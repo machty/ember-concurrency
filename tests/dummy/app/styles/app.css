@@ -27,5 +27,15 @@ body {
   font-size: 20px;
 }
 
+.btn {
+  line-height: 2;
+  padding: 1rem;
+  background-color: #ddddff;
+  width: 300px;
+  margin-bottom: 10px;
+  text-align: center;
+  border: 1px solid grey;
+}
+
 
 

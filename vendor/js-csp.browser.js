@@ -6,6 +6,7 @@ var channels = require("./impl/channels");
 var select = require("./impl/select");
 var process = require("./impl/process");
 var timers = require("./impl/timers");
+var dispatch = require("./impl/dispatch");
 
 function spawn(gen, creator) {
   var ch = channels.chan(buffers.fixed(1));
@@ -70,10 +71,13 @@ module.exports = {
   takeOrReturn: process.takeOrReturn,
   NO_VALUE: process.NO_VALUE,
 
-  timeout: timers.timeout
+  timeout: timers.timeout,
+
+  set_queue_dispatcher: dispatch.set_queue_dispatcher,
+  set_queue_delayer: dispatch.set_queue_delayer
 };
 
-},{"./impl/buffers":4,"./impl/channels":5,"./impl/process":7,"./impl/select":8,"./impl/timers":9}],2:[function(require,module,exports){
+},{"./impl/buffers":4,"./impl/channels":5,"./impl/dispatch":6,"./impl/process":7,"./impl/select":8,"./impl/timers":9}],2:[function(require,module,exports){
 "use strict";
 
 var Box = require("./impl/channels").Box;
@@ -1583,9 +1587,28 @@ exports.run = function (f) {
   queue_dispatcher();
 };
 
+var queue_delayer;
 exports.queue_delay = function(f, delay) {
-  setTimeout(f, delay);
+  if (queue_delayer) {
+    queue_delayer(f, delay);
+  } else {
+    setTimeout(f, delay);
+  }
 };
+
+exports.set_queue_dispatcher = function(handler) {
+  queue_dispatcher = function() {
+    if (!(queued && running)) {
+      queued = true;
+      handler(process_messages);
+    }
+  };
+}
+
+exports.set_queue_delayer = function(handler) {
+  queue_delayer = handler;
+}
+
 
 },{"./buffers":4}],7:[function(require,module,exports){
 "use strict";

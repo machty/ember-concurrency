@@ -2,6 +2,16 @@ import Ember from 'ember';
 
 export let csp = window.csp;
 
+csp.set_queue_delayer(function(f, delay) {
+  Ember.run.later(f, delay);
+});
+
+csp.set_queue_dispatcher(function(f) {
+	Ember.run.join(this, function() {
+		Ember.run.schedule('actions', f);
+	});
+});
+
 let Process = Ember.Object.extend({
   owner: null,
   generatorFunction: null,
@@ -85,4 +95,29 @@ export function process(...args) {
 export function sleep(ms) {
   return csp.timeout(ms);
 }
+
+let chan = csp.chan();
+let RawChannel = chan.constructor;
+chan.close();
+
+RawChannel.prototype.hasTakers = false;
+
+let oldTake = RawChannel.prototype._take;
+let oldPut = RawChannel.prototype._put;
+
+RawChannel.prototype._take = function() {
+  let ret = oldTake.apply(this, arguments);
+  this.refreshBlockingState();
+  return ret;
+};
+
+RawChannel.prototype._put= function() {
+  let ret = oldPut.apply(this, arguments);
+  this.refreshBlockingState();
+  return ret;
+};
+
+RawChannel.prototype.refreshBlockingState = function () {
+  Ember.set(this, 'hasTakers', this.takes.length > 0);
+};
 
