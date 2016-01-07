@@ -1,0 +1,31 @@
+body {
+  margin: 12px 16px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 12pt;
+}
+
+.progress-outer {
+  position: relative;
+  border: 1px solid black;
+  height: 20px;
+}
+
+.progress-inner {
+  position: absolute;
+  background-color: blue;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  transition: width 0.5s;
+  -webkit-transition: width 0.5s;
+}
+
+
+.btn-cancel {
+  color: red;
+  font-size: 20px;
+}
+
+
+
