@@ -2,7 +2,7 @@
 
 Communicating Sequential Processes (CSP, though not to be
 confused with [Content Security
-Policy](https://github.com/rwjblue/ember-cli-content-security-policy).
+Policy](https://github.com/rwjblue/ember-cli-content-security-policy)).
 
 This is still very experimental. I am still fleshing out some nice
 patterns. In the mean time, take a look at this
