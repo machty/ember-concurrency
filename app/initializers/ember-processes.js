@@ -3,6 +3,6 @@
 import 'ember-processes';
 
 export default {
-  name: 'liquid-fire',
+  name: 'ember-processes',
   initialize: function() {}
 };
