@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { csp, process, sleep } from 'ember-processes';
+import { csp, process, sleep, channel } from 'ember-processes';
 
 const { computed } = Ember;
 
@@ -67,10 +67,7 @@ export default Ember.Component.extend({
     this.set('foo', 'baz');
   }),
 
-
-  sharedActionsChannel: computed(function () {
-    return csp.chan();
-  }),
+  sharedActionsChannel: channel(csp.buffers.sliding, 1),
 
   init() {
     this._super();

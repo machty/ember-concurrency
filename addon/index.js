@@ -121,3 +121,16 @@ RawChannel.prototype.refreshBlockingState = function () {
   Ember.set(this, 'hasTakers', this.takes.length > 0);
 };
 
+export function channel(...args) {
+  let bufferConstructor = args[0];
+  return Ember.computed(function() {
+    if (typeof bufferConstructor === 'function') {
+      return csp.chan(bufferConstructor(args[1]));
+    } else if (args.length === 1) {
+      return csp.chan(args[0]);
+    } else {
+      return csp.chan();
+    }
+  });
+}
+
