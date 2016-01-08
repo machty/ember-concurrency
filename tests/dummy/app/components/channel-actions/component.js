@@ -105,6 +105,17 @@ export default Ember.Component.extend({
 
 
 
+      /*
+      queries
+        .debounce(1000)
+        .flatMapLatest(q => {
+          return ajax(`/search?q=${q}`);
+        })
+        .map(json => json.results);
+      */
+
+      //let q = yield query();
+
 
 
 
