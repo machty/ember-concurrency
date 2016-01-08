@@ -61,33 +61,36 @@ let Process = Ember.Object.extend({
   },
 });
 
+
+function cleanupOnDestroy(owner, object, cleanupMethodName) {
+  // TODO: find a non-mutate-y, hacky way of doing this.
+  if (!owner.willDestroy.__ember_processes_destroyers__) {
+    let oldWillDestroy = owner.willDestroy;
+    let disposers = [];
+
+    owner.willDestroy = function() {
+      for (let i = 0, l = disposers.length; i < l; i ++) {
+        disposers[i]();
+      }
+      oldWillDestroy.apply(owner, arguments);
+    };
+    owner.willDestroy.__ember_processes_destroyers__ = disposers;
+  }
+
+  owner.willDestroy.__ember_processes_destroyers__.push(() => {
+    object[cleanupMethodName]();
+  });
+}
+
+
 export function process(...args) {
   let generatorFunction = args.pop();
   let deps = args;
 
   return Ember.computed(...deps, function(key) {
-
     let owner = this;
     let wrapper = Process.create({ owner, generatorFunction, propertyName: key });
-
-    // TODO: clean up this mutate-y stuff
-    if (!owner.willDestroy.__generator_wrapper_disposers__) {
-      let oldWillDestroy = owner.willDestroy;
-      let disposers = [];
-
-      owner.willDestroy = function() {
-        for (let i = 0, l = disposers.length; i < l; i ++) {
-          disposers[i]();
-        }
-        oldWillDestroy.apply(owner, arguments);
-      };
-      owner.willDestroy.__generator_wrapper_disposers__ = disposers;
-    }
-
-    owner.willDestroy.__generator_wrapper_disposers__.push(() => {
-      wrapper.kill();
-    });
-
+    cleanupOnDestroy(owner, wrapper, 'kill');
     return wrapper;
   });
 }
@@ -124,13 +127,16 @@ RawChannel.prototype.refreshBlockingState = function () {
 export function channel(...args) {
   let bufferConstructor = args[0];
   return Ember.computed(function() {
+    let chan;
     if (typeof bufferConstructor === 'function') {
-      return csp.chan(bufferConstructor(args[1]));
+      chan = csp.chan(bufferConstructor(args[1]));
     } else if (args.length === 1) {
-      return csp.chan(args[0]);
+      chan = csp.chan(args[0]);
     } else {
-      return csp.chan();
+      chan = csp.chan();
     }
+    cleanupOnDestroy(this, chan, 'close');
+    return chan;
   });
 }
 
