@@ -109,7 +109,35 @@ export function process(...args) {
   cp.autoStart = () => {
     autoStart = true;
     return cp;
-  }
+  };
+
+  return cp;
+}
+
+export function looper(channelName, fnOrGenFn) {
+  let cp = liveComputed(function(key) {
+    let owner = this;
+    let channel = this.get(channelName);
+
+    let proc = Process.create({
+      owner,
+      generatorFunction: function * () {
+        for (;;) {
+          let value = yield channel;
+          if (value === csp.CLOSED) {
+            break;
+          }
+          yield * fnOrGenFn.call(owner, value);
+        }
+      },
+      propertyName: key
+    });
+    proc.start();
+
+    cleanupOnDestroy(owner, proc, 'kill');
+
+    return proc;
+  });
 
   return cp;
 }
