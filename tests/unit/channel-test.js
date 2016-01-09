@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import startApp from '../helpers/start-app';
 import { csp, channel } from 'ember-processes';
 
 module('Unit: Channels');

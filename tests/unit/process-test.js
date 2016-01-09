@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import startApp from '../helpers/start-app';
 import { csp, channel, process } from 'ember-processes';
 
 module('Unit: Processes');
@@ -24,8 +23,8 @@ test('.autoStart()', function(assert) {
   let obj1 = MyObject.create();
 
   csp.go(function * () {
-    ok(yield stops);
-    ok(yield stops);
+    assert.ok(yield stops);
+    assert.ok(yield stops);
     QUnit.start();
   });
 
@@ -38,5 +37,4 @@ test('.autoStart()', function(assert) {
   // as the channels they're blocked on? (this will usually
   // happen if the chan and proc are the same obj).
 });
-
 

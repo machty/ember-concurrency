@@ -1,6 +1,5 @@
 import Ember from 'ember';
-import startApp from '../helpers/start-app';
-import { csp, channel, process, makePublisher } from 'ember-processes';
+import { channel, process, makePublisher } from 'ember-processes';
 
 module('Unit: Publishers');
 
