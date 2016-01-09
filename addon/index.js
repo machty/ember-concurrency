@@ -187,3 +187,47 @@ export function channel(...args) {
   });
 }
 
+export function makePublisher(pubConstructor) {
+  // 20 is arbitrary, but probably an OK default?
+  // The reason we need it is that if you have
+  // pending putAsyncs and you close the channel,
+  // the close cancels those putAsyncs, which is
+  // probably undesirable for the pattern where a
+  // producer generates a bunch of values and closes.
+  //
+  // See here: https://github.com/ubolonton/js-csp/issues/63
+  //
+  // TODO: we should probably devise a better system
+  // for integrating with Observables that are backpressure
+  // aware
+  let chan = csp.chan(20);
+
+  let disposer = Ember.K;
+
+  let hasClosed = false;
+  let oldClose = chan.close;
+  chan.close = () => {
+    if (hasClosed) { return; }
+    hasClosed = true;
+    oldClose.call(chan);
+    disposer();
+  };
+
+  let publishHandle = (v) => {
+    if (hasClosed) {
+      return;
+    }
+    csp.putAsync(chan, v);
+  };
+  publishHandle.close = () => {
+    chan.close();
+  };
+
+  let maybeDisposer = pubConstructor(publishHandle);
+  if (typeof maybeDisposer === 'function') {
+    disposer = maybeDisposer;
+  }
+
+  return chan;
+}
+
