@@ -61,7 +61,6 @@ let Process = Ember.Object.extend({
   },
 });
 
-
 function cleanupOnDestroy(owner, object, cleanupMethodName) {
   // TODO: find a non-mutate-y, hacky way of doing this.
   if (!owner.willDestroy.__ember_processes_destroyers__) {
@@ -82,17 +81,37 @@ function cleanupOnDestroy(owner, object, cleanupMethodName) {
   });
 }
 
+function liveComputed(...args) {
+  let cp = Ember.computed(...args);
+  cp.setup = function(obj, keyname) {
+    Ember.addListener(obj, 'init', null, function() {
+      this.get(keyname);
+    });
+  };
+  return cp;
+}
 
 export function process(...args) {
   let generatorFunction = args.pop();
   let deps = args;
+  let autoStart = false;
 
-  return Ember.computed(...deps, function(key) {
+  let cp = liveComputed(...deps, function(key) {
     let owner = this;
-    let wrapper = Process.create({ owner, generatorFunction, propertyName: key });
-    cleanupOnDestroy(owner, wrapper, 'kill');
-    return wrapper;
+    let proc = Process.create({ owner, generatorFunction, propertyName: key });
+    cleanupOnDestroy(owner, proc, 'kill');
+    if (autoStart) {
+      proc.start();
+    }
+
+    return proc;
   });
+  cp.autoStart = () => {
+    autoStart = true;
+    return cp;
+  }
+
+  return cp;
 }
 
 export function sleep(ms) {
@@ -126,7 +145,7 @@ RawChannel.prototype.refreshBlockingState = function () {
 
 export function channel(...args) {
   let bufferConstructor = args[0];
-  return Ember.computed(function() {
+  return liveComputed(function() {
     let chan;
     if (typeof bufferConstructor === 'function') {
       chan = csp.chan(bufferConstructor(args[1]));
