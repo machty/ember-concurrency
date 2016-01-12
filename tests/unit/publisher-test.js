@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { channel, process, makePublisher } from 'ember-processes';
+import { channel, process, makePublisher, publisher } from 'ember-processes';
 
 module('Unit: Publishers');
 
@@ -62,12 +62,40 @@ test('publishers offer an Observable-esque API for construction / disposal', fun
   Ember.run(obj, 'destroy');
 });
 
+/*
+test('publisher constructors can be generators', function(assert) {
+  QUnit.stop();
+  let MyObject = Ember.Object.extend({
+    myChannel: channel(),
+    funSignal: publisher(function * (p) {
+      p(1);
+      p(yield this.get('myChannel'));
+    }),
+  });
+
+  let obj = MyObject.create();
+
+  csp.go(function * () {
+    let funSignal = obj.get('funSignal');
+    let values = [];
+    assert.equal(yield funSignal, 1);
+    csp.putAsync(obj.get('myChannel'), 2);
+    assert.equal(yield funSignal, 2);
+    QUnit.start();
+  });
+
+  // so the difference between a signal and channel is that...
+  //
+});
+
+
 // TODO: do we actually want this?
-//test('publishers accept an optional buffer', function(assert) {
-  //let chan = makePublisher(csp.buffers.sliding(33), () => {})
-  //assert.equal(chan.buf.n, 33);
-  //chan.close();
-//});
+test('publishers accept an optional buffer', function(assert) {
+  let chan = makePublisher(csp.buffers.sliding(33), () => {})
+  assert.equal(chan.buf.n, 33);
+  chan.close();
+});
+*/
 
 
 
