@@ -8,16 +8,16 @@ let MyObject = Ember.Object.extend({
   myChannelBuffered: channel(5),
   myChannelSlidingBuffered: channel(csp.buffers.sliding, 5),
 
-  one: channel(),
-  two: channel('one', function({foo, bar}) {
-    return {
-      foobar: foo+bar
-    };
-  }),
-  three: channel('two'),
-  four: channel('three', function (foo, bar) {
-    return { foo, bar };
-  }),
+  //one: channel(),
+  //two: channel('one', function({foo, bar}) {
+    //return {
+      //foobar: foo+bar
+    //};
+  //}),
+  //three: channel('two'),
+  //four: channel('three', function (foo, bar) {
+    //return { foo, bar };
+  //}),
 });
 
 test('channel() is a CP constructor that creates channels', function(assert) {
@@ -36,6 +36,8 @@ test('channel() is a CP constructor that creates channels', function(assert) {
   assert.equal(c2.buf.n, 5);
 });
 
+
+/*
 test('channel() CPs get auto-closed on host object destruction', function(assert) {
   QUnit.stop();
 
@@ -52,7 +54,6 @@ test('channel() CPs get auto-closed on host object destruction', function(assert
   });
 });
 
-/*
 test('passing args to channel makes it a mapping proxy', function(assert) {
   QUnit.stop();
 

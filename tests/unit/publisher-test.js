@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { channel, process, makePublisher, publisher } from 'ember-processes';
+import { channel, process, makePublisher } from 'ember-processes';
 
 module('Unit: Publishers');
 
