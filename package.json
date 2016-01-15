@@ -1,6 +1,6 @@
 {
   "name": "ember-processes",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "The default blueprint for ember-cli addons.",
   "directories": {
     "doc": "doc",
