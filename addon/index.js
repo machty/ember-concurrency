@@ -270,7 +270,7 @@ let ChannelAction = Ember.Object.extend({
       if (!this.get('ready')) { return; }
 
       let mapFn = this.mapFn;
-      let value = mapFn ? mapFn.apply(this.hostObject, args) : {};
+      let value = mapFn ? mapFn.apply(this.hostObject, args) : args[0] || {};
       if (value) {
         value._sourceAction = this;
       } else {
