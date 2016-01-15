@@ -114,11 +114,19 @@ export function process(...args) {
   return cp;
 }
 
-export function looper(channelName, fnOrGenFn) {
+export function looper() {
+  let channelName, fnOrGenFn;
+  if (arguments.length === 2) {
+    channelName = arguments[0];
+    fnOrGenFn = arguments[1];
+  } else {
+    fnOrGenFn = arguments[0];
+  }
+
   let cp = liveComputed(function(key) {
     let owner = this;
-    let channel = this.get(channelName);
-
+    channelName = channelName || key;
+    let channel = resolveChannel(owner, channelName);
     let proc = Process.create({
       owner,
       generatorFunction: function * () {
@@ -229,5 +237,57 @@ export function makePublisher(pubConstructor) {
   }
 
   return chan;
+}
+
+function resolveChannel(hostObject, channelPath) {
+  let charCode = channelPath.charCodeAt(0);
+  let startsWithUppercase = (charCode >= 65 && charCode <= 90);
+  if (startsWithUppercase) {
+    // assume it's a global action. return the implicit channel.
+    let owner = Ember.getOwner(hostObject);
+    let channelService = owner.lookup(`service:ember-processes-dispatcher`);
+    return channelService._globalChannelFor(channelPath);
+  } else {
+    return hostObject.get(channelPath);
+  }
+}
+
+
+// TODO: move this to ember-processes ?
+let ChannelAction = Ember.Object.extend({
+  perform: null,
+  hostObject: null,
+  channelPath: null,
+  channel: Ember.computed('channelPath', function() {
+    return resolveChannel(this.get('hostObject'), this.get('channelPath'));
+  }),
+
+  ready: Ember.computed.oneWay('channel.hasTakers'),
+
+  init() {
+    this._super();
+    this.perform = (...args) => {
+      if (!this.get('ready')) { return; }
+
+      let mapFn = this.mapFn;
+      let value = mapFn ? mapFn.apply(this.hostObject, args) : {};
+      if (value) {
+        value._sourceAction = this;
+      } else {
+        return;
+      }
+      csp.putAsync(this.get('channel'), value);
+    };
+  },
+});
+
+export function channelAction(channelPath, mapFn) {
+  return Ember.computed(function() {
+    return ChannelAction.create({
+      hostObject: this,
+      channelPath,
+      mapFn,
+    });
+  });
 }
 
