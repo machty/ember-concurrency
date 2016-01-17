@@ -17,6 +17,7 @@
   "newcap": true,
   "noarg": true,
   "noempty": false,
+  "noyield": true,
   "nonew": false,
   "nomen": false,
   "onevar": false,
