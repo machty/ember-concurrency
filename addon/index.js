@@ -256,6 +256,7 @@ function resolveChannel(hostObject, channelPath) {
 // TODO: move this to ember-processes ?
 let ChannelAction = Ember.Object.extend({
   perform: null,
+  performOptional: null,
   hostObject: null,
   channelPath: null,
   channel: Ember.computed('channelPath', function() {
@@ -266,26 +267,50 @@ let ChannelAction = Ember.Object.extend({
 
   init() {
     this._super();
-    this.perform = (...args) => {
-      if (!this.get('ready')) { return; }
-
-      let mapFn = this.mapFn;
-      let value = mapFn ? mapFn.apply(this.hostObject, args) : args[0] || {};
-      if (value) {
-        value._sourceAction = this;
-      } else {
-        return;
-      }
-      csp.putAsync(this.get('channel'), value);
+    this.performEnsure = (...args) => {
+      this._perform(false, args);
     };
+    this.perform = (...args) => {
+      this._perform(true , args);
+    };
+  },
+
+  _perform(optional, args) {
+    if (optional && !this.get('ready')) { return; }
+
+    let mapFn = this.mapFn;
+    let value = mapFn ? mapFn.apply(this.hostObject, args) : args[0] || {};
+    if (value) {
+      value._sourceAction = this;
+    } else {
+      return;
+    }
+    if (optional) {
+      csp.offer(this.get('channel'), value);
+    } else {
+      csp.putAsync(this.get('channel'), value);
+    }
+
   },
 });
 
-export function channelAction(channelPath, mapFn) {
-  return Ember.computed(function() {
+export function channelAction() {
+  let mapFn, channelPath;
+  if (arguments.length === 2) {
+    channelPath = arguments[0];
+    mapFn = arguments[1];
+  } else if (arguments.length === 1) {
+    if (typeof arguments[0] === 'function') {
+      mapFn = arguments[0];
+    } else {
+      channelPath = arguments[0];
+    }
+  }
+
+  return Ember.computed(function(key) {
     return ChannelAction.create({
       hostObject: this,
-      channelPath,
+      channelPath: channelPath || key,
       mapFn,
     });
   });
