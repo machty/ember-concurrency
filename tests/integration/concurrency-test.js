@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import Task from 'ember-processes/task';
 import Dispatcher from 'dummy/services/ember-processes-dispatcher';
+import { DidNotRunException } from 'ember-processes';
 
 module('Unit: Tasks and Concurrency');
 
@@ -45,6 +46,9 @@ test("tasks with unyielding generators run to completion synchronously and hence
 
   Ember.run(() => {
     task0.perform("abc", "def");
+  });
+
+  Ember.run(() => {
     task1.perform("qwe", "rty");
   });
 
@@ -57,7 +61,7 @@ test("tasks with unyielding generators run to completion synchronously and hence
 });
 
 test("default constraints: enforce full serialization", function(assert) {
-  assert.expect(8);
+  assert.expect(11);
 
   let defer = Ember.RSVP.defer();
   let hostObject;
@@ -67,7 +71,7 @@ test("default constraints: enforce full serialization", function(assert) {
     dispatcher = Dispatcher.create();
   });
 
-  let task0, task1;
+  let task0, task1, finalValue, error;
   function makeTask(genFn) {
     return Task.create({
       _dispatcher: dispatcher,
@@ -78,15 +82,24 @@ test("default constraints: enforce full serialization", function(assert) {
 
   Ember.run(() => {
     task0 = makeTask(function * () {
-      yield defer.promise;
+      let val = yield defer.promise;
+      return val;
     });
 
     task1 = makeTask(function * () {
-      return 123;
+      assert.ok(false, "should not run");
     });
 
-    task0.perform();
+    task0.perform().then(v => {
+      finalValue = v;
+    });
+    task1.perform().catch(e => {
+      error = e;
+    });
   });
+
+  assert.ok(!finalValue, "no value yet");
+  assert.ok(error instanceof DidNotRunException);
 
   assert.ok(!task0.get('isPerformable'));
   assert.ok(!task1.get('isPerformable'));
@@ -96,6 +109,8 @@ test("default constraints: enforce full serialization", function(assert) {
   Ember.run(() => {
     defer.resolve(5);
   });
+
+  assert.equal(finalValue, 5);
 
   assert.ok(task0.get('isPerformable'));
   assert.ok(task1.get('isPerformable'));

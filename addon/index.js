@@ -1,5 +1,7 @@
 import Ember from 'ember';
 
+export function DidNotRunException() { }
+
 export let csp = window.csp;
 
 csp.set_queue_delayer(function(f, delay) {
@@ -20,7 +22,7 @@ export let Process = Ember.Object.extend({
 
   isRunning: false,
 
-  start(...args) {
+  start(args, completionHandler) {
     if (this._currentProcess) {
       // already running; use restart() to restart.
       // NOTE: what if arguments have changed?
@@ -37,7 +39,10 @@ export let Process = Ember.Object.extend({
     let owner = this.owner;
     let iter = this.generatorFunction.apply(owner, args);
     this._currentProcess = csp.spawn(iter);
-    csp.takeAsync(this._currentProcess, () => {
+    csp.takeAsync(this._currentProcess, returnValue => {
+      if (completionHandler) {
+        completionHandler(returnValue);
+      }
       this.kill();
     });
   },
@@ -57,7 +62,7 @@ export let Process = Ember.Object.extend({
 
   restart(...args) {
     this.kill();
-    this.start(...args);
+    this.start(args);
   },
 });
 

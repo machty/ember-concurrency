@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { csp } from 'ember-processes';
+import { csp, DidNotRunException } from 'ember-processes';
 import { Process } from 'ember-processes';
 
 export default Ember.Service.extend({
@@ -26,8 +26,11 @@ export default Ember.Service.extend({
   },
 
   _tryPerform(task, args) {
-    //let constraints = task.get('_concurrencyConstraints');
+    if (!task.get('isPerformable')) {
+      return Ember.RSVP.reject(new DidNotRunException());
+    }
 
+    //let constraints = task.get('_concurrencyConstraints');
     let proc = Process.create({
       owner: task._hostObject,
       generatorFunction: task._genFn,
@@ -38,11 +41,12 @@ export default Ember.Service.extend({
     task.set('isRunning', true);
     this._updateConstraints();
 
-    proc.start(...args);
-
-    csp.takeAsync(proc._currentProcess, () => {
-      task.set('isRunning', false);
-      this._updateConstraints();
+    return new Ember.RSVP.Promise(r => {
+      proc.start(args, returnValue => {
+        task.set('isRunning', false);
+        this._updateConstraints();
+        r(returnValue);
+      });
     });
   },
 
