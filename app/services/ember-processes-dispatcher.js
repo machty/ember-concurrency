@@ -10,6 +10,11 @@ export default Ember.Service.extend({
     return channel;
   },
 
+  init() {
+    this._super();
+    this._tasks = {};
+  },
+
   willDestroy(...args) {
     let channels = this._channels;
     if (channels) {
@@ -21,15 +26,45 @@ export default Ember.Service.extend({
   },
 
   _tryPerform(task, args) {
-    let constraints = task.get('_concurrencyConstraints');
+    //let constraints = task.get('_concurrencyConstraints');
 
     let proc = Process.create({
       owner: task._hostObject,
       generatorFunction: task._genFn,
       propertyName: "TODO",
+      _task: task,
     });
 
+    task.set('isRunning', true);
+    this._updateConstraints();
+
     proc.start(...args);
+
+    csp.takeAsync(proc._currentProcess, () => {
+      task.set('isRunning', false);
+      this._updateConstraints();
+    });
+  },
+
+  _updateConstraints() {
+    let groups = {};
+
+    let taskGuids = Object.keys(this._tasks);
+    for (let i = 0, l = taskGuids.length; i < l; i ++) {
+      let task = this._tasks[taskGuids[i]];
+      let groupName = task.get('_concurrencyGroupName');
+      groups[groupName] = groups[groupName] || task.get('isRunning');
+    }
+
+    for (let i = 0, l = taskGuids.length; i < l; i ++) {
+      let task = this._tasks[taskGuids[i]];
+      let groupName = task.get('_concurrencyGroupName');
+      task.set('isPerformable', !groups[groupName]);
+    }
+  },
+
+  _registerTask(task) {
+    this._tasks[Ember.guidFor(task)] = task;
   },
 });
 
