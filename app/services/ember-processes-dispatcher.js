@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import { csp } from 'ember-processes';
+import { Process } from 'ember-processes';
 
 export default Ember.Service.extend({
   _channels: null,
@@ -17,6 +18,18 @@ export default Ember.Service.extend({
       }
     }
     this._super(...args);
+  },
+
+  _tryPerform(task, args) {
+    let constraints = task.get('_concurrencyConstraints');
+
+    let proc = Process.create({
+      owner: task._hostObject,
+      generatorFunction: task._genFn,
+      propertyName: "TODO",
+    });
+
+    proc.start(...args);
   },
 });
 

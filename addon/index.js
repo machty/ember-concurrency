@@ -12,7 +12,7 @@ csp.set_queue_dispatcher(function(f) {
 	});
 });
 
-let Process = Ember.Object.extend({
+export let Process = Ember.Object.extend({
   owner: null,
   generatorFunction: null,
 
@@ -252,8 +252,6 @@ function resolveChannel(hostObject, channelPath) {
   }
 }
 
-
-// TODO: move this to ember-processes ?
 let ChannelAction = Ember.Object.extend({
   perform: null,
   performOptional: null,
@@ -315,4 +313,53 @@ export function channelAction() {
     });
   });
 }
+
+
+
+let Task = Ember.Object.extend({
+  //perform: null,
+  //performOptional: null,
+
+
+  _hostObject: null,
+  _dispatcher: null,
+
+  //ready: Ember.computed.oneWay('channel.hasTakers'),
+
+  init() {
+    this._super();
+    //this.performEnsure = (...args) => {
+      //this._perform(false, args);
+    //};
+
+    this.perform = (...args) => {
+      // what does perform return?
+      // a promise, why not.
+
+
+      return this._dispatcher._tryPerform(this);
+    };
+  },
+
+  _concurrencyConstraints: null,
+});
+
+
+export function task(genFn) {
+  let desc = Ember.computed(function(key) {
+    let dispatcher = Ember.getOwner(this).lookup('service:-ember-processes-dispatcher');
+    Ember.assert(`You can only use task() on Ember Objects instantiated from a container`, dispatcher);
+    return Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: this,
+      _genFn: genFn,
+    });
+  });
+
+  // TODO:
+  // desc.concurrency = function() {}
+
+  return desc;
+}
+
 
