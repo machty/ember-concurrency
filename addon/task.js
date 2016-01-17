@@ -36,6 +36,11 @@ let Task = Ember.Object.extend({
   _concurrencyGroupName: computed(function() {
     return "SHARED_GLOBAL_GROUP";
   }),
+
+  willDestroy() {
+    this._dispatcher._taskDestroyed(this);
+    this._super();
+  },
 });
 
 export default Task;

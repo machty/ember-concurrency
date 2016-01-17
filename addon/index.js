@@ -324,12 +324,15 @@ export function task(genFn) {
   let desc = Ember.computed(function() {
     let dispatcher = Ember.getOwner(this).lookup('service:-ember-processes-dispatcher');
     Ember.assert(`You can only use task() on Ember Objects instantiated from a container`, dispatcher);
-    return Task.create({
+    let task = Task.create({
       _dispatcher: dispatcher,
       _hostObject: this,
       _genFn: genFn,
     });
+    cleanupOnDestroy(this, task, 'destroy');
+    return task;
   });
+
 
   // TODO:
   // desc.concurrency = function() {}

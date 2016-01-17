@@ -118,4 +118,60 @@ test("default constraints: enforce full serialization", function(assert) {
   assert.ok(!task1.get('isRunning'));
 });
 
+test("destroying host objects frees up other tasks to perform", function(assert) {
+  assert.expect(7);
+
+  let defer = Ember.RSVP.defer();
+  let hostObject0, hostObject1;
+  let dispatcher;
+  Ember.run(() => {
+    hostObject0 = Ember.Object.create();
+    hostObject1 = Ember.Object.create();
+    dispatcher = Dispatcher.create();
+  });
+
+  let task0, task1;
+  function makeTask(hostObject, genFn) {
+    return Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _genFn: genFn,
+    });
+  }
+
+  Ember.run(() => {
+    task0 = makeTask(hostObject0, function * () {
+      yield defer.promise;
+    });
+
+    task1 = makeTask(hostObject1, function * (v) {
+      return v;
+    });
+  });
+
+  assert.ok(task0.get('isPerformable'));
+  assert.ok(task1.get('isPerformable'));
+
+  Ember.run(() => {
+    task0.perform();
+  });
+
+  assert.ok(!task0.get('isPerformable'));
+  assert.ok(!task1.get('isPerformable'));
+
+  Ember.run(() => {
+    // TODO: test object destruction; right now it only attaches via the task CP
+    // hostObject0.destroy();
+    task0.destroy();
+  });
+
+  assert.ok(!task0.get('isPerformable'));
+  assert.ok(task1.get('isPerformable'));
+
+  Ember.run(() => {
+    task1.perform(123).then(v => {
+      assert.equal(v, 123);
+    });
+  });
+});
 

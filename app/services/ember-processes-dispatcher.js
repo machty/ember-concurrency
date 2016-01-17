@@ -16,6 +16,7 @@ export default Ember.Service.extend({
   },
 
   willDestroy(...args) {
+    // TODO this needs to go / be updated
     let channels = this._channels;
     if (channels) {
       for (let channel in channels) {
@@ -23,6 +24,16 @@ export default Ember.Service.extend({
       }
     }
     this._super(...args);
+  },
+
+  _taskDestroyed(task) {
+    delete this._tasks[Ember.guidFor(task)];
+    this._taskDidFinish(task);
+  },
+
+  _taskDidFinish(task) {
+    task.set('isRunning', false);
+    this._updateConstraints();
   },
 
   _tryPerform(task, args) {
@@ -43,8 +54,7 @@ export default Ember.Service.extend({
 
     return new Ember.RSVP.Promise(r => {
       proc.start(args, returnValue => {
-        task.set('isRunning', false);
-        this._updateConstraints();
+        this._taskDidFinish(task);
         r(returnValue);
       });
     });
