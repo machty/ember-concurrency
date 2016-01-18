@@ -1,31 +1,34 @@
-# ember-processes
+# ember-concurrency
 
-Communicating Sequential Processes (CSP, though not to be
-confused with [Content Security
-Policy](https://github.com/rwjblue/ember-cli-content-security-policy)).
+An experimental library for managing concurrency/asynchrony in Ember
+apps, leveraging JavaScript Generator functions and light-weight CSP
+(Communicating Sequential Processes, a la the Go Programming Language
+and Clojure's `core.async` libraries).
 
-This is still very experimental. I am still fleshing out some nice
-patterns. In the mean time, take a look at this
-[Twiddle](https://ember-twiddle.com/e9867c1813a9e4fb2033).
+## Usage
 
-## Installation
+TODO
+
+## Addon Maintenance
+
+### Installation
 
 * `git clone` this repository
 * `npm install`
 * `bower install`
 
-## Running
+### Running
 
 * `ember server`
 * Visit your app at http://localhost:4200.
 
-## Running Tests
+### Running Tests
 
 * `npm test` (Runs `ember try:testall` to test your addon against multiple Ember versions)
 * `ember test`
 * `ember test --server`
 
-## Building
+### Building
 
 * `ember build`
 
