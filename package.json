@@ -1,7 +1,7 @@
 {
-  "name": "ember-processes",
-  "version": "0.1.10",
-  "description": "The default blueprint for ember-cli addons.",
+  "name": "ember-concurrency",
+  "version": "0.1.11",
+  "description": "Manage concurrency in Ember.js apps using generators and tasks",
   "directories": {
     "doc": "doc",
     "test": "tests"
