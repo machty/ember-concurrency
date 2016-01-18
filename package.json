@@ -1,6 +1,6 @@
 {
   "name": "ember-concurrency",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Manage concurrency in Ember.js apps using generators and tasks",
   "directories": {
     "doc": "doc",
