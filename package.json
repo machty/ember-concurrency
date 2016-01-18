@@ -11,7 +11,7 @@
     "start": "ember server",
     "test": "ember try:testall"
   },
-  "repository": "https://github.com/machty/ember-processes",
+  "repository": "https://github.com/machty/ember-concurrency",
   "engines": {
     "node": ">= 0.10.0"
   },

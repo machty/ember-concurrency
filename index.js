@@ -2,7 +2,7 @@
 'use strict';
 
 module.exports = {
-  name: 'ember-processes',
+  name: 'ember-concurrency',
   included: function(app) {
     this._super.included(app);
 

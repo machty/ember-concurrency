@@ -1,7 +1,7 @@
 import Ember from 'ember';
-import Task from 'ember-processes/task';
-import Dispatcher from 'dummy/services/ember-processes-dispatcher';
-import { DidNotRunException } from 'ember-processes';
+import Task from 'ember-concurrency/task';
+import Dispatcher from 'dummy/services/ember-concurrency-dispatcher';
+import { DidNotRunException } from 'ember-concurrency';
 
 module('Unit: Tasks and Concurrency');
 

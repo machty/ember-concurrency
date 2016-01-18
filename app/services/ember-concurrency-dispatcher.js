@@ -1,6 +1,6 @@
 import Ember from 'ember';
-import { csp, DidNotRunException } from 'ember-processes';
-import { Process } from 'ember-processes';
+import { csp, DidNotRunException } from 'ember-concurrency';
+import { Process } from 'ember-concurrency';
 
 export default Ember.Service.extend({
   _channels: null,

@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { process, sleep } from 'ember-processes';
+import { process, sleep } from 'ember-concurrency';
 
 export default Ember.Component.extend({
   innerProgressStyle: Ember.computed('progress', function() {

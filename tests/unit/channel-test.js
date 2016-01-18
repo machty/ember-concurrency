@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { csp, channel } from 'ember-processes';
+import { csp, channel } from 'ember-concurrency';
 
 module('Unit: Channels');
 

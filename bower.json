@@ -1,5 +1,5 @@
 {
-  "name": "ember-processes",
+  "name": "ember-concurrency",
   "dependencies": {
     "ember": "2.2.0",
     "ember-cli-shims": "0.0.6",

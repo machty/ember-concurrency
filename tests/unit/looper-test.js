@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { csp, channel, looper } from 'ember-processes';
+import { csp, channel, looper } from 'ember-concurrency';
 
 module('Unit: Loopers');
 

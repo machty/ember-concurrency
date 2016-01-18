@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { process } from 'ember-processes';
+import { process } from 'ember-concurrency';
 
 let delay = (ms) => {
   return new Ember.RSVP.Promise(r => {

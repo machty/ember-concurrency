@@ -1,8 +1,8 @@
 // This initializer exists only to make sure that the following
 // imports happen before the app boots.
-import 'ember-processes';
+import 'ember-concurrency';
 
 export default {
-  name: 'ember-processes',
+  name: 'ember-concurrency',
   initialize: function() {}
 };

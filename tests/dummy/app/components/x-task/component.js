@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task, sleep } from 'ember-processes';
+import { task, sleep } from 'ember-concurrency';
 
 export default Ember.Component.extend({
   task: task(function * () {
