@@ -5,10 +5,6 @@ import { DidNotRunException } from 'ember-concurrency';
 
 module('Unit: Tasks and Concurrency');
 
-test("i can has task", function(assert) {
-  assert.ok(Task);
-});
-
 test("tasks with unyielding generators run to completion synchronously and hence no concurrency constraints apply", function(assert) {
   assert.expect(16);
 
@@ -174,4 +170,88 @@ test("destroying host objects frees up other tasks to perform", function(assert)
     });
   });
 });
+
+test("you can map task args to each other via mapArgs", function(assert) {
+  assert.expect(13);
+
+  let hostObject = Ember.Object.create();
+  let dispatcher = Dispatcher.create();
+
+  function makeTask(genFn) {
+    return Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _genFn: genFn,
+    });
+  }
+
+  let defer = Ember.RSVP.defer();
+  let task0 = makeTask(function * (ev) {
+    yield defer.promise;
+    assert.deepEqual(ev, { a: 'a', b: 'b', c: 'c', d: 'd' });
+  });
+
+  let task1 = task0._mapArgs((a,b,c) => ({ a, b, c, d: 'd' }));
+
+  assert.ok(task0.get('isPerformable'));
+  assert.ok(task1.get('isPerformable'));
+  assert.ok(!task0.get('isRunning'));
+  assert.ok(!task1.get('isRunning'));
+
+  Ember.run(() => {
+    task1.perform('a', 'b', 'c');
+  });
+
+  assert.ok(!task0.get('isPerformable'));
+  assert.ok(!task1.get('isPerformable'));
+  assert.ok(task0.get('isRunning'));
+  assert.ok(task1.get('isRunning'));
+
+  Ember.run(() => {
+    defer.resolve(123);
+  });
+
+  assert.ok(task0.get('isPerformable'));
+  assert.ok(task1.get('isPerformable'));
+  assert.ok(!task0.get('isRunning'));
+  assert.ok(!task1.get('isRunning'));
+});
+
+test("returning falsy from mapper prevents the task from running", function(assert) {
+  assert.expect(9);
+
+  let hostObject = Ember.Object.create();
+  let dispatcher = Dispatcher.create();
+
+  function makeTask(genFn) {
+    return Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _genFn: genFn,
+    });
+  }
+
+  let task0 = makeTask(function * () {
+    assert.ok(false);
+  });
+
+  let task1 = task0._mapArgs(() => null);
+
+  assert.ok(task0.get('isPerformable'));
+  assert.ok(task1.get('isPerformable'));
+  assert.ok(!task0.get('isRunning'));
+  assert.ok(!task1.get('isRunning'));
+
+  Ember.run(() => {
+    task1.perform('a', 'b', 'c').catch(e => {
+      assert.ok(e instanceof DidNotRunException);
+    });
+  });
+
+  assert.ok(task0.get('isPerformable'));
+  assert.ok(task1.get('isPerformable'));
+  assert.ok(!task0.get('isRunning'));
+  assert.ok(!task1.get('isRunning'));
+});
+
 

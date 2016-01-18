@@ -341,4 +341,14 @@ export function task(genFn) {
   return desc;
 }
 
+task.mapArgs = function(taskPath, maybeMapFn) {
+  let mapFn = maybeMapFn || (v => v);
+  return Ember.computed(function() {
+    let sourceTask = this.get(taskPath);
+    Ember.assert(`No source task was found at ${taskPath} to .mapArgs to`, sourceTask);
+    return sourceTask._mapArgs((...args) => {
+      return mapFn.apply(this, args);
+    });
+  });
+};
 

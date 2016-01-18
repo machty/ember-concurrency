@@ -41,20 +41,30 @@ export default Ember.Service.extend({
       return Ember.RSVP.reject(new DidNotRunException());
     }
 
+    let mappedArgs = task._prepareArgs(args);
+    if (!mappedArgs) {
+      return Ember.RSVP.reject(new DidNotRunException());
+    }
+
+    let rootTask = task;
+    while (rootTask._parentTask) {
+      rootTask = rootTask._parentTask;
+    }
+
     //let constraints = task.get('_concurrencyConstraints');
     let proc = Process.create({
-      owner: task._hostObject,
-      generatorFunction: task._genFn,
+      owner: rootTask._hostObject,
+      generatorFunction: rootTask._genFn,
       propertyName: "TODO",
-      _task: task,
+      _task: rootTask,
     });
 
-    task.set('isRunning', true);
+    rootTask.set('isRunning', true);
     this._updateConstraints();
 
     return new Ember.RSVP.Promise(r => {
-      proc.start(args, returnValue => {
-        this._taskDidFinish(task);
+      proc.start(mappedArgs, returnValue => {
+        this._taskDidFinish(rootTask);
         r(returnValue);
       });
     });
