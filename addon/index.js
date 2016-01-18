@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import getOwner from 'ember-getowner-polyfill';
 
 import Task from 'ember-processes/task';
 export function DidNotRunException() { }
@@ -250,7 +251,7 @@ function resolveChannel(hostObject, channelPath) {
   let startsWithUppercase = (charCode >= 65 && charCode <= 90);
   if (startsWithUppercase) {
     // assume it's a global action. return the implicit channel.
-    let owner = Ember.getOwner(hostObject);
+    let owner = getOwner(hostObject);
     let channelService = owner.lookup(`service:ember-processes-dispatcher`);
     return channelService._globalChannelFor(channelPath);
   } else {
@@ -322,7 +323,7 @@ export function channelAction() {
 
 export function task(genFn) {
   let desc = Ember.computed(function() {
-    let dispatcher = Ember.getOwner(this).lookup('service:-ember-processes-dispatcher');
+    let dispatcher = getOwner(this).lookup('service:ember-processes-dispatcher');
     Ember.assert(`You can only use task() on Ember Objects instantiated from a container`, dispatcher);
     let task = Task.create({
       _dispatcher: dispatcher,

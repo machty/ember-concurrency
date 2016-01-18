@@ -10,6 +10,7 @@ Router.map(function() {
   this.route('color');
   this.route('yielding');
   this.route('actions');
+  this.route('tasks');
 });
 
 export default Router;
