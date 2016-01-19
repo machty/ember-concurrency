@@ -63,6 +63,7 @@ export default Ember.Service.extend({
       propertyName: "TODO",
       _task: task,
     });
+    task._proc = proc;
 
     this._incrementSemaphoresForTaskChain(task, +1);
 

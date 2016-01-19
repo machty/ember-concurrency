@@ -32,7 +32,11 @@ let Task = Ember.Object.extend({
   },
 
   willDestroy() {
-    this._dispatcher._taskDestroyed(this);
+    if (this._proc) {
+      this._proc.kill();
+      this._proc = null;
+    }
+    //this._dispatcher._taskDestroyed(this);
     this._super();
   },
 });

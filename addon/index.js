@@ -323,7 +323,11 @@ export function channelAction() {
 }
 
 export function task(...args) {
-  let _genFn = args.pop();
+  let _genFn;
+  if (typeof args[args.length - 1] === 'function') {
+    _genFn = args.pop();
+  }
+
   let desc = Ember.computed(function(key) {
     let _dispatcher = getOwner(this).lookup('service:ember-concurrency-dispatcher');
     Ember.assert(`You can only use task() on Ember Objects instantiated from a container`, _dispatcher);
@@ -336,11 +340,22 @@ export function task(...args) {
       return depTask;
     });
 
+    let _depTask = _depTasks[0];
+
+    if (!_genFn) {
+      _genFn = function * (...args) {
+        if (_depTask) {
+          let value = yield _depTask.perform(...args);
+          return value;
+        }
+      };
+    }
+
     let task = Task.create({
       _dispatcher,
       _hostObject: this,
       _genFn,
-      _depTask: _depTasks[0],
+      _depTask,
     });
 
     cleanupOnDestroy(this, task, 'destroy');

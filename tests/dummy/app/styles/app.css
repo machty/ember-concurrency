@@ -39,7 +39,11 @@ body {
 
 .btn.disabled {
   background-color: #ddd;
+  color: #888;
 }
 
+.btn.running {
+  background-color: red;
+}
 
 

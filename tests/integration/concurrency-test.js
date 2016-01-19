@@ -117,7 +117,7 @@ test("two tasks can run at the same time", function(assert) {
 });
 
 test("destroying host objects frees up other tasks to perform", function(assert) {
-  assert.expect(11);
+  assert.expect(12);
 
   let defer = Ember.RSVP.defer();
   let hostObject;
@@ -128,6 +128,7 @@ test("destroying host objects frees up other tasks to perform", function(assert)
   });
 
   let task0, task1, task2;
+  let task1DidClose = false;
   Ember.run(() => {
     task0 = Task.create({
       _dispatcher: dispatcher,
@@ -140,7 +141,11 @@ test("destroying host objects frees up other tasks to perform", function(assert)
       _hostObject: hostObject,
       _depTask: task0,
       _genFn: function * () {
-        yield defer.promise;
+        try {
+          yield defer.promise;
+        } finally {
+          task1DidClose = true;
+        }
       }
     });
 
@@ -175,7 +180,7 @@ test("destroying host objects frees up other tasks to perform", function(assert)
   });
 
   assert.ok(task0.get('isPerformable'));
-  // task1 is destroyed
+  assert.equal(task1DidClose, true);
   assert.ok(task2.get('isPerformable'));
 
   // TODO: define behavior for destroying a dep task?
