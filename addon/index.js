@@ -41,6 +41,8 @@ export let Process = Ember.Object.extend({
     let owner = this.owner;
     let iter = this.generatorFunction.apply(owner, args);
     this._currentProcess = csp.spawn(iter);
+    this._currentProcess.process._emberProcess = this;
+
     csp.takeAsync(this._currentProcess, returnValue => {
       if (completionHandler) {
         completionHandler(returnValue);
@@ -295,7 +297,6 @@ let ChannelAction = Ember.Object.extend({
     } else {
       csp.putAsync(this.get('channel'), value);
     }
-
   },
 });
 
@@ -321,34 +322,31 @@ export function channelAction() {
   });
 }
 
-export function task(genFn) {
-  let desc = Ember.computed(function() {
-    let dispatcher = getOwner(this).lookup('service:ember-concurrency-dispatcher');
-    Ember.assert(`You can only use task() on Ember Objects instantiated from a container`, dispatcher);
-    let task = Task.create({
-      _dispatcher: dispatcher,
-      _hostObject: this,
-      _genFn: genFn,
+export function task(...args) {
+  let _genFn = args.pop();
+  let desc = Ember.computed(function(key) {
+    let _dispatcher = getOwner(this).lookup('service:ember-concurrency-dispatcher');
+    Ember.assert(`You can only use task() on Ember Objects instantiated from a container`, _dispatcher);
+
+    Ember.assert(`Task '${key}' specifies more than one dependent task, which is not presently supported`, args.length <= 1);
+
+    let _depTasks = args.map(path => {
+      let depTask = this.get(path);
+      Ember.assert(`Task '${key}' specifies '${path}' as a task dependency, but no task was found at that path.`, depTask instanceof Task);
+      return depTask;
     });
+
+    let task = Task.create({
+      _dispatcher,
+      _hostObject: this,
+      _genFn,
+      _depTask: _depTasks[0],
+    });
+
     cleanupOnDestroy(this, task, 'destroy');
     return task;
   });
 
-
-  // TODO:
-  // desc.concurrency = function() {}
-
   return desc;
 }
-
-task.mapArgs = function(taskPath, maybeMapFn) {
-  let mapFn = maybeMapFn || (v => v);
-  return Ember.computed(function() {
-    let sourceTask = this.get(taskPath);
-    Ember.assert(`No source task was found at ${taskPath} to .mapArgs to`, sourceTask);
-    return sourceTask._mapArgs((...args) => {
-      return mapFn.apply(this, args);
-    });
-  });
-};
 

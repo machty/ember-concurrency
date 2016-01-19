@@ -1,9 +1,8 @@
 import Ember from 'ember';
 import Task from 'ember-concurrency/task';
 import Dispatcher from 'dummy/services/ember-concurrency-dispatcher';
-import { DidNotRunException } from 'ember-concurrency';
 
-module('Unit: Tasks and Concurrency');
+module('Integration: Tasks and Concurrency');
 
 test("tasks with unyielding generators run to completion synchronously and hence no concurrency constraints apply", function(assert) {
   assert.expect(16);
@@ -56,10 +55,14 @@ test("tasks with unyielding generators run to completion synchronously and hence
   assert.equal(value1, "one");
 });
 
-test("default constraints: enforce full serialization", function(assert) {
-  assert.expect(11);
+test("two tasks can run at the same time", function(assert) {
+  QUnit.stop();
+  QUnit.stop();
 
-  let defer = Ember.RSVP.defer();
+  assert.expect(10);
+
+  let defer0 = Ember.RSVP.defer();
+  let defer1 = Ember.RSVP.defer();
   let hostObject;
   let dispatcher;
   Ember.run(() => {
@@ -67,7 +70,7 @@ test("default constraints: enforce full serialization", function(assert) {
     dispatcher = Dispatcher.create();
   });
 
-  let task0, task1, finalValue, error;
+  let task0, task1;
   function makeTask(genFn) {
     return Task.create({
       _dispatcher: dispatcher,
@@ -78,35 +81,34 @@ test("default constraints: enforce full serialization", function(assert) {
 
   Ember.run(() => {
     task0 = makeTask(function * () {
-      let val = yield defer.promise;
+      let val = yield defer0.promise;
       return val;
     });
 
     task1 = makeTask(function * () {
-      assert.ok(false, "should not run");
+      let val = yield defer1.promise;
+      return val;
     });
 
     task0.perform().then(v => {
-      finalValue = v;
+      assert.equal(v, 5);
+      QUnit.start();
     });
-    task1.perform().catch(e => {
-      error = e;
+    task1.perform().then(v => {
+      assert.equal(v, 6);
+      QUnit.start();
     });
   });
 
-  assert.ok(!finalValue, "no value yet");
-  assert.ok(error instanceof DidNotRunException);
-
-  assert.ok(!task0.get('isPerformable'));
+  assert.ok(!task0.get('isPerformable'), "task0 shouldn't be performable because it is running");
   assert.ok(!task1.get('isPerformable'));
   assert.ok(task0.get('isRunning'));
-  assert.ok(!task1.get('isRunning'));
+  assert.ok(task1.get('isRunning'));
 
   Ember.run(() => {
-    defer.resolve(5);
+    defer0.resolve(5);
+    defer1.resolve(6);
   });
-
-  assert.equal(finalValue, 5);
 
   assert.ok(task0.get('isPerformable'));
   assert.ok(task1.get('isPerformable'));
@@ -115,143 +117,127 @@ test("default constraints: enforce full serialization", function(assert) {
 });
 
 test("destroying host objects frees up other tasks to perform", function(assert) {
-  assert.expect(7);
+  assert.expect(11);
 
   let defer = Ember.RSVP.defer();
-  let hostObject0, hostObject1;
+  let hostObject;
   let dispatcher;
   Ember.run(() => {
-    hostObject0 = Ember.Object.create();
-    hostObject1 = Ember.Object.create();
+    hostObject = Ember.Object.create();
     dispatcher = Dispatcher.create();
   });
 
-  let task0, task1;
-  function makeTask(hostObject, genFn) {
-    return Task.create({
+  let task0, task1, task2;
+  Ember.run(() => {
+    task0 = Task.create({
       _dispatcher: dispatcher,
       _hostObject: hostObject,
-      _genFn: genFn,
-    });
-  }
-
-  Ember.run(() => {
-    task0 = makeTask(hostObject0, function * () {
-      yield defer.promise;
+      _genFn: function * () {}
     });
 
-    task1 = makeTask(hostObject1, function * (v) {
-      return v;
+    task1 = Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _depTask: task0,
+      _genFn: function * () {
+        yield defer.promise;
+      }
+    });
+
+    task2 = Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _depTask: task0,
+      _genFn: function * () {}
     });
   });
 
   assert.ok(task0.get('isPerformable'));
   assert.ok(task1.get('isPerformable'));
+  assert.ok(task2.get('isPerformable'));
 
   Ember.run(() => {
-    task0.perform();
+    task1.perform();
   });
 
   assert.ok(!task0.get('isPerformable'));
   assert.ok(!task1.get('isPerformable'));
+  assert.ok(!task2.get('isPerformable'));
+
+  assert.ok(task0.get('isRunning'));
+  assert.ok(task1.get('isRunning'));
+  assert.ok(!task2.get('isRunning'));
 
   Ember.run(() => {
     // TODO: test object destruction; right now it only attaches via the task CP
-    // hostObject0.destroy();
-    task0.destroy();
+    // hostObject.destroy();
+    task1.destroy();
   });
 
-  assert.ok(!task0.get('isPerformable'));
-  assert.ok(task1.get('isPerformable'));
+  assert.ok(task0.get('isPerformable'));
+  // task1 is destroyed
+  assert.ok(task2.get('isPerformable'));
 
-  Ember.run(() => {
-    task1.perform(123).then(v => {
-      assert.equal(v, 123);
-    });
-  });
+  // TODO: define behavior for destroying a dep task?
+  // Seems like dependers should no longer be runnable.
 });
 
-test("you can map task args to each other via mapArgs", function(assert) {
-  assert.expect(13);
+test("dependent tasks", function(assert) {
+  assert.expect(16);
 
   let hostObject = Ember.Object.create();
   let dispatcher = Dispatcher.create();
 
-  function makeTask(genFn) {
-    return Task.create({
+  let defer = Ember.RSVP.defer();
+  let task0, task1, task2;
+  Ember.run(() => {
+    task0 = Task.create({
       _dispatcher: dispatcher,
       _hostObject: hostObject,
-      _genFn: genFn,
+      _genFn: function * (c, d) {
+        assert.equal(c, 'c');
+        assert.equal(d, 'd');
+        let val = yield defer.promise;
+        return val;
+      },
     });
-  }
 
-  let defer = Ember.RSVP.defer();
-  let task0 = makeTask(function * (ev) {
-    yield defer.promise;
-    assert.deepEqual(ev, { a: 'a', b: 'b', c: 'c', d: 'd' });
+    task1 = Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _genFn: function * (a, b) {
+        assert.equal(a, 123);
+        assert.equal(b, 456);
+        let val = yield task0.perform('c', 'd');
+        return val;
+      },
+      _depTask: task0,
+    });
+
+    task2 = Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _genFn: function * () { },
+      _depTask: task1,
+    });
   });
-
-  let task1 = task0._mapArgs((a,b,c) => ({ a, b, c, d: 'd' }));
 
   assert.ok(task0.get('isPerformable'));
   assert.ok(task1.get('isPerformable'));
+  assert.ok(task2.get('isPerformable'));
   assert.ok(!task0.get('isRunning'));
   assert.ok(!task1.get('isRunning'));
+  assert.ok(!task2.get('isRunning'));
 
   Ember.run(() => {
-    task1.perform('a', 'b', 'c');
+    task1.perform(123, 456);
   });
 
   assert.ok(!task0.get('isPerformable'));
   assert.ok(!task1.get('isPerformable'));
+  assert.ok(!task2.get('isPerformable'));
   assert.ok(task0.get('isRunning'));
   assert.ok(task1.get('isRunning'));
-
-  Ember.run(() => {
-    defer.resolve(123);
-  });
-
-  assert.ok(task0.get('isPerformable'));
-  assert.ok(task1.get('isPerformable'));
-  assert.ok(!task0.get('isRunning'));
-  assert.ok(!task1.get('isRunning'));
+  assert.ok(!task2.get('isRunning'));
 });
-
-test("returning falsy from mapper prevents the task from running", function(assert) {
-  assert.expect(9);
-
-  let hostObject = Ember.Object.create();
-  let dispatcher = Dispatcher.create();
-
-  function makeTask(genFn) {
-    return Task.create({
-      _dispatcher: dispatcher,
-      _hostObject: hostObject,
-      _genFn: genFn,
-    });
-  }
-
-  let task0 = makeTask(function * () {
-    assert.ok(false);
-  });
-
-  let task1 = task0._mapArgs(() => null);
-
-  assert.ok(task0.get('isPerformable'));
-  assert.ok(task1.get('isPerformable'));
-  assert.ok(!task0.get('isRunning'));
-  assert.ok(!task1.get('isRunning'));
-
-  Ember.run(() => {
-    task1.perform('a', 'b', 'c').catch(e => {
-      assert.ok(e instanceof DidNotRunException);
-    });
-  });
-
-  assert.ok(task0.get('isPerformable'));
-  assert.ok(task1.get('isPerformable'));
-  assert.ok(!task0.get('isRunning'));
-  assert.ok(!task1.get('isRunning'));
-});
-
 

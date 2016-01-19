@@ -22,7 +22,13 @@ function spawn(gen, creator) {
 
   // FIXME: better way to expose process?
   ch.process = proc;
-  proc.run();
+
+  // we defer so we can hackishly attach ember-y things before it
+  // actually starts running
+  dispatch.run(function() {
+    proc.run();
+  });
+
   return ch;
 };
 
@@ -74,7 +80,9 @@ module.exports = {
   timeout: timers.timeout,
 
   set_queue_dispatcher: dispatch.set_queue_dispatcher,
-  set_queue_delayer: dispatch.set_queue_delayer
+  set_queue_delayer: dispatch.set_queue_delayer,
+
+  Process: process.Process
 };
 
 },{"./impl/buffers":4,"./impl/channels":5,"./impl/dispatch":6,"./impl/process":7,"./impl/select":8,"./impl/timers":9}],2:[function(require,module,exports){
@@ -1711,19 +1719,25 @@ Process.prototype.run = function(response) {
     return;
   }
 
-  // TODO: Shouldn't we (optionally) stop error propagation here (and
-  // signal the error through a channel or something)? Otherwise the
-  // uncaught exception will crash some runtimes (e.g. Node)
-  var iter;
-  if (response instanceof ErrorResult) {
-    this.isClosing = true;
-    iter = this.gen['throw'](response.value);
-  } else if (response instanceof ReturnResult) {
-    this.isClosing = true;
-    iter = this.gen['return'](response.value);
-  } else {
-    iter = this.gen.next(response);
+  try {
+    Process._current = this;
+    // TODO: Shouldn't we (optionally) stop error propagation here (and
+    // signal the error through a channel or something)? Otherwise the
+    // uncaught exception will crash some runtimes (e.g. Node)
+    var iter;
+    if (response instanceof ErrorResult) {
+      this.isClosing = true;
+      iter = this.gen['throw'](response.value);
+    } else if (response instanceof ReturnResult) {
+      this.isClosing = true;
+      iter = this.gen['return'](response.value);
+    } else {
+      iter = this.gen.next(response);
+    }
+  } finally {
+    Process._current = null;
   }
+
   if (iter.done) {
     this._done(iter.value);
     return;

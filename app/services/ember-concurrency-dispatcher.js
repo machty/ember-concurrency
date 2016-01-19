@@ -10,11 +10,6 @@ export default Ember.Service.extend({
     return channel;
   },
 
-  init() {
-    this._super();
-    this._tasks = {};
-  },
-
   willDestroy(...args) {
     // TODO this needs to go / be updated
     let channels = this._channels;
@@ -27,68 +22,58 @@ export default Ember.Service.extend({
   },
 
   _taskDestroyed(task) {
-    delete this._tasks[Ember.guidFor(task)];
     this._taskDidFinish(task);
+    // TODO: cancel depended-upon tasks? tests?
   },
 
   _taskDidFinish(task) {
-    task.set('isRunning', false);
-    this._updateConstraints();
+    this._incrementSemaphoresForTaskChain(task, -1);
+  },
+
+  _incrementSemaphoresForTaskChain(_task, inc) {
+    let task = _task;
+    while (task) {
+      task.incrementProperty('_isRunningSem', inc);
+      task = task._depTask;
+    }
   },
 
   _tryPerform(task, args) {
+    let currentlyExecutingTask = Ember.get(csp.Process, '_current._emberProcess._task');
+
     if (!task.get('isPerformable')) {
-      return Ember.RSVP.reject(new DidNotRunException());
+      if (currentlyExecutingTask) {
+        if (currentlyExecutingTask._depTask !== task) {
+          // this task is unperformable and is not a dependency
+          // of the currently running task, so we error.
+          return Ember.RSVP.reject(new DidNotRunException());
+        } else {
+          // this task is unperformable, but that is because
+          // the currently running task (which specifies this task
+          // as a dependency) marked it as such. it is actually performable.
+        }
+      } else {
+        return Ember.RSVP.reject(new DidNotRunException());
+      }
     }
 
-    let mappedArgs = task._prepareArgs(args);
-    if (!mappedArgs) {
-      return Ember.RSVP.reject(new DidNotRunException());
-    }
-
-    let rootTask = task;
-    while (rootTask._parentTask) {
-      rootTask = rootTask._parentTask;
-    }
-
-    //let constraints = task.get('_concurrencyConstraints');
     let proc = Process.create({
-      owner: rootTask._hostObject,
-      generatorFunction: rootTask._genFn,
+      owner: task._hostObject,
+      generatorFunction: task._genFn,
       propertyName: "TODO",
-      _task: rootTask,
+      _task: task,
     });
 
-    rootTask.set('isRunning', true);
-    this._updateConstraints();
+    this._incrementSemaphoresForTaskChain(task, +1);
 
     return new Ember.RSVP.Promise(r => {
-      proc.start(mappedArgs, returnValue => {
-        this._taskDidFinish(rootTask);
+      proc.start(args, returnValue => {
+        this._taskDidFinish(task);
         r(returnValue);
       });
     });
   },
 
-  _updateConstraints() {
-    let groups = {};
-
-    let taskGuids = Object.keys(this._tasks);
-    for (let i = 0, l = taskGuids.length; i < l; i ++) {
-      let task = this._tasks[taskGuids[i]];
-      let groupName = task.get('_concurrencyGroupName');
-      groups[groupName] = groups[groupName] || task.get('isRunning');
-    }
-
-    for (let i = 0, l = taskGuids.length; i < l; i ++) {
-      let task = this._tasks[taskGuids[i]];
-      let groupName = task.get('_concurrencyGroupName');
-      task.set('isPerformable', !groups[groupName]);
-    }
-  },
-
-  _registerTask(task) {
-    this._tasks[Ember.guidFor(task)] = task;
-  },
+  _taskSemaphors: null,
 });
 
