@@ -65,6 +65,7 @@ module.exports = {
   chan: chan,
   DEFAULT: select.DEFAULT,
   CLOSED: channels.CLOSED,
+  isClosedToken: channels.isClosedToken,
 
   put: process.put,
   take: process.take,
@@ -1192,7 +1193,28 @@ var dispatch = require("./dispatch");
 var MAX_DIRTY = 64;
 var MAX_QUEUE_SIZE = 1024;
 
-var CLOSED = null;
+var CLOSED = (function() {
+  var closedToken;
+  try {
+    closedToken = Symbol.for('@@csp/CLOSED');
+  } catch(e) {
+    closedToken = Object('@@csp/CLOSED');
+  }
+  return closedToken;
+})();
+
+var toString = Function.prototype.call.bind(Object.prototype.toString);
+
+var isClosedToken;
+if (typeof CLOSED === 'symbol') {
+  isClosedToken = function(value) {
+    return value === CLOSED;
+  };
+} else {
+  isClosedToken = function(value) {
+    return value == CLOSED && toString(value) === '[object String]';
+  };
+}
 
 var Box = function(value) {
   this.value = value;
@@ -1301,7 +1323,7 @@ Channel.prototype._put = function(value, handler) {
   }
   if (handler.is_blockable()) {
     if (this.puts.length >= MAX_QUEUE_SIZE) {
-        throw new Error("No more than " + MAX_QUEUE_SIZE + " pending puts are allowed on a single channel.");
+      throw new Error("No more than " + MAX_QUEUE_SIZE + " pending puts are allowed on a single channel.");
     }
     this.puts.unbounded_unshift(new PutBox(handler, value));
   }
@@ -1423,6 +1445,11 @@ Channel.prototype.close = function() {
     }
   }
 
+  /*
+   * ALEX: disable pending puts
+   *
+   * https://github.com/ubolonton/js-csp/issues/63
+   * https://github.com/ubolonton/js-csp/commit/9c8a601e7135febe9c49349d2fd4c6ecf54dba3d
   while (true) {
     var putter = this.puts.pop();
     if (putter === buffers.EMPTY) {
@@ -1435,6 +1462,7 @@ Channel.prototype.close = function() {
       }
     }
   }
+  */
 };
 
 
@@ -1514,6 +1542,7 @@ exports.chan = function(buf, xform, exHandler) {
 exports.Box = Box;
 exports.Channel = Channel;
 exports.CLOSED = CLOSED;
+exports.isClosedToken = isClosedToken;
 
 },{"./buffers":4,"./dispatch":6}],6:[function(require,module,exports){
 "use strict";
@@ -1749,7 +1778,11 @@ Process.prototype.run = function(response) {
   if (ins && typeof ins.then === 'function') {
     var promiseChannel = channels.chan();
     ins.then(function(value) {
-      put_then_callback(promiseChannel, value);
+      if (value === channels.CLOSED) {
+        promiseChannel.close();
+      } else {
+        put_then_callback(promiseChannel, value);
+      }
     }, function(value) {
       put_then_callback(promiseChannel, new ErrorResult(value));
     });

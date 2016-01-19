@@ -1,0 +1,82 @@
+<h2>Async Iterators</h2>
+
+<p>
+  Async Iterators let you loop over async streams of events.
+  For instance, you can loop over an Observable or an EventEmitter
+  stream and handle each value one at within the loop.
+</p>
+
+<pre>
+  myTask: task(function * () {
+    let ai = asyncIterator(noisyObservable);
+
+    while (true) {
+      let { value, done } = yield ai.next();
+      if (done) { break; }
+      yield sleep(300); // do some async work
+    }
+  }),
+</pre>
+
+<p>
+  Async Iterators enable you to handle values emitted from
+  streams one at a time. When a stream produces values faster
+  than your async loop can process them, this is called
+  "backpressure". You can manage backpressure by telling
+  the iterator how to handle values accumulated while
+  your loop is busy handling the most recent event.
+  I've provided some names for common buffer types, but
+  it's also possible to pass in a custom buffer as well
+  (though IMO this shouldn't be too common for web app dev).
+</p>
+
+<pre>
+    // no backpressure control; all values are preserved
+    asyncIterator(noisyObservable);
+
+    // ignore all values until the next `yield iter.next()`
+    asyncIterator(noisyObservable).ignoreIntermediateValues();
+
+    // if a value is received in the middle of handling the last
+    // event, it is preserved and delivered on the next `yield iter.next()`
+    // and all following events (until the .next) will be dropped
+    asyncIterator(noisyObservable).keepFirstIntermediateValue();
+
+    // same as keepFirstIntermediateValue, but only the most
+    // recently fired event is preserved.
+    asyncIterator(noisyObservable).keepLastIntermediateValue();
+</pre>
+
+<p>
+  The examples below demonstrate the different buffering options
+  using an observable that counts to 50.
+</p>
+
+{{async-iterator}}
+{{async-iterator bufferType='ignoreIntermediateValues'}}
+{{async-iterator bufferType='keepFirstIntermediateValue'}}
+{{async-iterator bufferType='keepLastIntermediateValue'}}
+
+<h4>TODO: batching</h4>
+
+<p>
+  It might make sense to support an AsyncIterator buffer strategy
+  where all values are kept and delivered in the form of an array
+  when you <code>yield asyncIter.next()</code>. It will block
+  if there are no values and produce a single element array
+  once a new value has been produced. It'll only produce
+  multi-element arrays if the consumer can't keep up.
+</p>
+
+<h4>Subscription / Disposable interface</h4>
+
+<p>
+  Anything async-iterable needs to be subscribable in some way,
+  and the corresponding subscription needs to be disposable.
+  My example just uses an Observable which specifies the API
+  for both, but we should be able to similarly async-iterate
+  over Ember.Evented events and other sources of async streams,
+  e.g. websockets ("Just Use Observables" is not an acceptable
+  answer here, but seems fine to use their subscribe()/dispose() API)
+</p>
+

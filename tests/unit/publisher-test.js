@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { channel, process, makePublisher } from 'ember-concurrency';
+import { csp, channel, process, makePublisher } from 'ember-concurrency';
 
 module('Unit: Publishers');
 
@@ -40,7 +40,7 @@ test('publishers offer an Observable-esque API for construction / disposal', fun
       let values = [];
       for (;;) {
         let val = yield channel;
-        if (!val) { break; }
+        if (val === csp.CLOSED) { break; }
         values.push(val);
       }
 

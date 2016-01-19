@@ -47,4 +47,8 @@ body {
   color: white;
 }
 
+.value {
+  font-size: 24px;
+  color: red;
+}
 

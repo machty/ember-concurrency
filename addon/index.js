@@ -123,42 +123,6 @@ export function process(...args) {
   return cp;
 }
 
-export function looper() {
-  let channelName, fnOrGenFn;
-  if (arguments.length === 2) {
-    channelName = arguments[0];
-    fnOrGenFn = arguments[1];
-  } else {
-    fnOrGenFn = arguments[0];
-  }
-
-  let cp = liveComputed(function(key) {
-    let owner = this;
-    channelName = channelName || key;
-    let channel = resolveChannel(owner, channelName);
-    let proc = Process.create({
-      owner,
-      generatorFunction: function * () {
-        for (;;) {
-          let value = yield channel;
-          if (value === csp.CLOSED) {
-            break;
-          }
-          yield * fnOrGenFn.call(owner, value);
-        }
-      },
-      propertyName: key
-    });
-    proc.start();
-
-    cleanupOnDestroy(owner, proc, 'kill');
-
-    return proc;
-  });
-
-  return cp;
-}
-
 export function sleep(ms) {
   return csp.timeout(ms);
 }

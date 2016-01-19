@@ -10,6 +10,7 @@ Router.map(function() {
   this.route('color');
   this.route('yielding');
   this.route('tasks');
+  this.route('async-iterator');
 });
 
 export default Router;
