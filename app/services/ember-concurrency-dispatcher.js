@@ -2,6 +2,13 @@ import Ember from 'ember';
 import { csp, DidNotRunException } from 'ember-concurrency';
 import { Process } from 'ember-concurrency';
 
+function didNotRun() {
+  return Ember.RSVP.resolve({
+    success: false,
+    reason: "unperformable",
+  });
+}
+
 export default Ember.Service.extend({
   _channels: null,
   _globalChannelFor(channelName) {
@@ -46,14 +53,14 @@ export default Ember.Service.extend({
         if (currentlyExecutingTask._depTask !== task) {
           // this task is unperformable and is not a dependency
           // of the currently running task, so we error.
-          return Ember.RSVP.reject(new DidNotRunException());
+          return didNotRun();
         } else {
           // this task is unperformable, but that is because
           // the currently running task (which specifies this task
           // as a dependency) marked it as such. it is actually performable.
         }
       } else {
-        return Ember.RSVP.reject(new DidNotRunException());
+        return didNotRun();
       }
     }
 
@@ -74,7 +81,5 @@ export default Ember.Service.extend({
       });
     });
   },
-
-  _taskSemaphors: null,
 });
 
