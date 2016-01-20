@@ -264,28 +264,6 @@ let ChannelAction = Ember.Object.extend({
   },
 });
 
-export function channelAction() {
-  let mapFn, channelPath;
-  if (arguments.length === 2) {
-    channelPath = arguments[0];
-    mapFn = arguments[1];
-  } else if (arguments.length === 1) {
-    if (typeof arguments[0] === 'function') {
-      mapFn = arguments[0];
-    } else {
-      channelPath = arguments[0];
-    }
-  }
-
-  return Ember.computed(function(key) {
-    return ChannelAction.create({
-      hostObject: this,
-      channelPath: channelPath || key,
-      mapFn,
-    });
-  });
-}
-
 export function task(...args) {
   let _genFn;
   if (typeof args[args.length - 1] === 'function') {
