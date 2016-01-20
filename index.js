@@ -6,6 +6,6 @@ module.exports = {
   included: function(app) {
     this._super.included(app);
 
-    app.import('vendor/js-csp.browser.js');
+    app.import('vendor/js-csp.browser.regenerator.js');
   }
 };
