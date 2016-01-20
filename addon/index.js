@@ -300,8 +300,12 @@ export function task(...args) {
 
     let _depTasks = args.map(path => {
       let depTask = this.get(path);
-      Ember.assert(`Task '${key}' specifies '${path}' as a task dependency, but no task was found at that path.`, depTask instanceof Task);
-      return depTask;
+      if (depTask instanceof Task) {
+        return depTask;
+      } else {
+        // TODO: log this? better API than quietly failing?
+        return null;
+      }
     });
 
     let _depTask = _depTasks[0];
