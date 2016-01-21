@@ -11,6 +11,7 @@ Router.map(function() {
   this.route('yielding');
   this.route('tasks');
   this.route('async-iterator');
+  this.route('music');
 });
 
 export default Router;
