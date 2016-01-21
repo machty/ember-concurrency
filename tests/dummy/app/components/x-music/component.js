@@ -50,7 +50,13 @@ export default Ember.Component.extend({
         yield sleep(halfTimeout);
       }
     } finally {
-      beepOscillator.stop();
+      if (context) {
+        context.close();
+      }
+
+      if (beepOscillator) {
+        beepOscillator.stop();
+      }
     }
   }).autoStart(),
 
