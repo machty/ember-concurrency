@@ -5,6 +5,8 @@ apps, leveraging JavaScript Generator functions and light-weight CSP
 (Communicating Sequential Processes, a la the Go Programming Language
 and Clojure's `core.async` libraries).
 
+[Check out the demo](http://machty.s3.amazonaws.com/ember-concurrency2/index.html)
+
 ## Usage
 
 TODO
