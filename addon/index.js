@@ -3,6 +3,19 @@ import getOwner from 'ember-getowner-polyfill';
 import Task from 'ember-concurrency/task';
 import AsyncIterator from 'ember-concurrency/async-iterator';
 
+let testGenFn = function * () {};
+let testIter = testGenFn();
+Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to true in your ember-cli-build.js (or Brocfile.js) to ensure that the generator function* syntax is properly transpiled, e.g.:
+
+  var app = new EmberApp({
+    babel: {
+      includePolyfill: true,
+    }
+  });`,
+  (typeof testIter.next      === 'function' &&
+   typeof testIter['return'] === 'function' &&
+   typeof testIter['throw']  === 'function'));
+
 export function DidNotRunException() {
   this.success = false;
   this.reason = "unperformable";
