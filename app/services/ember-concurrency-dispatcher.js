@@ -3,31 +3,10 @@ import { csp, DidNotRunException } from 'ember-concurrency';
 import { Process } from 'ember-concurrency';
 
 function didNotRun() {
-  return Ember.RSVP.resolve({
-    success: false,
-    reason: "unperformable",
-  });
+  return Ember.RSVP.resolve(new DidNotRunException());
 }
 
 export default Ember.Service.extend({
-  _channels: null,
-  _globalChannelFor(channelName) {
-    this._channels = this._channels || {};
-    let channel = this._channels[channelName] = this._channels[channelName] || csp.chan();
-    return channel;
-  },
-
-  willDestroy(...args) {
-    // TODO this needs to go / be updated
-    let channels = this._channels;
-    if (channels) {
-      for (let channel in channels) {
-        channel.close();
-      }
-    }
-    this._super(...args);
-  },
-
   _taskDestroyed(task) {
     this._taskDidFinish(task);
     // TODO: cancel depended-upon tasks? tests?

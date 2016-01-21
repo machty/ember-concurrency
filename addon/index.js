@@ -1,8 +1,12 @@
 import Ember from 'ember';
 import getOwner from 'ember-getowner-polyfill';
-
 import Task from 'ember-concurrency/task';
-export function DidNotRunException() { }
+import AsyncIterator from 'ember-concurrency/async-iterator';
+
+export function DidNotRunException() {
+  this.success = false;
+  this.reason = "unperformable";
+}
 
 export let csp = window.csp;
 
@@ -212,58 +216,6 @@ export function makePublisher(pubConstructor) {
   return chan;
 }
 
-function resolveChannel(hostObject, channelPath) {
-  let charCode = channelPath.charCodeAt(0);
-  let startsWithUppercase = (charCode >= 65 && charCode <= 90);
-  if (startsWithUppercase) {
-    // assume it's a global action. return the implicit channel.
-    let owner = getOwner(hostObject);
-    let channelService = owner.lookup(`service:ember-concurrency-dispatcher`);
-    return channelService._globalChannelFor(channelPath);
-  } else {
-    return hostObject.get(channelPath);
-  }
-}
-
-let ChannelAction = Ember.Object.extend({
-  perform: null,
-  performOptional: null,
-  hostObject: null,
-  channelPath: null,
-  channel: Ember.computed('channelPath', function() {
-    return resolveChannel(this.get('hostObject'), this.get('channelPath'));
-  }),
-
-  ready: Ember.computed.oneWay('channel.hasTakers'),
-
-  init() {
-    this._super();
-    this.performEnsure = (...args) => {
-      this._perform(false, args);
-    };
-    this.perform = (...args) => {
-      this._perform(true , args);
-    };
-  },
-
-  _perform(optional, args) {
-    if (optional && !this.get('ready')) { return; }
-
-    let mapFn = this.mapFn;
-    let value = mapFn ? mapFn.apply(this.hostObject, args) : args[0] || {};
-    if (value) {
-      value._sourceAction = this;
-    } else {
-      return;
-    }
-    if (optional) {
-      csp.offer(this.get('channel'), value);
-    } else {
-      csp.putAsync(this.get('channel'), value);
-    }
-  },
-});
-
 export function task(...args) {
   let _genFn;
   if (typeof args[args.length - 1] === 'function') {
@@ -309,5 +261,11 @@ export function task(...args) {
   });
 
   return desc;
+}
+
+export function asyncIterator(obs) {
+  return AsyncIterator.create({
+    _observable: obs,
+  });
 }
 
