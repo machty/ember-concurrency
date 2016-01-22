@@ -117,29 +117,6 @@ function liveComputed(...args) {
   return cp;
 }
 
-export function process(...args) {
-  let generatorFunction = args.pop();
-  let deps = args;
-  let autoStart = false;
-
-  let cp = liveComputed(...deps, function(key) {
-    let owner = this;
-    let proc = Process.create({ owner, generatorFunction, propertyName: key });
-    cleanupOnDestroy(owner, proc, 'kill');
-    if (autoStart) {
-      proc.start();
-    }
-
-    return proc;
-  });
-  cp.autoStart = () => {
-    autoStart = true;
-    return cp;
-  };
-
-  return cp;
-}
-
 export function sleep(ms) {
   return csp.timeout(ms);
 }
@@ -235,7 +212,9 @@ export function task(...args) {
     _genFn = args.pop();
   }
 
-  let desc = Ember.computed(function(key) {
+  let autoStart = false;
+
+  let desc = liveComputed(function(key) {
     let _dispatcher = getOwner(this).lookup('service:ember-concurrency-dispatcher');
     Ember.assert(`You can only use task() on Ember Objects instantiated from a container`, _dispatcher);
 
@@ -270,8 +249,18 @@ export function task(...args) {
     });
 
     cleanupOnDestroy(this, task, 'destroy');
+
+    if (autoStart) {
+      task.perform();
+    }
+
     return task;
   });
+
+  desc.autoStart = () => {
+    autoStart = true;
+    return desc;
+  };
 
   return desc;
 }

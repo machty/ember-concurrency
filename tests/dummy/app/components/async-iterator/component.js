@@ -1,10 +1,10 @@
 import Ember from 'ember';
-import { process, sleep, asyncIterator } from 'ember-concurrency';
+import { task, sleep, asyncIterator } from 'ember-concurrency';
 
 export default Ember.Component.extend({
   bufferType: null,
 
-  myProcess: process(function * () {
+  myTask: task(function * () {
     this.set('value', "START");
     let obs = window.Rx.Observable.interval(100).take(50 + 1).do(v => {
       if (!this.isDestroyed) {

@@ -1,10 +1,10 @@
 import Ember from 'ember';
-import { process, sleep, asyncIterator } from 'ember-concurrency';
+import { task, sleep, asyncIterator } from 'ember-concurrency';
 
 export default Ember.Component.extend(Ember.Evented, {
   bufferType: null,
 
-  myProcess: process(function * () {
+  myTask: task(function * () {
     this.set('value', "START");
 
     let ai = asyncIterator.fromEvent(this, 'onEvent');

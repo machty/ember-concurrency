@@ -1,8 +1,8 @@
 import Ember from 'ember';
-import { process, sleep } from 'ember-concurrency';
+import { task, sleep } from 'ember-concurrency';
 
 export default Ember.Component.extend({
-  playMusic: process(function * () {
+  playMusic: task(function * () {
     let i = 0;
     while(i++ < 6) {
       this.set('value', i);
