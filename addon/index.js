@@ -118,8 +118,24 @@ function liveComputed(...args) {
 }
 
 export function sleep(ms) {
-  return csp.timeout(ms);
+  if (arguments.length === 0) {
+    // return anonymous channel that never closes;
+    // useful for processes since every yield is combined
+    // with an implicit close channel.
+    return csp.chan();
+  } else {
+    return csp.timeout(ms);
+  }
 }
+
+sleep.untilEvent = function(obj, eventName) {
+  let chan = csp.chan();
+  Ember.addListener(obj, eventName, null, event => {
+    csp.putAsync(chan, event);
+    // need to close chan? does it matter if it's anonymous?
+  }, true);
+  return chan;
+};
 
 let chan = csp.chan();
 let RawChannel = chan.constructor;
