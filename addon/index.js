@@ -323,3 +323,26 @@ asyncIterator.fromEvent = function(obj, eventName) {
   });
 };
 
+export function asyncLoop(iterable, genFn) {
+  let task = Ember.get(csp.Process, '_current._emberProcess._task');
+
+  if (!task) {
+    throw new Error("Tried to invoke asyncLoop outside of task");
+  }
+
+  return csp.go(crankAsyncLoop, [iterable, task._hostObject, genFn]);
+}
+
+function * crankAsyncLoop(iterable, hostObject, genFn) {
+  let ai = AsyncIterator.create({
+    _observable: iterable,
+  });
+
+  while (true) {
+    let { value, done } = yield ai.next();
+    if (done) { break; }
+
+    yield csp.spawn(genFn.call(hostObject, value));
+  }
+}
+

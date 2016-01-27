@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import Task from 'ember-concurrency/task';
 import Dispatcher from 'dummy/services/ember-concurrency-dispatcher';
+import { asyncLoop } from 'ember-concurrency';
 
 module('Integration: Tasks and Concurrency');
 
@@ -337,6 +338,75 @@ test("Rx observables work just fine", function(assert) {
   Ember.run(subject, 'onNext', 3);
   Ember.run(task0, 'destroy');
   Ember.run(subject, 'onNext', 4);
+});
+
+test("asyncLoop: Evented observables", function(assert) {
+  assert.expect(1);
+
+  let EventedObject = Ember.Object.extend(Ember.Evented);
+  let hostObject = EventedObject.create();
+  let dispatcher = Dispatcher.create();
+
+  let task0;
+  let values = [];
+  Ember.run(() => {
+    task0 = Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _genFn: function * () {
+        asyncLoop(this.on('myEvent'), function * (v) {
+          values.push(v);
+        });
+      },
+    });
+  });
+
+  Ember.run(() => {
+    task0.perform();
+  });
+
+  Ember.run(() => {
+    hostObject.trigger('myEvent', 1);
+    hostObject.trigger('myEvent', 2);
+    hostObject.trigger('myEvent', 3);
+  });
+
+  assert.deepEqual(values, [1,2,3]);
+});
+
+test("asyncLoop: rx observables", function(assert) {
+  QUnit.stop();
+  assert.expect(6);
+
+  let hostObject = Ember.Object.create({
+    foo: 123
+  });
+  let dispatcher = Dispatcher.create();
+
+  let task0;
+  let values = [];
+  Ember.run(() => {
+    task0 = Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _genFn: function * () {
+        let obs = window.Rx.Observable.interval(10).take(5)
+                        .doOnCompleted(() => {
+                          assert.deepEqual(values, [0,1,2,3,4]);
+                          QUnit.start();
+                        });
+
+        yield asyncLoop(obs, function * (v) {
+          assert.equal(this.foo, 123, "the `this` context within the asyncLoop is the same as thetask invoking it");
+          values.push(v);
+        });
+      },
+    });
+  });
+
+  Ember.run(() => {
+    task0.perform();
+  });
 });
 
 
