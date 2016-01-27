@@ -284,4 +284,27 @@ test(".on('eventName') as observable", function(assert) {
   Ember.run(hostObject, 'trigger', 'otherEvent', 5);
 });
 
+test("when a task goes out of scope, any observables it's blocked on are disposed", function(assert) {
+  assert.expect(1);
+
+  let EventedObject = Ember.Object.extend(Ember.Evented);
+  let hostObject = EventedObject.create();
+  let dispatcher = Dispatcher.create();
+
+  let task0;
+  Ember.run(() => {
+    task0 = Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _genFn: function * () {
+        assert.equal(yield this.on('myEvent'), "should not happen");
+      },
+    });
+  });
+
+  Ember.run(task0, 'perform');
+  Ember.run(task0, 'destroy');
+
+  assert.equal(Ember.meta(hostObject)._listeners.length, 0);
+});
 

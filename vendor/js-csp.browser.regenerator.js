@@ -2348,7 +2348,7 @@ Process.prototype.run = function(response) {
       // TODO: implement for async loop
     });
 
-    altsWithClose(this, [observableChannel]);
+    altsWithClose(this, [observableChannel], null, null, subscription);
   }
   else if (ins instanceof Instruction) {
     switch (ins.op) {
@@ -2388,7 +2388,7 @@ Process.prototype.run = function(response) {
   }
 };
 
-function altsWithClose(process, _operations, options, mapper) {
+function altsWithClose(process, _operations, options, mapper, disposable) {
   var operations = _operations.slice();
 
   if (!process.manualClose && !process.isClosing) {
@@ -2397,6 +2397,10 @@ function altsWithClose(process, _operations, options, mapper) {
 
   select.do_alts(operations, function(result) {
     if (result.channel === process.closeChannel) {
+      if (disposable) {
+        disposable.dispose();
+      }
+
       process._continue(new ReturnResult(result));
     } else {
       process._continue(mapper ? mapper(result) : result.value);
