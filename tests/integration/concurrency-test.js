@@ -41,7 +41,7 @@ test("tasks with unyielding generators run to completion synchronously and hence
   assert.equal(value1, "none");
 
   Ember.run(() => {
-    task0.perform("abc", "def");
+    task0.run("abc", "def");
   });
 
   Ember.run(() => {

@@ -5,11 +5,12 @@ let { computed } = Ember;
 let Task = Ember.Object.extend({
   perform: null,
 
-  isPerformable: computed('_depTask.isPerformable', 'isRunning', function() {
+  isRunnable: computed('_depTask.isRunnable', 'isRunning', function() {
     let depTask = this.get('_depTask');
     return !this.get('isRunning') &&
-           (!depTask || depTask.get('isPerformable'));
+           (!depTask || depTask.get('isRunnable'));
   }),
+  isPerformable: computed.alias('isRunnable'),
 
   _isRunningSem: 0,
   isRunning: computed.gt('_isRunningSem', 0),
@@ -26,9 +27,17 @@ let Task = Ember.Object.extend({
   init() {
     this._super();
 
-    this.perform = (...args) => {
-      return this._dispatcher._tryPerform(this, args);
+    let self = this;
+    let boundPerform = function(...args) {
+      return self._perform(args);
     };
+
+    this.perform = boundPerform;
+    this.run = boundPerform;
+  },
+
+  _perform(args) {
+    return this._dispatcher._tryPerform(this, args);
   },
 
   willDestroy() {
