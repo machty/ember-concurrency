@@ -308,3 +308,35 @@ test("when a task goes out of scope, any observables it's blocked on are dispose
   assert.equal(Ember.meta(hostObject)._listeners.length, 0);
 });
 
+test("Rx observables work just fine", function(assert) {
+  assert.expect(3);
+
+  let EventedObject = Ember.Object.extend(Ember.Evented);
+  let hostObject = EventedObject.create();
+  let dispatcher = Dispatcher.create();
+
+  let subject = new window.Rx.Subject();
+
+  let task0;
+  Ember.run(() => {
+    task0 = Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _genFn: function * () {
+        assert.equal(yield subject, 1);
+        assert.equal(yield subject, 2);
+        assert.equal(yield subject, 3);
+        assert.equal(yield subject, "should not happen");
+      },
+    });
+  });
+
+  Ember.run(task0, 'perform');
+  Ember.run(subject, 'onNext', 1);
+  Ember.run(subject, 'onNext', 2);
+  Ember.run(subject, 'onNext', 3);
+  Ember.run(task0, 'destroy');
+  Ember.run(subject, 'onNext', 4);
+});
+
+
