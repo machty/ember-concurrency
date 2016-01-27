@@ -1998,11 +1998,6 @@ Channel.prototype.close = function() {
     }
   }
 
-  /*
-   * ALEX: disable pending puts
-   *
-   * https://github.com/ubolonton/js-csp/issues/63
-   * https://github.com/ubolonton/js-csp/commit/9c8a601e7135febe9c49349d2fd4c6ecf54dba3d
   while (true) {
     var putter = this.puts.pop();
     if (putter === buffers.EMPTY) {
@@ -2015,7 +2010,6 @@ Channel.prototype.close = function() {
       }
     }
   }
-  */
 };
 
 
@@ -2341,6 +2335,20 @@ Process.prototype.run = function(response) {
     });
 
     altsWithClose(this, [promiseChannel]);
+  }
+  else if (ins && typeof ins.subscribe === 'function') {
+    // TODO: use Symbols for detecting observable interface.
+    var observableChannel = channels.chan();
+    var subscription = ins.subscribe(function(value) {
+      put_then_callback(observableChannel, value);
+      subscription.dispose(); // TODO: this is hacky, perhaps need .last()
+    }, function(value) {
+      put_then_callback(observableChannel, new ErrorResult(value));
+    }, function(value) {
+      // TODO: implement for async loop
+    });
+
+    altsWithClose(this, [observableChannel]);
   }
   else if (ins instanceof Instruction) {
     switch (ins.op) {

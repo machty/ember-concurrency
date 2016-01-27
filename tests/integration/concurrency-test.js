@@ -246,3 +246,42 @@ test("dependent tasks", function(assert) {
   assert.ok(!task2.get('isRunning'));
 });
 
+test(".on('eventName') as observable", function(assert) {
+  assert.expect(4);
+
+  let EventedObject = Ember.Object.extend(Ember.Evented, {
+    init() {
+      this._super();
+      this.on('otherEvent', v => {
+        assert.equal(v, 5, "classic .on still works as expected");
+      });
+    },
+  });
+  let hostObject = EventedObject.create();
+  let dispatcher = Dispatcher.create();
+
+  let task0;
+  Ember.run(() => {
+    task0 = Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _genFn: function * () {
+        assert.equal(yield this.on('myEvent'), 1);
+        assert.equal(yield this.on('myEvent'), 2);
+        assert.equal(yield this.on('myEvent'), 3);
+      },
+    });
+  });
+
+  Ember.run(() => {
+    task0.perform();
+  });
+
+  Ember.run(hostObject, 'trigger', 'myEvent', 1);
+  Ember.run(hostObject, 'trigger', 'myEvent', 2);
+  Ember.run(hostObject, 'trigger', 'myEvent', 3);
+  Ember.run(hostObject, 'trigger', 'myEvent', 4); // ignored
+  Ember.run(hostObject, 'trigger', 'otherEvent', 5);
+});
+
+

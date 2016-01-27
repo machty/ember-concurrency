@@ -33,6 +33,36 @@ csp.set_queue_dispatcher(function(f) {
 	});
 });
 
+let EventedObservable = Ember.Object.extend({
+  obj: null,
+  eventName: null,
+
+  subscribe(onNext) {
+    let obj = this.obj;
+    let eventName = this.eventName;
+    obj.on(eventName, onNext);
+
+    let isDisposed = false;
+    return {
+      dispose: () => {
+        if (isDisposed) { return; }
+        isDisposed = true;
+        obj.off(eventName, onNext);
+      }
+    };
+  },
+});
+
+Ember.Evented.reopen({
+  on() {
+    if (arguments.length === 1) {
+      return EventedObservable.create({ obj: this, eventName: arguments[0] });
+    } else {
+      return this._super.apply(this, arguments);
+    }
+  },
+});
+
 export let Process = Ember.Object.extend({
   owner: null,
   generatorFunction: null,
@@ -286,26 +316,6 @@ export function asyncIterator(obs) {
     _observable: obs,
   });
 }
-
-let EventedObservable = Ember.Object.extend({
-  obj: null,
-  eventName: null,
-
-  subscribe(onNext) {
-    let obj = this.obj;
-    let eventName = this.eventName;
-    obj.on(eventName, onNext);
-
-    let isDisposed = false;
-    return {
-      dispose: () => {
-        if (isDisposed) { return; }
-        isDisposed = true;
-        obj.off(eventName, onNext);
-      }
-    };
-  },
-});
 
 asyncIterator.fromEvent = function(obj, eventName) {
   return AsyncIterator.create({
