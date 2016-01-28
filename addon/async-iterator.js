@@ -72,5 +72,13 @@ export default Ember.Object.extend({
       return val;
     }
   },
+
+  dispose() {
+    this._done = true;
+    if (this._subscription) {
+      this._subscription.dispose();
+      this._subscription = null;
+    }
+  },
 });
 

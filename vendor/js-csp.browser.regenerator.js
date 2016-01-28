@@ -65,6 +65,7 @@ module.exports = {
   chan: chan,
   DEFAULT: select.DEFAULT,
   CLOSED: channels.CLOSED,
+  Instruction: process.Instruction,
   isClosedToken: channels.isClosedToken,
 
   put: process.put,
@@ -2254,6 +2255,7 @@ var PUT = "put";
 var ALTS = "alts";
 var TAKE_OR_RETURN = "take_or_return";
 var PREVENT_CLOSE = "prevent_close";
+var CLOSE_INSTR = "close";
 
 function ErrorResult(value) {
   this.value = value;
@@ -2376,6 +2378,10 @@ Process.prototype.run = function(response) {
     case PREVENT_CLOSE:
       this.manualClose = true;
       this._continue(this.closeChannel);
+      break;
+
+    case CLOSE_INSTR:
+      altsWithClose(this, []); // TODO: won't work if preventClose has been called
       break;
 
     }

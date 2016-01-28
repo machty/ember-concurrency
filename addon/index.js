@@ -338,11 +338,28 @@ function * crankAsyncLoop(iterable, hostObject, genFn) {
     _observable: iterable,
   });
 
+  let didBreak = false;
   while (true) {
+    if (didBreak) {
+      break;
+    }
+
     let { value, done } = yield ai.next();
     if (done) { break; }
 
-    yield csp.spawn(genFn.call(hostObject, value));
+    let spawnChannel;
+    let controlObj = {
+      break() {
+        let process = spawnChannel.process;
+        process.close();
+        ai.dispose();
+        didBreak = true;
+        return new csp.Instruction("close");
+      },
+    };
+
+    spawnChannel = csp.spawn(genFn.call(hostObject, value, controlObj));
+    yield spawnChannel;
   }
 }
 

@@ -409,4 +409,46 @@ test("asyncLoop: rx observables", function(assert) {
   });
 });
 
+test("asyncLoop: iter.break", function(assert) {
+  QUnit.stop();
+  assert.expect(1);
+
+  let hostObject = Ember.Object.create();
+  let dispatcher = Dispatcher.create();
+  let subject = new window.Rx.Subject();
+
+  let task0;
+  Ember.run(() => {
+    task0 = Task.create({
+      _dispatcher: dispatcher,
+      _hostObject: hostObject,
+      _genFn: function * () {
+        let i = 0;
+        let values = [];
+        yield asyncLoop(subject, function * (v, iter) {
+          if (i++ === 3) {
+            yield iter.break();
+          }
+          values.push(v);
+        });
+        assert.deepEqual(values, ['a', 'b', 'c']);
+        QUnit.start();
+      },
+    });
+  });
+
+  Ember.run(() => {
+    task0.run();
+  });
+
+  Ember.run(() => {
+    subject.onNext('a');
+    subject.onNext('b');
+    subject.onNext('c');
+    subject.onNext('d');
+  });
+});
+
+
+
 
