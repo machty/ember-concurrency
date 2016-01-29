@@ -12,6 +12,7 @@ Router.map(function() {
   this.route('tasks');
   this.route('async-iterator');
   this.route('music');
+  this.route('auto-complete');
 });
 
 export default Router;

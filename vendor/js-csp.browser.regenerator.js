@@ -2237,6 +2237,11 @@ function take_then_callback(channel, callback) {
   }
 }
 
+function isGenerator(value) {
+  // TODO: use Symbol.iterator?
+  return value && typeof value.next === 'function';
+}
+
 var Process = function(gen, onFinish, creator) {
   this.gen = gen;
   this.creatorFunc = creator;
@@ -2288,6 +2293,9 @@ Process.prototype._done = function(value) {
 };
 
 Process.prototype.close = function(value) {
+  if (this.subproc) {
+    this.subproc.close();
+  }
   put_then_callback(this.closeChannel, new ReturnResult(value));
   this.closeChannel.close();
 };
@@ -2324,7 +2332,28 @@ Process.prototype.run = function(response) {
   var ins = iter.value;
   var self = this;
 
-  if (ins && typeof ins.then === 'function') {
+  if (isGenerator(ins)) {
+    // TODO: need to maintain a list of all things scoped to the
+    // lifetime of this process; observable subscriptions, forked tasks, etc.
+
+    var doneChan = channels.chan();
+    var subproc = new Process(ins, function(returnValue) {
+      put_then_callback(doneChan, returnValue);
+    });
+
+    this.subproc = subproc;
+
+    // we defer so we can hackishly attach ember-y things before it
+    // actually starts running
+    dispatch.run(function() {
+      subproc.run();
+    });
+
+
+    // do we want to alts with close this? TODO revisit cascading behavior
+    altsWithClose(this, [doneChan]);
+  }
+  else if (ins && typeof ins.then === 'function') {
     var promiseChannel = channels.chan();
     ins.then(function(value) {
       if (value === channels.CLOSED) {

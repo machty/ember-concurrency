@@ -34,10 +34,13 @@ let Task = Ember.Object.extend({
 
     this.perform = boundPerform;
     this.run = boundPerform;
+    this.rerun = function(...args) {
+      return self._perform(args, true);
+    };
   },
 
-  _perform(args) {
-    return this._dispatcher._tryPerform(this, args);
+  _perform(args, rerun) {
+    return this._dispatcher._tryPerform(this, args, rerun);
   },
 
   willDestroy() {

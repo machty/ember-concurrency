@@ -24,8 +24,18 @@ export default Ember.Service.extend({
     }
   },
 
-  _tryPerform(task, args) {
-    let currentlyExecutingTask = Ember.get(csp.Process, '_current._emberProcess._task');
+  _tryPerform(task, args, rerun) {
+    let currentlyExecutingTask = Ember.get(csp, 'Process._current._emberProcess._task');
+
+    if (rerun) {
+      if (task._proc) {
+        task._proc.kill();
+        //debugger;
+        //task._proc.close();
+        //task._proc = null;
+      }
+      // close the process, hopefully the task is smart enough to detect this?
+    }
 
     if (!task.get('isPerformable')) {
       if (currentlyExecutingTask) {

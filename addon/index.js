@@ -105,8 +105,9 @@ export let Process = Ember.Object.extend({
   kill() {
     if (this._currentProcess) {
       this.set('isRunning', false);
-      this._currentProcess.close();
-      this._currentProcess.process.close();
+      let processChannel = this._currentProcess;
+      processChannel.close();
+      processChannel.process.close();
       this._currentProcess = null;
     }
   },
