@@ -77,7 +77,17 @@ test("forEach loops over arrays", function(assert) {
   assert.deepEqual(arr, [1,2,3]);
 });
 
-test("forEach blocks on async values returned from fns, discontinues on owner destruction", function(assert) {
+test("`this` in forEach mapper fn is the attached host obj", function(assert) {
+  assert.expect(1);
+  Ember.run(() => {
+    let obj = Ember.Object.create();
+    forEach([1], function() {
+      assert.equal(this, obj);
+    }).attach(obj);
+  });
+});
+
+test("forEach blocks on async values returned from fns, discontinues on owner destruction: regular function", function(assert) {
   assert.expect(6);
   let defer, obj;
   let val = 0;
@@ -99,14 +109,26 @@ test("forEach blocks on async values returned from fns, discontinues on owner de
   assert.equal(val, 2);
 });
 
-test("`this` in forEach mapper fn is the attached host obj", function(assert) {
-  assert.expect(1);
+test("forEach blocks on async values returned from fns, discontinues on owner destruction: generator function", function(assert) {
+  assert.expect(6);
+  let defer, obj;
   let val = 0;
   Ember.run(() => {
-    let obj = Ember.Object.create();
-    forEach([1], function(v) {
-      assert.equal(this, obj);
+    obj = Ember.Object.create();
+    forEach([1,2,3], function * (v) {
+      val = v;
+      assert.ok(v !== 3, "loop should not hit the third iteration");
+      defer = Ember.RSVP.defer();
+      yield defer.promise.then(() => v);
+      return;
     }).attach(obj);
   });
+  assert.equal(val, 1);
+  Ember.run(defer.resolve);
+  assert.equal(val, 2);
+  Ember.run(obj, 'destroy');
+  assert.equal(val, 2);
+  Ember.run(defer.resolve);
+  assert.equal(val, 2);
 });
 

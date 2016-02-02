@@ -409,7 +409,9 @@ function start(owner, sourceIterable, fn) {
     let opsIterator = makeIterator(maybeIterator, sourceIterator, ({ value, done, index }) => {
       let disposable; // babel-intentional
 
-      if (done) {
+      // FIXME: this is a little wack; need to normalize "process" iterators
+      // and the way their last values are emitted.
+      if (done && value === undefined) {
         sourceIterator.proceed(sourceIteration.index, NEXT, value);
         return;
       }
