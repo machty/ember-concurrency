@@ -73,8 +73,8 @@ test("forEach loops over arrays", function(assert) {
   Ember.run(() => {
     let obj = Ember.Object.create();
     forEach([1,2,3], v => arr.push(v)).attach(obj);
+    assert.deepEqual(arr, [1,2,3]);
   });
-  assert.deepEqual(arr, [1,2,3]);
 });
 
 test("forEach blocks on async values returned from fns, discontinues on owner destruction", function(assert) {
@@ -86,6 +86,9 @@ test("forEach blocks on async values returned from fns, discontinues on owner de
     forEach([1,2,3], v => {
       val = v;
       assert.ok(v !== 3, "loop should not hit the third iteration");
+      if (v === 3){
+        debugger;
+      }
       defer = Ember.RSVP.defer();
       return defer.promise.then(() => v);
     }).attach(obj);

@@ -21,6 +21,13 @@ export function DidNotRunException() {
   this.reason = "unperformable";
 }
 
+const NEXT   = 'next';
+const THROW  = 'throw';
+const RETURN = 'return';
+
+const DISCONTINUE_TRAMPOLINE = {};
+const DISCONTINUE_ONLY_THIS_TRAMPOLINE = {};
+
 export let csp = window.csp;
 
 csp.set_queue_delayer(function(f, delay) {
@@ -364,16 +371,10 @@ function * crankAsyncLoop(iterable, hostObject, genFn) {
   }
 }
 
-
-
 export function forEach(iterable, fn) {
-  let throwError = true;
   let owner;
   Ember.run.schedule('actions', () => {
-    if (owner) {
-      let chan = csp.go(crankLoop, [iterable, fn]);
-      cleanupOnDestroy(owner, chan.process, 'close');
-    } else {
+    if (!owner) {
       throw new Error("You must call forEach(...).attach(this) if you're using forEach outside of a generator function");
     }
   });
@@ -381,27 +382,220 @@ export function forEach(iterable, fn) {
   return {
     attach(_owner) {
       owner = _owner;
-      throwError = false;
+      let it = start(iterable, fn);
+      cleanupOnDestroy(owner, it, 'dispose');
     },
   };
 }
 
-function * crankLoop(iterable, fn) {
-  for (let i of iterable) {
-    let value = fn(i);
-    //let resolvedValue = yield value;
-    yield value;
+function start(iterable, fn) {
+  let rawIterable = iterable[Symbol.iterator]();
+  let it = makeSourceIterator(rawIterable);
+  it.fn = fn;
+  it.dispose = function () {
+    if (this.isDisposed) { return; }
+    this.isDisposed = true;
+
+    // kill the inner loop / disposables
+    debugger;
+  };
+
+  trampoline(stepThroughSource, null, it, NEXT);
+  return it;
+}
+
+function trampoline(steppingFn, _nextValue, it, method) {
+  let nextValue = _nextValue;
+  while (true) {
+    let value = steppingFn(nextValue, it, method);
+    if (value === DISCONTINUE_TRAMPOLINE) {
+      return DISCONTINUE_TRAMPOLINE;
+    } else if (value === DISCONTINUE_ONLY_THIS_TRAMPOLINE) {
+      return;
+    } else {
+      nextValue = value;
+    }
   }
 }
 
+function isAsyncProducer(v) {
+  return v && (
+    typeof v.then === 'function' ||
+    typeof v.subscribe === 'function'
+  );
+}
+
+function isIterator(v) {
+  // Symbol polyfill?
+  return v && typeof v.next === 'function';
+}
+
+function stepThroughSource(nextValue, it, method) {
+  // Get the next value from the source iterable, e.g. `1` from [1,2,3]
+  let { value, done } = it.proceed(method, nextValue);
+  if (done) {
+    // what to do here?
+    return;
+  }
+
+  // Pass it to the mapping fn, which maybe be a normal fn or a generator fn
+  let mValue = it.fn(value);
+
+
+  // forEach([1,2,3], v => {
+  //   if (v >= 2) {
+  //     Break();
+  //     // BREAK
+  //
+  //     how would this work? well, you'd have
+  //
+  //     FUCK THIS ASYNC EVERYTHING
+  //   }
+  // });
 
 
 
+  // Normalize the value into an iterable:
+  // (v) => return Promise
+  //   becomes an iterable that returns a promise and finishes
+  // (v) => return Observable
+  //   becomes an iterable that returns an observable and finishes
+  // function * () {...}
+  //   already is an iterable, so does nothing
+  let subit = makeIterator(mValue, it);
 
 
+  // loop over this iterable with trampolining to avoid creating deep
+  // stacks when looping over a large synchronous iterable, like an array
+  //trampoline(substep, null, subit, NEXT);
 
+  // the result of this governs what to tell parent trampoline.
+  // if it's just a bunch of synchronous yields then we should
+  // let the parent trampoline keep going. If it's async in
+  // any way, then we stop.
+  return trampoline(substep, null, subit, NEXT);
+}
 
+function substep(nextValue, it, method) {
+  let { value, done } = it.proceed(method, nextValue);
 
+  if (done) {
+    return DISCONTINUE_ONLY_THIS_TRAMPOLINE;
+  }
 
+  let proceed, disposable;
+  if (value && typeof value.then === 'function') {
+    proceed = it.getProceed();
+    value.then(v => {
+      proceed([NEXT, v]);
+    }, error => {
+      proceed([THROW, error]);
+    });
+    return DISCONTINUE_TRAMPOLINE;
+  } else if (value && typeof value.subscribe === 'function') {
+    proceed = it.getProceed();
+    disposable = value.subscribe(v => {
+      proceed([NEXT, v]);
+    }, error => {
+      proceed([THROW, error]);
+    }, () => {
+      proceed([NEXT, null]); // replace with "no value" token?
+    });
+    it.registerDisposable(disposable);
+    return DISCONTINUE_TRAMPOLINE;
+  } else {
+    return value;
+  }
+}
 
+function makeSourceIterator(value) {
+  let it;
+  if (value && typeof value.next === 'function') {
+    it = value;
+  } else {
+    let done = false;
+    it = {
+      next() {
+        if (done) {
+          return {
+            done: true,
+            value: undefined,
+          };
+        } else {
+          done = true;
+          return {
+            done: false,
+            value,
+          };
+        }
+      }
+    };
+    it.source = value;
+  }
+  return it;
+}
+
+function makeIterator(value, parentIt) {
+  let it = makeSourceIterator(value);
+
+  let disposables = [];
+  let defer;
+  let subit = {
+    getProceed() {
+      if (!defer) {
+        defer = Ember.RSVP.defer();
+        defer.promise.then(([method, value]) => {
+          trampoline(substep, value, this, method);
+        });
+      }
+      return defer.resolve;
+    },
+    registerDisposable(d) {
+      disposables.push(d);
+    },
+    proceed(method, value) {
+      disposeAll(disposables);
+      return this[method](value);
+    },
+    dispose() {
+      disposeAll(disposables);
+      this.proceed(RETURN);
+    },
+    next(value) {
+      return it.next(value);
+    },
+    throw(error) {
+      if (typeof it.throw === 'function') {
+        return it.throw(error);
+      } else {
+        throw error;
+      }
+    },
+    return(v) {
+      if (typeof it.return === 'function') {
+        return it.return(v);
+      } else {
+        return {
+          done: true,
+          value: v,
+        };
+      }
+    },
+  };
+
+  if (parentIt) {
+    parentIt.registerDisposable(() => {
+      subit.proceed(RETURN); // or throw?
+    });
+  }
+
+  return subit;
+}
+
+function disposeAll(disposables) {
+  for (let i = 0; i < disposables.length; ++i) {
+    disposables[i]();
+  }
+  disposables.length = 0;
+}
 
