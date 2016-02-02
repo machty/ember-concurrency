@@ -99,4 +99,14 @@ test("forEach blocks on async values returned from fns, discontinues on owner de
   assert.equal(val, 2);
 });
 
+test("`this` in forEach mapper fn is the attached host obj", function(assert) {
+  assert.expect(1);
+  let val = 0;
+  Ember.run(() => {
+    let obj = Ember.Object.create();
+    forEach([1], function(v) {
+      assert.equal(this, obj);
+    }).attach(obj);
+  });
+});
 

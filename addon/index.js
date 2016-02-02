@@ -380,7 +380,7 @@ export function forEach(iterable, fn) {
   return {
     attach(_owner) {
       owner = _owner;
-      this.it = start(iterable, fn);
+      this.it = start(owner, iterable, fn);
       cleanupOnDestroy(owner, this, '_disposeIter');
     },
     _disposeIter() {
@@ -389,7 +389,7 @@ export function forEach(iterable, fn) {
   };
 }
 
-function start(sourceIterable, fn) {
+function start(owner, sourceIterable, fn) {
   let rawIterable = sourceIterable[Symbol.iterator]();
   let sourceIterator = makeIterator(rawIterable, null, (sourceIteration) => {
     if (sourceIteration.done) {
@@ -397,7 +397,7 @@ function start(sourceIterable, fn) {
     }
 
     // Pass it to the mapping fn, which may be be a normal fn or a generator fn
-    let maybeIterator = fn(sourceIteration.value);
+    let maybeIterator = fn.call(owner, sourceIteration.value);
 
     // Normalize the value into an iterable:
     // (v) => return Promise
