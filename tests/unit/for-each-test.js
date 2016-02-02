@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import { forEach } from 'ember-concurrency';
+import { interval } from 'ember-concurrency';
 
 module('Unit: forEach');
 
@@ -87,6 +88,8 @@ test("`this` in forEach mapper fn is the attached host obj", function(assert) {
   });
 });
 
+
+
 test("forEach blocks on async values returned from fns, discontinues on owner destruction: regular function", function(assert) {
   assert.expect(6);
   let defer, obj;
@@ -119,8 +122,7 @@ test("forEach blocks on async values returned from fns, discontinues on owner de
       val = v;
       assert.ok(v !== 3, "loop should not hit the third iteration");
       defer = Ember.RSVP.defer();
-      yield defer.promise.then(() => v);
-      return;
+      return defer.promise.then(() => v);
     }).attach(obj);
   });
   assert.equal(val, 1);
@@ -131,4 +133,46 @@ test("forEach blocks on async values returned from fns, discontinues on owner de
   Ember.run(defer.resolve);
   assert.equal(val, 2);
 });
+
+test("forEach allows yielding promises to pause iteration", function(assert) {
+  assert.expect(2);
+  let defer, obj;
+  Ember.run(() => {
+    obj = Ember.Object.create();
+    forEach([1,2], function * () {
+      defer = Ember.RSVP.defer();
+      let val;
+      val = yield defer.promise;
+      assert.equal(val, 'a');
+      defer = Ember.RSVP.defer();
+      val = yield defer.promise;
+      assert.equal(val, 'b');
+    }).attach(obj);
+  });
+  Ember.run(null, defer.resolve, 'a');
+  Ember.run(null, defer.resolve, 'b');
+});
+
+test("forEach can loop over time intervals", function(assert) {
+  QUnit.stop();
+  assert.expect(5);
+  let defer, obj;
+
+  let isValid = true;
+
+  let i = 0;
+  Ember.run(() => {
+    obj = Ember.Object.create();
+    forEach(interval(10), function * () {
+      i++;
+      assert.ok(isValid, "should not keep iterating");
+      if (i === 5) {
+        isValid = false;
+        obj.destroy();
+        QUnit.start();
+      }
+    }).attach(obj);
+  });
+});
+
 

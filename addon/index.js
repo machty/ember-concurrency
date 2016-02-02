@@ -153,15 +153,39 @@ function liveComputed(...args) {
   return cp;
 }
 
+export function createObservable(fn) {
+  return {
+    subscribe(onNext) {
+      let isDisposed = false;
+      let publish = (v) => {
+        if (isDisposed) { return; }
+        onNext(v);
+      };
+      let maybeDisposer = fn(publish);
+      let disposer = typeof maybeDisposer === 'function' ? maybeDisposer : Ember.K;
+
+      return {
+        dispose() {
+          if (isDisposed) { return; }
+          isDisposed = true;
+          disposer();
+        },
+      };
+    },
+  };
+}
+
+export function interval(ms) {
+  return createObservable(publish => {
+    let intervalId = setInterval(publish, ms);
+    return () => {
+      clearInterval(intervalId);
+    };
+  });
+}
+
 export function sleep(ms) {
-  if (arguments.length === 0) {
-    // return anonymous channel that never closes;
-    // useful for processes since every yield is combined
-    // with an implicit close channel.
-    return csp.chan();
-  } else {
-    return csp.timeout(ms);
-  }
+  return interval(ms);
 }
 
 sleep.untilEvent = function(obj, eventName) {
@@ -212,50 +236,6 @@ export function channel(...args) {
     cleanupOnDestroy(this, chan, 'close');
     return chan;
   });
-}
-
-export function makePublisher(pubConstructor) {
-  // 20 is arbitrary, but probably an OK default?
-  // The reason we need it is that if you have
-  // pending putAsyncs and you close the channel,
-  // the close cancels those putAsyncs, which is
-  // probably undesirable for the pattern where a
-  // producer generates a bunch of values and closes.
-  //
-  // See here: https://github.com/ubolonton/js-csp/issues/63
-  //
-  // TODO: we should probably devise a better system
-  // for integrating with Observables that are backpressure
-  // aware
-  let chan = csp.chan(20);
-
-  let disposer = Ember.K;
-
-  let hasClosed = false;
-  let oldClose = chan.close;
-  chan.close = () => {
-    if (hasClosed) { return; }
-    hasClosed = true;
-    oldClose.call(chan);
-    disposer();
-  };
-
-  let publishHandle = (v) => {
-    if (hasClosed) {
-      return;
-    }
-    csp.putAsync(chan, v);
-  };
-  publishHandle.close = () => {
-    chan.close();
-  };
-
-  let maybeDisposer = pubConstructor(publishHandle);
-  if (typeof maybeDisposer === 'function') {
-    disposer = maybeDisposer;
-  }
-
-  return chan;
 }
 
 export function task(...args) {
@@ -389,9 +369,87 @@ export function forEach(iterable, fn) {
   };
 }
 
+// TODO: consider a growing ringbuffer?
+function createBuffer(obs) {
+  let sub;
+  let isDisposed = false;
+  let buffer = {
+    buffer: [],
+    takers: [],
+    take(taker) {
+      if (this.buffer.length) {
+        let value = this.buffer.pop();
+        taker.commit(value);
+      } else {
+        this.takers.push(taker);
+      }
+    },
+    put(value) {
+      while (true) {
+        let taker = this.takers.shift();
+        if (!taker) {
+          break;
+        }
+
+        if (!taker.active) {
+          // TODO: is this needed?
+          continue;
+        }
+
+        taker.commit(value);
+        return;
+      }
+
+      this.buffer.push(value);
+    },
+    return() {
+      this.dispose();
+      return {
+        done: true,
+        value: undefined,
+      };
+    },
+    next() {
+      let defer = Ember.RSVP.defer();
+      let taker = {
+        active: true,
+        commit(value) {
+          this.active = false;
+          defer.resolve(value);
+        },
+        then(r0, r1) {
+          return defer.promise.then(r0, r1);
+        },
+      };
+      this.take(taker);
+      return taker;
+    },
+    dispose() {
+      if (isDisposed) { return; }
+      isDisposed = true;
+      sub.dispose();
+    },
+  };
+
+  sub = obs.subscribe(v => {
+    buffer.put(v);
+  });
+
+  return buffer;
+}
+
 function start(owner, sourceIterable, fn) {
-  let rawIterable = sourceIterable[Symbol.iterator]();
-  let sourceIterator = makeIterator(rawIterable, null, (sourceIteration) => {
+  let rawIterable;
+  if (sourceIterable[Symbol.iterator]) {
+    rawIterable = sourceIterable[Symbol.iterator]();
+  } else if (typeof sourceIterable.subscribe === 'function') {
+    rawIterable = createBuffer(sourceIterable);
+  } else {
+    // TODO: log error obj
+    throw new Error("Unknown structure passed to forEach; expected an iterable, observable, or a promise");
+  }
+
+  let sourceIterator = makeIterator(rawIterable, (sourceIteration) => {
     if (sourceIteration.done) {
       return;
     }
@@ -406,7 +464,7 @@ function start(owner, sourceIterable, fn) {
     //   becomes an iterable that returns an observable and finishes
     // function * () {...}
     //   already is an iterable, so normalization is a noop
-    let opsIterator = makeIterator(maybeIterator, sourceIterator, ({ value, done, index }) => {
+    let opsIterator = makeIterator(maybeIterator, ({ value, done, index }) => {
       let disposable; // babel-intentional
 
       // FIXME: this is a little wack; need to normalize "process" iterators
@@ -487,7 +545,7 @@ function makeSourceIterator(value) {
   return it;
 }
 
-function makeIterator(value, parentIt, handler) {
+function makeIterator(value, handler) {
   let it = makeSourceIterator(value);
 
   let index = 0;
@@ -515,7 +573,13 @@ function makeIterator(value, parentIt, handler) {
       disposeAll(disposables);
 
       let nextValue = this[method](value);
-      handler(Object.assign({ index }, nextValue));
+      if (nextValue.then) {
+        nextValue.then(v => {
+          handler(Object.assign({ index }, v));
+        });
+      } else {
+        handler(Object.assign({ index }, nextValue));
+      }
     },
     next(value) {
       return it.next(value);
