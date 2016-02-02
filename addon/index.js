@@ -24,9 +24,7 @@ export function DidNotRunException() {
 const NEXT   = 'next';
 const THROW  = 'throw';
 const RETURN = 'return';
-
-const DISCONTINUE_TRAMPOLINE = {};
-const DISCONTINUE_ONLY_THIS_TRAMPOLINE = {};
+const FORCE = {};
 
 export let csp = window.csp;
 
@@ -382,40 +380,64 @@ export function forEach(iterable, fn) {
   return {
     attach(_owner) {
       owner = _owner;
-      let it = start(iterable, fn);
-      cleanupOnDestroy(owner, it, 'dispose');
+      this.it = start(iterable, fn);
+      cleanupOnDestroy(owner, this, '_disposeIter');
+    },
+    _disposeIter() {
+      this.it.proceed(FORCE, RETURN, null);
     },
   };
 }
 
-function start(iterable, fn) {
-  let rawIterable = iterable[Symbol.iterator]();
-  let it = makeSourceIterator(rawIterable);
-  it.fn = fn;
-  it.dispose = function () {
-    if (this.isDisposed) { return; }
-    this.isDisposed = true;
-
-    // kill the inner loop / disposables
-    debugger;
-  };
-
-  trampoline(stepThroughSource, null, it, NEXT);
-  return it;
-}
-
-function trampoline(steppingFn, _nextValue, it, method) {
-  let nextValue = _nextValue;
-  while (true) {
-    let value = steppingFn(nextValue, it, method);
-    if (value === DISCONTINUE_TRAMPOLINE) {
-      return DISCONTINUE_TRAMPOLINE;
-    } else if (value === DISCONTINUE_ONLY_THIS_TRAMPOLINE) {
+function start(sourceIterable, fn) {
+  let rawIterable = sourceIterable[Symbol.iterator]();
+  let sourceIterator = makeIterator(rawIterable, null, (sourceIteration) => {
+    if (sourceIteration.done) {
       return;
-    } else {
-      nextValue = value;
     }
-  }
+
+    // Pass it to the mapping fn, which may be be a normal fn or a generator fn
+    let maybeIterator = fn(sourceIteration.value);
+
+    // Normalize the value into an iterable:
+    // (v) => return Promise
+    //   becomes an iterable that returns a promise and finishes
+    // (v) => return Observable
+    //   becomes an iterable that returns an observable and finishes
+    // function * () {...}
+    //   already is an iterable, so normalization is a noop
+    let opsIterator = makeIterator(maybeIterator, sourceIterator, ({ value, done, index }) => {
+      let disposable; // babel-intentional
+
+      if (done) {
+        sourceIterator.proceed(sourceIteration.index, NEXT, value);
+        return;
+      }
+
+      if (value && typeof value.then === 'function') {
+        value.then(v => {
+          opsIterator.proceed(index, NEXT, v);
+        }, error => {
+          opsIterator.proceed(index, THROW, error);
+        });
+      } else if (value && typeof value.subscribe === 'function') {
+        disposable = value.subscribe(v => {
+          opsIterator.proceed(index, NEXT, v);
+        }, error => {
+          opsIterator.proceed(index, THROW, error);
+        }, () => {
+          opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
+        });
+        // TODO: this disposable stuff is wrong ... () or .dispose() ?
+        opsIterator.registerDisposable(index, disposable);
+      } else {
+        opsIterator.proceed(index, NEXT, value);
+      }
+    });
+    opsIterator.proceed(0, NEXT, null);
+  });
+  sourceIterator.proceed(0, NEXT, null);
+  return sourceIterator;
 }
 
 function isAsyncProducer(v) {
@@ -430,82 +452,10 @@ function isIterator(v) {
   return v && typeof v.next === 'function';
 }
 
-function stepThroughSource(nextValue, it, method) {
-  // Get the next value from the source iterable, e.g. `1` from [1,2,3]
-  let { value, done } = it.proceed(method, nextValue);
-  if (done) {
-    // what to do here?
-    return;
-  }
-
-  // Pass it to the mapping fn, which maybe be a normal fn or a generator fn
-  let mValue = it.fn(value);
-
-
-  // forEach([1,2,3], v => {
-  //   if (v >= 2) {
-  //     Break();
-  //     // BREAK
-  //
-  //     how would this work? well, you'd have
-  //
-  //     FUCK THIS ASYNC EVERYTHING
-  //   }
-  // });
-
-
-
-  // Normalize the value into an iterable:
-  // (v) => return Promise
-  //   becomes an iterable that returns a promise and finishes
-  // (v) => return Observable
-  //   becomes an iterable that returns an observable and finishes
-  // function * () {...}
-  //   already is an iterable, so does nothing
-  let subit = makeIterator(mValue, it);
-
-
-  // loop over this iterable with trampolining to avoid creating deep
-  // stacks when looping over a large synchronous iterable, like an array
-  //trampoline(substep, null, subit, NEXT);
-
-  // the result of this governs what to tell parent trampoline.
-  // if it's just a bunch of synchronous yields then we should
-  // let the parent trampoline keep going. If it's async in
-  // any way, then we stop.
-  return trampoline(substep, null, subit, NEXT);
-}
-
-function substep(nextValue, it, method) {
-  let { value, done } = it.proceed(method, nextValue);
-
-  if (done) {
-    return DISCONTINUE_ONLY_THIS_TRAMPOLINE;
-  }
-
-  let proceed, disposable;
-  if (value && typeof value.then === 'function') {
-    proceed = it.getProceed();
-    value.then(v => {
-      proceed([NEXT, v]);
-    }, error => {
-      proceed([THROW, error]);
-    });
-    return DISCONTINUE_TRAMPOLINE;
-  } else if (value && typeof value.subscribe === 'function') {
-    proceed = it.getProceed();
-    disposable = value.subscribe(v => {
-      proceed([NEXT, v]);
-    }, error => {
-      proceed([THROW, error]);
-    }, () => {
-      proceed([NEXT, null]); // replace with "no value" token?
-    });
-    it.registerDisposable(disposable);
-    return DISCONTINUE_TRAMPOLINE;
-  } else {
-    return value;
-  }
+function dispatch(ctx, fn, arg) {
+	Ember.run.join(() => {
+		Ember.run.schedule('actions', ctx, fn, arg);
+	});
 }
 
 function makeSourceIterator(value) {
@@ -535,31 +485,35 @@ function makeSourceIterator(value) {
   return it;
 }
 
-function makeIterator(value, parentIt) {
+function makeIterator(value, parentIt, handler) {
   let it = makeSourceIterator(value);
 
+  let index = 0;
+
   let disposables = [];
-  let defer;
   let subit = {
-    getProceed() {
-      if (!defer) {
-        defer = Ember.RSVP.defer();
-        defer.promise.then(([method, value]) => {
-          trampoline(substep, value, this, method);
-        });
+    proceed: function(_index, method, nextValue) {
+      if (_index !== index && _index !== FORCE) {
+        // already processed from this point.
+        return;
       }
-      return defer.resolve;
+      index++;
+      dispatch(this, '_proceed', [method, nextValue]);
     },
-    registerDisposable(d) {
+    registerDisposable(_index, d) {
+      if (_index !== index) {
+        // dispose asynchronously
+        // TODO: TEST THIS
+        dispatch(null, d);
+        return;
+      }
       disposables.push(d);
     },
-    proceed(method, value) {
+    _proceed([method, value]) {
       disposeAll(disposables);
-      return this[method](value);
-    },
-    dispose() {
-      disposeAll(disposables);
-      this.proceed(RETURN);
+
+      let nextValue = this[method](value);
+      handler(Object.assign({ index }, nextValue));
     },
     next(value) {
       return it.next(value);
@@ -582,12 +536,6 @@ function makeIterator(value, parentIt) {
       }
     },
   };
-
-  if (parentIt) {
-    parentIt.registerDisposable(() => {
-      subit.proceed(RETURN); // or throw?
-    });
-  }
 
   return subit;
 }
