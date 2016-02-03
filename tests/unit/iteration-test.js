@@ -107,4 +107,21 @@ test("Iterations ignore stepping functions if the wrong index is passed in", fun
   runAndExpect('redo', 0, false);
 });
 
+test(".step() accepts a value that it passes back into the iteratable", function(assert) {
+  assert.expect(2);
+
+  function * foo () {
+    assert.equal('a', yield);
+    assert.equal('b', yield);
+  }
+
+  let iterator = _makeIteratorFromFunction(foo, {}, []);
+  let iteration = _makeIteration(iterator, Ember.K);
+
+  Ember.run(iteration, 'step', 0, undefined);
+  Ember.run(iteration, 'step', 1, 'a');
+  Ember.run(iteration, 'step', 2, 'b');
+});
+
+
 

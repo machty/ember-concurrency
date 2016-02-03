@@ -22,12 +22,12 @@ test("generator function basics", function(assert) {
   }
 
   let iter = _makeIteratorFromFunction(gen, {}, [1]);
-  assert.deepEqual(iter.next(), { value: 1, done: false });
+  assert.deepEqual(iter.next(),  { value: 1, done: false });
   assert.deepEqual(iter.next(2), { value: 2, done: false });
-  assert.deepEqual(iter.next(), { value: 3, done: false });
-  assert.deepEqual(iter.next(), { value: 4, done: true });
-  assert.deepEqual(iter.next(), { value: undefined, done: true });
-  assert.deepEqual(iter.next(), { value: undefined, done: true });
+  assert.deepEqual(iter.next(),  { value: 3, done: false });
+  assert.deepEqual(iter.next(),  { value: 4, done: true });
+  assert.deepEqual(iter.next(),  { value: undefined, done: true });
+  assert.deepEqual(iter.next(),  { value: undefined, done: true });
 });
 
 test(".return", function(assert) {

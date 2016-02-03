@@ -12,17 +12,17 @@ function Iteration (iterator, fn) {
   this.index = 0;
 }
 
-Iteration.prototype.step = function(index) {
-  this._step(NEXT, index);
+Iteration.prototype.step = function(index, nextValue) {
+  this._step(NEXT, index, nextValue);
 };
 
-Iteration.prototype._step = function(iterFn, index) {
+Iteration.prototype._step = function(iterFn, index, nextValue) {
   if (index !== this.index) {
     return;
   }
   this.index++;
   if (iterFn) {
-    this.lastValue = this.iterator[iterFn]();
+    this.lastValue = this.iterator[iterFn](nextValue);
   }
   this._runFunctionWithIndex();
 };
