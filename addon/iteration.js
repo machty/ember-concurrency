@@ -16,6 +16,12 @@ Iteration.prototype.redo = function() {
   this.fn(this.lastValue);
 };
 
+Iteration.prototype.break = function() {
+  let result = this.iterator.return();
+  this.lastValue = result;
+  this.fn(this.lastValue);
+};
+
 export function _makeIteration(iterator, fn) {
   return new Iteration(iterator, fn);
 }

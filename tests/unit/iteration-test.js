@@ -60,3 +60,22 @@ test("Iterations let you .redo() the same element over and over", function(asser
   assert.deepEqual(outerValue, { done: true, value: undefined });
 });
 
+test("Iterations let you .break() out of iteration", function(assert) {
+  assert.expect(4);
+
+  let iterator = _makeIteratorFromFunction(oneTwoThree, {}, []);
+  let outerValue;
+  let iteration = _makeIteration(iterator, v => {
+    outerValue = v;
+  });
+
+  Ember.run(iteration, 'step');
+  assert.deepEqual(outerValue, { done: false, value: 1 });
+  Ember.run(iteration, 'step');
+  assert.deepEqual(outerValue, { done: false, value: 2 });
+  Ember.run(iteration, 'break');
+  assert.deepEqual(outerValue, { done: true, value: undefined });
+  Ember.run(iteration, 'step');
+  assert.deepEqual(outerValue, { done: true, value: undefined });
+});
+
