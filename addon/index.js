@@ -2,6 +2,7 @@ import Ember from 'ember';
 import getOwner from 'ember-getowner-polyfill';
 import Task from 'ember-concurrency/task';
 import AsyncIterator from 'ember-concurrency/async-iterator';
+import { isGeneratorIterator } from 'ember-concurrency/utils';
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -11,10 +12,7 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
     babel: {
       includePolyfill: true,
     }
-  });`,
-  (typeof testIter.next      === 'function' &&
-   typeof testIter['return'] === 'function' &&
-   typeof testIter['throw']  === 'function'));
+  });`, isGeneratorIterator(testIter));
 
 export function DidNotRunException() {
   this.success = false;
@@ -24,6 +22,7 @@ export function DidNotRunException() {
 const NEXT   = 'next';
 const THROW  = 'throw';
 const RETURN = 'return';
+const BREAK = 'break';
 const FORCE = {};
 
 export let csp = window.csp;
@@ -373,7 +372,7 @@ export function forEach(iterable, fn) {
     },
     _disposeIter() {
       log("HOST: host object destroyed, disposing of source iteration", this.it);
-      this.it.proceed(FORCE, RETURN, null);
+      this.it.proceed(FORCE, BREAK, null);
     },
   };
 }
@@ -387,7 +386,7 @@ function createBuffer(obs) {
     takers: [],
     take(taker) {
       if (this.buffer.length) {
-        let value = this.buffer.pop();
+        let value = this.buffer.shift();
         taker.commit(value);
       } else {
         this.takers.push(taker);
@@ -448,22 +447,31 @@ function createBuffer(obs) {
   return buffer;
 }
 
+
+forEach(asyncThing, function * () {
+  // if asyncThing is noisy, and then the object dies... then
+  // we stop iterating right away.
+  //
+  // so that iteration
+});
+
+
 function start(owner, sourceIterable, fn) {
   log("SOURCE: Starting forEach with", owner, sourceIterable, fn);
 
   let rawIterable;
   if (sourceIterable[Symbol.iterator]) {
-    log("SOURCE: is iterable");
+    log("SOURCE: detected iterable");
     rawIterable = sourceIterable[Symbol.iterator]();
   } else if (typeof sourceIterable.subscribe === 'function') {
-    log("SOURCE: is observable");
+    log("SOURCE: detected observable");
     rawIterable = createBuffer(sourceIterable);
   } else {
     // TODO: log error obj
     throw new Error("Unknown structure passed to forEach; expected an iterable, observable, or a promise");
   }
 
-  let sourceIterator = makeIterator(rawIterable, (sourceIteration) => {
+  let sourceIterator = _makeIterator(rawIterable, (sourceIteration) => {
     log("SOURCE: next value ", sourceIteration);
 
     if (sourceIteration.done) {
@@ -472,6 +480,7 @@ function start(owner, sourceIterable, fn) {
     }
 
     // Pass it to the mapping fn, which may be be a normal fn or a generator fn
+    debugger;
     let maybeIterator = fn.call(owner, sourceIteration.value);
 
     // Normalize the value into an iterable:
@@ -482,7 +491,7 @@ function start(owner, sourceIterable, fn) {
     // function * () {...}
     //   already is an iterable, so normalization is a noop
     let doneSeen = false;
-    let opsIterator = makeIterator(maybeIterator, opsIteration => {
+    let opsIterator = _makeIterator(maybeIterator, opsIteration => {
       let { value, done, index } = opsIteration ;
       let disposable; // babel-intentional
 
@@ -553,18 +562,18 @@ function makeSourceIterator(value) {
   if (value && typeof value.next === 'function') {
     it = value;
   } else {
-    let done = false;
+    let hasFiredSingleValue = false;
     it = {
       next() {
-        if (done) {
+        if (hasFiredSingleValue) {
           return {
             done: true,
             value: undefined,
           };
         } else {
-          done = true;
+          hasFiredSingleValue = true;
           return {
-            done: false,
+            done: true,
             value,
           };
         }
@@ -575,13 +584,13 @@ function makeSourceIterator(value) {
   return it;
 }
 
-function makeIterator(value, handler) {
+
+export function _makeIterator(value, handler) {
   let it = makeSourceIterator(value);
 
   let index = 0;
 
   let disposables = [];
-  let finalizedResponse;
   let subit = {
     //dispose() {
       //disposeAll(disposables);
@@ -613,25 +622,27 @@ function makeIterator(value, handler) {
       let nextValue = this[method](value);
       if (nextValue.then) {
         nextValue.then(v => {
-          handler(Object.assign({ index }, v));
+          handler({ index, value: v, done: false });
         });
       } else {
         handler(Object.assign({ index }, nextValue));
       }
     },
     next(value) {
-      return finalizedResponse || it.next(value);
+      return it.next(value);
     },
-    return(v) {
-      if (typeof it.return === 'function') {
-        finalizedResponse = it.return(v);
-      } else {
-        finalizedResponse = {
-          done: true,
-          value: v,
-        };
-      }
-      return finalizedResponse;
+    break(v) {
+
+
+      //if (typeof it.return === 'function') {
+        //finalizedResponse = it.return(v);
+      //} else {
+        //finalizedResponse = {
+          //done: true,
+          //value: v,
+        //};
+      //}
+      //return finalizedResponse;
     },
   };
 

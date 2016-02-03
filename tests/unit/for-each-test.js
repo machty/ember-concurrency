@@ -155,6 +155,17 @@ test("forEach can loop over time intervals", function(assert) {
   });
 });
 
+test("forEach can cancel observables on the first iteration", function(assert) {
+  assert.expect(1);
+  Ember.run(() => {
+    let obj = Ember.Object.create();
+    forEach(window.Rx.Observable.range(1,10), function * (v) {
+      assert.equal(v, 1);
+      obj.destroy();
+    }).attach(obj);
+  });
+});
+
 /*
 test("forEach: yielding interval() just does one-off timers", function(assert) {
   QUnit.stop();

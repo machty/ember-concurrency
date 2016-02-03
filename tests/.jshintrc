@@ -16,6 +16,8 @@
     "fillIn",
     "click",
     "keyEvent",
+    "module",
+    "test",
     "triggerEvent",
     "find",
     "findWithAssert",
