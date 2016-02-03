@@ -98,13 +98,29 @@ test("Iterations ignore stepping functions if the wrong index is passed in", fun
   };
 
   runAndExpect('step',  1, false);
-  runAndExpect('step', -1, false);
   runAndExpect('step', 0, { index: 1, done: false, value: 1 });
   runAndExpect('step',  -2, false);
   runAndExpect('step', 0, false);
   runAndExpect('step', 1, { index: 2, done: false, value: 2 });
   runAndExpect('break', 0, false);
   runAndExpect('redo', 0, false);
+});
+
+test("Iterations ignore stepping functions always step on -1 index", function(assert) {
+  assert.expect(1);
+
+  let iterator = _makeIteratorFromFunction(oneTwoThree, {}, []);
+  let arr = [];
+  let iteration = _makeIteration(iterator, ({ done, value }) => {
+    if (!done) { arr.push(value); }
+  });
+
+  Ember.run(iteration, 'step', -1);
+  Ember.run(iteration, 'step', -1);
+  Ember.run(iteration, 'step', -1);
+  Ember.run(iteration, 'step', -1);
+  Ember.run(iteration, 'step', -1);
+  assert.deepEqual(arr, [1,2,3]);
 });
 
 test(".step() accepts a value that it passes back into the iteratable", function(assert) {
@@ -123,5 +139,24 @@ test(".step() accepts a value that it passes back into the iteratable", function
   Ember.run(iteration, 'step', 2, 'b');
 });
 
+test(".registerDisposable", function(assert) {
+  assert.expect(4);
 
+  let iterator = _makeIteratorFromFunction(oneTwoThree, {}, []);
+  let iteration = _makeIteration(iterator, Ember.K);
+
+  let arr = [];
+  Ember.run(() => {
+    iteration.registerDisposable(0, { dispose() { arr.push('a'); this.dispose = null; } });
+    iteration.registerDisposable(0, { dispose() { arr.push('b'); this.dispose = null; } });
+    iteration.registerDisposable(0, { dispose() { arr.push('c'); this.dispose = null; } });
+    assert.deepEqual(arr, []);
+    iteration.step(5, undefined);
+    assert.deepEqual(arr, []);
+    iteration.step(6, undefined);
+    assert.deepEqual(arr, []);
+    iteration.step(0, undefined);
+    assert.deepEqual(arr, ['a', 'b', 'c']);
+  });
+});
 

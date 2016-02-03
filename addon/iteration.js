@@ -1,44 +1,64 @@
 const NO_VALUE_YET = {};
 const NEXT   = 'next';
-const THROW  = 'throw';
 const RETURN = 'return';
-const BREAK = 'break';
-const FORCE = {};
 
 function Iteration (iterator, fn) {
   this.iterator = iterator;
   this.fn = fn;
   this.lastValue = NO_VALUE_YET;
   this.index = 0;
+  this.disposables = [];
 }
 
-Iteration.prototype.step = function(index, nextValue) {
-  this._step(NEXT, index, nextValue);
-};
+Iteration.prototype = {
+  step(index, nextValue) {
+    this._step(NEXT, index, nextValue);
+  },
 
-Iteration.prototype._step = function(iterFn, index, nextValue) {
-  if (index !== this.index) {
-    return;
+  _step(iterFn, index, nextValue) {
+    if (!this._indexValid(index)) { return; }
+    this._disposeDisposables();
+    this.index++;
+    if (iterFn) {
+      this.lastValue = this.iterator[iterFn](nextValue);
+    }
+    this._runFunctionWithIndex();
+  },
+
+  redo(index) {
+    this._step(null, index);
+  },
+
+  break(index) {
+    this._step(RETURN, index);
+  },
+
+  _runFunctionWithIndex() {
+    let result = Object.assign({ index: this.index }, this.lastValue);
+    this.fn(result);
+  },
+
+  _indexValid(index) {
+    return (index === this.index || index === -1);
+  },
+
+  registerDisposable(index, disposable) {
+    if (!this._indexValid(index)) { return; }
+    this.disposables.push(disposable);
+  },
+
+  _disposeDisposables() {
+    for (let i = 0, l = this.disposables.length; i < l; i++) {
+      let d = this.disposables[i];
+      d.dispose();
+    }
+    this.disposables.length = 0;
   }
-  this.index++;
-  if (iterFn) {
-    this.lastValue = this.iterator[iterFn](nextValue);
-  }
-  this._runFunctionWithIndex();
 };
 
-Iteration.prototype.redo = function(index) {
-  this._step(null, index);
-};
 
-Iteration.prototype.break = function(index) {
-  this._step(RETURN, index);
-};
 
-Iteration.prototype._runFunctionWithIndex = function() {
-  let result = Object.assign({ index: this.index }, this.lastValue);
-  this.fn(result);
-};
+
 
 export function _makeIteration(iterator, fn) {
   return new Iteration(iterator, fn);
