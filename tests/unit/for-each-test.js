@@ -1,45 +1,8 @@
 import Ember from 'ember';
 import { forEach } from 'ember-concurrency';
-import { interval } from 'ember-concurrency';
+import { interval, _numIntervals } from 'ember-concurrency';
 
 module('Unit: forEach');
-
-//let RootProcess = Ember.Object.extend({
-  //willDestroy() {
-    //// this gets called when host object is destroyed.
-  //},
-//});
-
-//function task() {
-  //// return an object that declares its own supervisor that exposes
-  //// the mailbox
-
-  //return supervisor(function() {
-  //});
-
-  //return liveComputed(function(key) {
-    //let hostObject = this;
-
-    //let supervisor = TaskSupervisor.create({
-    //});
-
-    //let supervisor = ForEachSupervisor.create({
-    //});
-
-    //installDestroyHandler(hostObject, function() {
-      //supervisor.destroy();
-    //});
-  //});
-//}
-
-//function forEach() {
-  //// return an object that declares its own supervisor that exposes
-  //// the mailbox
-
-  //return supervisor(function() {
-  //});
-//}
-
 
 test("forEach throws an error if used outside of task without .attach", function(assert) {
   assert.expect(1);
@@ -78,7 +41,7 @@ test("forEach loops over arrays", function(assert) {
   assert.deepEqual(arr, [1,2,3]);
 });
 
-test("`this` in forEach mapper fn is the attached host obj", function(assert) {
+test("`this` in forEach mapper fn is the attached host obj: regular function", function(assert) {
   assert.expect(1);
   Ember.run(() => {
     let obj = Ember.Object.create();
@@ -88,7 +51,15 @@ test("`this` in forEach mapper fn is the attached host obj", function(assert) {
   });
 });
 
-
+test("`this` in forEach mapper fn is the attached host obj: generator function", function(assert) {
+  assert.expect(1);
+  Ember.run(() => {
+    let obj = Ember.Object.create();
+    forEach([1], function * () {
+      assert.equal(this, obj);
+    }).attach(obj);
+  });
+});
 
 test("forEach blocks on async values returned from fns, discontinues on owner destruction: regular function", function(assert) {
   assert.expect(6);
@@ -112,6 +83,7 @@ test("forEach blocks on async values returned from fns, discontinues on owner de
   assert.equal(val, 2);
 });
 
+/*
 test("forEach blocks on async values returned from fns, discontinues on owner destruction: generator function", function(assert) {
   assert.expect(6);
   let defer, obj;
@@ -133,9 +105,10 @@ test("forEach blocks on async values returned from fns, discontinues on owner de
   Ember.run(defer.resolve);
   assert.equal(val, 2);
 });
+*/
 
 test("forEach allows yielding promises to pause iteration", function(assert) {
-  assert.expect(2);
+  assert.expect(4);
   let defer, obj;
   Ember.run(() => {
     obj = Ember.Object.create();
@@ -151,28 +124,60 @@ test("forEach allows yielding promises to pause iteration", function(assert) {
   });
   Ember.run(null, defer.resolve, 'a');
   Ember.run(null, defer.resolve, 'b');
+  Ember.run(null, defer.resolve, 'a');
+  Ember.run(null, defer.resolve, 'b');
+  Ember.run(null, defer.resolve, 'c');
 });
 
 test("forEach can loop over time intervals", function(assert) {
   QUnit.stop();
-  assert.expect(5);
-  let defer, obj;
+  assert.expect(12);
+  let obj, isValid = true;
 
-  let isValid = true;
+  assert.equal(_numIntervals, 0);
 
   let i = 0;
   Ember.run(() => {
     obj = Ember.Object.create();
     forEach(interval(10), function * () {
+      assert.equal(_numIntervals, 1);
       i++;
       assert.ok(isValid, "should not keep iterating");
       if (i === 5) {
         isValid = false;
         obj.destroy();
-        QUnit.start();
+        Ember.run.next(() => {
+          assert.equal(_numIntervals, 0);
+          QUnit.start();
+        });
       }
     }).attach(obj);
   });
 });
+
+/*
+test("forEach: yielding interval() just does one-off timers", function(assert) {
+  QUnit.stop();
+  assert.expect(5);
+  let obj;
+  let i = 0;
+  Ember.run(() => {
+    obj = Ember.Object.create();
+    forEach([1,2], function * (v) {
+      assert.equal(v, 1);
+      yield interval(10);
+      yield interval(10);
+      yield interval(10);
+      obj.destroy();
+
+      Ember.run.later(() => {
+        assert.equal(_numIntervals, 0);
+        QUnit.start();
+      }, 50);
+    }).attach(obj);
+  });
+});
+*/
+
 
 

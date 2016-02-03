@@ -175,11 +175,15 @@ export function createObservable(fn) {
   };
 }
 
+
+export let _numIntervals = 0;
 export function interval(ms) {
   return createObservable(publish => {
     let intervalId = setInterval(publish, ms);
+    _numIntervals++;
     return () => {
       clearInterval(intervalId);
+      _numIntervals--;
     };
   });
 }
@@ -349,6 +353,10 @@ function * crankAsyncLoop(iterable, hostObject, genFn) {
   }
 }
 
+function log(...args) {
+  console.log(...args);
+}
+
 export function forEach(iterable, fn) {
   let owner;
   Ember.run.schedule('actions', () => {
@@ -364,6 +372,7 @@ export function forEach(iterable, fn) {
       cleanupOnDestroy(owner, this, '_disposeIter');
     },
     _disposeIter() {
+      log("HOST: host object destroyed, disposing of source iteration", this.it);
       this.it.proceed(FORCE, RETURN, null);
     },
   };
@@ -403,6 +412,7 @@ function createBuffer(obs) {
       this.buffer.push(value);
     },
     return() {
+      // this needs a way of teardown
       this.dispose();
       return {
         done: true,
@@ -439,10 +449,14 @@ function createBuffer(obs) {
 }
 
 function start(owner, sourceIterable, fn) {
+  log("SOURCE: Starting forEach with", owner, sourceIterable, fn);
+
   let rawIterable;
   if (sourceIterable[Symbol.iterator]) {
+    log("SOURCE: is iterable");
     rawIterable = sourceIterable[Symbol.iterator]();
   } else if (typeof sourceIterable.subscribe === 'function') {
+    log("SOURCE: is observable");
     rawIterable = createBuffer(sourceIterable);
   } else {
     // TODO: log error obj
@@ -450,7 +464,10 @@ function start(owner, sourceIterable, fn) {
   }
 
   let sourceIterator = makeIterator(rawIterable, (sourceIteration) => {
+    log("SOURCE: next value ", sourceIteration);
+
     if (sourceIteration.done) {
+      log("SOURCE: iteration done, doing nothing", sourceIteration);
       return;
     }
 
@@ -464,12 +481,17 @@ function start(owner, sourceIterable, fn) {
     //   becomes an iterable that returns an observable and finishes
     // function * () {...}
     //   already is an iterable, so normalization is a noop
-    let opsIterator = makeIterator(maybeIterator, ({ value, done, index }) => {
+    let doneSeen = false;
+    let opsIterator = makeIterator(maybeIterator, opsIteration => {
+      let { value, done, index } = opsIteration ;
       let disposable; // babel-intentional
 
       // FIXME: this is a little wack; need to normalize "process" iterators
       // and the way their last values are emitted.
-      if (done && value === undefined) {
+
+      log("OPS: next value", opsIteration);
+
+      if (done) {
         sourceIterator.proceed(sourceIteration.index, NEXT, value);
         return;
       }
@@ -488,14 +510,22 @@ function start(owner, sourceIterable, fn) {
         }, () => {
           opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
         });
-        // TODO: this disposable stuff is wrong ... () or .dispose() ?
-        opsIterator.registerDisposable(index, disposable);
+
+        //opsIterator.registerDisposable(index, disposable);
       } else {
         opsIterator.proceed(index, NEXT, value);
       }
     });
+    opsIterator.label = "ops";
+    log("OPS: starting opsIterator", sourceIterator);
+
+    //sourceIterator.registerDisposable(sourceIteration.index, opsIterator);
     opsIterator.proceed(0, NEXT, null);
   });
+  sourceIterator.label = "source";
+
+  log("SOURCE: starting sourceIterator", sourceIterator);
+
   sourceIterator.proceed(0, NEXT, null);
   return sourceIterator;
 }
@@ -551,7 +581,13 @@ function makeIterator(value, handler) {
   let index = 0;
 
   let disposables = [];
+  let finalizedResponse;
   let subit = {
+    //dispose() {
+      //disposeAll(disposables);
+      //this.disposed = true;
+      //this.proceed(index, RETURN, null);
+    //},
     proceed: function(_index, method, nextValue) {
       if (_index !== index && _index !== FORCE) {
         // already processed from this point.
@@ -564,7 +600,9 @@ function makeIterator(value, handler) {
       if (_index !== index) {
         // dispose asynchronously
         // TODO: TEST THIS
-        dispatch(null, d);
+        dispatch(null, () => {
+          d.dispose();
+        });
         return;
       }
       disposables.push(d);
@@ -582,24 +620,18 @@ function makeIterator(value, handler) {
       }
     },
     next(value) {
-      return it.next(value);
-    },
-    throw(error) {
-      if (typeof it.throw === 'function') {
-        return it.throw(error);
-      } else {
-        throw error;
-      }
+      return finalizedResponse || it.next(value);
     },
     return(v) {
       if (typeof it.return === 'function') {
-        return it.return(v);
+        finalizedResponse = it.return(v);
       } else {
-        return {
+        finalizedResponse = {
           done: true,
           value: v,
         };
       }
+      return finalizedResponse;
     },
   };
 
@@ -608,7 +640,7 @@ function makeIterator(value, handler) {
 
 function disposeAll(disposables) {
   for (let i = 0; i < disposables.length; ++i) {
-    disposables[i]();
+    disposables[i].dispose();
   }
   disposables.length = 0;
 }
