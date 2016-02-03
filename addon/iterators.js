@@ -37,8 +37,28 @@ RegularFunctionIterator.prototype.return = function(value) {
   return this.next(value);
 };
 
-// maybe these guys should have returns instead of breaks.
-// and then
+function ProxyIterator(iter) {
+  this.iter = iter;
+  this.returnValue = null;
+}
+
+ProxyIterator.prototype.next = function() {
+  if (this.returnValue) { return this.returnValue; }
+
+  let result = this.iter.next();
+  if (result.done) {
+    this.returnValue = result;
+  }
+  return result;
+};
+
+ProxyIterator.prototype.return = function(value) {
+  if (!this.returnValue) {
+    this.returnValue = { done: true, value: value };
+  }
+
+  return this.returnValue;
+};
 
 export function _makeIteratorFromFunction(fn, context, args) {
   let value = fn.apply(context, args);
@@ -49,3 +69,19 @@ export function _makeIteratorFromFunction(fn, context, args) {
     return new RegularFunctionIterator(value);
   }
 }
+
+export function _makeIterator(iterable, owner, args) {
+  if (typeof iterable === 'function') {
+    return _makeIteratorFromFunction(iterable, owner, args);
+  } else if (iterable[Symbol.iterator]) {
+    return new ProxyIterator(iterable[Symbol.iterator]());
+  } else if (typeof iterable.subscribe === 'function') {
+    throw new Error("not implemented");
+    //log("SOURCE: detected push-based observable iterator");
+    //sourceIterator = createBuffer(sourceIterable);
+  } else {
+    // TODO: log error obj
+    throw new Error("Unknown structure passed to forEach; expected an iterable, observable, or a promise");
+  }
+}
+

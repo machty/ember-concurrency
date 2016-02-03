@@ -3,6 +3,8 @@ import getOwner from 'ember-getowner-polyfill';
 import Task from 'ember-concurrency/task';
 import AsyncIterator from 'ember-concurrency/async-iterator';
 import { isGeneratorIterator } from 'ember-concurrency/utils';
+import { _makeIteration } from 'ember-concurrency/iteration';
+import { _makeIterator } from 'ember-concurrency/iterators';
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -447,96 +449,65 @@ function createBuffer(obs) {
   return buffer;
 }
 
+const EMPTY_ARRAY = [];
 
-forEach(asyncThing, function * () {
-  // if asyncThing is noisy, and then the object dies... then
-  // we stop iterating right away.
-  //
-  // so that iteration
-});
+function start(owner, sourceIterable, iterationHandlerFn) {
+  log("SOURCE: Starting forEach with", owner, sourceIterable, iterationHandlerFn);
 
+  let sourceIterator = _makeIterator(sourceIterable, owner, EMPTY_ARRAY);
+  let sourceIteration = _makeIteration(sourceIterator, (si) => {
+    log("SOURCE: next value ", si);
 
-function start(owner, sourceIterable, fn) {
-  log("SOURCE: Starting forEach with", owner, sourceIterable, fn);
-
-  let rawIterable;
-  if (sourceIterable[Symbol.iterator]) {
-    log("SOURCE: detected iterable");
-    rawIterable = sourceIterable[Symbol.iterator]();
-  } else if (typeof sourceIterable.subscribe === 'function') {
-    log("SOURCE: detected observable");
-    rawIterable = createBuffer(sourceIterable);
-  } else {
-    // TODO: log error obj
-    throw new Error("Unknown structure passed to forEach; expected an iterable, observable, or a promise");
-  }
-
-  let sourceIterator = _makeIterator(rawIterable, (sourceIteration) => {
-    log("SOURCE: next value ", sourceIteration);
-
-    if (sourceIteration.done) {
-      log("SOURCE: iteration done, doing nothing", sourceIteration);
+    if (si.done) {
+      log("SOURCE: iteration done", si);
       return;
     }
 
-    // Pass it to the mapping fn, which may be be a normal fn or a generator fn
-    debugger;
-    let maybeIterator = fn.call(owner, sourceIteration.value);
+    let opsIterator = _makeIterator(iterationHandlerFn, owner, [si.value /*, control */]);
+    let opsIteration = _makeIteration(opsIterator, oi => {
+      let { value, done, index } = oi ;
+      let disposable;
 
-    // Normalize the value into an iterable:
-    // (v) => return Promise
-    //   becomes an iterable that returns a promise and finishes
-    // (v) => return Observable
-    //   becomes an iterable that returns an observable and finishes
-    // function * () {...}
-    //   already is an iterable, so normalization is a noop
-    let doneSeen = false;
-    let opsIterator = _makeIterator(maybeIterator, opsIteration => {
-      let { value, done, index } = opsIteration ;
-      let disposable; // babel-intentional
-
-      // FIXME: this is a little wack; need to normalize "process" iterators
-      // and the way their last values are emitted.
-
-      log("OPS: next value", opsIteration);
+      log("OPS: next value", oi);
 
       if (done) {
-        sourceIterator.proceed(sourceIteration.index, NEXT, value);
+        sourceIteration.step(si.index);
         return;
       }
 
       if (value && typeof value.then === 'function') {
         value.then(v => {
-          opsIterator.proceed(index, NEXT, v);
+          opsIteration.step(index, v);
         }, error => {
-          opsIterator.proceed(index, THROW, error);
+          //opsIterator.proceed(index, THROW, error);
         });
       } else if (value && typeof value.subscribe === 'function') {
         disposable = value.subscribe(v => {
-          opsIterator.proceed(index, NEXT, v);
+          opsIteration.step(index, v);
+          //opsIterator.proceed(index, NEXT, v);
         }, error => {
-          opsIterator.proceed(index, THROW, error);
+          //opsIterator.proceed(index, THROW, error);
         }, () => {
-          opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
+          //opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
         });
 
         //opsIterator.registerDisposable(index, disposable);
       } else {
-        opsIterator.proceed(index, NEXT, value);
+        opsIteration.step(index, value);
       }
     });
-    opsIterator.label = "ops";
-    log("OPS: starting opsIterator", sourceIterator);
+    opsIteration.label = "ops";
+    log("OPS: starting execution", opsIteration);
 
     //sourceIterator.registerDisposable(sourceIteration.index, opsIterator);
-    opsIterator.proceed(0, NEXT, null);
+    opsIteration.step(0, undefined);
   });
-  sourceIterator.label = "source";
 
-  log("SOURCE: starting sourceIterator", sourceIterator);
+  log("SOURCE: starting iteration", sourceIteration);
+  sourceIteration.label = "source";
+  sourceIteration.step(0, undefined);
 
-  sourceIterator.proceed(0, NEXT, null);
-  return sourceIterator;
+  return sourceIteration;
 }
 
 function isAsyncProducer(v) {
@@ -555,98 +526,6 @@ function dispatch(ctx, fn, arg) {
 	Ember.run.join(() => {
 		Ember.run.schedule('actions', ctx, fn, arg);
 	});
-}
-
-function makeSourceIterator(value) {
-  let it;
-  if (value && typeof value.next === 'function') {
-    it = value;
-  } else {
-    let hasFiredSingleValue = false;
-    it = {
-      next() {
-        if (hasFiredSingleValue) {
-          return {
-            done: true,
-            value: undefined,
-          };
-        } else {
-          hasFiredSingleValue = true;
-          return {
-            done: true,
-            value,
-          };
-        }
-      }
-    };
-    it.source = value;
-  }
-  return it;
-}
-
-
-export function _makeIterator(value, handler) {
-  let it = makeSourceIterator(value);
-
-  let index = 0;
-
-  let disposables = [];
-  let subit = {
-    //dispose() {
-      //disposeAll(disposables);
-      //this.disposed = true;
-      //this.proceed(index, RETURN, null);
-    //},
-    proceed: function(_index, method, nextValue) {
-      if (_index !== index && _index !== FORCE) {
-        // already processed from this point.
-        return;
-      }
-      index++;
-      dispatch(this, '_proceed', [method, nextValue]);
-    },
-    registerDisposable(_index, d) {
-      if (_index !== index) {
-        // dispose asynchronously
-        // TODO: TEST THIS
-        dispatch(null, () => {
-          d.dispose();
-        });
-        return;
-      }
-      disposables.push(d);
-    },
-    _proceed([method, value]) {
-      disposeAll(disposables);
-
-      let nextValue = this[method](value);
-      if (nextValue.then) {
-        nextValue.then(v => {
-          handler({ index, value: v, done: false });
-        });
-      } else {
-        handler(Object.assign({ index }, nextValue));
-      }
-    },
-    next(value) {
-      return it.next(value);
-    },
-    break(v) {
-
-
-      //if (typeof it.return === 'function') {
-        //finalizedResponse = it.return(v);
-      //} else {
-        //finalizedResponse = {
-          //done: true,
-          //value: v,
-        //};
-      //}
-      //return finalizedResponse;
-    },
-  };
-
-  return subit;
 }
 
 function disposeAll(disposables) {
