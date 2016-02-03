@@ -369,12 +369,12 @@ export function forEach(iterable, fn) {
   return {
     attach(_owner) {
       owner = _owner;
-      this.it = start(owner, iterable, fn);
+      this.iteration = start(owner, iterable, fn);
       cleanupOnDestroy(owner, this, '_disposeIter');
     },
     _disposeIter() {
-      log("HOST: host object destroyed, disposing of source iteration", this.it);
-      this.it.proceed(FORCE, BREAK, null);
+      log("HOST: host object destroyed, disposing of source iteration", this.iteration);
+      this.iteration.break(-1);
     },
   };
 }
@@ -471,8 +471,12 @@ function start(owner, sourceIterable, iterationHandlerFn) {
       log("OPS: next value", oi);
 
       if (done) {
-        sourceIteration.step(si.index);
-        return;
+        // unlike array iterators, "process" iterators can "return" values,
+        // and we still want to block on those values before full returning.
+        if (!value) {
+          sourceIteration.step(si.index);
+          return;
+        }
       }
 
       if (value && typeof value.then === 'function') {
@@ -496,6 +500,13 @@ function start(owner, sourceIterable, iterationHandlerFn) {
         opsIteration.step(index, value);
       }
     });
+
+    sourceIteration.registerDisposable(si.index, {
+      dispose() {
+        opsIteration.break(-1);
+      },
+    });
+
     opsIteration.label = "ops";
     log("OPS: starting execution", opsIteration);
 

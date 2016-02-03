@@ -8,6 +8,7 @@ function Iteration (iterator, fn) {
   this.lastValue = NO_VALUE_YET;
   this.index = 0;
   this.disposables = [];
+  this.stepQueue= [];
 }
 
 Iteration.prototype = {
@@ -17,8 +18,20 @@ Iteration.prototype = {
 
   _step(iterFn, index, nextValue) {
     if (!this._indexValid(index)) { return; }
-    this._disposeDisposables();
+    this.stepQueue.push([iterFn, nextValue]);
+    Ember.run.once(this, this._flushQueue);
+  },
+
+  _flushQueue() {
     this.index++;
+    let queue = this.stepQueue;
+    this.stepQueue = [];
+
+    this._disposeDisposables();
+
+    // TODO: add tests around this, particularly when
+    // two things give the iteration conflicting instructions.
+    let [iterFn, nextValue] = queue.pop();
     if (iterFn) {
       this.lastValue = this.iterator[iterFn](nextValue);
     }

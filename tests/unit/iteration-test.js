@@ -150,13 +150,15 @@ test(".registerDisposable", function(assert) {
     iteration.registerDisposable(0, { dispose() { arr.push('a'); this.dispose = null; } });
     iteration.registerDisposable(0, { dispose() { arr.push('b'); this.dispose = null; } });
     iteration.registerDisposable(0, { dispose() { arr.push('c'); this.dispose = null; } });
-    assert.deepEqual(arr, []);
-    iteration.step(5, undefined);
-    assert.deepEqual(arr, []);
-    iteration.step(6, undefined);
-    assert.deepEqual(arr, []);
-    iteration.step(0, undefined);
-    assert.deepEqual(arr, ['a', 'b', 'c']);
   });
+  assert.deepEqual(arr, []);
+  Ember.run(iteration, 'step', 5, undefined);
+  assert.deepEqual(arr, []);
+  Ember.run(iteration, 'step', 6, undefined);
+  iteration.step(6, undefined);
+  Ember.run(iteration, 'step', 0, undefined);
+  assert.deepEqual(arr, ['a', 'b', 'c']);
+  Ember.run(iteration, 'step', 1, undefined);
+  assert.deepEqual(arr, ['a', 'b', 'c']);
 });
 
