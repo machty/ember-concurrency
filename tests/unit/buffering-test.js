@@ -63,5 +63,5 @@ doBufferingTest("keepFirstIntermediateValue: ranges", rangeObservable, keepFirst
 doBufferingTest("keepFirstIntermediateValue: sporadic", sporadicObservable, keepFirstIntermediateValue, [1,2,4,5]);
 
 doBufferingTest("keepLastIntermediateValue: ranges", rangeObservable, keepLastIntermediateValue, [1, 5, 101, 105]);
-doBufferingTest("keepLastIntermediateValue: ranges", rangeObservable, keepLastIntermediateValue, [1, 5, 101, 105]);
+doBufferingTest("keepLastIntermediateValue: sporadic", sporadicObservable, keepLastIntermediateValue, [1, 3, 4, 6]);
 
