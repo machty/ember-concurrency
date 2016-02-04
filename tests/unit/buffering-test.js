@@ -15,7 +15,7 @@ let rangeObservable = Observable.concat(
   range(101,5).delay(150)
 );
 
-// 1 (5ms) 2 3 (100ms) 4 5 6
+// 1 (2ms) 2 3 (100ms) 4 5 6
 let sporadicObservable = Observable.concat(
   just(1),
   just(2).delay(5),
@@ -60,5 +60,5 @@ doBufferingTest("dropIntermediateValues: ranges", rangeObservable, dropIntermedi
 doBufferingTest("dropIntermediateValues: sporadic", sporadicObservable, dropIntermediateValues, [1,4]);
 
 doBufferingTest("keepFirstIntermediateValue: ranges", rangeObservable, keepFirstIntermediateValue, [1, 2, 101, 102]);
-doBufferingTest("keepFirstIntermediateValue: ranges", rangeObservable, dropIntermediateValues, [1,101]);
+doBufferingTest("keepFirstIntermediateValue: ranges", rangeObservable, keepFirstIntermediateValue, [1,2,101,102]);
 
