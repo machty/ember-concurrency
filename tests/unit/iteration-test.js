@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { _makeIteration } from 'ember-concurrency/iteration';
-import { _makeIteratorFromFunction } from 'ember-concurrency/iterators';
+import { _makeIterator } from 'ember-concurrency/iterators';
 
 module('Unit: Iterations');
 
@@ -13,7 +13,7 @@ function * oneTwoThree() {
 test("stepping through a Iteration", function(assert) {
   assert.expect(5);
 
-  let iterator = _makeIteratorFromFunction(oneTwoThree, {}, []);
+  let iterator = _makeIterator(oneTwoThree, {}, []);
   let outerValue;
   let iteration = _makeIteration(iterator, v => {
     outerValue = v;
@@ -34,7 +34,7 @@ test("stepping through a Iteration", function(assert) {
 test("Iterations let you .redo() the same element over and over", function(assert) {
   assert.expect(9);
 
-  let iterator = _makeIteratorFromFunction(oneTwoThree, {}, []);
+  let iterator = _makeIterator(oneTwoThree, {}, []);
   let outerValue;
   let iteration = _makeIteration(iterator, v => {
     outerValue = v;
@@ -63,7 +63,7 @@ test("Iterations let you .redo() the same element over and over", function(asser
 test("Iterations let you .break() out of iteration", function(assert) {
   assert.expect(4);
 
-  let iterator = _makeIteratorFromFunction(oneTwoThree, {}, []);
+  let iterator = _makeIterator(oneTwoThree, {}, []);
   let outerValue;
   let iteration = _makeIteration(iterator, v => {
     outerValue = v;
@@ -82,7 +82,7 @@ test("Iterations let you .break() out of iteration", function(assert) {
 test("Iterations ignore stepping functions if the wrong index is passed in", function(assert) {
   assert.expect(2);
 
-  let iterator = _makeIteratorFromFunction(oneTwoThree, {}, []);
+  let iterator = _makeIterator(oneTwoThree, {}, []);
   let currentExpectedValue;
   let iteration = _makeIteration(iterator, v => {
     if (!currentExpectedValue) {
@@ -109,7 +109,7 @@ test("Iterations ignore stepping functions if the wrong index is passed in", fun
 test("Iterations ignore stepping functions always step on -1 index", function(assert) {
   assert.expect(1);
 
-  let iterator = _makeIteratorFromFunction(oneTwoThree, {}, []);
+  let iterator = _makeIterator(oneTwoThree, {}, []);
   let arr = [];
   let iteration = _makeIteration(iterator, ({ done, value }) => {
     if (!done) { arr.push(value); }
@@ -131,7 +131,7 @@ test(".step() accepts a value that it passes back into the iteratable", function
     assert.equal('b', yield);
   }
 
-  let iterator = _makeIteratorFromFunction(foo, {}, []);
+  let iterator = _makeIterator(foo, {}, []);
   let iteration = _makeIteration(iterator, Ember.K);
 
   Ember.run(iteration, 'step', 0, undefined);
@@ -142,7 +142,7 @@ test(".step() accepts a value that it passes back into the iteratable", function
 test(".registerDisposable", function(assert) {
   assert.expect(4);
 
-  let iterator = _makeIteratorFromFunction(oneTwoThree, {}, []);
+  let iterator = _makeIterator(oneTwoThree, {}, []);
   let iteration = _makeIteration(iterator, Ember.K);
 
   let arr = [];
