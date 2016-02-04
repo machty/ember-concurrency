@@ -38,6 +38,30 @@ export function dropIntermediateValues() {
   CURRENT_ITERATION.setBufferPolicy(_dropIntermediateValues);
 }
 
+let _keepFirstIntermediateValue = {
+  name: 'keepFirstIntermediateValue',
+  create: returnSelf,
+  attach(iterator) {
+    if (iterator.takers.length === 0) {
+      // drop all but first buffered values
+      iterator.buffer.length = 1;
+    }
+  },
+  put(value, iterator) {
+    if (iterator.takers.length > 0) {
+      iterator.put(value);
+    } else {
+      if (iterator.buffer.length === 0) {
+        iterator.put(value);
+      }
+    }
+  },
+};
+
+export function keepFirstIntermediateValue() {
+  CURRENT_ITERATION.setBufferPolicy(_keepFirstIntermediateValue);
+}
+
 function Iteration(iterator, sourceIteration, fn) {
   this.iterator = iterator;
   this.fn = fn;

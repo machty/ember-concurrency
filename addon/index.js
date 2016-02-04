@@ -3,10 +3,10 @@ import getOwner from 'ember-getowner-polyfill';
 import Task from 'ember-concurrency/task';
 import AsyncIterator from 'ember-concurrency/async-iterator';
 import { isGeneratorIterator } from 'ember-concurrency/utils';
-import { _makeIteration, dropIntermediateValues } from 'ember-concurrency/iteration';
+import { _makeIteration, dropIntermediateValues, keepFirstIntermediateValue } from 'ember-concurrency/iteration';
 import { _makeIterator } from 'ember-concurrency/iterators';
 
-export { dropIntermediateValues };
+export { dropIntermediateValues, keepFirstIntermediateValue };
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
