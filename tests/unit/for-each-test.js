@@ -159,7 +159,7 @@ test("forEach can cancel observables on the first iteration", function(assert) {
   assert.expect(1);
   Ember.run(() => {
     let obj = Ember.Object.create();
-    forEach(window.Rx.Observable.range(1,10), function * (v) {
+    forEach(window.Rx.Observable.range(1,10).delay(1), function * (v) {
       assert.equal(v, 1);
       obj.destroy();
     }).attach(obj);

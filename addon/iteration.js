@@ -25,15 +25,27 @@ Iteration.prototype = {
   _flushQueue() {
     this.index++;
     let queue = this.stepQueue;
+    if (queue.length === 0) { return; }
     this.stepQueue = [];
-
     this._disposeDisposables();
 
     // TODO: add tests around this, particularly when
     // two things give the iteration conflicting instructions.
+    let index = this.index;
     let [iterFn, nextValue] = queue.pop();
     if (iterFn) {
-      this.lastValue = this.iterator[iterFn](nextValue);
+      let value = this.iterator[iterFn](nextValue);
+      if (value.then) {
+        value.then(v => {
+          this.lastValue = value;
+          this._runFunctionWithIndex();
+        }, error => {
+          throw new Error("not implemented");
+        });
+        return;
+      } else {
+        this.lastValue = value;
+      }
     }
     this._runFunctionWithIndex();
   },
