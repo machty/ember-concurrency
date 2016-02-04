@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import { isGeneratorIterator } from 'ember-concurrency/utils';
 
 function GeneratorFunctionIterator(iter) {

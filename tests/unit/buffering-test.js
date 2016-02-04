@@ -9,12 +9,10 @@ const {
   just,
 } = Observable;
 
-module('Unit: buffering');
-
-// emits 1-10 right away, then 101-110 150ms later
+// 1 2 3 4 5 (150ms) 101 102 103 104 105
 let rangeObservable = Observable.concat(
-  range(1,10),
-  range(101,10).delay(150)
+  range(1,5),
+  range(101,5).delay(150)
 );
 
 // 1 (5ms) 2 3 (100ms) 4 5 6
@@ -26,6 +24,8 @@ let sporadicObservable = Observable.concat(
   just(5),
   just(6)
 );
+
+module('Unit: buffering');
 
 function doBufferingTest(description, observable, bufferPolicyFn, expectations) {
   test(description, function(assert) {
@@ -53,6 +53,12 @@ function doBufferingTest(description, observable, bufferPolicyFn, expectations) 
   });
 }
 
+doBufferingTest("no buffering: ranges", rangeObservable, Ember.K, [1,2,3,4,5,101,102,103,104,105]);
+doBufferingTest("no buffering: sporadic", sporadicObservable, Ember.K, [1,2,3,4,5,6]);
+
 doBufferingTest("dropIntermediateValues: ranges", rangeObservable, dropIntermediateValues, [1,101]);
 doBufferingTest("dropIntermediateValues: sporadic", sporadicObservable, dropIntermediateValues, [1,4]);
+
+//doBufferingTest("keepFirstIntermediateValue: ranges", rangeObservable, dropIntermediateValues, [1,101]);
+//doBufferingTest("keepFirstIntermediateValue: ranges", rangeObservable, dropIntermediateValues, [1,101]);
 
