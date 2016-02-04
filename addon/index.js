@@ -314,46 +314,6 @@ asyncIterator.fromEvent = function(obj, eventName) {
   });
 };
 
-export function asyncLoop(iterable, genFn) {
-  let task = Ember.get(csp.Process, '_current._emberProcess._task');
-
-  if (!task) {
-    throw new Error("Tried to invoke asyncLoop outside of task");
-  }
-
-  return csp.go(crankAsyncLoop, [iterable, task._hostObject, genFn]);
-}
-
-function * crankAsyncLoop(iterable, hostObject, genFn) {
-  let ai = AsyncIterator.create({
-    _observable: iterable,
-  });
-
-  let didBreak = false;
-  while (true) {
-    if (didBreak) {
-      break;
-    }
-
-    let { value, done } = yield ai.next();
-    if (done) { break; }
-
-    let spawnChannel;
-    let controlObj = {
-      break() {
-        let process = spawnChannel.process;
-        process.close();
-        ai.dispose();
-        didBreak = true;
-        return new csp.Instruction("close");
-      },
-    };
-
-    spawnChannel = csp.spawn(genFn.call(hostObject, value, controlObj));
-    yield spawnChannel;
-  }
-}
-
 function log(...args) {
   //console.log(...args);
 }
