@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { forEach } from 'ember-concurrency';
-import { interval, dropIntermediateValues, keepFirstIntermediateValue } from 'ember-concurrency';
+import { interval, dropIntermediateValues, keepFirstIntermediateValue, keepLastIntermediateValue } from 'ember-concurrency';
 
 const Observable = window.Rx.Observable;
 
@@ -60,5 +60,8 @@ doBufferingTest("dropIntermediateValues: ranges", rangeObservable, dropIntermedi
 doBufferingTest("dropIntermediateValues: sporadic", sporadicObservable, dropIntermediateValues, [1,4]);
 
 doBufferingTest("keepFirstIntermediateValue: ranges", rangeObservable, keepFirstIntermediateValue, [1, 2, 101, 102]);
-doBufferingTest("keepFirstIntermediateValue: ranges", rangeObservable, keepFirstIntermediateValue, [1,2,101,102]);
+doBufferingTest("keepFirstIntermediateValue: sporadic", sporadicObservable, keepFirstIntermediateValue, [1,2,4,5]);
+
+doBufferingTest("keepLastIntermediateValue: ranges", rangeObservable, keepLastIntermediateValue, [1, 5, 101, 105]);
+doBufferingTest("keepLastIntermediateValue: ranges", rangeObservable, keepLastIntermediateValue, [1, 5, 101, 105]);
 

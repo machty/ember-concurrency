@@ -43,8 +43,10 @@ let _keepFirstIntermediateValue = {
   create: returnSelf,
   attach(iterator) {
     if (iterator.takers.length === 0) {
-      // drop all but first buffered values
-      iterator.buffer.length = 1;
+      if (iterator.buffer.length > 1) {
+        // drop all but first buffered values
+        iterator.buffer.length = 1;
+      }
     }
   },
   put(value, iterator) {
@@ -60,6 +62,31 @@ let _keepFirstIntermediateValue = {
 
 export function keepFirstIntermediateValue() {
   CURRENT_ITERATION.setBufferPolicy(_keepFirstIntermediateValue);
+}
+
+let _keepLastIntermediateValue = {
+  name: 'keepLastIntermediateValue',
+  create: returnSelf,
+  attach(iterator) {
+    if (iterator.takers.length === 0) {
+      if (iterator.buffer.length > 1) {
+        // drop all but last buffered values
+        iterator.buffer = [iterator.buffer.pop()];
+      }
+    }
+  },
+  put(value, iterator) {
+    if (iterator.takers.length > 0) {
+      iterator.put(value);
+    } else {
+      iterator.buffer.length = 0;
+      iterator.put(value);
+    }
+  },
+};
+
+export function keepLastIntermediateValue() {
+  CURRENT_ITERATION.setBufferPolicy(_keepLastIntermediateValue);
 }
 
 function Iteration(iterator, sourceIteration, fn) {
