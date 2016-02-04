@@ -60,7 +60,7 @@ ProxyIterator.prototype.return = function(value) {
   return this.returnValue;
 };
 
-export function _makeIteratorFromFunction(fn, context, args) {
+function _makeIteratorFromFunction(fn, context, args) {
   let value = fn.apply(context, args);
 
   if (isGeneratorIterator(value)) {
@@ -71,7 +71,9 @@ export function _makeIteratorFromFunction(fn, context, args) {
 }
 
 export function _makeIterator(iterable, owner, args) {
-  if (typeof iterable === 'function') {
+  if (typeof iterable.next === 'function') {
+    return new ProxyIterator(iterable);
+  } else if (typeof iterable === 'function') {
     return _makeIteratorFromFunction(iterable, owner, args);
   } else if (iterable[Symbol.iterator]) {
     return new ProxyIterator(iterable[Symbol.iterator]());
