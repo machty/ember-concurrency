@@ -37,7 +37,10 @@ Iteration.prototype = {
       let value = this.iterator[iterFn](nextValue);
       if (value.then) {
         value.then(v => {
-          this.lastValue = value;
+          this.lastValue = {
+            done: false,
+            value: v,
+          };
           this._runFunctionWithIndex();
         }, error => {
           throw new Error("not implemented");

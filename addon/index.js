@@ -21,12 +21,6 @@ export function DidNotRunException() {
   this.reason = "unperformable";
 }
 
-const NEXT   = 'next';
-const THROW  = 'throw';
-const RETURN = 'return';
-const BREAK = 'break';
-const FORCE = {};
-
 export let csp = window.csp;
 
 csp.set_queue_delayer(function(f, delay) {
@@ -409,23 +403,22 @@ function start(owner, sourceIterable, iterationHandlerFn) {
         }
       }
 
+
       if (value && typeof value.then === 'function') {
         value.then(v => {
-          opsIteration.step(index, v);
+          joinAndSchedule(opsIteration, 'step', index, v);
         }, error => {
           //opsIterator.proceed(index, THROW, error);
         });
       } else if (value && typeof value.subscribe === 'function') {
         disposable = value.subscribe(v => {
-          opsIteration.step(index, v);
-          //opsIterator.proceed(index, NEXT, v);
+          joinAndSchedule(opsIteration, 'step', index, v);
         }, error => {
           //opsIterator.proceed(index, THROW, error);
         }, () => {
           //opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
         });
-
-        //opsIterator.registerDisposable(index, disposable);
+        opsIteration.registerDisposable(index, disposable);
       } else {
         opsIteration.step(index, value);
       }
@@ -451,28 +444,9 @@ function start(owner, sourceIterable, iterationHandlerFn) {
   return sourceIteration;
 }
 
-function isAsyncProducer(v) {
-  return v && (
-    typeof v.then === 'function' ||
-    typeof v.subscribe === 'function'
-  );
-}
-
-function isIterator(v) {
-  // Symbol polyfill?
-  return v && typeof v.next === 'function';
-}
-
-function dispatch(ctx, fn, arg) {
-	Ember.run.join(() => {
-		Ember.run.schedule('actions', ctx, fn, arg);
-	});
-}
-
-function disposeAll(disposables) {
-  for (let i = 0; i < disposables.length; ++i) {
-    disposables[i].dispose();
-  }
-  disposables.length = 0;
+function joinAndSchedule(...args) {
+  Ember.run.join(() => {
+    Ember.run.schedule('actions', ...args);
+  });
 }
 
