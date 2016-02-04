@@ -15,7 +15,7 @@ test("stepping through a Iteration", function(assert) {
 
   let iterator = _makeIterator(oneTwoThree, {}, []);
   let outerValue;
-  let iteration = _makeIteration(iterator, v => {
+  let iteration = _makeIteration(iterator, null, v => {
     outerValue = v;
   });
 
@@ -36,7 +36,7 @@ test("Iterations let you .redo() the same element over and over", function(asser
 
   let iterator = _makeIterator(oneTwoThree, {}, []);
   let outerValue;
-  let iteration = _makeIteration(iterator, v => {
+  let iteration = _makeIteration(iterator, null, v => {
     outerValue = v;
   });
 
@@ -65,7 +65,7 @@ test("Iterations let you .break() out of iteration", function(assert) {
 
   let iterator = _makeIterator(oneTwoThree, {}, []);
   let outerValue;
-  let iteration = _makeIteration(iterator, v => {
+  let iteration = _makeIteration(iterator, null, v => {
     outerValue = v;
   });
 
@@ -84,7 +84,7 @@ test("Iterations ignore stepping functions if the wrong index is passed in", fun
 
   let iterator = _makeIterator(oneTwoThree, {}, []);
   let currentExpectedValue;
-  let iteration = _makeIteration(iterator, v => {
+  let iteration = _makeIteration(iterator, null, v => {
     if (!currentExpectedValue) {
       assert.ok(false, "step function shouldn't have run");
     } else {
@@ -111,7 +111,7 @@ test("Iterations ignore stepping functions always step on -1 index", function(as
 
   let iterator = _makeIterator(oneTwoThree, {}, []);
   let arr = [];
-  let iteration = _makeIteration(iterator, ({ done, value }) => {
+  let iteration = _makeIteration(iterator, null, ({ done, value }) => {
     if (!done) { arr.push(value); }
   });
 
@@ -132,7 +132,7 @@ test(".step() accepts a value that it passes back into the iteratable", function
   }
 
   let iterator = _makeIterator(foo, {}, []);
-  let iteration = _makeIteration(iterator, Ember.K);
+  let iteration = _makeIteration(iterator, null, Ember.K);
 
   Ember.run(iteration, 'step', 0, undefined);
   Ember.run(iteration, 'step', 1, 'a');
@@ -143,7 +143,7 @@ test(".registerDisposable", function(assert) {
   assert.expect(4);
 
   let iterator = _makeIterator(oneTwoThree, {}, []);
-  let iteration = _makeIteration(iterator, Ember.K);
+  let iteration = _makeIteration(iterator, null, Ember.K);
 
   let arr = [];
   Ember.run(() => {

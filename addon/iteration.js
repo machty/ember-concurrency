@@ -1,14 +1,51 @@
+import Ember from 'ember';
+
 const NO_VALUE_YET = {};
 const NEXT   = 'next';
 const RETURN = 'return';
 
-function Iteration (iterator, fn) {
+let NULL_ITERATION = {
+  setBufferPolicy(policy) {
+    Ember.assert(`You called ${policy.name} outside of the scope of an iteration (this and similar iteration macros can only be called at the top level of an iteration handler function)`, false);
+  },
+};
+
+let CURRENT_ITERATION = NULL_ITERATION;
+
+let returnSelf = Ember.K;
+
+let _dropIntermediateValues = {
+  name: 'dropIntermediateValues',
+  create: returnSelf,
+  attach(iterator) {
+    if (iterator.takers.length === 0) {
+      // drop all buffered values
+      iterator.buffer.length = 0;
+    }
+  },
+  put(value, iterator) {
+    if (iterator.takers.length > 0) {
+      //console.log(`PUTTING ${value}`);
+      iterator.put(value);
+    } else {
+      //console.log(`DROPPING ${value}`);
+      // no one's listening for values; just drop.
+    }
+  },
+};
+
+export function dropIntermediateValues() {
+  CURRENT_ITERATION.setBufferPolicy(_dropIntermediateValues);
+}
+
+function Iteration(iterator, sourceIteration, fn) {
   this.iterator = iterator;
   this.fn = fn;
   this.lastValue = NO_VALUE_YET;
   this.index = 0;
   this.disposables = [];
-  this.stepQueue= [];
+  this.stepQueue = [];
+  this.sourceIteration = sourceIteration;
 }
 
 Iteration.prototype = {
@@ -22,6 +59,15 @@ Iteration.prototype = {
     Ember.run.once(this, this._flushQueue);
   },
 
+  setBufferPolicy(policy) {
+    if (this.sourceIteration) {
+      this.sourceIteration.setBufferPolicy(policy);
+    } else {
+      Ember.assert(`The collection you're looping over doesn't support ${policy.name}`, !!this.iterator.setBufferPolicy);
+      this.iterator.setBufferPolicy(policy.create(this));
+    }
+  },
+
   _flushQueue() {
     this.index++;
     let queue = this.stepQueue;
@@ -31,10 +77,16 @@ Iteration.prototype = {
 
     // TODO: add tests around this, particularly when
     // two things give the iteration conflicting instructions.
-    let index = this.index;
     let [iterFn, nextValue] = queue.pop();
     if (iterFn) {
-      let value = this.iterator[iterFn](nextValue);
+      let value;
+      try {
+        CURRENT_ITERATION = this;
+        value = this.iterator[iterFn](nextValue);
+      } finally {
+        CURRENT_ITERATION = NULL_ITERATION;
+      }
+
       if (value.then) {
         value.then(v => {
           this.lastValue = {
@@ -88,7 +140,7 @@ Iteration.prototype = {
 
 
 
-export function _makeIteration(iterator, fn) {
-  return new Iteration(iterator, fn);
+export function _makeIteration(iterator, sourceIteration, fn) {
+  return new Iteration(iterator, sourceIteration, fn);
 }
 

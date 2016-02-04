@@ -3,8 +3,10 @@ import getOwner from 'ember-getowner-polyfill';
 import Task from 'ember-concurrency/task';
 import AsyncIterator from 'ember-concurrency/async-iterator';
 import { isGeneratorIterator } from 'ember-concurrency/utils';
-import { _makeIteration } from 'ember-concurrency/iteration';
+import { _makeIteration, dropIntermediateValues } from 'ember-concurrency/iteration';
 import { _makeIterator } from 'ember-concurrency/iterators';
+
+export { dropIntermediateValues };
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -349,7 +351,7 @@ function * crankAsyncLoop(iterable, hostObject, genFn) {
 }
 
 function log(...args) {
-  console.log(...args);
+  //console.log(...args);
 }
 
 export function forEach(iterable, fn) {
@@ -379,7 +381,7 @@ function start(owner, sourceIterable, iterationHandlerFn) {
   log("SOURCE: Starting forEach with", owner, sourceIterable, iterationHandlerFn);
 
   let sourceIterator = _makeIterator(sourceIterable, owner, EMPTY_ARRAY);
-  let sourceIteration = _makeIteration(sourceIterator, (si) => {
+  let sourceIteration = _makeIteration(sourceIterator, null, (si) => {
     log("SOURCE: next value ", si);
 
     if (si.done) {
@@ -388,7 +390,7 @@ function start(owner, sourceIterable, iterationHandlerFn) {
     }
 
     let opsIterator = _makeIterator(iterationHandlerFn, owner, [si.value /*, control */]);
-    let opsIteration = _makeIteration(opsIterator, oi => {
+    let opsIteration = _makeIteration(opsIterator, sourceIteration, oi => {
       let { value, done, index } = oi ;
       let disposable;
 
@@ -449,4 +451,9 @@ function joinAndSchedule(...args) {
     Ember.run.schedule('actions', ...args);
   });
 }
+
+
+
+
+
 

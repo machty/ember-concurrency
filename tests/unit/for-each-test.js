@@ -4,6 +4,8 @@ import { interval, _numIntervals } from 'ember-concurrency';
 
 module('Unit: forEach');
 
+const Observable = window.Rx.Observable;
+
 test("forEach throws an error if used outside of task without .attach", function(assert) {
   assert.expect(1);
 
@@ -134,13 +136,13 @@ test("forEach can loop over time intervals", function(assert) {
   assert.expect(12);
   let obj, isValid = true;
 
-  assert.equal(_numIntervals, 0);
+  assert.equal(_numIntervals, 0, "num intervals starts off at 0");
 
   let i = 0;
   Ember.run(() => {
     obj = Ember.Object.create();
     forEach(interval(10), function * () {
-      assert.equal(_numIntervals, 1);
+      assert.equal(_numIntervals, 1, "only one interval running at a given time");
       i++;
       assert.ok(isValid, "should not keep iterating");
       if (i === 5) {
@@ -160,7 +162,7 @@ test("forEach can cancel observables on the first iteration", function(assert) {
   assert.expect(1);
   Ember.run(() => {
     let obj = Ember.Object.create();
-    forEach(window.Rx.Observable.range(1,10).delay(1), function * (v) {
+    forEach(Observable.range(1,10).delay(1), function * (v) {
       assert.equal(v, 1);
       obj.destroy();
       QUnit.start();
@@ -188,5 +190,4 @@ test("forEach: yielding interval() just does one-off timers", function(assert) {
     }).attach(obj);
   });
 });
-
 

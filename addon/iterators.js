@@ -78,19 +78,24 @@ export function _makeIterator(iterable, owner, args) {
   } else if (iterable[Symbol.iterator]) {
     return new ProxyIterator(iterable[Symbol.iterator]());
   } else if (typeof iterable.subscribe === 'function') {
-    return createBuffer(iterable);
+    return createBufferedIterator(iterable);
   } else {
     // TODO: log error obj
     throw new Error("Unknown structure passed to forEach; expected an iterable, observable, or a promise");
   }
 }
 
+let DEFAULT_BUFFER_POLICY = {
+  put(value, iterator) {
+    iterator.put(value);
+  },
+};
 
 // TODO: consider a growing ringbuffer?
-function createBuffer(obs) {
+function createBufferedIterator(obs) {
   let sub;
   let isDisposed = false;
-  let buffer = {
+  let iterator = {
     buffer: [],
     takers: [],
     take(taker) {
@@ -147,12 +152,20 @@ function createBuffer(obs) {
       isDisposed = true;
       sub.dispose();
     },
+    policy: DEFAULT_BUFFER_POLICY,
+    setBufferPolicy(policy) {
+      if (this.policy === policy) {
+        return;
+      }
+      policy.attach(this);
+      this.policy = policy;
+    },
   };
 
   sub = obs.subscribe(v => {
-    buffer.put(v);
+    iterator.policy.put(v, iterator);
   });
 
-  return buffer;
+  return iterator;
 }
 
