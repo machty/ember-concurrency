@@ -21,7 +21,6 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
     }
   });`, isGeneratorIterator(testIter));
 
-
 function eventedTaskDescriptor(func, eventNames) {
   let cp = Ember.computed(function() {
     let publish;
@@ -58,9 +57,8 @@ function makeListener(taskName) {
 
 Ember.on = (...args) => {
   let last = args[args.length-1];
-  let func, kickerFunc;
   if (typeof last === 'function') {
-    func = args.pop();
+    let func = args.pop();
     if (isGeneratorFunction(func)) {
       return eventedTaskDescriptor(func, args);
     } else {
