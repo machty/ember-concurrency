@@ -187,10 +187,6 @@ Iteration.prototype = {
   }
 };
 
-
-
-
-
 export function _makeIteration(iterator, sourceIteration, fn) {
   return new Iteration(iterator, sourceIteration, fn);
 }

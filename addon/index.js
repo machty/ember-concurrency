@@ -2,7 +2,7 @@ import Ember from 'ember';
 import getOwner from 'ember-getowner-polyfill';
 import Task from 'ember-concurrency/task';
 import AsyncIterator from 'ember-concurrency/async-iterator';
-import { isGeneratorIterator } from 'ember-concurrency/utils';
+import { isGeneratorIterator, Arguments } from 'ember-concurrency/utils';
 import { _makeIteration, dropIntermediateValues, keepFirstIntermediateValue, keepLastIntermediateValue } from 'ember-concurrency/iteration';
 import { _makeIterator } from 'ember-concurrency/iterators';
 
@@ -22,24 +22,32 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
     }
   });`, isGeneratorIterator(testIter));
 
-let emberOn = Ember.on;
 Ember.on = (...args) => {
   let last = args[args.length-1];
   let func, kickerFunc;
   if (typeof last === 'function') {
     func = args.pop();
     if (isGeneratorFunction(func)) {
-      let publish, obs, setup;
+      let prebuffer = [];
+      let publish = (args) => {
+        prebuffer.push(args);
+      };
+
+      let obs, setup;
       kickerFunc = function(...fnargs) {
         if (!setup) {
           obs = createObservable(_publish => {
             publish = _publish;
+            for (let i = 0, l = prebuffer.length; i < l; i ++) {
+              let v = prebuffer[i];
+              publish(v);
+            }
           });
 
           forEach(obs, func).attach(this);
           setup = true;
         }
-        Ember.run.once(publish, ...fnargs);
+        Ember.run.schedule('actions', null, publish, new Arguments(fnargs));
       };
 
       kickerFunc.__ember_listens__ = args;

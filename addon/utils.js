@@ -5,3 +5,7 @@ export function isGeneratorIterator(iter) {
           typeof iter['throw']  === 'function');
 }
 
+export function Arguments(args) {
+  this.args = args;
+}
+

@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import { isGeneratorIterator } from 'ember-concurrency/utils';
+import { Arguments } from 'ember-concurrency/utils';
 
 function GeneratorFunctionIterator(iter) {
   this.iter = iter;
@@ -62,7 +63,13 @@ ProxyIterator.prototype.return = function(value) {
 };
 
 function _makeIteratorFromFunction(fn, context, args) {
-  let value = fn.apply(context, args);
+  let value;
+
+  if (args[0] instanceof Arguments) {
+    value = fn.apply(context, args[0].args);
+  } else {
+    value = fn.apply(context, args);
+  }
 
   if (isGeneratorIterator(value)) {
     return new GeneratorFunctionIterator(value);
