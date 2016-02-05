@@ -22,6 +22,37 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
     }
   });`, isGeneratorIterator(testIter));
 
+let emberOn = Ember.on;
+Ember.on = (...args) => {
+  let last = args[args.length-1];
+  let func, kickerFunc;
+  if (typeof last === 'function') {
+    func = args.pop();
+    if (isGeneratorFunction(func)) {
+      let publish, obs, setup;
+      kickerFunc = function(...fnargs) {
+        if (!setup) {
+          obs = createObservable(_publish => {
+            publish = _publish;
+          });
+
+          forEach(obs, func).attach(this);
+          setup = true;
+        }
+        Ember.run.once(publish, ...fnargs);
+      };
+
+      kickerFunc.__ember_listens__ = args;
+      return kickerFunc;
+    } else {
+      func.__ember_listens__ = args;
+      return func;
+    }
+  } else {
+    throw new Error("Not implemented");
+  }
+};
+
 export function DidNotRunException() {
   this.success = false;
   this.reason = "unperformable";
@@ -414,6 +445,21 @@ function joinAndSchedule(...args) {
   Ember.run.join(() => {
     Ember.run.schedule('actions', ...args);
   });
+}
+
+function isGeneratorFunction(obj) {
+  var constructor = obj.constructor;
+
+  if (!constructor) {
+    return false;
+  }
+
+  if (constructor.name === 'GeneratorFunction'||
+      constructor.displayName === 'GeneratorFunction') {
+    return true;
+  }
+
+  return false;
 }
 
 
