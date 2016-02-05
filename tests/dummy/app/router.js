@@ -6,6 +6,8 @@ const Router = Ember.Router.extend({
 });
 
 Router.map(function() {
+  this.route('docs');
+
   this.route('ajax');
   this.route('color');
   this.route('yielding');

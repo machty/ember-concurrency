@@ -1,7 +1,23 @@
-@import "normalize.css";
-@import "skeleton.css";
+@import "./normalize";
+@import "./skeleton";
 
 .centered {
+  text-align: center;
+}
+
+section {
+  margin-top: 10rem;
+}
+
+.navbar {
+  a {
+    text-decoration: none;
+    color: black;
+    line-height: 5rem;
+  }
+}
+
+.nav-bar-link-outer {
   text-align: center;
 }
 
