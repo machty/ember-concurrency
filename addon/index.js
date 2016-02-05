@@ -21,32 +21,48 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
     }
   });`, isGeneratorIterator(testIter));
 
+
+function eventedTaskDescriptor(func, eventNames) {
+  let cp = Ember.computed(function() {
+    let publish;
+    let obs = createObservable(_publish => {
+      publish = _publish;
+    });
+
+    forEach(obs, func).attach(this);
+    let task = {
+      perform(...args) {
+        publish(new Arguments(args));
+      }
+    };
+
+    return task;
+  });
+
+  cp.setup = function(obj, keyname) {
+    for (let i = 0; i < eventNames.length; ++i) {
+      let eventName = eventNames[i];
+      Ember.addListener(obj, eventName, null, makeListener(keyname));
+    }
+  };
+
+  return cp;
+}
+
+function makeListener(taskName) {
+  return function() {
+    let task = this.get(taskName);
+    task.perform.apply(task, arguments);
+  };
+}
+
 Ember.on = (...args) => {
   let last = args[args.length-1];
   let func, kickerFunc;
   if (typeof last === 'function') {
     func = args.pop();
     if (isGeneratorFunction(func)) {
-
-      kickerFunc = function(...fnargs) {
-        let guid = Ember.guidFor(kickerFunc);
-        let obsId = "__ember_concurrency_obs__" + guid;
-        let pubId = "__ember_concurrency_pub__" + guid;
-
-        let obs = this[obsId];
-        if (!obs) {
-          obs = this[obsId] = createObservable(publish => {
-            this[pubId] = publish;
-          });
-
-          forEach(obs, func).attach(this);
-        }
-
-        Ember.run.schedule('actions', null, this[pubId], new Arguments(fnargs));
-      };
-
-      kickerFunc.__ember_listens__ = args;
-      return kickerFunc;
+      return eventedTaskDescriptor(func, args);
     } else {
       func.__ember_listens__ = args;
       return func;
@@ -264,22 +280,6 @@ RawChannel.prototype._put= function() {
 RawChannel.prototype.refreshBlockingState = function () {
   Ember.set(this, 'hasTakers', this.takes.length > 0);
 };
-
-export function channel(...args) {
-  let bufferConstructor = args[0];
-  return liveComputed(function() {
-    let chan;
-    if (typeof bufferConstructor === 'function') {
-      chan = csp.chan(bufferConstructor(args[1]));
-    } else if (args.length === 1) {
-      chan = csp.chan(args[0]);
-    } else {
-      chan = csp.chan();
-    }
-    cleanupOnDestroy(this, chan, 'close');
-    return chan;
-  });
-}
 
 export function task(...args) {
   let _genFn;
