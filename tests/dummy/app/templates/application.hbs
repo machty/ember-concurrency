@@ -5,30 +5,77 @@
 <div class="container">
 
   <section class="header">
-    <h1>{{caps-marquee text="ember-concurrency"}}</h1>
+    <h1>ember-concurrency</h1>
 
     <h4 class="centered"><strong>ember-concurrency</strong> is an <strong>Ember Addon</strong> that enables you to:</h4>
 
-    <div class="value-props row">
-      <div class="four columns value-prop">
-        <strong>Say goodbye to excessive boilerplate</strong> for managing asynchrony, including:
+    <div class="row">
+      <div class="four columns">
+        Use an <strong>Async/Await-like syntax</strong> to easily express complex,
+        <strong>cancellable</strong>, and <strong>restartable</strong> tasks.
+      </div>
+      <div class="four columns">
+        <strong>Say goodbye to error-prone boilerplate</strong> for managing asynchrony, including:
         timer cancellation, deactivate &amp; willDestroy hooks,
         isDestroyed checks, and others.
       </div>
-      <div class="four columns value-prop">
-        Use an <strong>Async/Await-like syntax</strong> to express complex,
-        <strong>cancellable</strong>, and <strong>restartable</strong> tasks.
-      </div>
-      <div class="four columns value-prop">
-        "Loop over" <strong>Ember.Evented</strong> and <strong>Rx Observable</strong> events using simple
-        but powerful primitives for managing <strong>backpressure</strong> while avoiding
-        <strong>Callback Hell</strong>&trade;
+      <div class="four columns">
+        Loop over streams of <strong>Ember.Evented</strong> events
+        (and optionally <strong>Rx.Observables</strong>), with
+        built-in <strong>backpressure</strong> support, and no
+        <strong>Callback Hell</strong>&trade;.
       </div>
     </div>
   </section>
 
-  {{code-snippet name="sample-template.hbs"}}
+  <section>
+    <h2 class="centered">Basic Example</h2>
 
+    <div class="row">
+      <div class="six columns">
+        <h3>{{caps-marquee text="ember-concurrency"}}</h3>
+
+        {{code-snippet name="caps-marquee.js"}}
+      </div>
+      <div class="six columns">
+        <h3>{{scrambled-text text="ember-concurrency"}}</h3>
+
+        {{code-snippet name="scrambled-text.js"}}
+      </div>
+    </div>
+
+    <h5>
+      Imagine writing the above using setTimeout / Ember.run.later.
+    </h5>
+
+    <ul>
+      <li>You would need to use callbacks</li>
+      <li>These callbacks would require a recursive call to take the next "step"</li>
+      <li>When this Component is unrendered, the animation would need to be
+          stopped in some way: the timers would need to be cancelled, and you
+          might need to add an <code>if (this.isDestroyed)</code> check to make
+          sure you don't set a property after the component has been destroyed
+          (otherwise you see <code>"Assertion Failed: calling set on destroyed object"</code>).
+      </li>
+    </ul>
+
+    <p>
+      By leveraging generator function syntax (<code>function *</code> and the
+      <code>yield</code> keyword), <strong>ember-concurrency</strong> let's you
+      write <code>extremely clear asynchronous code</code> and takes care of all the messy stuff:
+      tearing down asynchronous tasks (and cancelling them where possible, e.g. AJAX
+      requests), scoping asynchronous tasks to the lifetime of the object they live
+      on (e.g. Components), and preventing undesired concurrency between tasks.
+    </p>
+
+    <h5>
+      But ember-concurrency is a lot more than toy animation examples
+    </h5>
+
+    <p>
+      Please take a look at the docs. :) :) ;) :D
+    </p>
+  </section>
 </div>
 
 <p>

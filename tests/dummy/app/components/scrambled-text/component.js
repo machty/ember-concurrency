@@ -3,7 +3,7 @@ import Ember from 'ember';
 import { timeout } from 'ember-concurrency';
 
 // from http://stackoverflow.com/a/3943985/914123
-function shuffle(word) {
+function scramble(word) {
   var a = word.split(""),
   n = a.length;
 
@@ -20,16 +20,21 @@ export default Ember.Component.extend({
   tagName: '',
   text: null,
   scrambledText: null,
+// BEGIN-SNIPPET scrambled-text
   startScrambling: Ember.on('init', function * () {
     let text = this.get('text');
-    let pauseTime = 200;
-    while (pauseTime > 50) {
-      this.set('scrambledText', shuffle(text));
-      yield timeout(pauseTime);
-      pauseTime = pauseTime * 0.95;
+    while (true) {
+      let pauseTime = 140;
+      while (pauseTime > 5) {
+        this.set('scrambledText', scramble(text));
+        yield timeout(pauseTime);
+        pauseTime = pauseTime * 0.95;
+      }
+      this.set('scrambledText', text);
+      yield timeout(1500);
     }
-    this.set('scrambledText', text);
   }),
+// END-SNIPPET
 });
 
 
