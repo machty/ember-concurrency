@@ -27,26 +27,22 @@ Ember.on = (...args) => {
   if (typeof last === 'function') {
     func = args.pop();
     if (isGeneratorFunction(func)) {
-      let prebuffer = [];
-      let publish = (args) => {
-        prebuffer.push(args);
-      };
 
-      let obs, setup;
       kickerFunc = function(...fnargs) {
-        if (!setup) {
-          obs = createObservable(_publish => {
-            publish = _publish;
-            for (let i = 0, l = prebuffer.length; i < l; i ++) {
-              let v = prebuffer[i];
-              publish(v);
-            }
+        let guid = Ember.guidFor(kickerFunc);
+        let obsId = "__ember_concurrency_obs__" + guid;
+        let pubId = "__ember_concurrency_pub__" + guid;
+
+        let obs = this[obsId];
+        if (!obs) {
+          obs = this[obsId] = createObservable(publish => {
+            this[pubId] = publish;
           });
 
           forEach(obs, func).attach(this);
-          setup = true;
         }
-        Ember.run.schedule('actions', null, publish, new Arguments(fnargs));
+
+        Ember.run.schedule('actions', null, this[pubId], new Arguments(fnargs));
       };
 
       kickerFunc.__ember_listens__ = args;
