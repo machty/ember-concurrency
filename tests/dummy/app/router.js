@@ -6,7 +6,9 @@ const Router = Ember.Router.extend({
 });
 
 Router.map(function() {
-  this.route('docs');
+  this.route('docs', function() {
+    //this.route('intro');
+  });
 
   this.route('ajax');
   this.route('color');

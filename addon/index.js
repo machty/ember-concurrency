@@ -24,6 +24,8 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
 function eventedTaskDescriptor(func, eventNames) {
   let cp = Ember.computed(function() {
     let publish;
+
+    // TODO: we really need a subject/buffer primitive
     let obs = createObservable(_publish => {
       publish = _publish;
     });
