@@ -1,4 +1,35 @@
-<h1>ember-concurrency</h1>
+<div class="navbar">
+  <h3>ember-concurrency</h3>
+</div>
+
+<div class="container">
+
+  <section class="header">
+    <h1>{{caps-marquee text="ember-concurrency"}}</h1>
+
+    <h4 class="centered"><strong>ember-concurrency</strong> is an <strong>Ember Addon</strong> that enables you to:</h4>
+
+    <div class="value-props row">
+      <div class="four columns value-prop">
+        <strong>Say goodbye to excessive boilerplate</strong> for managing asynchrony, including:
+        timer cancellation, deactivate &amp; willDestroy hooks,
+        isDestroyed checks, and others.
+      </div>
+      <div class="four columns value-prop">
+        Use an <strong>Async/Await-like syntax</strong> to express complex,
+        <strong>cancellable</strong>, and <strong>restartable</strong> tasks.
+      </div>
+      <div class="four columns value-prop">
+        "Loop over" <strong>Ember.Evented</strong> and <strong>Rx Observable</strong> events using simple
+        but powerful primitives for managing <strong>backpressure</strong> while avoiding
+        <strong>Callback Hell</strong>&trade;
+      </div>
+    </div>
+  </section>
+
+  {{code-snippet name="sample-template.hbs"}}
+
+</div>
 
 <p>
   <a href="https://github.com/machty/ember-concurrency/tree/master/tests/dummy/app" target="_blank">Check out the code</a>
@@ -8,7 +39,6 @@
 {{!link-to 'color' 'color'}}
 {{!link-to 'yielding' 'yielding'}}
 {{link-to 'tasks' 'tasks'}}
-{{link-to 'async-iterator' 'async-iterator'}}
 {{link-to 'music' 'music'}}
 {{link-to 'auto-complete' 'auto-complete'}}
 

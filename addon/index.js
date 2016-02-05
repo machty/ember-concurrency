@@ -1,7 +1,6 @@
 import Ember from 'ember';
 import getOwner from 'ember-getowner-polyfill';
 import Task from 'ember-concurrency/task';
-import AsyncIterator from 'ember-concurrency/async-iterator';
 import { isGeneratorIterator, Arguments } from 'ember-concurrency/utils';
 import { _makeIteration, dropIntermediateValues, keepFirstIntermediateValue, keepLastIntermediateValue } from 'ember-concurrency/iteration';
 import { _makeIterator } from 'ember-concurrency/iterators';
@@ -232,6 +231,10 @@ export function sleep(ms) {
   return interval(ms);
 }
 
+export function timeout(ms) {
+  return interval(ms);
+}
+
 sleep.untilEvent = function(obj, eventName) {
   let chan = csp.chan();
   Ember.addListener(obj, eventName, null, event => {
@@ -340,18 +343,6 @@ export function task(...args) {
 
   return desc;
 }
-
-export function asyncIterator(obs) {
-  return AsyncIterator.create({
-    _observable: obs,
-  });
-}
-
-asyncIterator.fromEvent = function(obj, eventName) {
-  return AsyncIterator.create({
-    _observable: EventedObservable.create({ obj, eventName })
-  });
-};
 
 function log(...args) {
   //console.log(...args);

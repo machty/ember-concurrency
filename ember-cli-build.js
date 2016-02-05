@@ -11,7 +11,9 @@ module.exports = function(defaults) {
     babel: {
       includePolyfill: true,
       browserPolyfill: true,
-    }
+    },
+
+    snippetPaths: ['tests/dummy/snippets'],
   });
 
   /*
