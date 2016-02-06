@@ -107995,8 +107995,11 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   var testIter = testGenFn();
   _ember['default'].assert('ember-concurrency requires that you set babel.includePolyfill to true in your ember-cli-build.js (or Brocfile.js) to ensure that the generator function* syntax is properly transpiled, e.g.:\n\n  var app = new EmberApp({\n    babel: {\n      includePolyfill: true,\n    }\n  });', (0, _emberConcurrencyUtils.isGeneratorIterator)(testIter));
 
-  function task(func) {
-    var cp = _ember['default'].computed(function () {
+  var ComputedProperty = _ember['default'].__loader.require("ember-metal/computed").ComputedProperty;
+
+  function TaskProperty(taskFunc) {
+    var tp = this;
+    ComputedProperty.call(this, function () {
       var publish = undefined;
 
       // TODO: we really need a subject/buffer primitive
@@ -108004,7 +108007,7 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
         publish = _publish;
       });
 
-      forEach(obs, func).attach(this);
+      forEach(obs, taskFunc, tp.bufferPolicy).attach(this);
 
       var perform = function perform() {
         for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
@@ -108032,23 +108035,35 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
       return task;
     });
 
-    var eventNames = undefined;
-    cp.setup = function (obj, keyname) {
-      if (eventNames) {
-        for (var i = 0; i < eventNames.length; ++i) {
-          var eventName = eventNames[i];
-          _ember['default'].addListener(obj, eventName, null, makeListener(keyname));
-        }
+    this.bufferPolicy = null;
+    this.eventNames = null;
+  }
+
+  TaskProperty.prototype = Object.create(ComputedProperty.prototype);
+  TaskProperty.prototype.constructor = TaskProperty;
+  TaskProperty.prototype.setup = function (obj, keyname) {
+    var eventNames = this.eventNames;
+    if (eventNames) {
+      for (var i = 0; i < eventNames.length; ++i) {
+        var eventName = eventNames[i];
+        _ember['default'].addListener(obj, eventName, null, makeListener(keyname));
       }
-    };
+    }
+  };
 
-    cp.on = function () {
-      eventNames = eventNames || [];
-      eventNames.push.apply(eventNames, arguments);
-      return this;
-    };
+  TaskProperty.prototype.on = function () {
+    this.eventNames = this.eventNames || [];
+    this.eventNames.push.apply(this.eventNames, arguments);
+    return this;
+  };
 
-    return cp;
+  TaskProperty.prototype.restartable = function () {
+    this.bufferPolicy = _emberConcurrencyIteration._restartable;
+    return this;
+  };
+
+  function task(func) {
+    return new TaskProperty(func);
   }
 
   function makeListener(taskName) {
@@ -108184,7 +108199,7 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
     //console.log(...args);
   }
 
-  function forEach(iterable, fn) {
+  function forEach(iterable, fn, bufferPolicy) {
     var owner = undefined;
     _ember['default'].run.schedule('actions', function () {
       if (!owner) {
@@ -108195,7 +108210,7 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
     return {
       attach: function attach(_owner) {
         owner = _owner;
-        this.iteration = start(owner, iterable, fn);
+        this.iteration = start(owner, iterable, fn, bufferPolicy);
         cleanupOnDestroy(owner, this, '_disposeIter');
       },
       _disposeIter: function _disposeIter() {
@@ -108207,11 +108222,11 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
 
   var EMPTY_ARRAY = [];
 
-  function start(owner, sourceIterable, iterationHandlerFn) {
+  function start(owner, sourceIterable, iterationHandlerFn, bufferPolicy) {
     log("SOURCE: Starting forEach with", owner, sourceIterable, iterationHandlerFn);
 
     var sourceIterator = (0, _emberConcurrencyIterators._makeIterator)(sourceIterable, owner, EMPTY_ARRAY);
-    var sourceIteration = (0, _emberConcurrencyIteration._makeIteration)(sourceIterator, null, function (si) {
+    var sourceIteration = (0, _emberConcurrencyIteration._makeIteration)(sourceIterator, null, null, function (si) {
       log("SOURCE: next value ", si);
 
       if (si.done) {
@@ -108220,7 +108235,7 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
       }
 
       var opsIterator = (0, _emberConcurrencyIterators._makeIterator)(iterationHandlerFn, owner, [si.value /*, control */]);
-      var opsIteration = (0, _emberConcurrencyIteration._makeIteration)(opsIterator, sourceIteration, function (oi) {
+      var opsIteration = (0, _emberConcurrencyIteration._makeIteration)(opsIterator, sourceIteration, bufferPolicy, function (oi) {
         var value = oi.value;
         var done = oi.done;
         var index = oi.index;
@@ -108405,6 +108420,8 @@ define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _
     }
   };
 
+  exports._keepFirstIntermediateValue = _keepFirstIntermediateValue;
+
   function keepFirstIntermediateValue() {
     CURRENT_ITERATION.setBufferPolicy(_keepFirstIntermediateValue);
   }
@@ -108429,6 +108446,8 @@ define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _
       }
     }
   };
+
+  exports._keepLastIntermediateValue = _keepLastIntermediateValue;
 
   function keepLastIntermediateValue() {
     CURRENT_ITERATION.setBufferPolicy(_keepLastIntermediateValue);
@@ -108459,11 +108478,13 @@ define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _
     }
   };
 
+  exports._restartable = _restartable;
+
   function restartable() {
     CURRENT_ITERATION.setBufferPolicy(_restartable);
   }
 
-  function Iteration(iterator, sourceIteration, fn) {
+  function Iteration(iterator, sourceIteration, bufferPolicy, fn) {
     this.iterator = iterator;
     this.fn = fn;
     this.lastValue = NO_VALUE_YET;
@@ -108471,6 +108492,9 @@ define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _
     this.disposables = [];
     this.stepQueue = [];
     this.sourceIteration = sourceIteration;
+    if (bufferPolicy) {
+      this.setBufferPolicy(bufferPolicy);
+    }
   }
 
   Iteration.prototype = {
@@ -108576,8 +108600,8 @@ define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _
     }
   };
 
-  function _makeIteration(iterator, sourceIteration, fn) {
-    return new Iteration(iterator, sourceIteration, fn);
+  function _makeIteration(iterator, sourceIteration, bufferPolicy, fn) {
+    return new Iteration(iterator, sourceIteration, bufferPolicy, fn);
   }
 });
 define('ember-concurrency/iterators', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _emberConcurrencyUtils) {
