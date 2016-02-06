@@ -6,6 +6,7 @@ import {
   keepFirstIntermediateValue,
   keepLastIntermediateValue,
   restartable,
+  _restartable,
 } from 'ember-concurrency/iteration';
 import { _makeIterator } from 'ember-concurrency/iterators';
 
@@ -30,6 +31,7 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
 const ComputedProperty = Ember.__loader.require("ember-metal/computed").ComputedProperty;
 
 function TaskProperty(taskFunc) {
+  let tp = this;
   ComputedProperty.call(this, function() {
     let publish;
 
@@ -38,7 +40,7 @@ function TaskProperty(taskFunc) {
       publish = _publish;
     });
 
-    forEach(obs, taskFunc).attach(this);
+    forEach(obs, taskFunc, tp.bufferPolicy).attach(this);
 
     let perform = function(...args) {
       let argsObject = new Arguments(args);
@@ -58,6 +60,7 @@ function TaskProperty(taskFunc) {
     return task;
   });
 
+  this.bufferPolicy = null;
   this.eventNames = null;
 }
 
@@ -76,6 +79,11 @@ TaskProperty.prototype.setup = function(obj, keyname) {
 TaskProperty.prototype.on = function() {
   this.eventNames = this.eventNames || [];
   this.eventNames.push.apply(this.eventNames, arguments);
+  return this;
+};
+
+TaskProperty.prototype.restartable = function() {
+  this.bufferPolicy = _restartable;
   return this;
 };
 
@@ -200,7 +208,7 @@ function log(...args) {
   //console.log(...args);
 }
 
-export function forEach(iterable, fn) {
+export function forEach(iterable, fn, bufferPolicy) {
   let owner;
   Ember.run.schedule('actions', () => {
     if (!owner) {
@@ -211,7 +219,7 @@ export function forEach(iterable, fn) {
   return {
     attach(_owner) {
       owner = _owner;
-      this.iteration = start(owner, iterable, fn);
+      this.iteration = start(owner, iterable, fn, bufferPolicy);
       cleanupOnDestroy(owner, this, '_disposeIter');
     },
     _disposeIter() {
@@ -223,11 +231,11 @@ export function forEach(iterable, fn) {
 
 const EMPTY_ARRAY = [];
 
-function start(owner, sourceIterable, iterationHandlerFn) {
+function start(owner, sourceIterable, iterationHandlerFn, bufferPolicy) {
   log("SOURCE: Starting forEach with", owner, sourceIterable, iterationHandlerFn);
 
   let sourceIterator = _makeIterator(sourceIterable, owner, EMPTY_ARRAY);
-  let sourceIteration = _makeIteration(sourceIterator, null, (si) => {
+  let sourceIteration = _makeIteration(sourceIterator, null, null, (si) => {
     log("SOURCE: next value ", si);
 
     if (si.done) {
@@ -236,7 +244,7 @@ function start(owner, sourceIterable, iterationHandlerFn) {
     }
 
     let opsIterator = _makeIterator(iterationHandlerFn, owner, [si.value /*, control */]);
-    let opsIteration = _makeIteration(opsIterator, sourceIteration, oi => {
+    let opsIteration = _makeIteration(opsIterator, sourceIteration, bufferPolicy, oi => {
       let { value, done, index } = oi ;
       let disposable;
 

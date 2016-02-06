@@ -38,7 +38,7 @@ export function dropIntermediateValues() {
   CURRENT_ITERATION.setBufferPolicy(_dropIntermediateValues);
 }
 
-let _keepFirstIntermediateValue = {
+export let _keepFirstIntermediateValue = {
   name: 'keepFirstIntermediateValue',
   create: returnSelf,
   attach(iterator) {
@@ -64,7 +64,7 @@ export function keepFirstIntermediateValue() {
   CURRENT_ITERATION.setBufferPolicy(_keepFirstIntermediateValue);
 }
 
-let _keepLastIntermediateValue = {
+export let _keepLastIntermediateValue = {
   name: 'keepLastIntermediateValue',
   create: returnSelf,
   attach(iterator) {
@@ -107,7 +107,7 @@ _restartableInstance.prototype.put = function(value, iterator) {
   iterator.put(value);
 };
 
-let _restartable = {
+export let _restartable = {
   name: 'restartable',
   create(iteration) {
     return new _restartableInstance(iteration);
@@ -118,7 +118,7 @@ export function restartable() {
   CURRENT_ITERATION.setBufferPolicy(_restartable);
 }
 
-function Iteration(iterator, sourceIteration, fn) {
+function Iteration(iterator, sourceIteration, bufferPolicy, fn) {
   this.iterator = iterator;
   this.fn = fn;
   this.lastValue = NO_VALUE_YET;
@@ -126,6 +126,9 @@ function Iteration(iterator, sourceIteration, fn) {
   this.disposables = [];
   this.stepQueue = [];
   this.sourceIteration = sourceIteration;
+  if (bufferPolicy) {
+    this.setBufferPolicy(bufferPolicy);
+  }
 }
 
 Iteration.prototype = {
@@ -216,7 +219,7 @@ Iteration.prototype = {
   }
 };
 
-export function _makeIteration(iterator, sourceIteration, fn) {
-  return new Iteration(iterator, sourceIteration, fn);
+export function _makeIteration(iterator, sourceIteration, bufferPolicy, fn) {
+  return new Iteration(iterator, sourceIteration, bufferPolicy, fn);
 }
 
