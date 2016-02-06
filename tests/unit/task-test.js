@@ -1,25 +1,23 @@
 import Ember from 'ember';
-import { interval, _numIntervals } from 'ember-concurrency';
+import { task, interval } from 'ember-concurrency';
 
-module('Unit: overloaded Ember.on');
+module('Unit: task');
 
-const Observable = window.Rx.Observable;
-
-test("Ember.on init", function(assert) {
+test("task init", function(assert) {
   assert.expect(3);
 
   let Obj = Ember.Object.extend({
-    oldschool: Ember.on('init', function() {
+    oldschool: task(function() {
       assert.ok(this instanceof Obj);
-    }),
+    }).on('init'),
 
-    newschool: Ember.on('init', function * () {
+    newschool: task(function * () {
       assert.ok(this instanceof Obj);
       yield 1;
       yield 1;
       yield 1;
       assert.ok(true, "done");
-    }),
+    }).on('init'),
   });
 
   Ember.run(() => {
@@ -27,14 +25,14 @@ test("Ember.on init", function(assert) {
   });
 });
 
-test("Ember.on Evented event", function(assert) {
+test("task Evented event", function(assert) {
   assert.expect(1);
 
   let arr = [];
   let Obj = Ember.Object.extend(Ember.Evented, {
-    doStuff: Ember.on('foo', function * (a,b,c) {
+    doStuff: task(function * (a,b,c) {
       arr.push(a,b,c);
-    }),
+    }).on('foo'),
   });
 
   Ember.run(() => {
@@ -46,14 +44,14 @@ test("Ember.on Evented event", function(assert) {
   assert.deepEqual(arr, [1,2,3,4,5,6,7,8,9]);
 });
 
-test("Ember.on Evented event discontinues after destruction", function(assert) {
+test("task Evented event discontinues after destruction", function(assert) {
   assert.expect(1);
 
   let arr = [];
   let Obj = Ember.Object.extend(Ember.Evented, {
-    doStuff: Ember.on('foo', function * (a,b,c) {
+    doStuff: task(function * (a,b,c) {
       arr.push(a,b,c);
-    }),
+    }).on('foo'),
   });
 
   let obj;
@@ -66,17 +64,17 @@ test("Ember.on Evented event discontinues after destruction", function(assert) {
   assert.deepEqual(arr, [1,2,3]);
 });
 
-test("Ember.on discontinues after destruction when blocked on async values", function(assert) {
+test("task discontinues after destruction when blocked on async values", function(assert) {
   QUnit.stop();
   assert.expect(1);
 
   let Obj = Ember.Object.extend(Ember.Evented, {
-    doStuff: Ember.on('init', function * () {
+    doStuff: task(function * () {
       assert.ok(true);
       yield interval(1000);
       assert.ok(false);
       yield interval(1000);
-    }),
+    }).on('init'),
   });
 
   let obj;

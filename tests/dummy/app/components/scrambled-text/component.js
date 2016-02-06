@@ -1,6 +1,5 @@
 import Ember from 'ember';
-
-import { timeout } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 
 // from http://stackoverflow.com/a/3943985/914123
 function scramble(word) {
@@ -21,7 +20,7 @@ export default Ember.Component.extend({
   text: null,
   scrambledText: null,
 // BEGIN-SNIPPET scrambled-text
-  startScrambling: Ember.on('init', function * () {
+  startScrambling: task(function * () {
     let text = this.get('text');
     while (true) {
       let pauseTime = 140;
@@ -33,7 +32,7 @@ export default Ember.Component.extend({
       this.set('scrambledText', text);
       yield timeout(1500);
     }
-  }),
+  }).on('init'),
 // END-SNIPPET
 });
 

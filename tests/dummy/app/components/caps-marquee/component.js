@@ -1,6 +1,5 @@
 import Ember from 'ember';
-
-import { timeout } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 
 function capitalizeAt(text, i) {
   let capsLetter = text.charAt(i).toUpperCase();
@@ -14,7 +13,7 @@ export default Ember.Component.extend({
   text: null,
   scrambledText: null,
 // BEGIN-SNIPPET caps-marquee
-  marqueeLoop: Ember.on('init', function * () {
+  marqueeLoop: task(function * () {
     let text = this.get('text');
     while (true) {
       this.set('formattedText', text);
@@ -24,7 +23,7 @@ export default Ember.Component.extend({
         yield timeout(50);
       }
     }
-  }),
+  }).on('init'),
 // END-SNIPPET
 });
 

@@ -21,7 +21,7 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
     }
   });`, isGeneratorIterator(testIter));
 
-function eventedTaskDescriptor(func, eventNames) {
+export function task(func) {
   let cp = Ember.computed(function() {
     let publish;
 
@@ -40,11 +40,20 @@ function eventedTaskDescriptor(func, eventNames) {
     return task;
   });
 
+  let eventNames;
   cp.setup = function(obj, keyname) {
-    for (let i = 0; i < eventNames.length; ++i) {
-      let eventName = eventNames[i];
-      Ember.addListener(obj, eventName, null, makeListener(keyname));
+    if (eventNames) {
+      for (let i = 0; i < eventNames.length; ++i) {
+        let eventName = eventNames[i];
+        Ember.addListener(obj, eventName, null, makeListener(keyname));
+      }
     }
+  };
+
+  cp.on = function() {
+    eventNames = eventNames || [];
+    eventNames.push.apply(eventNames, arguments);
+    return this;
   };
 
   return cp;
@@ -56,21 +65,6 @@ function makeListener(taskName) {
     task.perform.apply(task, arguments);
   };
 }
-
-Ember.on = (...args) => {
-  let last = args[args.length-1];
-  if (typeof last === 'function') {
-    let func = args.pop();
-    if (isGeneratorFunction(func)) {
-      return eventedTaskDescriptor(func, args);
-    } else {
-      func.__ember_listens__ = args;
-      return func;
-    }
-  } else {
-    throw new Error("Not implemented");
-  }
-};
 
 export function DidNotRunException() {
   this.success = false;
@@ -280,65 +274,6 @@ RawChannel.prototype._put= function() {
 RawChannel.prototype.refreshBlockingState = function () {
   Ember.set(this, 'hasTakers', this.takes.length > 0);
 };
-
-export function task(...args) {
-  let _genFn;
-  if (typeof args[args.length - 1] === 'function') {
-    _genFn = args.pop();
-  }
-
-  let autoStart = false;
-
-  let desc = liveComputed(function(key) {
-    let _dispatcher = getOwner(this).lookup('service:ember-concurrency-dispatcher');
-    Ember.assert(`You can only use task() on Ember Objects instantiated from a container`, _dispatcher);
-
-    Ember.assert(`Task '${key}' specifies more than one dependent task, which is not presently supported`, args.length <= 1);
-
-    let _depTasks = args.map(path => {
-      let depTask = this.get(path);
-      if (depTask instanceof Task) {
-        return depTask;
-      } else {
-        // TODO: log this? better API than quietly failing?
-        return null;
-      }
-    });
-
-    let _depTask = _depTasks[0];
-
-    if (!_genFn) {
-      _genFn = function * (...args) {
-        if (_depTask) {
-          let value = yield _depTask.perform(...args);
-          return value;
-        }
-      };
-    }
-
-    let task = Task.create({
-      _dispatcher,
-      _hostObject: this,
-      _genFn,
-      _depTask,
-    });
-
-    cleanupOnDestroy(this, task, 'destroy');
-
-    if (autoStart) {
-      task.perform();
-    }
-
-    return task;
-  });
-
-  desc.autoStart = () => {
-    autoStart = true;
-    return desc;
-  };
-
-  return desc;
-}
 
 function log(...args) {
   //console.log(...args);
