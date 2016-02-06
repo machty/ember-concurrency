@@ -679,6 +679,14 @@ define("dummy/components/auto-complete/template", ["exports"], function (exports
     };
   })());
 });
+define('dummy/components/basic-dropdown', ['exports', 'ember-basic-dropdown/components/basic-dropdown'], function (exports, _emberBasicDropdownComponentsBasicDropdown) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberBasicDropdownComponentsBasicDropdown['default'];
+    }
+  });
+});
 define('dummy/components/caps-marquee/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
 
   function capitalizeAt(text, i) {
@@ -1253,6 +1261,70 @@ define("dummy/components/color-square/template", ["exports"], function (exports)
     };
   })());
 });
+define('dummy/components/ember-wormhole', ['exports', 'ember-wormhole/components/ember-wormhole'], function (exports, _emberWormholeComponentsEmberWormhole) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberWormholeComponentsEmberWormhole['default'];
+    }
+  });
+});
+define('dummy/components/power-select/before-options', ['exports', 'ember-power-select/components/power-select/before-options'], function (exports, _emberPowerSelectComponentsPowerSelectBeforeOptions) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberPowerSelectComponentsPowerSelectBeforeOptions['default'];
+    }
+  });
+});
+define('dummy/components/power-select/options', ['exports', 'ember-power-select/components/power-select/options'], function (exports, _emberPowerSelectComponentsPowerSelectOptions) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberPowerSelectComponentsPowerSelectOptions['default'];
+    }
+  });
+});
+define('dummy/components/power-select/trigger', ['exports', 'ember-power-select/components/power-select/trigger'], function (exports, _emberPowerSelectComponentsPowerSelectTrigger) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberPowerSelectComponentsPowerSelectTrigger['default'];
+    }
+  });
+});
+define('dummy/components/power-select-multiple/options', ['exports', 'ember-power-select/components/power-select-multiple/options'], function (exports, _emberPowerSelectComponentsPowerSelectMultipleOptions) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberPowerSelectComponentsPowerSelectMultipleOptions['default'];
+    }
+  });
+});
+define('dummy/components/power-select-multiple/trigger', ['exports', 'ember-power-select/components/power-select-multiple/trigger'], function (exports, _emberPowerSelectComponentsPowerSelectMultipleTrigger) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberPowerSelectComponentsPowerSelectMultipleTrigger['default'];
+    }
+  });
+});
+define('dummy/components/power-select-multiple', ['exports', 'ember-power-select/components/power-select-multiple'], function (exports, _emberPowerSelectComponentsPowerSelectMultiple) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberPowerSelectComponentsPowerSelectMultiple['default'];
+    }
+  });
+});
+define('dummy/components/power-select', ['exports', 'ember-power-select/components/power-select'], function (exports, _emberPowerSelectComponentsPowerSelect) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberPowerSelectComponentsPowerSelect['default'];
+    }
+  });
+});
 define('dummy/components/scrambled-text/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
 
   // from http://stackoverflow.com/a/3943985/914123
@@ -1801,20 +1873,27 @@ define("dummy/components/yielding-promises/template", ["exports"], function (exp
 define('dummy/controllers/array', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller;
 });
-define("dummy/controllers/docs", ["exports", "ember"], function (exports, _ember) {
+define('dummy/controllers/object', ['exports', 'ember'], function (exports, _ember) {
+  exports['default'] = _ember['default'].Controller;
+});
+define('dummy/controllers/tasks', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  exports['default'] = _ember['default'].Controller.extend({
+    taskGroup0: (0, _emberConcurrency.task)(),
+    taskGroup1: (0, _emberConcurrency.task)()
+  });
+});
+define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember) {
   var computed = _ember["default"].computed;
   exports["default"] = _ember["default"].Controller.extend({
     appController: _ember["default"].inject.controller('application'),
 
     tableOfContents: [{ route: "docs", title: "Introduction" },
 
-    //{ route: "installation",   title: "Installation & Compatibility"},
-    { route: "docs.backpressure", title: "Backpressure"
-    }],
+    //{ route: "docs.loops",   title: "Loops"},
 
-    //children: [
-    //{route: "docs.backp", title: "dropAllIntermediate"},
-    //]
+    { title: "Examples", route: "docs.examples",
+      children: [{ route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }]
+    }],
 
     //{ route: 'transition-map', title: 'Transition Map',
     //children: [
@@ -1886,16 +1965,230 @@ define("dummy/controllers/docs", ["exports", "ember"], function (exports, _ember
     })
   });
 });
-define('dummy/controllers/object', ['exports', 'ember'], function (exports, _ember) {
-  exports['default'] = _ember['default'].Controller;
-});
-define('dummy/controllers/tasks', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+define('dummy/docs/examples/autocomplete/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+
+  // Wrap the $.getJSON API so that it's cancellable.
+  function cancellableGetJSON(url) {
+    return (0, _emberConcurrency.createObservable)(function (publish) {
+      var xhr = _ember['default'].$.getJSON(url);
+      xhr.then(publish, publish.error);
+
+      return function () {
+        xhr.abort();
+      };
+    });
+  }
+
+  // BEGIN-SNIPPET debounced-search-with-cancellation
+  var DEBOUNCE_MS = 250;
   exports['default'] = _ember['default'].Controller.extend({
-    taskGroup0: (0, _emberConcurrency.task)(),
-    taskGroup1: (0, _emberConcurrency.task)()
+    searchRepo: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0(term) {
+      var url, json;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            // This tells ember-concurrency that if this task is called while
+            // it is already running, it should cancel the previous task and
+            // start over. If this were commented this out, the new task
+            // would only start running after the previous task finishes.
+            (0, _emberConcurrency.restartable)();
+
+            if (!_ember['default'].isBlank(term)) {
+              context$1$0.next = 3;
+              break;
+            }
+
+            return context$1$0.abrupt('return', []);
+
+          case 3:
+            context$1$0.next = 5;
+            return (0, _emberConcurrency.timeout)(DEBOUNCE_MS);
+
+          case 5:
+            url = '//api.github.com/search/repositories?q=' + term;
+            context$1$0.next = 8;
+            return cancellableGetJSON(url);
+
+          case 8:
+            json = context$1$0.sent;
+            return context$1$0.abrupt('return', json.items);
+
+          case 10:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    }))
   });
+
+  // END-SNIPPET
 });
-define("dummy/docs/backpressure/index/template", ["exports"], function (exports) {
+
+// Pause here for DEBOUNCE_MS milliseconds. Because we told
+// ember-concurrency that this task is `restartable`, if the user
+// starts typing again, the current search will be cancelled at
+// this point and start over from the beginning. This is the
+// ember-concurrency way of debouncing a task.
+
+// We yield AJAX request and wait for it to complete. If the task
+// is restarted before this request completes, the XHR request
+// is aborted (open the inspector and see for yourself :)
+define("dummy/docs/examples/autocomplete/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 23,
+              "column": 2
+            },
+            "end": {
+              "line": 27,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/docs/examples/autocomplete/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [["content", "repo.full_name", ["loc", [null, [26, 4], [26, 22]]]]],
+        locals: ["repo"],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.2.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 39,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/examples/autocomplete/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Auto-Search + ember-power-select + debouncing");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  This example improves upon\n  the ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("a");
+        dom.setAttribute(el2, "href", "http://www.ember-power-select.com/cookbook/debounce-searches");
+        var el3 = dom.createTextNode("Debounced Search");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  example in the ember-power-select docs, which, while reasonably succinct,\n  involves somewhat confusing usage of the\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createElement("a");
+        dom.setAttribute(el3, "href", "http://emberjs.com/api/classes/Ember.run.html#method_debounce");
+        var el4 = dom.createTextNode("Ember.run.debounce API");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(",\n  and doesn't cancel previous AJAX requests when a new search begins.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Live Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  (Please mind the GitHub API quota :)\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("JavaScript");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Template");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(3);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [8]), 2, 2);
+        morphs[1] = dom.createMorphAt(fragment, 12, 12, contextualElement);
+        morphs[2] = dom.createMorphAt(fragment, 16, 16, contextualElement);
+        return morphs;
+      },
+      statements: [["block", "power-select", [], ["search", ["subexpr", "@mut", [["get", "searchRepo.action", ["loc", [null, [23, 25], [23, 42]]]]], [], []], "selected", ["subexpr", "@mut", [["get", "selected", ["loc", [null, [24, 27], [24, 35]]]]], [], []], "onchange", ["subexpr", "action", [["subexpr", "mut", [["get", "selected", ["loc", [null, [25, 40], [25, 48]]]]], [], ["loc", [null, [25, 35], [25, 49]]]]], [], ["loc", [null, [25, 27], [25, 50]]]]], 0, null, ["loc", [null, [23, 2], [27, 19]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancellation.js"], ["loc", [null, [33, 0], [33, 61]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancellation-template.hbs"], ["loc", [null, [37, 0], [37, 71]]]]],
+      locals: [],
+      templates: [child0]
+    };
+  })());
+});
+define("dummy/docs/examples/index/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
@@ -1911,11 +2204,11 @@ define("dummy/docs/backpressure/index/template", ["exports"], function (exports)
             "column": 0
           },
           "end": {
-            "line": 7,
+            "line": 16,
             "column": 0
           }
         },
-        "moduleName": "dummy/docs/backpressure/index/template.hbs"
+        "moduleName": "dummy/docs/examples/index/template.hbs"
       },
       isEmpty: false,
       arity: 0,
@@ -1924,13 +2217,39 @@ define("dummy/docs/backpressure/index/template", ["exports"], function (exports)
       buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h3");
-        var el2 = dom.createTextNode("Backpressure");
+        var el2 = dom.createTextNode("Examples");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  TODO\n");
+        var el2 = dom.createTextNode("\n  What better way to familiarize yourself with\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("strong");
+        var el3 = dom.createTextNode("ember-concurrency");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" than to check out\n  the slew of examples on the left?\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Also, if you can't find the example or answer you're looking for,\n  please ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("a");
+        dom.setAttribute(el2, "href", "https://github.com/machty/ember-concurrency/issues");
+        var el3 = dom.createTextNode("open an issue");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  or ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("a");
+        dom.setAttribute(el2, "href", "https://twitter.com/machty");
+        var el3 = dom.createTextNode("ping @machty on Twitter");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" and\n  he'll cook one up for you :).\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -2034,6 +2353,453 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
     };
   })());
 });
+define("dummy/docs/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      var child0 = (function () {
+        var child0 = (function () {
+          return {
+            meta: {
+              "fragmentReason": false,
+              "revision": "Ember@2.2.0",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 9,
+                  "column": 12
+                },
+                "end": {
+                  "line": 9,
+                  "column": 51
+                }
+              },
+              "moduleName": "dummy/docs/template.hbs"
+            },
+            isEmpty: false,
+            arity: 0,
+            cachedFragment: null,
+            hasRendered: false,
+            buildFragment: function buildFragment(dom) {
+              var el0 = dom.createDocumentFragment();
+              var el1 = dom.createComment("");
+              dom.appendChild(el0, el1);
+              return el0;
+            },
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
+              dom.insertBoundary(fragment, 0);
+              dom.insertBoundary(fragment, null);
+              return morphs;
+            },
+            statements: [["content", "entry.title", ["loc", [null, [9, 36], [9, 51]]]]],
+            locals: [],
+            templates: []
+          };
+        })();
+        return {
+          meta: {
+            "fragmentReason": false,
+            "revision": "Ember@2.2.0",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 8,
+                "column": 10
+              },
+              "end": {
+                "line": 10,
+                "column": 10
+              }
+            },
+            "moduleName": "dummy/docs/template.hbs"
+          },
+          isEmpty: false,
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("            ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+            return morphs;
+          },
+          statements: [["block", "link-to", [["get", "entry.route", ["loc", [null, [9, 23], [9, 34]]]]], [], 0, null, ["loc", [null, [9, 12], [9, 63]]]]],
+          locals: [],
+          templates: [child0]
+        };
+      })();
+      var child1 = (function () {
+        return {
+          meta: {
+            "fragmentReason": false,
+            "revision": "Ember@2.2.0",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 10,
+                "column": 10
+              },
+              "end": {
+                "line": 12,
+                "column": 10
+              }
+            },
+            "moduleName": "dummy/docs/template.hbs"
+          },
+          isEmpty: false,
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("            ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+            return morphs;
+          },
+          statements: [["content", "entry.title", ["loc", [null, [11, 12], [11, 27]]]]],
+          locals: [],
+          templates: []
+        };
+      })();
+      var child2 = (function () {
+        var child0 = (function () {
+          var child0 = (function () {
+            return {
+              meta: {
+                "fragmentReason": false,
+                "revision": "Ember@2.2.0",
+                "loc": {
+                  "source": null,
+                  "start": {
+                    "line": 18,
+                    "column": 14
+                  },
+                  "end": {
+                    "line": 18,
+                    "column": 53
+                  }
+                },
+                "moduleName": "dummy/docs/template.hbs"
+              },
+              isEmpty: false,
+              arity: 0,
+              cachedFragment: null,
+              hasRendered: false,
+              buildFragment: function buildFragment(dom) {
+                var el0 = dom.createDocumentFragment();
+                var el1 = dom.createComment("");
+                dom.appendChild(el0, el1);
+                return el0;
+              },
+              buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+                var morphs = new Array(1);
+                morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
+                dom.insertBoundary(fragment, 0);
+                dom.insertBoundary(fragment, null);
+                return morphs;
+              },
+              statements: [["content", "child.title", ["loc", [null, [18, 38], [18, 53]]]]],
+              locals: [],
+              templates: []
+            };
+          })();
+          return {
+            meta: {
+              "fragmentReason": false,
+              "revision": "Ember@2.2.0",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 16,
+                  "column": 12
+                },
+                "end": {
+                  "line": 20,
+                  "column": 12
+                }
+              },
+              "moduleName": "dummy/docs/template.hbs"
+            },
+            isEmpty: false,
+            arity: 1,
+            cachedFragment: null,
+            hasRendered: false,
+            buildFragment: function buildFragment(dom) {
+              var el0 = dom.createDocumentFragment();
+              var el1 = dom.createTextNode("            ");
+              dom.appendChild(el0, el1);
+              var el1 = dom.createElement("li");
+              var el2 = dom.createTextNode("\n              ");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createComment("");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createTextNode("\n            ");
+              dom.appendChild(el1, el2);
+              dom.appendChild(el0, el1);
+              var el1 = dom.createTextNode("\n");
+              dom.appendChild(el0, el1);
+              return el0;
+            },
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var morphs = new Array(1);
+              morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
+              return morphs;
+            },
+            statements: [["block", "link-to", [["get", "child.route", ["loc", [null, [18, 25], [18, 36]]]]], [], 0, null, ["loc", [null, [18, 14], [18, 65]]]]],
+            locals: ["child"],
+            templates: [child0]
+          };
+        })();
+        return {
+          meta: {
+            "fragmentReason": false,
+            "revision": "Ember@2.2.0",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 14,
+                "column": 10
+              },
+              "end": {
+                "line": 22,
+                "column": 10
+              }
+            },
+            "moduleName": "dummy/docs/template.hbs"
+          },
+          isEmpty: false,
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("          ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("ul");
+            var el2 = dom.createTextNode("\n");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("          ");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
+            return morphs;
+          },
+          statements: [["block", "each", [["get", "entry.children", ["loc", [null, [16, 20], [16, 34]]]]], ["key", "route"], 0, null, ["loc", [null, [16, 12], [20, 21]]]]],
+          locals: [],
+          templates: [child0]
+        };
+      })();
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 6,
+              "column": 8
+            },
+            "end": {
+              "line": 24,
+              "column": 8
+            }
+          },
+          "moduleName": "dummy/docs/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("        ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("li");
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("        ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1]);
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(element0, 1, 1);
+          morphs[1] = dom.createMorphAt(element0, 3, 3);
+          return morphs;
+        },
+        statements: [["block", "if", [["get", "entry.route", ["loc", [null, [8, 16], [8, 27]]]]], [], 0, 1, ["loc", [null, [8, 10], [12, 17]]]], ["block", "if", [["get", "entry.children", ["loc", [null, [14, 16], [14, 30]]]]], [], 2, null, ["loc", [null, [14, 10], [22, 17]]]]],
+        locals: ["entry"],
+        templates: [child0, child1, child2]
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "triple-curlies"
+        },
+        "revision": "Ember@2.2.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 34,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1, "class", "container");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "docs row");
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3, "class", "three columns");
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4, "class", "side-menu");
+        var el5 = dom.createTextNode("\n      ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("ul");
+        var el6 = dom.createTextNode("\n");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createComment("");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("      ");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n    ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3, "class", "nine columns");
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n  ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element1 = dom.childAt(fragment, [0, 1]);
+        var morphs = new Array(2);
+        morphs[0] = dom.createMorphAt(dom.childAt(element1, [1, 1, 1]), 1, 1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element1, [3]), 1, 1);
+        return morphs;
+      },
+      statements: [["block", "each", [["get", "tableOfContents", ["loc", [null, [6, 16], [6, 31]]]]], ["key", "route"], 0, null, ["loc", [null, [6, 8], [24, 17]]]], ["content", "outlet", ["loc", [null, [30, 4], [30, 14]]]]],
+      locals: [],
+      templates: [child0]
+    };
+  })());
+});
+define('dummy/helpers/ember-power-select-build-selection', ['exports', 'ember-power-select/helpers/ember-power-select-build-selection'], function (exports, _emberPowerSelectHelpersEmberPowerSelectBuildSelection) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberPowerSelectHelpersEmberPowerSelectBuildSelection['default'];
+    }
+  });
+  Object.defineProperty(exports, 'emberPowerSelectBuildSelection', {
+    enumerable: true,
+    get: function get() {
+      return _emberPowerSelectHelpersEmberPowerSelectBuildSelection.emberPowerSelectBuildSelection;
+    }
+  });
+});
+define('dummy/helpers/ember-power-select-option-classes', ['exports', 'ember-power-select/helpers/ember-power-select-option-classes'], function (exports, _emberPowerSelectHelpersEmberPowerSelectOptionClasses) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberPowerSelectHelpersEmberPowerSelectOptionClasses['default'];
+    }
+  });
+  Object.defineProperty(exports, 'emberPowerSelectOptionClasses', {
+    enumerable: true,
+    get: function get() {
+      return _emberPowerSelectHelpersEmberPowerSelectOptionClasses.emberPowerSelectOptionClasses;
+    }
+  });
+});
+define('dummy/helpers/hash', ['exports', 'ember-hash-helper-polyfill/helpers/hash'], function (exports, _emberHashHelperPolyfillHelpersHash) {
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function get() {
+      return _emberHashHelperPolyfillHelpersHash['default'];
+    }
+  });
+  Object.defineProperty(exports, 'hash', {
+    enumerable: true,
+    get: function get() {
+      return _emberHashHelperPolyfillHelpersHash.hash;
+    }
+  });
+});
 define('dummy/initializers/app-version', ['exports', 'ember-cli-app-version/initializer-factory', 'dummy/config/environment'], function (exports, _emberCliAppVersionInitializerFactory, _dummyConfigEnvironment) {
   exports['default'] = {
     name: 'App Version',
@@ -2094,15 +2860,17 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
 
   Router.map(function () {
     this.route('docs', function () {
-      this.route('backpressure', function () {});
+      this.route('examples', function () {
+        this.route('autocomplete');
+      });
     });
 
-    this.route('ajax');
-    this.route('color');
-    this.route('yielding');
-    this.route('tasks');
-    this.route('music');
-    this.route('auto-complete');
+    //this.route('ajax');
+    //this.route('color');
+    //this.route('yielding');
+    //this.route('tasks');
+    //this.route('music');
+    //this.route('auto-complete');
   });
 
   exports['default'] = Router;
@@ -2118,6 +2886,8 @@ define('dummy/services/ajax', ['exports', 'ember-ajax/services/ajax'], function 
 define("dummy/snippets", ["exports"], function (exports) {
   exports["default"] = {
     "caps-marquee.js": "  marqueeLoop: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      this.set('formattedText', text);\n      yield timeout(1500);\n      for (let i = 0; i < text.length; ++i) {\n        this.set('formattedText', capitalizeAt(text, i));\n        yield timeout(50);\n      }\n    }\n  }).on('init'),",
+    "debounced-search-with-cancellation-template.hbs": "  {{! note the use of `searchRepo.action` to pass in\n      an action that will kick off the search task }}\n\n  {{#power-select search=searchRepo.action\n                  selected=selected\n                  onchange=(action (mut selected)) as |repo|}}\n    {{repo.full_name}}\n  {{/power-select}}",
+    "debounced-search-with-cancellation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    // This tells ember-concurrency that if this task is called while\n    // it is already running, it should cancel the previous task and\n    // start over. If this were commented this out, the new task\n    // would only start running after the previous task finishes.\n    restartable();\n\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because we told\n    // ember-concurrency that this task is `restartable`, if the user\n    // starts typing again, the current search will be cancelled at\n    // this point and start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `//api.github.com/search/repositories?q=${term}`;\n\n    // We yield AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield cancellableGetJSON(url);\n    return json.items;\n  }),\n});",
     "sample-template.hbs": "<p>\nhere is some code\n</p>\n",
     "scrambled-text.js": "  startScrambling: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      let pauseTime = 140;\n      while (pauseTime > 5) {\n        this.set('scrambledText', scramble(text));\n        yield timeout(pauseTime);\n        pauseTime = pauseTime * 0.95;\n      }\n      this.set('scrambledText', text);\n      yield timeout(1500);\n    }\n  }).on('init'),"
   };
@@ -2461,371 +3231,6 @@ define("dummy/templates/components/code-snippet", ["exports"], function (exports
       statements: [["content", "source", ["loc", [null, [1, 0], [1, 10]]]]],
       locals: [],
       templates: []
-    };
-  })());
-});
-define("dummy/templates/docs", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template((function () {
-    var child0 = (function () {
-      var child0 = (function () {
-        var child0 = (function () {
-          return {
-            meta: {
-              "fragmentReason": false,
-              "revision": "Ember@2.2.0",
-              "loc": {
-                "source": null,
-                "start": {
-                  "line": 9,
-                  "column": 12
-                },
-                "end": {
-                  "line": 9,
-                  "column": 51
-                }
-              },
-              "moduleName": "dummy/templates/docs.hbs"
-            },
-            isEmpty: false,
-            arity: 0,
-            cachedFragment: null,
-            hasRendered: false,
-            buildFragment: function buildFragment(dom) {
-              var el0 = dom.createDocumentFragment();
-              var el1 = dom.createComment("");
-              dom.appendChild(el0, el1);
-              return el0;
-            },
-            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var morphs = new Array(1);
-              morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
-              dom.insertBoundary(fragment, 0);
-              dom.insertBoundary(fragment, null);
-              return morphs;
-            },
-            statements: [["content", "entry.title", ["loc", [null, [9, 36], [9, 51]]]]],
-            locals: [],
-            templates: []
-          };
-        })();
-        return {
-          meta: {
-            "fragmentReason": false,
-            "revision": "Ember@2.2.0",
-            "loc": {
-              "source": null,
-              "start": {
-                "line": 8,
-                "column": 10
-              },
-              "end": {
-                "line": 10,
-                "column": 10
-              }
-            },
-            "moduleName": "dummy/templates/docs.hbs"
-          },
-          isEmpty: false,
-          arity: 0,
-          cachedFragment: null,
-          hasRendered: false,
-          buildFragment: function buildFragment(dom) {
-            var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("            ");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createComment("");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createTextNode("\n");
-            dom.appendChild(el0, el1);
-            return el0;
-          },
-          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var morphs = new Array(1);
-            morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
-            return morphs;
-          },
-          statements: [["block", "link-to", [["get", "entry.route", ["loc", [null, [9, 23], [9, 34]]]]], [], 0, null, ["loc", [null, [9, 12], [9, 63]]]]],
-          locals: [],
-          templates: [child0]
-        };
-      })();
-      var child1 = (function () {
-        return {
-          meta: {
-            "fragmentReason": false,
-            "revision": "Ember@2.2.0",
-            "loc": {
-              "source": null,
-              "start": {
-                "line": 10,
-                "column": 10
-              },
-              "end": {
-                "line": 12,
-                "column": 10
-              }
-            },
-            "moduleName": "dummy/templates/docs.hbs"
-          },
-          isEmpty: false,
-          arity: 0,
-          cachedFragment: null,
-          hasRendered: false,
-          buildFragment: function buildFragment(dom) {
-            var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("            ");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createComment("");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createTextNode("\n");
-            dom.appendChild(el0, el1);
-            return el0;
-          },
-          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var morphs = new Array(1);
-            morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
-            return morphs;
-          },
-          statements: [["content", "entry.title", ["loc", [null, [11, 12], [11, 27]]]]],
-          locals: [],
-          templates: []
-        };
-      })();
-      var child2 = (function () {
-        var child0 = (function () {
-          return {
-            meta: {
-              "fragmentReason": false,
-              "revision": "Ember@2.2.0",
-              "loc": {
-                "source": null,
-                "start": {
-                  "line": 16,
-                  "column": 12
-                },
-                "end": {
-                  "line": 20,
-                  "column": 12
-                }
-              },
-              "moduleName": "dummy/templates/docs.hbs"
-            },
-            isEmpty: false,
-            arity: 1,
-            cachedFragment: null,
-            hasRendered: false,
-            buildFragment: function buildFragment(dom) {
-              var el0 = dom.createDocumentFragment();
-              var el1 = dom.createTextNode("            ");
-              dom.appendChild(el0, el1);
-              var el1 = dom.createElement("li");
-              var el2 = dom.createTextNode("\n              ");
-              dom.appendChild(el1, el2);
-              var el2 = dom.createComment("");
-              dom.appendChild(el1, el2);
-              var el2 = dom.createTextNode("\n            ");
-              dom.appendChild(el1, el2);
-              dom.appendChild(el0, el1);
-              var el1 = dom.createTextNode("\n");
-              dom.appendChild(el0, el1);
-              return el0;
-            },
-            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var morphs = new Array(1);
-              morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
-              return morphs;
-            },
-            statements: [["content", "child.title", ["loc", [null, [18, 14], [18, 29]]]]],
-            locals: ["child"],
-            templates: []
-          };
-        })();
-        return {
-          meta: {
-            "fragmentReason": false,
-            "revision": "Ember@2.2.0",
-            "loc": {
-              "source": null,
-              "start": {
-                "line": 14,
-                "column": 10
-              },
-              "end": {
-                "line": 22,
-                "column": 10
-              }
-            },
-            "moduleName": "dummy/templates/docs.hbs"
-          },
-          isEmpty: false,
-          arity: 0,
-          cachedFragment: null,
-          hasRendered: false,
-          buildFragment: function buildFragment(dom) {
-            var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("          ");
-            dom.appendChild(el0, el1);
-            var el1 = dom.createElement("ul");
-            var el2 = dom.createTextNode("\n");
-            dom.appendChild(el1, el2);
-            var el2 = dom.createComment("");
-            dom.appendChild(el1, el2);
-            var el2 = dom.createTextNode("          ");
-            dom.appendChild(el1, el2);
-            dom.appendChild(el0, el1);
-            var el1 = dom.createTextNode("\n");
-            dom.appendChild(el0, el1);
-            return el0;
-          },
-          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var morphs = new Array(1);
-            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
-            return morphs;
-          },
-          statements: [["block", "each", [["get", "entry.children", ["loc", [null, [16, 20], [16, 34]]]]], ["key", "route"], 0, null, ["loc", [null, [16, 12], [20, 21]]]]],
-          locals: [],
-          templates: [child0]
-        };
-      })();
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.2.0",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 6,
-              "column": 8
-            },
-            "end": {
-              "line": 24,
-              "column": 8
-            }
-          },
-          "moduleName": "dummy/templates/docs.hbs"
-        },
-        isEmpty: false,
-        arity: 1,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("        ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("li");
-          var el2 = dom.createTextNode("\n");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("        ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element0 = dom.childAt(fragment, [1]);
-          var morphs = new Array(2);
-          morphs[0] = dom.createMorphAt(element0, 1, 1);
-          morphs[1] = dom.createMorphAt(element0, 3, 3);
-          return morphs;
-        },
-        statements: [["block", "if", [["get", "entry.route", ["loc", [null, [8, 16], [8, 27]]]]], [], 0, 1, ["loc", [null, [8, 10], [12, 17]]]], ["block", "if", [["get", "entry.children", ["loc", [null, [14, 16], [14, 30]]]]], [], 2, null, ["loc", [null, [14, 10], [22, 17]]]]],
-        locals: ["entry"],
-        templates: [child0, child1, child2]
-      };
-    })();
-    return {
-      meta: {
-        "fragmentReason": {
-          "name": "triple-curlies"
-        },
-        "revision": "Ember@2.2.0",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 34,
-            "column": 0
-          }
-        },
-        "moduleName": "dummy/templates/docs.hbs"
-      },
-      isEmpty: false,
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1, "class", "container");
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "docs row");
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "three columns");
-        var el4 = dom.createTextNode("\n    ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "side-menu");
-        var el5 = dom.createTextNode("\n      ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("ul");
-        var el6 = dom.createTextNode("\n");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createComment("");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("      ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n    ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "nine columns");
-        var el4 = dom.createTextNode("\n    ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createComment("");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n  ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element1 = dom.childAt(fragment, [0, 1]);
-        var morphs = new Array(2);
-        morphs[0] = dom.createMorphAt(dom.childAt(element1, [1, 1, 1]), 1, 1);
-        morphs[1] = dom.createMorphAt(dom.childAt(element1, [3]), 1, 1);
-        return morphs;
-      },
-      statements: [["block", "each", [["get", "tableOfContents", ["loc", [null, [6, 16], [6, 31]]]]], ["key", "route"], 0, null, ["loc", [null, [6, 8], [24, 17]]]], ["content", "outlet", ["loc", [null, [30, 4], [30, 14]]]]],
-      locals: [],
-      templates: [child0]
     };
   })());
 });
@@ -3401,7 +3806,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.4.7+301bfcb2"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.4.7+de2a21bd"});
 }
 
 /* jshint ignore:end */
