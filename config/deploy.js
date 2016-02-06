@@ -21,15 +21,6 @@ module.exports = function(deployTarget) {
     // configure other plugins for production deploy target here
   }
 
-  ENV.s3 = {
-    accessKeyId: process.env.S3_KEY,
-    secretAccessKey: process.env.S3_SECRET,
-    bucket: 'machty',
-    prefix: 'ember-concurrency2',
-    region: 'us-east-1',
-    filePattern: '**/*.{js,css,png,gif,ico,jpg,map,xml,txt,svg,swf,eot,ttf,woff,woff2,html}'
-  };
-
   // Note: if you need to build some configuration asynchronously, you can return
   // a promise that resolves with the ENV object instead of returning the
   // ENV object synchronously.
