@@ -38,7 +38,10 @@ export function task(func) {
     forEach(obs, func).attach(this);
     let task = {
       perform(...args) {
-        publish(new Arguments(args));
+        let argsObject = new Arguments(args);
+        argsObject.defer = Ember.RSVP.defer();
+        publish(argsObject);
+        return argsObject.defer.promise;
       },
       _perform(...args) {
         publish(new Arguments(args));
@@ -131,12 +134,21 @@ function cleanupOnDestroy(owner, object, cleanupMethodName) {
 
 export function createObservable(fn) {
   return {
-    subscribe(onNext) {
+    subscribe(onNext, onError, onCompleted) {
       let isDisposed = false;
       let publish = (v) => {
         if (isDisposed) { return; }
-        onNext(v);
+        joinAndSchedule(null, onNext, v);
       };
+      publish.error = (e) => {
+        if (isDisposed) { return; }
+        joinAndSchedule(() => {
+          if (onError) { onError(e); }
+          if (onCompleted) { onCompleted(); }
+        });
+      }
+      // TODO: publish.complete?
+
       let maybeDisposer = fn(publish);
       let disposer = typeof maybeDisposer === 'function' ? maybeDisposer : Ember.K;
 
@@ -217,32 +229,30 @@ function start(owner, sourceIterable, iterationHandlerFn) {
 
       log("OPS: next value", oi);
 
-      if (done) {
-        // unlike array iterators, "process" iterators can "return" values,
-        // and we still want to block on those values before full returning.
-        if (!value) {
-          sourceIteration.step(si.index);
-          return;
-        }
-      }
-
-      if (value && typeof value.then === 'function') {
-        value.then(v => {
-          joinAndSchedule(opsIteration, 'step', index, v);
+      let observable = normalizeObservable(value);
+      if (observable) {
+        let disposable = observable.subscribe(v => {
+          if (done) {
+            maybeResolveInvocationPromise(si.value, v);
+            sourceIteration.step(si.index);
+          } else {
+            opsIteration.step(index, v);
+          }
         }, error => {
-          //opsIterator.proceed(index, THROW, error);
-        });
-      } else if (value && typeof value.subscribe === 'function') {
-        disposable = value.subscribe(v => {
-          joinAndSchedule(opsIteration, 'step', index, v);
-        }, error => {
-          //opsIterator.proceed(index, THROW, error);
+          maybeResolveInvocationPromise(si.value, Ember.RSVP.reject(error));
+          sourceIteration.step(si.index); // throw? break? return?
         }, () => {
+          // TODO: test me
           //opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
         });
         opsIteration.registerDisposable(index, disposable);
       } else {
-        opsIteration.step(index, value);
+        if (done) {
+          maybeResolveInvocationPromise(si.value, value);
+          sourceIteration.step(si.index);
+        } else {
+          opsIteration.step(index, value);
+        }
       }
     });
 
@@ -264,6 +274,28 @@ function start(owner, sourceIterable, iterationHandlerFn) {
   sourceIteration.step(0, undefined);
 
   return sourceIteration;
+}
+
+function maybeResolveInvocationPromise(value, resolveValue) {
+  if (value instanceof Arguments) {
+    value.resolve(resolveValue);
+  }
+}
+
+function normalizeObservable(value) {
+  if (value && typeof value.then === 'function') {
+    return createObservable(publish => {
+      value.then(publish, publish.error);
+    });
+  } else if (value && typeof value.subscribe === 'function') {
+    // TODO: check for scheduler interface for Rx rather than
+    // creating another wrapping observable to schedule on run loop.
+    return createObservable(publish => {
+      return value.subscribe(publish, publish.error).dispose;
+    });
+  } else {
+    return null;
+  }
 }
 
 function joinAndSchedule(...args) {

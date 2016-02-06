@@ -48,7 +48,6 @@ function doBufferingTest(description, observable, bufferPolicyFn, expectations) 
 
         yield interval(10);
         arr.push(v);
-        console.log(v);
         if (v === last) {
           Ember.run.later(() => {
             QUnit.start();
