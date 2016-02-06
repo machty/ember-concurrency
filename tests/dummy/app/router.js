@@ -9,6 +9,7 @@ Router.map(function() {
   this.route('docs', function() {
     this.route('backpressure', function() {
     });
+    this.route('loops');
   });
 
   this.route('ajax');

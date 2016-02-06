@@ -1,6 +1,12 @@
 import Ember from 'ember';
 import { forEach } from 'ember-concurrency';
-import { interval, dropIntermediateValues, keepFirstIntermediateValue, keepLastIntermediateValue } from 'ember-concurrency';
+import {
+  interval,
+  dropIntermediateValues,
+  keepFirstIntermediateValue,
+  keepLastIntermediateValue,
+  restartable,
+} from 'ember-concurrency';
 
 const Observable = window.Rx.Observable;
 
@@ -40,8 +46,9 @@ function doBufferingTest(description, observable, bufferPolicyFn, expectations) 
       forEach(observable, function * (v) {
         bufferPolicyFn();
 
-        arr.push(v);
         yield interval(10);
+        arr.push(v);
+        console.log(v);
         if (v === last) {
           Ember.run.later(() => {
             QUnit.start();
@@ -56,12 +63,14 @@ function doBufferingTest(description, observable, bufferPolicyFn, expectations) 
 doBufferingTest("no buffering: ranges", rangeObservable, Ember.K, [1,2,3,4,5,101,102,103,104,105]);
 doBufferingTest("no buffering: sporadic", sporadicObservable, Ember.K, [1,2,3,4,5,6]);
 
-doBufferingTest("dropIntermediateValues: ranges", rangeObservable, dropIntermediateValues, [1,101]);
+doBufferingTest("dropIntermediateValues: ranges",   rangeObservable,    dropIntermediateValues, [1,101]);
 doBufferingTest("dropIntermediateValues: sporadic", sporadicObservable, dropIntermediateValues, [1,4]);
 
-doBufferingTest("keepFirstIntermediateValue: ranges", rangeObservable, keepFirstIntermediateValue, [1, 2, 101, 102]);
+doBufferingTest("keepFirstIntermediateValue: ranges",   rangeObservable,    keepFirstIntermediateValue, [1, 2, 101, 102]);
 doBufferingTest("keepFirstIntermediateValue: sporadic", sporadicObservable, keepFirstIntermediateValue, [1,2,4,5]);
 
-doBufferingTest("keepLastIntermediateValue: ranges", rangeObservable, keepLastIntermediateValue, [1, 5, 101, 105]);
+doBufferingTest("keepLastIntermediateValue: ranges",   rangeObservable,    keepLastIntermediateValue, [1, 5, 101, 105]);
 doBufferingTest("keepLastIntermediateValue: sporadic", sporadicObservable, keepLastIntermediateValue, [1, 3, 4, 6]);
 
+doBufferingTest("restartable: ranges",   rangeObservable,    restartable, [5, 105]); // yuno pass?
+doBufferingTest("restartable: sporadic", sporadicObservable, restartable, [3, 6]);

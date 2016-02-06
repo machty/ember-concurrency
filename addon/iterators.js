@@ -171,7 +171,9 @@ function createBufferedIterator(obs) {
   };
 
   sub = obs.subscribe(v => {
-    iterator.policy.put(v, iterator);
+    Ember.run.join(() =>{
+      iterator.policy.put(v, iterator);
+    });
   });
 
   return iterator;

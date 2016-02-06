@@ -8,12 +8,13 @@ export default Ember.Controller.extend({
   tableOfContents: [
     { route: "docs",   title: "Introduction"},
 
-    //{ route: "installation",   title: "Installation & Compatibility"},
-    { route: "docs.backpressure", title: "Backpressure",
+    { route: "docs.loops",   title: "Loops"},
+
+    //{ route: "docs.backpressure", title: "Backpressure",
       //children: [
         //{route: "docs.backp", title: "dropAllIntermediate"},
       //]
-    },
+    //},
     //{ route: 'transition-map', title: 'Transition Map',
       //children: [
         //{route: 'transition-map.route-constraints', title: 'Matching by route & model'},

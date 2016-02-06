@@ -1,12 +1,19 @@
 import Ember from 'ember';
 import { isGeneratorIterator, Arguments } from 'ember-concurrency/utils';
-import { _makeIteration, dropIntermediateValues, keepFirstIntermediateValue, keepLastIntermediateValue } from 'ember-concurrency/iteration';
+import {
+  _makeIteration,
+  dropIntermediateValues,
+  keepFirstIntermediateValue,
+  keepLastIntermediateValue,
+  restartable,
+} from 'ember-concurrency/iteration';
 import { _makeIterator } from 'ember-concurrency/iterators';
 
 export {
   dropIntermediateValues,
   keepFirstIntermediateValue,
-  keepLastIntermediateValue
+  keepLastIntermediateValue,
+  restartable
 };
 
 let testGenFn = function * () {};
@@ -32,7 +39,10 @@ export function task(func) {
     let task = {
       perform(...args) {
         publish(new Arguments(args));
-      }
+      },
+      _perform(...args) {
+        publish(new Arguments(args));
+      },
     };
 
     return task;
@@ -60,7 +70,7 @@ export function task(func) {
 function makeListener(taskName) {
   return function() {
     let task = this.get(taskName);
-    task.perform.apply(task, arguments);
+    task._perform.apply(task, arguments);
   };
 }
 

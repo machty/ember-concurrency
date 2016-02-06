@@ -89,6 +89,35 @@ export function keepLastIntermediateValue() {
   CURRENT_ITERATION.setBufferPolicy(_keepLastIntermediateValue);
 }
 
+function _restartableInstance(iteration) {
+  this.iteration = iteration;
+}
+
+_restartableInstance.prototype.attach = function(iterator) {
+  if (iterator.buffer.length) {
+    let mostRecent = iterator.buffer.pop();
+    iterator.buffer = [mostRecent];
+  } else {
+    iterator.buffer = [];
+  }
+};
+
+_restartableInstance.prototype.put = function(value, iterator) {
+  this.iteration.step(-1, undefined);
+  iterator.put(value);
+};
+
+let _restartable = {
+  name: 'restartable',
+  create(iteration) {
+    return new _restartableInstance(iteration);
+  },
+};
+
+export function restartable() {
+  CURRENT_ITERATION.setBufferPolicy(_restartable);
+}
+
 function Iteration(iterator, sourceIteration, fn) {
   this.iterator = iterator;
   this.fn = fn;
