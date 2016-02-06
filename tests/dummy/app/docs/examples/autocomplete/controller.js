@@ -26,7 +26,7 @@ export default Ember.Controller.extend({
     // ember-concurrency way of debouncing a task.
     yield timeout(DEBOUNCE_MS);
 
-    let url = `//api.github.com/search/repositories?q=${term}`;
+    let url = `https://api.github.com/search/repositories?q=${term}`;
 
     // We yield AJAX request and wait for it to complete. If the task
     // is restarted before this request completes, the XHR request
