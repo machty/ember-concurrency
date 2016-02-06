@@ -3401,7 +3401,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.4.7+c8765f02"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.4.7+60dd01c1"});
 }
 
 /* jshint ignore:end */
