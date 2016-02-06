@@ -1,6 +1,4 @@
 import Ember from 'ember';
-import getOwner from 'ember-getowner-polyfill';
-import Task from 'ember-concurrency/task';
 import { isGeneratorIterator, Arguments } from 'ember-concurrency/utils';
 import { _makeIteration, dropIntermediateValues, keepFirstIntermediateValue, keepLastIntermediateValue } from 'ember-concurrency/iteration';
 import { _makeIterator } from 'ember-concurrency/iterators';
@@ -71,18 +69,6 @@ export function DidNotRunException() {
   this.reason = "unperformable";
 }
 
-export let csp = window.csp;
-
-csp.set_queue_delayer(function(f, delay) {
-  Ember.run.later(f, delay);
-});
-
-csp.set_queue_dispatcher(function(f) {
-	Ember.run.join(this, function() {
-		Ember.run.schedule('actions', f);
-	});
-});
-
 let EventedObservable = Ember.Object.extend({
   obj: null,
   eventName: null,
@@ -113,61 +99,6 @@ Ember.Evented.reopen({
   },
 });
 
-export let Process = Ember.Object.extend({
-  owner: null,
-  generatorFunction: null,
-
-  _currentProcess: null,
-
-  isRunning: false,
-
-  start(args, completionHandler) {
-    if (this._currentProcess) {
-      // already running; use restart() to restart.
-      // NOTE: what if arguments have changed?
-      // it seems like we want something that says "make sure
-      // this process is running, with these args, but don't
-      // restart unless the args have changed". Lowest level of
-      // allowing this would be saving the current args in an externally
-      // inspectable way.
-      return;
-    }
-
-    this.set('isRunning', true);
-
-    let owner = this.owner;
-    let iter = this.generatorFunction.apply(owner, args);
-    this._currentProcess = csp.spawn(iter);
-    this._currentProcess.process._emberProcess = this;
-
-    csp.takeAsync(this._currentProcess, returnValue => {
-      if (completionHandler) {
-        completionHandler(returnValue);
-      }
-      this.kill();
-    });
-  },
-
-  stop() {
-    this.kill();
-  },
-
-  kill() {
-    if (this._currentProcess) {
-      this.set('isRunning', false);
-      let processChannel = this._currentProcess;
-      processChannel.close();
-      processChannel.process.close();
-      this._currentProcess = null;
-    }
-  },
-
-  restart(...args) {
-    this.kill();
-    this.start(args);
-  },
-});
-
 function cleanupOnDestroy(owner, object, cleanupMethodName) {
   // TODO: find a non-mutate-y, hacky way of doing this.
   if (!owner.willDestroy.__ember_processes_destroyers__) {
@@ -186,16 +117,6 @@ function cleanupOnDestroy(owner, object, cleanupMethodName) {
   owner.willDestroy.__ember_processes_destroyers__.push(() => {
     object[cleanupMethodName]();
   });
-}
-
-function liveComputed(...args) {
-  let cp = Ember.computed(...args);
-  cp.setup = function(obj, keyname) {
-    Ember.addListener(obj, 'init', null, function() {
-      this.get(keyname);
-    });
-  };
-  return cp;
 }
 
 export function createObservable(fn) {
@@ -220,7 +141,6 @@ export function createObservable(fn) {
   };
 }
 
-
 export let _numIntervals = 0;
 export function interval(ms) {
   return createObservable(publish => {
@@ -240,40 +160,6 @@ export function sleep(ms) {
 export function timeout(ms) {
   return interval(ms);
 }
-
-sleep.untilEvent = function(obj, eventName) {
-  let chan = csp.chan();
-  Ember.addListener(obj, eventName, null, event => {
-    csp.putAsync(chan, event);
-    // need to close chan? does it matter if it's anonymous?
-  }, true);
-  return chan;
-};
-
-let chan = csp.chan();
-let RawChannel = chan.constructor;
-chan.close();
-
-RawChannel.prototype.hasTakers = false;
-
-let oldTake = RawChannel.prototype._take;
-let oldPut = RawChannel.prototype._put;
-
-RawChannel.prototype._take = function() {
-  let ret = oldTake.apply(this, arguments);
-  this.refreshBlockingState();
-  return ret;
-};
-
-RawChannel.prototype._put= function() {
-  let ret = oldPut.apply(this, arguments);
-  this.refreshBlockingState();
-  return ret;
-};
-
-RawChannel.prototype.refreshBlockingState = function () {
-  Ember.set(this, 'hasTakers', this.takes.length > 0);
-};
 
 function log(...args) {
   //console.log(...args);
@@ -330,7 +216,6 @@ function start(owner, sourceIterable, iterationHandlerFn) {
         }
       }
 
-
       if (value && typeof value.then === 'function') {
         value.then(v => {
           joinAndSchedule(opsIteration, 'step', index, v);
@@ -376,24 +261,4 @@ function joinAndSchedule(...args) {
     Ember.run.schedule('actions', ...args);
   });
 }
-
-function isGeneratorFunction(obj) {
-  var constructor = obj.constructor;
-
-  if (!constructor) {
-    return false;
-  }
-
-  if (constructor.name === 'GeneratorFunction'||
-      constructor.displayName === 'GeneratorFunction') {
-    return true;
-  }
-
-  return false;
-}
-
-
-
-
-
 
