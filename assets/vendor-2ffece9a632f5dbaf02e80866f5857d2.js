@@ -108022,7 +108022,6 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
 
       var task = {
         perform: perform,
-        action: perform,
         _perform: function _perform() {
           for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
             args[_key2] = arguments[_key2];

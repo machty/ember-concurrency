@@ -790,6 +790,208 @@ define("dummy/components/scrambled-text/template", ["exports"], function (export
     };
   })());
 });
+define('dummy/components/start-task-example/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  exports['default'] = _ember['default'].Component.extend({
+    init: function init() {
+      this._super();
+      this.set('messages', _ember['default'].A());
+    },
+
+    messages: null,
+
+    // BEGIN-SNIPPET start-task-example
+    myTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0(msg) {
+      var m;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            m = {
+              text: 'myTask invoked with the following: ' + (msg || "init") + '... '
+            };
+
+            this.messages.pushObject(m);
+            context$1$0.next = 4;
+            return (0, _emberConcurrency.timeout)(500);
+
+          case 4:
+            _ember['default'].set(m, 'text', m.text + "Done");
+
+          case 5:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    })).on('init', 'foo'),
+
+    actions: {
+      performTask: function performTask(msg) {
+        // This demonstrates how you can .get() a reference
+        // to a task and then run it with .perform(), but
+        // ideally you should just invoke myTask.perform
+        // directly from the template.
+        this.get('myTask').perform(msg);
+      },
+      triggerFoo: function triggerFoo(msg) {
+        this.trigger('foo', msg);
+      }
+    }
+    // END-SNIPPET
+  });
+});
+define("dummy/components/start-task-example/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 18,
+              "column": 2
+            },
+            "end": {
+              "line": 20,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/components/start-task-example/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("li");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
+          return morphs;
+        },
+        statements: [["content", "m.text", ["loc", [null, [19, 8], [19, 18]]]]],
+        locals: ["m"],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.2.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 31,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/components/start-task-example/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode("\n    1. task.perform(...)\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode("\n    2. task.perform action\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode("\n    3. .on('foo')\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h6");
+        var el2 = dom.createTextNode("Messages Received:");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ul");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("JavaScript");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Template");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [0]);
+        var element1 = dom.childAt(element0, [2]);
+        var element2 = dom.childAt(element0, [4]);
+        var element3 = dom.childAt(element0, [6]);
+        var morphs = new Array(6);
+        morphs[0] = dom.createElementMorph(element1);
+        morphs[1] = dom.createElementMorph(element2);
+        morphs[2] = dom.createElementMorph(element3);
+        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [4]), 1, 1);
+        morphs[4] = dom.createMorphAt(fragment, 8, 8, contextualElement);
+        morphs[5] = dom.createMorphAt(fragment, 12, 12, contextualElement);
+        return morphs;
+      },
+      statements: [["element", "action", ["performTask", "one"], [], ["loc", [null, [3, 10], [3, 40]]]], ["element", "action", [["get", "myTask.perform", ["loc", [null, [6, 19], [6, 33]]]], "two"], [], ["loc", [null, [6, 10], [6, 41]]]], ["element", "action", ["triggerFoo", "three"], [], ["loc", [null, [9, 10], [9, 41]]]], ["block", "each", [["get", "messages", ["loc", [null, [18, 10], [18, 18]]]]], [], 0, null, ["loc", [null, [18, 2], [20, 11]]]], ["inline", "code-snippet", [], ["name", "start-task-example.js"], ["loc", [null, [25, 0], [25, 45]]]], ["inline", "code-snippet", [], ["name", "start-task-example-template.hbs"], ["loc", [null, [29, 0], [29, 55]]]]],
+      locals: [],
+      templates: [child0]
+    };
+  })());
+});
 define('dummy/components/x-music/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
   exports['default'] = _ember['default'].Component.extend({
     playMusic: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
@@ -1242,7 +1444,7 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
     //{ route: "docs.loops",   title: "Loops"},
 
     { title: "Examples", route: "docs.examples",
-      children: [{ route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }]
+      children: [{ route: "docs.examples.starting-a-task", title: "Starting a Task" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }]
     }],
 
     //{ route: 'transition-map', title: 'Transition Map',
@@ -1387,11 +1589,11 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
           "loc": {
             "source": null,
             "start": {
-              "line": 23,
+              "line": 20,
               "column": 2
             },
             "end": {
-              "line": 27,
+              "line": 24,
               "column": 2
             }
           },
@@ -1416,7 +1618,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
           morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
           return morphs;
         },
-        statements: [["content", "repo.full_name", ["loc", [null, [26, 4], [26, 22]]]]],
+        statements: [["content", "repo.full_name", ["loc", [null, [23, 4], [23, 22]]]]],
         locals: ["repo"],
         templates: []
       };
@@ -1435,7 +1637,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
             "column": 0
           },
           "end": {
-            "line": 39,
+            "line": 36,
             "column": 0
           }
         },
@@ -1490,8 +1692,6 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
         var el1 = dom.createElement("p");
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
@@ -1521,12 +1721,12 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var morphs = new Array(3);
-        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [8]), 2, 2);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [8]), 1, 1);
         morphs[1] = dom.createMorphAt(fragment, 12, 12, contextualElement);
         morphs[2] = dom.createMorphAt(fragment, 16, 16, contextualElement);
         return morphs;
       },
-      statements: [["block", "power-select", [], ["search", ["subexpr", "@mut", [["get", "searchRepo.action", ["loc", [null, [23, 25], [23, 42]]]]], [], []], "selected", ["subexpr", "@mut", [["get", "selected", ["loc", [null, [24, 27], [24, 35]]]]], [], []], "onchange", ["subexpr", "action", [["subexpr", "mut", [["get", "selected", ["loc", [null, [25, 40], [25, 48]]]]], [], ["loc", [null, [25, 35], [25, 49]]]]], [], ["loc", [null, [25, 27], [25, 50]]]]], 0, null, ["loc", [null, [23, 2], [27, 19]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancellation.js"], ["loc", [null, [33, 0], [33, 61]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancellation-template.hbs"], ["loc", [null, [37, 0], [37, 71]]]]],
+      statements: [["block", "power-select", [], ["search", ["subexpr", "@mut", [["get", "searchRepo.perform", ["loc", [null, [20, 25], [20, 43]]]]], [], []], "selected", ["subexpr", "@mut", [["get", "selected", ["loc", [null, [21, 27], [21, 35]]]]], [], []], "onchange", ["subexpr", "action", [["subexpr", "mut", [["get", "selected", ["loc", [null, [22, 40], [22, 48]]]]], [], ["loc", [null, [22, 35], [22, 49]]]]], [], ["loc", [null, [22, 27], [22, 50]]]]], 0, null, ["loc", [null, [20, 2], [24, 19]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancellation.js"], ["loc", [null, [30, 0], [30, 61]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancellation-template.hbs"], ["loc", [null, [34, 0], [34, 71]]]]],
       locals: [],
       templates: [child0]
     };
@@ -1609,6 +1809,141 @@ define("dummy/docs/examples/index/template", ["exports"], function (exports) {
     };
   })());
 });
+define("dummy/docs/examples/starting-a-task/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.2.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 33,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/examples/starting-a-task/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Starting a task");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  There are three ways to start a task:\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ol");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    In JavaScript, get a reference to the task and call ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("task.perform(...)");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    In your Handlebars template, pass ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("nameOfTask.perform");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" to the ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("action");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    helper or into components as actions. This is the most direct and preferable way to\n    invoke a task, but keep in mind that for this to work you must ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("em");
+        var el4 = dom.createTextNode("not");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" declare\n    the hash in the ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("actions");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" hash.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    In JavaScript, specify the Ember Events that should cause the task to\n    run using ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("task(...).on(eventName)");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(". You can use ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".on('init')");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    to create a task the runs as soon as the object it lives on is initialized.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  The following example demonstrates all three variants:\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Live Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment, 10, 10, contextualElement);
+        return morphs;
+      },
+      statements: [["content", "start-task-example", ["loc", [null, [30, 0], [30, 22]]]]],
+      locals: [],
+      templates: []
+    };
+  })());
+});
 define("dummy/docs/index/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
@@ -1625,7 +1960,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 26,
+            "line": 28,
             "column": 0
           }
         },
@@ -1675,7 +2010,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode("ember-concurrency");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" in your projects.) While Ember\n  provides many promise-friendly APIs to help you build your apps,\n  even careful, idiomatic use of Promises in Ember apps leaves room for\n  a slew of concurrency / async-related bugs and leaks to sneak in.\n");
+        var el2 = dom.createTextNode(" in your projects.) But while Ember\n  provides many promise-friendly APIs to help you build your apps,\n  even careful, idiomatic use of Promises in Ember apps leaves room for\n  a slew of concurrency / async-related bugs and leaks to sneak in.\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -1684,7 +2019,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         var el2 = dom.createTextNode("WORK IN PROGRESS");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\nBoth ember-concurrency and these docs are a work in progress!\n\n");
+        var el1 = dom.createTextNode("\n\nBoth ember-concurrency and these docs are a work in progress; while I\nwork to fill out these docs, please check out some of the examples on\nthe left.\n\n");
         dom.appendChild(el0, el1);
         return el0;
       },
@@ -2206,6 +2541,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
     this.route('docs', function () {
       this.route('examples', function () {
         this.route('autocomplete');
+        this.route('starting-a-task');
       });
     });
 
@@ -2230,10 +2566,12 @@ define('dummy/services/ajax', ['exports', 'ember-ajax/services/ajax'], function 
 define("dummy/snippets", ["exports"], function (exports) {
   exports["default"] = {
     "caps-marquee.js": "  marqueeLoop: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      this.set('formattedText', text);\n      yield timeout(1500);\n      for (let i = 0; i < text.length; ++i) {\n        this.set('formattedText', capitalizeAt(text, i));\n        yield timeout(50);\n      }\n    }\n  }).on('init'),",
-    "debounced-search-with-cancellation-template.hbs": "  {{! note the use of `searchRepo.action` to pass in\n      an action that will kick off the search task }}\n\n  {{#power-select search=searchRepo.action\n                  selected=selected\n                  onchange=(action (mut selected)) as |repo|}}\n    {{repo.full_name}}\n  {{/power-select}}",
+    "debounced-search-with-cancellation-template.hbs": "  {{#power-select search=searchRepo.perform\n                  selected=selected\n                  onchange=(action (mut selected)) as |repo|}}\n    {{repo.full_name}}\n  {{/power-select}}",
     "debounced-search-with-cancellation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because this\n    // task is `.restartable()`, if the user starts typing again,\n    // the current search will be cancelled at this point and\n    // start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `https://api.github.com/search/repositories?q=${term}`;\n\n    // We yield AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield cancellableGetJSON(url);\n    return json.items;\n  }).restartable(),\n});",
     "sample-template.hbs": "<p>\nhere is some code\n</p>\n",
-    "scrambled-text.js": "  startScrambling: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      let pauseTime = 140;\n      while (pauseTime > 5) {\n        this.set('scrambledText', scramble(text));\n        yield timeout(pauseTime);\n        pauseTime = pauseTime * 0.95;\n      }\n      this.set('scrambledText', text);\n      yield timeout(1500);\n    }\n  }).on('init'),"
+    "scrambled-text.js": "  startScrambling: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      let pauseTime = 140;\n      while (pauseTime > 5) {\n        this.set('scrambledText', scramble(text));\n        yield timeout(pauseTime);\n        pauseTime = pauseTime * 0.95;\n      }\n      this.set('scrambledText', text);\n      yield timeout(1500);\n    }\n  }).on('init'),",
+    "start-task-example-template.hbs": "  <button {{action 'performTask' \"one\"}}>\n    1. task.perform(...)\n  </button>\n  <button {{action myTask.perform \"two\"}}>\n    2. task.perform action\n  </button>\n  <button {{action \"triggerFoo\" \"three\"}}>\n    3. .on('foo')\n  </button>",
+    "start-task-example.js": "  myTask: task(function * (msg) {\n    let m = {\n      text: `myTask invoked with the following: ${msg || \"init\"}... `\n    };\n    this.messages.pushObject(m);\n    yield timeout(500);\n    Ember.set(m, 'text', m.text + \"Done\");\n  }).on('init', 'foo'),\n\n  actions: {\n    performTask(msg) {\n      // This demonstrates how you can .get() a reference\n      // to a task and then run it with .perform(), but\n      // ideally you should just invoke myTask.perform\n      // directly from the template.\n      this.get('myTask').perform(msg);\n    },\n    triggerFoo(msg) {\n      this.trigger('foo', msg);\n    }\n  }"
   };
 });
 define("dummy/templates/ajax", ["exports"], function (exports) {
@@ -3150,7 +3488,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.4.7+adb01fea"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.4.7+410fa1d8"});
 }
 
 /* jshint ignore:end */
