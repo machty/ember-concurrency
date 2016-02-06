@@ -26,8 +26,11 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
     }
   });`, isGeneratorIterator(testIter));
 
-export function task(func) {
-  let cp = Ember.computed(function() {
+
+const ComputedProperty = Ember.__loader.require("ember-metal/computed").ComputedProperty;
+
+function TaskProperty(taskFunc) {
+  ComputedProperty.call(this, function() {
     let publish;
 
     // TODO: we really need a subject/buffer primitive
@@ -35,7 +38,7 @@ export function task(func) {
       publish = _publish;
     });
 
-    forEach(obs, func).attach(this);
+    forEach(obs, taskFunc).attach(this);
 
     let perform = function(...args) {
       let argsObject = new Arguments(args);
@@ -55,23 +58,29 @@ export function task(func) {
     return task;
   });
 
-  let eventNames;
-  cp.setup = function(obj, keyname) {
-    if (eventNames) {
-      for (let i = 0; i < eventNames.length; ++i) {
-        let eventName = eventNames[i];
-        Ember.addListener(obj, eventName, null, makeListener(keyname));
-      }
+  this.eventNames = null;
+}
+
+TaskProperty.prototype = Object.create(ComputedProperty.prototype);
+TaskProperty.prototype.constructor = TaskProperty;
+TaskProperty.prototype.setup = function(obj, keyname) {
+  let eventNames = this.eventNames;
+  if (eventNames) {
+    for (let i = 0; i < eventNames.length; ++i) {
+      let eventName = eventNames[i];
+      Ember.addListener(obj, eventName, null, makeListener(keyname));
     }
-  };
+  }
+};
 
-  cp.on = function() {
-    eventNames = eventNames || [];
-    eventNames.push.apply(eventNames, arguments);
-    return this;
-  };
+TaskProperty.prototype.on = function() {
+  this.eventNames = this.eventNames || [];
+  this.eventNames.push.apply(this.eventNames, arguments);
+  return this;
+};
 
-  return cp;
+export function task(func) {
+  return new TaskProperty(func);
 }
 
 function makeListener(taskName) {
