@@ -36,13 +36,17 @@ export function task(func) {
     });
 
     forEach(obs, func).attach(this);
+
+    let perform = function(...args) {
+      let argsObject = new Arguments(args);
+      argsObject.defer = Ember.RSVP.defer();
+      publish(argsObject);
+      return argsObject.defer.promise;
+    };
+
     let task = {
-      perform(...args) {
-        let argsObject = new Arguments(args);
-        argsObject.defer = Ember.RSVP.defer();
-        publish(argsObject);
-        return argsObject.defer.promise;
-      },
+      perform: perform,
+      action: perform,
       _perform(...args) {
         publish(new Arguments(args));
       },

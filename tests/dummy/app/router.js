@@ -7,17 +7,17 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
   this.route('docs', function() {
-    this.route('backpressure', function() {
+    this.route('examples', function() {
+      this.route('autocomplete');
     });
-    this.route('loops');
   });
 
-  this.route('ajax');
-  this.route('color');
-  this.route('yielding');
-  this.route('tasks');
-  this.route('music');
-  this.route('auto-complete');
+  //this.route('ajax');
+  //this.route('color');
+  //this.route('yielding');
+  //this.route('tasks');
+  //this.route('music');
+  //this.route('auto-complete');
 });
 
 export default Router;

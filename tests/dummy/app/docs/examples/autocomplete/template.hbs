@@ -1,0 +1,38 @@
+<h3>Auto-Search + ember-power-select + debouncing</h3>
+
+<p>
+  This example improves upon
+  the <a href="http://www.ember-power-select.com/cookbook/debounce-searches">Debounced Search</a>
+  example in the ember-power-select docs, which, while reasonably succinct,
+  involves somewhat confusing usage of the
+  <code><a href="http://emberjs.com/api/classes/Ember.run.html#method_debounce">Ember.run.debounce API</a></code>,
+  and doesn't cancel previous AJAX requests when a new search begins.
+</p>
+
+<h5>Live Example</h5>
+
+<p>
+  (Please mind the GitHub API quota :)
+</p>
+
+<p>
+{{! BEGIN-SNIPPET debounced-search-with-cancellation-template }}
+  {{! note the use of `searchRepo.action` to pass in
+      an action that will kick off the search task }}
+
+  {{#power-select search=searchRepo.action
+                  selected=selected
+                  onchange=(action (mut selected)) as |repo|}}
+    {{repo.full_name}}
+  {{/power-select}}
+{{! END-SNIPPET }}
+</p>
+
+<h5>JavaScript</h5>
+
+{{code-snippet name="debounced-search-with-cancellation.js"}}
+
+<h5>Template</h5>
+
+{{code-snippet name="debounced-search-with-cancellation-template.hbs"}}
+

@@ -8,13 +8,13 @@ export default Ember.Controller.extend({
   tableOfContents: [
     { route: "docs",   title: "Introduction"},
 
-    { route: "docs.loops",   title: "Loops"},
+    //{ route: "docs.loops",   title: "Loops"},
 
-    //{ route: "docs.backpressure", title: "Backpressure",
-      //children: [
-        //{route: "docs.backp", title: "dropAllIntermediate"},
-      //]
-    //},
+    { title: "Examples", route: "docs.examples",
+      children: [
+        {route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select"},
+      ]
+    },
     //{ route: 'transition-map', title: 'Transition Map',
       //children: [
         //{route: 'transition-map.route-constraints', title: 'Matching by route & model'},

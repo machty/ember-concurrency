@@ -15,7 +15,7 @@
           <ul>
             {{#each entry.children key="route" as |child|}}
             <li>
-              {{child.title}}
+              {{#link-to child.route}}{{child.title}}{{/link-to}}
             </li>
             {{/each}}
           </ul>
