@@ -51,7 +51,6 @@ function TaskProperty(taskFunc) {
 
     let task = {
       perform: perform,
-      action: perform,
       _perform(...args) {
         publish(new Arguments(args));
       },

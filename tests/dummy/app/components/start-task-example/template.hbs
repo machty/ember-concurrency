@@ -1,0 +1,30 @@
+<p>
+{{! BEGIN-SNIPPET start-task-example-template }}
+  <button {{action 'performTask' "one"}}>
+    1. task.perform(...)
+  </button>
+  <button {{action myTask.perform "two"}}>
+    2. task.perform action
+  </button>
+  <button {{action "triggerFoo" "three"}}>
+    3. .on('foo')
+  </button>
+{{! END-SNIPPET }}
+</p>
+
+<h6>Messages Received:</h6>
+
+<ul>
+  {{#each messages as |m|}}
+    <li>{{m.text}}</li>
+  {{/each}}
+</ul>
+
+<h5>JavaScript</h5>
+
+{{code-snippet name="start-task-example.js"}}
+
+<h5>Template</h5>
+
+{{code-snippet name="start-task-example-template.hbs"}}
+

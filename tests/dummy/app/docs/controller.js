@@ -12,6 +12,7 @@ export default Ember.Controller.extend({
 
     { title: "Examples", route: "docs.examples",
       children: [
+        {route: "docs.examples.starting-a-task", title: "Starting a Task"},
         {route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select"},
       ]
     },

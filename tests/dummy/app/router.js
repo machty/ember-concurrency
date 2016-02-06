@@ -9,6 +9,7 @@ Router.map(function() {
   this.route('docs', function() {
     this.route('examples', function() {
       this.route('autocomplete');
+      this.route('starting-a-task');
     });
   });
 

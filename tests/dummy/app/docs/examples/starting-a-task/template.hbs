@@ -1,0 +1,32 @@
+<h3>Starting a task</h3>
+
+<p>
+  There are three ways to start a task:
+</p>
+
+<ol>
+  <li>
+    In JavaScript, get a reference to the task and call <code>task.perform(...)</code>
+  </li>
+  <li>
+    In your Handlebars template, pass <code>nameOfTask.perform</code> to the <code>action</code>
+    helper or into components as actions. This is the most direct and preferable way to
+    invoke a task, but keep in mind that for this to work you must <em>not</em> declare
+    the hash in the <code>actions</code> hash.
+  </li>
+  <li>
+    In JavaScript, specify the Ember Events that should cause the task to
+    run using <code>task(...).on(eventName)</code>. You can use <code>.on('init')</code>
+    to create a task the runs as soon as the object it lives on is initialized.
+  </li>
+</ol>
+
+<p>
+  The following example demonstrates all three variants:
+</p>
+
+<h5>Live Example</h5>
+
+{{start-task-example}}
+
+

@@ -17,10 +17,7 @@
 
 <p>
 {{! BEGIN-SNIPPET debounced-search-with-cancellation-template }}
-  {{! note the use of `searchRepo.action` to pass in
-      an action that will kick off the search task }}
-
-  {{#power-select search=searchRepo.action
+  {{#power-select search=searchRepo.perform
                   selected=selected
                   onchange=(action (mut selected)) as |repo|}}
     {{repo.full_name}}
