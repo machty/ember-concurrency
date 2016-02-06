@@ -1,0 +1,14 @@
+<h4>Canonical auto-complete example</h4>
+
+<input oninput={{updateSearch.rerun}} />
+
+{{#if results}}
+	<ul>
+    {{#each results as |r|}}
+      <li>{{r.word}}</li>
+    {{/each}}
+  </ul>
+{{else}}
+	Nothing to display yet...
+{{/if}}
+

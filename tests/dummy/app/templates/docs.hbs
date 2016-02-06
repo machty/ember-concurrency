@@ -1,0 +1,33 @@
+<div class="container">
+<div class="docs row">
+  <div class="three columns">
+    <div class="side-menu">
+      <ul>
+        {{#each tableOfContents key="route" as |entry|}}
+        <li>
+          {{#if entry.route}}
+            {{#link-to entry.route}}{{entry.title}}{{/link-to}}
+          {{else}}
+            {{entry.title}}
+          {{/if}}
+
+          {{#if entry.children}}
+          <ul>
+            {{#each entry.children key="route" as |child|}}
+            <li>
+              {{child.title}}
+            </li>
+            {{/each}}
+          </ul>
+          {{/if}}
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+
+  </div>
+  <div class="nine columns">
+    {{outlet}}
+  </div>
+</div>
+</div>
