@@ -1,15 +1,8 @@
 # ember-concurrency
 
-An experimental library for managing concurrency/asynchrony in Ember
-apps, leveraging JavaScript Generator functions and light-weight CSP
-(Communicating Sequential Processes, a la the Go Programming Language
-and Clojure's `core.async` libraries).
+A toolset with improved concurrency primitives for Ember.js.
 
-[Check out the demo](http://machty.s3.amazonaws.com/ember-concurrency2/index.html)
-
-## Usage
-
-TODO
+Documentation can be found [here](http://emberconcurrency.com).
 
 ## Addon Maintenance
 
