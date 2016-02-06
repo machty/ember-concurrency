@@ -9,15 +9,11 @@ export default Ember.Controller.extend({
     { route: "docs",   title: "Introduction"},
 
     //{ route: "installation",   title: "Installation & Compatibility"},
-    //{ route: "helpers-documentation", title: "Template Helpers",
+    { route: "docs.backpressure", title: "Backpressure",
       //children: [
-        //{route: "helpers-documentation.liquid-outlet", title: "liquid-outlet"},
-        //{route: "helpers-documentation.liquid-bind", title: "liquid-bind (inline form)"},
-        //{route: "helpers-documentation.liquid-bind-block", title: "liquid-bind (block form)"},
-        //{route: "helpers-documentation.liquid-if", title: "liquid-if"},
-        //{route: "helpers-documentation.liquid-spacer", title: "liquid-spacer"},
+        //{route: "docs.backp", title: "dropAllIntermediate"},
       //]
-    //},
+    },
     //{ route: 'transition-map', title: 'Transition Map',
       //children: [
         //{route: 'transition-map.route-constraints', title: 'Matching by route & model'},

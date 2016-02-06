@@ -5,7 +5,11 @@
       <ul>
         {{#each tableOfContents key="route" as |entry|}}
         <li>
-          {{#link-to entry.route}}{{entry.title}}{{/link-to}}
+          {{#if entry.route}}
+            {{#link-to entry.route}}{{entry.title}}{{/link-to}}
+          {{else}}
+            {{entry.title}}
+          {{/if}}
 
           {{#if entry.children}}
           <ul>
