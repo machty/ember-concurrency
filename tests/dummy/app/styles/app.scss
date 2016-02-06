@@ -1,7 +1,33 @@
-body {
-  margin: 12px 16px;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 12pt;
+@import "./normalize";
+@import "./skeleton";
+
+.centered {
+  text-align: center;
+}
+
+section {
+  margin-top: 10rem;
+}
+
+.navbar {
+  a {
+    text-decoration: none;
+    color: black;
+    line-height: 6rem;
+    padding: 2rem 2rem;
+  }
+}
+
+.nav-bar-link-outer {
+  text-align: center;
+}
+
+.docs {
+  margin-top: 2rem;
+}
+
+.side-menu {
+  padding-left: 2rem;
 }
 
 .progress-outer {

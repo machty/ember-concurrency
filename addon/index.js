@@ -1,8 +1,13 @@
 import Ember from 'ember';
-import getOwner from 'ember-getowner-polyfill';
-import Task from 'ember-concurrency/task';
-import AsyncIterator from 'ember-concurrency/async-iterator';
-import { isGeneratorIterator } from 'ember-concurrency/utils';
+import { isGeneratorIterator, Arguments } from 'ember-concurrency/utils';
+import { _makeIteration, dropIntermediateValues, keepFirstIntermediateValue, keepLastIntermediateValue } from 'ember-concurrency/iteration';
+import { _makeIterator } from 'ember-concurrency/iterators';
+
+export {
+  dropIntermediateValues,
+  keepFirstIntermediateValue,
+  keepLastIntermediateValue
+};
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -14,28 +19,55 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
     }
   });`, isGeneratorIterator(testIter));
 
+export function task(func) {
+  let cp = Ember.computed(function() {
+    let publish;
+
+    // TODO: we really need a subject/buffer primitive
+    let obs = createObservable(_publish => {
+      publish = _publish;
+    });
+
+    forEach(obs, func).attach(this);
+    let task = {
+      perform(...args) {
+        publish(new Arguments(args));
+      }
+    };
+
+    return task;
+  });
+
+  let eventNames;
+  cp.setup = function(obj, keyname) {
+    if (eventNames) {
+      for (let i = 0; i < eventNames.length; ++i) {
+        let eventName = eventNames[i];
+        Ember.addListener(obj, eventName, null, makeListener(keyname));
+      }
+    }
+  };
+
+  cp.on = function() {
+    eventNames = eventNames || [];
+    eventNames.push.apply(eventNames, arguments);
+    return this;
+  };
+
+  return cp;
+}
+
+function makeListener(taskName) {
+  return function() {
+    let task = this.get(taskName);
+    task.perform.apply(task, arguments);
+  };
+}
+
 export function DidNotRunException() {
   this.success = false;
   this.reason = "unperformable";
 }
-
-const NEXT   = 'next';
-const THROW  = 'throw';
-const RETURN = 'return';
-const BREAK = 'break';
-const FORCE = {};
-
-export let csp = window.csp;
-
-csp.set_queue_delayer(function(f, delay) {
-  Ember.run.later(f, delay);
-});
-
-csp.set_queue_dispatcher(function(f) {
-	Ember.run.join(this, function() {
-		Ember.run.schedule('actions', f);
-	});
-});
 
 let EventedObservable = Ember.Object.extend({
   obj: null,
@@ -67,61 +99,6 @@ Ember.Evented.reopen({
   },
 });
 
-export let Process = Ember.Object.extend({
-  owner: null,
-  generatorFunction: null,
-
-  _currentProcess: null,
-
-  isRunning: false,
-
-  start(args, completionHandler) {
-    if (this._currentProcess) {
-      // already running; use restart() to restart.
-      // NOTE: what if arguments have changed?
-      // it seems like we want something that says "make sure
-      // this process is running, with these args, but don't
-      // restart unless the args have changed". Lowest level of
-      // allowing this would be saving the current args in an externally
-      // inspectable way.
-      return;
-    }
-
-    this.set('isRunning', true);
-
-    let owner = this.owner;
-    let iter = this.generatorFunction.apply(owner, args);
-    this._currentProcess = csp.spawn(iter);
-    this._currentProcess.process._emberProcess = this;
-
-    csp.takeAsync(this._currentProcess, returnValue => {
-      if (completionHandler) {
-        completionHandler(returnValue);
-      }
-      this.kill();
-    });
-  },
-
-  stop() {
-    this.kill();
-  },
-
-  kill() {
-    if (this._currentProcess) {
-      this.set('isRunning', false);
-      let processChannel = this._currentProcess;
-      processChannel.close();
-      processChannel.process.close();
-      this._currentProcess = null;
-    }
-  },
-
-  restart(...args) {
-    this.kill();
-    this.start(args);
-  },
-});
-
 function cleanupOnDestroy(owner, object, cleanupMethodName) {
   // TODO: find a non-mutate-y, hacky way of doing this.
   if (!owner.willDestroy.__ember_processes_destroyers__) {
@@ -140,16 +117,6 @@ function cleanupOnDestroy(owner, object, cleanupMethodName) {
   owner.willDestroy.__ember_processes_destroyers__.push(() => {
     object[cleanupMethodName]();
   });
-}
-
-function liveComputed(...args) {
-  let cp = Ember.computed(...args);
-  cp.setup = function(obj, keyname) {
-    Ember.addListener(obj, 'init', null, function() {
-      this.get(keyname);
-    });
-  };
-  return cp;
 }
 
 export function createObservable(fn) {
@@ -174,7 +141,6 @@ export function createObservable(fn) {
   };
 }
 
-
 export let _numIntervals = 0;
 export function interval(ms) {
   return createObservable(publish => {
@@ -191,169 +157,12 @@ export function sleep(ms) {
   return interval(ms);
 }
 
-sleep.untilEvent = function(obj, eventName) {
-  let chan = csp.chan();
-  Ember.addListener(obj, eventName, null, event => {
-    csp.putAsync(chan, event);
-    // need to close chan? does it matter if it's anonymous?
-  }, true);
-  return chan;
-};
-
-let chan = csp.chan();
-let RawChannel = chan.constructor;
-chan.close();
-
-RawChannel.prototype.hasTakers = false;
-
-let oldTake = RawChannel.prototype._take;
-let oldPut = RawChannel.prototype._put;
-
-RawChannel.prototype._take = function() {
-  let ret = oldTake.apply(this, arguments);
-  this.refreshBlockingState();
-  return ret;
-};
-
-RawChannel.prototype._put= function() {
-  let ret = oldPut.apply(this, arguments);
-  this.refreshBlockingState();
-  return ret;
-};
-
-RawChannel.prototype.refreshBlockingState = function () {
-  Ember.set(this, 'hasTakers', this.takes.length > 0);
-};
-
-export function channel(...args) {
-  let bufferConstructor = args[0];
-  return liveComputed(function() {
-    let chan;
-    if (typeof bufferConstructor === 'function') {
-      chan = csp.chan(bufferConstructor(args[1]));
-    } else if (args.length === 1) {
-      chan = csp.chan(args[0]);
-    } else {
-      chan = csp.chan();
-    }
-    cleanupOnDestroy(this, chan, 'close');
-    return chan;
-  });
-}
-
-export function task(...args) {
-  let _genFn;
-  if (typeof args[args.length - 1] === 'function') {
-    _genFn = args.pop();
-  }
-
-  let autoStart = false;
-
-  let desc = liveComputed(function(key) {
-    let _dispatcher = getOwner(this).lookup('service:ember-concurrency-dispatcher');
-    Ember.assert(`You can only use task() on Ember Objects instantiated from a container`, _dispatcher);
-
-    Ember.assert(`Task '${key}' specifies more than one dependent task, which is not presently supported`, args.length <= 1);
-
-    let _depTasks = args.map(path => {
-      let depTask = this.get(path);
-      if (depTask instanceof Task) {
-        return depTask;
-      } else {
-        // TODO: log this? better API than quietly failing?
-        return null;
-      }
-    });
-
-    let _depTask = _depTasks[0];
-
-    if (!_genFn) {
-      _genFn = function * (...args) {
-        if (_depTask) {
-          let value = yield _depTask.perform(...args);
-          return value;
-        }
-      };
-    }
-
-    let task = Task.create({
-      _dispatcher,
-      _hostObject: this,
-      _genFn,
-      _depTask,
-    });
-
-    cleanupOnDestroy(this, task, 'destroy');
-
-    if (autoStart) {
-      task.perform();
-    }
-
-    return task;
-  });
-
-  desc.autoStart = () => {
-    autoStart = true;
-    return desc;
-  };
-
-  return desc;
-}
-
-export function asyncIterator(obs) {
-  return AsyncIterator.create({
-    _observable: obs,
-  });
-}
-
-asyncIterator.fromEvent = function(obj, eventName) {
-  return AsyncIterator.create({
-    _observable: EventedObservable.create({ obj, eventName })
-  });
-};
-
-export function asyncLoop(iterable, genFn) {
-  let task = Ember.get(csp.Process, '_current._emberProcess._task');
-
-  if (!task) {
-    throw new Error("Tried to invoke asyncLoop outside of task");
-  }
-
-  return csp.go(crankAsyncLoop, [iterable, task._hostObject, genFn]);
-}
-
-function * crankAsyncLoop(iterable, hostObject, genFn) {
-  let ai = AsyncIterator.create({
-    _observable: iterable,
-  });
-
-  let didBreak = false;
-  while (true) {
-    if (didBreak) {
-      break;
-    }
-
-    let { value, done } = yield ai.next();
-    if (done) { break; }
-
-    let spawnChannel;
-    let controlObj = {
-      break() {
-        let process = spawnChannel.process;
-        process.close();
-        ai.dispose();
-        didBreak = true;
-        return new csp.Instruction("close");
-      },
-    };
-
-    spawnChannel = csp.spawn(genFn.call(hostObject, value, controlObj));
-    yield spawnChannel;
-  }
+export function timeout(ms) {
+  return interval(ms);
 }
 
 function log(...args) {
-  console.log(...args);
+  //console.log(...args);
 }
 
 export function forEach(iterable, fn) {
@@ -367,292 +176,89 @@ export function forEach(iterable, fn) {
   return {
     attach(_owner) {
       owner = _owner;
-      this.it = start(owner, iterable, fn);
+      this.iteration = start(owner, iterable, fn);
       cleanupOnDestroy(owner, this, '_disposeIter');
     },
     _disposeIter() {
-      log("HOST: host object destroyed, disposing of source iteration", this.it);
-      this.it.proceed(FORCE, BREAK, null);
+      log("HOST: host object destroyed, disposing of source iteration", this.iteration);
+      this.iteration.break(-1);
     },
   };
 }
 
-// TODO: consider a growing ringbuffer?
-function createBuffer(obs) {
-  let sub;
-  let isDisposed = false;
-  let buffer = {
-    buffer: [],
-    takers: [],
-    take(taker) {
-      if (this.buffer.length) {
-        let value = this.buffer.shift();
-        taker.commit(value);
-      } else {
-        this.takers.push(taker);
-      }
-    },
-    put(value) {
-      while (true) {
-        let taker = this.takers.shift();
-        if (!taker) {
-          break;
-        }
+const EMPTY_ARRAY = [];
 
-        if (!taker.active) {
-          // TODO: is this needed?
-          continue;
-        }
+function start(owner, sourceIterable, iterationHandlerFn) {
+  log("SOURCE: Starting forEach with", owner, sourceIterable, iterationHandlerFn);
 
-        taker.commit(value);
-        return;
-      }
+  let sourceIterator = _makeIterator(sourceIterable, owner, EMPTY_ARRAY);
+  let sourceIteration = _makeIteration(sourceIterator, null, (si) => {
+    log("SOURCE: next value ", si);
 
-      this.buffer.push(value);
-    },
-    return() {
-      // this needs a way of teardown
-      this.dispose();
-      return {
-        done: true,
-        value: undefined,
-      };
-    },
-    next() {
-      let defer = Ember.RSVP.defer();
-      let taker = {
-        active: true,
-        commit(value) {
-          this.active = false;
-          defer.resolve(value);
-        },
-        then(r0, r1) {
-          return defer.promise.then(r0, r1);
-        },
-      };
-      this.take(taker);
-      return taker;
-    },
-    dispose() {
-      if (isDisposed) { return; }
-      isDisposed = true;
-      sub.dispose();
-    },
-  };
-
-  sub = obs.subscribe(v => {
-    buffer.put(v);
-  });
-
-  return buffer;
-}
-
-
-forEach(asyncThing, function * () {
-  // if asyncThing is noisy, and then the object dies... then
-  // we stop iterating right away.
-  //
-  // so that iteration
-});
-
-
-function start(owner, sourceIterable, fn) {
-  log("SOURCE: Starting forEach with", owner, sourceIterable, fn);
-
-  let rawIterable;
-  if (sourceIterable[Symbol.iterator]) {
-    log("SOURCE: detected iterable");
-    rawIterable = sourceIterable[Symbol.iterator]();
-  } else if (typeof sourceIterable.subscribe === 'function') {
-    log("SOURCE: detected observable");
-    rawIterable = createBuffer(sourceIterable);
-  } else {
-    // TODO: log error obj
-    throw new Error("Unknown structure passed to forEach; expected an iterable, observable, or a promise");
-  }
-
-  let sourceIterator = _makeIterator(rawIterable, (sourceIteration) => {
-    log("SOURCE: next value ", sourceIteration);
-
-    if (sourceIteration.done) {
-      log("SOURCE: iteration done, doing nothing", sourceIteration);
+    if (si.done) {
+      log("SOURCE: iteration done", si);
       return;
     }
 
-    // Pass it to the mapping fn, which may be be a normal fn or a generator fn
-    debugger;
-    let maybeIterator = fn.call(owner, sourceIteration.value);
+    let opsIterator = _makeIterator(iterationHandlerFn, owner, [si.value /*, control */]);
+    let opsIteration = _makeIteration(opsIterator, sourceIteration, oi => {
+      let { value, done, index } = oi ;
+      let disposable;
 
-    // Normalize the value into an iterable:
-    // (v) => return Promise
-    //   becomes an iterable that returns a promise and finishes
-    // (v) => return Observable
-    //   becomes an iterable that returns an observable and finishes
-    // function * () {...}
-    //   already is an iterable, so normalization is a noop
-    let doneSeen = false;
-    let opsIterator = _makeIterator(maybeIterator, opsIteration => {
-      let { value, done, index } = opsIteration ;
-      let disposable; // babel-intentional
-
-      // FIXME: this is a little wack; need to normalize "process" iterators
-      // and the way their last values are emitted.
-
-      log("OPS: next value", opsIteration);
+      log("OPS: next value", oi);
 
       if (done) {
-        sourceIterator.proceed(sourceIteration.index, NEXT, value);
-        return;
+        // unlike array iterators, "process" iterators can "return" values,
+        // and we still want to block on those values before full returning.
+        if (!value) {
+          sourceIteration.step(si.index);
+          return;
+        }
       }
 
       if (value && typeof value.then === 'function') {
         value.then(v => {
-          opsIterator.proceed(index, NEXT, v);
+          joinAndSchedule(opsIteration, 'step', index, v);
         }, error => {
-          opsIterator.proceed(index, THROW, error);
+          //opsIterator.proceed(index, THROW, error);
         });
       } else if (value && typeof value.subscribe === 'function') {
         disposable = value.subscribe(v => {
-          opsIterator.proceed(index, NEXT, v);
+          joinAndSchedule(opsIteration, 'step', index, v);
         }, error => {
-          opsIterator.proceed(index, THROW, error);
+          //opsIterator.proceed(index, THROW, error);
         }, () => {
-          opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
+          //opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
         });
-
-        //opsIterator.registerDisposable(index, disposable);
+        opsIteration.registerDisposable(index, disposable);
       } else {
-        opsIterator.proceed(index, NEXT, value);
+        opsIteration.step(index, value);
       }
     });
-    opsIterator.label = "ops";
-    log("OPS: starting opsIterator", sourceIterator);
+
+    sourceIteration.registerDisposable(si.index, {
+      dispose() {
+        opsIteration.break(-1);
+      },
+    });
+
+    opsIteration.label = "ops";
+    log("OPS: starting execution", opsIteration);
 
     //sourceIterator.registerDisposable(sourceIteration.index, opsIterator);
-    opsIterator.proceed(0, NEXT, null);
+    opsIteration.step(0, undefined);
   });
-  sourceIterator.label = "source";
 
-  log("SOURCE: starting sourceIterator", sourceIterator);
+  log("SOURCE: starting iteration", sourceIteration);
+  sourceIteration.label = "source";
+  sourceIteration.step(0, undefined);
 
-  sourceIterator.proceed(0, NEXT, null);
-  return sourceIterator;
+  return sourceIteration;
 }
 
-function isAsyncProducer(v) {
-  return v && (
-    typeof v.then === 'function' ||
-    typeof v.subscribe === 'function'
-  );
-}
-
-function isIterator(v) {
-  // Symbol polyfill?
-  return v && typeof v.next === 'function';
-}
-
-function dispatch(ctx, fn, arg) {
-	Ember.run.join(() => {
-		Ember.run.schedule('actions', ctx, fn, arg);
-	});
-}
-
-function makeSourceIterator(value) {
-  let it;
-  if (value && typeof value.next === 'function') {
-    it = value;
-  } else {
-    let hasFiredSingleValue = false;
-    it = {
-      next() {
-        if (hasFiredSingleValue) {
-          return {
-            done: true,
-            value: undefined,
-          };
-        } else {
-          hasFiredSingleValue = true;
-          return {
-            done: true,
-            value,
-          };
-        }
-      }
-    };
-    it.source = value;
-  }
-  return it;
-}
-
-
-export function _makeIterator(value, handler) {
-  let it = makeSourceIterator(value);
-
-  let index = 0;
-
-  let disposables = [];
-  let subit = {
-    //dispose() {
-      //disposeAll(disposables);
-      //this.disposed = true;
-      //this.proceed(index, RETURN, null);
-    //},
-    proceed: function(_index, method, nextValue) {
-      if (_index !== index && _index !== FORCE) {
-        // already processed from this point.
-        return;
-      }
-      index++;
-      dispatch(this, '_proceed', [method, nextValue]);
-    },
-    registerDisposable(_index, d) {
-      if (_index !== index) {
-        // dispose asynchronously
-        // TODO: TEST THIS
-        dispatch(null, () => {
-          d.dispose();
-        });
-        return;
-      }
-      disposables.push(d);
-    },
-    _proceed([method, value]) {
-      disposeAll(disposables);
-
-      let nextValue = this[method](value);
-      if (nextValue.then) {
-        nextValue.then(v => {
-          handler({ index, value: v, done: false });
-        });
-      } else {
-        handler(Object.assign({ index }, nextValue));
-      }
-    },
-    next(value) {
-      return it.next(value);
-    },
-    break(v) {
-
-
-      //if (typeof it.return === 'function') {
-        //finalizedResponse = it.return(v);
-      //} else {
-        //finalizedResponse = {
-          //done: true,
-          //value: v,
-        //};
-      //}
-      //return finalizedResponse;
-    },
-  };
-
-  return subit;
-}
-
-function disposeAll(disposables) {
-  for (let i = 0; i < disposables.length; ++i) {
-    disposables[i].dispose();
-  }
-  disposables.length = 0;
+function joinAndSchedule(...args) {
+  Ember.run.join(() => {
+    Ember.run.schedule('actions', ...args);
+  });
 }
 

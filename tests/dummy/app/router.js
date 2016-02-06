@@ -6,11 +6,14 @@ const Router = Ember.Router.extend({
 });
 
 Router.map(function() {
+  this.route('docs', function() {
+    //this.route('intro');
+  });
+
   this.route('ajax');
   this.route('color');
   this.route('yielding');
   this.route('tasks');
-  this.route('async-iterator');
   this.route('music');
   this.route('auto-complete');
 });

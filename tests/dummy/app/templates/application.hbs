@@ -1,16 +1,25 @@
-<h1>ember-concurrency</h1>
-
-<p>
-  <a href="https://github.com/machty/ember-concurrency/tree/master/tests/dummy/app" target="_blank">Check out the code</a>
-</p>
-
-{{!link-to 'ajax' 'ajax'}}
-{{!link-to 'color' 'color'}}
-{{!link-to 'yielding' 'yielding'}}
-{{link-to 'tasks' 'tasks'}}
-{{link-to 'async-iterator' 'async-iterator'}}
-{{link-to 'music' 'music'}}
-{{link-to 'auto-complete' 'auto-complete'}}
+<div class="container navbar">
+  <div class="row">
+    <div class="six columns">
+      <h3>ember-concurrency</h3>
+    </div>
+    <div class="two columns">
+      <div class="nav-bar-link-outer">
+        {{link-to "Home" 'index'}}
+      </div>
+    </div>
+    <div class="two columns">
+      <div class="nav-bar-link-outer">
+        {{link-to "Docs" 'docs'}}
+      </div>
+    </div>
+    <div class="two columns">
+      <div class="nav-bar-link-outer">
+        <a href="https://github.com/machty/ember-concurrency" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 {{outlet}}
 
