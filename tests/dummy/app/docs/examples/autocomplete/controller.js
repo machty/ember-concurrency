@@ -28,7 +28,7 @@ export default Ember.Controller.extend({
 
     let url = `https://api.github.com/search/repositories?q=${term}`;
 
-    // We yield AJAX request and wait for it to complete. If the task
+    // We yield an AJAX request and wait for it to complete. If the task
     // is restarted before this request completes, the XHR request
     // is aborted (open the inspector and see for yourself :)
     let json = yield cancellableGetJSON(url);
