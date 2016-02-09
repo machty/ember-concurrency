@@ -72,11 +72,11 @@ export let _keepLastIntermediateValue = {
   },
 };
 
-function _restartableInstance(iteration) {
+function RestartableInstance(iteration) {
   this.iteration = iteration;
 }
 
-_restartableInstance.prototype.put = function(value, iterator) {
+RestartableInstance.prototype.put = function(value, iterator) {
   this.iteration.step(-1, undefined);
   iterator.put(value);
 };
@@ -84,7 +84,7 @@ _restartableInstance.prototype.put = function(value, iterator) {
 export let _restartable = {
   name: 'restartable',
   create(iteration) {
-    return new _restartableInstance(iteration);
+    return new RestartableInstance(iteration);
   },
 };
 
