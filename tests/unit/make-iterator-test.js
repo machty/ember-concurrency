@@ -5,7 +5,7 @@ module('Unit: iterators from generator functions');
 test("function runs with provided `this` context", function(assert) {
   assert.expect(1);
   let obj = {};
-  function * gen(v) {
+  function * gen() {
     assert.equal(this, obj);
   }
   _makeIterator(gen, obj, [1]).next();
@@ -69,7 +69,7 @@ module('Unit: iterators from regular functions');
 test("function runs with provided `this` context", function(assert) {
   assert.expect(1);
   let obj = {};
-  function gen(v) {
+  function gen() {
     assert.equal(this, obj);
   }
   _makeIterator(gen, obj, [1]).next();
@@ -78,7 +78,7 @@ test("function runs with provided `this` context", function(assert) {
 test("basics", function(assert) {
   assert.expect(3);
 
-  function gen(v) {
+  function gen() {
     return 123;
   }
 
@@ -91,7 +91,7 @@ test("basics", function(assert) {
 test("return() exists but is ignored", function(assert) {
   assert.expect(3);
 
-  function gen(v) {
+  function gen() {
     return 123;
   }
 

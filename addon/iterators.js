@@ -93,14 +93,8 @@ export function _makeIterator(iterable, owner, args) {
   }
 }
 
-let DEFAULT_BUFFER_POLICY = {
-  put(value, iterator) {
-    iterator.put(value);
-  },
-};
-
 // TODO: consider a growing ringbuffer?
-function createBufferedIterator(obs) {
+function createBufferedIterator(obs, bufferPolicy) {
   let sub;
   let isDisposed = false;
   let iterator = {
@@ -160,19 +154,20 @@ function createBufferedIterator(obs) {
       isDisposed = true;
       sub.dispose();
     },
-    policy: DEFAULT_BUFFER_POLICY,
-    setBufferPolicy(policy) {
-      if (this.policy === policy) {
-        return;
-      }
-      policy.attach(this);
-      this.policy = policy;
+    policy: bufferPolicy,
+    start() {
     },
   };
 
-  sub = obs.subscribe(v => {
-    Ember.run.join(() =>{
-      iterator.policy.put(v, iterator);
+  // TODO: refactor; this defers synchronous puts, as well as
+  // the handling of the puts by takers.
+  Ember.run.schedule('actions', null, () => {
+    sub = obs.subscribe(v => {
+      Ember.run.join(() =>{
+        Ember.run.schedule('actions', null, () => {
+          iterator.policy.put(v, iterator);
+        });
+      });
     });
   });
 

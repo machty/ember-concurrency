@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task, timeout } from 'ember-concurrency';
+import { task } from 'ember-concurrency';
 
 let Tracker = Ember.Object.extend({
   id: null,
@@ -36,7 +36,7 @@ export default Ember.Component.extend({
       this.set('timeElapsed', now - this.startTime);
 
       let defer = Ember.RSVP.defer();
-      requestAnimationFrame(defer.resolve);
+      window.requestAnimationFrame(defer.resolve);
       yield defer.promise;
     }
   }).on('init'),

@@ -36,11 +36,18 @@ const ComputedProperty = Ember.__loader.require("ember-metal/computed").Computed
 function TaskProperty(taskFunc) {
   let tp = this;
   ComputedProperty.call(this, function() {
-    let publish;
+    let presubscribeQueue;
+    let publish = (v) => {
+      presubscribeQueue = presubscribeQueue || [];
+      presubscribeQueue.push(v);
+    };
 
     // TODO: we really need a subject/buffer primitive
     let obs = createObservable(_publish => {
       publish = _publish;
+      for (let i = 0; i < presubscribeQueue.length; i++) {
+        _publish(presubscribeQueue[i]);
+      }
     });
 
     forEach(obs, taskFunc, tp.bufferPolicy).attach(this);
@@ -184,7 +191,7 @@ export function createObservable(fn) {
           if (onError) { onError(e); }
           if (onCompleted) { onCompleted(); }
         });
-      }
+      };
       // TODO: publish.complete?
 
       let maybeDisposer = fn(publish);
@@ -221,9 +228,7 @@ export function timeout(ms) {
   return interval(ms);
 }
 
-function log(...args) {
-  //console.log(...args);
-}
+function log() { }
 
 export function forEach(iterable, fn, bufferPolicy) {
   let owner;
@@ -263,7 +268,6 @@ function start(owner, sourceIterable, iterationHandlerFn, bufferPolicy) {
     let opsIterator = _makeIterator(iterationHandlerFn, owner, [si.value /*, control */]);
     let opsIteration = _makeIteration(opsIterator, sourceIteration, bufferPolicy, oi => {
       let { value, done, index } = oi ;
-      let disposable;
 
       log("OPS: next value", oi);
 
