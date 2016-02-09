@@ -6,13 +6,13 @@ const RETURN = 'return';
 
 let returnSelf = Ember.K;
 
-function _concurrentInstance(iteration) {
+function ConcurrentInstance(iteration) {
   this.iteration = iteration;
 }
 
-_concurrentInstance.prototype.concurrent = true;
+ConcurrentInstance.prototype.concurrent = true;
 
-_concurrentInstance.prototype.put = function(value, iterator) {
+ConcurrentInstance.prototype.put = function(value, iterator) {
   this.iteration.step(-1, undefined);
   iterator.put(value);
 };
@@ -21,7 +21,7 @@ export let _concurrent = {
   name: 'concurrent',
   concurrent: true,
   create(iteration) {
-    return new _concurrentInstance(iteration);
+    return new ConcurrentInstance(iteration);
   },
 };
 
