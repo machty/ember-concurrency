@@ -14,7 +14,48 @@ let CURRENT_ITERATION = NULL_ITERATION;
 
 let returnSelf = Ember.K;
 
-let _dropIntermediateValues = {
+function _concurrentInstance(iteration) {
+  this.iteration = iteration;
+}
+
+_concurrentInstance.prototype.attach = function(iterator) {
+  if (iterator.buffer.length) {
+    let mostRecent = iterator.buffer.pop();
+    iterator.buffer = [mostRecent];
+  } else {
+    iterator.buffer = [];
+  }
+};
+
+_concurrentInstance.prototype.concurrent = true;
+
+_concurrentInstance.prototype.put = function(value, iterator) {
+  this.iteration.step(-1, undefined);
+  iterator.put(value);
+};
+
+export let _concurrent = {
+  name: 'concurrent',
+  concurrent: true,
+  create(iteration) {
+    return new _concurrentInstance(iteration);
+  },
+};
+
+//export function concurrent() {
+  //CURRENT_ITERATION.setBufferPolicy(_restartable);
+//}
+
+export let _enqueue = {
+  name: 'enqueue',
+  create: returnSelf,
+  attach: Ember.K,
+  put(value, iterator) {
+    iterator.put(value);
+  },
+};
+
+export let _dropIntermediateValues = {
   name: 'dropIntermediateValues',
   create: returnSelf,
   attach(iterator) {
@@ -124,11 +165,10 @@ function Iteration(iterator, sourceIteration, bufferPolicy, fn) {
   this.lastValue = NO_VALUE_YET;
   this.index = 0;
   this.disposables = [];
+  this.rootDisposables = [];
   this.stepQueue = [];
   this.sourceIteration = sourceIteration;
-  if (bufferPolicy) {
-    this.setBufferPolicy(bufferPolicy);
-  }
+  this.setBufferPolicy(bufferPolicy || _concurrent);
 }
 
 Iteration.prototype = {
@@ -156,12 +196,17 @@ Iteration.prototype = {
     let queue = this.stepQueue;
     if (queue.length === 0) { return; }
     this.stepQueue = [];
-    this._disposeDisposables();
+    this._disposeDisposables(this.disposables);
 
     // TODO: add tests around this, particularly when
     // two things give the iteration conflicting instructions.
     let [iterFn, nextValue] = queue.pop();
     if (iterFn) {
+
+      if (iterFn === RETURN) {
+        this._disposeDisposables(this.rootDisposables);
+      }
+
       let value;
       try {
         CURRENT_ITERATION = this;
@@ -205,17 +250,21 @@ Iteration.prototype = {
     return (index === this.index || index === -1);
   },
 
-  registerDisposable(index, disposable) {
+  registerDisposable(index, disposable, isRootDisposable) {
     if (!this._indexValid(index)) { return; }
-    this.disposables.push(disposable);
+    if (isRootDisposable) {
+      this.rootDisposables.push(disposable);
+    } else {
+      this.disposables.push(disposable);
+    }
   },
 
-  _disposeDisposables() {
-    for (let i = 0, l = this.disposables.length; i < l; i++) {
-      let d = this.disposables[i];
+  _disposeDisposables(disposables) {
+    for (let i = 0, l = disposables.length; i < l; i++) {
+      let d = disposables[i];
       d.dispose();
     }
-    this.disposables.length = 0;
+    disposables.length = 0;
   }
 };
 

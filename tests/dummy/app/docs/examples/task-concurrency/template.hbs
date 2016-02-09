@@ -1,0 +1,114 @@
+<h3>Task Concurrency</h3>
+
+<p>
+  By default, <strong>ember-concurrency</strong> tasks run concurrently
+  &mdash; if you call <code>myTask.perform(); myTask.perform();</code>,
+  two instances of the task will run at the same time (unless the object
+  they live on is destroyed, in which case they'll be cancelled).
+</p>
+
+<p>
+  Often, you want to guarantee that no more than one instance of a task
+  runs at the same time; for instance, if you have a task that saves
+  model state to the server, you probably don't want that task to run
+  concurrently &mdash; you want it to run sequentially, or you might
+  want to ignore attempts to perform the task. In practice,
+  enforcing these constraints is tricky and often results
+  in redundant, error-prone boilerplate, but ember-concurrency
+  makes it easy to reign in this undesired concurrency with the
+  modifiers described below.
+</p>
+
+<h3>Examples</h3>
+
+<p>
+  All of the examples below run the same task function (which
+  just pauses for a moment and then completes), but with
+  different task modifiers applied:
+</p>
+
+{{code-snippet name="shared-tasks.js"}}
+
+<h5>Default Behavior: Tasks Run Concurrently</h5>
+
+<p>
+  Tap the <code>task.perform()</code> button a few times. Note how
+  the lifetimes of each task overlap, and each task runs to completion.
+</p>
+
+{{concurrency-graph task=defaultTask}}
+
+
+<h4>.restartable()</h4>
+
+<p>
+  The <code>.restartable()</code> modifier ensures that only one instance
+  of a task is running by cancelling any currently-running tasks and starting
+  a new task instance immediately. Note how there is no task overlap,
+  and how currently running tasks get cancelled
+  (<span style="text-decoration:line-through;">.perform()</span> is crossed out)
+  if a new task starts before a prior one completes.
+</p>
+
+<p>
+  <em>
+    Check out {{link-to 'Debounced Auto-Search' 'docs.examples.autocomplete'}} for
+    a practical example of .restartable()
+  </em>
+</p>
+
+
+{{concurrency-graph task=restartableTask}}
+
+<h4>.enqueue()</h4>
+
+<p>
+  The <code>.enqueue()</code> modifier ensures that only one instance
+  of a task is running be maintaining a queue of pending tasks and
+  running them sequentially. Note how there is no task overlap, but no
+  tasks are cancelled either.
+</p>
+
+{{concurrency-graph task=enqueuedTask}}
+
+
+<h4>.drop()</h4>
+
+<p>
+  The <code>.drop()</code> modifier drops tasks that are <code>.perform</code>ed
+  while another is already running. Dropped tasks' functions are never even called.
+</p>
+
+<p>
+  <em>
+    Use case: a refresh button that prevents users from DOS-ing the server.
+  </em>
+</p>
+
+{{concurrency-graph task=droppingTask}}
+
+
+<h4>.keepLatest()</h4>
+
+<p>
+  The <code>.keepLatest()</code> modifier enqueues intermediate <code>.perform()</code>s
+  but drops all but the most recent (the latest) perform.
+</p>
+
+<p>
+  <em>
+    Use case: you want to centralize app updates in a single task, and you 1)
+    don't want this task to be cancellable and 2) if staleness events occur
+    while the task is running, you only need to respond to the most recent one.
+  </em>
+</p>
+
+{{concurrency-graph task=keepLatestTask}}
+
+<p>
+  <em>
+    Thanks to <a href="https://github.com/ef4">Edward Faulkner</a> for providing
+    a starting point for the graphs :)
+  </em>
+</p>
+

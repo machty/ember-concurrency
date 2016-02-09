@@ -3,10 +3,13 @@ import { isGeneratorIterator, Arguments } from 'ember-concurrency/utils';
 import {
   _makeIteration,
   dropIntermediateValues,
+  _dropIntermediateValues,
   keepFirstIntermediateValue,
   keepLastIntermediateValue,
+  _keepLastIntermediateValue,
   restartable,
   _restartable,
+  _enqueue,
 } from 'ember-concurrency/iteration';
 import { _makeIterator } from 'ember-concurrency/iterators';
 
@@ -83,6 +86,21 @@ TaskProperty.prototype.on = function() {
 
 TaskProperty.prototype.restartable = function() {
   this.bufferPolicy = _restartable;
+  return this;
+};
+
+TaskProperty.prototype.enqueue = function() {
+  this.bufferPolicy = _enqueue;
+  return this;
+};
+
+TaskProperty.prototype.drop = function() {
+  this.bufferPolicy = _dropIntermediateValues;
+  return this;
+};
+
+TaskProperty.prototype.keepLatest = function() {
+  this.bufferPolicy = _keepLastIntermediateValue;
   return this;
 };
 
@@ -234,7 +252,7 @@ function start(owner, sourceIterable, iterationHandlerFn, bufferPolicy) {
   log("SOURCE: Starting forEach with", owner, sourceIterable, iterationHandlerFn);
 
   let sourceIterator = _makeIterator(sourceIterable, owner, EMPTY_ARRAY);
-  let sourceIteration = _makeIteration(sourceIterator, null, null, (si) => {
+  let sourceIteration = _makeIteration(sourceIterator, null, bufferPolicy, (si) => {
     log("SOURCE: next value ", si);
 
     if (si.done) {
@@ -278,14 +296,15 @@ function start(owner, sourceIterable, iterationHandlerFn, bufferPolicy) {
 
     sourceIteration.registerDisposable(si.index, {
       dispose() {
+        // so this needs to be modified. it's a disposable that needs to be
+        // disposed when t
         opsIteration.break(-1);
       },
-    });
+    }, (sourceIterator.policy && sourceIterator.policy.concurrent));
 
     opsIteration.label = "ops";
     log("OPS: starting execution", opsIteration);
 
-    //sourceIterator.registerDisposable(sourceIteration.index, opsIterator);
     opsIteration.step(0, undefined);
   });
 

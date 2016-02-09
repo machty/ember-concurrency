@@ -10,6 +10,7 @@ Router.map(function() {
     this.route('examples', function() {
       this.route('autocomplete');
       this.route('starting-a-task');
+      this.route('task-concurrency');
     });
   });
 
