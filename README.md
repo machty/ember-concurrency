@@ -2,7 +2,7 @@
 
 A toolset with improved concurrency primitives for Ember.js.
 
-Documentation can be found [here](http://emberconcurrency.com).
+Documentation can be found [here](http://ember-concurrency.com).
 
 ## Addon Maintenance
 
