@@ -1,7 +1,7 @@
 {
   "name": "ember-concurrency",
   "version": "0.4.7",
-  "description": "Manage concurrency in Ember.js apps using generators and tasks",
+  "description": "Improved concurrency/async primitives for Ember.js",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -46,8 +46,10 @@
   },
   "keywords": [
     "ember-addon",
-    "csp",
-    "processes"
+    "concurrency",
+    "task",
+    "tasks",
+    "cancellation"
   ],
   "dependencies": {
     "ember-cli-babel": "^5.1.5",
