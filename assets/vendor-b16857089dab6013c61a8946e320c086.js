@@ -108061,6 +108061,21 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
     return this;
   };
 
+  TaskProperty.prototype.enqueue = function () {
+    this.bufferPolicy = _emberConcurrencyIteration._enqueue;
+    return this;
+  };
+
+  TaskProperty.prototype.drop = function () {
+    this.bufferPolicy = _emberConcurrencyIteration._dropIntermediateValues;
+    return this;
+  };
+
+  TaskProperty.prototype.keepLatest = function () {
+    this.bufferPolicy = _emberConcurrencyIteration._keepLastIntermediateValue;
+    return this;
+  };
+
   function task(func) {
     return new TaskProperty(func);
   }
@@ -108225,7 +108240,7 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
     log("SOURCE: Starting forEach with", owner, sourceIterable, iterationHandlerFn);
 
     var sourceIterator = (0, _emberConcurrencyIterators._makeIterator)(sourceIterable, owner, EMPTY_ARRAY);
-    var sourceIteration = (0, _emberConcurrencyIteration._makeIteration)(sourceIterator, null, null, function (si) {
+    var sourceIteration = (0, _emberConcurrencyIteration._makeIteration)(sourceIterator, null, bufferPolicy, function (si) {
       log("SOURCE: next value ", si);
 
       if (si.done) {
@@ -108272,14 +108287,15 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
 
       sourceIteration.registerDisposable(si.index, {
         dispose: function dispose() {
+          // so this needs to be modified. it's a disposable that needs to be
+          // disposed when t
           opsIteration['break'](-1);
         }
-      });
+      }, sourceIterator.policy && sourceIterator.policy.concurrent);
 
       opsIteration.label = "ops";
       log("OPS: starting execution", opsIteration);
 
-      //sourceIterator.registerDisposable(sourceIteration.index, opsIterator);
       opsIteration.step(0, undefined);
     });
 
@@ -108373,6 +108389,51 @@ define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _
 
   var returnSelf = _ember['default'].K;
 
+  function _concurrentInstance(iteration) {
+    this.iteration = iteration;
+  }
+
+  _concurrentInstance.prototype.attach = function (iterator) {
+    if (iterator.buffer.length) {
+      var mostRecent = iterator.buffer.pop();
+      iterator.buffer = [mostRecent];
+    } else {
+      iterator.buffer = [];
+    }
+  };
+
+  _concurrentInstance.prototype.concurrent = true;
+
+  _concurrentInstance.prototype.put = function (value, iterator) {
+    this.iteration.step(-1, undefined);
+    iterator.put(value);
+  };
+
+  var _concurrent = {
+    name: 'concurrent',
+    concurrent: true,
+    create: function create(iteration) {
+      return new _concurrentInstance(iteration);
+    }
+  };
+
+  exports._concurrent = _concurrent;
+
+  //export function concurrent() {
+  //CURRENT_ITERATION.setBufferPolicy(_restartable);
+  //}
+
+  var _enqueue = {
+    name: 'enqueue',
+    create: returnSelf,
+    attach: _ember['default'].K,
+    put: function put(value, iterator) {
+      iterator.put(value);
+    }
+  };
+
+  exports._enqueue = _enqueue;
+
   var _dropIntermediateValues = {
     name: 'dropIntermediateValues',
     create: returnSelf,
@@ -108392,6 +108453,8 @@ define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _
       }
     }
   };
+
+  exports._dropIntermediateValues = _dropIntermediateValues;
 
   function dropIntermediateValues() {
     CURRENT_ITERATION.setBufferPolicy(_dropIntermediateValues);
@@ -108489,11 +108552,10 @@ define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _
     this.lastValue = NO_VALUE_YET;
     this.index = 0;
     this.disposables = [];
+    this.rootDisposables = [];
     this.stepQueue = [];
     this.sourceIteration = sourceIteration;
-    if (bufferPolicy) {
-      this.setBufferPolicy(bufferPolicy);
-    }
+    this.setBufferPolicy(bufferPolicy || _concurrent);
   }
 
   Iteration.prototype = {
@@ -108527,7 +108589,7 @@ define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _
         return;
       }
       this.stepQueue = [];
-      this._disposeDisposables();
+      this._disposeDisposables(this.disposables);
 
       // TODO: add tests around this, particularly when
       // two things give the iteration conflicting instructions.
@@ -108540,6 +108602,11 @@ define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _
       var nextValue = _queue$pop2[1];
 
       if (iterFn) {
+
+        if (iterFn === RETURN) {
+          this._disposeDisposables(this.rootDisposables);
+        }
+
         var value = undefined;
         try {
           CURRENT_ITERATION = this;
@@ -108583,19 +108650,23 @@ define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _
       return index === this.index || index === -1;
     },
 
-    registerDisposable: function registerDisposable(index, disposable) {
+    registerDisposable: function registerDisposable(index, disposable, isRootDisposable) {
       if (!this._indexValid(index)) {
         return;
       }
-      this.disposables.push(disposable);
+      if (isRootDisposable) {
+        this.rootDisposables.push(disposable);
+      } else {
+        this.disposables.push(disposable);
+      }
     },
 
-    _disposeDisposables: function _disposeDisposables() {
-      for (var i = 0, l = this.disposables.length; i < l; i++) {
-        var d = this.disposables[i];
+    _disposeDisposables: function _disposeDisposables(disposables) {
+      for (var i = 0, l = disposables.length; i < l; i++) {
+        var d = disposables[i];
         d.dispose();
       }
-      this.disposables.length = 0;
+      disposables.length = 0;
     }
   };
 
