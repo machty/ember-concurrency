@@ -13,13 +13,6 @@ Router.map(function() {
       this.route('task-concurrency');
     });
   });
-
-  //this.route('ajax');
-  //this.route('color');
-  //this.route('yielding');
-  //this.route('tasks');
-  //this.route('music');
-  //this.route('auto-complete');
 });
 
 export default Router;

@@ -7,9 +7,6 @@ export default Ember.Controller.extend({
 
   tableOfContents: [
     { route: "docs",   title: "Introduction"},
-
-    //{ route: "docs.loops",   title: "Loops"},
-
     { title: "Examples", route: "docs.examples",
       children: [
         {route: "docs.examples.task-concurrency", title: "Task Concurrency"},
@@ -17,31 +14,6 @@ export default Ember.Controller.extend({
         {route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select"},
       ]
     },
-    //{ route: 'transition-map', title: 'Transition Map',
-      //children: [
-        //{route: 'transition-map.route-constraints', title: 'Matching by route & model'},
-        //{route: 'transition-map.value-constraints', title: 'Matching by value'},
-        //{route: 'transition-map.dom-constraints', title: 'Matching by DOM context'},
-        //{route: 'transition-map.initial-constraints', title: 'Matching initial renders'},
-        //{route: 'transition-map.choosing-transitions', title: 'Choosing transition animations'},
-        //{route: 'transition-map.debugging-constraints', title: 'Debugging transition matching'}
-      //]
-    //},
-    //{ route: 'transitions', title: 'Transitions',
-      //children: [
-        //{route: 'transitions.predefined', title: "Predefined transitions"},
-        //{route: 'transitions.explode', title: "explode"},
-        //{route: 'transitions.defining', title: 'Defining custom transitions'},
-        //{route: 'transitions.primitives', title: 'Animation Primitives'}
-      //]
-    //},
-    //{ route: 'modal-documentation', title: 'Modal Dialogs',
-      //children: [
-        //{route: 'modal-documentation.modal', title: 'modal()'},
-        //{route: 'modal-documentation.component', title: 'Modal Components'},
-        //{route: 'modal-documentation.animation', title: 'Customizing Animation'}
-      //]
-    //}
   ],
 
   flatContents: computed(function(){

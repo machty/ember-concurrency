@@ -45,6 +45,7 @@ function TaskProperty(taskFunc) {
     // TODO: we really need a subject/buffer primitive
     let obs = createObservable(_publish => {
       publish = _publish;
+      if (!presubscribeQueue) { return; }
       for (let i = 0; i < presubscribeQueue.length; i++) {
         _publish(presubscribeQueue[i]);
       }
