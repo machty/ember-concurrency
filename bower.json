@@ -8,7 +8,8 @@
     "ember-qunit-notifications": "0.1.0",
     "jquery": "^2.0.0",
     "loader.js": "^3.5.0",
-    "qunit": "~1.20.0"
+    "qunit": "~1.20.0",
+    "fastclick": "~1.0.6"
   },
   "resolutions": {
     "ember": "2.2.0"
