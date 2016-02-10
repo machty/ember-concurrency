@@ -123,11 +123,6 @@ function makeListener(taskName) {
   };
 }
 
-export function DidNotRunException() {
-  this.success = false;
-  this.reason = "unperformable";
-}
-
 let EventedObservable = Ember.Object.extend({
   obj: null,
   eventName: null,

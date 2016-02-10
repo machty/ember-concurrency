@@ -7,9 +7,10 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
   this.route('docs', function() {
+    this.route('getting-started');
+    this.route('writing-tasks');
     this.route('examples', function() {
       this.route('autocomplete');
-      this.route('starting-a-task');
       this.route('task-concurrency');
     });
   });
