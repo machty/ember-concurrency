@@ -30,7 +30,7 @@ export default Ember.Controller.extend({
 
   currentIndex: computed('appController.currentRouteName', 'flatContents', function(){
     var contents = this.get('flatContents'),
-        current = this.get('application.currentRouteName'),
+        current = this.get('appController.currentRouteName'),
         bestMatch,
         entry;
 

@@ -3,25 +3,69 @@
 <p>
   <strong>ember-concurrency</strong> is a toolset that supplements
   Ember's existing tools and conventions for handling concurrency and
-  asynchrony.
+  asynchrony. The primary tool that ember-concurrency provides is
+  the <strong>Task</strong>.
 </p>
 
-<h4>Motivation</h4>
+<h4>Tasks</h4>
 
 <p>
-  <a href="http://emberjs.com/api/classes/RSVP.Promise.html">Promises</a>
-  are a powerful tool for expressing fault-tolerant, asynchronous operations.
-  (If you are unfamiliar or inexperienced with Promises, you
-  should familiarize yourself with them first before considering
-  <strong>ember-concurrency</strong> in your projects.) But while Ember
-  provides many promise-friendly APIs to help you build your apps,
-  even careful, idiomatic use of Promises in Ember apps leaves room for
-  a slew of concurrency / async-related bugs and leaks to sneak in.
+  ember-concurrency enables you to write Tasks, which are asynchronous,
+  cancellable operations that are bound to the lifetime of the object they live on,
+  which means when the host object is destroyed (e.g. a component is unrendered),
+  the task is automatically cancelled. Here is an example of a task:
 </p>
 
-<h4>WORK IN PROGRESS</h4>
+{{intro-task}}
 
-Both ember-concurrency and these docs are a work in progress; while I
-work to fill out these docs, please check out some of the examples on
-the left.
+{{code-snippet name="intro-task.js"}}
+
+<p>
+  The example above demonstrates a few things:
+</p>
+
+<ul>
+  <li>
+    Tasks are implemented using
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">ES6 Generator Function syntax</a>
+    and the <code>yield</code> keyword
+  </li>
+  <li>
+    This syntax enables writing async code in a synchronous looking manner
+  </li>
+  <li>
+    It is trivial to restart a task without having to manually cancel the previous task.
+  </li>
+</ul>
+
+<h4>Without Tasks</h4>
+
+<p>
+  To understand everything that ember-concurrency tasks afford you, here
+  is a reimplementation of the above example without using tasks:
+</p>
+
+{{intro-task-oldschool}}
+
+{{code-snippet name="intro-task-oldschool.js"}}
+
+<p>
+  As you can see, it takes a surprising amount of code to handle
+  all of the corner cases when dealing with async code:
+</p>
+
+<ul>
+  <li>
+    You have to stop the currently running operation before starting a new
+    operation in its place; in other words, you need to prevent accidental
+    concurrency
+  </li>
+  <li>
+    You have to stop the operation when the parent object is destroyed
+  </li>
+  <li>
+    You have to break down each step of the asynchronous operation into
+    individually cancellable units
+  </li>
+</ul>
 
