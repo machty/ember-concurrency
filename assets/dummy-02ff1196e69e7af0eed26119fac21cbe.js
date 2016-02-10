@@ -1132,6 +1132,29 @@ define('dummy/components/power-select', ['exports', 'ember-power-select/componen
     }
   });
 });
+define('dummy/components/press-and-hold-button/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+
+  // BEGIN-SNIPPET increment-button
+  function increment() {
+    this.sendAction('press');
+  }
+
+  function stopIncrementing() {
+    this.sendAction('release');
+  }
+
+  exports['default'] = _ember['default'].Component.extend({
+    tagName: 'button',
+
+    touchStart: increment,
+    mouseDown: increment,
+    touchEnd: stopIncrementing,
+    mouseLeave: stopIncrementing,
+    mouseUp: stopIncrementing
+  });
+
+  // END-SNIPPET
+});
 define('dummy/components/scrambled-text/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
 
   // from http://stackoverflow.com/a/3943985/914123
@@ -1461,7 +1484,7 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
     appController: _ember["default"].inject.controller('application'),
 
     tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.getting-started", title: "Getting Started" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { title: "Examples", route: "docs.examples",
-      children: [{ route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }]
+      children: [{ route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }]
     }],
 
     flatContents: computed(function () {
@@ -1721,6 +1744,270 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
       statements: [["block", "power-select", [], ["search", ["subexpr", "@mut", [["get", "searchRepo.perform", ["loc", [null, [20, 25], [20, 43]]]]], [], []], "selected", ["subexpr", "@mut", [["get", "selected", ["loc", [null, [21, 27], [21, 35]]]]], [], []], "onchange", ["subexpr", "action", [["subexpr", "mut", [["get", "selected", ["loc", [null, [22, 40], [22, 48]]]]], [], ["loc", [null, [22, 35], [22, 49]]]]], [], ["loc", [null, [22, 27], [22, 50]]]]], 0, null, ["loc", [null, [20, 2], [24, 19]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancellation.js"], ["loc", [null, [30, 0], [30, 61]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancellation-template.hbs"], ["loc", [null, [34, 0], [34, 71]]]]],
       locals: [],
       templates: [child0]
+    };
+  })());
+});
+define('dummy/docs/examples/increment-buttons/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+
+  // BEGIN-SNIPPET increment-button-task
+  exports['default'] = _ember['default'].Controller.extend({
+    count: 0,
+    incrementBy: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0(inc) {
+      var speed;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            if (inc) {
+              context$1$0.next = 2;
+              break;
+            }
+
+            return context$1$0.abrupt('return');
+
+          case 2:
+            speed = 400;
+
+          case 3:
+            if (!true) {
+              context$1$0.next = 10;
+              break;
+            }
+
+            this.incrementProperty('count', inc);
+            context$1$0.next = 7;
+            return (0, _emberConcurrency.timeout)(speed);
+
+          case 7:
+            speed = Math.max(50, speed * 0.8);
+            context$1$0.next = 3;
+            break;
+
+          case 10:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    })).restartable()
+  });
+
+  // END-SNIPPET
+});
+define("dummy/docs/examples/increment-buttons/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 25,
+              "column": 2
+            },
+            "end": {
+              "line": 29,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/docs/examples/increment-buttons/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      --Decrease\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 31,
+              "column": 2
+            },
+            "end": {
+              "line": 35,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/docs/examples/increment-buttons/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      Increase++\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.2.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 51,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/examples/increment-buttons/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Accelerating Increment / Decrement Buttons");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  This example demonstrates a few different concepts:\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ul");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("Tricky time-based operations like acceleration are simplified\n      by the sequential style of task functions");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    Tasks integrate with the template actions API: you can use\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("taskName.perform");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" in place of anywhere you\n    might want to use a classic Ember action name.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Live Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h1");
+        var el2 = dom.createTextNode("Num: ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("(Hold down the buttons to accelerate.)");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("JavaScript (task)");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("JavaScript (button component)");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Template");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [12]);
+        var morphs = new Array(6);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [8]), 1, 1);
+        morphs[1] = dom.createMorphAt(element0, 1, 1);
+        morphs[2] = dom.createMorphAt(element0, 3, 3);
+        morphs[3] = dom.createMorphAt(fragment, 17, 17, contextualElement);
+        morphs[4] = dom.createMorphAt(fragment, 21, 21, contextualElement);
+        morphs[5] = dom.createMorphAt(fragment, 25, 25, contextualElement);
+        return morphs;
+      },
+      statements: [["content", "count", ["loc", [null, [19, 9], [19, 18]]]], ["block", "press-and-hold-button", [], ["press", ["subexpr", "action", [["get", "incrementBy.perform", ["loc", [null, [26, 18], [26, 37]]]], -1], [], ["loc", [null, [26, 10], [26, 41]]]], "release", ["subexpr", "action", [["get", "incrementBy.perform", ["loc", [null, [27, 20], [27, 39]]]], 0], [], ["loc", [null, [27, 12], [27, 42]]]]], 0, null, ["loc", [null, [25, 2], [29, 28]]]], ["block", "press-and-hold-button", [], ["press", ["subexpr", "action", [["get", "incrementBy.perform", ["loc", [null, [32, 18], [32, 37]]]], 1], [], ["loc", [null, [32, 10], [32, 40]]]], "release", ["subexpr", "action", [["get", "incrementBy.perform", ["loc", [null, [33, 20], [33, 39]]]], 0], [], ["loc", [null, [33, 12], [33, 42]]]]], 1, null, ["loc", [null, [31, 2], [35, 28]]]], ["inline", "code-snippet", [], ["name", "increment-button-task.js"], ["loc", [null, [41, 0], [41, 48]]]], ["inline", "code-snippet", [], ["name", "increment-button.js"], ["loc", [null, [45, 0], [45, 43]]]], ["inline", "code-snippet", [], ["name", "press-and-hold-buttons.hbs"], ["loc", [null, [49, 0], [49, 50]]]]],
+      locals: [],
+      templates: [child0, child1]
     };
   })());
 });
@@ -3126,6 +3413,20 @@ define('dummy/initializers/container-debug-adapter', ['exports', 'ember-resolver
     }
   };
 });
+define('dummy/initializers/ember-cli-fastclick', ['exports', 'ember'], function (exports, _ember) {
+
+  var EmberCliFastclickInitializer = {
+    name: 'fastclick',
+
+    initialize: function initialize() {
+      _ember['default'].run.schedule('afterRender', function () {
+        FastClick.attach(document.body);
+      });
+    }
+  };
+
+  exports['default'] = EmberCliFastclickInitializer;
+});
 define('dummy/initializers/export-application-global', ['exports', 'ember', 'dummy/config/environment'], function (exports, _ember, _dummyConfigEnvironment) {
   exports.initialize = initialize;
 
@@ -3172,6 +3473,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
       this.route('writing-tasks');
       this.route('task-concurrency');
       this.route('examples', function () {
+        this.route('increment-buttons');
         this.route('autocomplete');
         this.route('task-concurrency');
       });
@@ -3195,8 +3497,11 @@ define("dummy/snippets", ["exports"], function (exports) {
     "debounced-search-with-cancellation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because this\n    // task is `.restartable()`, if the user starts typing again,\n    // the current search will be cancelled at this point and\n    // start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `https://api.github.com/search/repositories?q=${term}`;\n\n    // We yield an AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield cancellableGetJSON(url);\n    return json.items;\n  }).restartable(),\n});",
     "ember-app-config.js": "var app = new EmberApp({\n  babel: {\n    includePolyfill: true,\n\n    // you might need this too, depending on your version of babel\n    // browserPolyfill: true,\n  },\n});\n\n",
     "ember-install.sh": "ember install ember-concurrency\n",
+    "increment-button-task.js": "export default Ember.Controller.extend({\n  count: 0,\n  incrementBy: task(function * (inc) {\n    if (!inc) { return; }\n\n    let speed = 400;\n    while (true) {\n      this.incrementProperty('count', inc);\n      yield timeout(speed);\n      speed = Math.max(50, speed * 0.8);\n    }\n  }).restartable(),\n});",
+    "increment-button.js": "function increment() {\n  this.sendAction('press');\n}\n\nfunction stopIncrementing() {\n  this.sendAction('release');\n}\n\nexport default Ember.Component.extend({\n  tagName: 'button',\n\n  touchStart: increment,\n  mouseDown:  increment,\n  touchEnd:   stopIncrementing,\n  mouseLeave: stopIncrementing,\n  mouseUp:    stopIncrementing,\n});",
     "intro-task-oldschool.js": "import Ember from 'ember';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  startCounting() {\n    this.cancelTimer();\n    this.set('count', 0);\n    this.step();\n  },\n\n  step() {\n    if (this.count < 5) {\n      this.incrementProperty('count');\n      this.timerId = Ember.run.later(this, this.step, 300);\n    } else {\n      this.set('count', \"DONE!\");\n    }\n  },\n\n  willDestroy() {\n    this.cancelTimer();\n  },\n\n  cancelTimer() {\n    if (this.timerId) {\n      Ember.run.cancel(this.timerId);\n      this.timerId = null;\n    }\n  },\n\n  actions: {\n    startCounting() {\n      this.startCounting();\n    }\n  }\n});",
     "intro-task.js": "import Ember from 'ember';\nimport { task, timeout } from 'ember-concurrency';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  countingTask: task(function * () {\n    this.set('count', 0);\n    while (this.count < 5) {\n      this.incrementProperty('count');\n      yield timeout(300);\n    }\n    this.set('count', \"DONE!\");\n  }).restartable()\n});",
+    "press-and-hold-buttons.hbs": "<p>\n  {{#press-and-hold-button\n    press=(action incrementBy.perform -1)\n    release=(action incrementBy.perform 0)}}\n      --Decrease\n  {{/press-and-hold-button}}\n\n  {{#press-and-hold-button\n    press=(action incrementBy.perform 1)\n    release=(action incrementBy.perform 0)}}\n      Increase++\n  {{/press-and-hold-button}}\n</p>",
     "scrambled-text.js": "  startScrambling: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      let pauseTime = 140;\n      while (pauseTime > 5) {\n        this.set('scrambledText', scramble(text));\n        yield timeout(pauseTime);\n        pauseTime = pauseTime * 0.95;\n      }\n      this.set('scrambledText', text);\n      yield timeout(1500);\n    }\n  }).on('init'),",
     "shared-task-function.js": "function * SHARED_TASK_FN(tracker) {\n  tracker.start();\n  let didComplete = false;\n  try {\n    // simulate async work\n    yield timeout(1500);\n    didComplete = true;\n  } finally {\n    tracker.end(didComplete);\n  }\n}",
     "shared-tasks.js": "export default Ember.Controller.extend({\n  defaultTask:     task(SHARED_TASK_FN),\n  restartableTask: task(SHARED_TASK_FN).restartable(),\n  enqueuedTask:    task(SHARED_TASK_FN).enqueue(),\n  droppingTask:    task(SHARED_TASK_FN).drop(),\n  keepLatestTask:  task(SHARED_TASK_FN).keepLatest(),\n});",
@@ -3416,7 +3721,11 @@ define("dummy/templates/index", ["exports"], function (exports) {
         var el5 = dom.createTextNode("\n\n        ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("p");
-        var el6 = dom.createTextNode("Read the Getting Started docs for more info.");
+        var el6 = dom.createTextNode("Read the ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createComment("");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode(" docs for more info.");
         dom.appendChild(el5, el6);
         dom.appendChild(el4, el5);
         var el5 = dom.createTextNode("\n      ");
@@ -3625,19 +3934,21 @@ define("dummy/templates/index", ["exports"], function (exports) {
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element0 = dom.childAt(fragment, [0, 5]);
-        var element1 = dom.childAt(element0, [3]);
-        var element2 = dom.childAt(element1, [1]);
-        var element3 = dom.childAt(element1, [3]);
-        var morphs = new Array(5);
-        morphs[0] = dom.createMorphAt(dom.childAt(element2, [1]), 0, 0);
-        morphs[1] = dom.createMorphAt(element2, 3, 3);
-        morphs[2] = dom.createMorphAt(dom.childAt(element3, [1]), 0, 0);
-        morphs[3] = dom.createMorphAt(element3, 3, 3);
-        morphs[4] = dom.createMorphAt(dom.childAt(element0, [13]), 1, 1);
+        var element0 = dom.childAt(fragment, [0]);
+        var element1 = dom.childAt(element0, [5]);
+        var element2 = dom.childAt(element1, [3]);
+        var element3 = dom.childAt(element2, [1]);
+        var element4 = dom.childAt(element2, [3]);
+        var morphs = new Array(6);
+        morphs[0] = dom.createMorphAt(dom.childAt(element0, [3, 3, 3, 3]), 1, 1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element3, [1]), 0, 0);
+        morphs[2] = dom.createMorphAt(element3, 3, 3);
+        morphs[3] = dom.createMorphAt(dom.childAt(element4, [1]), 0, 0);
+        morphs[4] = dom.createMorphAt(element4, 3, 3);
+        morphs[5] = dom.createMorphAt(dom.childAt(element1, [13]), 1, 1);
         return morphs;
       },
-      statements: [["inline", "caps-marquee", [], ["text", "ember-concurrency"], ["loc", [null, [43, 12], [43, 53]]]], ["inline", "code-snippet", [], ["name", "caps-marquee.js"], ["loc", [null, [45, 8], [45, 47]]]], ["inline", "scrambled-text", [], ["text", "ember-concurrency"], ["loc", [null, [48, 12], [48, 55]]]], ["inline", "code-snippet", [], ["name", "scrambled-text.js"], ["loc", [null, [50, 8], [50, 49]]]], ["inline", "link-to", ["documentation", "docs"], [], ["loc", [null, [86, 32], [86, 66]]]]],
+      statements: [["inline", "link-to", ["Getting Started", "docs.getting-started"], [], ["loc", [null, [32, 20], [32, 72]]]], ["inline", "caps-marquee", [], ["text", "ember-concurrency"], ["loc", [null, [43, 12], [43, 53]]]], ["inline", "code-snippet", [], ["name", "caps-marquee.js"], ["loc", [null, [45, 8], [45, 47]]]], ["inline", "scrambled-text", [], ["text", "ember-concurrency"], ["loc", [null, [48, 12], [48, 55]]]], ["inline", "code-snippet", [], ["name", "scrambled-text.js"], ["loc", [null, [50, 8], [50, 49]]]], ["inline", "link-to", ["documentation", "docs"], [], ["loc", [null, [86, 32], [86, 66]]]]],
       locals: [],
       templates: []
     };
@@ -3669,7 +3980,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.0+5100e024"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.1+6bc44974"});
 }
 
 /* jshint ignore:end */
