@@ -12,8 +12,8 @@ export default Ember.Controller.extend({
     {route: "docs.task-concurrency", title: "Managing Task Concurrency"},
     { title: "Examples", route: "docs.examples",
       children: [
-        {route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons"},
         {route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select"},
+        {route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons"},
       ]
     },
   ],
