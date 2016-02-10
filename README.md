@@ -7,7 +7,7 @@ found [here](http://ember-concurrency.com).
 
 `ember-concurrency` is an ember-cli addon. You can install it via:
 
-    ember install liquid-fire
+    ember install ember-concurrency
 
 `ember-concurrency` also requires that the Regenerator runtime be
 included in your app. The easiest way to ensure this is to enable
