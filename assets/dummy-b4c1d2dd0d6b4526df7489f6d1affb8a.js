@@ -1484,7 +1484,7 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
     appController: _ember["default"].inject.controller('application'),
 
     tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.getting-started", title: "Getting Started" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { title: "Examples", route: "docs.examples",
-      children: [{ route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }]
+      children: [{ route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }]
     }],
 
     flatContents: computed(function () {
@@ -3980,7 +3980,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.1+6bc44974"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.1+0118df0d"});
 }
 
 /* jshint ignore:end */
