@@ -9,6 +9,7 @@ Router.map(function() {
   this.route('docs', function() {
     this.route('getting-started');
     this.route('writing-tasks');
+    this.route('task-concurrency');
     this.route('examples', function() {
       this.route('autocomplete');
       this.route('task-concurrency');
