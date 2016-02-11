@@ -1516,7 +1516,7 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
     appController: _ember["default"].inject.controller('application'),
 
     tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.getting-started", title: "Getting Started" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { title: "Examples", route: "docs.examples",
-      children: [{ route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.loading-ui", title: "Loading UI" }]
+      children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }]
     }],
 
     flatContents: computed(function () {
@@ -2124,7 +2124,7 @@ define('dummy/docs/examples/loading-ui/controller', ['exports', 'ember', 'ember-
 
   // BEGIN-SNIPPET loading-ui-controller
   exports['default'] = _ember['default'].Controller.extend({
-    askQuestion: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0(inc) {
+    askQuestion: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
       return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
           case 0:
@@ -2460,13 +2460,13 @@ define("dummy/docs/getting-started/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode("Brocfile.js");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(")\n  ");
+        var el2 = dom.createTextNode(")\n  as set ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
         var el3 = dom.createTextNode("babel.includePolyfill");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" is true to enable ES6 generator function\n  transpilation.\n");
+        var el2 = dom.createTextNode(" to true to enable ES6 generator function\n  transpilation.\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -2541,14 +2541,26 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h4");
+        var el1 = dom.createElement("h3");
         var el2 = dom.createTextNode("Tasks");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  ember-concurrency enables you to write Tasks, which are asynchronous,\n  cancellable operations that are bound to the lifetime of the object they live on,\n  which means when the host object is destroyed (e.g. a component is unrendered),\n  the task is automatically cancelled. Here is an example of a task:\n");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("strong");
+        var el3 = dom.createTextNode("ember-concurrency");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" enables you to write ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("strong");
+        var el3 = dom.createTextNode("Tasks");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(", which are asynchronous,\n  cancellable operations that are bound to the lifetime of the object they live on,\n  which means when the host object is destroyed (e.g. a component is unrendered),\n  the task is automatically cancelled. Here is an example of a task:\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -2604,7 +2616,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h4");
+        var el1 = dom.createElement("h3");
         var el2 = dom.createTextNode("Without Tasks");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
@@ -3458,7 +3470,7 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Step one of writing a task is deciding which object it'll live on — remember\n  that all ember-concurrency tasks are scoped to the lifetime of the object it lives\n  on, such that when that host object is destroyed, the task is cancelled. So if\n  you want the task to cancel when a component is unrendered, put it on a component.\n  If you want it to have a longer life span than a component, perhaps it belongs on\n  a service.\n");
+        var el2 = dom.createTextNode("\n  Step one of writing a task is deciding which object it'll live on —\n  an ember-concurrency task is scoped to the lifetime of the object it lives\n  on, such that when that host object is destroyed, the task is cancelled. So if\n  you want the task to cancel when a component is unrendered, put it on a component.\n  If you want it to have a longer life span than a component, perhaps it belongs on\n  a service.\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -3804,7 +3816,7 @@ define("dummy/snippets", ["exports"], function (exports) {
     "increment-button.js": "function increment() {\n  this.sendAction('press');\n}\n\nfunction stopIncrementing() {\n  this.sendAction('release');\n}\n\nexport default Ember.Component.extend({\n  tagName: 'button',\n\n  touchStart: increment,\n  mouseDown:  increment,\n  touchEnd:   stopIncrementing,\n  mouseLeave: stopIncrementing,\n  mouseUp:    stopIncrementing,\n});",
     "intro-task-oldschool.js": "import Ember from 'ember';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  startCounting() {\n    this.cancelTimer();\n    this.set('count', 0);\n    this.step();\n  },\n\n  step() {\n    if (this.count < 5) {\n      this.incrementProperty('count');\n      this.timerId = Ember.run.later(this, this.step, 300);\n    } else {\n      this.set('count', \"DONE!\");\n    }\n  },\n\n  willDestroy() {\n    this.cancelTimer();\n  },\n\n  cancelTimer() {\n    if (this.timerId) {\n      Ember.run.cancel(this.timerId);\n      this.timerId = null;\n    }\n  },\n\n  actions: {\n    startCounting() {\n      this.startCounting();\n    }\n  }\n});",
     "intro-task.js": "import Ember from 'ember';\nimport { task, timeout } from 'ember-concurrency';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  countingTask: task(function * () {\n    this.set('count', 0);\n    while (this.count < 5) {\n      this.incrementProperty('count');\n      yield timeout(300);\n    }\n    this.set('count', \"DONE!\");\n  }).restartable()\n});",
-    "loading-ui-controller.js": "export default Ember.Controller.extend({\n  askQuestion: task(function * (inc) {\n    yield timeout(1000);\n    this.set('result', Math.random());\n  }).drop(),\n\n  result: null,\n});",
+    "loading-ui-controller.js": "export default Ember.Controller.extend({\n  askQuestion: task(function * () {\n    yield timeout(1000);\n    this.set('result', Math.random());\n  }).drop(),\n\n  result: null,\n});",
     "press-and-hold-buttons.hbs": "<p>\n  {{#press-and-hold-button\n    press=(action incrementBy.perform -1)\n    release=(action incrementBy.perform 0)}}\n      --Decrease\n  {{/press-and-hold-button}}\n\n  {{#press-and-hold-button\n    press=(action incrementBy.perform 1)\n    release=(action incrementBy.perform 0)}}\n      Increase++\n  {{/press-and-hold-button}}\n</p>",
     "scrambled-text.js": "  startScrambling: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      let pauseTime = 140;\n      while (pauseTime > 5) {\n        this.set('scrambledText', scramble(text));\n        yield timeout(pauseTime);\n        pauseTime = pauseTime * 0.95;\n      }\n      this.set('scrambledText', text);\n      yield timeout(1500);\n    }\n  }).on('init'),",
     "shared-task-function.js": "function * SHARED_TASK_FN(tracker) {\n  tracker.start();\n  let didComplete = false;\n  try {\n    // simulate async work\n    yield timeout(1500);\n    didComplete = true;\n  } finally {\n    tracker.end(didComplete);\n  }\n}",
@@ -3875,7 +3887,7 @@ define("dummy/templates/index", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 92,
+            "line": 63,
             "column": 0
           }
         },
@@ -3897,6 +3909,8 @@ define("dummy/templates/index", ["exports"], function (exports) {
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("h4");
         dom.setAttribute(el3, "class", "centered");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
         var el4 = dom.createElement("strong");
         var el5 = dom.createTextNode("ember-concurrency");
         dom.appendChild(el4, el5);
@@ -3907,142 +3921,7 @@ define("dummy/templates/index", ["exports"], function (exports) {
         var el5 = dom.createTextNode("Ember Addon");
         dom.appendChild(el4, el5);
         dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode(" that enables you to:");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "row");
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "four columns");
-        var el5 = dom.createTextNode("\n        Use an ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("strong");
-        var el6 = dom.createTextNode("Async/Await-like syntax");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode(" to easily express complex,\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("strong");
-        var el6 = dom.createTextNode("cancellable");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode(", and ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("strong");
-        var el6 = dom.createTextNode("restartable");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode(" tasks.\n      ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "four columns");
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("strong");
-        var el6 = dom.createTextNode("Say goodbye to error-prone boilerplate");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode(" for managing asynchrony, including:\n        timer cancellation, deactivate & willDestroy hooks,\n        isDestroyed checks, and others.\n      ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "four columns");
-        var el5 = dom.createTextNode("\n        Loop over streams of ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("strong");
-        var el6 = dom.createTextNode("Ember.Evented");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode(" events\n        (with optional support for ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("strong");
-        var el6 = dom.createTextNode("Rx.Observables");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("), with\n        built-in ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("strong");
-        var el6 = dom.createTextNode("backpressure");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode(" support, and no\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("strong");
-        var el6 = dom.createTextNode("Callback Hell");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("™.\n      ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("section");
-        dom.setAttribute(el2, "class", "header");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("h2");
-        dom.setAttribute(el3, "class", "centered");
-        var el4 = dom.createTextNode("Installation");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "row");
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "two columns");
-        var el5 = dom.createTextNode(" ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "eight columns");
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("pre");
-        dom.setAttribute(el5, "class", "hljs");
-        var el6 = dom.createTextNode("ember install ember-concurrency");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("p");
-        var el6 = dom.createTextNode("Read the ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createComment("");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode(" docs for more info.");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n      ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "two columns");
-        var el5 = dom.createTextNode(" ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n    ");
+        var el4 = dom.createTextNode(" that enables\n      you to write concise, worry-free, cancellable, restartable, asynchronous tasks.\n    ");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n  ");
@@ -4238,21 +4117,19 @@ define("dummy/templates/index", ["exports"], function (exports) {
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element0 = dom.childAt(fragment, [0]);
-        var element1 = dom.childAt(element0, [5]);
-        var element2 = dom.childAt(element1, [3]);
-        var element3 = dom.childAt(element2, [1]);
-        var element4 = dom.childAt(element2, [3]);
-        var morphs = new Array(6);
-        morphs[0] = dom.createMorphAt(dom.childAt(element0, [3, 3, 3, 3]), 1, 1);
-        morphs[1] = dom.createMorphAt(dom.childAt(element3, [1]), 0, 0);
-        morphs[2] = dom.createMorphAt(element3, 3, 3);
-        morphs[3] = dom.createMorphAt(dom.childAt(element4, [1]), 0, 0);
-        morphs[4] = dom.createMorphAt(element4, 3, 3);
-        morphs[5] = dom.createMorphAt(dom.childAt(element1, [13]), 1, 1);
+        var element0 = dom.childAt(fragment, [0, 3]);
+        var element1 = dom.childAt(element0, [3]);
+        var element2 = dom.childAt(element1, [1]);
+        var element3 = dom.childAt(element1, [3]);
+        var morphs = new Array(5);
+        morphs[0] = dom.createMorphAt(dom.childAt(element2, [1]), 0, 0);
+        morphs[1] = dom.createMorphAt(element2, 3, 3);
+        morphs[2] = dom.createMorphAt(dom.childAt(element3, [1]), 0, 0);
+        morphs[3] = dom.createMorphAt(element3, 3, 3);
+        morphs[4] = dom.createMorphAt(dom.childAt(element0, [13]), 1, 1);
         return morphs;
       },
-      statements: [["inline", "link-to", ["Getting Started", "docs.getting-started"], [], ["loc", [null, [32, 20], [32, 72]]]], ["inline", "caps-marquee", [], ["text", "ember-concurrency"], ["loc", [null, [43, 12], [43, 53]]]], ["inline", "code-snippet", [], ["name", "caps-marquee.js"], ["loc", [null, [45, 8], [45, 47]]]], ["inline", "scrambled-text", [], ["text", "ember-concurrency"], ["loc", [null, [48, 12], [48, 55]]]], ["inline", "code-snippet", [], ["name", "scrambled-text.js"], ["loc", [null, [50, 8], [50, 49]]]], ["inline", "link-to", ["documentation", "docs"], [], ["loc", [null, [86, 32], [86, 66]]]]],
+      statements: [["inline", "caps-marquee", [], ["text", "ember-concurrency"], ["loc", [null, [14, 12], [14, 53]]]], ["inline", "code-snippet", [], ["name", "caps-marquee.js"], ["loc", [null, [16, 8], [16, 47]]]], ["inline", "scrambled-text", [], ["text", "ember-concurrency"], ["loc", [null, [19, 12], [19, 55]]]], ["inline", "code-snippet", [], ["name", "scrambled-text.js"], ["loc", [null, [21, 8], [21, 49]]]], ["inline", "link-to", ["documentation", "docs"], [], ["loc", [null, [57, 32], [57, 66]]]]],
       locals: [],
       templates: []
     };
@@ -4284,7 +4161,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.1+616fda15"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.1+d1a10815"});
 }
 
 /* jshint ignore:end */
