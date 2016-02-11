@@ -1,0 +1,46 @@
+<h3>Loading UI While a Task is Running</h3>
+
+<p>
+  Reigning in undesired concurrency is partly what <strong>ember-concurrency</strong>
+  has to offer. The other part is making it easy to build UI around
+  asynchronous tasks.
+</p>
+
+<p>
+  For simple cases where you just need to display a loading dialog or disable a button
+  while a task is running, you can make use of the <code>.isIdle</code> property of
+  a task, which is false when the task is running, and true otherwise. This eliminates
+  a lot of the boilerplate of setting a property at the beginning of some async operation,
+  and unsetting when the operation completes. Also, because the task in the example
+  below uses the <code>.drop()</code> modifier
+  (see {{link-to 'Managing Task Concurrency' 'docs.task-concurrency'}}),
+  there's no need to write a guard at the beginning of the task to return early if
+  the task is already running.
+</p>
+
+<h3>Live Example</h3>
+
+<p>
+  What is the meaning of life?
+  {{#if result}} Answer: {{result}} {{/if}}
+
+</p>
+
+<p>
+  {{! BEGIN-SNIPPET ask-button }}
+  <button class={{if askQuestion.isIdle 'button-primary'}}
+    {{action askQuestion.perform}}>
+        {{#if askQuestion.isIdle}}
+          Ask
+        {{else}}
+          Thinking...
+          {{fa-icon "spinner" spin=true}}
+        {{/if}}
+  </button>
+  {{! END-SNIPPET }}
+</p>
+
+{{code-snippet name="loading-ui-controller.js"}}
+
+{{code-snippet name="ask-button.hbs"}}
+

@@ -12,6 +12,7 @@ Router.map(function() {
     this.route('task-concurrency');
     this.route('examples', function() {
       this.route('increment-buttons');
+      this.route('loading-ui');
       this.route('autocomplete');
       this.route('task-concurrency');
     });

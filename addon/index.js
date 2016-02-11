@@ -297,7 +297,6 @@ function start(owner, loopHandle, sourceIterable, iterationHandlerFn, bufferPoli
           if (done) {
             maybeResolveInvocationPromise(si.value, v);
             sourceIteration.step(si.index);
-            loopHandle.incrementProperty('concurrency', -1);
           } else {
             opsIteration.step(index, v);
           }
@@ -312,8 +311,12 @@ function start(owner, loopHandle, sourceIterable, iterationHandlerFn, bufferPoli
       } else {
         if (done) {
           maybeResolveInvocationPromise(si.value, value);
+
+          // this seems weird. if you have a concurrent task...
+          // what are you doing telling the source "iterator" to
+          // step? do we want to tell it to step or just that it's ready for more?
+          // i am so confused.
           sourceIteration.step(si.index);
-          loopHandle.incrementProperty('concurrency', -1);
         } else {
           opsIteration.step(index, value);
         }
@@ -323,6 +326,7 @@ function start(owner, loopHandle, sourceIterable, iterationHandlerFn, bufferPoli
     loopHandle.incrementProperty('concurrency', 1);
     sourceIteration.registerDisposable(si.index, {
       dispose() {
+        loopHandle.incrementProperty('concurrency', -1);
         opsIteration.break(-1);
       },
     }, (sourceIterator.policy && sourceIterator.policy.concurrent));

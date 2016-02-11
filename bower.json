@@ -9,7 +9,8 @@
     "jquery": "^2.0.0",
     "loader.js": "^3.5.0",
     "qunit": "~1.20.0",
-    "fastclick": "~1.0.6"
+    "fastclick": "~1.0.6",
+    "font-awesome": "~4.5.0"
   },
   "resolutions": {
     "ember": "2.2.0"

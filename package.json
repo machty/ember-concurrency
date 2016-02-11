@@ -28,6 +28,7 @@
     "ember-cli-deploy-build": "0.1.0",
     "ember-cli-deploy-git": "0.1.0",
     "ember-cli-fastclick": "1.1.0",
+    "ember-cli-font-awesome": "1.4.2",
     "ember-cli-github-pages": "0.0.6",
     "ember-cli-htmlbars": "^1.0.1",
     "ember-cli-htmlbars-inline-precompile": "^0.3.1",

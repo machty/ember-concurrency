@@ -14,6 +14,7 @@ export default Ember.Controller.extend({
       children: [
         {route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select"},
         {route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons"},
+        {route: "docs.examples.loading-ui", title: "Loading UI"},
       ]
     },
   ],
