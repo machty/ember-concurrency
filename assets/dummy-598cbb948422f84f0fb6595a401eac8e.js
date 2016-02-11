@@ -3981,7 +3981,7 @@ define("dummy/templates/index", ["exports"], function (exports) {
         var el3 = dom.createTextNode("\n\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("h5");
-        var el4 = dom.createTextNode("\n      Imagine writing the above using timers:\n    ");
+        var el4 = dom.createTextNode("\n      Imagine writing the above using timers (or Promises):\n    ");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n\n    ");
@@ -4161,7 +4161,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.1+d1a10815"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.1+f0b3a4d9"});
 }
 
 /* jshint ignore:end */
