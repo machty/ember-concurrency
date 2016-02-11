@@ -1167,22 +1167,22 @@ define('dummy/components/power-select', ['exports', 'ember-power-select/componen
 define('dummy/components/press-and-hold-button/component', ['exports', 'ember'], function (exports, _ember) {
 
   // BEGIN-SNIPPET increment-button
-  function increment() {
+  function sendPress() {
     this.sendAction('press');
   }
 
-  function stopIncrementing() {
+  function sendRelease() {
     this.sendAction('release');
   }
 
   exports['default'] = _ember['default'].Component.extend({
     tagName: 'button',
 
-    touchStart: increment,
-    mouseDown: increment,
-    touchEnd: stopIncrementing,
-    mouseLeave: stopIncrementing,
-    mouseUp: stopIncrementing
+    touchStart: sendPress,
+    mouseDown: sendPress,
+    touchEnd: sendRelease,
+    mouseLeave: sendRelease,
+    mouseUp: sendRelease
   });
 
   // END-SNIPPET
@@ -3813,7 +3813,7 @@ define("dummy/snippets", ["exports"], function (exports) {
     "ember-app-config.js": "var app = new EmberApp({\n  babel: {\n    includePolyfill: true,\n\n    // you might need this too, depending on your version of babel\n    // browserPolyfill: true,\n  },\n});\n\n",
     "ember-install.sh": "ember install ember-concurrency\n",
     "increment-button-task.js": "export default Ember.Controller.extend({\n  count: 0,\n  incrementBy: task(function * (inc) {\n    if (!inc) { return; }\n\n    let speed = 400;\n    while (true) {\n      this.incrementProperty('count', inc);\n      yield timeout(speed);\n      speed = Math.max(50, speed * 0.8);\n    }\n  }).restartable(),\n});",
-    "increment-button.js": "function increment() {\n  this.sendAction('press');\n}\n\nfunction stopIncrementing() {\n  this.sendAction('release');\n}\n\nexport default Ember.Component.extend({\n  tagName: 'button',\n\n  touchStart: increment,\n  mouseDown:  increment,\n  touchEnd:   stopIncrementing,\n  mouseLeave: stopIncrementing,\n  mouseUp:    stopIncrementing,\n});",
+    "increment-button.js": "function sendPress() {\n  this.sendAction('press');\n}\n\nfunction sendRelease() {\n  this.sendAction('release');\n}\n\nexport default Ember.Component.extend({\n  tagName: 'button',\n\n  touchStart: sendPress,\n  mouseDown:  sendPress,\n  touchEnd:   sendRelease,\n  mouseLeave: sendRelease,\n  mouseUp:    sendRelease,\n});",
     "intro-task-oldschool.js": "import Ember from 'ember';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  startCounting() {\n    this.cancelTimer();\n    this.set('count', 0);\n    this.step();\n  },\n\n  step() {\n    if (this.count < 5) {\n      this.incrementProperty('count');\n      this.timerId = Ember.run.later(this, this.step, 300);\n    } else {\n      this.set('count', \"DONE!\");\n    }\n  },\n\n  willDestroy() {\n    this.cancelTimer();\n  },\n\n  cancelTimer() {\n    if (this.timerId) {\n      Ember.run.cancel(this.timerId);\n      this.timerId = null;\n    }\n  },\n\n  actions: {\n    startCounting() {\n      this.startCounting();\n    }\n  }\n});",
     "intro-task.js": "import Ember from 'ember';\nimport { task, timeout } from 'ember-concurrency';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  countingTask: task(function * () {\n    this.set('count', 0);\n    while (this.count < 5) {\n      this.incrementProperty('count');\n      yield timeout(300);\n    }\n    this.set('count', \"DONE!\");\n  }).restartable()\n});",
     "loading-ui-controller.js": "export default Ember.Controller.extend({\n  askQuestion: task(function * () {\n    yield timeout(1000);\n    this.set('result', Math.random());\n  }).drop(),\n\n  result: null,\n});",
@@ -4069,7 +4069,7 @@ define("dummy/templates/index", ["exports"], function (exports) {
         var el5 = dom.createTextNode("ember-concurrency");
         dom.appendChild(el4, el5);
         dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode(" let's you\n      write ");
+        var el4 = dom.createTextNode(" lets you\n      write ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("strong");
         var el5 = dom.createTextNode("extremely clear asynchronous code");
@@ -4161,7 +4161,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.1+f0b3a4d9"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.2+690eec44"});
 }
 
 /* jshint ignore:end */
