@@ -20,6 +20,8 @@ export {
   restartable
 };
 
+const { computed } = Ember;
+
 let testGenFn = function * () {};
 let testIter = testGenFn();
 Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to true in your ember-cli-build.js (or Brocfile.js) to ensure that the generator function* syntax is properly transpiled, e.g.:
@@ -32,6 +34,12 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
 
 
 const ComputedProperty = Ember.__loader.require("ember-metal/computed").ComputedProperty;
+
+const TaskHandle = Ember.Object.extend({
+  loopHandle: null,
+  concurrency: computed.oneWay('loopHandle.concurrency'),
+  isIdle: computed.equal('concurrency', 0),
+});
 
 function TaskProperty(taskFunc) {
   let tp = this;
@@ -51,7 +59,7 @@ function TaskProperty(taskFunc) {
       }
     });
 
-    forEach(obs, taskFunc, tp.bufferPolicy).attach(this);
+    let loopHandle = forEach(obs, taskFunc, tp.bufferPolicy).attach(this);
 
     let perform = function(...args) {
       let argsObject = new Arguments(args);
@@ -60,14 +68,13 @@ function TaskProperty(taskFunc) {
       return argsObject.defer.promise;
     };
 
-    let task = {
+    return TaskHandle.create({
       perform: perform,
       _perform(...args) {
         publish(new Arguments(args));
       },
-    };
-
-    return task;
+      loopHandle,
+    });
   });
 
   this.bufferPolicy = null;
@@ -226,30 +233,47 @@ export function timeout(ms) {
 
 function log() { }
 
-export function forEach(iterable, fn, bufferPolicy) {
-  let owner;
-  Ember.run.schedule('actions', () => {
-    if (!owner) {
-      throw new Error("You must call forEach(...).attach(this) if you're using forEach outside of a generator function");
-    }
-  });
+let LoopHandle = Ember.Object.extend({
+  init() {
+    this._super();
 
-  return {
-    attach(_owner) {
-      owner = _owner;
-      this.iteration = start(owner, iterable, fn, bufferPolicy);
-      cleanupOnDestroy(owner, this, '_disposeIter');
-    },
-    _disposeIter() {
-      log("HOST: host object destroyed, disposing of source iteration", this.iteration);
-      this.iteration.break(-1);
-    },
-  };
+    Ember.run.schedule('actions', () => {
+      if (!this.owner) {
+        throw new Error("You must call forEach(...).attach(this) if you're using forEach outside of a generator function");
+      }
+    });
+  },
+
+  owner: null,
+  iteration: null,
+  iterable: null,
+  fn: null,
+  bufferPolicy: null,
+
+  concurrency: 0,
+
+  attach(owner) {
+    this.owner = owner;
+    this.set('iteration', start(owner, this, this.iterable, this.fn, this.bufferPolicy));
+    cleanupOnDestroy(owner, this, '_disposeIter');
+    return this;
+  },
+
+  _disposeIter() {
+    log("HOST: host object destroyed, disposing of source iteration", this.iteration);
+    this.iteration.break(-1);
+  },
+});
+
+export function forEach(iterable, fn, bufferPolicy) {
+  return LoopHandle.create({
+    iterable, fn, bufferPolicy
+  });
 }
 
 const EMPTY_ARRAY = [];
 
-function start(owner, sourceIterable, iterationHandlerFn, bufferPolicy) {
+function start(owner, loopHandle, sourceIterable, iterationHandlerFn, bufferPolicy) {
   log("SOURCE: Starting forEach with", owner, sourceIterable, iterationHandlerFn);
 
   let sourceIterator = _makeIterator(sourceIterable, owner, EMPTY_ARRAY);
@@ -273,6 +297,7 @@ function start(owner, sourceIterable, iterationHandlerFn, bufferPolicy) {
           if (done) {
             maybeResolveInvocationPromise(si.value, v);
             sourceIteration.step(si.index);
+            loopHandle.incrementProperty('concurrency', -1);
           } else {
             opsIteration.step(index, v);
           }
@@ -288,16 +313,16 @@ function start(owner, sourceIterable, iterationHandlerFn, bufferPolicy) {
         if (done) {
           maybeResolveInvocationPromise(si.value, value);
           sourceIteration.step(si.index);
+          loopHandle.incrementProperty('concurrency', -1);
         } else {
           opsIteration.step(index, value);
         }
       }
     });
 
+    loopHandle.incrementProperty('concurrency', 1);
     sourceIteration.registerDisposable(si.index, {
       dispose() {
-        // so this needs to be modified. it's a disposable that needs to be
-        // disposed when t
         opsIteration.break(-1);
       },
     }, (sourceIterator.policy && sourceIterator.policy.concurrent));
