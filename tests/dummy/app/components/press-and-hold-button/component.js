@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET increment-button
 function increment() {
