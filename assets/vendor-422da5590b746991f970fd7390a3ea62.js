@@ -94543,6 +94543,516 @@ define("ember-cli-app-version/templates/app-version", ["exports"], function (exp
     };
   })());
 });
+define('ember-cli-font-awesome/components/fa-icon', ['exports', 'ember', 'ember-cli-font-awesome/utils/try-match', 'ember-computed-decorators', 'ember-cli-font-awesome/utils/optional-decorator'], function (exports, _ember, _emberCliFontAwesomeUtilsTryMatch, _emberComputedDecorators, _emberCliFontAwesomeUtilsOptionalDecorator) {
+  'use strict';
+
+  function _createDecoratedObject(descriptors) {
+    var target = {};for (var i = 0; i < descriptors.length; i++) {
+      var descriptor = descriptors[i];var decorators = descriptor.decorators;var key = descriptor.key;delete descriptor.key;delete descriptor.decorators;descriptor.enumerable = true;descriptor.configurable = true;if ('value' in descriptor || descriptor.initializer) descriptor.writable = true;if (decorators) {
+        for (var f = 0; f < decorators.length; f++) {
+          var decorator = decorators[f];if (typeof decorator === 'function') {
+            descriptor = decorator(target, key, descriptor) || descriptor;
+          } else {
+            throw new TypeError('The decorator for method ' + descriptor.key + ' is of the invalid type ' + typeof decorator);
+          }
+        }
+      }if (descriptor.initializer) {
+        descriptor.value = descriptor.initializer.call(target);
+      }Object.defineProperty(target, key, descriptor);
+    }return target;
+  }
+
+  var FaIconComponent = _ember['default'].Component.extend(_createDecoratedObject([{
+    key: 'tagName',
+    initializer: function initializer() {
+      return 'i';
+    }
+  }, {
+    key: 'classNames',
+    initializer: function initializer() {
+      return ['fa'];
+    }
+  }, {
+    key: 'classNameBindings',
+    initializer: function initializer() {
+      return ['iconCssClass', 'flipCssClass', 'rotateCssClass', 'sizeCssClass', 'pullCssClass', 'stackCssClass', 'spin:fa-spin', 'fixedWidth:fa-fw', 'listItem:fa-li', 'border:fa-border', 'pulse:fa-pulse', 'inverse:fa-inverse'];
+    }
+  }, {
+    key: 'attributeBindings',
+    initializer: function initializer() {
+      return ['ariaHiddenAttribute:aria-hidden', 'title'];
+    }
+  }, {
+    key: 'iconCssClass',
+    decorators: [(0, _emberComputedDecorators['default'])('icon', 'params.[]')],
+    value: function iconCssClass(icon, params) {
+      icon = icon || params[0];
+      if (icon) {
+        return (0, _emberCliFontAwesomeUtilsTryMatch['default'])(icon, /^fa-/) ? icon : 'fa-' + icon;
+      }
+    }
+  }, {
+    key: 'flipCssClass',
+    decorators: [_emberCliFontAwesomeUtilsOptionalDecorator['default'], (0, _emberComputedDecorators['default'])('flip')],
+    value: function flipCssClass(flip) {
+      return (0, _emberCliFontAwesomeUtilsTryMatch['default'])(flip, /^fa-flip/) ? flip : 'fa-flip-' + flip;
+    }
+  }, {
+    key: 'rotateCssClass',
+    decorators: [_emberCliFontAwesomeUtilsOptionalDecorator['default'], (0, _emberComputedDecorators['default'])('rotate')],
+    value: function rotateCssClass(rotate) {
+      if ((0, _emberCliFontAwesomeUtilsTryMatch['default'])(rotate, /^fa-rotate/)) {
+        return rotate;
+      } else {
+        return 'fa-rotate-' + rotate;
+      }
+    }
+  }, {
+    key: 'sizeCssClass',
+    decorators: [_emberCliFontAwesomeUtilsOptionalDecorator['default'], (0, _emberComputedDecorators['default'])('size')],
+    value: function sizeCssClass(size) {
+      if ((0, _emberCliFontAwesomeUtilsTryMatch['default'])(size, /^fa-/)) {
+        return size;
+      } else if ((0, _emberCliFontAwesomeUtilsTryMatch['default'])(size, /(?:lg|x)$/)) {
+        return 'fa-' + size;
+      } else {
+        return 'fa-' + size + 'x';
+      }
+    }
+  }, {
+    key: 'pullCssClass',
+    decorators: [_emberCliFontAwesomeUtilsOptionalDecorator['default'], (0, _emberComputedDecorators['default'])('pull')],
+    value: function pullCssClass(pull) {
+      return 'fa-pull-' + pull;
+    }
+  }, {
+    key: 'stackCssClass',
+    decorators: [_emberCliFontAwesomeUtilsOptionalDecorator['default'], (0, _emberComputedDecorators['default'])('stack')],
+    value: function stackCssClass(stack) {
+      if ((0, _emberCliFontAwesomeUtilsTryMatch['default'])(stack, /^fa-/)) {
+        return stack;
+      } else if ((0, _emberCliFontAwesomeUtilsTryMatch['default'])(stack, /x$/)) {
+        return 'fa-stack-' + stack;
+      } else {
+        return 'fa-stack-' + stack + 'x';
+      }
+    }
+  }, {
+    key: 'ariaHiddenAttribute',
+    decorators: [(0, _emberComputedDecorators['default'])('ariaHidden')],
+    value: function ariaHiddenAttribute(ariaHidden) {
+      return ariaHidden !== false ? true : undefined;
+    }
+  }]));
+
+  FaIconComponent.reopenClass({
+    positionalParams: 'params'
+  });
+
+  exports['default'] = FaIconComponent;
+});
+define('ember-cli-font-awesome/components/fa-list-icon', ['exports', 'ember-cli-font-awesome/components/fa-icon'], function (exports, _emberCliFontAwesomeComponentsFaIcon) {
+  'use strict';
+
+  exports['default'] = _emberCliFontAwesomeComponentsFaIcon['default'].extend({ listItem: true });
+});
+define('ember-cli-font-awesome/components/fa-list', ['exports', 'ember'], function (exports, _ember) {
+  'use strict';
+
+  exports['default'] = _ember['default'].Component.extend({
+    tagName: 'ul',
+    classNames: 'fa-ul'
+  });
+});
+define('ember-cli-font-awesome/components/fa-stack', ['exports', 'ember', 'ember-cli-font-awesome/utils/try-match', 'ember-computed-decorators', 'ember-cli-font-awesome/utils/optional-decorator'], function (exports, _ember, _emberCliFontAwesomeUtilsTryMatch, _emberComputedDecorators, _emberCliFontAwesomeUtilsOptionalDecorator) {
+  'use strict';
+
+  function _createDecoratedObject(descriptors) {
+    var target = {};for (var i = 0; i < descriptors.length; i++) {
+      var descriptor = descriptors[i];var decorators = descriptor.decorators;var key = descriptor.key;delete descriptor.key;delete descriptor.decorators;descriptor.enumerable = true;descriptor.configurable = true;if ('value' in descriptor || descriptor.initializer) descriptor.writable = true;if (decorators) {
+        for (var f = 0; f < decorators.length; f++) {
+          var decorator = decorators[f];if (typeof decorator === 'function') {
+            descriptor = decorator(target, key, descriptor) || descriptor;
+          } else {
+            throw new TypeError('The decorator for method ' + descriptor.key + ' is of the invalid type ' + typeof decorator);
+          }
+        }
+      }if (descriptor.initializer) {
+        descriptor.value = descriptor.initializer.call(target);
+      }Object.defineProperty(target, key, descriptor);
+    }return target;
+  }
+
+  exports['default'] = _ember['default'].Component.extend(_createDecoratedObject([{
+    key: 'tagName',
+    initializer: function initializer() {
+      return 'span';
+    }
+  }, {
+    key: 'classNames',
+    initializer: function initializer() {
+      return 'fa-stack';
+    }
+  }, {
+    key: 'classNameBindings',
+    initializer: function initializer() {
+      return ['sizeCssClass'];
+    }
+  }, {
+    key: 'sizeCssClass',
+    decorators: [_emberCliFontAwesomeUtilsOptionalDecorator['default'], (0, _emberComputedDecorators['default'])('size')],
+    value: function sizeCssClass(size) {
+      if ((0, _emberCliFontAwesomeUtilsTryMatch['default'])(size, /^fa-/)) {
+        return size;
+      } else if ((0, _emberCliFontAwesomeUtilsTryMatch['default'])(size, /(?:lg|x)$/)) {
+        return 'fa-' + size;
+      } else {
+        return 'fa-' + size + 'x';
+      }
+    }
+  }]));
+});
+define("ember-cli-font-awesome/utils/optional-decorator", ["exports"], function (exports) {
+  "use strict";
+
+  exports["default"] = optional;
+
+  function optional(object, attributeName, descriptor) {
+    var originalFunction = descriptor.value;
+
+    descriptor.value = function () {
+      var args = [].slice.call(arguments, 0);
+      if (args.some(function (value) {
+        return value != null;
+      })) {
+        return originalFunction.apply(undefined, arguments);
+      }
+    };
+
+    return descriptor;
+  }
+});
+define('ember-cli-font-awesome/utils/try-match', ['exports'], function (exports) {
+  'use strict';
+
+  exports['default'] = function (object, regex) {
+    return typeof object === 'string' && object.match(regex);
+  };
+});
+define('ember-computed-decorators/decorator-alias', ['exports', 'ember-computed-decorators/utils/extract-value'], function (exports, _emberComputedDecoratorsUtilsExtractValue) {
+  'use strict';
+
+  exports['default'] = decoratorAlias;
+
+  function decoratorAlias(fn, errorMessage) {
+    return function () {
+      for (var _len = arguments.length, params = Array(_len), _key = 0; _key < _len; _key++) {
+        params[_key] = arguments[_key];
+      }
+
+      // determine if user called as @computed('blah', 'blah') or @computed
+      if (params.length === 0) {
+        throw new Error(errorMessage);
+      } else {
+        return function (target, key, desc) {
+          return {
+            enumerable: desc.enumerable,
+            configurable: desc.configurable,
+            writable: desc.writable,
+            initializer: function initializer() {
+              var value = (0, _emberComputedDecoratorsUtilsExtractValue['default'])(desc);
+              return fn.apply(null, params.concat(value));
+            }
+          };
+        };
+      }
+    };
+  }
+});
+define('ember-computed-decorators/ember-data', ['exports', 'ember-data', 'ember-computed-decorators/macro-alias'], function (exports, _emberData, _emberComputedDecoratorsMacroAlias) {
+  'use strict';
+
+  var attr = (0, _emberComputedDecoratorsMacroAlias['default'])(_emberData['default'].attr);
+  exports.attr = attr;
+
+  var hasMany = (0, _emberComputedDecoratorsMacroAlias['default'])(_emberData['default'].hasMany);
+  exports.hasMany = hasMany;
+
+  var belongsTo = (0, _emberComputedDecoratorsMacroAlias['default'])(_emberData['default'].belongsTo);
+  exports.belongsTo = belongsTo;
+});
+define('ember-computed-decorators/index', ['exports', 'ember', 'ember-computed-decorators/utils/handle-descriptor', 'ember-computed-decorators/utils/is-descriptor', 'ember-computed-decorators/utils/extract-value', 'ember-computed-decorators/decorator-alias', 'ember-computed-decorators/macro-alias'], function (exports, _ember, _emberComputedDecoratorsUtilsHandleDescriptor, _emberComputedDecoratorsUtilsIsDescriptor, _emberComputedDecoratorsUtilsExtractValue, _emberComputedDecoratorsDecoratorAlias, _emberComputedDecoratorsMacroAlias) {
+  'use strict';
+
+  var _slice = Array.prototype.slice;
+
+  exports['default'] = computedDecorator;
+  exports.readOnly = readOnly;
+
+  function computedDecorator() {
+    for (var _len = arguments.length, params = Array(_len), _key = 0; _key < _len; _key++) {
+      params[_key] = arguments[_key];
+    }
+
+    // determine if user called as @computed('blah', 'blah') or @computed
+    if ((0, _emberComputedDecoratorsUtilsIsDescriptor['default'])(params[params.length - 1])) {
+      return _emberComputedDecoratorsUtilsHandleDescriptor['default'].apply(undefined, arguments);
+    } else {
+      return function () /* target, key, desc */{
+        return _emberComputedDecoratorsUtilsHandleDescriptor['default'].apply(undefined, _slice.call(arguments).concat([params]));
+      };
+    }
+  }
+
+  function readOnly(target, name, desc) {
+    return {
+      writable: false,
+      enumerable: desc.enumerable,
+      configurable: desc.configurable,
+      initializer: function initializer() {
+        var value = (0, _emberComputedDecoratorsUtilsExtractValue['default'])(desc);
+        return value.readOnly();
+      }
+    };
+  }
+
+  var on = (0, _emberComputedDecoratorsDecoratorAlias['default'])(_ember['default'].on, 'Can not `on` without event names');
+  exports.on = on;
+
+  var observes = (0, _emberComputedDecoratorsDecoratorAlias['default'])(_ember['default'].observer, 'Can not `observe` without property names');exports.observes = observes;
+
+  var alias = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.alias);
+  exports.alias = alias;
+
+  var and = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.and);
+  exports.and = and;
+
+  var bool = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.bool);
+  exports.bool = bool;
+
+  var collect = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.collect);
+  exports.collect = collect;
+
+  var empty = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.empty);
+  exports.empty = empty;
+
+  var equal = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.equal);
+  exports.equal = equal;
+
+  var filter = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.filter);
+  exports.filter = filter;
+
+  var filterBy = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.filterBy);
+  exports.filterBy = filterBy;
+
+  var gt = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.gt);
+  exports.gt = gt;
+
+  var gte = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.gte);
+  exports.gte = gte;
+
+  var intersect = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.intersect);
+  exports.intersect = intersect;
+
+  var lt = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.lt);
+  exports.lt = lt;
+
+  var lte = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.lte);
+  exports.lte = lte;
+
+  var map = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.map);
+  exports.map = map;
+
+  var mapBy = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.mapBy);
+  exports.mapBy = mapBy;
+
+  var match = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.match);
+  exports.match = match;
+
+  var max = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.max);
+  exports.max = max;
+
+  var min = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.min);
+  exports.min = min;
+
+  var none = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.none);
+  exports.none = none;
+
+  var not = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.not);
+  exports.not = not;
+
+  var notEmpty = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.notEmpty);
+  exports.notEmpty = notEmpty;
+
+  var oneWay = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.oneWay);
+  exports.oneWay = oneWay;
+
+  var or = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.or);
+  exports.or = or;
+
+  var reads = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.reads);
+  exports.reads = reads;
+
+  var setDiff = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.setDiff);
+  exports.setDiff = setDiff;
+
+  var sort = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.sort);
+  exports.sort = sort;
+
+  var sum = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.sum);
+  exports.sum = sum;
+
+  var union = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.union);
+  exports.union = union;
+
+  var uniq = (0, _emberComputedDecoratorsMacroAlias['default'])(_ember['default'].computed.uniq);
+  exports.uniq = uniq;
+});
+define('ember-computed-decorators/macro-alias', ['exports', 'ember-computed-decorators/utils/is-descriptor'], function (exports, _emberComputedDecoratorsUtilsIsDescriptor) {
+  'use strict';
+
+  exports['default'] = macroAlias;
+
+  function _toConsumableArray(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];return arr2;
+    } else {
+      return Array.from(arr);
+    }
+  }
+
+  function handleDescriptor(target, property, desc, fn) {
+    var params = arguments.length <= 4 || arguments[4] === undefined ? [] : arguments[4];
+
+    return {
+      enumerable: desc.enumerable,
+      configurable: desc.configurable,
+      writable: desc.writable,
+      initializer: function initializer() {
+        return fn.apply(undefined, _toConsumableArray(params));
+      }
+    };
+  }
+  function macroAlias(fn) {
+    return function () {
+      for (var _len = arguments.length, params = Array(_len), _key = 0; _key < _len; _key++) {
+        params[_key] = arguments[_key];
+      }
+
+      if ((0, _emberComputedDecoratorsUtilsIsDescriptor['default'])(params[params.length - 1])) {
+        return handleDescriptor.apply(undefined, params.concat([fn]));
+      } else {
+        return function (target, property, desc) {
+          return handleDescriptor(target, property, desc, fn, params);
+        };
+      }
+    };
+  }
+});
+define('ember-computed-decorators/utils/extract-value', ['exports'], function (exports) {
+  'use strict';
+
+  exports['default'] = extractValue;
+
+  function extractValue(desc) {
+    return desc.value || typeof desc.initializer === 'function' && desc.initializer();
+  }
+});
+define('ember-computed-decorators/utils/handle-descriptor', ['exports', 'ember', 'ember-computed-decorators/utils/extract-value'], function (exports, _ember, _emberComputedDecoratorsUtilsExtractValue) {
+  'use strict';
+
+  exports['default'] = handleDescriptor;
+
+  var computed = _ember['default'].computed;
+  var expandProperties = _ember['default'].expandProperties;
+  var get = _ember['default'].get;
+
+  function handleDescriptor(target, key, desc) {
+    var params = arguments.length <= 3 || arguments[3] === undefined ? [] : arguments[3];
+
+    return {
+      enumerable: desc.enumerable,
+      configurable: desc.configurable,
+      writeable: desc.writeable,
+      initializer: function initializer() {
+        var computedDescriptor = undefined;
+
+        if (desc.writable) {
+          var val = (0, _emberComputedDecoratorsUtilsExtractValue['default'])(desc);
+          if (typeof val === 'object') {
+            var value = {};
+            if (val.get) {
+              value.get = callUserSuppliedGet(params, val.get);
+            }
+            if (val.set) {
+              value.set = callUserSuppliedSet(params, val.set);
+            }
+            computedDescriptor = value;
+          } else {
+            computedDescriptor = callUserSuppliedGet(params, val);
+          }
+        } else {
+          throw new Error('ember-computed-decorators does not support using getters and setters');
+        }
+
+        return computed.apply(null, params.concat(computedDescriptor));
+      }
+    };
+  }
+
+  function expandPropertyList(propertyList) {
+    return propertyList.reduce(function (newPropertyList, property) {
+      var atEachIndex = property.indexOf('.@each');
+      if (atEachIndex !== -1) {
+        return newPropertyList.concat(property.slice(0, atEachIndex));
+      } else if (property.slice(-2) === '[]') {
+        return newPropertyList.concat(property.slice(0, -3));
+      }
+
+      expandProperties(property, function (expandedProperties) {
+        newPropertyList = newPropertyList.concat(expandedProperties);
+      });
+
+      return newPropertyList;
+    }, []);
+  }
+
+  function callUserSuppliedGet(params, func) {
+    var expandedParams = expandPropertyList(params);
+    return function () {
+      var _this = this;
+
+      var paramValues = expandedParams.map(function (p) {
+        return get(_this, p);
+      });
+
+      return func.apply(this, paramValues);
+    };
+  }
+
+  function callUserSuppliedSet(params, func) {
+    var expandedParams = expandPropertyList(params);
+    return function (key, value) {
+      var _this2 = this;
+
+      var paramValues = expandedParams.map(function (p) {
+        return get(_this2, p);
+      });
+      paramValues.unshift(value);
+
+      return func.apply(this, paramValues);
+    };
+  }
+});
+define('ember-computed-decorators/utils/is-descriptor', ['exports'], function (exports) {
+  'use strict';
+
+  exports['default'] = isDescriptor;
+
+  function isDescriptor(item) {
+    return item && typeof item === 'object' && 'writable' in item && 'enumerable' in item && 'configurable' in item;
+  }
+});
 define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/iteration', 'ember-concurrency/iterators'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyIteration, _emberConcurrencyIterators) {
   'use strict';
 
@@ -94557,6 +95067,8 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   exports.keepLastIntermediateValue = _emberConcurrencyIteration.keepLastIntermediateValue;
   exports.restartable = _emberConcurrencyIteration.restartable;
 
+  var computed = _ember['default'].computed;
+
   var testGenFn = regeneratorRuntime.mark(function testGenFn() {
     return regeneratorRuntime.wrap(function testGenFn$(context$1$0) {
       while (1) switch (context$1$0.prev = context$1$0.next) {
@@ -94570,6 +95082,12 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   _ember['default'].assert('ember-concurrency requires that you set babel.includePolyfill to true in your ember-cli-build.js (or Brocfile.js) to ensure that the generator function* syntax is properly transpiled, e.g.:\n\n  var app = new EmberApp({\n    babel: {\n      includePolyfill: true,\n    }\n  });', (0, _emberConcurrencyUtils.isGeneratorIterator)(testIter));
 
   var ComputedProperty = _ember['default'].__loader.require("ember-metal/computed").ComputedProperty;
+
+  var TaskHandle = _ember['default'].Object.extend({
+    loopHandle: null,
+    concurrency: computed.oneWay('loopHandle.concurrency'),
+    isIdle: computed.equal('concurrency', 0)
+  });
 
   function TaskProperty(taskFunc) {
     var tp = this;
@@ -94591,7 +95109,7 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
         }
       });
 
-      forEach(obs, taskFunc, tp.bufferPolicy).attach(this);
+      var loopHandle = forEach(obs, taskFunc, tp.bufferPolicy).attach(this);
 
       var perform = function perform() {
         for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
@@ -94604,7 +95122,7 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
         return argsObject.defer.promise;
       };
 
-      var task = {
+      return TaskHandle.create({
         perform: perform,
         _perform: function _perform() {
           for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
@@ -94612,10 +95130,9 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
           }
 
           publish(new _emberConcurrencyUtils.Arguments(args));
-        }
-      };
-
-      return task;
+        },
+        loopHandle: loopHandle
+      });
     });
 
     this.bufferPolicy = null;
@@ -94790,30 +95307,49 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
 
   function log() {}
 
-  function forEach(iterable, fn, bufferPolicy) {
-    var owner = undefined;
-    _ember['default'].run.schedule('actions', function () {
-      if (!owner) {
-        throw new Error("You must call forEach(...).attach(this) if you're using forEach outside of a generator function");
-      }
-    });
+  var LoopHandle = _ember['default'].Object.extend({
+    init: function init() {
+      var _this = this;
 
-    return {
-      attach: function attach(_owner) {
-        owner = _owner;
-        this.iteration = start(owner, iterable, fn, bufferPolicy);
-        cleanupOnDestroy(owner, this, '_disposeIter');
-      },
-      _disposeIter: function _disposeIter() {
-        log("HOST: host object destroyed, disposing of source iteration", this.iteration);
-        this.iteration['break'](-1);
-      }
-    };
+      this._super();
+
+      _ember['default'].run.schedule('actions', function () {
+        if (!_this.owner) {
+          throw new Error("You must call forEach(...).attach(this) if you're using forEach outside of a generator function");
+        }
+      });
+    },
+
+    owner: null,
+    iteration: null,
+    iterable: null,
+    fn: null,
+    bufferPolicy: null,
+
+    concurrency: 0,
+
+    attach: function attach(owner) {
+      this.owner = owner;
+      this.set('iteration', start(owner, this, this.iterable, this.fn, this.bufferPolicy));
+      cleanupOnDestroy(owner, this, '_disposeIter');
+      return this;
+    },
+
+    _disposeIter: function _disposeIter() {
+      log("HOST: host object destroyed, disposing of source iteration", this.iteration);
+      this.iteration['break'](-1);
+    }
+  });
+
+  function forEach(iterable, fn, bufferPolicy) {
+    return LoopHandle.create({
+      iterable: iterable, fn: fn, bufferPolicy: bufferPolicy
+    });
   }
 
   var EMPTY_ARRAY = [];
 
-  function start(owner, sourceIterable, iterationHandlerFn, bufferPolicy) {
+  function start(owner, loopHandle, sourceIterable, iterationHandlerFn, bufferPolicy) {
     log("SOURCE: Starting forEach with", owner, sourceIterable, iterationHandlerFn);
 
     var sourceIterator = (0, _emberConcurrencyIterators._makeIterator)(sourceIterable, owner, EMPTY_ARRAY);
@@ -94853,6 +95389,11 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
         } else {
           if (done) {
             maybeResolveInvocationPromise(si.value, value);
+
+            // this seems weird. if you have a concurrent task...
+            // what are you doing telling the source "iterator" to
+            // step? do we want to tell it to step or just that it's ready for more?
+            // i am so confused.
             sourceIteration.step(si.index);
           } else {
             opsIteration.step(index, value);
@@ -94860,10 +95401,10 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
         }
       });
 
+      loopHandle.incrementProperty('concurrency', 1);
       sourceIteration.registerDisposable(si.index, {
         dispose: function dispose() {
-          // so this needs to be modified. it's a disposable that needs to be
-          // disposed when t
+          loopHandle.incrementProperty('concurrency', -1);
           opsIteration['break'](-1);
         }
       }, sourceIterator.policy && sourceIterator.policy.concurrent);
