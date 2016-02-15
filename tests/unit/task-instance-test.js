@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import TaskInstance from 'ember-concurrency/-task-instance';
 import { createObservable } from 'ember-concurrency/utils';
-import { Cancelation } from 'ember-concurrency';
+import { Cancelation, timeout, _numIntervals } from 'ember-concurrency';
 
 module('Unit: task instance');
 
@@ -210,8 +210,24 @@ test("exception handling", function(assert) {
   assert.ok(taskInstance.get('isIdle'));
 });
 
+test("yielded disposables are disposed upon cancellation", function(assert) {
+  QUnit.stop();
+  assert.expect(3);
 
-
-
-
+  assert.equal(_numIntervals, 0);
+  Ember.run(() => {
+    TaskInstance.create({
+      fn: function * () {
+        yield timeout(50);
+        yield timeout(50);
+        Ember.run.next(() => {
+          assert.equal(_numIntervals, 0);
+          QUnit.start();
+        });
+      },
+      args: [],
+    });
+  });
+  assert.equal(_numIntervals, 1);
+});
 

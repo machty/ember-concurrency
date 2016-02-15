@@ -11,8 +11,13 @@ function forwardToInternalPromise(method) {
 
 export default Ember.Object.extend({
   iterator: null,
+  _disposable: null,
   isCanceled: false,
   hasStarted: false,
+
+  isDropped: Ember.computed('isCanceled', 'hasStarted', function() {
+    return this.get('isCanceled') && !this.get('hasStarted');
+  }),
 
   _index: 1,
   isIdle: false,
@@ -61,6 +66,7 @@ export default Ember.Object.extend({
   promise: null,
 
   _proceed(index, nextValue) {
+    this._dispose();
     Ember.run.once(this, this._takeStep, index, nextValue);
   },
 
@@ -73,8 +79,20 @@ export default Ember.Object.extend({
   },
 
   _hasBegunShutdown: false,
-
   _hasResolved: false,
+
+  _finalize(value) {
+    this.set('isIdle', true);
+    this._defer.resolve(value);
+    this._dispose();
+  },
+
+  _dispose() {
+    if (this._disposable) {
+      this._disposable.dispose();
+      this._disposable = null;
+    }
+  },
 
   _takeStep(index, nextValue) {
     if (index !== this._index) { return; }
@@ -90,13 +108,12 @@ export default Ember.Object.extend({
     let { done, value, error } = result;
 
     if (error) {
-      this.set('isIdle', true);
-      this._defer.reject(value);
+      this._finalize(Ember.RSVP.reject(value));
       return;
     } else {
       if (done && value === undefined) {
         this.set('isIdle', true);
-        this._defer.resolve(nextValue);
+        this._finalize(nextValue);
         return;
       }
     }
@@ -108,7 +125,7 @@ export default Ember.Object.extend({
       return;
     }
 
-    let disposable = observable.subscribe(v => {
+    this._disposable = observable.subscribe(v => {
       this._proceed(index, v);
     }, error => {
       Ember.assert("not implemented yet", false);
