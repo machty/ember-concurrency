@@ -3,6 +3,7 @@ import { isGeneratorIterator } from './utils';
 import { TaskProperty, forEach } from './-task-property';
 import { createObservable } from './utils';
 import { EventedObservable } from './-evented-observable';
+import { Cancelation } from './-task-instance';
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -44,5 +45,6 @@ export function timeout(ms) {
   return interval(ms);
 }
 
-export { createObservable, forEach };
+export { createObservable, forEach, Cancelation };
+
 
