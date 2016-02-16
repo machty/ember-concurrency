@@ -5,16 +5,9 @@ export function Cancelation() {}
 
 function forwardToInternalPromise(method) {
   return function(...args) {
-    return this.promise[method](...args);
+    this._ignorePromiseErrors = true;
+    return this._defer.promise[method](...args);
   };
-}
-
-function IgnoreCancelation(e) {
-  if (e && e.name === 'TaskCancelation') {
-    // prevent RSVP onError
-  } else {
-    return Ember.RSVP.reject(e);
-  }
 }
 
 export default Ember.Object.extend({
@@ -22,6 +15,7 @@ export default Ember.Object.extend({
   _disposable: null,
   isCanceled: false,
   hasStarted: false,
+  _ignorePromiseErrors: false,
 
   isDropped: Ember.computed('isCanceled', 'hasStarted', function() {
     return this.get('isCanceled') && !this.get('hasStarted');
@@ -33,8 +27,15 @@ export default Ember.Object.extend({
   init() {
     this._super();
     this._defer = Ember.RSVP.defer();
-    this.promise = this._defer.promise;
-    this.promise.catch(IgnoreCancelation);
+    this._cancelationIgnorer = this._defer.promise.catch(e => {
+      if (this._ignorePromiseErrors) { return; }
+
+      if (e && e.name === 'TaskCancelation') {
+        // prevent RSVP onError
+      } else {
+        return Ember.RSVP.reject(e);
+      }
+    });
     this.iterator = this.fn.apply(this.context, this.args);
   },
 

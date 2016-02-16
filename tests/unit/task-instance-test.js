@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import TaskInstance from 'ember-concurrency/-task-instance';
 import { createObservable } from 'ember-concurrency/utils';
-import { Cancelation, timeout, _numIntervals } from 'ember-concurrency';
+import { timeout, _numIntervals } from 'ember-concurrency';
 
 module('Unit: task instance');
 
@@ -17,7 +17,7 @@ test("basics", function(assert) {
       },
       args: [1,2,3],
       context,
-    });
+    })._start();
   });
 });
 
@@ -33,17 +33,17 @@ test("blocks on async yields", function(assert) {
         assert.equal(value, 123);
       },
       args: [],
-    });
+    })._start();
   });
 
   Ember.run(null, defer.resolve, 123);
 });
 
-function expectReject(promise, type) {
+function expectCancelation(promise) {
   promise.then(() => {
     QUnit.ok(false, "promise should have rejected");
   }, e => {
-    QUnit.ok(e instanceof type, "promise rejected with expected type");
+    QUnit.equal(e.name, 'TaskCancelation', "promise rejection is a cancelation");
   });
 }
 
@@ -68,10 +68,10 @@ test("cancelation", function(assert) {
         }
       },
       args: [],
-    });
+    })._start();
   });
 
-  expectReject(taskInstance, Cancelation);
+  expectCancelation(taskInstance);
 
   Ember.run(() => {
     assert.ok(!taskInstance.get('isCanceled'));
@@ -96,7 +96,6 @@ test("deferred start", function(assert) {
   assert.expect(4);
 
   let shouldBeRunning = false;
-  let defer = Ember.RSVP.defer();
   let taskInstance = Ember.run(() => {
     return TaskInstance.create({
       fn: function * (...args) {
@@ -104,58 +103,34 @@ test("deferred start", function(assert) {
         assert.deepEqual(args, [1,2,3]);
       },
       args: [1,2,3],
-      startAfter: defer.promise
     });
   });
 
   assert.ok(!taskInstance.get('hasStarted'));
   Ember.run(() => {
     shouldBeRunning = true;
-    defer.resolve();
+    taskInstance._start();
   });
   assert.ok(taskInstance.get('hasStarted'));
 });
 
-test("deferred start: canceled via reject", function(assert) {
-  assert.expect(1);
-
-  let defer = Ember.RSVP.defer();
-  let taskInstance = Ember.run(() => {
-    return TaskInstance.create({
-      fn: function * () {
-        assert.ok(false, "should not get here");
-      },
-      args: [1,2,3],
-      startAfter: defer.promise
-    });
-  });
-
-  taskInstance.catch(e => {
-    assert.ok(e instanceof Cancelation, "caught error");
-  });
-
-  Ember.run(null, defer.reject);
-});
-
-test("deferred start: canceled via .cancel()", function(assert) {
+test("deferred start: .cancel() before ._start()", function(assert) {
   assert.expect(3);
 
-  let defer = Ember.RSVP.defer();
   let taskInstance = Ember.run(() => {
     return TaskInstance.create({
       fn: function * () {
         assert.ok(false, "should not get here");
       },
       args: [],
-      startAfter: defer.promise
     });
   });
 
-  expectReject(taskInstance, Cancelation);
+  expectCancelation(taskInstance);
 
   Ember.run(() => {
     taskInstance.cancel();
-    defer.resolve();
+    taskInstance._start();
   });
   assert.ok(!taskInstance.get('hasStarted'));
   assert.ok(taskInstance.get('isCanceled'));
@@ -170,7 +145,7 @@ test(".then() resolves with the returned value", function(assert) {
         return 123;
       },
       args: [],
-    }).then(v => {
+    })._start().then(v => {
       assert.equal(v, 123);
     });
   });
@@ -197,7 +172,7 @@ test("exception handling", function(assert) {
         }
       },
       args: [],
-    });
+    })._start();
     taskInstance.catch(e => { caughtError = e; });
   });
 
@@ -226,7 +201,7 @@ test("yielded disposables are disposed upon cancellation", function(assert) {
         });
       },
       args: [],
-    });
+    })._start();
   });
   assert.equal(_numIntervals, 1);
 });
