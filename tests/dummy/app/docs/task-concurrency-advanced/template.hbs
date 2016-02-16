@@ -23,7 +23,7 @@
 
 {{code-snippet name="shared-tasks-concurrent.js"}}
 
-<h4>.restartable() with maxConcurrency</h4>
+<h4>.restartable() with .maxConcurrency(3)</h4>
 
 <p>
   When concurrency exceeds maxConcurrency, the oldest running task is canceled.
@@ -40,15 +40,15 @@
 </p>
 
 
-<h4>.enqueue() with maxConcurrency</h4>
+<h4>.enqueue() with .maxConcurrency(3)</h4>
 
 {{concurrency-graph task=enqueuedTask3}}
 
-<h4>.drop() with maxConcurrency</h4>
+<h4>.drop() with .maxConcurrency(3)</h4>
 
 {{concurrency-graph task=droppingTask3}}
 
-<h4>.keepLatest() with maxConcurrency</h4>
+<h4>.keepLatest() with .maxConcurrency(3)</h4>
 
 {{concurrency-graph task=keepLatestTask3}}
 
@@ -58,4 +58,3 @@
     a starting point for the graphs :)
   </em>
 </p>
-
