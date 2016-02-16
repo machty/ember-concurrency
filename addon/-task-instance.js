@@ -143,7 +143,7 @@ export default Ember.Object.extend({
 
     this._disposable = observable.subscribe(v => {
       this._proceed(index, v);
-    }, error => {
+    }, () => {
       Ember.assert("not implemented yet", false);
     }, () => {
       // TODO: test me

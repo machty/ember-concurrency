@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import TaskInstance from 'ember-concurrency/-task-instance';
-import { createObservable } from 'ember-concurrency/utils';
 import { timeout, _numIntervals } from 'ember-concurrency';
 
 module('Unit: task instance');
