@@ -4,7 +4,7 @@
   By default, <strong>ember-concurrency</strong> tasks run concurrently
   &mdash; if you call <code>myTask.perform(); myTask.perform();</code>,
   two instances of the task will run at the same time (unless the object
-  they live on is destroyed, in which case they'll be cancelled).
+  they live on is destroyed, in which case they'll be canceled).
 </p>
 
 <p>
@@ -45,7 +45,7 @@
   The <code>.restartable()</code> modifier ensures that only one instance
   of a task is running by cancelling any currently-running tasks and starting
   a new task instance immediately. Note how there is no task overlap,
-  and how currently running tasks get cancelled
+  and how currently running tasks get canceled
   (<span style="text-decoration:line-through;">.perform()</span> is crossed out)
   if a new task starts before a prior one completes.
 </p>
@@ -66,7 +66,7 @@
   The <code>.enqueue()</code> modifier ensures that only one instance
   of a task is running be maintaining a queue of pending tasks and
   running them sequentially. Note how there is no task overlap, but no
-  tasks are cancelled either.
+  tasks are canceled either.
 </p>
 
 {{concurrency-graph task=enqueuedTask}}
@@ -105,6 +105,60 @@
 </p>
 
 {{concurrency-graph task=keepLatestTask}}
+
+<h3>Advanced: maxConcurrency</h3>
+
+<p>
+  The above modifiers limit the concurrency of a task to 1 &mdash; only
+  one instance of a task can run at a time. Most of the time, this
+  is exactly what you want.
+</p>
+
+<p>
+  There are some cases, however, when you might want to limit
+  the number of concurrently running task instances to a number greater
+  than 1.  In such cases, you can use the task modifier
+  <code>.maxConcurrency(n)</code> to opt into a specific maximum
+  concurrency other than 1.
+</p>
+
+<p>
+  The examples below use the same task modifiers as the ones above,
+  but with <code>.maxConcurrency(3)</code> applied to them: they each
+  allow 3 running instances before enqueuing, cancelling, or dropping
+  <code>perform()</code>s.
+</p>
+
+{{code-snippet name="shared-tasks-concurrent.js"}}
+
+<h4>.restartable() with maxConcurrency</h4>
+
+<p>
+  When concurrency exceeds maxConcurrency, the oldest running task is canceled.
+</p>
+
+{{concurrency-graph task=restartableTask3}}
+
+<p>
+  <em>
+    TODO: while .restartable() is an excellent name when maxConcurrency
+    is 1, it poorly describes the behavior for values greater than 1.
+    A better name in this case might be .sliding(), as in sliding buffer.
+  </em>
+</p>
+
+
+<h4>.enqueue() with maxConcurrency</h4>
+
+{{concurrency-graph task=enqueuedTask3}}
+
+<h4>.drop() with maxConcurrency</h4>
+
+{{concurrency-graph task=droppingTask3}}
+
+<h4>.keepLatest()</h4>
+
+{{concurrency-graph task=keepLatestTask3}}
 
 <p>
   <em>
