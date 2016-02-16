@@ -205,3 +205,36 @@ test("yielded disposables are disposed upon cancellation", function(assert) {
   assert.equal(_numIntervals, 1);
 });
 
+test("unhandled yielded rejections bubble", function(assert) {
+  assert.expect(1);
+  try {
+    Ember.run(() => {
+      TaskInstance.create({
+        fn: function * () {
+          yield Ember.RSVP.reject("wat");
+        },
+        args: [],
+      })._start();
+    });
+  } catch(e) {
+    assert.equal(e, "wat");
+  }
+});
+
+test("unhandled thrown exceptions bubble", function(assert) {
+  assert.expect(1);
+  try {
+    Ember.run(() => {
+      TaskInstance.create({
+        fn: function * () {
+          throw "wat";
+        },
+        args: [],
+      })._start();
+    });
+  } catch(e) {
+    assert.equal(e, "wat");
+  }
+});
+
+

@@ -158,8 +158,8 @@ export default Ember.Object.extend({
 
     this._disposable = observable.subscribe(v => {
       this._proceed(index, v);
-    }, () => {
-      Ember.assert("not implemented yet", false);
+    }, error => {
+      this._finalize(Ember.RSVP.reject(error));
     }, () => {
       // TODO: test me
       //opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
