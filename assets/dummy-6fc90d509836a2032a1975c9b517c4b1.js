@@ -344,12 +344,18 @@ define("dummy/components/code-snippet", ["exports", "ember", "dummy/snippets"], 
 define('dummy/components/concurrency-graph/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
   function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
+  var computed = _ember['default'].computed;
+
   var Tracker = _ember['default'].Object.extend({
     id: null,
     performTime: null,
     startTime: null,
     endTime: Infinity,
-    cancelled: false
+    taskInstance: null,
+    isCanceled: computed.oneWay('taskInstance.isCanceled'),
+    state: computed('taskInstance.state', function () {
+      return _ember['default'].String.capitalize(this.get('taskInstance.state'));
+    })
   });
 
   var nextId = 0;
@@ -421,18 +427,16 @@ define('dummy/components/concurrency-graph/component', ['exports', 'ember', 'emb
           start: function start() {
             tracker.set('startTime', _this.timeElapsed);
           },
-          end: function end(didComplete) {
+          end: function end() {
             tracker.set('endTime', _this.timeElapsed);
-            if (!didComplete) {
-              tracker.set('cancelled', true);
-            }
           }
         });
 
-        this.get('trackers').pushObject(tracker);
-
         var task = this.get('task');
-        task.perform(tracker);
+        var taskInstance = task.perform(tracker);
+        tracker.set('taskInstance', taskInstance);
+
+        this.get('trackers').pushObject(tracker);
       },
 
       restart: function restart() {
@@ -522,7 +526,11 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
               var el1 = dom.createElement("text");
               dom.setAttribute(el1, "font-family", "Raleway");
               dom.setAttribute(el1, "font-size", "14");
-              var el2 = dom.createTextNode("\n          .perform()\n        ");
+              var el2 = dom.createTextNode("\n          ");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createComment("");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createTextNode("\n        ");
               dom.appendChild(el1, el2);
               dom.appendChild(el0, el1);
               var el1 = dom.createTextNode("\n        ");
@@ -537,19 +545,20 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
             buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
               var element0 = dom.childAt(fragment, [1]);
               var element1 = dom.childAt(fragment, [3]);
-              var morphs = new Array(9);
+              var morphs = new Array(10);
               morphs[0] = dom.createAttrMorph(element0, 'x');
               morphs[1] = dom.createAttrMorph(element0, 'y');
               morphs[2] = dom.createAttrMorph(element0, 'fill');
               morphs[3] = dom.createAttrMorph(element0, 'text-decoration');
               morphs[4] = dom.createAttrMorph(element0, 'font-style');
-              morphs[5] = dom.createAttrMorph(element1, 'x1');
-              morphs[6] = dom.createAttrMorph(element1, 'x2');
-              morphs[7] = dom.createAttrMorph(element1, 'y2');
-              morphs[8] = dom.createAttrMorph(element1, 'stroke');
+              morphs[5] = dom.createMorphAt(element0, 1, 1);
+              morphs[6] = dom.createAttrMorph(element1, 'x1');
+              morphs[7] = dom.createAttrMorph(element1, 'x2');
+              morphs[8] = dom.createAttrMorph(element1, 'y2');
+              morphs[9] = dom.createAttrMorph(element1, 'stroke');
               return morphs;
             },
-            statements: [["attribute", "x", ["concat", [["get", "x", ["loc", [null, [25, 19], [25, 20]]]], "%"]]], ["attribute", "y", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [26, 28], [26, 40]]]], ["get", "tracker.id", ["loc", [null, [26, 41], [26, 51]]]]], [], ["loc", [null, [26, 16], [26, 53]]]]], ["attribute", "fill", ["get", "color", ["loc", [null, [28, 21], [28, 26]]]]], ["attribute", "text-decoration", ["subexpr", "if", [["get", "tracker.cancelled", ["loc", [null, [30, 35], [30, 52]]]], "line-through", "none"], [], ["loc", [null, [30, 30], [30, 76]]]]], ["attribute", "font-style", ["subexpr", "if", [["get", "tracker.startTime", ["loc", [null, [31, 30], [31, 47]]]], "normal", "italic"], [], ["loc", [null, [31, 25], [31, 67]]]]], ["attribute", "x1", ["concat", [["get", "x", ["loc", [null, [34, 20], [34, 21]]]], "%"]]], ["attribute", "x2", ["concat", [["get", "x", ["loc", [null, [34, 40], [34, 41]]]], "%"]]], ["attribute", "y2", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [34, 61], [34, 73]]]], ["get", "tracker.id", ["loc", [null, [34, 74], [34, 84]]]]], [], ["loc", [null, [34, 49], [34, 86]]]]], ["attribute", "stroke", ["get", "color", ["loc", [null, [34, 96], [34, 101]]]]]],
+            statements: [["attribute", "x", ["concat", [["subexpr", "sum", [0.5, ["get", "x", ["loc", [null, [25, 27], [25, 28]]]]], [], ["loc", [null, [25, 17], [25, 30]]]], "%"]]], ["attribute", "y", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [26, 28], [26, 40]]]], ["get", "tracker.id", ["loc", [null, [26, 41], [26, 51]]]]], [], ["loc", [null, [26, 16], [26, 53]]]]], ["attribute", "fill", ["get", "color", ["loc", [null, [28, 21], [28, 26]]]]], ["attribute", "text-decoration", ["subexpr", "if", [["get", "tracker.isCanceled", ["loc", [null, [30, 35], [30, 53]]]], "line-through", "none"], [], ["loc", [null, [30, 30], [30, 77]]]]], ["attribute", "font-style", ["subexpr", "if", [["get", "tracker.startTime", ["loc", [null, [31, 30], [31, 47]]]], "normal", "italic"], [], ["loc", [null, [31, 25], [31, 67]]]]], ["content", "tracker.state", ["loc", [null, [32, 10], [32, 27]]]], ["attribute", "x1", ["concat", [["get", "x", ["loc", [null, [34, 20], [34, 21]]]], "%"]]], ["attribute", "x2", ["concat", [["get", "x", ["loc", [null, [34, 40], [34, 41]]]], "%"]]], ["attribute", "y2", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [34, 61], [34, 73]]]], ["get", "tracker.id", ["loc", [null, [34, 74], [34, 84]]]]], [], ["loc", [null, [34, 49], [34, 86]]]]], ["attribute", "stroke", ["get", "color", ["loc", [null, [34, 96], [34, 101]]]]]],
             locals: ["x"],
             templates: []
           };
@@ -1515,7 +1524,7 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
   exports["default"] = _ember["default"].Controller.extend({
     appController: _ember["default"].inject.controller('application'),
 
-    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.getting-started", title: "Getting Started" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { title: "Examples", route: "docs.examples",
+    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.getting-started", title: "Getting Started" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { title: "Examples", route: "docs.examples",
       children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }]
     }],
 
@@ -2685,34 +2694,27 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
 define('dummy/docs/task-concurrency/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
   var marked0$0 = [SHARED_TASK_FN].map(regeneratorRuntime.mark);
 
-  // BEGIN-SNIPPET shared-task-function
   function SHARED_TASK_FN(tracker) {
-    var didComplete;
     return regeneratorRuntime.wrap(function SHARED_TASK_FN$(context$1$0) {
       while (1) switch (context$1$0.prev = context$1$0.next) {
         case 0:
           tracker.start();
-          didComplete = false;
-          context$1$0.prev = 2;
-          context$1$0.next = 5;
+          context$1$0.prev = 1;
+          context$1$0.next = 4;
           return (0, _emberConcurrency.timeout)(1500);
 
-        case 5:
-          didComplete = true;
+        case 4:
+          context$1$0.prev = 4;
 
-        case 6:
-          context$1$0.prev = 6;
+          tracker.end();
+          return context$1$0.finish(4);
 
-          tracker.end(didComplete);
-          return context$1$0.finish(6);
-
-        case 9:
+        case 7:
         case 'end':
           return context$1$0.stop();
       }
-    }, marked0$0[0], this, [[2,, 6, 9]]);
+    }, marked0$0[0], this, [[1,, 4, 7]]);
   }
-  // END-SNIPPET
 
   // BEGIN-SNIPPET shared-tasks
   exports['default'] = _ember['default'].Controller.extend({
@@ -2774,7 +2776,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode("myTask.perform(); myTask.perform();");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(",\n  two instances of the task will run at the same time (unless the object\n  they live on is destroyed, in which case they'll be cancelled).\n");
+        var el2 = dom.createTextNode(",\n  two instances of the task will run at the same time (unless the object\n  they live on is destroyed, in which case they'll be canceled).\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -2836,7 +2838,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode(".restartable()");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" modifier ensures that only one instance\n  of a task is running by cancelling any currently-running tasks and starting\n  a new task instance immediately. Note how there is no task overlap,\n  and how currently running tasks get cancelled\n  (");
+        var el2 = dom.createTextNode(" modifier ensures that only one instance\n  of a task is running by cancelling any currently-running tasks and starting\n  a new task instance immediately. Note how there is no task overlap,\n  and how currently running tasks get canceled\n  (");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("span");
         dom.setAttribute(el2, "style", "text-decoration:line-through;");
@@ -2881,7 +2883,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode(".enqueue()");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" modifier ensures that only one instance\n  of a task is running be maintaining a queue of pending tasks and\n  running them sequentially. Note how there is no task overlap, but no\n  tasks are cancelled either.\n");
+        var el2 = dom.createTextNode(" modifier ensures that only one instance\n  of a task is running be maintaining a queue of pending tasks and\n  running them sequentially. Note how there is no task overlap, but no\n  tasks are canceled either.\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -3014,6 +3016,211 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         return morphs;
       },
       statements: [["inline", "code-snippet", [], ["name", "shared-tasks.js"], ["loc", [null, [30, 0], [30, 39]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "defaultTask", ["loc", [null, [39, 25], [39, 36]]]]], [], []]], ["loc", [null, [39, 0], [39, 38]]]], ["inline", "link-to", ["Debounced Auto-Search", "docs.examples.autocomplete"], [], ["loc", [null, [55, 14], [55, 78]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "restartableTask", ["loc", [null, [61, 25], [61, 40]]]]], [], []]], ["loc", [null, [61, 0], [61, 42]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "enqueuedTask", ["loc", [null, [72, 25], [72, 37]]]]], [], []]], ["loc", [null, [72, 0], [72, 39]]]], ["inline", "link-to", ["Loading UI", "docs.examples.loading-ui"], [], ["loc", [null, [84, 18], [84, 69]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "droppingTask", ["loc", [null, [89, 25], [89, 37]]]]], [], []]], ["loc", [null, [89, 0], [89, 39]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "keepLatestTask", ["loc", [null, [107, 25], [107, 39]]]]], [], []]], ["loc", [null, [107, 0], [107, 41]]]]],
+      locals: [],
+      templates: []
+    };
+  })());
+});
+define('dummy/docs/task-concurrency-advanced/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  var marked0$0 = [SHARED_TASK_FN].map(regeneratorRuntime.mark);
+
+  function SHARED_TASK_FN(tracker) {
+    return regeneratorRuntime.wrap(function SHARED_TASK_FN$(context$1$0) {
+      while (1) switch (context$1$0.prev = context$1$0.next) {
+        case 0:
+          tracker.start();
+          context$1$0.prev = 1;
+          context$1$0.next = 4;
+          return (0, _emberConcurrency.timeout)(1500);
+
+        case 4:
+          context$1$0.prev = 4;
+
+          tracker.end();
+          return context$1$0.finish(4);
+
+        case 7:
+        case 'end':
+          return context$1$0.stop();
+      }
+    }, marked0$0[0], this, [[1,, 4, 7]]);
+  }
+
+  // BEGIN-SNIPPET shared-tasks-concurrent
+  exports['default'] = _ember['default'].Controller.extend({
+    restartableTask3: (0, _emberConcurrency.task)(SHARED_TASK_FN).maxConcurrency(3).restartable(),
+    enqueuedTask3: (0, _emberConcurrency.task)(SHARED_TASK_FN).maxConcurrency(3).enqueue(),
+    droppingTask3: (0, _emberConcurrency.task)(SHARED_TASK_FN).maxConcurrency(3).drop(),
+    keepLatestTask3: (0, _emberConcurrency.task)(SHARED_TASK_FN).maxConcurrency(3).keepLatest()
+  });
+
+  // END-SNIPPET
+});
+
+// simulate async work
+define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.2.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 62,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/task-concurrency-advanced/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Managing Task Concurrency (Advanced)");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  The examples on the previous page limit the concurrency of a task to 1 — only\n  one instance of a task can run at a time. Most of the time, this\n  is exactly what you want.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  There are some cases, however, when you might want to limit\n  the number of concurrently running task instances to a number greater\n  than 1.  In such cases, you can use the task modifier\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".maxConcurrency(n)");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" to opt into a specific maximum\n  concurrency other than 1.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  The examples below use the same task modifiers as the ones on the previous\n  page, but with ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".maxConcurrency(3)");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" applied to them: they each\n  allow 3 running instances before enqueuing, cancelling, or dropping\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("perform()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("s.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode(".restartable() with maxConcurrency");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  When concurrency exceeds maxConcurrency, the oldest running task is canceled.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("em");
+        var el3 = dom.createTextNode("\n    TODO: while .restartable() is an excellent name when maxConcurrency\n    is 1, it poorly describes the behavior for values greater than 1.\n    A better name in this case might be .sliding(), as in sliding buffer.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode(".enqueue() with maxConcurrency");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode(".drop() with maxConcurrency");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode(".keepLatest() with maxConcurrency");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("em");
+        var el3 = dom.createTextNode("\n    Thanks to ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("a");
+        dom.setAttribute(el3, "href", "https://github.com/ef4");
+        var el4 = dom.createTextNode("Edward Faulkner");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" for providing\n    a starting point for the graphs :)\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(5);
+        morphs[0] = dom.createMorphAt(fragment, 8, 8, contextualElement);
+        morphs[1] = dom.createMorphAt(fragment, 14, 14, contextualElement);
+        morphs[2] = dom.createMorphAt(fragment, 20, 20, contextualElement);
+        morphs[3] = dom.createMorphAt(fragment, 24, 24, contextualElement);
+        morphs[4] = dom.createMorphAt(fragment, 28, 28, contextualElement);
+        return morphs;
+      },
+      statements: [["inline", "code-snippet", [], ["name", "shared-tasks-concurrent.js"], ["loc", [null, [24, 0], [24, 50]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "restartableTask3", ["loc", [null, [32, 25], [32, 41]]]]], [], []]], ["loc", [null, [32, 0], [32, 43]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "enqueuedTask3", ["loc", [null, [45, 25], [45, 38]]]]], [], []]], ["loc", [null, [45, 0], [45, 40]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "droppingTask3", ["loc", [null, [49, 25], [49, 38]]]]], [], []]], ["loc", [null, [49, 0], [49, 40]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "keepLatestTask3", ["loc", [null, [53, 25], [53, 40]]]]], [], []]], ["loc", [null, [53, 0], [53, 42]]]]],
       locals: [],
       templates: []
     };
@@ -3691,6 +3898,22 @@ define('dummy/helpers/subtract', ['exports', 'ember'], function (exports, _ember
 
   exports['default'] = _ember['default'].Helper.helper(subtract);
 });
+define('dummy/helpers/sum', ['exports', 'ember'], function (exports, _ember) {
+  var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
+  exports.sum = sum;
+
+  function sum(_ref /*, hash*/) {
+    var _ref2 = _slicedToArray(_ref, 2);
+
+    var a = _ref2[0];
+    var b = _ref2[1];
+
+    return a + b;
+  }
+
+  exports['default'] = _ember['default'].Helper.helper(sum);
+});
 define('dummy/helpers/width', ['exports', 'ember'], function (exports, _ember) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
@@ -3740,6 +3963,14 @@ define('dummy/initializers/ember-cli-fastclick', ['exports', 'ember'], function 
 
   exports['default'] = EmberCliFastclickInitializer;
 });
+define('dummy/initializers/ember-concurrency', ['exports', 'ember-concurrency'], function (exports, _emberConcurrency) {
+  exports['default'] = {
+    name: 'ember-concurrency',
+    initialize: function initialize() {}
+  };
+});
+// This initializer exists only to make sure that the following
+// imports happen before the app boots.
 define('dummy/initializers/export-application-global', ['exports', 'ember', 'dummy/config/environment'], function (exports, _ember, _dummyConfigEnvironment) {
   exports.initialize = initialize;
 
@@ -3785,6 +4016,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
       this.route('getting-started');
       this.route('writing-tasks');
       this.route('task-concurrency');
+      this.route('task-concurrency-advanced');
       this.route('examples', function () {
         this.route('increment-buttons');
         this.route('loading-ui');
@@ -3819,7 +4051,7 @@ define("dummy/snippets", ["exports"], function (exports) {
     "loading-ui-controller.js": "export default Ember.Controller.extend({\n  askQuestion: task(function * () {\n    yield timeout(1000);\n    this.set('result', Math.random());\n  }).drop(),\n\n  result: null,\n});",
     "press-and-hold-buttons.hbs": "<p>\n  {{#press-and-hold-button\n    press=(action incrementBy.perform -1)\n    release=(action incrementBy.perform 0)}}\n      --Decrease\n  {{/press-and-hold-button}}\n\n  {{#press-and-hold-button\n    press=(action incrementBy.perform 1)\n    release=(action incrementBy.perform 0)}}\n      Increase++\n  {{/press-and-hold-button}}\n</p>",
     "scrambled-text.js": "  startScrambling: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      let pauseTime = 140;\n      while (pauseTime > 5) {\n        this.set('scrambledText', scramble(text));\n        yield timeout(pauseTime);\n        pauseTime = pauseTime * 0.95;\n      }\n      this.set('scrambledText', text);\n      yield timeout(1500);\n    }\n  }).on('init'),",
-    "shared-task-function.js": "function * SHARED_TASK_FN(tracker) {\n  tracker.start();\n  let didComplete = false;\n  try {\n    // simulate async work\n    yield timeout(1500);\n    didComplete = true;\n  } finally {\n    tracker.end(didComplete);\n  }\n}",
+    "shared-tasks-concurrent.js": "export default Ember.Controller.extend({\n  restartableTask3: task(SHARED_TASK_FN).maxConcurrency(3).restartable(),\n  enqueuedTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueue(),\n  droppingTask3:    task(SHARED_TASK_FN).maxConcurrency(3).drop(),\n  keepLatestTask3:  task(SHARED_TASK_FN).maxConcurrency(3).keepLatest(),\n});",
     "shared-tasks.js": "export default Ember.Controller.extend({\n  defaultTask:     task(SHARED_TASK_FN),\n  restartableTask: task(SHARED_TASK_FN).restartable(),\n  enqueuedTask:    task(SHARED_TASK_FN).enqueue(),\n  droppingTask:    task(SHARED_TASK_FN).drop(),\n  keepLatestTask:  task(SHARED_TASK_FN).keepLatest(),\n});",
     "start-task-example-template.hbs": "  <button {{action 'performTask' \"one\"}}>\n    1. task.perform(...)\n  </button>\n\n  <button {{action myTask.perform \"two\"}}>\n    2. task.perform action\n  </button>\n\n  <button {{action \"triggerFoo\" \"three\"}}>\n    3. .on('foo')\n  </button>",
     "start-task-example.js": "  myTask: task(function * (msg) {\n    let m = {\n      text: `myTask invoked with the following: ${msg || \"init\"}... `\n    };\n    this.messages.pushObject(m);\n    yield timeout(500);\n    Ember.set(m, 'text', m.text + \"Done\");\n  }).on('init', 'foo'),\n\n  actions: {\n    performTask(msg) {\n      // This demonstrates how you can .get() a reference\n      // to a task and then run it with .perform(), but\n      // ideally you should just invoke myTask.perform\n      // directly from the template.\n      this.get('myTask').perform(msg);\n    },\n    triggerFoo(msg) {\n      this.trigger('foo', msg);\n    }\n  }",
@@ -4161,7 +4393,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.2+690eec44"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.3+cfaa930c"});
 }
 
 /* jshint ignore:end */

@@ -95053,89 +95053,395 @@ define('ember-computed-decorators/utils/is-descriptor', ['exports'], function (e
     return item && typeof item === 'object' && 'writable' in item && 'enumerable' in item && 'configurable' in item;
   }
 });
-define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/iteration', 'ember-concurrency/iterators'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyIteration, _emberConcurrencyIterators) {
+define('ember-concurrency/-evented-observable', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
-  exports.task = task;
-  exports.createObservable = createObservable;
-  exports.interval = interval;
-  exports.sleep = sleep;
-  exports.timeout = timeout;
-  exports.forEach = forEach;
-  exports.dropIntermediateValues = _emberConcurrencyIteration.dropIntermediateValues;
-  exports.keepFirstIntermediateValue = _emberConcurrencyIteration.keepFirstIntermediateValue;
-  exports.keepLastIntermediateValue = _emberConcurrencyIteration.keepLastIntermediateValue;
-  exports.restartable = _emberConcurrencyIteration.restartable;
+  exports['default'] = _ember['default'].Object.extend({
+    obj: null,
+    eventName: null,
 
-  var computed = _ember['default'].computed;
+    subscribe: function subscribe(onNext) {
+      var obj = this.obj;
+      var eventName = this.eventName;
+      obj.on(eventName, onNext);
 
-  var testGenFn = regeneratorRuntime.mark(function testGenFn() {
-    return regeneratorRuntime.wrap(function testGenFn$(context$1$0) {
-      while (1) switch (context$1$0.prev = context$1$0.next) {
-        case 0:
-        case 'end':
-          return context$1$0.stop();
-      }
-    }, testGenFn, this);
-  });
-  var testIter = testGenFn();
-  _ember['default'].assert('ember-concurrency requires that you set babel.includePolyfill to true in your ember-cli-build.js (or Brocfile.js) to ensure that the generator function* syntax is properly transpiled, e.g.:\n\n  var app = new EmberApp({\n    babel: {\n      includePolyfill: true,\n    }\n  });', (0, _emberConcurrencyUtils.isGeneratorIterator)(testIter));
-
-  var ComputedProperty = _ember['default'].__loader.require("ember-metal/computed").ComputedProperty;
-
-  var TaskHandle = _ember['default'].Object.extend({
-    loopHandle: null,
-    concurrency: computed.oneWay('loopHandle.concurrency'),
-    isIdle: computed.equal('concurrency', 0)
-  });
-
-  function TaskProperty(taskFunc) {
-    var tp = this;
-    ComputedProperty.call(this, function () {
-      var presubscribeQueue = undefined;
-      var publish = function publish(v) {
-        presubscribeQueue = presubscribeQueue || [];
-        presubscribeQueue.push(v);
+      var isDisposed = false;
+      return {
+        dispose: function dispose() {
+          if (isDisposed) {
+            return;
+          }
+          isDisposed = true;
+          obj.off(eventName, onNext);
+        }
       };
+    }
+  });
+});
+define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _emberConcurrencyUtils) {
+  'use strict';
 
-      // TODO: we really need a subject/buffer primitive
-      var obs = createObservable(function (_publish) {
-        publish = _publish;
-        if (!presubscribeQueue) {
+  exports.Cancelation = Cancelation;
+
+  function Cancelation() {}
+
+  function forwardToInternalPromise(method) {
+    return function () {
+      var _defer$promise;
+
+      this._ignorePromiseErrors = true;
+      return (_defer$promise = this._defer.promise)[method].apply(_defer$promise, arguments);
+    };
+  }
+
+  exports['default'] = _ember['default'].Object.extend({
+    iterator: null,
+    _disposable: null,
+    isCanceled: false,
+    hasStarted: false,
+    _ignorePromiseErrors: false,
+
+    state: _ember['default'].computed('isDropped', 'isCanceled', 'hasStarted', 'isFinished', function () {
+      if (this.get('isDropped')) {
+        return 'dropped';
+      } else if (this.get('isCanceled')) {
+        return 'canceled';
+      } else if (this.get('isFinished')) {
+        return 'finished';
+      } else if (this.get('hasStarted')) {
+        return 'running';
+      } else {
+        return 'waiting';
+      }
+    }),
+
+    isDropped: _ember['default'].computed('isCanceled', 'hasStarted', function () {
+      return this.get('isCanceled') && !this.get('hasStarted');
+    }),
+
+    _index: 1,
+    isFinished: false,
+    isRunning: _ember['default'].computed.not('isFinished'),
+
+    init: function init() {
+      var _this = this;
+
+      this._super();
+      this._defer = _ember['default'].RSVP.defer();
+      this._cancelationIgnorer = this._defer.promise['catch'](function (e) {
+        if (_this._ignorePromiseErrors) {
           return;
         }
-        for (var i = 0; i < presubscribeQueue.length; i++) {
-          _publish(presubscribeQueue[i]);
-        }
+
+        if (e && e.name === 'TaskCancelation') {
+          // prevent RSVP onError
+        } else {
+            return _ember['default'].RSVP.reject(e);
+          }
       });
+      this.iterator = this.fn.apply(this.context, this.args);
+    },
 
-      var loopHandle = forEach(obs, taskFunc, tp.bufferPolicy).attach(this);
+    _start: function _start() {
+      if (this.hasStarted || this.isCanceled) {
+        return this;
+      }
+      this.set('hasStarted', true);
+      this._proceed(1, undefined);
+      return this;
+    },
 
-      var perform = function perform() {
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
+    cancel: function cancel() {
+      if (this.isCanceled) {
+        return;
+      }
+      this._rejectWithCancelation();
+
+      // eagerly advance index so that pending promise resolutions
+      // are ignored
+      this._index++;
+      this._proceed(this._index, undefined);
+    },
+
+    then: forwardToInternalPromise('then'),
+    'catch': forwardToInternalPromise('catch'),
+    'finally': forwardToInternalPromise('finally'),
+
+    _rejectWithCancelation: function _rejectWithCancelation() {
+      if (this.isCanceled) {
+        return;
+      }
+      var error = new Error("TaskCancelation");
+      error.name = "TaskCancelation";
+      this._reject(error);
+      this.set('isCanceled', true);
+    },
+
+    _reject: function _reject(error) {
+      this._defer.reject(error);
+    },
+
+    _defer: null,
+    promise: null,
+
+    _proceed: function _proceed(index, nextValue) {
+      this._dispose();
+      _ember['default'].run.once(this, this._takeStep, index, nextValue);
+    },
+
+    _hasBegunShutdown: false,
+    _hasResolved: false,
+
+    _finalize: function _finalize(value) {
+      this.set('isFinished', true);
+      this._defer.resolve(value);
+      this._dispose();
+    },
+
+    _dispose: function _dispose() {
+      if (this._disposable) {
+        this._disposable.dispose();
+        this._disposable = null;
+      }
+    },
+
+    _takeSafeStep: function _takeSafeStep(nextValue, iteratorMethod) {
+      try {
+        return this.iterator[iteratorMethod](nextValue);
+      } catch (e) {
+        return { value: e, error: true };
+      }
+    },
+
+    _takeStep: function _takeStep(index, nextValue) {
+      var _this2 = this;
+
+      if (index !== this._index) {
+        return;
+      }
+
+      var result = undefined;
+      if (this.isCanceled && !this._hasBegunShutdown) {
+        this._hasBegunShutdown = true;
+        if (this.hasStarted) {
+          result = this._takeSafeStep(nextValue, 'return');
+        } else {
+          // calling .return on an unstarted generator iterator
+          // doesn't do the intuitive thing, so just skip it.
+          result = { done: true, value: undefined };
         }
+      } else {
+        result = this._takeSafeStep(nextValue, 'next');
+      }
 
-        var argsObject = new _emberConcurrencyUtils.Arguments(args);
-        argsObject.defer = _ember['default'].RSVP.defer();
-        publish(argsObject);
-        return argsObject.defer.promise;
+      var _result = result;
+      var done = _result.done;
+      var value = _result.value;
+      var error = _result.error;
+
+      if (error) {
+        this._finalize(_ember['default'].RSVP.reject(value));
+        return;
+      } else {
+        if (done && value === undefined) {
+          this.set('isFinished', true);
+          this._finalize(nextValue);
+          return;
+        }
+      }
+
+      var observable = normalizeObservable(value);
+      if (!observable) {
+        // TODO: assert that user is doing something weird?
+        this._proceed(index, value);
+        return;
+      }
+
+      this._disposable = observable.subscribe(function (v) {
+        _this2._proceed(index, v);
+      }, function () {
+        _ember['default'].assert("not implemented yet", false);
+      }, function () {
+        // TODO: test me
+        //opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
+      });
+    }
+  });
+
+  function normalizeObservable(value) {
+    if (value && typeof value.then === 'function') {
+      return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
+        value.then(publish, publish.error);
+      });
+    } else if (value && typeof value.subscribe === 'function') {
+      // TODO: check for scheduler interface for Rx rather than
+      // creating another wrapping observable to schedule on run loop.
+      return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
+        return value.subscribe(publish, publish.error).dispose;
+      });
+    } else {
+      return null;
+    }
+  }
+});
+define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance'], function (exports, _ember, _emberConcurrencyTaskInstance) {
+  'use strict';
+
+  exports.TaskProperty = TaskProperty;
+
+  function _toConsumableArray(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];return arr2;
+    } else {
+      return Array.from(arr);
+    }
+  }
+
+  var ComputedProperty = _ember['default'].__loader.require("ember-metal/computed").ComputedProperty;
+  var computed = _ember['default'].computed;
+
+  var saturateActiveQueue = function saturateActiveQueue(taskHandle) {
+    while (taskHandle._activeTaskInstances.length < taskHandle._maxConcurrency) {
+      var taskInstance = taskHandle._queuedTaskInstances.shift();
+      if (!taskInstance) {
+        break;
+      }
+      taskHandle._activeTaskInstances.push(taskInstance);
+    }
+  };
+
+  var spliceTaskInstances = function spliceTaskInstances(taskInstances, index, count) {
+    for (var i = index; i < index + count; ++i) {
+      taskInstances[i].cancel();
+    }
+    taskInstances.splice(index, count);
+  };
+
+  var enqueueTasksPolicy = {
+    requiresUnboundedConcurrency: true,
+    schedule: function schedule(taskHandle) {
+      // [a,b,_] [c,d,e,f] becomes
+      // [a,b,c] [d,e,f]
+      saturateActiveQueue(taskHandle);
+    }
+  };
+
+  var dropQueuedTasksPolicy = {
+    schedule: function schedule(taskHandle) {
+      // [a,b,_] [c,d,e,f] becomes
+      // [a,b,c] []
+      saturateActiveQueue(taskHandle);
+      spliceTaskInstances(taskHandle._queuedTaskInstances, 0, taskHandle._queuedTaskInstances.length);
+    }
+  };
+
+  var cancelOngoingTasksPolicy = {
+    schedule: function schedule(taskHandle) {
+      // [a,b,_] [c,d,e,f] becomes
+      // [d,e,f] []
+      var activeTaskInstances = taskHandle._activeTaskInstances;
+      var queuedTaskInstances = taskHandle._queuedTaskInstances;
+      activeTaskInstances.push.apply(activeTaskInstances, _toConsumableArray(queuedTaskInstances));
+      queuedTaskInstances.length = 0;
+
+      var numToShift = Math.max(0, activeTaskInstances.length - taskHandle._maxConcurrency);
+      spliceTaskInstances(activeTaskInstances, 0, numToShift);
+    }
+  };
+
+  var dropButKeepLatestPolicy = {
+    schedule: function schedule(taskHandle) {
+      // [a,b,_] [c,d,e,f] becomes
+      // [d,e,f] []
+      saturateActiveQueue(taskHandle);
+      spliceTaskInstances(taskHandle._queuedTaskInstances, 0, taskHandle._queuedTaskInstances.length - 1);
+    }
+  };
+
+  var TaskHandle = _ember['default'].Object.extend({
+    fn: null,
+    context: null,
+    bufferPolicy: null,
+    perform: null,
+    concurrency: 0,
+    isIdle: computed.equal('concurrency', 0),
+    isRunning: _ember['default'].computed.not('isIdle'),
+    _maxConcurrency: Infinity,
+    _activeTaskInstances: null,
+    _needsFlush: null,
+
+    init: function init() {
+      var _this = this;
+
+      this._super();
+      this._activeTaskInstances = _ember['default'].A();
+      this._queuedTaskInstances = _ember['default'].A();
+
+      // TODO: {{perform}} helper
+      this.perform = function () {
+        return _this._perform.apply(_this, arguments);
       };
 
-      return TaskHandle.create({
-        perform: perform,
-        _perform: function _perform() {
-          for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-            args[_key2] = arguments[_key2];
-          }
+      this._needsFlush = _ember['default'].run.bind(this, this._scheduleFlush);
 
-          publish(new _emberConcurrencyUtils.Arguments(args));
-        },
-        loopHandle: loopHandle
+      cleanupOnDestroy(this.context, this, 'cancel');
+    },
+
+    cancel: function cancel() {
+      spliceTaskInstances(this._activeTaskInstances, 0, this._activeTaskInstances.length);
+      spliceTaskInstances(this._queuedTaskInstances, 0, this._queuedTaskInstances.length);
+    },
+
+    _perform: function _perform() {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      var taskInstance = _emberConcurrencyTaskInstance['default'].create({
+        fn: this.fn,
+        args: args,
+        context: this.context
+      });
+
+      this._queuedTaskInstances.push(taskInstance);
+      this._needsFlush();
+
+      return taskInstance;
+    },
+
+    _scheduleFlush: function _scheduleFlush() {
+      _ember['default'].run.once(this, this._flushQueues);
+    },
+
+    _flushQueues: function _flushQueues() {
+      this._activeTaskInstances = _ember['default'].A(this._activeTaskInstances.filterBy('isFinished', false));
+
+      this.bufferPolicy.schedule(this);
+
+      for (var i = 0; i < this._activeTaskInstances.length; ++i) {
+        var taskInstance = this._activeTaskInstances[i];
+        if (!taskInstance.hasStarted) {
+          taskInstance._start().then(this._needsFlush, this._needsFlush);
+        }
+      }
+
+      this.set('concurrency', this._activeTaskInstances.length);
+    }
+  });
+
+  function TaskProperty(taskFn) {
+    var tp = this;
+    ComputedProperty.call(this, function () {
+      return TaskHandle.create({
+        fn: taskFn,
+        context: this,
+        bufferPolicy: tp.bufferPolicy,
+        _maxConcurrency: tp._maxConcurrency
       });
     });
 
-    this.bufferPolicy = null;
+    this.bufferPolicy = enqueueTasksPolicy;
+    this._maxConcurrency = Infinity;
     this.eventNames = null;
   }
 
@@ -95158,67 +95464,46 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   };
 
   TaskProperty.prototype.restartable = function () {
-    this.bufferPolicy = _emberConcurrencyIteration._restartable;
+    this.bufferPolicy = cancelOngoingTasksPolicy;
+    this._setDefaultMaxConcurrency(1);
     return this;
   };
 
   TaskProperty.prototype.enqueue = function () {
-    this.bufferPolicy = _emberConcurrencyIteration._enqueue;
+    this.bufferPolicy = enqueueTasksPolicy;
+    this._setDefaultMaxConcurrency(1);
     return this;
   };
 
   TaskProperty.prototype.drop = function () {
-    this.bufferPolicy = _emberConcurrencyIteration._dropIntermediateValues;
+    this.bufferPolicy = dropQueuedTasksPolicy;
+    this._setDefaultMaxConcurrency(1);
     return this;
   };
 
   TaskProperty.prototype.keepLatest = function () {
-    this.bufferPolicy = _emberConcurrencyIteration._keepLastIntermediateValue;
+    this.bufferPolicy = dropButKeepLatestPolicy;
+    this._setDefaultMaxConcurrency(1);
     return this;
   };
 
-  function task(func) {
-    return new TaskProperty(func);
-  }
+  TaskProperty.prototype.maxConcurrency = function (n) {
+    this._maxConcurrency = n;
+    return this;
+  };
+
+  TaskProperty.prototype._setDefaultMaxConcurrency = function (n) {
+    if (this._maxConcurrency === Infinity) {
+      this._maxConcurrency = n;
+    }
+  };
 
   function makeListener(taskName) {
     return function () {
-      var task = this.get(taskName);
-      task._perform.apply(task, arguments);
+      var taskHandle = this.get(taskName);
+      taskHandle._perform.apply(taskHandle, arguments);
     };
   }
-
-  var EventedObservable = _ember['default'].Object.extend({
-    obj: null,
-    eventName: null,
-
-    subscribe: function subscribe(onNext) {
-      var obj = this.obj;
-      var eventName = this.eventName;
-      obj.on(eventName, onNext);
-
-      var isDisposed = false;
-      return {
-        dispose: function dispose() {
-          if (isDisposed) {
-            return;
-          }
-          isDisposed = true;
-          obj.off(eventName, onNext);
-        }
-      };
-    }
-  });
-
-  _ember['default'].Evented.reopen({
-    on: function on() {
-      if (arguments.length === 1) {
-        return EventedObservable.create({ obj: this, eventName: arguments[0] });
-      } else {
-        return this._super.apply(this, arguments);
-      }
-    }
-  });
 
   function cleanupOnDestroy(owner, object, cleanupMethodName) {
     // TODO: find a non-mutate-y, hacky way of doing this.
@@ -95241,6 +95526,83 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
       object[cleanupMethodName]();
     });
   }
+});
+define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-evented-observable', 'ember-concurrency/-task-instance'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyEventedObservable, _emberConcurrencyTaskInstance) {
+  'use strict';
+
+  exports.task = task;
+  exports.interval = interval;
+  exports.timeout = timeout;
+
+  var testGenFn = regeneratorRuntime.mark(function testGenFn() {
+    return regeneratorRuntime.wrap(function testGenFn$(context$1$0) {
+      while (1) switch (context$1$0.prev = context$1$0.next) {
+        case 0:
+        case 'end':
+          return context$1$0.stop();
+      }
+    }, testGenFn, this);
+  });
+  var testIter = testGenFn();
+  _ember['default'].assert('ember-concurrency requires that you set babel.includePolyfill to true in your ember-cli-build.js (or Brocfile.js) to ensure that the generator function* syntax is properly transpiled, e.g.:\n\n  var app = new EmberApp({\n    babel: {\n      includePolyfill: true,\n    }\n  });', (0, _emberConcurrencyUtils.isGeneratorIterator)(testIter));
+
+  function task(func) {
+    return new _emberConcurrencyTaskProperty.TaskProperty(func);
+  }
+
+  _ember['default'].Evented.reopen({
+    on: function on() {
+      if (arguments.length === 1) {
+        return _emberConcurrencyEventedObservable.EventedObservable.create({ obj: this, eventName: arguments[0] });
+      } else {
+        return this._super.apply(this, arguments);
+      }
+    }
+  });
+
+  var _numIntervals = 0;
+  exports._numIntervals = _numIntervals;
+
+  function interval(ms) {
+    return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
+      var intervalId = setInterval(publish, ms);
+      exports._numIntervals = _numIntervals += 1;
+      return function () {
+        clearInterval(intervalId);
+        exports._numIntervals = _numIntervals -= 1;
+      };
+    });
+  }
+
+  function timeout(ms) {
+    return interval(ms);
+  }
+
+  exports.createObservable = _emberConcurrencyUtils.createObservable;
+  exports.forEach = _emberConcurrencyTaskProperty.forEach;
+  exports.Cancelation = _emberConcurrencyTaskInstance.Cancelation;
+});
+define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _ember) {
+  'use strict';
+
+  exports.isGeneratorIterator = isGeneratorIterator;
+  exports.Arguments = Arguments;
+  exports.createObservable = createObservable;
+
+  function isGeneratorIterator(iter) {
+    return iter && typeof iter.next === 'function' && typeof iter['return'] === 'function' && typeof iter['throw'] === 'function';
+  }
+
+  function Arguments(args, defer) {
+    this.args = args;
+    this.defer = defer;
+  }
+
+  Arguments.prototype.resolve = function (value) {
+    if (this.defer) {
+      this.defer.resolve(value);
+    }
+  };
 
   function createObservable(fn) {
     return {
@@ -95283,170 +95645,9 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
     };
   }
 
-  var _numIntervals = 0;
-  exports._numIntervals = _numIntervals;
-
-  function interval(ms) {
-    return createObservable(function (publish) {
-      var intervalId = setInterval(publish, ms);
-      exports._numIntervals = _numIntervals += 1;
-      return function () {
-        clearInterval(intervalId);
-        exports._numIntervals = _numIntervals -= 1;
-      };
-    });
-  }
-
-  function sleep(ms) {
-    return interval(ms);
-  }
-
-  function timeout(ms) {
-    return interval(ms);
-  }
-
-  function log() {}
-
-  var LoopHandle = _ember['default'].Object.extend({
-    init: function init() {
-      var _this = this;
-
-      this._super();
-
-      _ember['default'].run.schedule('actions', function () {
-        if (!_this.owner) {
-          throw new Error("You must call forEach(...).attach(this) if you're using forEach outside of a generator function");
-        }
-      });
-    },
-
-    owner: null,
-    iteration: null,
-    iterable: null,
-    fn: null,
-    bufferPolicy: null,
-
-    concurrency: 0,
-
-    attach: function attach(owner) {
-      this.owner = owner;
-      this.set('iteration', start(owner, this, this.iterable, this.fn, this.bufferPolicy));
-      cleanupOnDestroy(owner, this, '_disposeIter');
-      return this;
-    },
-
-    _disposeIter: function _disposeIter() {
-      log("HOST: host object destroyed, disposing of source iteration", this.iteration);
-      this.iteration['break'](-1);
-    }
-  });
-
-  function forEach(iterable, fn, bufferPolicy) {
-    return LoopHandle.create({
-      iterable: iterable, fn: fn, bufferPolicy: bufferPolicy
-    });
-  }
-
-  var EMPTY_ARRAY = [];
-
-  function start(owner, loopHandle, sourceIterable, iterationHandlerFn, bufferPolicy) {
-    log("SOURCE: Starting forEach with", owner, sourceIterable, iterationHandlerFn);
-
-    var sourceIterator = (0, _emberConcurrencyIterators._makeIterator)(sourceIterable, owner, EMPTY_ARRAY);
-    var sourceIteration = (0, _emberConcurrencyIteration._makeIteration)(sourceIterator, null, bufferPolicy, function (si) {
-      log("SOURCE: next value ", si);
-
-      if (si.done) {
-        log("SOURCE: iteration done", si);
-        return;
-      }
-
-      var opsIterator = (0, _emberConcurrencyIterators._makeIterator)(iterationHandlerFn, owner, [si.value /*, control */]);
-      var opsIteration = (0, _emberConcurrencyIteration._makeIteration)(opsIterator, sourceIteration, bufferPolicy, function (oi) {
-        var value = oi.value;
-        var done = oi.done;
-        var index = oi.index;
-
-        log("OPS: next value", oi);
-
-        var observable = normalizeObservable(value);
-        if (observable) {
-          var disposable = observable.subscribe(function (v) {
-            if (done) {
-              maybeResolveInvocationPromise(si.value, v);
-              sourceIteration.step(si.index);
-            } else {
-              opsIteration.step(index, v);
-            }
-          }, function (error) {
-            maybeResolveInvocationPromise(si.value, _ember['default'].RSVP.reject(error));
-            sourceIteration.step(si.index); // throw? break? return?
-          }, function () {
-            // TODO: test me
-            //opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
-          });
-          opsIteration.registerDisposable(index, disposable);
-        } else {
-          if (done) {
-            maybeResolveInvocationPromise(si.value, value);
-
-            // this seems weird. if you have a concurrent task...
-            // what are you doing telling the source "iterator" to
-            // step? do we want to tell it to step or just that it's ready for more?
-            // i am so confused.
-            sourceIteration.step(si.index);
-          } else {
-            opsIteration.step(index, value);
-          }
-        }
-      });
-
-      loopHandle.incrementProperty('concurrency', 1);
-      sourceIteration.registerDisposable(si.index, {
-        dispose: function dispose() {
-          loopHandle.incrementProperty('concurrency', -1);
-          opsIteration['break'](-1);
-        }
-      }, sourceIterator.policy && sourceIterator.policy.concurrent);
-
-      opsIteration.label = "ops";
-      log("OPS: starting execution", opsIteration);
-
-      opsIteration.step(0, undefined);
-    });
-
-    log("SOURCE: starting iteration", sourceIteration);
-    sourceIteration.label = "source";
-    sourceIteration.step(0, undefined);
-
-    return sourceIteration;
-  }
-
-  function maybeResolveInvocationPromise(value, resolveValue) {
-    if (value instanceof _emberConcurrencyUtils.Arguments) {
-      value.resolve(resolveValue);
-    }
-  }
-
-  function normalizeObservable(value) {
-    if (value && typeof value.then === 'function') {
-      return createObservable(function (publish) {
-        value.then(publish, publish.error);
-      });
-    } else if (value && typeof value.subscribe === 'function') {
-      // TODO: check for scheduler interface for Rx rather than
-      // creating another wrapping observable to schedule on run loop.
-      return createObservable(function (publish) {
-        return value.subscribe(publish, publish.error).dispose;
-      });
-    } else {
-      return null;
-    }
-  }
-
   function joinAndSchedule() {
-    for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      args[_key3] = arguments[_key3];
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
     }
 
     _ember['default'].run.join(function () {
@@ -95455,459 +95656,6 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
       (_Ember$run = _ember['default'].run).schedule.apply(_Ember$run, ['actions'].concat(args));
     });
   }
-});
-define('ember-concurrency/iteration', ['exports', 'ember'], function (exports, _ember) {
-  'use strict';
-
-  var _slicedToArray = (function () {
-    function sliceIterator(arr, i) {
-      var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
-        for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-          _arr.push(_s.value);if (i && _arr.length === i) break;
-        }
-      } catch (err) {
-        _d = true;_e = err;
-      } finally {
-        try {
-          if (!_n && _i['return']) _i['return']();
-        } finally {
-          if (_d) throw _e;
-        }
-      }return _arr;
-    }return function (arr, i) {
-      if (Array.isArray(arr)) {
-        return arr;
-      } else if (Symbol.iterator in Object(arr)) {
-        return sliceIterator(arr, i);
-      } else {
-        throw new TypeError('Invalid attempt to destructure non-iterable instance');
-      }
-    };
-  })();
-
-  exports._makeIteration = _makeIteration;
-
-  var NO_VALUE_YET = {};
-  var NEXT = 'next';
-  var RETURN = 'return';
-
-  var returnSelf = _ember['default'].K;
-
-  function ConcurrentInstance(iteration) {
-    this.iteration = iteration;
-  }
-
-  ConcurrentInstance.prototype.concurrent = true;
-
-  ConcurrentInstance.prototype.put = function (value, iterator) {
-    this.iteration.step(-1, undefined);
-    iterator.put(value);
-  };
-
-  var _concurrent = {
-    name: 'concurrent',
-    concurrent: true,
-    create: function create(iteration) {
-      return new ConcurrentInstance(iteration);
-    }
-  };
-
-  exports._concurrent = _concurrent;
-
-  var _enqueue = {
-    name: 'enqueue',
-    create: returnSelf,
-    put: function put(value, iterator) {
-      iterator.put(value);
-    }
-  };
-
-  exports._enqueue = _enqueue;
-
-  var _dropIntermediateValues = {
-    name: 'dropIntermediateValues',
-    create: returnSelf,
-    put: function put(value, iterator) {
-      if (iterator.takers.length > 0) {
-        iterator.put(value);
-      } else {
-        // no one's listening for values; just drop.
-      }
-    }
-  };
-
-  exports._dropIntermediateValues = _dropIntermediateValues;
-
-  var _keepFirstIntermediateValue = {
-    name: 'keepFirstIntermediateValue',
-    create: returnSelf,
-    put: function put(value, iterator) {
-      if (iterator.takers.length > 0) {
-        iterator.put(value);
-      } else {
-        if (iterator.buffer.length === 0) {
-          iterator.put(value);
-        }
-      }
-    }
-  };
-
-  exports._keepFirstIntermediateValue = _keepFirstIntermediateValue;
-
-  var _keepLastIntermediateValue = {
-    name: 'keepLastIntermediateValue',
-    create: returnSelf,
-    put: function put(value, iterator) {
-      if (iterator.takers.length > 0) {
-        iterator.put(value);
-      } else {
-        iterator.buffer.length = 0;
-        iterator.put(value);
-      }
-    }
-  };
-
-  exports._keepLastIntermediateValue = _keepLastIntermediateValue;
-
-  function RestartableInstance(iteration) {
-    this.iteration = iteration;
-  }
-
-  RestartableInstance.prototype.put = function (value, iterator) {
-    this.iteration.step(-1, undefined);
-    iterator.put(value);
-  };
-
-  var _restartable = {
-    name: 'restartable',
-    create: function create(iteration) {
-      return new RestartableInstance(iteration);
-    }
-  };
-
-  exports._restartable = _restartable;
-
-  function Iteration(iterator, sourceIteration, bufferPolicy, fn) {
-    this.iterator = iterator;
-    this.fn = fn;
-    this.lastValue = NO_VALUE_YET;
-    this.index = 0;
-    this.disposables = [];
-    this.rootDisposables = [];
-    this.stepQueue = [];
-    this.sourceIteration = sourceIteration;
-    this.setBufferPolicy(bufferPolicy || _concurrent);
-  }
-
-  Iteration.prototype = {
-    step: function step(index, nextValue) {
-      this._step(NEXT, index, nextValue);
-    },
-
-    _step: function _step(iterFn, index, nextValue) {
-      if (!this._indexValid(index)) {
-        return;
-      }
-      this.stepQueue.push([iterFn, nextValue]);
-      _ember['default'].run.once(this, this._flushQueue);
-    },
-
-    setBufferPolicy: function setBufferPolicy(policy) {
-      if (this.sourceIteration) {
-        this.sourceIteration.setBufferPolicy(policy);
-      } else {
-        //Ember.assert(`The collection you're looping over doesn't support ${policy.name}`, !!this.iterator.setBufferPolicy);
-        this.iterator.policy = policy.create(this);
-      }
-    },
-
-    _flushQueue: function _flushQueue() {
-      var _this = this;
-
-      this.index++;
-      var queue = this.stepQueue;
-      if (queue.length === 0) {
-        return;
-      }
-      this.stepQueue = [];
-      this._disposeDisposables(this.disposables);
-
-      // TODO: add tests around this, particularly when
-      // two things give the iteration conflicting instructions.
-
-      var _queue$pop = queue.pop();
-
-      var _queue$pop2 = _slicedToArray(_queue$pop, 2);
-
-      var iterFn = _queue$pop2[0];
-      var nextValue = _queue$pop2[1];
-
-      if (iterFn) {
-
-        if (iterFn === RETURN) {
-          this._disposeDisposables(this.rootDisposables);
-        }
-
-        var value = this.iterator[iterFn](nextValue);
-
-        if (value.then) {
-          value.then(function (v) {
-            _this.lastValue = {
-              done: false,
-              value: v
-            };
-            _this._runFunctionWithIndex();
-          }, function () {
-            throw new Error("not implemented");
-          });
-          return;
-        } else {
-          this.lastValue = value;
-        }
-      }
-      this._runFunctionWithIndex();
-    },
-
-    redo: function redo(index) {
-      this._step(null, index);
-    },
-
-    'break': function _break(index) {
-      this._step(RETURN, index);
-    },
-
-    _runFunctionWithIndex: function _runFunctionWithIndex() {
-      var result = Object.assign({ index: this.index }, this.lastValue);
-      this.fn(result);
-    },
-
-    _indexValid: function _indexValid(index) {
-      return index === this.index || index === -1;
-    },
-
-    registerDisposable: function registerDisposable(index, disposable, isRootDisposable) {
-      if (!this._indexValid(index)) {
-        return;
-      }
-      if (isRootDisposable) {
-        this.rootDisposables.push(disposable);
-      } else {
-        this.disposables.push(disposable);
-      }
-    },
-
-    _disposeDisposables: function _disposeDisposables(disposables) {
-      for (var i = 0, l = disposables.length; i < l; i++) {
-        var d = disposables[i];
-        d.dispose();
-      }
-      disposables.length = 0;
-    }
-  };
-
-  function _makeIteration(iterator, sourceIteration, bufferPolicy, fn) {
-    return new Iteration(iterator, sourceIteration, bufferPolicy, fn);
-  }
-});
-define('ember-concurrency/iterators', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _emberConcurrencyUtils) {
-  'use strict';
-
-  exports._makeIterator = _makeIterator;
-
-  function GeneratorFunctionIterator(iter) {
-    this.iter = iter;
-  }
-
-  GeneratorFunctionIterator.prototype.next = function (nextValue) {
-    return this.iter.next(nextValue);
-  };
-
-  GeneratorFunctionIterator.prototype['return'] = function (returnValue) {
-    return this.iter['return'](returnValue);
-  };
-
-  function RegularFunctionIterator(value) {
-    this.value = value;
-    this.hasEmittedValue = false;
-  }
-
-  RegularFunctionIterator.prototype.next = function () {
-    if (this.hasEmittedValue) {
-      return {
-        done: true,
-        value: undefined
-      };
-    } else {
-      this.hasEmittedValue = true;
-      return {
-        done: true,
-        value: this.value
-      };
-    }
-  };
-
-  RegularFunctionIterator.prototype['return'] = function (value) {
-    return this.next(value);
-  };
-
-  function ProxyIterator(iter) {
-    this.iter = iter;
-    this.returnValue = null;
-  }
-
-  ProxyIterator.prototype.next = function () {
-    if (this.returnValue) {
-      return this.returnValue;
-    }
-
-    var result = this.iter.next();
-    if (result.done) {
-      this.returnValue = result;
-    }
-    return result;
-  };
-
-  ProxyIterator.prototype['return'] = function (value) {
-    if (!this.returnValue) {
-      this.returnValue = { done: true, value: value };
-    }
-
-    return this.returnValue;
-  };
-
-  function _makeIteratorFromFunction(fn, context, args) {
-    var value = undefined;
-
-    if (args[0] instanceof _emberConcurrencyUtils.Arguments) {
-      value = fn.apply(context, args[0].args);
-    } else {
-      value = fn.apply(context, args);
-    }
-
-    if ((0, _emberConcurrencyUtils.isGeneratorIterator)(value)) {
-      return new GeneratorFunctionIterator(value);
-    } else {
-      return new RegularFunctionIterator(value);
-    }
-  }
-
-  function _makeIterator(iterable, owner, args) {
-    if (typeof iterable.next === 'function') {
-      return new ProxyIterator(iterable);
-    } else if (typeof iterable === 'function') {
-      return _makeIteratorFromFunction(iterable, owner, args);
-    } else if (iterable[Symbol.iterator]) {
-      return new ProxyIterator(iterable[Symbol.iterator]());
-    } else if (typeof iterable.subscribe === 'function') {
-      return createBufferedIterator(iterable);
-    } else {
-      // TODO: log error obj
-      throw new Error("Unknown structure passed to forEach; expected an iterable, observable, or a promise");
-    }
-  }
-
-  // TODO: consider a growing ringbuffer?
-  function createBufferedIterator(obs, bufferPolicy) {
-    var sub = undefined;
-    var isDisposed = false;
-    var iterator = {
-      buffer: [],
-      takers: [],
-      take: function take(taker) {
-        if (this.buffer.length) {
-          var value = this.buffer.shift();
-          taker.commit(value);
-        } else {
-          this.takers.push(taker);
-        }
-      },
-      put: function put(value) {
-        while (true) {
-          var taker = this.takers.shift();
-          if (!taker) {
-            break;
-          }
-
-          if (!taker.active) {
-            // TODO: is this needed?
-            continue;
-          }
-
-          taker.commit(value);
-          return;
-        }
-
-        this.buffer.push(value);
-      },
-      'return': function _return() {
-        // this needs a way of teardown
-        this.dispose();
-        return {
-          done: true,
-          value: undefined
-        };
-      },
-      next: function next() {
-        var defer = _ember['default'].RSVP.defer();
-        var taker = {
-          active: true,
-          commit: function commit(value) {
-            this.active = false;
-            defer.resolve(value);
-          },
-          then: function then(r0, r1) {
-            return defer.promise.then(r0, r1);
-          }
-        };
-        this.take(taker);
-        return taker;
-      },
-      dispose: function dispose() {
-        if (isDisposed) {
-          return;
-        }
-        isDisposed = true;
-        sub.dispose();
-      },
-      policy: bufferPolicy,
-      start: function start() {}
-    };
-
-    // TODO: refactor; this defers synchronous puts, as well as
-    // the handling of the puts by takers.
-    _ember['default'].run.schedule('actions', null, function () {
-      sub = obs.subscribe(function (v) {
-        _ember['default'].run.join(function () {
-          _ember['default'].run.schedule('actions', null, function () {
-            iterator.policy.put(v, iterator);
-          });
-        });
-      });
-    });
-
-    return iterator;
-  }
-});
-define('ember-concurrency/utils', ['exports'], function (exports) {
-  'use strict';
-
-  exports.isGeneratorIterator = isGeneratorIterator;
-  exports.Arguments = Arguments;
-
-  function isGeneratorIterator(iter) {
-    return iter && typeof iter.next === 'function' && typeof iter['return'] === 'function' && typeof iter['throw'] === 'function';
-  }
-
-  function Arguments(args, defer) {
-    this.args = args;
-    this.defer = defer;
-  }
-
-  Arguments.prototype.resolve = function (value) {
-    if (this.defer) {
-      this.defer.resolve(value);
-    }
-  };
 });
 define('ember-getowner-polyfill/fake-owner', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
