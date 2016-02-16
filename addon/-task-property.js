@@ -8,7 +8,6 @@ const saturateActiveQueue = (taskHandle) => {
   while (taskHandle._activeTaskInstances.length < taskHandle._maxConcurrency) {
     let taskInstance = taskHandle._queuedTaskInstances.shift();
     if (!taskInstance) { break; }
-    taskInstance._start().finally(() => taskHandle._needsFlush());
     taskHandle._activeTaskInstances.push(taskInstance);
   }
 };
@@ -38,36 +37,26 @@ const dropQueuedTasksPolicy = {
   }
 };
 
-const cancelOngoing = (taskHandle, keep) => {
-  let activeTaskInstances = taskHandle._activeTaskInstances;
-  let queuedTaskInstances = taskHandle._queuedTaskInstances;
-  activeTaskInstances.push(...queuedTaskInstances);
-  queuedTaskInstances.length = 0;
-
-  if (keep) {
-    queuedTaskInstances.push(...activeTaskInstances.splice(activeTaskInstances.length - keep, keep));
-  }
-
-  let numToShift = Math.max(0, activeTaskInstances.length - taskHandle._maxConcurrency);
-  spliceTaskInstances(activeTaskInstances, 0, numToShift);
-  for (let i = 0; i < activeTaskInstances.length; ++i) {
-    activeTaskInstances[i]._start().finally(() => taskHandle._needsFlush());
-  }
-};
-
 const cancelOngoingTasksPolicy = {
   schedule(taskHandle) {
     // [a,b,_] [c,d,e,f] becomes
     // [d,e,f] []
-    cancelOngoing(taskHandle, 0);
+    let activeTaskInstances = taskHandle._activeTaskInstances;
+    let queuedTaskInstances = taskHandle._queuedTaskInstances;
+    activeTaskInstances.push(...queuedTaskInstances);
+    queuedTaskInstances.length = 0;
+
+    let numToShift = Math.max(0, activeTaskInstances.length - taskHandle._maxConcurrency);
+    spliceTaskInstances(activeTaskInstances, 0, numToShift);
   }
 };
 
-const cancelOngoingKeepLatestPolicy = {
+const dropButKeepLatestPolicy = {
   schedule(taskHandle) {
     // [a,b,_] [c,d,e,f] becomes
     // [d,e,f] []
-    cancelOngoing(taskHandle, 1);
+    saturateActiveQueue(taskHandle);
+    spliceTaskInstances(taskHandle._queuedTaskInstances, 0, taskHandle._queuedTaskInstances.length - 1);
   }
 };
 
@@ -80,6 +69,7 @@ const TaskHandle = Ember.Object.extend({
   isIdle: computed.equal('concurrency', 0),
   _maxConcurrency: Infinity,
   _activeTaskInstances: null,
+  _needsFlush: null,
 
   init() {
     this._super();
@@ -90,6 +80,8 @@ const TaskHandle = Ember.Object.extend({
     this.perform = (...args) => {
       return this._perform(...args);
     };
+
+    this._needsFlush = Ember.run.bind(this, this._scheduleFlush);
 
     cleanupOnDestroy(this.context, this, 'cancel');
   },
@@ -112,7 +104,7 @@ const TaskHandle = Ember.Object.extend({
     return taskInstance;
   },
 
-  _needsFlush() {
+  _scheduleFlush() {
     Ember.run.once(this, this._flushQueues);
   },
 
@@ -120,6 +112,14 @@ const TaskHandle = Ember.Object.extend({
     this._activeTaskInstances = Ember.A(this._activeTaskInstances.filterBy('isIdle', false));
 
     this.bufferPolicy.schedule(this);
+
+    for (let i = 0; i < this._activeTaskInstances.length; ++i) {
+      let taskInstance = this._activeTaskInstances[i];
+      if (!taskInstance.hasStarted) {
+        taskInstance._start().then(this._needsFlush, this._needsFlush);
+      }
+    }
+
     this.set('concurrency', this._activeTaskInstances.length);
   },
 });
@@ -177,7 +177,7 @@ TaskProperty.prototype.drop = function() {
 };
 
 TaskProperty.prototype.keepLatest = function() {
-  this.bufferPolicy = cancelOngoingKeepLatestPolicy;
+  this.bufferPolicy = dropButKeepLatestPolicy;
   this._setDefaultMaxConcurrency(1);
   return this;
 };

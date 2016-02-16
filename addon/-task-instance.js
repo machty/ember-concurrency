@@ -9,6 +9,14 @@ function forwardToInternalPromise(method) {
   };
 }
 
+function IgnoreCancelation(e) {
+  if (e && e.name === 'TaskCancelation') {
+    // prevent RSVP onError
+  } else {
+    return Ember.RSVP.reject(e);
+  }
+}
+
 export default Ember.Object.extend({
   iterator: null,
   _disposable: null,
@@ -26,6 +34,7 @@ export default Ember.Object.extend({
     this._super();
     this._defer = Ember.RSVP.defer();
     this.promise = this._defer.promise;
+    this.promise.catch(IgnoreCancelation);
     this.iterator = this.fn.apply(this.context, this.args);
   },
 
@@ -52,7 +61,9 @@ export default Ember.Object.extend({
 
   _rejectWithCancelation() {
     if (this.isCanceled) { return; }
-    this._reject(new Cancelation());
+    let error = new Error("TaskCancelation");
+    error.name = "TaskCancelation";
+    this._reject(error);
     this.set('isCanceled', true);
   },
 
@@ -66,14 +77,6 @@ export default Ember.Object.extend({
   _proceed(index, nextValue) {
     this._dispose();
     Ember.run.once(this, this._takeStep, index, nextValue);
-  },
-
-  _takeSafeStep(nextValue, iteratorMethod) {
-    try {
-      return this.iterator[iteratorMethod](nextValue);
-    } catch(e) {
-      return { value: e, error: true };
-    }
   },
 
   _hasBegunShutdown: false,
@@ -92,13 +95,27 @@ export default Ember.Object.extend({
     }
   },
 
+  _takeSafeStep(nextValue, iteratorMethod) {
+    try {
+      return this.iterator[iteratorMethod](nextValue);
+    } catch(e) {
+      return { value: e, error: true };
+    }
+  },
+
   _takeStep(index, nextValue) {
     if (index !== this._index) { return; }
 
     let result;
     if (this.isCanceled && !this._hasBegunShutdown) {
       this._hasBegunShutdown = true;
-      result = this._takeSafeStep(nextValue, 'return');
+      if (this.hasStarted) {
+        result = this._takeSafeStep(nextValue, 'return');
+      } else {
+        // calling .return on an unstarted generator iterator
+        // doesn't do the intuitive thing, so just skip it.
+        result = { done: true, value: undefined };
+      }
     } else {
       result = this._takeSafeStep(nextValue, 'next');
     }
