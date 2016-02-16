@@ -4,13 +4,11 @@ import { task, timeout } from 'ember-concurrency';
 // BEGIN-SNIPPET shared-task-function
 function * SHARED_TASK_FN(tracker) {
   tracker.start();
-  let didComplete = false;
   try {
     // simulate async work
     yield timeout(1500);
-    didComplete = true;
   } finally {
-    tracker.end(didComplete);
+    tracker.end();
   }
 }
 // END-SNIPPET

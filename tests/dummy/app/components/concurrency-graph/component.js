@@ -1,12 +1,17 @@
 import Ember from 'ember';
 import { task } from 'ember-concurrency';
+const { computed } = Ember;
 
 let Tracker = Ember.Object.extend({
   id: null,
   performTime: null,
   startTime: null,
   endTime: Infinity,
-  cancelled: false,
+  taskInstance: null,
+  isCanceled: computed.oneWay('taskInstance.isCanceled'),
+  state: computed('taskInstance.state', function() {
+    return Ember.String.capitalize(this.get('taskInstance.state'));
+  }),
 });
 
 let nextId = 0;
@@ -55,18 +60,16 @@ export default Ember.Component.extend({
         start: () => {
           tracker.set('startTime', this.timeElapsed);
         },
-        end: (didComplete) => {
+        end: () => {
           tracker.set('endTime', this.timeElapsed);
-          if (!didComplete) {
-            tracker.set('cancelled', true);
-          }
         },
       });
 
-      this.get('trackers').pushObject(tracker);
-
       let task = this.get('task');
-      task.perform(tracker);
+      let taskInstance = task.perform(tracker);
+      tracker.set('taskInstance', taskInstance);
+
+      this.get('trackers').pushObject(tracker);
     },
 
     restart() {

@@ -17,6 +17,20 @@ export default Ember.Object.extend({
   hasStarted: false,
   _ignorePromiseErrors: false,
 
+  state: Ember.computed('isDropped', 'isCanceled', 'hasStarted', 'isFinished', function() {
+    if (this.get('isDropped')) {
+      return 'dropped';
+    } else if (this.get('isCanceled')) {
+      return 'canceled';
+    } else if (this.get('isFinished')) {
+      return 'finished';
+    } else if (this.get('hasStarted')) {
+      return 'running';
+    } else {
+      return 'waiting';
+    }
+  }),
+
   isDropped: Ember.computed('isCanceled', 'hasStarted', function() {
     return this.get('isCanceled') && !this.get('hasStarted');
   }),
