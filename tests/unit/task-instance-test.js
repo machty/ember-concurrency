@@ -79,16 +79,16 @@ test("cancelation", function(assert) {
     // tick as a cancel.
     defer0.resolve();
     taskInstance.cancel();
-    assert.ok(!taskInstance.get('isIdle'));
+    assert.ok(!taskInstance.get('isFinished'));
     assert.ok(taskInstance.get('isCanceled'));
   });
 
   Ember.run(null, defer1.resolve, 123);
   assert.ok(taskInstance.get('isCanceled'));
-  assert.ok(!taskInstance.get('isIdle'));
+  assert.ok(!taskInstance.get('isFinished'));
   Ember.run(null, defer2.resolve, 456);
   assert.ok(taskInstance.get('isCanceled'));
-  assert.ok(taskInstance.get('isIdle'));
+  assert.ok(taskInstance.get('isFinished'));
 });
 
 test("deferred start", function(assert) {
@@ -176,12 +176,12 @@ test("exception handling", function(assert) {
   });
 
   assert.ok(!caughtError);
-  assert.ok(!taskInstance.get('isIdle'));
+  assert.ok(!taskInstance.get('isFinished'));
   Ember.run(null, defer0.resolve, 123);
-  assert.ok(!taskInstance.get('isIdle'));
+  assert.ok(!taskInstance.get('isFinished'));
   Ember.run(null, defer1.resolve, 456);
   assert.equal(caughtError.message, "wat");
-  assert.ok(taskInstance.get('isIdle'));
+  assert.ok(taskInstance.get('isFinished'));
 });
 
 test("yielded disposables are disposed upon cancellation", function(assert) {

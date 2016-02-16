@@ -67,6 +67,7 @@ const TaskHandle = Ember.Object.extend({
   perform: null,
   concurrency: 0,
   isIdle: computed.equal('concurrency', 0),
+  isRunning: Ember.computed.not('isIdle'),
   _maxConcurrency: Infinity,
   _activeTaskInstances: null,
   _needsFlush: null,
@@ -109,7 +110,7 @@ const TaskHandle = Ember.Object.extend({
   },
 
   _flushQueues() {
-    this._activeTaskInstances = Ember.A(this._activeTaskInstances.filterBy('isIdle', false));
+    this._activeTaskInstances = Ember.A(this._activeTaskInstances.filterBy('isFinished', false));
 
     this.bufferPolicy.schedule(this);
 

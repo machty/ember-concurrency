@@ -22,7 +22,8 @@ export default Ember.Object.extend({
   }),
 
   _index: 1,
-  isIdle: false,
+  isFinished: false,
+  isRunning: Ember.computed.not('isFinished'),
 
   init() {
     this._super();
@@ -84,7 +85,7 @@ export default Ember.Object.extend({
   _hasResolved: false,
 
   _finalize(value) {
-    this.set('isIdle', true);
+    this.set('isFinished', true);
     this._defer.resolve(value);
     this._dispose();
   },
@@ -128,7 +129,7 @@ export default Ember.Object.extend({
       return;
     } else {
       if (done && value === undefined) {
-        this.set('isIdle', true);
+        this.set('isFinished', true);
         this._finalize(nextValue);
         return;
       }
