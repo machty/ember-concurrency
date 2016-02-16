@@ -27,15 +27,13 @@ export default Ember.Object.extend({
     this._defer = Ember.RSVP.defer();
     this.promise = this._defer.promise;
     this.iterator = this.fn.apply(this.context, this.args);
+  },
 
-    Ember.RSVP.resolve(this.startAfter).then(() => {
-      if (this.isCanceled) { return; }
-
-      this.set('hasStarted', true);
-      this._proceed(1, undefined);
-    }).catch(() => {
-      this._rejectWithCancelation();
-    });
+  _start() {
+    if (this.hasStarted || this.isCanceled) { return this; }
+    this.set('hasStarted', true);
+    this._proceed(1, undefined);
+    return this;
   },
 
   cancel() {

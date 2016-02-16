@@ -1,7 +1,6 @@
 import Ember from 'ember';
-import { isGeneratorIterator } from './utils';
+import { isGeneratorIterator, createObservable } from './utils';
 import { TaskProperty, forEach } from './-task-property';
-import { createObservable } from './utils';
 import { EventedObservable } from './-evented-observable';
 import { Cancelation } from './-task-instance';
 
