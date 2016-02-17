@@ -88,3 +88,24 @@ test("task discontinues after destruction when blocked on async values", functio
   });
 });
 
+test("task.cancelAll cancels all running task instances", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend(Ember.Evented, {
+    doStuff: task(function * () {
+      assert.ok(false, "should not get here");
+    }),
+  });
+
+  let instances;
+  Ember.run(() => {
+    let obj = Obj.create();
+    let task = obj.get('doStuff');
+    instances = Ember.A([ task.perform(), task.perform(), task.perform() ]);
+    task.cancelAll();
+  });
+
+  assert.deepEqual(instances.mapBy('isCanceled'), [true, true, true]);
+});
+
+

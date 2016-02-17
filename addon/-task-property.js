@@ -84,10 +84,10 @@ const TaskHandle = Ember.Object.extend({
 
     this._needsFlush = Ember.run.bind(this, this._scheduleFlush);
 
-    cleanupOnDestroy(this.context, this, 'cancel');
+    cleanupOnDestroy(this.context, this, 'cancelAll');
   },
 
-  cancel() {
+  cancelAll() {
     spliceTaskInstances(this._activeTaskInstances, 0, this._activeTaskInstances.length);
     spliceTaskInstances(this._queuedTaskInstances, 0, this._queuedTaskInstances.length);
   },
