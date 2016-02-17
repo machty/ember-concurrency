@@ -43,7 +43,7 @@
 
 <p>
   The <code>.restartable()</code> modifier ensures that only one instance
-  of a task is running by cancelling any currently-running tasks and starting
+  of a task is running by canceling any currently-running tasks and starting
   a new task instance immediately. Note how there is no task overlap,
   and how currently running tasks get canceled
   (<span style="text-decoration:line-through;">.perform()</span> is crossed out)
@@ -99,7 +99,7 @@
 <p>
   <em>
     Use case: you want to centralize app updates in a single task, and you 1)
-    don't want this task to be cancellable and 2) if staleness events occur
+    don't want this task to be cancelable and 2) if staleness events occur
     while the task is running, you only need to respond to the most recent one.
   </em>
 </p>

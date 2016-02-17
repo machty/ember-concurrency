@@ -184,7 +184,7 @@ test("exception handling", function(assert) {
   assert.ok(taskInstance.get('isFinished'));
 });
 
-test("yielded disposables are disposed upon cancellation", function(assert) {
+test("yielded disposables are disposed upon cancelation", function(assert) {
   QUnit.stop();
   assert.expect(3);
 
