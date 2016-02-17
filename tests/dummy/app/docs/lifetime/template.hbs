@@ -1,0 +1,35 @@
+<h3>Task Lifetime</h3>
+
+<p>
+  Tasks are automatically canceled when their host object is destroyed.
+  This is particularly relevant for tasks that live on components: at
+  any point, a component might be unrendered as the user navigates
+  around the app.
+</p>
+
+<h4>Example</h4>
+
+<p>
+  This simple example demonstrates that it is perfectly safe to use tasks
+  on components; the <code>count-up</code> component is getting
+  rendered and then destroyed in a loop, yet its internal timer
+  that rapidly increments numbers is automatically and cleanly
+  torn down. No need to implement a <code>willDestroy</code>
+  hook, or manually cancel the task, or cancel timers.
+</p>
+
+{{! BEGIN-SNIPPET lifetime-template }}
+<h5>
+  Count-up:
+  {{#if isDisplaying}}
+    {{count-up}}
+  {{else}}
+    ...
+  {{/if}}
+</h5>
+{{! END-SNIPPET }}
+
+{{code-snippet name="lifetime.js"}}
+{{code-snippet name="lifetime-template.hbs"}}
+{{code-snippet name="count-up.js"}}
+

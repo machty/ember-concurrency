@@ -13,6 +13,7 @@ Router.map(function() {
     this.route('task-concurrency-advanced');
     this.route('cancelation');
     this.route('child-tasks');
+    this.route('lifetime');
     this.route('examples', function() {
       this.route('increment-buttons');
       this.route('loading-ui');
