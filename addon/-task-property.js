@@ -142,23 +142,25 @@ export function TaskProperty(taskFn) {
   this.bufferPolicy = enqueueTasksPolicy;
   this._maxConcurrency = Infinity;
   this.eventNames = null;
+  this.cancelEventNames = null;
 }
 
 TaskProperty.prototype = Object.create(ComputedProperty.prototype);
 TaskProperty.prototype.constructor = TaskProperty;
-TaskProperty.prototype.setup = function(obj, keyname) {
-  let eventNames = this.eventNames;
-  if (eventNames) {
-    for (let i = 0; i < eventNames.length; ++i) {
-      let eventName = eventNames[i];
-      Ember.addListener(obj, eventName, null, makeListener(keyname));
-    }
-  }
+TaskProperty.prototype.setup = function(proto, keyname) {
+  addListenersToPrototype(proto, this.eventNames, keyname, '_perform');
+  addListenersToPrototype(proto, this.cancelEventNames, keyname, 'cancelAll');
 };
 
 TaskProperty.prototype.on = function() {
   this.eventNames = this.eventNames || [];
   this.eventNames.push.apply(this.eventNames, arguments);
+  return this;
+};
+
+TaskProperty.prototype.cancelOn = function() {
+  this.cancelEventNames = this.cancelEventNames || [];
+  this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
   return this;
 };
 
@@ -197,10 +199,19 @@ TaskProperty.prototype._setDefaultMaxConcurrency = function(n) {
   }
 };
 
-function makeListener(taskName) {
+function addListenersToPrototype(proto, eventNames, taskName, taskMethod) {
+  if (eventNames) {
+    for (let i = 0; i < eventNames.length; ++i) {
+      let eventName = eventNames[i];
+      Ember.addListener(proto, eventName, null, makeListener(taskName, taskMethod));
+    }
+  }
+}
+
+function makeListener(taskName, method) {
   return function() {
     let taskHandle = this.get(taskName);
-    taskHandle._perform.apply(taskHandle, arguments);
+    taskHandle[method].apply(taskHandle, arguments);
   };
 }
 

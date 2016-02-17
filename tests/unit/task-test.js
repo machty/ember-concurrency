@@ -108,4 +108,17 @@ test("task.cancelAll cancels all running task instances", function(assert) {
   assert.deepEqual(instances.mapBy('isCanceled'), [true, true, true]);
 });
 
+test("task().cancelOn", function(assert) {
+  assert.expect(0);
+
+  let Obj = Ember.Object.extend(Ember.Evented, {
+    doStuff: task(function * () {
+      assert.ok(false, "should not get here");
+    }).on('init').cancelOn('foo'),
+  });
+
+  Ember.run(() => {
+    Obj.create().trigger('foo');
+  });
+});
 
