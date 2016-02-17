@@ -1,4 +1,7 @@
 # Changelog
+### 0.5.5:
+ - added task(...).cancelOn('eventName'), which calls cancelAll()
+   on the task whenever the event is fired
 
 ### 0.5.4:
  - .state properties for Tasks and TaskInstances
