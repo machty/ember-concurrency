@@ -91,9 +91,9 @@ let TaskInstance = Ember.Object.extend({
   _defer: null,
   promise: null,
 
-  _proceed(index, nextValue) {
+  _proceed(index, nextValue, method) {
     this._dispose();
-    Ember.run.once(this, this._takeStep, index, nextValue);
+    Ember.run.once(this, this._takeStep, index, nextValue, method);
   },
 
   _hasBegunShutdown: false,
@@ -120,7 +120,7 @@ let TaskInstance = Ember.Object.extend({
     }
   },
 
-  _takeStep(index, nextValue) {
+  _takeStep(index, nextValue, method) {
     if (index !== this._index) { return; }
 
     let result;
@@ -134,7 +134,7 @@ let TaskInstance = Ember.Object.extend({
         result = { done: true, value: undefined };
       }
     } else {
-      result = this._takeSafeStep(nextValue, 'next');
+      result = this._takeSafeStep(nextValue, method || 'next');
     }
 
     let { done, value, error } = result;
@@ -160,10 +160,10 @@ let TaskInstance = Ember.Object.extend({
     this._disposable = observable.subscribe(v => {
       this._proceed(index, v);
     }, error => {
-      this._finalize(Ember.RSVP.reject(error));
+      this._proceed(index, error, 'throw');
     }, () => {
-      // TODO: test me
-      //opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
+      // TODO: test, and figure out what it means to yield
+      // something that completes without producing a value.
     });
   },
 });
@@ -181,6 +181,7 @@ function normalizeObservable(value) {
   } else if (typeof value.then === 'function') {
     return createObservable(publish => {
       value.then(publish, publish.error);
+      return value.__ec_dispose__;
     });
   } else if (typeof value.subscribe === 'function') {
     // TODO: check for scheduler interface for Rx rather than
