@@ -1,0 +1,58 @@
+<h3>Tasks on Ember.Route (and other long-lived objects)</h3>
+
+<p>
+  <strong>ember-concurrency</strong> tasks are scoped to the lifetime of
+  the object they live on, so if that object is destroyed, all of the
+  tasks attached to it are canceled.  This is very convenient when
+  writing tasks on object with finite lifetimes, like Components, but certain Ember objects, like
+  Routes (and Controllers), are never actually destroyed, but even
+  if you can't rely on object destruction to cancel a task,
+  <strong>ember-concurrency</strong> makes it easy to run
+  tasks between lifecycle events other than <code>init</code>
+  and <code>destroy</code>.
+</p>
+
+<h3>Live Example</h3>
+
+<p>
+  Try clicking the links below. As the URL changes, you should see
+  notifications about the server polling status changing. If you
+  leave this route (by going to another page on this site), you'll
+  see that the polling task is being properly canceled.
+</p>
+
+<ul>
+  {{#each ids as |id|}}
+  <li>
+    {{#link-to 'docs.examples.route-tasks.detail' id}}
+      Thing {{id}}
+    {{/link-to}}
+  </li>
+  {{/each}}
+</ul>
+
+<ul>
+  <li>
+    We use the <a href="https://github.com/aexmachina/ember-notify">ember-notify</a> Ember Addon
+    to display notifications using the <code>notify</code> service it provides.
+  </li>
+  <li>
+    <code>setupController</code> kicks off the task with the current model id
+  </li>
+  <li>
+    The <code>pollServerForChanges</code> task polls the server in a loop,
+    and uses the <code>finally</code> block to notify when it is being canceled.
+  </li>
+  <li>
+    We use <code>.restartable()</code> to ensure that only one instance of the
+    task is running at a time, hence any time <code>setupController</code>
+    performs the task, any prior instances are canceled.
+  </li>
+  <li>
+    We use <code>.cancelOn('deactivate')</code> to make sure the task cancels
+    when the user leaves the route.
+  </li>
+</ul>
+
+{{code-snippet name="detail-route.js"}}
+

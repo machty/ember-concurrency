@@ -20,6 +20,9 @@ Router.map(function() {
       this.route('autocomplete');
       this.route('task-concurrency');
       this.route('ajax-throttling');
+      this.route('route-tasks', function() {
+        this.route('detail', { path: ':id' });
+      });
     });
   });
 });

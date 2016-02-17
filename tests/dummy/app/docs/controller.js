@@ -20,6 +20,7 @@ export default Ember.Controller.extend({
         {route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select"},
         {route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons"},
         {route: "docs.examples.ajax-throttling", title: "AJAX Throttling"},
+        {route: "docs.examples.route-tasks", title: "Route Tasks"},
       ]
     },
   ],
