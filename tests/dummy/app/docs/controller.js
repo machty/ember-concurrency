@@ -11,6 +11,7 @@ export default Ember.Controller.extend({
     { route: "docs.writing-tasks", title: "Writing Tasks"},
     { route: "docs.task-concurrency", title: "Managing Task Concurrency"},
     { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency"},
+    { route: "docs.cancelation", title: "Cancelation"},
     { title: "Examples", route: "docs.examples",
       children: [
         {route: "docs.examples.loading-ui", title: "Loading UI"},

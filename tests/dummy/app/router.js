@@ -11,6 +11,7 @@ Router.map(function() {
     this.route('writing-tasks');
     this.route('task-concurrency');
     this.route('task-concurrency-advanced');
+    this.route('cancelation');
     this.route('examples', function() {
       this.route('increment-buttons');
       this.route('loading-ui');
