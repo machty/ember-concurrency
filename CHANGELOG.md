@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.5.4:
+ - .state properties for Tasks and TaskInstances
+ - task.cancelAll() cancels all running/pending task instances
+ - taskInstance.cancel() cancels an individual instance
+
 ### 0.5.3:
  - Added .maxConcurrency(n) task modifier which works in
    conjunction with the other task modifiers.
