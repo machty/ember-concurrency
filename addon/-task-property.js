@@ -68,6 +68,9 @@ const TaskHandle = Ember.Object.extend({
   concurrency: 0,
   isIdle: computed.equal('concurrency', 0),
   isRunning: Ember.computed.not('isIdle'),
+  state: computed('isIdle', function() {
+    return this.get('isIdle') ? 'idle' : 'running';
+  }),
   _maxConcurrency: Infinity,
   _activeTaskInstances: null,
   _needsFlush: null,

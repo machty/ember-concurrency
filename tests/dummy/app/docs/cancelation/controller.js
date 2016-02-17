@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import { task } from 'ember-concurrency';
-const { computed } = Ember;
 
 // BEGIN-SNIPPET cancelation
 const WAIT_HERE_FOREVER = Ember.RSVP.defer().promise;
