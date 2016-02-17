@@ -10,7 +10,7 @@ function forwardToInternalPromise(method) {
   };
 }
 
-export default Ember.Object.extend({
+let TaskInstance = Ember.Object.extend({
   iterator: null,
   _disposable: null,
   isCanceled: false,
@@ -45,8 +45,8 @@ export default Ember.Object.extend({
     this._cancelationIgnorer = this._defer.promise.catch(e => {
       if (this._ignorePromiseErrors) { return; }
 
-      if (e && e.name === 'TaskCancelation') {
-        // prevent RSVP onError
+      if (e && e.name === 'TaskCancelation' && e.taskInstance === this) {
+        // swallow cancelations that belong to the same task.
       } else {
         return Ember.RSVP.reject(e);
       }
@@ -79,6 +79,7 @@ export default Ember.Object.extend({
     if (this.isCanceled) { return; }
     let error = new Error("TaskCancelation");
     error.name = "TaskCancelation";
+    error.taskInstance = this;
     this._reject(error);
     this.set('isCanceled', true);
   },
@@ -168,11 +169,20 @@ export default Ember.Object.extend({
 });
 
 function normalizeObservable(value) {
-  if (value && typeof value.then === 'function') {
+  if (!value) { return null; }
+
+  if (value instanceof TaskInstance) {
+    return createObservable(publish => {
+      value.then(publish, publish.error);
+      return () => {
+        value.cancel();
+      };
+    });
+  } else if (typeof value.then === 'function') {
     return createObservable(publish => {
       value.then(publish, publish.error);
     });
-  } else if (value && typeof value.subscribe === 'function') {
+  } else if (typeof value.subscribe === 'function') {
     // TODO: check for scheduler interface for Rx rather than
     // creating another wrapping observable to schedule on run loop.
     return createObservable(publish => {
@@ -182,4 +192,6 @@ function normalizeObservable(value) {
     return null;
   }
 }
+
+export default TaskInstance;
 

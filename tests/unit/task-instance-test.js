@@ -237,4 +237,97 @@ test("unhandled thrown exceptions bubble", function(assert) {
   }
 });
 
+test("yielding to other tasks", function(assert) {
+  assert.expect(3);
+
+  let taskInstance0, taskInstance1, defer;
+  Ember.run(() => {
+    taskInstance0 = TaskInstance.create({
+      fn: function * () {
+        taskInstance1 = TaskInstance.create({
+          fn: function * () {
+            defer = Ember.RSVP.defer();
+            let value = yield defer.promise;
+            return value;
+          },
+          args: [],
+        })._start();
+        let value = yield taskInstance1;
+        assert.equal(value, 123);
+      },
+      args: [],
+    })._start();
+  });
+
+  assert.equal(taskInstance0.get('state'), 'running');
+  assert.equal(taskInstance1.get('state'), 'running');
+
+  Ember.run(null, defer.resolve, 123);
+});
+
+test("yielding to other tasks: parent task gets canceled", function(assert) {
+  assert.expect(2);
+
+  let taskInstance0, taskInstance1, defer;
+  Ember.run(() => {
+    taskInstance0 = TaskInstance.create({
+      fn: function * () {
+        taskInstance1 = TaskInstance.create({
+          fn: function * () {
+            defer = Ember.RSVP.defer();
+            let value = yield defer.promise;
+            return value;
+          },
+          args: [],
+        })._start();
+        let value = yield taskInstance1;
+        assert.equal(value, 123);
+      },
+      args: [],
+    })._start();
+  });
+
+  Ember.run(taskInstance0, 'cancel');
+
+  assert.equal(taskInstance0.get('state'), 'canceled');
+  assert.equal(taskInstance1.get('state'), 'canceled');
+
+  Ember.run(null, defer.resolve, "naw");
+});
+
+test("yielding to other tasks: child task gets canceled", function(assert) {
+  assert.expect(4);
+
+  let taskInstance0, taskInstance1, defer;
+  Ember.run(() => {
+    taskInstance0 = TaskInstance.create({
+      fn: function * () {
+        taskInstance1 = TaskInstance.create({
+          fn: function * () {
+            defer = Ember.RSVP.defer();
+            let value = yield defer.promise;
+            return value;
+          },
+          args: [],
+        })._start();
+        let value = yield taskInstance1;
+        assert.equal(value, 123);
+      },
+      args: [],
+    })._start();
+  });
+
+  try {
+    Ember.run(taskInstance1, 'cancel');
+  } catch(e) {
+    assert.equal(e.name, 'TaskCancelation');
+    assert.equal(e.taskInstance, taskInstance1);
+  }
+
+  assert.equal(taskInstance0.get('state'), 'finished'); // TODO: this is up for debate
+  assert.equal(taskInstance1.get('state'), 'canceled');
+
+  Ember.run(null, defer.resolve, "naw");
+});
+
 
