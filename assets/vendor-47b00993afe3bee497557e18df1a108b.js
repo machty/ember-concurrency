@@ -95380,6 +95380,9 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     concurrency: 0,
     isIdle: computed.equal('concurrency', 0),
     isRunning: _ember['default'].computed.not('isIdle'),
+    state: computed('isIdle', function () {
+      return this.get('isIdle') ? 'idle' : 'running';
+    }),
     _maxConcurrency: Infinity,
     _activeTaskInstances: null,
     _needsFlush: null,

@@ -1520,7 +1520,6 @@ define('dummy/controllers/object', ['exports', 'ember'], function (exports, _emb
   exports['default'] = _ember['default'].Controller;
 });
 define('dummy/docs/cancelation/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
-  var computed = _ember['default'].computed;
 
   // BEGIN-SNIPPET cancelation
   var WAIT_HERE_FOREVER = _ember['default'].RSVP.defer().promise;
@@ -1867,12 +1866,305 @@ define("dummy/docs/cancelation/template", ["exports"], function (exports) {
     };
   })());
 });
+define('dummy/docs/child-tasks/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+
+  // BEGIN-SNIPPET child-tasks
+  exports['default'] = _ember['default'].Controller.extend({
+    status: "Waiting to start",
+
+    parentTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      var value;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            this.set('status', "1. Parent: one moment...");
+            context$1$0.next = 3;
+            return (0, _emberConcurrency.timeout)(1000);
+
+          case 3:
+            context$1$0.next = 5;
+            return this.get('childTask').perform();
+
+          case 5:
+            value = context$1$0.sent;
+
+            this.set('status', '5. Parent: child says "' + value + '"');
+            context$1$0.next = 9;
+            return (0, _emberConcurrency.timeout)(1000);
+
+          case 9:
+            this.set('status', "6. Done!");
+
+          case 10:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    })).restartable(),
+
+    childTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      var value;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            this.set('status', "2. Child: one moment...");
+            context$1$0.next = 3;
+            return (0, _emberConcurrency.timeout)(1000);
+
+          case 3:
+            context$1$0.next = 5;
+            return this.get('grandchildTask').perform();
+
+          case 5:
+            value = context$1$0.sent;
+
+            this.set('status', '4. Child: grandchild says "' + value + '"');
+            context$1$0.next = 9;
+            return (0, _emberConcurrency.timeout)(1000);
+
+          case 9:
+            return context$1$0.abrupt('return', "What's up");
+
+          case 10:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    })),
+
+    grandchildTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            this.set('status', "3. Grandchild: one moment...");
+            context$1$0.next = 3;
+            return (0, _emberConcurrency.timeout)(1000);
+
+          case 3:
+            return context$1$0.abrupt('return', "Hello");
+
+          case 4:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    }))
+  });
+
+  // END-SNIPPET
+});
+define("dummy/docs/child-tasks/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 23,
+              "column": 2
+            },
+            "end": {
+              "line": 25,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/docs/child-tasks/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    Restart Parent Task\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 25,
+              "column": 2
+            },
+            "end": {
+              "line": 27,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/docs/child-tasks/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    Perform Parent Task\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.2.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 34,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/child-tasks/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Child Tasks");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Tasks can call other tasks by ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("yield");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("ing the\n  result of ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("anotherTask.perform()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(". When this happens,\n  the Parent task will wait for the Child task to complete before\n  proceeding. If the Parent task is canceled, the Child task will\n  automatically be canceled as well.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ul");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("Parent Task:     ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("Child Task:      ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("Grandchild Task: ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("button");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [8]);
+        var element1 = dom.childAt(fragment, [10]);
+        var morphs = new Array(8);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [6]), 0, 0);
+        morphs[1] = dom.createMorphAt(dom.childAt(element0, [1]), 1, 1);
+        morphs[2] = dom.createMorphAt(dom.childAt(element0, [3]), 1, 1);
+        morphs[3] = dom.createMorphAt(dom.childAt(element0, [5]), 1, 1);
+        morphs[4] = dom.createElementMorph(element1);
+        morphs[5] = dom.createMorphAt(element1, 1, 1);
+        morphs[6] = dom.createMorphAt(fragment, 13, 13, contextualElement);
+        morphs[7] = dom.createMorphAt(fragment, 15, 15, contextualElement);
+        return morphs;
+      },
+      statements: [["content", "status", ["loc", [null, [14, 4], [14, 14]]]], ["content", "parentTask.state", ["loc", [null, [17, 23], [17, 43]]]], ["content", "childTask.state", ["loc", [null, [18, 23], [18, 42]]]], ["content", "grandchildTask.state", ["loc", [null, [19, 23], [19, 47]]]], ["element", "action", [["get", "parentTask.perform", ["loc", [null, [22, 17], [22, 35]]]]], [], ["loc", [null, [22, 8], [22, 37]]]], ["block", "if", [["get", "parentTask.isRunning", ["loc", [null, [23, 8], [23, 28]]]]], [], 0, 1, ["loc", [null, [23, 2], [27, 9]]]], ["inline", "code-snippet", [], ["name", "child-tasks.js"], ["loc", [null, [31, 0], [31, 38]]]], ["inline", "code-snippet", [], ["name", "child-tasks-template.hbs"], ["loc", [null, [32, 0], [32, 48]]]]],
+      locals: [],
+      templates: [child0, child1]
+    };
+  })());
+});
 define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember) {
   var computed = _ember["default"].computed;
   exports["default"] = _ember["default"].Controller.extend({
     appController: _ember["default"].inject.controller('application'),
 
-    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.getting-started", title: "Getting Started" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { route: "docs.cancelation", title: "Cancelation" }, { title: "Examples", route: "docs.examples",
+    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.getting-started", title: "Getting Started" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { route: "docs.cancelation", title: "Cancelation" }, { route: "docs.child-tasks", title: "Child Tasks" }, { title: "Examples", route: "docs.examples",
       children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }]
     }],
 
@@ -4366,6 +4658,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
       this.route('task-concurrency');
       this.route('task-concurrency-advanced');
       this.route('cancelation');
+      this.route('child-tasks');
       this.route('examples', function () {
         this.route('increment-buttons');
         this.route('loading-ui');
@@ -4391,6 +4684,8 @@ define("dummy/snippets", ["exports"], function (exports) {
     "cancelation-template.hbs": "<h5>Running tasks: {{count}}</h5>\n\n<button {{action 'performTask'}}>Perform Task</button>\n{{#if count}}\n  <button {{action 'cancelAll'}}>Cancel All</button>\n{{/if}}\n{{#if mostRecent.isRunning}}\n  <button {{action 'cancelMostRecent'}}>Cancel Most Recent</button>\n{{/if}}",
     "cancelation.js": "const WAIT_HERE_FOREVER = Ember.RSVP.defer().promise;\nexport default Ember.Controller.extend({\n  count: 0,\n  mostRecent: null,\n\n  myTask: task(function * () {\n    try {\n      this.incrementProperty('count');\n      yield WAIT_HERE_FOREVER;\n    } finally {\n      // finally blocks always get called,\n      // even when the task is being canceled\n      this.decrementProperty('count');\n    }\n  }),\n\n  actions: {\n    performTask() {\n      let task = this.get('myTask');\n      let taskInstance = task.perform();\n      this.set('mostRecent', taskInstance);\n    },\n\n    cancelAll() {\n      this.get('myTask').cancelAll();\n    },\n\n    cancelMostRecent() {\n      this.get('mostRecent').cancel();\n    },\n  }\n});",
     "caps-marquee.js": "  marqueeLoop: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      this.set('formattedText', text);\n      yield timeout(1500);\n      for (let i = 0; i < text.length; ++i) {\n        this.set('formattedText', capitalizeAt(text, i));\n        yield timeout(50);\n      }\n    }\n  }).on('init'),",
+    "child-tasks-template.hbs": "<h5>{{status}}</h5>\n\n<ul>\n  <li>Parent Task:     {{parentTask.state}}</li>\n  <li>Child Task:      {{childTask.state}}</li>\n  <li>Grandchild Task: {{grandchildTask.state}}</li>\n</ul>\n\n<button {{action parentTask.perform}}>\n  {{#if parentTask.isRunning}}\n    Restart Parent Task\n  {{else}}\n    Perform Parent Task\n  {{/if}}\n</button>",
+    "child-tasks.js": "export default Ember.Controller.extend({\n  status: \"Waiting to start\",\n\n  parentTask: task(function * () {\n    this.set('status', \"1. Parent: one moment...\");\n    yield timeout(1000);\n    let value = yield this.get('childTask').perform();\n    this.set('status', `5. Parent: child says \"${value}\"`);\n    yield timeout(1000);\n    this.set('status', \"6. Done!\");\n  }).restartable(),\n\n  childTask: task(function * () {\n    this.set('status', \"2. Child: one moment...\");\n    yield timeout(1000);\n    let value = yield this.get('grandchildTask').perform();\n    this.set('status', `4. Child: grandchild says \"${value}\"`);\n    yield timeout(1000);\n    return \"What's up\";\n  }),\n\n  grandchildTask: task(function * () {\n    this.set('status', \"3. Grandchild: one moment...\");\n    yield timeout(1000);\n    return \"Hello\";\n  }),\n});",
     "debounced-search-with-cancelation-template.hbs": "  {{#power-select search=searchRepo.perform\n                  selected=selected\n                  onchange=(action (mut selected)) as |repo|}}\n    {{repo.full_name}}\n  {{/power-select}}",
     "debounced-search-with-cancelation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because this\n    // task is `.restartable()`, if the user starts typing again,\n    // the current search will be canceled at this point and\n    // start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `https://api.github.com/search/repositories?q=${term}`;\n\n    // We yield an AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield cancelableGetJSON(url);\n    return json.items;\n  }).restartable(),\n});",
     "ember-app-config.js": "var app = new EmberApp({\n  babel: {\n    includePolyfill: true,\n\n    // you might need this too, depending on your version of babel\n    // browserPolyfill: true,\n  },\n});\n\n",
@@ -4744,7 +5039,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.3+f4bfc555"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.4"});
 }
 
 /* jshint ignore:end */
