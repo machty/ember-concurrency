@@ -95185,9 +95185,9 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     _defer: null,
     promise: null,
 
-    _proceed: function _proceed(index, nextValue) {
+    _proceed: function _proceed(index, nextValue, method) {
       this._dispose();
-      _ember['default'].run.once(this, this._takeStep, index, nextValue);
+      _ember['default'].run.once(this, this._takeStep, index, nextValue, method);
     },
 
     _hasBegunShutdown: false,
@@ -95214,7 +95214,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       }
     },
 
-    _takeStep: function _takeStep(index, nextValue) {
+    _takeStep: function _takeStep(index, nextValue, method) {
       var _this2 = this;
 
       if (index !== this._index) {
@@ -95232,7 +95232,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
           result = { done: true, value: undefined };
         }
       } else {
-        result = this._takeSafeStep(nextValue, 'next');
+        result = this._takeSafeStep(nextValue, method || 'next');
       }
 
       var _result = result;
@@ -95261,10 +95261,10 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       this._disposable = observable.subscribe(function (v) {
         _this2._proceed(index, v);
       }, function (error) {
-        _this2._finalize(_ember['default'].RSVP.reject(error));
+        _this2._proceed(index, error, 'throw');
       }, function () {
-        // TODO: test me
-        //opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
+        // TODO: test, and figure out what it means to yield
+        // something that completes without producing a value.
       });
     }
   });
@@ -95284,6 +95284,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     } else if (typeof value.then === 'function') {
       return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
         value.then(publish, publish.error);
+        return value.__ec_dispose__;
       });
     } else if (typeof value.subscribe === 'function') {
       // TODO: check for scheduler interface for Rx rather than
@@ -95555,7 +95556,34 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     });
   }
 });
-define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-evented-observable', 'ember-concurrency/-task-instance'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyEventedObservable, _emberConcurrencyTaskInstance) {
+define('ember-concurrency/-yieldables', ['exports', 'ember', 'ember-concurrency/-task-instance'], function (exports, _ember, _emberConcurrencyTaskInstance) {
+  'use strict';
+
+  exports.all = all;
+
+  function all(items) {
+    var defer = _ember['default'].RSVP.defer();
+    _ember['default'].RSVP.Promise.all(items).then(defer.resolve, defer.reject);
+
+    var hasCancelled = false;
+    var cancelAll = function cancelAll() {
+      if (hasCancelled) {
+        return;
+      }
+      hasCancelled = true;
+      items.forEach(function (it) {
+        if (it instanceof _emberConcurrencyTaskInstance['default']) {
+          it.cancel();
+        }
+      });
+    };
+
+    var promise = defer.promise['finally'](cancelAll);
+    promise.__ec_dispose__ = cancelAll;
+    return promise;
+  }
+});
+define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-evented-observable', 'ember-concurrency/-task-instance', 'ember-concurrency/-yieldables'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyEventedObservable, _emberConcurrencyTaskInstance, _emberConcurrencyYieldables) {
   'use strict';
 
   exports.task = task;
@@ -95609,6 +95637,7 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   exports.createObservable = _emberConcurrencyUtils.createObservable;
   exports.forEach = _emberConcurrencyTaskProperty.forEach;
   exports.Cancelation = _emberConcurrencyTaskInstance.Cancelation;
+  exports.all = _emberConcurrencyYieldables.all;
 });
 define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _ember) {
   'use strict';

@@ -2419,7 +2419,7 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
     appController: _ember["default"].inject.controller('application'),
 
     tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.getting-started", title: "Getting Started" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { route: "docs.cancelation", title: "Cancelation" }, { route: "docs.lifetime", title: "Lifetime" }, { route: "docs.child-tasks", title: "Child Tasks" }, { title: "Examples", route: "docs.examples",
-      children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" }, { route: "docs.examples.route-tasks", title: "Route Tasks" }]
+      children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" }, { route: "docs.examples.route-tasks", title: "Route Tasks" }, { route: "docs.examples.joining-tasks", title: "Joining Multiple Tasks" }]
     }],
 
     flatContents: computed(function () {
@@ -3106,6 +3106,328 @@ define("dummy/docs/examples/index/template", ["exports"], function (exports) {
       statements: [],
       locals: [],
       templates: []
+    };
+  })());
+});
+define('dummy/docs/examples/joining-tasks/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+
+  var WORDS = ['ember', 'tomster', 'swag', 'yolo', 'turbo', 'ajax'];
+  function randomWord() {
+    return WORDS[Math.floor(Math.random() * WORDS.length)];
+  }
+
+  var ProgressTracker = _ember['default'].Object.extend({
+    id: null,
+    percent: 0,
+    word: null
+  });
+
+  exports['default'] = _ember['default'].Controller.extend({
+    status: "Waiting...",
+    trackers: null,
+
+    // BEGIN-SNIPPET joining-tasks
+    parent: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      var trackers, childTasks, id, tracker, words;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            trackers = [], childTasks = [];
+
+            for (id = 0; id < 5; ++id) {
+              tracker = ProgressTracker.create({ id: id });
+
+              trackers.push(tracker);
+              childTasks.push(this.get('child').perform(tracker));
+            }
+
+            this.set('trackers', trackers);
+            this.set('status', "Waiting for child tasks to complete...");
+            context$1$0.next = 6;
+            return (0, _emberConcurrency.all)(childTasks);
+
+          case 6:
+            words = context$1$0.sent;
+
+            this.set('status', 'Done: ' + words.join(', '));
+
+          case 8:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    })).restartable(),
+
+    child: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0(tracker) {
+      var percent, word;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            percent = 0;
+            context$1$0.next = 3;
+            return (0, _emberConcurrency.timeout)(500);
+
+          case 3:
+            if (!(percent < 100)) {
+              context$1$0.next = 10;
+              break;
+            }
+
+            percent = Math.min(100, Math.floor(percent + Math.random() * 20));
+            tracker.set('percent', percent);
+            context$1$0.next = 8;
+            return (0, _emberConcurrency.timeout)(Math.random() * 100 + 100);
+
+          case 8:
+            context$1$0.next = 3;
+            break;
+
+          case 10:
+            word = randomWord();
+
+            tracker.set('word', word);
+            return context$1$0.abrupt('return', word);
+
+          case 13:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    })).maxConcurrency(3),
+    // END-SNIPPET
+
+    colors: ['#ff8888', '#88ff88', '#8888ff']
+  });
+});
+define("dummy/docs/examples/joining-tasks/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      var child0 = (function () {
+        return {
+          meta: {
+            "fragmentReason": false,
+            "revision": "Ember@2.2.0",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 36,
+                "column": 6
+              },
+              "end": {
+                "line": 38,
+                "column": 6
+              }
+            },
+            "moduleName": "dummy/docs/examples/joining-tasks/template.hbs"
+          },
+          isEmpty: false,
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("        Word: ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var morphs = new Array(1);
+            morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+            return morphs;
+          },
+          statements: [["content", "tracker.word", ["loc", [null, [37, 14], [37, 30]]]]],
+          locals: [],
+          templates: []
+        };
+      })();
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 32,
+              "column": 0
+            },
+            "end": {
+              "line": 41,
+              "column": 0
+            }
+          },
+          "moduleName": "dummy/docs/examples/joining-tasks/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "progress-outer");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("div");
+          dom.setAttribute(el2, "class", "progress-inner");
+          var el3 = dom.createTextNode("\n      Progress: ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("%\n");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("    ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1, 1]);
+          var morphs = new Array(3);
+          morphs[0] = dom.createAttrMorph(element0, 'style');
+          morphs[1] = dom.createMorphAt(element0, 1, 1);
+          morphs[2] = dom.createMorphAt(element0, 3, 3);
+          return morphs;
+        },
+        statements: [["attribute", "style", ["subexpr", "progress-style", [["get", "tracker.percent", ["loc", [null, [34, 55], [34, 70]]]], ["get", "tracker.id", ["loc", [null, [34, 71], [34, 81]]]], ["get", "colors", ["loc", [null, [34, 82], [34, 88]]]]], [], ["loc", [null, [34, 38], [34, 90]]]]], ["content", "tracker.percent", ["loc", [null, [35, 16], [35, 35]]]], ["block", "if", [["get", "tracker.word", ["loc", [null, [36, 12], [36, 24]]]]], [], 0, null, ["loc", [null, [36, 6], [38, 13]]]]],
+        locals: ["tracker"],
+        templates: [child0]
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.2.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 45,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/examples/joining-tasks/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Joining Multiple Tasks (or, cancelable Promise.all)");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("strong");
+        var el3 = dom.createTextNode("ember-concurrency");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" provides a Task-aware variant of\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("a");
+        dom.setAttribute(el2, "href", "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all");
+        var el3 = dom.createTextNode("Promise.all");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(",\n  which can be used in cases where a parent task wants to wait\n  for multiple child tasks to run to completion (or throw an error)\n  before continuing onward. Unlike ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("Promise.all");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(", it has\n  the added benefit that if the parent task is canceled (or restarts),\n  all of the child tasks will be automatically canceled. Similarly,\n  if any of the child tasks throws an error, all other child tasks\n  are immediately canceled.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Live Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Click the Start button below (and try clicking it while the tasks are running).\n  Note how ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".maxConcurrency(3)");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" ensures that only 3 progress tasks\n  run at a time, but if you restart the task while it's running, it immediately\n  starts 3 tasks after canceling the previous ones.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Status: ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element1 = dom.childAt(fragment, [10, 1]);
+        var morphs = new Array(5);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [8]), 1, 1);
+        morphs[1] = dom.createElementMorph(element1);
+        morphs[2] = dom.createMorphAt(element1, 1, 1);
+        morphs[3] = dom.createMorphAt(fragment, 12, 12, contextualElement);
+        morphs[4] = dom.createMorphAt(fragment, 14, 14, contextualElement);
+        return morphs;
+      },
+      statements: [["content", "status", ["loc", [null, [24, 12], [24, 22]]]], ["element", "action", [["get", "parent.perform", ["loc", [null, [27, 19], [27, 33]]]]], [], ["loc", [null, [27, 10], [27, 35]]]], ["inline", "if", [["get", "parent.isRunning", ["loc", [null, [28, 9], [28, 25]]]], "Restart", "Start"], [], ["loc", [null, [28, 4], [28, 45]]]], ["block", "each", [["get", "trackers", ["loc", [null, [32, 8], [32, 16]]]]], [], 0, null, ["loc", [null, [32, 0], [41, 9]]]], ["inline", "code-snippet", [], ["name", "joining-tasks.js"], ["loc", [null, [43, 0], [43, 40]]]]],
+      locals: [],
+      templates: [child0]
     };
   })());
 });
@@ -5318,6 +5640,24 @@ define('dummy/helpers/pick-from', ['exports', 'ember'], function (exports, _embe
 
   exports['default'] = _ember['default'].Helper.helper(pickFrom);
 });
+define('dummy/helpers/progress-style', ['exports', 'ember'], function (exports, _ember) {
+  var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
+  exports.progressStyleHelper = progressStyleHelper;
+
+  function progressStyleHelper(_ref /*, hash*/) {
+    var _ref2 = _slicedToArray(_ref, 3);
+
+    var percent = _ref2[0];
+    var id = _ref2[1];
+    var colors = _ref2[2];
+
+    var color = colors[id % colors.length];
+    return new _ember['default'].Handlebars.SafeString('width: ' + percent + '%; background-color: ' + color + ';');
+  }
+
+  exports['default'] = _ember['default'].Helper.helper(progressStyleHelper);
+});
 define('dummy/helpers/scale', ['exports', 'ember'], function (exports, _ember) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
@@ -5507,6 +5847,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
         this.route('route-tasks', function () {
           this.route('detail', { path: ':id' });
         });
+        this.route('joining-tasks');
       });
     });
   });
@@ -5543,6 +5884,7 @@ define("dummy/snippets", ["exports"], function (exports) {
     "increment-button.js": "function sendPress() {\n  this.sendAction('press');\n}\n\nfunction sendRelease() {\n  this.sendAction('release');\n}\n\nexport default Ember.Component.extend({\n  tagName: 'button',\n\n  touchStart: sendPress,\n  mouseDown:  sendPress,\n  touchEnd:   sendRelease,\n  mouseLeave: sendRelease,\n  mouseUp:    sendRelease,\n});",
     "intro-task-oldschool.js": "import Ember from 'ember';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  startCounting() {\n    this.cancelTimer();\n    this.set('count', 0);\n    this.step();\n  },\n\n  step() {\n    if (this.count < 5) {\n      this.incrementProperty('count');\n      this.timerId = Ember.run.later(this, this.step, 300);\n    } else {\n      this.set('count', \"DONE!\");\n    }\n  },\n\n  willDestroy() {\n    this.cancelTimer();\n  },\n\n  cancelTimer() {\n    if (this.timerId) {\n      Ember.run.cancel(this.timerId);\n      this.timerId = null;\n    }\n  },\n\n  actions: {\n    startCounting() {\n      this.startCounting();\n    }\n  }\n});",
     "intro-task.js": "import Ember from 'ember';\nimport { task, timeout } from 'ember-concurrency';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  countingTask: task(function * () {\n    this.set('count', 0);\n    while (this.count < 5) {\n      this.incrementProperty('count');\n      yield timeout(300);\n    }\n    this.set('count', \"DONE!\");\n  }).restartable()\n});",
+    "joining-tasks.js": "  parent: task(function * () {\n    let trackers = [], childTasks = [];\n    for (let id = 0; id < 5; ++id) {\n      let tracker = ProgressTracker.create({ id });\n      trackers.push(tracker);\n      childTasks.push(this.get('child').perform(tracker));\n    }\n\n    this.set('trackers', trackers);\n    this.set('status', \"Waiting for child tasks to complete...\");\n    let words = yield all(childTasks);\n    this.set('status', `Done: ${words.join(', ')}`);\n  }).restartable(),\n\n  child: task(function * (tracker) {\n    let percent = 0;\n    yield timeout(500);\n    while (percent < 100) {\n      percent = Math.min(100, Math.floor(percent + Math.random() * 20));\n      tracker.set('percent', percent);\n      yield timeout(Math.random() * 100 + 100);\n    }\n    let word = randomWord();\n    tracker.set('word', word);\n    return word;\n  }).maxConcurrency(3),",
     "lifetime-template.hbs": "<h5>\n  Count-up:\n  {{#if isDisplaying}}\n    {{count-up}}\n  {{else}}\n    ...\n  {{/if}}\n</h5>",
     "lifetime.js": "export default Ember.Controller.extend({\n  isDisplaying: false,\n\n  togglingLoop: task(function * () {\n    while (true) {\n      this.toggleProperty('isDisplaying');\n      yield timeout(1500);\n    }\n  }).on('init'),\n});",
     "loading-ui-controller.js": "export default Ember.Controller.extend({\n  askQuestion: task(function * () {\n    yield timeout(1000);\n    this.set('result', Math.random());\n  }).drop(),\n\n  result: null,\n});",
@@ -5890,7 +6232,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.5+a848bc23"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.6"});
 }
 
 /* jshint ignore:end */
