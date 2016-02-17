@@ -1,4 +1,8 @@
 # Changelog
+### 0.5.6:
+ - added cancelable variant of Promise.all for joining multiple
+   child tasks.
+
 ### 0.5.5:
  - added task(...).cancelOn('eventName'), which calls cancelAll()
    on the task whenever the event is fired
