@@ -57,7 +57,7 @@ test("all cancels all other joined tasks if one of them fails", function(assert)
           task.perform(),
         ]);
       } catch(e) {
-        assert.deepEqual(e, { wat: 'lol' });
+        assert.equal(e.wat, 'lol');
       }
     }),
 
