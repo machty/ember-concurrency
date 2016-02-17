@@ -37,19 +37,22 @@ section {
 
 .progress-outer {
   position: relative;
-  border: 1px solid black;
-  height: 20px;
+  height: 40px;
+  margin-bottom: 10px;
 }
 
 .progress-inner {
   position: absolute;
-  background-color: blue;
   left: 0;
   top: 0;
   bottom: 0;
   width: 0%;
   transition: width 0.5s;
-  -webkit-transition: width 0.5s;
+  -webkit-transition: width 1s;
+  white-space: nowrap;
+  line-height: 100%;
+  border-radius: 3px;
+  line-height: 40px;
 }
 
 

@@ -23,6 +23,7 @@ Router.map(function() {
       this.route('route-tasks', function() {
         this.route('detail', { path: ':id' });
       });
+      this.route('joining-tasks');
     });
   });
 });

@@ -1,0 +1,44 @@
+<h3>Joining Multiple Tasks (or, cancelable Promise.all)</h3>
+
+<p>
+  <strong>ember-concurrency</strong> provides a Task-aware variant of
+  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">Promise.all</a>,
+  which can be used in cases where a parent task wants to wait
+  for multiple child tasks to run to completion (or throw an error)
+  before continuing onward. Unlike <code>Promise.all</code>, it has
+  the added benefit that if the parent task is canceled (or restarts),
+  all of the child tasks will be automatically canceled. Similarly,
+  if any of the child tasks throws an error, all other child tasks
+  are immediately canceled.
+</p>
+
+<h3>Live Example</h3>
+
+<p>
+  Click the Start button below (and try clicking it while the tasks are running).
+  Note how <code>.maxConcurrency(3)</code> ensures that only 3 progress tasks
+  run at a time, but if you restart the task while it's running, it immediately
+  starts 3 tasks after canceling the previous ones.
+</p>
+
+<h5>Status: {{status}}</h5>
+
+<p>
+  <button {{action parent.perform}}>
+    {{if parent.isRunning 'Restart' 'Start'}}
+  </button>
+</p>
+
+{{#each trackers as |tracker|}}
+  <div class="progress-outer">
+    <div class="progress-inner" style={{progress-style tracker.percent tracker.id colors}}>
+      Progress: {{tracker.percent}}%
+      {{#if tracker.word}}
+        Word: {{tracker.word}}
+      {{/if}}
+    </div>
+  </div>
+{{/each}}
+
+{{code-snippet name="joining-tasks.js"}}
+

@@ -21,6 +21,7 @@ export default Ember.Controller.extend({
         {route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons"},
         {route: "docs.examples.ajax-throttling", title: "AJAX Throttling"},
         {route: "docs.examples.route-tasks", title: "Route Tasks"},
+        {route: "docs.examples.joining-tasks", title: "Joining Multiple Tasks"},
       ]
     },
   ],
