@@ -95094,7 +95094,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     };
   }
 
-  exports['default'] = _ember['default'].Object.extend({
+  var TaskInstance = _ember['default'].Object.extend({
     iterator: null,
     _disposable: null,
     isCanceled: false,
@@ -95133,8 +95133,8 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
           return;
         }
 
-        if (e && e.name === 'TaskCancelation') {
-          // prevent RSVP onError
+        if (e && e.name === 'TaskCancelation' && e.taskInstance === _this) {
+          // swallow cancelations that belong to the same task.
         } else {
             return _ember['default'].RSVP.reject(e);
           }
@@ -95173,6 +95173,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       }
       var error = new Error("TaskCancelation");
       error.name = "TaskCancelation";
+      error.taskInstance = this;
       this._reject(error);
       this.set('isCanceled', true);
     },
@@ -95259,8 +95260,8 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
       this._disposable = observable.subscribe(function (v) {
         _this2._proceed(index, v);
-      }, function () {
-        _ember['default'].assert("not implemented yet", false);
+      }, function (error) {
+        _this2._finalize(_ember['default'].RSVP.reject(error));
       }, function () {
         // TODO: test me
         //opsIterator.proceed(index, NEXT, null); // replace with "no value" token?
@@ -95269,11 +95270,22 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
   });
 
   function normalizeObservable(value) {
-    if (value && typeof value.then === 'function') {
+    if (!value) {
+      return null;
+    }
+
+    if (value instanceof TaskInstance) {
+      return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
+        value.then(publish, publish.error);
+        return function () {
+          value.cancel();
+        };
+      });
+    } else if (typeof value.then === 'function') {
       return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
         value.then(publish, publish.error);
       });
-    } else if (value && typeof value.subscribe === 'function') {
+    } else if (typeof value.subscribe === 'function') {
       // TODO: check for scheduler interface for Rx rather than
       // creating another wrapping observable to schedule on run loop.
       return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
@@ -95283,6 +95295,8 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       return null;
     }
   }
+
+  exports['default'] = TaskInstance;
 });
 define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance'], function (exports, _ember, _emberConcurrencyTaskInstance) {
   'use strict';
@@ -95384,10 +95398,10 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
 
       this._needsFlush = _ember['default'].run.bind(this, this._scheduleFlush);
 
-      cleanupOnDestroy(this.context, this, 'cancel');
+      cleanupOnDestroy(this.context, this, 'cancelAll');
     },
 
-    cancel: function cancel() {
+    cancelAll: function cancelAll() {
       spliceTaskInstances(this._activeTaskInstances, 0, this._activeTaskInstances.length);
       spliceTaskInstances(this._queuedTaskInstances, 0, this._queuedTaskInstances.length);
     },

@@ -1519,12 +1519,360 @@ define('dummy/controllers/array', ['exports', 'ember'], function (exports, _embe
 define('dummy/controllers/object', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller;
 });
+define('dummy/docs/cancelation/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  var computed = _ember['default'].computed;
+
+  // BEGIN-SNIPPET cancelation
+  var WAIT_HERE_FOREVER = _ember['default'].RSVP.defer().promise;
+  exports['default'] = _ember['default'].Controller.extend({
+    count: 0,
+    mostRecent: null,
+
+    myTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            context$1$0.prev = 0;
+
+            this.incrementProperty('count');
+            context$1$0.next = 4;
+            return WAIT_HERE_FOREVER;
+
+          case 4:
+            context$1$0.prev = 4;
+
+            // finally blocks always get called,
+            // even when the task is being canceled
+            this.decrementProperty('count');
+            return context$1$0.finish(4);
+
+          case 7:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this, [[0,, 4, 7]]);
+    })),
+
+    actions: {
+      performTask: function performTask() {
+        var task = this.get('myTask');
+        var taskInstance = task.perform();
+        this.set('mostRecent', taskInstance);
+      },
+
+      cancelAll: function cancelAll() {
+        this.get('myTask').cancelAll();
+      },
+
+      cancelMostRecent: function cancelMostRecent() {
+        this.get('mostRecent').cancel();
+      }
+    }
+  });
+
+  // END-SNIPPET
+});
+define("dummy/docs/cancelation/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 41,
+              "column": 0
+            },
+            "end": {
+              "line": 43,
+              "column": 0
+            }
+          },
+          "moduleName": "dummy/docs/cancelation/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("button");
+          var el2 = dom.createTextNode("Cancel All");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element1 = dom.childAt(fragment, [1]);
+          var morphs = new Array(1);
+          morphs[0] = dom.createElementMorph(element1);
+          return morphs;
+        },
+        statements: [["element", "action", ["cancelAll"], [], ["loc", [null, [42, 10], [42, 32]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 44,
+              "column": 0
+            },
+            "end": {
+              "line": 46,
+              "column": 0
+            }
+          },
+          "moduleName": "dummy/docs/cancelation/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("button");
+          var el2 = dom.createTextNode("Cancel Most Recent");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1]);
+          var morphs = new Array(1);
+          morphs[0] = dom.createElementMorph(element0);
+          return morphs;
+        },
+        statements: [["element", "action", ["cancelMostRecent"], [], ["loc", [null, [45, 10], [45, 39]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.2.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 60,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/cancelation/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Cancelation");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("strong");
+        var el3 = dom.createTextNode("ember-concurrency");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" tasks can be canceled either\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("em");
+        var el3 = dom.createTextNode("explicitly");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" (by calling one of the cancel methods\n  on a task or task instance) or ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("em");
+        var el3 = dom.createTextNode("implicitly");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" (based on\n  how the task is configured, or because the task's host object\n  was destroyed).\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Generally speaking, it is ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("em");
+        var el3 = dom.createTextNode("much");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" better to configure your tasks properly\n  (via ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(")\n  such that they'll be implicitly/automatically canceled at\n  the right time, but there are still some cases where\n  explicit cancelation is the only option.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Explicit Cancelation");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  There are two ways to explicitly cancel a task:\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ol");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("Call ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("task.cancelAll()");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" on the Task object —\n    this will cancel all running or enqueued Task Instances for that\n    task.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("Call ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("taskInstance.cancel()");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" on a Task Instance\n    (the object returned from a prior call to ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("task.perform()");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(")\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Running tasks: ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("button");
+        var el2 = dom.createTextNode("Perform Task");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("em");
+        var el3 = dom.createTextNode("\n    Tip: You can also use the ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".concurrency");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" property to get\n    the current number of running task instances for a given task,\n    e.g. ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("{{myTask.concurrency}}");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(": ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element2 = dom.childAt(fragment, [16]);
+        var morphs = new Array(8);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [4]), 3, 3);
+        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [14]), 1, 1);
+        morphs[2] = dom.createElementMorph(element2);
+        morphs[3] = dom.createMorphAt(fragment, 18, 18, contextualElement);
+        morphs[4] = dom.createMorphAt(fragment, 19, 19, contextualElement);
+        morphs[5] = dom.createMorphAt(dom.childAt(fragment, [21, 1]), 5, 5);
+        morphs[6] = dom.createMorphAt(fragment, 23, 23, contextualElement);
+        morphs[7] = dom.createMorphAt(fragment, 25, 25, contextualElement);
+        return morphs;
+      },
+      statements: [["inline", "link-to", ["Task Modifiers", "docs.task-concurrency"], [], ["loc", [null, [13, 7], [13, 59]]]], ["content", "count", ["loc", [null, [38, 19], [38, 28]]]], ["element", "action", ["performTask"], [], ["loc", [null, [40, 8], [40, 32]]]], ["block", "if", [["get", "count", ["loc", [null, [41, 6], [41, 11]]]]], [], 0, null, ["loc", [null, [41, 0], [43, 7]]]], ["block", "if", [["get", "mostRecent.isRunning", ["loc", [null, [44, 6], [44, 26]]]]], [], 1, null, ["loc", [null, [44, 0], [46, 7]]]], ["content", "myTask.concurrency", ["loc", [null, [53, 47], [53, 69]]]], ["inline", "code-snippet", [], ["name", "cancelation-template.hbs"], ["loc", [null, [57, 0], [57, 48]]]], ["inline", "code-snippet", [], ["name", "cancelation.js"], ["loc", [null, [58, 0], [58, 38]]]]],
+      locals: [],
+      templates: [child0, child1]
+    };
+  })());
+});
 define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember) {
   var computed = _ember["default"].computed;
   exports["default"] = _ember["default"].Controller.extend({
     appController: _ember["default"].inject.controller('application'),
 
-    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.getting-started", title: "Getting Started" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { title: "Examples", route: "docs.examples",
+    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.getting-started", title: "Getting Started" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { route: "docs.cancelation", title: "Cancelation" }, { title: "Examples", route: "docs.examples",
       children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }]
     }],
 
@@ -1575,8 +1923,8 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
 });
 define('dummy/docs/examples/autocomplete/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
 
-  // Wrap the $.getJSON API so that it's cancellable.
-  function cancellableGetJSON(url) {
+  // Wrap the $.getJSON API so that it's cancelable.
+  function cancelableGetJSON(url) {
     return (0, _emberConcurrency.createObservable)(function (publish) {
       var xhr = _ember['default'].$.getJSON(url);
       xhr.then(publish, publish.error);
@@ -1587,7 +1935,7 @@ define('dummy/docs/examples/autocomplete/controller', ['exports', 'ember', 'embe
     });
   }
 
-  // BEGIN-SNIPPET debounced-search-with-cancellation
+  // BEGIN-SNIPPET debounced-search-with-cancelation
   var DEBOUNCE_MS = 250;
   exports['default'] = _ember['default'].Controller.extend({
     searchRepo: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0(term) {
@@ -1609,7 +1957,7 @@ define('dummy/docs/examples/autocomplete/controller', ['exports', 'ember', 'embe
           case 4:
             url = 'https://api.github.com/search/repositories?q=' + term;
             context$1$0.next = 7;
-            return cancellableGetJSON(url);
+            return cancelableGetJSON(url);
 
           case 7:
             json = context$1$0.sent;
@@ -1628,7 +1976,7 @@ define('dummy/docs/examples/autocomplete/controller', ['exports', 'ember', 'embe
 
 // Pause here for DEBOUNCE_MS milliseconds. Because this
 // task is `.restartable()`, if the user starts typing again,
-// the current search will be cancelled at this point and
+// the current search will be canceled at this point and
 // start over from the beginning. This is the
 // ember-concurrency way of debouncing a task.
 
@@ -1782,7 +2130,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
         morphs[2] = dom.createMorphAt(fragment, 16, 16, contextualElement);
         return morphs;
       },
-      statements: [["block", "power-select", [], ["search", ["subexpr", "@mut", [["get", "searchRepo.perform", ["loc", [null, [20, 25], [20, 43]]]]], [], []], "selected", ["subexpr", "@mut", [["get", "selected", ["loc", [null, [21, 27], [21, 35]]]]], [], []], "onchange", ["subexpr", "action", [["subexpr", "mut", [["get", "selected", ["loc", [null, [22, 40], [22, 48]]]]], [], ["loc", [null, [22, 35], [22, 49]]]]], [], ["loc", [null, [22, 27], [22, 50]]]]], 0, null, ["loc", [null, [20, 2], [24, 19]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancellation.js"], ["loc", [null, [30, 0], [30, 61]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancellation-template.hbs"], ["loc", [null, [34, 0], [34, 71]]]]],
+      statements: [["block", "power-select", [], ["search", ["subexpr", "@mut", [["get", "searchRepo.perform", ["loc", [null, [20, 25], [20, 43]]]]], [], []], "selected", ["subexpr", "@mut", [["get", "selected", ["loc", [null, [21, 27], [21, 35]]]]], [], []], "onchange", ["subexpr", "action", [["subexpr", "mut", [["get", "selected", ["loc", [null, [22, 40], [22, 48]]]]], [], ["loc", [null, [22, 35], [22, 49]]]]], [], ["loc", [null, [22, 27], [22, 50]]]]], 0, null, ["loc", [null, [20, 2], [24, 19]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation.js"], ["loc", [null, [30, 0], [30, 60]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation-template.hbs"], ["loc", [null, [34, 0], [34, 70]]]]],
       locals: [],
       templates: [child0]
     };
@@ -2569,7 +2917,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode("Tasks");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(", which are asynchronous,\n  cancellable operations that are bound to the lifetime of the object they live on,\n  which means when the host object is destroyed (e.g. a component is unrendered),\n  the task is automatically cancelled. Here is an example of a task:\n");
+        var el2 = dom.createTextNode(", which are asynchronous,\n  cancelable operations that are bound to the lifetime of the object they live on,\n  which means when the host object is destroyed (e.g. a component is unrendered),\n  the task is automatically canceled. Here is an example of a task:\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -2667,7 +3015,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("li");
-        var el3 = dom.createTextNode("\n    You have to break down each step of the asynchronous operation into\n    individually cancellable units\n  ");
+        var el3 = dom.createTextNode("\n    You have to break down each step of the asynchronous operation into\n    individually cancelable units\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
@@ -2838,7 +3186,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode(".restartable()");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" modifier ensures that only one instance\n  of a task is running by cancelling any currently-running tasks and starting\n  a new task instance immediately. Note how there is no task overlap,\n  and how currently running tasks get canceled\n  (");
+        var el2 = dom.createTextNode(" modifier ensures that only one instance\n  of a task is running by canceling any currently-running tasks and starting\n  a new task instance immediately. Note how there is no task overlap,\n  and how currently running tasks get canceled\n  (");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("span");
         dom.setAttribute(el2, "style", "text-decoration:line-through;");
@@ -2970,7 +3318,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("em");
-        var el3 = dom.createTextNode("\n    Use case: you want to centralize app updates in a single task, and you 1)\n    don't want this task to be cancellable and 2) if staleness events occur\n    while the task is running, you only need to respond to the most recent one.\n  ");
+        var el3 = dom.createTextNode("\n    Use case: you want to centralize app updates in a single task, and you 1)\n    don't want this task to be cancelable and 2) if staleness events occur\n    while the task is running, you only need to respond to the most recent one.\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
@@ -3074,7 +3422,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
             "column": 0
           },
           "end": {
-            "line": 62,
+            "line": 61,
             "column": 0
           }
         },
@@ -3117,7 +3465,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
         var el3 = dom.createTextNode(".maxConcurrency(3)");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" applied to them: they each\n  allow 3 running instances before enqueuing, cancelling, or dropping\n  ");
+        var el2 = dom.createTextNode(" applied to them: they each\n  allow 3 running instances before enqueuing, canceling, or dropping\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
         var el3 = dom.createTextNode("perform()");
@@ -3133,7 +3481,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("h4");
-        var el2 = dom.createTextNode(".restartable() with maxConcurrency");
+        var el2 = dom.createTextNode(".restartable() with .maxConcurrency(3)");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -3161,7 +3509,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
         var el1 = dom.createTextNode("\n\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("h4");
-        var el2 = dom.createTextNode(".enqueue() with maxConcurrency");
+        var el2 = dom.createTextNode(".enqueue() with .maxConcurrency(3)");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -3171,7 +3519,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("h4");
-        var el2 = dom.createTextNode(".drop() with maxConcurrency");
+        var el2 = dom.createTextNode(".drop() with .maxConcurrency(3)");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -3181,7 +3529,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("h4");
-        var el2 = dom.createTextNode(".keepLatest() with maxConcurrency");
+        var el2 = dom.createTextNode(".keepLatest() with .maxConcurrency(3)");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -3207,7 +3555,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
+        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         return el0;
       },
@@ -3677,7 +4025,7 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Step one of writing a task is deciding which object it'll live on —\n  an ember-concurrency task is scoped to the lifetime of the object it lives\n  on, such that when that host object is destroyed, the task is cancelled. So if\n  you want the task to cancel when a component is unrendered, put it on a component.\n  If you want it to have a longer life span than a component, perhaps it belongs on\n  a service.\n");
+        var el2 = dom.createTextNode("\n  Step one of writing a task is deciding which object it'll live on —\n  an ember-concurrency task is scoped to the lifetime of the object it lives\n  on, such that when that host object is destroyed, the task is canceled. So if\n  you want the task to cancel when a component is unrendered, put it on a component.\n  If you want it to have a longer life span than a component, perhaps it belongs on\n  a service.\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -4017,6 +4365,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
       this.route('writing-tasks');
       this.route('task-concurrency');
       this.route('task-concurrency-advanced');
+      this.route('cancelation');
       this.route('examples', function () {
         this.route('increment-buttons');
         this.route('loading-ui');
@@ -4039,9 +4388,11 @@ define('dummy/services/ajax', ['exports', 'ember-ajax/services/ajax'], function 
 define("dummy/snippets", ["exports"], function (exports) {
   exports["default"] = {
     "ask-button.hbs": "  <button class={{if askQuestion.isIdle 'button-primary'}}\n    {{action askQuestion.perform}}>\n        {{#if askQuestion.isIdle}}\n          Ask\n        {{else}}\n          Thinking...\n          {{fa-icon \"spinner\" spin=true}}\n        {{/if}}\n  </button>",
+    "cancelation-template.hbs": "<h5>Running tasks: {{count}}</h5>\n\n<button {{action 'performTask'}}>Perform Task</button>\n{{#if count}}\n  <button {{action 'cancelAll'}}>Cancel All</button>\n{{/if}}\n{{#if mostRecent.isRunning}}\n  <button {{action 'cancelMostRecent'}}>Cancel Most Recent</button>\n{{/if}}",
+    "cancelation.js": "const WAIT_HERE_FOREVER = Ember.RSVP.defer().promise;\nexport default Ember.Controller.extend({\n  count: 0,\n  mostRecent: null,\n\n  myTask: task(function * () {\n    try {\n      this.incrementProperty('count');\n      yield WAIT_HERE_FOREVER;\n    } finally {\n      // finally blocks always get called,\n      // even when the task is being canceled\n      this.decrementProperty('count');\n    }\n  }),\n\n  actions: {\n    performTask() {\n      let task = this.get('myTask');\n      let taskInstance = task.perform();\n      this.set('mostRecent', taskInstance);\n    },\n\n    cancelAll() {\n      this.get('myTask').cancelAll();\n    },\n\n    cancelMostRecent() {\n      this.get('mostRecent').cancel();\n    },\n  }\n});",
     "caps-marquee.js": "  marqueeLoop: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      this.set('formattedText', text);\n      yield timeout(1500);\n      for (let i = 0; i < text.length; ++i) {\n        this.set('formattedText', capitalizeAt(text, i));\n        yield timeout(50);\n      }\n    }\n  }).on('init'),",
-    "debounced-search-with-cancellation-template.hbs": "  {{#power-select search=searchRepo.perform\n                  selected=selected\n                  onchange=(action (mut selected)) as |repo|}}\n    {{repo.full_name}}\n  {{/power-select}}",
-    "debounced-search-with-cancellation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because this\n    // task is `.restartable()`, if the user starts typing again,\n    // the current search will be cancelled at this point and\n    // start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `https://api.github.com/search/repositories?q=${term}`;\n\n    // We yield an AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield cancellableGetJSON(url);\n    return json.items;\n  }).restartable(),\n});",
+    "debounced-search-with-cancelation-template.hbs": "  {{#power-select search=searchRepo.perform\n                  selected=selected\n                  onchange=(action (mut selected)) as |repo|}}\n    {{repo.full_name}}\n  {{/power-select}}",
+    "debounced-search-with-cancelation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because this\n    // task is `.restartable()`, if the user starts typing again,\n    // the current search will be canceled at this point and\n    // start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `https://api.github.com/search/repositories?q=${term}`;\n\n    // We yield an AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield cancelableGetJSON(url);\n    return json.items;\n  }).restartable(),\n});",
     "ember-app-config.js": "var app = new EmberApp({\n  babel: {\n    includePolyfill: true,\n\n    // you might need this too, depending on your version of babel\n    // browserPolyfill: true,\n  },\n});\n\n",
     "ember-install.sh": "ember install ember-concurrency\n",
     "increment-button-task.js": "export default Ember.Controller.extend({\n  count: 0,\n  incrementBy: task(function * (inc) {\n    if (!inc) { return; }\n\n    let speed = 400;\n    while (true) {\n      this.incrementProperty('count', inc);\n      yield timeout(speed);\n      speed = Math.max(50, speed * 0.8);\n    }\n  }).restartable(),\n});",
@@ -4153,7 +4504,7 @@ define("dummy/templates/index", ["exports"], function (exports) {
         var el5 = dom.createTextNode("Ember Addon");
         dom.appendChild(el4, el5);
         dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode(" that enables\n      you to write concise, worry-free, cancellable, restartable, asynchronous tasks.\n    ");
+        var el4 = dom.createTextNode(" that enables\n      you to write concise, worry-free, cancelable, restartable, asynchronous tasks.\n    ");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n  ");
@@ -4310,7 +4661,7 @@ define("dummy/templates/index", ["exports"], function (exports) {
         var el4 = dom.createTextNode(" and takes care of all the messy stuff:\n      tearing down asynchronous tasks (and ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("strong");
-        var el5 = dom.createTextNode("cancelling");
+        var el5 = dom.createTextNode("canceling");
         dom.appendChild(el4, el5);
         dom.appendChild(el3, el4);
         var el4 = dom.createTextNode(" them where possible, \n      e.g. ");
@@ -4393,7 +4744,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.3+cfaa930c"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.3+f4bfc555"});
 }
 
 /* jshint ignore:end */
