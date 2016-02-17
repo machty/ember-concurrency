@@ -18,6 +18,7 @@ Router.map(function() {
       this.route('loading-ui');
       this.route('autocomplete');
       this.route('task-concurrency');
+      this.route('ajax-throttling');
     });
   });
 });
