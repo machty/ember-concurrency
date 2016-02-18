@@ -16,7 +16,7 @@ const RSVP = Ember.RSVP;
  *   are canceled), all of the other unfinished `TaskInstance`s will
  *   be automatically canceled.
  *
- * [Check out the "Awaiting Multiple Child Tasks example"](http://localhost:4207/#/docs/examples/joining-tasks)
+ * [Check out the "Awaiting Multiple Child Tasks example"](/#/docs/examples/joining-tasks)
  *
  * @param {function} generatorFunction the generator function backing the task.
  * @returns {TaskProperty}
@@ -34,7 +34,7 @@ export let all = taskAwareVariantOf(RSVP.Promise, 'all');
  * - once any of the tasks/promises passed in complete (either success, failure,
  *   or cancelation), any of the {@linkcode TaskInstance}s passed in will be canceled
  *
- * [Check out the "Awaiting Multiple Child Tasks example"](http://localhost:4207/#/docs/examples/joining-tasks)
+ * [Check out the "Awaiting Multiple Child Tasks example"](/#/docs/examples/joining-tasks)
  *
  * @param {function} generatorFunction the generator function backing the task.
  * @returns {TaskProperty}
