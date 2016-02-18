@@ -95771,23 +95771,84 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
   }
 
   /**
-    The `Ember.Route` class is used to define individual routes. Refer to
-    the [routing guide](http://emberjs.com/guides/routing/) for documentation.
+    A `TaskInstance` represent a single execution of a
+    {@linkcode Task}. Every call to {@linkcode Task#perform} returns
+    a `TaskInstance`.
   
-    @class Route
-    @namespace Ember
-    @extends Ember.Object
-    @uses Ember.ActionHandler
-    @uses Ember.Evented
-    @public
+    `TaskInstance`s are cancelable, either explicitly
+    via {@linkcode TaskInstance#cancel} or {@linkcode Task#cancelAll},
+    or automatically due to the host object being destroyed, or
+    because concurrency policy enforced by a
+    {@linkcode TaskProperty Task Modifier} canceled the task instance.
+  
+    <style>
+      .ignore-this--this-is-here-to-hide-constructor,
+      #TaskInstance { display: none }
+    </style>
+  
+    @class TaskInstance
   */
   var TaskInstance = _ember['default'].Object.extend({
     iterator: null,
     _disposable: null,
-    isCanceled: false,
-    hasStarted: false,
     _ignorePromiseErrors: false,
 
+    /**
+     * True if the task instance was canceled before it could run to completion.
+     *
+     * @memberof TaskInstance
+     * @instance
+     * @readOnly
+     */
+    isCanceled: false,
+
+    /**
+     * True if the task instance has started, else false.
+     *
+     * @memberof TaskInstance
+     * @instance
+     * @readOnly
+     */
+    hasStarted: false,
+
+    /**
+     * True if the task has run to completion.
+     *
+     * @memberof TaskInstance
+     * @instance
+     * @readOnly
+     */
+    isFinished: false,
+
+    /**
+     * True if the task is still running.
+     *
+     * @memberof TaskInstance
+     * @instance
+     * @readOnly
+     */
+    isRunning: _ember['default'].computed.not('isFinished'),
+
+    /**
+     * Describes the state that the task instance is in. Can be used for debugging,
+     * or potentially driving some UI state. Possible values are:
+     *
+     * - `"dropped"`: task instance was canceled before it started
+     * - `"canceled"`: task instance was canceled before it could finish
+     * - `"finished"`: task instance ran to completion (even if an exception was thrown)
+     * - `"running"`: task instance is currently running (returns true even if
+     *     is paused on a yielded promise)
+     * - `"waiting"`: task instance hasn't begun running yet (usually
+     *     because the task is using the {@linkcode TaskProperty#enqueue .enqueue()}
+     *     task modifier)
+     *
+     * The animated timeline examples on the [Task Concurrency](/#/docs/task-concurrency)
+     * docs page make use of this property.
+     *
+     * @memberof TaskInstance
+     * @instance
+     * @readOnly
+     */
     state: _ember['default'].computed('isDropped', 'isCanceled', 'hasStarted', 'isFinished', function () {
       if (this.get('isDropped')) {
         return 'dropped';
@@ -95802,13 +95863,22 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       }
     }),
 
+    /**
+     * True if the TaskInstance was canceled before it could
+     * ever start running. For example, calling
+     * {@linkcode Task#perform .perform()} twice on a
+     * task with the {@linkcode TaskProperty#drop .drop()} modifier applied
+     * will result in the second task instance being dropped.
+     *
+     * @memberof TaskInstance
+     * @instance
+     * @readOnly
+     */
     isDropped: _ember['default'].computed('isCanceled', 'hasStarted', function () {
       return this.get('isCanceled') && !this.get('hasStarted');
     }),
 
     _index: 1,
-    isFinished: false,
-    isRunning: _ember['default'].computed.not('isFinished'),
 
     init: function init() {
       var _this = this;
@@ -95838,6 +95908,14 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       return this;
     },
 
+    /**
+     * Cancels the task instance. Has no effect if the task instance has
+     * already been canceled or has already finished running.
+     *
+     * @method cancel
+     * @memberof TaskInstance
+     * @instance
+     */
     cancel: function cancel() {
       if (this.isCanceled) {
         return;
@@ -95850,8 +95928,33 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       this._proceed(this._index, undefined);
     },
 
+    /**
+     * Returns a promise that resolves with the value returned
+     * from the task's (generator) function, or rejects with
+     * either the exception thrown from the task function, or
+     * an error with a `.name` property with value `"TaskCancelation"`.
+     *
+     * @method then
+     * @memberof TaskInstance
+     * @instance
+     * @return {Promise}
+     */
     then: forwardToInternalPromise('then'),
+
+    /**
+     * @method catch
+     * @memberof TaskInstance
+     * @instance
+     * @return {Promise}
+     */
     'catch': forwardToInternalPromise('catch'),
+
+    /**
+     * @method finally
+     * @memberof TaskInstance
+     * @instance
+     * @return {Promise}
+     */
     'finally': forwardToInternalPromise('finally'),
 
     _rejectWithCancelation: function _rejectWithCancelation() {
@@ -95870,7 +95973,6 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     },
 
     _defer: null,
-    promise: null,
 
     _proceed: function _proceed(index, nextValue, method) {
       this._dispose();
@@ -96002,13 +96104,13 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
   var ComputedProperty = _ember['default'].__loader.require("ember-metal/computed").ComputedProperty;
   var computed = _ember['default'].computed;
 
-  var saturateActiveQueue = function saturateActiveQueue(taskHandle) {
-    while (taskHandle._activeTaskInstances.length < taskHandle._maxConcurrency) {
-      var taskInstance = taskHandle._queuedTaskInstances.shift();
+  var saturateActiveQueue = function saturateActiveQueue(task) {
+    while (task._activeTaskInstances.length < task._maxConcurrency) {
+      var taskInstance = task._queuedTaskInstances.shift();
       if (!taskInstance) {
         break;
       }
-      taskHandle._activeTaskInstances.push(taskInstance);
+      task._activeTaskInstances.push(taskInstance);
     }
   };
 
@@ -96021,51 +96123,66 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
 
   var enqueueTasksPolicy = {
     requiresUnboundedConcurrency: true,
-    schedule: function schedule(taskHandle) {
+    schedule: function schedule(task) {
       // [a,b,_] [c,d,e,f] becomes
       // [a,b,c] [d,e,f]
-      saturateActiveQueue(taskHandle);
+      saturateActiveQueue(task);
     }
   };
 
   var dropQueuedTasksPolicy = {
-    schedule: function schedule(taskHandle) {
+    schedule: function schedule(task) {
       // [a,b,_] [c,d,e,f] becomes
       // [a,b,c] []
-      saturateActiveQueue(taskHandle);
-      spliceTaskInstances(taskHandle._queuedTaskInstances, 0, taskHandle._queuedTaskInstances.length);
+      saturateActiveQueue(task);
+      spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length);
     }
   };
 
   var cancelOngoingTasksPolicy = {
-    schedule: function schedule(taskHandle) {
+    schedule: function schedule(task) {
       // [a,b,_] [c,d,e,f] becomes
       // [d,e,f] []
-      var activeTaskInstances = taskHandle._activeTaskInstances;
-      var queuedTaskInstances = taskHandle._queuedTaskInstances;
+      var activeTaskInstances = task._activeTaskInstances;
+      var queuedTaskInstances = task._queuedTaskInstances;
       activeTaskInstances.push.apply(activeTaskInstances, _toConsumableArray(queuedTaskInstances));
       queuedTaskInstances.length = 0;
 
-      var numToShift = Math.max(0, activeTaskInstances.length - taskHandle._maxConcurrency);
+      var numToShift = Math.max(0, activeTaskInstances.length - task._maxConcurrency);
       spliceTaskInstances(activeTaskInstances, 0, numToShift);
     }
   };
 
   var dropButKeepLatestPolicy = {
-    schedule: function schedule(taskHandle) {
+    schedule: function schedule(task) {
       // [a,b,_] [c,d,e,f] becomes
       // [d,e,f] []
-      saturateActiveQueue(taskHandle);
-      spliceTaskInstances(taskHandle._queuedTaskInstances, 0, taskHandle._queuedTaskInstances.length - 1);
+      saturateActiveQueue(task);
+      spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length - 1);
     }
   };
 
-  var TaskHandle = _ember['default'].Object.extend({
+  /**
+    The `Task` object lives on a host Ember object (e.g.
+    a Component, Route, or Controller). You call the
+    {@linkcode Task#perform .perform()} method on this object
+    to create run individual {@linkcode TaskInstance}s,
+    and at any point, you can call the {@linkcode Task#cancelAll .cancelAll()}
+    method on this object to cancel all running or enqueued
+    {@linkcode TaskInstance}s.
+  
+  
+    <style>
+      .ignore-this--this-is-here-to-hide-constructor,
+      #Task{ display: none }
+    </style>
+  
+    @class Task
+  */
+  var Task = _ember['default'].Object.extend({
     fn: null,
     context: null,
     bufferPolicy: null,
-    perform: null,
-    concurrency: 0,
     isIdle: computed.equal('concurrency', 0),
     isRunning: _ember['default'].computed.not('isIdle'),
     state: computed('isIdle', function () {
@@ -96074,6 +96191,30 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     _maxConcurrency: Infinity,
     _activeTaskInstances: null,
     _needsFlush: null,
+
+    /**
+     * The current number of active running task instances. This
+     * number will never exceed maxConcurrency.
+     *
+     * @memberof Task
+     * @instance
+     * @readOnly
+     */
+    concurrency: 0,
+
+    /**
+     * Creates a new {@linkcode TaskInstance} and attempts to run it right away.
+     * If running this task instance would increase the task's concurrency
+     * to a number greater than the task's maxConcurrency, this task
+     * instance might be immediately canceled (dropped), or enqueued
+     * to run at later time, after the currently running task(s) have finished.
+     *
+     * @method perform
+     * @memberof Task
+     * @param {*} arg* - args to pass to the task function
+     * @instance
+     */
+    perform: null,
 
     init: function init() {
       var _this = this;
@@ -96092,6 +96233,16 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
       cleanupOnDestroy(this.context, this, 'cancelAll');
     },
 
+    /**
+     * Cancels all running or queued `TaskInstance`s for this Task.
+     * If you're trying to cancel a specific TaskInstance (rather
+     * than all of the instances running under this task) call
+     * `.cancel()` on the specific TaskInstance.
+     *
+     * @method cancelAll
+     * @memberof Task
+     * @instance
+     */
     cancelAll: function cancelAll() {
       spliceTaskInstances(this._activeTaskInstances, 0, this._activeTaskInstances.length);
       spliceTaskInstances(this._queuedTaskInstances, 0, this._queuedTaskInstances.length);
@@ -96134,10 +96285,27 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     }
   });
 
+  /**
+    A {@link TaskProperty} is the Computed Property-like object returned
+    from the {@linkcode task} function. You can call Task Modifier methods
+    on this object to configure the behavior of the {@link Task}.
+  
+    See [Managing Task Concurrency](/#/docs/task-concurrency) for an
+    overview of all the different task modifiers you can use and how
+    they impact automatic cancelation / enqueueing of task instances.
+  
+    <style>
+      .ignore-this--this-is-here-to-hide-constructor,
+      #TaskProperty { display: none }
+    </style>
+  
+    @class TaskProperty
+  */
+
   function TaskProperty(taskFn) {
     var tp = this;
     ComputedProperty.call(this, function () {
-      return TaskHandle.create({
+      return Task.create({
         fn: taskFn,
         context: this,
         bufferPolicy: tp.bufferPolicy,
@@ -96158,42 +96326,150 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     addListenersToPrototype(proto, this.cancelEventNames, keyname, 'cancelAll');
   };
 
+  /**
+   * Calling `task(...).on(eventName)` configures the task to be
+   * automatically performed when the specified events fire. In
+   * this way, it behaves like
+   * [Ember.on](http://emberjs.com/api/classes/Ember.html#method_on).
+   *
+   * You can use `task(...).on('init')` to perform the task
+   * when the host object is initialized.
+   *
+   * ```js
+   * export default Ember.Component.extend({
+   *   pollForUpdates: task(function * () {
+   *     // ... this runs when the Component is first created
+   *     // because we specified .on('init')
+   *   }).on('init'),
+   *
+   *   handleFoo: task(function * (a, b, c) {
+   *     // this gets performed automatically if the 'foo'
+   *     // event fires on this Component,
+   *     // e.g., if someone called component.trigger('foo')
+   *   }).on('foo'),
+   * });
+   * ```
+   *
+   * [See the Writing Tasks Docs for more info](/#/docs/writing-tasks)
+   *
+   * @method on
+   * @memberof TaskProperty
+   * @param {String} eventNames*
+   * @instance
+   */
   TaskProperty.prototype.on = function () {
     this.eventNames = this.eventNames || [];
     this.eventNames.push.apply(this.eventNames, arguments);
     return this;
   };
 
+  /**
+   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
+   * but instead will cause the task to be canceled if any of the
+   * specified events fire on the parent object.
+   *
+   * [See the Live Example](/#/docs/examples/route-tasks/1)
+   *
+   * @method cancelOn
+   * @memberof TaskProperty
+   * @param {String} eventNames*
+   * @instance
+   */
   TaskProperty.prototype.cancelOn = function () {
     this.cancelEventNames = this.cancelEventNames || [];
     this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
     return this;
   };
 
+  /**
+   * Configures the task to cancel old currently task instances
+   * to make room for a new one to perform. Sets default
+   * maxConcurrency to 1.
+   *
+   * [See the Live Example](/#/docs/examples/route-tasks/1)
+   *
+   * @method restartable
+   * @memberof TaskProperty
+   * @instance
+   */
   TaskProperty.prototype.restartable = function () {
     this.bufferPolicy = cancelOngoingTasksPolicy;
     this._setDefaultMaxConcurrency(1);
     return this;
   };
 
+  /**
+   * Configures the task to run task instances one-at-a-time in
+   * the order they were `.perform()`ed. Sets default
+   * maxConcurrency to 1.
+   *
+   * @method enqueue
+   * @memberof TaskProperty
+   * @instance
+   */
   TaskProperty.prototype.enqueue = function () {
     this.bufferPolicy = enqueueTasksPolicy;
     this._setDefaultMaxConcurrency(1);
     return this;
   };
 
+  /**
+   * Configures the task to immediately cancel (i.e. drop) any
+   * task instances performed when the task is already running
+   * at maxConcurrency. Sets default maxConcurrency to 1.
+   *
+   * @method drop
+   * @memberof TaskProperty
+   * @instance
+   */
   TaskProperty.prototype.drop = function () {
     this.bufferPolicy = dropQueuedTasksPolicy;
     this._setDefaultMaxConcurrency(1);
     return this;
   };
 
+  /**
+   * @private
+   */
   TaskProperty.prototype.keepLatest = function () {
     this.bufferPolicy = dropButKeepLatestPolicy;
     this._setDefaultMaxConcurrency(1);
     return this;
   };
 
+  /**
+   * Sets the maximum number of task instances that are allowed
+   * to run at the same time. By default, with no task modifiers
+   * applied, this number is Infinity (there is no limit
+   * to the number of tasks that can run at the same time).
+   * {@linkcode TaskProperty#restartable .restartable()},
+   * {@linkcode TaskProperty#enqueue .enqueue()}, and
+   * {@linkcode TaskProperty#drop .drop()} set the default
+   * maxConcurrency to 1, but you can override this value
+   * to set the maximum number of concurrently running tasks
+   * to a number greater than 1.
+   *
+   * [See the AJAX Throttling example](/#/docs/examples/ajax-throttling)
+   *
+   * The example below uses a task with `maxConcurrency(3)` to limit
+   * the number of concurrent AJAX requests (for anyone using this task)
+   * to 3.
+   *
+   * ```js
+   * doSomeAjax: task(function * (url) {
+   *   return Ember.$.getJSON(url).promise();
+   * }).maxConcurrency(3),
+   *
+   * elsewhere() {
+   *   this.get('doSomeAjax').perform("http://www.example.com/json");
+   * },
+   * ```
+   *
+   * @method maxConcurrency
+   * @memberof TaskProperty
+   * @param {Number} n The maximum number of concurrently running tasks
+   * @instance
+   */
   TaskProperty.prototype.maxConcurrency = function (n) {
     this._maxConcurrency = n;
     return this;
@@ -96216,8 +96492,8 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
 
   function makeListener(taskName, method) {
     return function () {
-      var taskHandle = this.get(taskName);
-      taskHandle[method].apply(taskHandle, arguments);
+      var task = this.get(taskName);
+      task[method].apply(task, arguments);
     };
   }
 
@@ -96248,9 +96524,43 @@ define('ember-concurrency/-yieldables', ['exports', 'ember', 'ember-concurrency/
 
   var RSVP = _ember['default'].RSVP;
 
+  /**
+   * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
+   * The normal version of a `Promise.all` just returns a regular, uncancelable
+   * Promise. The `ember-concurrency` variant of `all()` has the following
+   * additional behavior:
+   *
+   * - if the task that `yield`ed `all()` is canceled, any of the
+   *   {@linkcode TaskInstance}s passed in to `all` will be canceled
+   * - if any of the {@linkcode TaskInstance}s (or regular promises) passed in reject (or
+   *   are canceled), all of the other unfinished `TaskInstance`s will
+   *   be automatically canceled.
+   *
+   * [Check out the "Awaiting Multiple Child Tasks example"](http://localhost:4207/#/docs/examples/joining-tasks)
+   *
+   * @param {function} generatorFunction the generator function backing the task.
+   * @returns {TaskProperty}
+   */
   var all = taskAwareVariantOf(RSVP.Promise, 'all');
+
   exports.all = all;
 
+  /**
+   * A cancelation-aware variant of [Promise.race](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race).
+   * The normal version of a `Promise.race` just returns a regular, uncancelable
+   * Promise. The `ember-concurrency` variant of `race()` has the following
+   * additional behavior:
+   *
+   * - if the task that `yield`ed `race()` is canceled, any of the
+   *   {@linkcode TaskInstance}s passed in to `race` will be canceled
+   * - once any of the tasks/promises passed in complete (either success, failure,
+   *   or cancelation), any of the {@linkcode TaskInstance}s passed in will be canceled
+   *
+   * [Check out the "Awaiting Multiple Child Tasks example"](http://localhost:4207/#/docs/examples/joining-tasks)
+   *
+   * @param {function} generatorFunction the generator function backing the task.
+   * @returns {TaskProperty}
+   */
   var race = taskAwareVariantOf(RSVP.Promise, 'race');
 
   exports.race = race;
@@ -96279,7 +96589,7 @@ define('ember-concurrency/-yieldables', ['exports', 'ember', 'ember-concurrency/
     };
   }
 });
-define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-evented-observable', 'ember-concurrency/-task-instance', 'ember-concurrency/-yieldables'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyEventedObservable, _emberConcurrencyTaskInstance, _emberConcurrencyYieldables) {
+define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-evented-observable', 'ember-concurrency/-yieldables'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyEventedObservable, _emberConcurrencyYieldables) {
   'use strict';
 
   exports.task = task;
@@ -96299,63 +96609,59 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   _ember['default'].assert('ember-concurrency requires that you set babel.includePolyfill to true in your ember-cli-build.js (or Brocfile.js) to ensure that the generator function* syntax is properly transpiled, e.g.:\n\n  var app = new EmberApp({\n    babel: {\n      includePolyfill: true,\n    }\n  });', (0, _emberConcurrencyUtils.isGeneratorIterator)(testIter));
 
   /**
-    * A Task is a cancelable, restartable, asynchronous operation that
-    * is driven by a generator function. Tasks are automatically canceled
-    * when the object they live on is destroyed (e.g. a Component
-    * is unrendered).
-    *
-    * To define a task, use the `task(...)` function, and pass in
-    * a generator function, which will be invoked when the task
-    * is performed. The reason generator functions are used is
-    * that they (like the proposed ES7 async-await syntax) can
-    * be used to elegantly express asynchronous, cancelable
-    * operations.
-    *
-    * The following Component defines a task called `myTask` that,
-    * when performed, prints a message to the console, sleeps for 1 second,
-    * prints a final message to the console, and then completes.
-    *
-    * ```js
-    * export default Component.extend({
-    *   myTask: task(function * () {
-    *     console.log("Pausing for a second...");
-    *     yield timeout(1000);
-    *     console.log("Done!");
-    *   })
-    * });
-    * ```
-    *
-    * ```hbs
-    * <button {{action myTask.perform}}>Perform Task</button>
-    * ```
-    *
-    * @param {function*()} generatorFunction - the generator function backing the task.
-    * @returns {TaskProperty}
-    */
+   * A Task is a cancelable, restartable, asynchronous operation that
+   * is driven by a generator function. Tasks are automatically canceled
+   * when the object they live on is destroyed (e.g. a Component
+   * is unrendered).
+   *
+   * To define a task, use the `task(...)` function, and pass in
+   * a generator function, which will be invoked when the task
+   * is performed. The reason generator functions are used is
+   * that they (like the proposed ES7 async-await syntax) can
+   * be used to elegantly express asynchronous, cancelable
+   * operations.
+   *
+   * The following Component defines a task called `myTask` that,
+   * when performed, prints a message to the console, sleeps for 1 second,
+   * prints a final message to the console, and then completes.
+   *
+   * ```js
+   * import { task, timeout } from 'ember-concurrency';
+   * export default Component.extend({
+   *   myTask: task(function * () {
+   *     console.log("Pausing for a second...");
+   *     yield timeout(1000);
+   *     console.log("Done!");
+   *   })
+   * });
+   * ```
+   *
+   * ```hbs
+   * <button {{action myTask.perform}}>Perform Task</button>
+   * ```
+   *
+   * By default, tasks have no concurrency constraints
+   * (multiple instances of a task can be running at the same time)
+   * but much of a power of tasks lies in proper usage of Task Modifiers
+   * that you can apply to a task.
+   *
+   * @param {function} generatorFunction the generator function backing the task.
+   * @returns {TaskProperty}
+   */
 
   function task(generatorFunction) {
     return new _emberConcurrencyTaskProperty.TaskProperty(generatorFunction);
   }
 
-  _ember['default'].Evented.reopen({
-    on: function on() {
-      if (arguments.length === 1) {
-        return _emberConcurrencyEventedObservable.EventedObservable.create({ obj: this, eventName: arguments[0] });
-      } else {
-        return this._super.apply(this, arguments);
-      }
-    }
-  });
-
   /**
-   @private
+   * @private
    */
   var _numIntervals = 0;
 
   exports._numIntervals = _numIntervals;
 
   /**
-   @private
+   * @private
    */
 
   function interval(ms) {
@@ -96370,34 +96676,33 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   }
 
   /**
-    * Yielding `timeout(ms)` will pause a task for the duration
-    * of time passed in, in milliseconds.
-    *
-    * The task below, when performed, will print a message to the
-    * console every second.
-    *
-    * ```js
-    * export default Component.extend({
-    *   myTask: task(function * () {
-    *     while (true) {
-    *       console.log("Hello!");
-    *       yield timeout(1000);
-    *     }
-    *   })
-    * });
-    * ```
-    *
-    * @param {number} ms - the amount of time to sleep before resuming
-    *   the task, in milliseconds
-    */
+   *
+   * Yielding `timeout(ms)` will pause a task for the duration
+   * of time passed in, in milliseconds.
+   *
+   * The task below, when performed, will print a message to the
+   * console every second.
+   *
+   * ```js
+   * export default Component.extend({
+   *   myTask: task(function * () {
+   *     while (true) {
+   *       console.log("Hello!");
+   *       yield timeout(1000);
+   *     }
+   *   })
+   * });
+   * ```
+   *
+   * @param {number} ms - the amount of time to sleep before resuming
+   *   the task, in milliseconds
+   */
 
   function timeout(ms) {
     return interval(ms);
   }
 
   exports.createObservable = _emberConcurrencyUtils.createObservable;
-  exports.forEach = _emberConcurrencyTaskProperty.forEach;
-  exports.Cancelation = _emberConcurrencyTaskInstance.Cancelation;
   exports.all = _emberConcurrencyYieldables.all;
   exports.race = _emberConcurrencyYieldables.race;
 });

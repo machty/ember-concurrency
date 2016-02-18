@@ -1,151 +1,96 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset='utf-8' />
-  <title>  | Documentation</title>
-  <meta name='viewport' content='width=device-width,initial-scale=1'>
-  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Code+Pro:400,500,700' rel='stylesheet' type='text/css'>
-  <link href='assets/bass-afe4af4ba4681fb8ba270a1e35993e4b.css' type='text/css' rel='stylesheet' />
-  <link href='assets/style-9bb8624744e7ee5deb4492f7569135cb.css' type='text/css' rel='stylesheet' />
-  <link href='assets/github-f1ddc0616df73a089fd7262301b9eb8a.css' type='text/css' rel='stylesheet' />
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js" integrity="sha256-4uV247xgfNF5/1EZRwEPZF00QaNTE67A29BsRDf4O3c= sha512-cWK7m0Z2gnQvbYfqlDAAAAZPxU4VGTw9flpPiY8K191VutjwGTPrYlqxoPSoGR1wYuGsvsZRLuYQ0sDEE8CzSg==" > </script>
+    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js" integrity="sha256-m2rEgwM7AlcnFOtNN+4ZkYXEEAjrKz9GoAqw685qIMU= sha512-I7qoWRmUBxiLMXpr0MqXWzZaRC7iYXw6t1j9IRkcGqaFQiOkRd4l8rIPpIvTtqB+IZ82fVjCAGGymC7nBXj/Bw==" > </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow-3559834dc32d2cad6adeb2d2fed40e18.css" integrity="sha256-zInEqaMwHPE1XRPTqnMP2uZOEEYFQ2zjcasAv2R1nXg= sha512-DNQDuSSkAzc46N+QWE3KS1L9bV0TmwsRxFLYlC6kX3SP8nJmMl/33DgpGRmNKkm+TppbqCWXPhhin5iHk2K+WQ==" >
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default-ae260dbf3da9b55f508cf5f0e0692c75.css" integrity="sha256-Lt+BUW2LloVa18IoHxlqx0pFWuFeX5uiMj/ZgL1XtZs= sha512-Ck58In4yxY9dQKwfz4hzsWRvZ5vJelyCE4fHt+Sdx4zSss8NZPCeYlfY4+vioLHuVLB3YAtTKApR6L1jV7+HJQ==" >
 </head>
-<body class='documentation'>
-  <div class='container'>
-    <div class='clearfix md-mxn2'>
-      <div class='fixed md-show fix-3 overflow-auto max-height-100'>
-        <div class='py1 px2'>
-          <h3 class='mb0 no-anchor'></h3>
-          <div class='mb1'><code></code></div>
-          <input
-            placeholder='Filter'
-            id='filter-input'
-            class='col12 block field'
-            type='text' />
-          <div id='toc'>
-              <a
-                href='#Route'
-                class='block bold'>
-                Route
-              </a>
-              <a
-                href='#isDropped'
-                class='block bold'>
-                isDropped
-              </a>
-              <a
-                href='#task'
-                class='block bold'>
-                task
-              </a>
-              <a
-                href='#timeout'
-                class='block bold'>
-                timeout
-              </a>
-          </div>
-        </div>
-      </div>
-      <div class='fix-margin-3'>
-        <div class='px2'>
-<div class='py1'><section class='py2 clearfix'>
-  <h2 id='Route' class='mt0'>
-    Route<span class='gray'></span>
-  </h2>
-    <p>
-      Extends
-        Ember.Object
-    </p>
-  <p>The <code>Ember.Route</code> class is used to define individual routes. Refer to
-the <a href="http://emberjs.com/guides/routing/">routing guide</a> for documentation.</p>
 
-</section>
-</div><div class='py1'><section class='py2 clearfix'>
-  <h2 id='isDropped' class='mt0'>
-    isDropped<span class='gray'></span>
-  </h2>
-  <p>Ioiadsoaijdi oads ioajdjois</p>
+<body>
 
-</section>
-</div><div class='py1'><section class='py2 clearfix'>
-  <h2 id='task' class='mt0'>
-    task<span class='gray'>(generatorFunction)</span>
-  </h2>
-  <p>A Task is a cancelable, restartable, asynchronous operation that
-is driven by a generator function. Tasks are automatically canceled
-when the object they live on is destroyed (e.g. a Component
-is unrendered).</p>
-<p>To define a task, use the <code>task(...)</code> function, and pass in
-a generator function, which will be invoked when the task
-is performed. The reason generator functions are used is
-that they (like the proposed ES7 async-await syntax) can
-be used to elegantly express asynchronous, cancelable
-operations.</p>
-<p>The following Component defines a task called <code>myTask</code> that,
-when performed, prints a message to the console, sleeps for 1 second,
-prints a final message to the console, and then completes.</p>
-<pre><code class="language-js">export default Component.extend({
-  myTask: task(function * () {
-    console.log(&quot;Pausing for a second...&quot;);
-    yield timeout(1000);
-    console.log(&quot;Done!&quot;);
-  })
-});
-</code></pre>
-<pre><code class="language-hbs">&lt;button {{action myTask.perform}}&gt;Perform Task&lt;/button&gt;
-</code></pre>
+<div id="main">
 
-    <h4>Parameters</h4>
-    <ul class='suppress-p-margin'>
-        <li> <strong>generatorFunction</strong>
-          :
-          <div class='force-inline'>
-            
-          </div>
-        </li>
-    </ul>
-      <h4>Returns</h4>
-      <code><code>TaskProperty</code></code>
-      
-      <div class='force-inline'>
-        
-      </div>
-</section>
-</div><div class='py1'><section class='py2 clearfix'>
-  <h2 id='timeout' class='mt0'>
-    timeout<span class='gray'>(ms)</span>
-  </h2>
-  <p>Yielding <code>timeout(ms)</code> will pause a task for the duration
-of time passed in, in milliseconds.</p>
-<p>The task below, when performed, will print a message to the
-console every second.</p>
-<pre><code class="language-js">export default Component.extend({
-  myTask: task(function * () {
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h2>ember-concurrency API docs</h2><p>All of <code>ember-concurrency</code>'s public API is available
+on the <code>&quot;ember-concurrency&quot;</code> module, and
+most of the time, you'll only be using the <code>task</code> and <code>timeout</code>
+imports, e.g.:</p>
+<pre class="prettyprint source lang-js"><code>import { task, timeout } from 'ember-concurrency';
+
+export default Component.extend({
+  loopingTask: task(function * () {
     while (true) {
-      console.log(&quot;Hello!&quot;);
-      yield timeout(1000);
+      this.set('num', Math.random());
+      yield timeout(100);
     }
-  })
-});
-</code></pre>
+  }).on('init')
+});</code></pre><h2>Task Modifiers</h2><p>You can find a description of all the Task Modifiers
+under the <a href="TaskProperty.html">Task Property API docs</a>.</p>
+<ul>
+<li><a href="TaskProperty.html#enqueue">.enqueue()</a></li>
+<li><a href="TaskProperty.html#drop">.drop()</a></li>
+<li><a href="TaskProperty.html#maxConcurrency">.maxConcurrency()</a></li>
+</ul>
+<h2>The full API</h2><pre class="prettyprint source lang-js"><code>import {
+  task,    // task macro
+  timeout, // pause execution
 
-    <h4>Parameters</h4>
-    <ul class='suppress-p-margin'>
-        <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code> <strong>ms</strong>
-          :
-          <div class='force-inline'>
-            <p>the amount of time to sleep before resuming
-the task, in milliseconds</p>
+  // Task/cancelation-aware variants of Promise.all/race
+  all,
+  race,
+} from 'ember-concurrency';</code></pre></article>
+    </section>
 
-          </div>
-        </li>
-    </ul>
-</section>
+
+
+
+
+
 </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src='assets/anchor-26d1fa1d1f9ff222a70a950e682e394a.js'></script>
-  <script src='assets/site-37f455043539b35a7f2082dd04ffbec2.js' integrity="sha256-jAQToGWSv9K1Q7lnPueZ9DMVQjwzg/K1OJknQbCb39A= sha512-vPdjITPobaTz5E4+IBll/n2oStvrD8eix6XWB0d/5Plty+clhS8QGOqeOmy/luWuxaI403UhE3nfdMUB8gzRdQ==" ></script>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#timeout">timeout</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Feb 18 2016 12:50:08 GMT-0500 (EST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber-8520038fe7381ba8119956a342d21580.js" integrity="sha256-vMEFelUNCGXNj868DnUxt2Im0l1C69+oyrwR8jFMN4c= sha512-wMQT+ilyfMWGE+hfya4aHTkRssI1sZ4CANq+avFb+SRSfITBRUUxlSgAZC11+ry8dr+eMW2CgVJggPXncHTwEQ==" > </script>
 </body>
 </html>

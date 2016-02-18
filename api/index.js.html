@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: index.js</title>
+
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js" integrity="sha256-4uV247xgfNF5/1EZRwEPZF00QaNTE67A29BsRDf4O3c= sha512-cWK7m0Z2gnQvbYfqlDAAAAZPxU4VGTw9flpPiY8K191VutjwGTPrYlqxoPSoGR1wYuGsvsZRLuYQ0sDEE8CzSg==" > </script>
+    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js" integrity="sha256-m2rEgwM7AlcnFOtNN+4ZkYXEEAjrKz9GoAqw685qIMU= sha512-I7qoWRmUBxiLMXpr0MqXWzZaRC7iYXw6t1j9IRkcGqaFQiOkRd4l8rIPpIvTtqB+IZ82fVjCAGGymC7nBXj/Bw==" > </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow-3559834dc32d2cad6adeb2d2fed40e18.css" integrity="sha256-zInEqaMwHPE1XRPTqnMP2uZOEEYFQ2zjcasAv2R1nXg= sha512-DNQDuSSkAzc46N+QWE3KS1L9bV0TmwsRxFLYlC6kX3SP8nJmMl/33DgpGRmNKkm+TppbqCWXPhhin5iHk2K+WQ==" >
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default-ae260dbf3da9b55f508cf5f0e0692c75.css" integrity="sha256-Lt+BUW2LloVa18IoHxlqx0pFWuFeX5uiMj/ZgL1XtZs= sha512-Ck58In4yxY9dQKwfz4hzsWRvZ5vJelyCE4fHt+Sdx4zSss8NZPCeYlfY4+vioLHuVLB3YAtTKApR6L1jV7+HJQ==" >
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: index.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import Ember from 'ember';
+import { isGeneratorIterator, createObservable } from './utils';
+import { TaskProperty } from './-task-property';
+import { EventedObservable } from './-evented-observable';
+import { all, race } from './-yieldables';
+
+let testGenFn = function * () {};
+let testIter = testGenFn();
+Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to true in your ember-cli-build.js (or Brocfile.js) to ensure that the generator function* syntax is properly transpiled, e.g.:
+
+  var app = new EmberApp({
+    babel: {
+      includePolyfill: true,
+    }
+  });`, isGeneratorIterator(testIter));
+
+/**
+ * A Task is a cancelable, restartable, asynchronous operation that
+ * is driven by a generator function. Tasks are automatically canceled
+ * when the object they live on is destroyed (e.g. a Component
+ * is unrendered).
+ *
+ * To define a task, use the `task(...)` function, and pass in
+ * a generator function, which will be invoked when the task
+ * is performed. The reason generator functions are used is
+ * that they (like the proposed ES7 async-await syntax) can
+ * be used to elegantly express asynchronous, cancelable
+ * operations.
+ *
+ * The following Component defines a task called `myTask` that,
+ * when performed, prints a message to the console, sleeps for 1 second,
+ * prints a final message to the console, and then completes.
+ *
+ * ```js
+ * import { task, timeout } from 'ember-concurrency';
+ * export default Component.extend({
+ *   myTask: task(function * () {
+ *     console.log("Pausing for a second...");
+ *     yield timeout(1000);
+ *     console.log("Done!");
+ *   })
+ * });
+ * ```
+ *
+ * ```hbs
+ * &lt;button {{action myTask.perform}}>Perform Task&lt;/button>
+ * ```
+ *
+ * By default, tasks have no concurrency constraints
+ * (multiple instances of a task can be running at the same time)
+ * but much of a power of tasks lies in proper usage of Task Modifiers
+ * that you can apply to a task.
+ *
+ * @param {function} generatorFunction the generator function backing the task.
+ * @returns {TaskProperty}
+ */
+export function task(generatorFunction) {
+  return new TaskProperty(generatorFunction);
+}
+
+/**
+ * @private
+ */
+export let _numIntervals = 0;
+
+/**
+ * @private
+ */
+export function interval(ms) {
+  return createObservable(publish => {
+    let intervalId = setInterval(publish, ms);
+    _numIntervals++;
+    return () => {
+      clearInterval(intervalId);
+      _numIntervals--;
+    };
+  });
+}
+
+/**
+ *
+ * Yielding `timeout(ms)` will pause a task for the duration
+ * of time passed in, in milliseconds.
+ *
+ * The task below, when performed, will print a message to the
+ * console every second.
+ *
+ * ```js
+ * export default Component.extend({
+ *   myTask: task(function * () {
+ *     while (true) {
+ *       console.log("Hello!");
+ *       yield timeout(1000);
+ *     }
+ *   })
+ * });
+ * ```
+ *
+ * @param {number} ms - the amount of time to sleep before resuming
+ *   the task, in milliseconds
+ */
+export function timeout(ms) {
+  return interval(ms);
+}
+
+export { createObservable, all, race };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#timeout">timeout</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Feb 18 2016 12:50:08 GMT-0500 (EST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber-8520038fe7381ba8119956a342d21580.js" integrity="sha256-vMEFelUNCGXNj868DnUxt2Im0l1C69+oyrwR8jFMN4c= sha512-wMQT+ilyfMWGE+hfya4aHTkRssI1sZ4CANq+avFb+SRSfITBRUUxlSgAZC11+ry8dr+eMW2CgVJggPXncHTwEQ==" > </script>
+</body>
+</html>

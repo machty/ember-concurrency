@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: TaskProperty</title>
+
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js" integrity="sha256-4uV247xgfNF5/1EZRwEPZF00QaNTE67A29BsRDf4O3c= sha512-cWK7m0Z2gnQvbYfqlDAAAAZPxU4VGTw9flpPiY8K191VutjwGTPrYlqxoPSoGR1wYuGsvsZRLuYQ0sDEE8CzSg==" > </script>
+    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js" integrity="sha256-m2rEgwM7AlcnFOtNN+4ZkYXEEAjrKz9GoAqw685qIMU= sha512-I7qoWRmUBxiLMXpr0MqXWzZaRC7iYXw6t1j9IRkcGqaFQiOkRd4l8rIPpIvTtqB+IZ82fVjCAGGymC7nBXj/Bw==" > </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow-3559834dc32d2cad6adeb2d2fed40e18.css" integrity="sha256-zInEqaMwHPE1XRPTqnMP2uZOEEYFQ2zjcasAv2R1nXg= sha512-DNQDuSSkAzc46N+QWE3KS1L9bV0TmwsRxFLYlC6kX3SP8nJmMl/33DgpGRmNKkm+TppbqCWXPhhin5iHk2K+WQ==" >
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default-ae260dbf3da9b55f508cf5f0e0692c75.css" integrity="sha256-Lt+BUW2LloVa18IoHxlqx0pFWuFeX5uiMj/ZgL1XtZs= sha512-Ck58In4yxY9dQKwfz4hzsWRvZ5vJelyCE4fHt+Sdx4zSss8NZPCeYlfY4+vioLHuVLB3YAtTKApR6L1jV7+HJQ==" >
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: TaskProperty</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>TaskProperty</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="TaskProperty"><span class="type-signature"></span>new TaskProperty<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>A <a href="TaskProperty.html">TaskProperty</a> is the Computed Property-like object returned
+  from the <a href="global.html#task"><code>task</code></a> function. You can call Task Modifier methods
+  on this object to configure the behavior of the <a href="Task.html">Task</a>.</p>
+<p>  See <a href="/#/docs/task-concurrency">Managing Task Concurrency</a> for an
+  overview of all the different task modifiers you can use and how
+  they impact automatic cancelation / enqueueing of task instances.</p>
+  <style>
+    .ignore-this--this-is-here-to-hide-constructor,
+    #TaskProperty { display: none }
+  </style>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line180">line 180</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="cancelOn"><span class="type-signature"></span>cancelOn<span class="signature">(eventNames*)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>This behaves like the <a href="TaskProperty.html#on"><code>task(...).on() modifier</code></a>,
+but instead will cause the task to be canceled if any of the
+specified events fire on the parent object.</p>
+<p><a href="/#/docs/examples/route-tasks/1">See the Live Example</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eventNames*</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line257">line 257</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="drop"><span class="type-signature"></span>drop<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Configures the task to immediately cancel (i.e. drop) any
+task instances performed when the task is already running
+at maxConcurrency. Sets default maxConcurrency to 1.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line307">line 307</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="enqueue"><span class="type-signature"></span>enqueue<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Configures the task to run task instances one-at-a-time in
+the order they were <code>.perform()</code>ed. Sets default
+maxConcurrency to 1.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line292">line 292</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="maxConcurrency"><span class="type-signature"></span>maxConcurrency<span class="signature">(n)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Sets the maximum number of task instances that are allowed
+to run at the same time. By default, with no task modifiers
+applied, this number is Infinity (there is no limit
+to the number of tasks that can run at the same time).
+<a href="TaskProperty.html#restartable"><code>.restartable()</code></a>,
+<a href="TaskProperty.html#enqueue"><code>.enqueue()</code></a>, and
+<a href="TaskProperty.html#drop"><code>.drop()</code></a> set the default
+maxConcurrency to 1, but you can override this value
+to set the maximum number of concurrently running tasks
+to a number greater than 1.</p>
+<p><a href="/#/docs/examples/ajax-throttling">See the AJAX Throttling example</a></p>
+<p>The example below uses a task with <code>maxConcurrency(3)</code> to limit
+the number of concurrent AJAX requests (for anyone using this task)
+to 3.</p>
+<pre class="prettyprint source lang-js"><code>doSomeAjax: task(function * (url) {
+  return Ember.$.getJSON(url).promise();
+}).maxConcurrency(3),
+
+elsewhere() {
+  this.get('doSomeAjax').perform(&quot;http://www.example.com/json&quot;);
+},</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>n</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The maximum number of concurrently running tasks</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line331">line 331</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="on"><span class="type-signature"></span>on<span class="signature">(eventNames*)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Calling <code>task(...).on(eventName)</code> configures the task to be
+automatically performed when the specified events fire. In
+this way, it behaves like
+<a href="http://emberjs.com/api/classes/Ember.html#method_on">Ember.on</a>.</p>
+<p>You can use <code>task(...).on('init')</code> to perform the task
+when the host object is initialized.</p>
+<pre class="prettyprint source lang-js"><code>export default Ember.Component.extend({
+  pollForUpdates: task(function * () {
+    // ... this runs when the Component is first created
+    // because we specified .on('init')
+  }).on('init'),
+
+  handleFoo: task(function * (a, b, c) {
+    // this gets performed automatically if the 'foo'
+    // event fires on this Component,
+    // e.g., if someone called component.trigger('foo')
+  }).on('foo'),
+});</code></pre><p><a href="/#/docs/writing-tasks">See the Writing Tasks Docs for more info</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eventNames*</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line220">line 220</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="restartable"><span class="type-signature"></span>restartable<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Configures the task to cancel old currently task instances
+to make room for a new one to perform. Sets default
+maxConcurrency to 1.</p>
+<p><a href="/#/docs/examples/route-tasks/1">See the Live Example</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line275">line 275</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#timeout">timeout</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Feb 18 2016 12:50:08 GMT-0500 (EST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber-8520038fe7381ba8119956a342d21580.js" integrity="sha256-vMEFelUNCGXNj868DnUxt2Im0l1C69+oyrwR8jFMN4c= sha512-wMQT+ilyfMWGE+hfya4aHTkRssI1sZ4CANq+avFb+SRSfITBRUUxlSgAZC11+ry8dr+eMW2CgVJggPXncHTwEQ==" > </script>
+</body>
+</html>
