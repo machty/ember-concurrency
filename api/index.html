@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>  | Documentation</title>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Code+Pro:400,500,700' rel='stylesheet' type='text/css'>
+  <link href='assets/bass-afe4af4ba4681fb8ba270a1e35993e4b.css' type='text/css' rel='stylesheet' />
+  <link href='assets/style-9bb8624744e7ee5deb4492f7569135cb.css' type='text/css' rel='stylesheet' />
+  <link href='assets/github-f1ddc0616df73a089fd7262301b9eb8a.css' type='text/css' rel='stylesheet' />
+</head>
+<body class='documentation'>
+  <div class='container'>
+    <div class='clearfix md-mxn2'>
+      <div class='fixed md-show fix-3 overflow-auto max-height-100'>
+        <div class='py1 px2'>
+          <h3 class='mb0 no-anchor'></h3>
+          <div class='mb1'><code></code></div>
+          <input
+            placeholder='Filter'
+            id='filter-input'
+            class='col12 block field'
+            type='text' />
+          <div id='toc'>
+              <a
+                href='#Route'
+                class='block bold'>
+                Route
+              </a>
+              <a
+                href='#isDropped'
+                class='block bold'>
+                isDropped
+              </a>
+              <a
+                href='#task'
+                class='block bold'>
+                task
+              </a>
+              <a
+                href='#timeout'
+                class='block bold'>
+                timeout
+              </a>
+          </div>
+        </div>
+      </div>
+      <div class='fix-margin-3'>
+        <div class='px2'>
+<div class='py1'><section class='py2 clearfix'>
+  <h2 id='Route' class='mt0'>
+    Route<span class='gray'></span>
+  </h2>
+    <p>
+      Extends
+        Ember.Object
+    </p>
+  <p>The <code>Ember.Route</code> class is used to define individual routes. Refer to
+the <a href="http://emberjs.com/guides/routing/">routing guide</a> for documentation.</p>
+
+</section>
+</div><div class='py1'><section class='py2 clearfix'>
+  <h2 id='isDropped' class='mt0'>
+    isDropped<span class='gray'></span>
+  </h2>
+  <p>Ioiadsoaijdi oads ioajdjois</p>
+
+</section>
+</div><div class='py1'><section class='py2 clearfix'>
+  <h2 id='task' class='mt0'>
+    task<span class='gray'>(generatorFunction)</span>
+  </h2>
+  <p>A Task is a cancelable, restartable, asynchronous operation that
+is driven by a generator function. Tasks are automatically canceled
+when the object they live on is destroyed (e.g. a Component
+is unrendered).</p>
+<p>To define a task, use the <code>task(...)</code> function, and pass in
+a generator function, which will be invoked when the task
+is performed. The reason generator functions are used is
+that they (like the proposed ES7 async-await syntax) can
+be used to elegantly express asynchronous, cancelable
+operations.</p>
+<p>The following Component defines a task called <code>myTask</code> that,
+when performed, prints a message to the console, sleeps for 1 second,
+prints a final message to the console, and then completes.</p>
+<pre><code class="language-js">export default Component.extend({
+  myTask: task(function * () {
+    console.log(&quot;Pausing for a second...&quot;);
+    yield timeout(1000);
+    console.log(&quot;Done!&quot;);
+  })
+});
+</code></pre>
+<pre><code class="language-hbs">&lt;button {{action myTask.perform}}&gt;Perform Task&lt;/button&gt;
+</code></pre>
+
+    <h4>Parameters</h4>
+    <ul class='suppress-p-margin'>
+        <li> <strong>generatorFunction</strong>
+          :
+          <div class='force-inline'>
+            
+          </div>
+        </li>
+    </ul>
+      <h4>Returns</h4>
+      <code><code>TaskProperty</code></code>
+      
+      <div class='force-inline'>
+        
+      </div>
+</section>
+</div><div class='py1'><section class='py2 clearfix'>
+  <h2 id='timeout' class='mt0'>
+    timeout<span class='gray'>(ms)</span>
+  </h2>
+  <p>Yielding <code>timeout(ms)</code> will pause a task for the duration
+of time passed in, in milliseconds.</p>
+<p>The task below, when performed, will print a message to the
+console every second.</p>
+<pre><code class="language-js">export default Component.extend({
+  myTask: task(function * () {
+    while (true) {
+      console.log(&quot;Hello!&quot;);
+      yield timeout(1000);
+    }
+  })
+});
+</code></pre>
+
+    <h4>Parameters</h4>
+    <ul class='suppress-p-margin'>
+        <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code> <strong>ms</strong>
+          :
+          <div class='force-inline'>
+            <p>the amount of time to sleep before resuming
+the task, in milliseconds</p>
+
+          </div>
+        </li>
+    </ul>
+</section>
+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src='assets/anchor-26d1fa1d1f9ff222a70a950e682e394a.js'></script>
+  <script src='assets/site-37f455043539b35a7f2082dd04ffbec2.js' integrity="sha256-jAQToGWSv9K1Q7lnPueZ9DMVQjwzg/K1OJknQbCb39A= sha512-vPdjITPobaTz5E4+IBll/n2oStvrD8eix6XWB0d/5Plty+clhS8QGOqeOmy/luWuxaI403UhE3nfdMUB8gzRdQ==" ></script>
+</body>
+</html>
