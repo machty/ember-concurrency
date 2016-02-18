@@ -6270,7 +6270,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.6+5c915e4e"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.6+49a30168"});
 }
 
 /* jshint ignore:end */
