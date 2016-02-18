@@ -1,6 +1,9 @@
 # Changelog
 ### 0.5.6:
- - added cancelable variant of Promise.all for joining multiple
+ - added Task-aware/cancelable variant of Promise.race
+
+### 0.5.6:
+ - added Task-aware/cancelable variant of Promise.all for joining multiple
    child tasks.
 
 ### 0.5.5:
