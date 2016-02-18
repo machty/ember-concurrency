@@ -1,3 +1,6 @@
+/**
+ @module ember-concurrency
+*/
 import Ember from 'ember';
 import { isGeneratorIterator, createObservable } from './utils';
 import { TaskProperty, forEach } from './-task-property';
@@ -15,6 +18,11 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
     }
   });`, isGeneratorIterator(testIter));
 
+/**
+  @method task
+  @param func {Function} the generator function backing the task.
+  @returns {TaskProperty}
+*/
 export function task(func) {
   return new TaskProperty(func);
 }
@@ -46,5 +54,3 @@ export function timeout(ms) {
 }
 
 export { createObservable, forEach, Cancelation, all, race };
-
-
