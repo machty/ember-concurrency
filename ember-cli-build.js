@@ -8,11 +8,6 @@ module.exports = function(defaults) {
       enabled: false
     },
 
-    babel: {
-      includePolyfill: true,
-      browserPolyfill: true,
-    },
-
     snippetPaths: ['tests/dummy/snippets'],
     snippetSearchPaths: ['app', 'tests/dummy/app', 'addon'],
 
