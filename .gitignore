@@ -21,3 +21,6 @@ TODO.md
 deploy.sh
 
 /docs
+.vscode
+tests/dummy/public/api
+

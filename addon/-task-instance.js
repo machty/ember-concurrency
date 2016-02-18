@@ -1,8 +1,6 @@
 import Ember from 'ember';
 import { createObservable } from './utils';
 
-export function Cancelation() {}
-
 function forwardToInternalPromise(method) {
   return function(...args) {
     this._ignorePromiseErrors = true;
@@ -10,13 +8,86 @@ function forwardToInternalPromise(method) {
   };
 }
 
+
+/**
+  A `TaskInstance` represent a single execution of a
+  {@linkcode Task}. Every call to {@linkcode Task#perform} returns
+  a `TaskInstance`.
+
+  `TaskInstance`s are cancelable, either explicitly
+  via {@linkcode TaskInstance#cancel} or {@linkcode Task#cancelAll},
+  or automatically due to the host object being destroyed, or
+  because concurrency policy enforced by a
+  {@linkcode TaskProperty Task Modifier} canceled the task instance.
+
+  <style>
+    .ignore-this--this-is-here-to-hide-constructor,
+    #TaskInstance { display: none }
+  </style>
+
+  @class TaskInstance
+*/
 let TaskInstance = Ember.Object.extend({
   iterator: null,
   _disposable: null,
-  isCanceled: false,
-  hasStarted: false,
   _ignorePromiseErrors: false,
 
+  /**
+   * True if the task instance was canceled before it could run to completion.
+   *
+   * @memberof TaskInstance
+   * @instance
+   * @readOnly
+   */
+  isCanceled: false,
+
+  /**
+   * True if the task instance has started, else false.
+   *
+   * @memberof TaskInstance
+   * @instance
+   * @readOnly
+   */
+  hasStarted: false,
+
+  /**
+   * True if the task has run to completion.
+   *
+   * @memberof TaskInstance
+   * @instance
+   * @readOnly
+   */
+  isFinished: false,
+
+  /**
+   * True if the task is still running.
+   *
+   * @memberof TaskInstance
+   * @instance
+   * @readOnly
+   */
+  isRunning: Ember.computed.not('isFinished'),
+
+  /**
+   * Describes the state that the task instance is in. Can be used for debugging,
+   * or potentially driving some UI state. Possible values are:
+   *
+   * - `"dropped"`: task instance was canceled before it started
+   * - `"canceled"`: task instance was canceled before it could finish
+   * - `"finished"`: task instance ran to completion (even if an exception was thrown)
+   * - `"running"`: task instance is currently running (returns true even if
+   *     is paused on a yielded promise)
+   * - `"waiting"`: task instance hasn't begun running yet (usually
+   *     because the task is using the {@linkcode TaskProperty#enqueue .enqueue()}
+   *     task modifier)
+   *
+   * The animated timeline examples on the [Task Concurrency](/#/docs/task-concurrency)
+   * docs page make use of this property.
+   *
+   * @memberof TaskInstance
+   * @instance
+   * @readOnly
+   */
   state: Ember.computed('isDropped', 'isCanceled', 'hasStarted', 'isFinished', function() {
     if (this.get('isDropped')) {
       return 'dropped';
@@ -31,13 +102,22 @@ let TaskInstance = Ember.Object.extend({
     }
   }),
 
+  /**
+   * True if the TaskInstance was canceled before it could
+   * ever start running. For example, calling
+   * {@linkcode Task#perform .perform()} twice on a
+   * task with the {@linkcode TaskProperty#drop .drop()} modifier applied
+   * will result in the second task instance being dropped.
+   *
+   * @memberof TaskInstance
+   * @instance
+   * @readOnly
+   */
   isDropped: Ember.computed('isCanceled', 'hasStarted', function() {
     return this.get('isCanceled') && !this.get('hasStarted');
   }),
 
   _index: 1,
-  isFinished: false,
-  isRunning: Ember.computed.not('isFinished'),
 
   init() {
     this._super();
@@ -61,6 +141,14 @@ let TaskInstance = Ember.Object.extend({
     return this;
   },
 
+  /**
+   * Cancels the task instance. Has no effect if the task instance has
+   * already been canceled or has already finished running.
+   *
+   * @method cancel
+   * @memberof TaskInstance
+   * @instance
+   */
   cancel() {
     if (this.isCanceled) { return; }
     this._rejectWithCancelation();
@@ -71,8 +159,33 @@ let TaskInstance = Ember.Object.extend({
     this._proceed(this._index, undefined);
   },
 
+  /**
+   * Returns a promise that resolves with the value returned
+   * from the task's (generator) function, or rejects with
+   * either the exception thrown from the task function, or
+   * an error with a `.name` property with value `"TaskCancelation"`.
+   *
+   * @method then
+   * @memberof TaskInstance
+   * @instance
+   * @return {Promise}
+   */
   then:    forwardToInternalPromise('then'),
+
+  /**
+   * @method catch
+   * @memberof TaskInstance
+   * @instance
+   * @return {Promise}
+   */
   catch:   forwardToInternalPromise('catch'),
+
+  /**
+   * @method finally
+   * @memberof TaskInstance
+   * @instance
+   * @return {Promise}
+   */
   finally: forwardToInternalPromise('finally'),
 
   _rejectWithCancelation() {
@@ -89,7 +202,6 @@ let TaskInstance = Ember.Object.extend({
   },
 
   _defer: null,
-  promise: null,
 
   _proceed(index, nextValue, method) {
     this._dispose();

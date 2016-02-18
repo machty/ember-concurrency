@@ -41,3 +41,10 @@ approach).
 * `ember build`
 
 For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+
+### Generate Docs
+
+TODO: use build pipeline.
+
+    ./builddocs.sh
+
