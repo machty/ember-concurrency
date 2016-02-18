@@ -47,7 +47,7 @@ define("dummy/application/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 33,
+            "line": 28,
             "column": 0
           }
         },
@@ -68,7 +68,7 @@ define("dummy/application/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "eight columns");
+        dom.setAttribute(el3, "class", "six columns");
         var el4 = dom.createTextNode("\n      ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("h3");
@@ -81,7 +81,7 @@ define("dummy/application/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "one columns");
+        dom.setAttribute(el3, "class", "two columns");
         var el4 = dom.createTextNode("\n      ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("div");
@@ -99,7 +99,7 @@ define("dummy/application/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "one columns");
+        dom.setAttribute(el3, "class", "two columns");
         var el4 = dom.createTextNode("\n      ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("div");
@@ -117,28 +117,7 @@ define("dummy/application/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "one columns");
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4, "class", "nav-bar-link-outer");
-        var el5 = dom.createTextNode("\n        ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("a");
-        dom.setAttribute(el5, "href", "/api");
-        var el6 = dom.createTextNode("API");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n      ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("div");
-        dom.setAttribute(el3, "class", "one columns");
+        dom.setAttribute(el3, "class", "two columns");
         var el4 = dom.createTextNode("\n      ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("div");
@@ -184,7 +163,7 @@ define("dummy/application/template", ["exports"], function (exports) {
         morphs[3] = dom.createMorphAt(fragment, 4, 4, contextualElement);
         return morphs;
       },
-      statements: [["inline", "link-to", ["Home", "index"], [], ["loc", [null, [8, 8], [8, 34]]]], ["inline", "link-to", ["Docs", "docs"], [], ["loc", [null, [13, 8], [13, 33]]]], ["content", "outlet", ["loc", [null, [29, 0], [29, 10]]]], ["content", "ember-notify", ["loc", [null, [31, 0], [31, 16]]]]],
+      statements: [["inline", "link-to", ["Home", "index"], [], ["loc", [null, [8, 8], [8, 34]]]], ["inline", "link-to", ["Docs", "docs"], [], ["loc", [null, [13, 8], [13, 33]]]], ["content", "outlet", ["loc", [null, [24, 0], [24, 10]]]], ["content", "ember-notify", ["loc", [null, [26, 0], [26, 16]]]]],
       locals: [],
       templates: []
     };
