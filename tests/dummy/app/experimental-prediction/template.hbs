@@ -1,5 +1,5 @@
 <div class="container">
-  <h2>Experimental: predict .perform() success</h2>
+  <h2>Experimental: all derivable state about a task</h2>
 
   <p>
     Because the "buffering policy" for a task is declaratively
@@ -20,7 +20,9 @@
   {{#each tasks as |task|}}
     <h4>{{task.name}}, maxConcurrency={{task._maxConcurrency}}</h4>
     <ul>
-      <li>nextPerformState: {{caps-bool task.nextPerformState}}</li>
+      <li>isRunning: {{caps-bool task.isRunning}}</li>
+      <li>concurrency: {{task.concurrency}}</li>
+      <li>nextPerformState: {{task.nextPerformState}}</li>
       <li>nextPerformWouldSucceed: {{caps-bool task.nextPerformWouldSucceed}}</li>
       <li>nextPerformWouldDrop: {{caps-bool task.nextPerformWouldDrop}}</li>
       <li>nextPerformWouldEnqueue: {{caps-bool task.nextPerformWouldEnqueue}}</li>

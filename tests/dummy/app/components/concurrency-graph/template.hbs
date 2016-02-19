@@ -1,5 +1,8 @@
 <button {{action 'startTask'}}>task.perform()</button>
 <button {{action 'restart'}}>Clear Timeline</button>
+{{#if task.isRunning}}
+  <button {{action 'cancelAll' target=task}}>Cancel All</button>
+{{/if}}
 
 <style type="text/css">
 g:hover {
