@@ -6135,7 +6135,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
           var el2 = dom.createTextNode("\n      ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("li");
-          var el3 = dom.createTextNode("nextPerformWouldSucceed: ");
+          var el3 = dom.createTextNode("performWillSucceed: ");
           dom.appendChild(el2, el3);
           var el3 = dom.createComment("");
           dom.appendChild(el2, el3);
@@ -6143,7 +6143,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
           var el2 = dom.createTextNode("\n      ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("li");
-          var el3 = dom.createTextNode("nextPerformWouldDrop: ");
+          var el3 = dom.createTextNode("performWillDrop: ");
           dom.appendChild(el2, el3);
           var el3 = dom.createComment("");
           dom.appendChild(el2, el3);
@@ -6151,7 +6151,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
           var el2 = dom.createTextNode("\n      ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("li");
-          var el3 = dom.createTextNode("nextPerformWouldEnqueue: ");
+          var el3 = dom.createTextNode("performWillEnqueue: ");
           dom.appendChild(el2, el3);
           var el3 = dom.createComment("");
           dom.appendChild(el2, el3);
@@ -6159,7 +6159,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
           var el2 = dom.createTextNode("\n      ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("li");
-          var el3 = dom.createTextNode("nextPerformWouldCancelPrevious: ");
+          var el3 = dom.createTextNode("performWillCancelPrevious: ");
           dom.appendChild(el2, el3);
           var el3 = dom.createComment("");
           dom.appendChild(el2, el3);
@@ -6191,7 +6191,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
           morphs[9] = dom.createMorphAt(fragment, 5, 5, contextualElement);
           return morphs;
         },
-        statements: [["content", "task.name", ["loc", [null, [21, 8], [21, 21]]]], ["content", "task._maxConcurrency", ["loc", [null, [21, 38], [21, 62]]]], ["inline", "caps-bool", [["get", "task.isRunning", ["loc", [null, [23, 33], [23, 47]]]]], [], ["loc", [null, [23, 21], [23, 49]]]], ["content", "task.concurrency", ["loc", [null, [24, 23], [24, 43]]]], ["content", "task.nextPerformState", ["loc", [null, [25, 28], [25, 53]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldSucceed", ["loc", [null, [26, 47], [26, 75]]]]], [], ["loc", [null, [26, 35], [26, 77]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldDrop", ["loc", [null, [27, 44], [27, 69]]]]], [], ["loc", [null, [27, 32], [27, 71]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldEnqueue", ["loc", [null, [28, 47], [28, 75]]]]], [], ["loc", [null, [28, 35], [28, 77]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldCancelPrevious", ["loc", [null, [29, 54], [29, 89]]]]], [], ["loc", [null, [29, 42], [29, 91]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "task", ["loc", [null, [31, 29], [31, 33]]]]], [], []]], ["loc", [null, [31, 4], [31, 35]]]]],
+        statements: [["content", "task.name", ["loc", [null, [21, 8], [21, 21]]]], ["content", "task._maxConcurrency", ["loc", [null, [21, 38], [21, 62]]]], ["inline", "caps-bool", [["get", "task.isRunning", ["loc", [null, [23, 33], [23, 47]]]]], [], ["loc", [null, [23, 21], [23, 49]]]], ["content", "task.concurrency", ["loc", [null, [24, 23], [24, 43]]]], ["content", "task.nextPerformState", ["loc", [null, [25, 28], [25, 53]]]], ["inline", "caps-bool", [["get", "task.performWillSucceed", ["loc", [null, [26, 42], [26, 65]]]]], [], ["loc", [null, [26, 30], [26, 67]]]], ["inline", "caps-bool", [["get", "task.performWillDrop", ["loc", [null, [27, 39], [27, 59]]]]], [], ["loc", [null, [27, 27], [27, 61]]]], ["inline", "caps-bool", [["get", "task.performWillEnqueue", ["loc", [null, [28, 42], [28, 65]]]]], [], ["loc", [null, [28, 30], [28, 67]]]], ["inline", "caps-bool", [["get", "task.performWillCancelPrevious", ["loc", [null, [29, 49], [29, 79]]]]], [], ["loc", [null, [29, 37], [29, 81]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "task", ["loc", [null, [31, 29], [31, 33]]]]], [], []]], ["loc", [null, [31, 4], [31, 35]]]]],
         locals: ["task"],
         templates: []
       };
@@ -6941,7 +6941,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.8+8a040ab5"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.8+822428a3"});
 }
 
 /* jshint ignore:end */
