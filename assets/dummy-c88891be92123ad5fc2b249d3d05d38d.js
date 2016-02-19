@@ -643,6 +643,51 @@ define('dummy/components/concurrency-graph/component', ['exports', 'ember', 'emb
 define("dummy/components/concurrency-graph/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "line": 5,
+              "column": 0
+            }
+          },
+          "moduleName": "dummy/components/concurrency-graph/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("button");
+          var el2 = dom.createTextNode("Cancel All");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element3 = dom.childAt(fragment, [1]);
+          var morphs = new Array(1);
+          morphs[0] = dom.createElementMorph(element3);
+          return morphs;
+        },
+        statements: [["element", "action", ["cancelAll"], ["target", ["get", "task", ["loc", [null, [4, 38], [4, 42]]]]], ["loc", [null, [4, 10], [4, 44]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
       var child0 = (function () {
         var child0 = (function () {
           return {
@@ -652,11 +697,11 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 15,
+                  "line": 18,
                   "column": 6
                 },
                 "end": {
-                  "line": 22,
+                  "line": 25,
                   "column": 6
                 }
               },
@@ -687,7 +732,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
               morphs[2] = dom.createAttrMorph(element2, 'fill');
               return morphs;
             },
-            statements: [["attribute", "x", ["concat", [["subexpr", "scale", [["subexpr", "subtract", [["get", "tracker.startTime", ["loc", [null, [16, 35], [16, 52]]]], ["get", "lowerLimit", ["loc", [null, [16, 53], [16, 63]]]]], [], ["loc", [null, [16, 25], [16, 64]]]], ["get", "lowerLimit", ["loc", [null, [16, 65], [16, 75]]]], ["get", "upperLimit", ["loc", [null, [16, 76], [16, 86]]]]], [], ["loc", [null, [16, 17], [16, 88]]]], "%"]]], ["attribute", "width", ["concat", [["subexpr", "scale", [["subexpr", "width", [["get", "tracker.startTime", ["loc", [null, [18, 36], [18, 53]]]], ["get", "tracker.endTime", ["loc", [null, [18, 54], [18, 69]]]], ["get", "upperLimit", ["loc", [null, [18, 70], [18, 80]]]]], [], ["loc", [null, [18, 29], [18, 81]]]], ["get", "lowerLimit", ["loc", [null, [18, 82], [18, 92]]]], ["get", "upperLimit", ["loc", [null, [18, 93], [18, 103]]]]], [], ["loc", [null, [18, 21], [18, 105]]]], "%"]]], ["attribute", "fill", ["get", "color", ["loc", [null, [20, 21], [20, 26]]]]]],
+            statements: [["attribute", "x", ["concat", [["subexpr", "scale", [["subexpr", "subtract", [["get", "tracker.startTime", ["loc", [null, [19, 35], [19, 52]]]], ["get", "lowerLimit", ["loc", [null, [19, 53], [19, 63]]]]], [], ["loc", [null, [19, 25], [19, 64]]]], ["get", "lowerLimit", ["loc", [null, [19, 65], [19, 75]]]], ["get", "upperLimit", ["loc", [null, [19, 76], [19, 86]]]]], [], ["loc", [null, [19, 17], [19, 88]]]], "%"]]], ["attribute", "width", ["concat", [["subexpr", "scale", [["subexpr", "width", [["get", "tracker.startTime", ["loc", [null, [21, 36], [21, 53]]]], ["get", "tracker.endTime", ["loc", [null, [21, 54], [21, 69]]]], ["get", "upperLimit", ["loc", [null, [21, 70], [21, 80]]]]], [], ["loc", [null, [21, 29], [21, 81]]]], ["get", "lowerLimit", ["loc", [null, [21, 82], [21, 92]]]], ["get", "upperLimit", ["loc", [null, [21, 93], [21, 103]]]]], [], ["loc", [null, [21, 21], [21, 105]]]], "%"]]], ["attribute", "fill", ["get", "color", ["loc", [null, [23, 21], [23, 26]]]]]],
             locals: [],
             templates: []
           };
@@ -700,11 +745,11 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 24,
+                  "line": 27,
                   "column": 6
                 },
                 "end": {
-                  "line": 35,
+                  "line": 38,
                   "column": 6
                 }
               },
@@ -753,7 +798,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
               morphs[9] = dom.createAttrMorph(element1, 'stroke');
               return morphs;
             },
-            statements: [["attribute", "x", ["concat", [["subexpr", "sum", [0.5, ["get", "x", ["loc", [null, [25, 27], [25, 28]]]]], [], ["loc", [null, [25, 17], [25, 30]]]], "%"]]], ["attribute", "y", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [26, 28], [26, 40]]]], ["get", "tracker.id", ["loc", [null, [26, 41], [26, 51]]]]], [], ["loc", [null, [26, 16], [26, 53]]]]], ["attribute", "fill", ["get", "color", ["loc", [null, [28, 21], [28, 26]]]]], ["attribute", "text-decoration", ["subexpr", "if", [["get", "tracker.isCanceled", ["loc", [null, [30, 35], [30, 53]]]], "line-through", "none"], [], ["loc", [null, [30, 30], [30, 77]]]]], ["attribute", "font-style", ["subexpr", "if", [["get", "tracker.startTime", ["loc", [null, [31, 30], [31, 47]]]], "normal", "italic"], [], ["loc", [null, [31, 25], [31, 67]]]]], ["content", "tracker.state", ["loc", [null, [32, 10], [32, 27]]]], ["attribute", "x1", ["concat", [["get", "x", ["loc", [null, [34, 20], [34, 21]]]], "%"]]], ["attribute", "x2", ["concat", [["get", "x", ["loc", [null, [34, 40], [34, 41]]]], "%"]]], ["attribute", "y2", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [34, 61], [34, 73]]]], ["get", "tracker.id", ["loc", [null, [34, 74], [34, 84]]]]], [], ["loc", [null, [34, 49], [34, 86]]]]], ["attribute", "stroke", ["get", "color", ["loc", [null, [34, 96], [34, 101]]]]]],
+            statements: [["attribute", "x", ["concat", [["subexpr", "sum", [0.5, ["get", "x", ["loc", [null, [28, 27], [28, 28]]]]], [], ["loc", [null, [28, 17], [28, 30]]]], "%"]]], ["attribute", "y", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [29, 28], [29, 40]]]], ["get", "tracker.id", ["loc", [null, [29, 41], [29, 51]]]]], [], ["loc", [null, [29, 16], [29, 53]]]]], ["attribute", "fill", ["get", "color", ["loc", [null, [31, 21], [31, 26]]]]], ["attribute", "text-decoration", ["subexpr", "if", [["get", "tracker.isCanceled", ["loc", [null, [33, 35], [33, 53]]]], "line-through", "none"], [], ["loc", [null, [33, 30], [33, 77]]]]], ["attribute", "font-style", ["subexpr", "if", [["get", "tracker.startTime", ["loc", [null, [34, 30], [34, 47]]]], "normal", "italic"], [], ["loc", [null, [34, 25], [34, 67]]]]], ["content", "tracker.state", ["loc", [null, [35, 10], [35, 27]]]], ["attribute", "x1", ["concat", [["get", "x", ["loc", [null, [37, 20], [37, 21]]]], "%"]]], ["attribute", "x2", ["concat", [["get", "x", ["loc", [null, [37, 40], [37, 41]]]], "%"]]], ["attribute", "y2", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [37, 61], [37, 73]]]], ["get", "tracker.id", ["loc", [null, [37, 74], [37, 84]]]]], [], ["loc", [null, [37, 49], [37, 86]]]]], ["attribute", "stroke", ["get", "color", ["loc", [null, [37, 96], [37, 101]]]]]],
             locals: ["x"],
             templates: []
           };
@@ -765,11 +810,11 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
             "loc": {
               "source": null,
               "start": {
-                "line": 14,
+                "line": 17,
                 "column": 4
               },
               "end": {
-                "line": 36,
+                "line": 39,
                 "column": 4
               }
             },
@@ -797,7 +842,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
             dom.insertBoundary(fragment, null);
             return morphs;
           },
-          statements: [["block", "if", [["get", "tracker.startTime", ["loc", [null, [15, 12], [15, 29]]]]], [], 0, null, ["loc", [null, [15, 6], [22, 13]]]], ["block", "with", [["subexpr", "scale", [["subexpr", "subtract", [["get", "tracker.performTime", ["loc", [null, [24, 31], [24, 50]]]], ["get", "lowerLimit", ["loc", [null, [24, 51], [24, 61]]]]], [], ["loc", [null, [24, 21], [24, 62]]]], ["get", "lowerLimit", ["loc", [null, [24, 63], [24, 73]]]], ["get", "upperLimit", ["loc", [null, [24, 74], [24, 84]]]]], [], ["loc", [null, [24, 14], [24, 85]]]]], [], 1, null, ["loc", [null, [24, 6], [35, 15]]]]],
+          statements: [["block", "if", [["get", "tracker.startTime", ["loc", [null, [18, 12], [18, 29]]]]], [], 0, null, ["loc", [null, [18, 6], [25, 13]]]], ["block", "with", [["subexpr", "scale", [["subexpr", "subtract", [["get", "tracker.performTime", ["loc", [null, [27, 31], [27, 50]]]], ["get", "lowerLimit", ["loc", [null, [27, 51], [27, 61]]]]], [], ["loc", [null, [27, 21], [27, 62]]]], ["get", "lowerLimit", ["loc", [null, [27, 63], [27, 73]]]], ["get", "upperLimit", ["loc", [null, [27, 74], [27, 84]]]]], [], ["loc", [null, [27, 14], [27, 85]]]]], [], 1, null, ["loc", [null, [27, 6], [38, 15]]]]],
           locals: ["color"],
           templates: [child0, child1]
         };
@@ -809,11 +854,11 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
           "loc": {
             "source": null,
             "start": {
-              "line": 12,
+              "line": 15,
               "column": 0
             },
             "end": {
-              "line": 38,
+              "line": 41,
               "column": 0
             }
           },
@@ -845,7 +890,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
           morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
           return morphs;
         },
-        statements: [["block", "with", [["subexpr", "pick-from", [["get", "colors", ["loc", [null, [14, 23], [14, 29]]]], ["get", "tracker.id", ["loc", [null, [14, 30], [14, 40]]]]], [], ["loc", [null, [14, 12], [14, 41]]]]], [], 0, null, ["loc", [null, [14, 4], [36, 13]]]]],
+        statements: [["block", "with", [["subexpr", "pick-from", [["get", "colors", ["loc", [null, [17, 23], [17, 29]]]], ["get", "tracker.id", ["loc", [null, [17, 30], [17, 40]]]]], [], ["loc", [null, [17, 12], [17, 41]]]]], [], 0, null, ["loc", [null, [17, 4], [39, 13]]]]],
         locals: ["tracker"],
         templates: [child0]
       };
@@ -854,7 +899,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
       meta: {
         "fragmentReason": {
           "name": "missing-wrapper",
-          "problems": ["multiple-nodes"]
+          "problems": ["multiple-nodes", "wrong-type"]
         },
         "revision": "Ember@2.3.1",
         "loc": {
@@ -864,7 +909,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
             "column": 0
           },
           "end": {
-            "line": 41,
+            "line": 44,
             "column": 0
           }
         },
@@ -886,7 +931,11 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
         var el2 = dom.createTextNode("Clear Timeline");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("style");
         dom.setAttribute(el1, "type", "text/css");
@@ -908,17 +957,18 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element3 = dom.childAt(fragment, [0]);
-        var element4 = dom.childAt(fragment, [2]);
-        var morphs = new Array(3);
-        morphs[0] = dom.createElementMorph(element3);
-        morphs[1] = dom.createElementMorph(element4);
-        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [6]), 1, 1);
+        var element4 = dom.childAt(fragment, [0]);
+        var element5 = dom.childAt(fragment, [2]);
+        var morphs = new Array(4);
+        morphs[0] = dom.createElementMorph(element4);
+        morphs[1] = dom.createElementMorph(element5);
+        morphs[2] = dom.createMorphAt(fragment, 4, 4, contextualElement);
+        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [8]), 1, 1);
         return morphs;
       },
-      statements: [["element", "action", ["startTask"], [], ["loc", [null, [1, 8], [1, 30]]]], ["element", "action", ["restart"], [], ["loc", [null, [2, 8], [2, 28]]]], ["block", "each", [["get", "trackers", ["loc", [null, [12, 8], [12, 16]]]]], [], 0, null, ["loc", [null, [12, 0], [38, 9]]]]],
+      statements: [["element", "action", ["startTask"], [], ["loc", [null, [1, 8], [1, 30]]]], ["element", "action", ["restart"], [], ["loc", [null, [2, 8], [2, 28]]]], ["block", "if", [["get", "task.isRunning", ["loc", [null, [3, 6], [3, 20]]]]], [], 0, null, ["loc", [null, [3, 0], [5, 7]]]], ["block", "each", [["get", "trackers", ["loc", [null, [15, 8], [15, 16]]]]], [], 1, null, ["loc", [null, [15, 0], [41, 9]]]]],
       locals: [],
-      templates: [child0]
+      templates: [child0, child1]
     };
   })());
 });
@@ -5656,7 +5706,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
               "column": 2
             },
             "end": {
-              "line": 30,
+              "line": 32,
               "column": 2
             }
           },
@@ -5681,6 +5731,22 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
           var el1 = dom.createTextNode("\n    ");
           dom.appendChild(el0, el1);
           var el1 = dom.createElement("ul");
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("li");
+          var el3 = dom.createTextNode("isRunning: ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("li");
+          var el3 = dom.createTextNode("concurrency: ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n      ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("li");
@@ -5735,7 +5801,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
           var element0 = dom.childAt(fragment, [1]);
           var element1 = dom.childAt(fragment, [3]);
-          var morphs = new Array(8);
+          var morphs = new Array(10);
           morphs[0] = dom.createMorphAt(element0, 0, 0);
           morphs[1] = dom.createMorphAt(element0, 2, 2);
           morphs[2] = dom.createMorphAt(dom.childAt(element1, [1]), 1, 1);
@@ -5743,10 +5809,12 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
           morphs[4] = dom.createMorphAt(dom.childAt(element1, [5]), 1, 1);
           morphs[5] = dom.createMorphAt(dom.childAt(element1, [7]), 1, 1);
           morphs[6] = dom.createMorphAt(dom.childAt(element1, [9]), 1, 1);
-          morphs[7] = dom.createMorphAt(fragment, 5, 5, contextualElement);
+          morphs[7] = dom.createMorphAt(dom.childAt(element1, [11]), 1, 1);
+          morphs[8] = dom.createMorphAt(dom.childAt(element1, [13]), 1, 1);
+          morphs[9] = dom.createMorphAt(fragment, 5, 5, contextualElement);
           return morphs;
         },
-        statements: [["content", "task.name", ["loc", [null, [21, 8], [21, 21]]]], ["content", "task._maxConcurrency", ["loc", [null, [21, 38], [21, 62]]]], ["inline", "caps-bool", [["get", "task.nextPerformState", ["loc", [null, [23, 40], [23, 61]]]]], [], ["loc", [null, [23, 28], [23, 63]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldSucceed", ["loc", [null, [24, 47], [24, 75]]]]], [], ["loc", [null, [24, 35], [24, 77]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldDrop", ["loc", [null, [25, 44], [25, 69]]]]], [], ["loc", [null, [25, 32], [25, 71]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldEnqueue", ["loc", [null, [26, 47], [26, 75]]]]], [], ["loc", [null, [26, 35], [26, 77]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldCancelPrevious", ["loc", [null, [27, 54], [27, 89]]]]], [], ["loc", [null, [27, 42], [27, 91]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "task", ["loc", [null, [29, 29], [29, 33]]]]], [], []]], ["loc", [null, [29, 4], [29, 35]]]]],
+        statements: [["content", "task.name", ["loc", [null, [21, 8], [21, 21]]]], ["content", "task._maxConcurrency", ["loc", [null, [21, 38], [21, 62]]]], ["inline", "caps-bool", [["get", "task.isRunning", ["loc", [null, [23, 33], [23, 47]]]]], [], ["loc", [null, [23, 21], [23, 49]]]], ["content", "task.concurrency", ["loc", [null, [24, 23], [24, 43]]]], ["content", "task.nextPerformState", ["loc", [null, [25, 28], [25, 53]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldSucceed", ["loc", [null, [26, 47], [26, 75]]]]], [], ["loc", [null, [26, 35], [26, 77]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldDrop", ["loc", [null, [27, 44], [27, 69]]]]], [], ["loc", [null, [27, 32], [27, 71]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldEnqueue", ["loc", [null, [28, 47], [28, 75]]]]], [], ["loc", [null, [28, 35], [28, 77]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldCancelPrevious", ["loc", [null, [29, 54], [29, 89]]]]], [], ["loc", [null, [29, 42], [29, 91]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "task", ["loc", [null, [31, 29], [31, 33]]]]], [], []]], ["loc", [null, [31, 4], [31, 35]]]]],
         locals: ["task"],
         templates: []
       };
@@ -5764,7 +5832,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
             "column": 0
           },
           "end": {
-            "line": 33,
+            "line": 35,
             "column": 0
           }
         },
@@ -5781,7 +5849,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("h2");
-        var el3 = dom.createTextNode("Experimental: predict .perform() success");
+        var el3 = dom.createTextNode("Experimental: all derivable state about a task");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n\n  ");
@@ -5810,7 +5878,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
         morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0]), 7, 7);
         return morphs;
       },
-      statements: [["block", "each", [["get", "tasks", ["loc", [null, [20, 10], [20, 15]]]]], [], 0, null, ["loc", [null, [20, 2], [30, 11]]]]],
+      statements: [["block", "each", [["get", "tasks", ["loc", [null, [20, 10], [20, 15]]]]], [], 0, null, ["loc", [null, [20, 2], [32, 11]]]]],
       locals: [],
       templates: [child0]
     };
@@ -6492,7 +6560,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.7+05d4942c"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.7+9988d47c"});
 }
 
 /* jshint ignore:end */
