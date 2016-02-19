@@ -1,5 +1,10 @@
 # Changelog
-### 0.5.6:
+### 0.5.8:
+ - EXPERIMENTAL: Task#performWillSucceed boolean property
+ - EXPERIMENTAL: TaskProperty#.performs() for linking
+   to tasks you intend to call.
+
+### 0.5.7:
  - added Task-aware/cancelable variant of Promise.race
 
 ### 0.5.6:
