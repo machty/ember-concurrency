@@ -96121,12 +96121,19 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     taskInstances.splice(index, count);
   };
 
+  function numPerformSlots(task) {
+    return task._maxConcurrency - task._queuedTaskInstances.length - task._activeTaskInstances.length;
+  }
+
   var enqueueTasksPolicy = {
     requiresUnboundedConcurrency: true,
     schedule: function schedule(task) {
       // [a,b,_] [c,d,e,f] becomes
       // [a,b,c] [d,e,f]
       saturateActiveQueue(task);
+    },
+    getNextPerformStatus: function getNextPerformStatus(task) {
+      return numPerformSlots(task) > 0 ? 'succeed' : 'enqueue';
     }
   };
 
@@ -96136,6 +96143,9 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
       // [a,b,c] []
       saturateActiveQueue(task);
       spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length);
+    },
+    getNextPerformStatus: function getNextPerformStatus(task) {
+      return numPerformSlots(task) > 0 ? 'succeed' : 'drop';
     }
   };
 
@@ -96150,6 +96160,9 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
 
       var numToShift = Math.max(0, activeTaskInstances.length - task._maxConcurrency);
       spliceTaskInstances(activeTaskInstances, 0, numToShift);
+    },
+    getNextPerformStatus: function getNextPerformStatus(task) {
+      return numPerformSlots(task) > 0 ? 'succeed' : 'cancel_previous';
     }
   };
 
@@ -96191,6 +96204,101 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     _maxConcurrency: Infinity,
     _activeTaskInstances: null,
     _needsFlush: null,
+    _link: null,
+    _propertyName: null,
+
+    name: computed.oneWay('_propertyName'),
+
+    /**
+     * EXPERIMENTAL
+     *
+     * This value describes what would happen to the TaskInstance returned
+     * from .perform() if .perform() were called right now.  Returns one of
+     * the following values:
+     *
+     * - `succeed`: new TaskInstance will start running immediately
+     * - `drop`: new TaskInstance will be dropped
+     * - `enqueue`: new TaskInstance will be enqueued for later execution
+     *
+     * @memberof Task
+     * @instance
+     * @private
+     * @readOnly
+     */
+    nextPerformState: computed(function () {
+      return this.bufferPolicy.getNextPerformStatus(this);
+    }),
+
+    /**
+     * EXPERIMENTAL
+     *
+     * Returns true if calling .perform() right now would immediately start running
+     * the returned TaskInstance.
+     *
+     * @memberof Task
+     * @instance
+     * @private
+     * @readOnly
+     */
+    nextPerformWouldSucceed: computed('nextPerformState', function () {
+      var val = this.get('nextPerformState');
+      return val === 'succeed' || val === 'cancel_previous';
+    }),
+
+    /**
+     * EXPERIMENTAL
+     *
+     * Returns true if calling .perform() right now would immediately cancel (drop)
+     * the returned TaskInstance.
+     *
+     * @memberof Task
+     * @instance
+     * @private
+     * @readOnly
+     */
+    nextPerformWouldDrop: computed.equal('nextPerformState', 'drop'),
+
+    /**
+     * EXPERIMENTAL
+     *
+     * Returns true if calling .perform() right now would enqueue the TaskInstance
+     * rather than execute immediately.
+     *
+     * @memberof Task
+     * @instance
+     * @private
+     * @readOnly
+     */
+    nextPerformWouldEnqueue: computed.equal('nextPerformState', 'enqueue'),
+
+    /**
+     * EXPERIMENTAL
+     *
+     * Returns true if calling .perform() right now would cause a previous task to be canceled
+     *
+     * @memberof Task
+     * @instance
+     * @private
+     * @readOnly
+     */
+    nextPerformWouldCancelPrevious: computed.equal('nextPerformState', 'cancel_previous'),
+
+    init: function init() {
+      var _this = this;
+
+      this._super();
+      this._activeTaskInstances = _ember['default'].A();
+      this._queuedTaskInstances = _ember['default'].A();
+
+      // TODO: {{perform}} helper
+      this.perform = function () {
+        return _this._perform.apply(_this, arguments);
+      };
+
+      this._needsFlush = _ember['default'].run.bind(this, this._scheduleFlush);
+
+      cleanupOnDestroy(this.context, this, 'cancelAll');
+    },
 
     /**
      * The current number of active running task instances. This
@@ -96215,23 +96323,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @instance
      */
     perform: null,
-
-    init: function init() {
-      var _this = this;
-
-      this._super();
-      this._activeTaskInstances = _ember['default'].A();
-      this._queuedTaskInstances = _ember['default'].A();
-
-      // TODO: {{perform}} helper
-      this.perform = function () {
-        return _this._perform.apply(_this, arguments);
-      };
-
-      this._needsFlush = _ember['default'].run.bind(this, this._scheduleFlush);
-
-      cleanupOnDestroy(this.context, this, 'cancelAll');
-    },
 
     /**
      * Cancels all running or queued `TaskInstance`s for this Task.
@@ -96261,6 +96352,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
 
       this._queuedTaskInstances.push(taskInstance);
       this._needsFlush();
+      this.notifyPropertyChange('nextPerformState');
 
       return taskInstance;
     },
@@ -96281,6 +96373,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
         }
       }
 
+      this.notifyPropertyChange('nextPerformState');
       this.set('concurrency', this._activeTaskInstances.length);
     }
   });
@@ -96304,12 +96397,14 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
 
   function TaskProperty(taskFn) {
     var tp = this;
-    ComputedProperty.call(this, function () {
+    ComputedProperty.call(this, function (_propertyName) {
       return Task.create({
         fn: taskFn,
         context: this,
         bufferPolicy: tp.bufferPolicy,
-        _maxConcurrency: tp._maxConcurrency
+        _maxConcurrency: tp._maxConcurrency,
+        _link: tp._link,
+        _propertyName: _propertyName
       });
     });
 
@@ -96317,6 +96412,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     this._maxConcurrency = Infinity;
     this.eventNames = null;
     this.cancelEventNames = null;
+    this._link = null;
   }
 
   TaskProperty.prototype = Object.create(ComputedProperty.prototype);
@@ -96479,6 +96575,11 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     if (this._maxConcurrency === Infinity) {
       this._maxConcurrency = n;
     }
+  };
+
+  TaskProperty.prototype.link = function (taskOrGroupPath) {
+    this._link = taskOrGroupPath;
+    return this;
   };
 
   function addListenersToPrototype(proto, eventNames, taskName, taskMethod) {

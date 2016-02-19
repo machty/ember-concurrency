@@ -5601,6 +5601,236 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
     };
   })());
 });
+define('dummy/experimental-prediction/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  var marked0$0 = [SHARED_TASK_FN].map(regeneratorRuntime.mark);
+
+  function SHARED_TASK_FN(tracker) {
+    return regeneratorRuntime.wrap(function SHARED_TASK_FN$(context$1$0) {
+      while (1) switch (context$1$0.prev = context$1$0.next) {
+        case 0:
+          tracker.start();
+          context$1$0.prev = 1;
+          context$1$0.next = 4;
+          return (0, _emberConcurrency.timeout)(1500);
+
+        case 4:
+          context$1$0.prev = 4;
+
+          tracker.end();
+          return context$1$0.finish(4);
+
+        case 7:
+        case 'end':
+          return context$1$0.stop();
+      }
+    }, marked0$0[0], this, [[1,, 4, 7]]);
+  }
+
+  exports['default'] = _ember['default'].Controller.extend({
+    defaultTask: (0, _emberConcurrency.task)(SHARED_TASK_FN),
+    restartableTask: (0, _emberConcurrency.task)(SHARED_TASK_FN).restartable(),
+    enqueuedTask: (0, _emberConcurrency.task)(SHARED_TASK_FN).enqueue(),
+    droppingTask: (0, _emberConcurrency.task)(SHARED_TASK_FN).drop(),
+    restartableTask3: (0, _emberConcurrency.task)(SHARED_TASK_FN).maxConcurrency(3).restartable(),
+    enqueuedTask3: (0, _emberConcurrency.task)(SHARED_TASK_FN).maxConcurrency(3).enqueue(),
+    droppingTask3: (0, _emberConcurrency.task)(SHARED_TASK_FN).maxConcurrency(3).drop(),
+
+    tasks: _ember['default'].computed(function () {
+      return [this.get('defaultTask'), this.get('restartableTask'), this.get('enqueuedTask'), this.get('droppingTask'), this.get('restartableTask3'), this.get('enqueuedTask3'), this.get('droppingTask3')];
+    })
+  });
+});
+
+// simulate async work
+define("dummy/experimental-prediction/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 20,
+              "column": 2
+            },
+            "end": {
+              "line": 30,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/experimental-prediction/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h4");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode(", maxConcurrency=");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("ul");
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("li");
+          var el3 = dom.createTextNode("nextPerformState: ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("li");
+          var el3 = dom.createTextNode("nextPerformWouldSucceed: ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("li");
+          var el3 = dom.createTextNode("nextPerformWouldDrop: ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("li");
+          var el3 = dom.createTextNode("nextPerformWouldEnqueue: ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("li");
+          var el3 = dom.createTextNode("nextPerformWouldCancelPrevious: ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1]);
+          var element1 = dom.childAt(fragment, [3]);
+          var morphs = new Array(8);
+          morphs[0] = dom.createMorphAt(element0, 0, 0);
+          morphs[1] = dom.createMorphAt(element0, 2, 2);
+          morphs[2] = dom.createMorphAt(dom.childAt(element1, [1]), 1, 1);
+          morphs[3] = dom.createMorphAt(dom.childAt(element1, [3]), 1, 1);
+          morphs[4] = dom.createMorphAt(dom.childAt(element1, [5]), 1, 1);
+          morphs[5] = dom.createMorphAt(dom.childAt(element1, [7]), 1, 1);
+          morphs[6] = dom.createMorphAt(dom.childAt(element1, [9]), 1, 1);
+          morphs[7] = dom.createMorphAt(fragment, 5, 5, contextualElement);
+          return morphs;
+        },
+        statements: [["content", "task.name", ["loc", [null, [21, 8], [21, 21]]]], ["content", "task._maxConcurrency", ["loc", [null, [21, 38], [21, 62]]]], ["inline", "caps-bool", [["get", "task.nextPerformState", ["loc", [null, [23, 40], [23, 61]]]]], [], ["loc", [null, [23, 28], [23, 63]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldSucceed", ["loc", [null, [24, 47], [24, 75]]]]], [], ["loc", [null, [24, 35], [24, 77]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldDrop", ["loc", [null, [25, 44], [25, 69]]]]], [], ["loc", [null, [25, 32], [25, 71]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldEnqueue", ["loc", [null, [26, 47], [26, 75]]]]], [], ["loc", [null, [26, 35], [26, 77]]]], ["inline", "caps-bool", [["get", "task.nextPerformWouldCancelPrevious", ["loc", [null, [27, 54], [27, 89]]]]], [], ["loc", [null, [27, 42], [27, 91]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "task", ["loc", [null, [29, 29], [29, 33]]]]], [], []]], ["loc", [null, [29, 4], [29, 35]]]]],
+        locals: ["task"],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "triple-curlies"
+        },
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 33,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/experimental-prediction/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1, "class", "container");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("h2");
+        var el3 = dom.createTextNode("Experimental: predict .perform() success");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("p");
+        var el3 = dom.createTextNode("\n    Because the \"buffering policy\" for a task is declaratively\n    specified up front (via task modifiers like .drop, .enqueue),\n    someone who wants to .perform a task can know up front whether\n    perform()ing that task right now would 1) immediately execute\n    the task instance, 2) immediately cancel (drop) the task\n    instance, or 3) enqueue the task instance for later execution.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("p");
+        var el3 = dom.createTextNode("\n    This experiment is part of my attempt to squeeze out the maximal\n    amount of derivable state from the declarative ember-concurrency\n    API. Once we have all the derivable state we can coalesce\n    into more reasonable APIs/patterns to expose to the user.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0]), 7, 7);
+        return morphs;
+      },
+      statements: [["block", "each", [["get", "tasks", ["loc", [null, [20, 10], [20, 15]]]]], [], 0, null, ["loc", [null, [20, 2], [30, 11]]]]],
+      locals: [],
+      templates: [child0]
+    };
+  })());
+});
+define("dummy/helpers/caps-bool", ["exports", "ember"], function (exports, _ember) {
+  var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+
+  exports.capsBool = capsBool;
+
+  function capsBool(_ref /*, hash*/) {
+    var _ref2 = _slicedToArray(_ref, 1);
+
+    var bool = _ref2[0];
+
+    return bool ? "YES" : "no";
+  }
+
+  exports["default"] = _ember["default"].Helper.helper(capsBool);
+});
 define('dummy/helpers/color', ['exports', 'ember'], function (exports, _ember) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
@@ -5873,6 +6103,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
         this.route('joining-tasks');
       });
     });
+    this.route('experimental-prediction');
   });
 
   exports['default'] = Router;
@@ -6261,7 +6492,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.7+d4058982"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.7+05d4942c"});
 }
 
 /* jshint ignore:end */
