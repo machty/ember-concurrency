@@ -166,3 +166,33 @@ test(".performs() links two tasks such that if the target task next perform will
   });
 });
 
+test(".performs() allows caller's perform to succeed when maxConcurrency isn't constraining", function(assert) {
+  assert.expect(4);
+
+  let defer;
+  let Obj = Ember.Object.extend({
+    foo: task(function * () {
+      defer = defer || Ember.RSVP.defer();
+      yield defer.promise;
+    }),
+
+    bar: task(function * () {
+      yield this.get('foo').perform();
+    }).performs('foo'),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+    obj.get('foo').perform();
+    obj.get('bar').perform();
+  });
+
+  assert.equal(obj.get('foo.concurrency'), 2);
+  assert.equal(obj.get('bar.concurrency'), 1);
+  Ember.run(defer.resolve);
+  assert.equal(obj.get('foo.concurrency'), 0);
+  assert.equal(obj.get('bar.concurrency'), 0);
+});
+
+
