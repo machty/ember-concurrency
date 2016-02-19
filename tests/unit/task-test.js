@@ -122,29 +122,11 @@ test("task().cancelOn", function(assert) {
   });
 });
 
-test("linked tasks can perform the tasks they're linked to", function(assert) {
-  assert.expect(1);
-
-  let Obj = Ember.Object.extend({
-    foo: task(function * (v) {
-      assert.equal(v, 123);
-    }),
-
-    bar: task(function * (v) {
-      yield this.get('foo').perform(v);
-    }).link('foo'),
-  });
-
-  Ember.run(() => {
-    Obj.create().get('bar').perform(123);
-  });
-});
-
-/*
-test("linked tasks ", function(assert) {
-  assert.expect(2);
+test(".performs() links two tasks such that if the target task next perform will fail, the calling task will immediately drop", function(assert) {
+  assert.expect(13);
 
   let defer;
+  let canCallBar = false;
   let Obj = Ember.Object.extend({
     foo: task(function * () {
       defer = Ember.RSVP.defer();
@@ -152,26 +134,35 @@ test("linked tasks ", function(assert) {
     }).drop(),
 
     bar: task(function * () {
-      return 123;
-    }).link('foo'),
+      assert.ok(canCallBar, "bar shouldn't be called at this time");
+    }).performs('foo'),
   });
 
-  let obj;
+  let obj, error;
   Ember.run(() => {
     obj = Obj.create();
+    assert.equal(obj.get('foo.isRunning'), false);
+    assert.equal(obj.get('bar.isRunning'), false);
+    assert.equal(obj.get('foo.nextPerformState'), 'succeed');
+    assert.equal(obj.get('bar.nextPerformState'), 'succeed');
     obj.get('foo').perform();
+    assert.equal(obj.get('bar.nextPerformState'), 'drop');
     obj.get('bar').perform().catch(e => {
-      assert.equal(e.name, 'TaskCancelation');
+      error = e;
     });
   });
 
-  Ember.run(null, defer.resolve);
-
+  assert.equal(error.name, 'TaskCancelation');
+  assert.equal(obj.get('foo.isRunning'), true);
+  assert.equal(obj.get('bar.isRunning'), false);
+  Ember.run(defer.resolve);
+  assert.equal(obj.get('foo.isRunning'), false);
+  assert.equal(obj.get('bar.isRunning'), false);
+  assert.equal(obj.get('foo.nextPerformState'), 'succeed');
+  assert.equal(obj.get('bar.nextPerformState'), 'succeed');
+  canCallBar = true;
   Ember.run(() => {
-    obj.get('bar').perform().then(v => {
-      assert.equal(v, 123);
-    });
+    obj.get('bar').perform();
   });
 });
-*/
 

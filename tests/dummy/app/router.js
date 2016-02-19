@@ -24,6 +24,7 @@ Router.map(function() {
         this.route('detail', { path: ':id' });
       });
       this.route('joining-tasks');
+      this.route('decorating-tasks');
     });
   });
   this.route('experimental-prediction');

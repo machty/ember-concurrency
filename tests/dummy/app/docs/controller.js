@@ -22,6 +22,7 @@ export default Ember.Controller.extend({
         {route: "docs.examples.ajax-throttling", title: "AJAX Throttling"},
         {route: "docs.examples.route-tasks", title: "Route Tasks"},
         {route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks"},
+        //{route: "docs.examples.decorating-tasks", title: "Decorating Other Tasks"},
       ]
     },
   ],
