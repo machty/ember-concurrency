@@ -140,8 +140,8 @@ test("linked tasks can perform the tasks they're linked to", function(assert) {
   });
 });
 
-
-test("linked tasks wat", function(assert) {
+/*
+test("linked tasks ", function(assert) {
   assert.expect(2);
 
   let defer;
@@ -173,8 +173,5 @@ test("linked tasks wat", function(assert) {
     });
   });
 });
-
-
-
-
+*/
 
