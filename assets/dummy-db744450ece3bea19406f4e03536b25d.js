@@ -2496,6 +2496,7 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
       children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" }, { route: "docs.examples.route-tasks", title: "Route Tasks" }, { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" }]
     }],
 
+    //{route: "docs.examples.decorating-tasks", title: "Decorating Other Tasks"},
     flatContents: computed(function () {
       var flattened = [];
       this.get('tableOfContents').forEach(function (entry) {
@@ -2839,6 +2840,382 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
       statements: [["block", "power-select", [], ["search", ["subexpr", "@mut", [["get", "searchRepo.perform", ["loc", [null, [20, 25], [20, 43]]]]], [], []], "selected", ["subexpr", "@mut", [["get", "selected", ["loc", [null, [21, 27], [21, 35]]]]], [], []], "onchange", ["subexpr", "action", [["subexpr", "mut", [["get", "selected", ["loc", [null, [22, 40], [22, 48]]]]], [], ["loc", [null, [22, 35], [22, 49]]]]], [], ["loc", [null, [22, 27], [22, 50]]]]], 0, null, ["loc", [null, [20, 2], [24, 19]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation.js"], ["loc", [null, [30, 0], [30, 60]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation-template.hbs"], ["loc", [null, [34, 0], [34, 70]]]]],
       locals: [],
       templates: [child0]
+    };
+  })());
+});
+define('dummy/docs/examples/decorating-tasks/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+
+  // BEGIN-SNIPPET decorating-tasks
+  function taskWithCooldown(taskPath, ms) {
+    return (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$1$0() {
+      var _get;
+
+      var args$2$0 = arguments;
+      return regeneratorRuntime.wrap(function callee$1$0$(context$2$0) {
+        while (1) switch (context$2$0.prev = context$2$0.next) {
+          case 0:
+            context$2$0.next = 2;
+            return (_get = this.get(taskPath)).perform.apply(_get, args$2$0);
+
+          case 2:
+            context$2$0.next = 4;
+            return (0, _emberConcurrency.timeout)(ms);
+
+          case 4:
+          case 'end':
+            return context$2$0.stop();
+        }
+      }, callee$1$0, this);
+    })).drop().performs(taskPath);
+  }
+
+  exports['default'] = _ember['default'].Controller.extend({
+    sharedTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            context$1$0.next = 2;
+            return (0, _emberConcurrency.timeout)(1000);
+
+          case 2:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    })).drop(),
+
+    halfSecond: taskWithCooldown('sharedTask', 500),
+    oneSecond: taskWithCooldown('sharedTask', 1000),
+    twoSeconds: taskWithCooldown('sharedTask', 2000),
+
+    tasks: _ember['default'].computed(function () {
+      return [this.get('halfSecond'), this.get('oneSecond'), this.get('twoSeconds')];
+    })
+  });
+
+  // END-SNIPPET
+});
+
+// perform the task...
+
+// ...and wait for cooldown timer.
+define("dummy/docs/examples/decorating-tasks/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 40,
+              "column": 2
+            },
+            "end": {
+              "line": 44,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/docs/examples/decorating-tasks/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("button");
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element1 = dom.childAt(fragment, [1]);
+          var morphs = new Array(3);
+          morphs[0] = dom.createAttrMorph(element1, 'class');
+          morphs[1] = dom.createElementMorph(element1);
+          morphs[2] = dom.createMorphAt(element1, 1, 1);
+          return morphs;
+        },
+        statements: [["attribute", "class", ["subexpr", "if", [["get", "task.isIdle", ["loc", [null, [41, 47], [41, 58]]]], "button-primary"], [], ["loc", [null, [41, 42], [41, 77]]]]], ["element", "action", [["get", "task.perform", ["loc", [null, [41, 21], [41, 33]]]]], [], ["loc", [null, [41, 12], [41, 35]]]], ["content", "task.name", ["loc", [null, [42, 6], [42, 19]]]]],
+        locals: ["task"],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 62,
+              "column": 2
+            },
+            "end": {
+              "line": 66,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/docs/examples/decorating-tasks/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("button");
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1]);
+          var morphs = new Array(3);
+          morphs[0] = dom.createAttrMorph(element0, 'class');
+          morphs[1] = dom.createElementMorph(element0);
+          morphs[2] = dom.createMorphAt(element0, 1, 1);
+          return morphs;
+        },
+        statements: [["attribute", "class", ["subexpr", "if", [["get", "task.performWillSucceed", ["loc", [null, [63, 47], [63, 70]]]], "button-primary"], [], ["loc", [null, [63, 42], [63, 89]]]]], ["element", "action", [["get", "task.perform", ["loc", [null, [63, 21], [63, 33]]]]], [], ["loc", [null, [63, 12], [63, 35]]]], ["content", "task.name", ["loc", [null, [64, 6], [64, 19]]]]],
+        locals: ["task"],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 74,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/examples/decorating-tasks/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Decorating (or Composing) Tasks");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Sometimes you'll want to write a task that simply runs\n  another task, but with some added behavior. One example\n  is a button with a cooldown period after the underyling\n  task has finished running. In such a case, it might be\n  tempting to put the cooldown timer on the underlying\n  task, but if the underlying task is shared between many\n  consumers that ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("em");
+        var el3 = dom.createTextNode("don't");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" require that cooldown time,\n  then you'd be foisting your cooldown needs on everyone\n  else who might depend on that shared resource.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ember-concurrency task are composable, such that it's\n  easy to write tasks that decorate another task with added\n  behavior, as shown in the example below:\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Live Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Shared Task: ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  The following buttons use the ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".isIdle");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" property of Task\n  to stylize the buttons as clickable. ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("isIdle");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" is false only\n  when the task is actively running, which explains why, when clicking\n  buttons in the top row, only the one you click is stylized as inactive,\n  while the others still look clickable (because they both perform different\n  tasks). In fact, clicking these active-looking\n  buttons while ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("sharedTask");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" is still running will result in those\n  clicks being ignored since the both ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("sharedTask");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" and the tasks\n  with cooldown applied, are configured to ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".drop");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" performs while\n  they're running.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  The buttons below use ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".performWillSucceed");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" instead of ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".isIdle");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  to stylize the buttons as clickable. ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".performWillSucceed");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" is true\n  when the state of the task is such that calling ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".perform()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" on it\n  will immediately execute (rather than being dropped or enqueued). While ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("isIdle");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  only takes into considering whether the specified task is running,\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".performWillSucceed");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" takes into consideration whether the task\n  linked via the ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".performs(otherTask)");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" Task Modifier can be performed at this time.\n  This explains why the buttons below ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("em");
+        var el3 = dom.createTextNode("all");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" are stylized as unclickable when\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("em");
+        var el3 = dom.createTextNode("anyone");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" is performing ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("sharedTask");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(".\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(6);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [8]), 1, 1);
+        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [12]), 1, 1);
+        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [17]), 1, 1);
+        morphs[3] = dom.createMorphAt(fragment, 20, 20, contextualElement);
+        morphs[4] = dom.createMorphAt(fragment, 22, 22, contextualElement);
+        morphs[5] = dom.createMorphAt(fragment, 24, 24, contextualElement);
+        return morphs;
+      },
+      statements: [["content", "sharedTask.state", ["loc", [null, [23, 17], [23, 37]]]], ["block", "each", [["get", "tasks", ["loc", [null, [40, 10], [40, 15]]]]], [], 0, null, ["loc", [null, [40, 2], [44, 11]]]], ["block", "each", [["get", "tasks", ["loc", [null, [62, 10], [62, 15]]]]], [], 1, null, ["loc", [null, [62, 2], [66, 11]]]], ["inline", "code-snippet", [], ["name", "decorating-tasks.js"], ["loc", [null, [70, 0], [70, 43]]]], ["inline", "code-snippet", [], ["name", "decorating-tasks-template-isIdle.hbs"], ["loc", [null, [71, 0], [71, 60]]]], ["inline", "code-snippet", [], ["name", "decorating-tasks-template-performWillSucceed.hbs"], ["loc", [null, [72, 0], [72, 72]]]]],
+      locals: [],
+      templates: [child0, child1]
     };
   })());
 });
@@ -6169,6 +6546,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
           this.route('detail', { path: ':id' });
         });
         this.route('joining-tasks');
+        this.route('decorating-tasks');
       });
     });
     this.route('experimental-prediction');
@@ -6199,6 +6577,9 @@ define("dummy/snippets", ["exports"], function (exports) {
     "count-up.js": "  countUp: task(function * () {\n    while (true) {\n      this.incrementProperty('count');\n      yield timeout(100);\n    }\n  }).on('init'),",
     "debounced-search-with-cancelation-template.hbs": "  {{#power-select search=searchRepo.perform\n                  selected=selected\n                  onchange=(action (mut selected)) as |repo|}}\n    {{repo.full_name}}\n  {{/power-select}}",
     "debounced-search-with-cancelation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because this\n    // task is `.restartable()`, if the user starts typing again,\n    // the current search will be canceled at this point and\n    // start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `https://api.github.com/search/repositories?q=${term}`;\n\n    // We yield an AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield cancelableGetJSON(url);\n    return json.items;\n  }).restartable(),\n});",
+    "decorating-tasks-template-isIdle.hbs": "<p>\n  {{#each tasks as |task|}}\n    <button {{action task.perform}} class={{if task.isIdle 'button-primary'}}>\n      {{task.name}}\n    </button>\n  {{/each}}\n</p>",
+    "decorating-tasks-template-performWillSucceed.hbs": "<p>\n  {{#each tasks as |task|}}\n    <button {{action task.perform}} class={{if task.performWillSucceed 'button-primary'}}>\n      {{task.name}}\n    </button>\n  {{/each}}\n</p>",
+    "decorating-tasks.js": "function taskWithCooldown(taskPath, ms) {\n  return task(function * (...args) {\n    // perform the task...\n    yield this.get(taskPath).perform(...args);\n\n    // ...and wait for cooldown timer.\n    yield timeout(ms);\n  }).drop().performs(taskPath);\n}\n\nexport default Ember.Controller.extend({\n  sharedTask: task(function * () {\n    yield timeout(1000);\n  }).drop(),\n\n  halfSecond: taskWithCooldown('sharedTask', 500),\n  oneSecond:  taskWithCooldown('sharedTask', 1000),\n  twoSeconds: taskWithCooldown('sharedTask', 2000),\n\n  tasks: Ember.computed(function() {\n    return [\n      this.get('halfSecond'),\n      this.get('oneSecond'),\n      this.get('twoSeconds')\n    ];\n  }),\n});",
     "detail-route.js": "export default Ember.Route.extend({\n  notify: Ember.inject.service('notify'),\n\n  setupController(controller, model) {\n    this.get('pollServerForChanges').perform(model.id);\n  },\n\n  pollServerForChanges: task(function * (id) {\n    let notify = this.get('notify');\n    yield timeout(500);\n    try {\n      notify.info(`Thing ${id}: Starting to poll for changes`);\n      while (true) {\n        yield timeout(5000);\n        notify.info(`Thing ${id}: Polling now...`);\n      }\n    } finally {\n      notify.warning(`Thing ${id}: No longer polling for changes`);\n    }\n  }).cancelOn('deactivate').restartable(),\n});",
     "ember-install.sh": "ember install ember-concurrency\n",
     "increment-button-task.js": "export default Ember.Controller.extend({\n  count: 0,\n  incrementBy: task(function * (inc) {\n    if (!inc) { return; }\n\n    let speed = 400;\n    while (true) {\n      this.incrementProperty('count', inc);\n      yield timeout(speed);\n      speed = Math.max(50, speed * 0.8);\n    }\n  }).restartable(),\n});",
@@ -6560,7 +6941,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.7+9988d47c"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.8+8a040ab5"});
 }
 
 /* jshint ignore:end */

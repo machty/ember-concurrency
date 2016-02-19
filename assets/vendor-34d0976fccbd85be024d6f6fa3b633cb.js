@@ -96175,6 +96175,10 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     }
   };
 
+  function isSuccess(nextPerformState) {
+    return nextPerformState === 'succeed' || nextPerformState === 'cancel_previous';
+  }
+
   /**
     The `Task` object lives on a host Ember object (e.g.
     a Component, Route, or Controller). You call the
@@ -96204,10 +96208,27 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     _maxConcurrency: Infinity,
     _activeTaskInstances: null,
     _needsFlush: null,
-    _link: null,
     _propertyName: null,
 
     name: computed.oneWay('_propertyName'),
+
+    _performsPath: null,
+    _performs: computed('_performsPath', function () {
+      var path = this.get('_performsPath');
+      if (!path) {
+        return;
+      }
+
+      var task = this.context.get(path);
+      if (!(task instanceof Task)) {
+        throw new Error('You wrote .performs(\'' + path + '\'), but the object at \'' + path + '\' is not a Task');
+      }
+      return task;
+    }),
+
+    _performsState: computed('_performs.nextPerformState', function () {
+      return this.get('_performs.nextPerformState') || 'succeed';
+    }),
 
     /**
      * EXPERIMENTAL
@@ -96225,8 +96246,9 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @private
      * @readOnly
      */
-    nextPerformState: computed(function () {
-      return this.bufferPolicy.getNextPerformStatus(this);
+    nextPerformState: computed('_performsState', function () {
+      var performsState = this.get('_performsState');
+      return isSuccess(performsState) ? this.bufferPolicy.getNextPerformStatus(this) : performsState;
     }),
 
     /**
@@ -96240,9 +96262,8 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @private
      * @readOnly
      */
-    nextPerformWouldSucceed: computed('nextPerformState', function () {
-      var val = this.get('nextPerformState');
-      return val === 'succeed' || val === 'cancel_previous';
+    performWillSucceed: computed('nextPerformState', function () {
+      return isSuccess(this.get('nextPerformState'));
     }),
 
     /**
@@ -96256,7 +96277,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @private
      * @readOnly
      */
-    nextPerformWouldDrop: computed.equal('nextPerformState', 'drop'),
+    performWillDrop: computed.equal('nextPerformState', 'drop'),
 
     /**
      * EXPERIMENTAL
@@ -96269,7 +96290,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @private
      * @readOnly
      */
-    nextPerformWouldEnqueue: computed.equal('nextPerformState', 'enqueue'),
+    performWillEnqueue: computed.equal('nextPerformState', 'enqueue'),
 
     /**
      * EXPERIMENTAL
@@ -96281,7 +96302,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @private
      * @readOnly
      */
-    nextPerformWouldCancelPrevious: computed.equal('nextPerformState', 'cancel_previous'),
+    performWillCancelPrevious: computed.equal('nextPerformState', 'cancel_previous'),
 
     init: function init() {
       var _this = this;
@@ -96350,6 +96371,14 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
         context: this.context
       });
 
+      if (this.get('_performs') && !this.get('performWillSucceed')) {
+        // tasks linked via .performs() should be immediately dropped
+        // before they even have a chance to run if we know that
+        // .performWillSucceed is false.
+        taskInstance.cancel();
+        return taskInstance;
+      }
+
       this._queuedTaskInstances.push(taskInstance);
       this._needsFlush();
       this.notifyPropertyChange('nextPerformState');
@@ -96403,7 +96432,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
         context: this,
         bufferPolicy: tp.bufferPolicy,
         _maxConcurrency: tp._maxConcurrency,
-        _link: tp._link,
+        _performsPath: tp._performsPath && tp._performsPath[0],
         _propertyName: _propertyName
       });
     });
@@ -96412,7 +96441,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     this._maxConcurrency = Infinity;
     this.eventNames = null;
     this.cancelEventNames = null;
-    this._link = null;
+    this._performsPath = null;
   }
 
   TaskProperty.prototype = Object.create(ComputedProperty.prototype);
@@ -96577,8 +96606,9 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     }
   };
 
-  TaskProperty.prototype.link = function (taskOrGroupPath) {
-    this._link = taskOrGroupPath;
+  TaskProperty.prototype.performs = function () {
+    this._performsPath = this._performsPath || [];
+    this._performsPath.push.apply(this._performsPath, arguments);
     return this;
   };
 
