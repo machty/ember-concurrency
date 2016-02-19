@@ -19,12 +19,21 @@ const spliceTaskInstances = (taskInstances, index, count) => {
   taskInstances.splice(index, count);
 };
 
+function numPerformSlots(task) {
+  return task._maxConcurrency -
+    task._queuedTaskInstances.length -
+    task._activeTaskInstances.length;
+}
+
 const enqueueTasksPolicy = {
   requiresUnboundedConcurrency: true,
   schedule(task) {
     // [a,b,_] [c,d,e,f] becomes
     // [a,b,c] [d,e,f]
     saturateActiveQueue(task);
+  },
+  getNextPerformStatus(task) {
+    return numPerformSlots(task) > 0 ? 'succeed' : 'enqueue';
   }
 };
 
@@ -34,6 +43,9 @@ const dropQueuedTasksPolicy = {
     // [a,b,c] []
     saturateActiveQueue(task);
     spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length);
+  },
+  getNextPerformStatus(task) {
+    return numPerformSlots(task) > 0 ? 'succeed' : 'drop';
   }
 };
 
@@ -48,6 +60,9 @@ const cancelOngoingTasksPolicy = {
 
     let numToShift = Math.max(0, activeTaskInstances.length - task._maxConcurrency);
     spliceTaskInstances(activeTaskInstances, 0, numToShift);
+  },
+  getNextPerformStatus(task) {
+    return numPerformSlots(task) > 0 ? 'succeed' : 'cancel_previous';
   }
 };
 
@@ -89,6 +104,99 @@ const Task = Ember.Object.extend({
   _maxConcurrency: Infinity,
   _activeTaskInstances: null,
   _needsFlush: null,
+  _link: null,
+  _propertyName: null,
+
+  name: computed.oneWay('_propertyName'),
+
+  /**
+   * EXPERIMENTAL
+   *
+   * This value describes what would happen to the TaskInstance returned
+   * from .perform() if .perform() were called right now.  Returns one of
+   * the following values:
+   *
+   * - `succeed`: new TaskInstance will start running immediately
+   * - `drop`: new TaskInstance will be dropped
+   * - `enqueue`: new TaskInstance will be enqueued for later execution
+   *
+   * @memberof Task
+   * @instance
+   * @private
+   * @readOnly
+   */
+  nextPerformState: computed(function() {
+    return this.bufferPolicy.getNextPerformStatus(this);
+  }),
+
+  /**
+   * EXPERIMENTAL
+   *
+   * Returns true if calling .perform() right now would immediately start running
+   * the returned TaskInstance.
+   *
+   * @memberof Task
+   * @instance
+   * @private
+   * @readOnly
+   */
+  nextPerformWouldSucceed: computed('nextPerformState', function() {
+    let val = this.get('nextPerformState');
+    return val === 'succeed' || val === 'cancel_previous';
+  }),
+
+  /**
+   * EXPERIMENTAL
+   *
+   * Returns true if calling .perform() right now would immediately cancel (drop)
+   * the returned TaskInstance.
+   *
+   * @memberof Task
+   * @instance
+   * @private
+   * @readOnly
+   */
+  nextPerformWouldDrop: computed.equal('nextPerformState', 'drop'),
+
+  /**
+   * EXPERIMENTAL
+   *
+   * Returns true if calling .perform() right now would enqueue the TaskInstance
+   * rather than execute immediately.
+   *
+   * @memberof Task
+   * @instance
+   * @private
+   * @readOnly
+   */
+  nextPerformWouldEnqueue: computed.equal('nextPerformState', 'enqueue'),
+
+  /**
+   * EXPERIMENTAL
+   *
+   * Returns true if calling .perform() right now would cause a previous task to be canceled
+   *
+   * @memberof Task
+   * @instance
+   * @private
+   * @readOnly
+   */
+  nextPerformWouldCancelPrevious: computed.equal('nextPerformState', 'cancel_previous'),
+
+  init() {
+    this._super();
+    this._activeTaskInstances = Ember.A();
+    this._queuedTaskInstances = Ember.A();
+
+    // TODO: {{perform}} helper
+    this.perform = (...args) => {
+      return this._perform(...args);
+    };
+
+    this._needsFlush = Ember.run.bind(this, this._scheduleFlush);
+
+    cleanupOnDestroy(this.context, this, 'cancelAll');
+  },
 
   /**
    * The current number of active running task instances. This
@@ -114,21 +222,6 @@ const Task = Ember.Object.extend({
    */
   perform: null,
 
-  init() {
-    this._super();
-    this._activeTaskInstances = Ember.A();
-    this._queuedTaskInstances = Ember.A();
-
-    // TODO: {{perform}} helper
-    this.perform = (...args) => {
-      return this._perform(...args);
-    };
-
-    this._needsFlush = Ember.run.bind(this, this._scheduleFlush);
-
-    cleanupOnDestroy(this.context, this, 'cancelAll');
-  },
-
   /**
    * Cancels all running or queued `TaskInstance`s for this Task.
    * If you're trying to cancel a specific TaskInstance (rather
@@ -153,6 +246,7 @@ const Task = Ember.Object.extend({
 
     this._queuedTaskInstances.push(taskInstance);
     this._needsFlush();
+    this.notifyPropertyChange('nextPerformState');
 
     return taskInstance;
   },
@@ -173,6 +267,7 @@ const Task = Ember.Object.extend({
       }
     }
 
+    this.notifyPropertyChange('nextPerformState');
     this.set('concurrency', this._activeTaskInstances.length);
   },
 });
@@ -195,12 +290,14 @@ const Task = Ember.Object.extend({
 */
 export function TaskProperty(taskFn) {
   let tp = this;
-  ComputedProperty.call(this, function() {
+  ComputedProperty.call(this, function(_propertyName) {
     return Task.create({
       fn: taskFn,
       context: this,
       bufferPolicy: tp.bufferPolicy,
       _maxConcurrency: tp._maxConcurrency,
+      _link: tp._link,
+      _propertyName,
     });
   });
 
@@ -208,6 +305,7 @@ export function TaskProperty(taskFn) {
   this._maxConcurrency = Infinity;
   this.eventNames = null;
   this.cancelEventNames = null;
+  this._link = null;
 }
 
 TaskProperty.prototype = Object.create(ComputedProperty.prototype);
@@ -370,6 +468,11 @@ TaskProperty.prototype._setDefaultMaxConcurrency = function(n) {
   if (this._maxConcurrency === Infinity) {
     this._maxConcurrency = n;
   }
+};
+
+TaskProperty.prototype.link = function(taskOrGroupPath) {
+  this._link = taskOrGroupPath;
+  return this;
 };
 
 function addListenersToPrototype(proto, eventNames, taskName, taskMethod) {

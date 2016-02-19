@@ -122,3 +122,59 @@ test("task().cancelOn", function(assert) {
   });
 });
 
+test("linked tasks can perform the tasks they're linked to", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    foo: task(function * (v) {
+      assert.equal(v, 123);
+    }),
+
+    bar: task(function * (v) {
+      yield this.get('foo').perform(v);
+    }).link('foo'),
+  });
+
+  Ember.run(() => {
+    Obj.create().get('bar').perform(123);
+  });
+});
+
+
+test("linked tasks wat", function(assert) {
+  assert.expect(2);
+
+  let defer;
+  let Obj = Ember.Object.extend({
+    foo: task(function * () {
+      defer = Ember.RSVP.defer();
+      yield defer.promise;
+    }).drop(),
+
+    bar: task(function * () {
+      return 123;
+    }).link('foo'),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+    obj.get('foo').perform();
+    obj.get('bar').perform().catch(e => {
+      assert.equal(e.name, 'TaskCancelation');
+    });
+  });
+
+  Ember.run(null, defer.resolve);
+
+  Ember.run(() => {
+    obj.get('bar').perform().then(v => {
+      assert.equal(v, 123);
+    });
+  });
+});
+
+
+
+
+

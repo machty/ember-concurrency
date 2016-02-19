@@ -26,6 +26,7 @@ Router.map(function() {
       this.route('joining-tasks');
     });
   });
+  this.route('experimental-prediction');
 });
 
 export default Router;

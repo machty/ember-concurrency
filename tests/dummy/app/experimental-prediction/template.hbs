@@ -1,0 +1,32 @@
+<div class="container">
+  <h2>Experimental: predict .perform() success</h2>
+
+  <p>
+    Because the "buffering policy" for a task is declaratively
+    specified up front (via task modifiers like .drop, .enqueue),
+    someone who wants to .perform a task can know up front whether
+    perform()ing that task right now would 1) immediately execute
+    the task instance, 2) immediately cancel (drop) the task
+    instance, or 3) enqueue the task instance for later execution.
+  </p>
+
+  <p>
+    This experiment is part of my attempt to squeeze out the maximal
+    amount of derivable state from the declarative ember-concurrency
+    API. Once we have all the derivable state we can coalesce
+    into more reasonable APIs/patterns to expose to the user.
+  </p>
+
+  {{#each tasks as |task|}}
+    <h4>{{task.name}}, maxConcurrency={{task._maxConcurrency}}</h4>
+    <ul>
+      <li>nextPerformState: {{caps-bool task.nextPerformState}}</li>
+      <li>nextPerformWouldSucceed: {{caps-bool task.nextPerformWouldSucceed}}</li>
+      <li>nextPerformWouldDrop: {{caps-bool task.nextPerformWouldDrop}}</li>
+      <li>nextPerformWouldEnqueue: {{caps-bool task.nextPerformWouldEnqueue}}</li>
+      <li>nextPerformWouldCancelPrevious: {{caps-bool task.nextPerformWouldCancelPrevious}}</li>
+    </ul>
+    {{concurrency-graph task=task}}
+  {{/each}}
+</div>
+
