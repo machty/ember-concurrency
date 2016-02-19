@@ -23,10 +23,10 @@
       <li>isRunning: {{caps-bool task.isRunning}}</li>
       <li>concurrency: {{task.concurrency}}</li>
       <li>nextPerformState: {{task.nextPerformState}}</li>
-      <li>nextPerformWouldSucceed: {{caps-bool task.nextPerformWouldSucceed}}</li>
-      <li>nextPerformWouldDrop: {{caps-bool task.nextPerformWouldDrop}}</li>
-      <li>nextPerformWouldEnqueue: {{caps-bool task.nextPerformWouldEnqueue}}</li>
-      <li>nextPerformWouldCancelPrevious: {{caps-bool task.nextPerformWouldCancelPrevious}}</li>
+      <li>performWillSucceed: {{caps-bool task.performWillSucceed}}</li>
+      <li>performWillDrop: {{caps-bool task.performWillDrop}}</li>
+      <li>performWillEnqueue: {{caps-bool task.performWillEnqueue}}</li>
+      <li>performWillCancelPrevious: {{caps-bool task.performWillCancelPrevious}}</li>
     </ul>
     {{concurrency-graph task=task}}
   {{/each}}
