@@ -24,12 +24,6 @@
 
 <h4>Subscribing to Observable of Evented events</h4>
 
-<p>
-  This works by reopening Ember.Evented and overriding
-  <code>.on()</code> to return an observable if the
-  handler function argument is omitted.
-</p>
-
 <h5>Status: {{fooStatus}}</h5>
 
 <button {{action 'triggerFoo'}}>Trigger Foo</button>
