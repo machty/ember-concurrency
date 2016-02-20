@@ -100,7 +100,12 @@ export function interval(ms) {
  *   the task, in milliseconds
  */
 export function timeout(ms) {
-  return interval(ms);
+  let timerId;
+  let promise = new Ember.RSVP.Promise(r => {
+    timerId = setTimeout(r, ms);
+  });
+  promise.__ec_cancel__ = () => window.clearTimeout(timerId);
+  return promise;
 }
 
 export { createObservable, all, race };

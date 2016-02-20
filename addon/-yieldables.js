@@ -58,7 +58,7 @@ function taskAwareVariantOf(obj, method) {
     };
 
     let promise = defer.promise.finally(cancelAll);
-    promise.__ec_dispose__ = cancelAll;
+    promise.__ec_cancel__ = cancelAll;
     return promise;
   };
 }
