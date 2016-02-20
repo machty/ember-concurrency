@@ -7,7 +7,7 @@ test("task init", function(assert) {
   assert.expect(3);
 
   let Obj = Ember.Object.extend({
-    oldschool: task(function() {
+    oldschool: task(function * () {
       assert.ok(this instanceof Obj);
     }).on('init'),
 
@@ -21,7 +21,7 @@ test("task init", function(assert) {
   });
 
   Ember.run(() => {
-    Obj.create({ });
+    Obj.create();
   });
 });
 
@@ -195,4 +195,21 @@ test(".performs() allows caller's perform to succeed when maxConcurrency isn't c
   assert.equal(obj.get('bar.concurrency'), 0);
 });
 
+test(".performs() allows caller's perform to succeed when maxConcurrency isn't constraining", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    foo: task(function * () {
+      throw new Error("wat");
+    }),
+  });
+
+  try {
+    Ember.run(() => {
+      Obj.create().get('foo').perform();
+    });
+  } catch(e) {
+    assert.equal(e.message, "wat");
+  }
+});
 

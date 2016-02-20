@@ -292,7 +292,8 @@ const Task = Ember.Object.extend({
     for (let i = 0; i < this._activeTaskInstances.length; ++i) {
       let taskInstance = this._activeTaskInstances[i];
       if (!taskInstance.hasStarted) {
-        taskInstance._start().then(this._needsFlush, this._needsFlush);
+        // use internal promise so that it doesn't cancel error reporting
+        taskInstance._start()._defer.promise.then(this._needsFlush, this._needsFlush);
       }
     }
 
