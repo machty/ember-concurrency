@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import { isGeneratorIterator, createObservable } from './utils';
 import { TaskProperty } from './-task-property';
-//import { EventedObservable } from './-evented-observable';
+import EventedObservable from './-evented-observable';
 import { subscribe } from './-subscribe';
 import { all, race } from './-yieldables';
 
@@ -107,6 +107,10 @@ export function timeout(ms) {
   });
   promise.__ec_cancel__ = () => window.clearTimeout(timerId);
   return promise;
+}
+
+export function events(obj, eventName) {
+  return EventedObservable.create({ obj, eventName });
 }
 
 export { createObservable, all, race, subscribe };

@@ -25,6 +25,7 @@ Router.map(function() {
       });
       this.route('joining-tasks');
       this.route('decorating-tasks');
+      this.route('observables');
     });
   });
   this.route('experimental-prediction');
