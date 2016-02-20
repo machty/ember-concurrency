@@ -95733,6 +95733,88 @@ define('ember-computed-decorators/utils/is-descriptor', ['exports'], function (e
     return item && typeof item === 'object' && 'writable' in item && 'enumerable' in item && 'configurable' in item;
   }
 });
+define('ember-concurrency/-buffer-policy', ['exports'], function (exports) {
+  'use strict';
+
+  function _toConsumableArray(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];return arr2;
+    } else {
+      return Array.from(arr);
+    }
+  }
+
+  var saturateActiveQueue = function saturateActiveQueue(task) {
+    while (task._activeTaskInstances.length < task._maxConcurrency) {
+      var taskInstance = task._queuedTaskInstances.shift();
+      if (!taskInstance) {
+        break;
+      }
+      task._activeTaskInstances.push(taskInstance);
+    }
+  };
+
+  function numPerformSlots(task) {
+    return task._maxConcurrency - task._queuedTaskInstances.length - task._activeTaskInstances.length;
+  }
+
+  var enqueueTasksPolicy = {
+    requiresUnboundedConcurrency: true,
+    schedule: function schedule(task) {
+      // [a,b,_] [c,d,e,f] becomes
+      // [a,b,c] [d,e,f]
+      saturateActiveQueue(task);
+    },
+    getNextPerformStatus: function getNextPerformStatus(task) {
+      return numPerformSlots(task) > 0 ? 'succeed' : 'enqueue';
+    }
+  };
+
+  exports.enqueueTasksPolicy = enqueueTasksPolicy;
+
+  var dropQueuedTasksPolicy = {
+    schedule: function schedule(task) {
+      // [a,b,_] [c,d,e,f] becomes
+      // [a,b,c] []
+      saturateActiveQueue(task);
+      task.spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length);
+    },
+    getNextPerformStatus: function getNextPerformStatus(task) {
+      return numPerformSlots(task) > 0 ? 'succeed' : 'drop';
+    }
+  };
+
+  exports.dropQueuedTasksPolicy = dropQueuedTasksPolicy;
+
+  var cancelOngoingTasksPolicy = {
+    schedule: function schedule(task) {
+      // [a,b,_] [c,d,e,f] becomes
+      // [d,e,f] []
+      var activeTaskInstances = task._activeTaskInstances;
+      var queuedTaskInstances = task._queuedTaskInstances;
+      activeTaskInstances.push.apply(activeTaskInstances, _toConsumableArray(queuedTaskInstances));
+      queuedTaskInstances.length = 0;
+
+      var numToShift = Math.max(0, activeTaskInstances.length - task._maxConcurrency);
+      task.spliceTaskInstances(activeTaskInstances, 0, numToShift);
+    },
+    getNextPerformStatus: function getNextPerformStatus(task) {
+      return numPerformSlots(task) > 0 ? 'succeed' : 'cancel_previous';
+    }
+  };
+
+  exports.cancelOngoingTasksPolicy = cancelOngoingTasksPolicy;
+
+  var dropButKeepLatestPolicy = {
+    schedule: function schedule(task) {
+      // [a,b,_] [c,d,e,f] becomes
+      // [d,e,f] []
+      saturateActiveQueue(task);
+      task.spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length - 1);
+    }
+  };
+  exports.dropButKeepLatestPolicy = dropButKeepLatestPolicy;
+});
 define('ember-concurrency/-evented-observable', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
@@ -95758,8 +95840,158 @@ define('ember-concurrency/-evented-observable', ['exports', 'ember'], function (
     }
   });
 });
+define('ember-concurrency/-subscribe', ['exports', 'ember', 'ember-concurrency/-task-property', 'ember-concurrency/-task-instance', 'ember-concurrency/utils', 'ember-concurrency/-buffer-policy'], function (exports, _ember, _emberConcurrencyTaskProperty, _emberConcurrencyTaskInstance, _emberConcurrencyUtils, _emberConcurrencyBufferPolicy) {
+  'use strict';
+
+  exports.subscribe = subscribe;
+
+  var computed = _ember['default'].computed;
+  var oneWay = computed.oneWay;
+
+  var loopTaskAttrs = {
+    _makeTask: null,
+    _taskHasStarted: false,
+    _bufferPolicy: _emberConcurrencyBufferPolicy.enqueueTasksPolicy,
+    _maxConcurrency: Infinity,
+    _taskInstance: null,
+    _origin: null,
+
+    _subscriptionCompleted: false,
+    _innerTask: computed(function () {
+      var _this = this;
+
+      this._taskHasStarted = true;
+
+      var task = undefined;
+      if (this._fnOrTask instanceof _emberConcurrencyTaskProperty.Task) {
+        task = this._fnOrTask;
+      } else {
+        task = _emberConcurrencyTaskProperty.Task.create({
+          fn: this._fnOrTask,
+          context: this._taskInstance.context,
+          bufferPolicy: this._bufferPolicy,
+          _maxConcurrency: this._maxConcurrency,
+          _propertyName: this._taskInstance.get('name') + ':inner subscribe() task'
+        });
+      }
+
+      this._subscription = this._observable.subscribe(function (v) {
+        task.perform(v);
+      }, function () {
+        throw new Error("not implemented");
+      }, function () {
+        task._getCompletionPromise().then(function () {
+          _this._teardown();
+        });
+      });
+
+      return task;
+    }),
+
+    toString: function toString() {
+      return '<LoopTask:' + _ember['default'].guidFor(this) + '> of ' + this._origin;
+    },
+
+    init: function init() {
+      var _this2 = this;
+
+      this._super();
+      this._onCompleteDefer = _ember['default'].RSVP.defer();
+      _ember['default'].run.schedule('actions', null, function () {
+        _ember['default'].assert('You must `yield` calls to subscribe(), e.g. `yield subscribe()`: ' + _this2, _this2._taskHasStarted);
+      });
+    },
+
+    concurrency: oneWay('_innerTask.concurrency'),
+    nextPerformState: oneWay('_innerTask.nextPerformState'),
+    performWillSucceed: oneWay('_innerTask.performWillSucceed'),
+    performWillDrop: oneWay('_innerTask.performWillDrop'),
+    performWillEnqueue: oneWay('_innerTask.performWillEnqueue'),
+    performWillCancelPrevious: oneWay('_innerTask.performWillCancelPrevious'),
+    isIdle: oneWay('_innerTask.isIdle'),
+    isRunning: oneWay('_innerTask.isRunning'),
+
+    cancelAll: function cancelAll() {
+      this.get('_innerTask').cancelAll();
+    },
+
+    maxConcurrency: function maxConcurrency(n) {
+      this._maxConcurrency = n;
+      return this;
+    },
+
+    restartable: bufferPolicySetter('restartable', _emberConcurrencyBufferPolicy.cancelOngoingTasksPolicy),
+    enqueue: bufferPolicySetter('enqueue', _emberConcurrencyBufferPolicy.enqueueTasksPolicy),
+    drop: bufferPolicySetter('drop', _emberConcurrencyBufferPolicy.dropQueuedTasksPolicy),
+
+    _onCompleteDefer: null,
+    _teardown: function _teardown() {
+      if (this._subscription) {
+        this._subscription.dispose();
+        this._subscription = null;
+        this._onCompleteDefer.resolve();
+      }
+    },
+
+    _setDefaultMaxConcurrency: function _setDefaultMaxConcurrency(n) {
+      if (this._maxConcurrency === Infinity) {
+        this._maxConcurrency = n;
+      }
+    },
+
+    _assertNotStarted: function _assertNotStarted(methodName) {
+      if (this._taskHasStarted) {
+        _ember['default'].assert(methodName + '() cannot be called at this time; iteration has already started', false);
+      }
+    }
+  };
+
+  loopTaskAttrs[_emberConcurrencyUtils.yieldableSymbol] = function () {
+    var _this3 = this;
+
+    return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
+      // this is the observable that gets yielded by
+      // the task calling `subscribe()`. By calling `publish`
+      // here, we're signaling that this loop task is done
+      // and that the parent task should proceed.
+
+      _this3._onCompleteDefer.promise.then(publish);
+      _this3.get('_innerTask');
+      return function () {
+        _this3._teardown();
+      };
+    });
+  };
+
+  var LoopTask = _ember['default'].Object.extend(loopTaskAttrs);
+
+  exports.LoopTask = LoopTask;
+
+  function bufferPolicySetter(name, bufferPolicy) {
+    return function () {
+      this._assertNotStarted(name);
+      this._setDefaultMaxConcurrency(1);
+      this._bufferPolicy = bufferPolicy;
+      return this;
+    };
+  }
+
+  function subscribe(observable, fnOrTask) {
+    var taskInstance = (0, _emberConcurrencyTaskInstance._getRunningTaskInstance)();
+    _ember['default'].assert("subscribe() can only be called from within a task function (e.g. function * () { yield subscribe(...) })", taskInstance);
+
+    return LoopTask.create({
+      _taskInstance: taskInstance,
+      _fnOrTask: fnOrTask,
+      _observable: observable,
+      _origin: taskInstance
+    });
+  }
+});
 define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _emberConcurrencyUtils) {
   'use strict';
+
+  exports._getRunningTaskInstance = _getRunningTaskInstance;
 
   function forwardToInternalPromise(method) {
     return function () {
@@ -95768,6 +96000,12 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       this._ignorePromiseErrors = true;
       return (_defer$promise = this._defer.promise)[method].apply(_defer$promise, arguments);
     };
+  }
+
+  var CURRENT_TASK_INSTANCE = undefined;
+
+  function _getRunningTaskInstance() {
+    return CURRENT_TASK_INSTANCE;
   }
 
   /**
@@ -95788,10 +96026,11 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
   
     @class TaskInstance
   */
-  var TaskInstance = _ember['default'].Object.extend({
+  var taskInstanceAttrs = {
     iterator: null,
     _disposable: null,
     _ignorePromiseErrors: false,
+    task: null,
 
     /**
      * True if the task instance was canceled before it could run to completion.
@@ -95908,6 +96147,10 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       return this;
     },
 
+    toString: function toString() {
+      return '<TaskInstance:' + _ember['default'].guidFor(this) + '> of ' + this._origin;
+    },
+
     /**
      * Cancels the task instance. Has no effect if the task instance has
      * already been canceled or has already finished running.
@@ -95997,9 +96240,12 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
     _takeSafeStep: function _takeSafeStep(nextValue, iteratorMethod) {
       try {
+        CURRENT_TASK_INSTANCE = this;
         return this.iterator[iteratorMethod](nextValue);
       } catch (e) {
         return { value: e, error: true };
+      } finally {
+        CURRENT_TASK_INSTANCE = null;
       }
     },
 
@@ -96056,24 +96302,32 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
         // something that completes without producing a value.
       });
     }
-  });
+  };
+
+  taskInstanceAttrs[_emberConcurrencyUtils.yieldableSymbol] = function () {
+    var _this3 = this;
+
+    return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
+      _this3.then(publish, publish.error);
+      return function () {
+        _this3.cancel();
+      };
+    });
+  };
+
+  var TaskInstance = _ember['default'].Object.extend(taskInstanceAttrs);
 
   function normalizeObservable(value) {
     if (!value) {
       return null;
     }
 
-    if (value instanceof TaskInstance) {
-      return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
-        value.then(publish, publish.error);
-        return function () {
-          value.cancel();
-        };
-      });
+    if (value[_emberConcurrencyUtils.yieldableSymbol]) {
+      return value[_emberConcurrencyUtils.yieldableSymbol]();
     } else if (typeof value.then === 'function') {
       return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
         value.then(publish, publish.error);
-        return value.__ec_dispose__;
+        return value.__ec_cancel__;
       });
     } else if (typeof value.subscribe === 'function') {
       // TODO: check for scheduler interface for Rx rather than
@@ -96088,92 +96342,13 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
   exports['default'] = TaskInstance;
 });
-define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance'], function (exports, _ember, _emberConcurrencyTaskInstance) {
+define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/utils', 'ember-concurrency/-buffer-policy'], function (exports, _ember, _emberConcurrencyTaskInstance, _emberConcurrencyUtils, _emberConcurrencyBufferPolicy) {
   'use strict';
 
   exports.TaskProperty = TaskProperty;
 
-  function _toConsumableArray(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];return arr2;
-    } else {
-      return Array.from(arr);
-    }
-  }
-
   var ComputedProperty = _ember['default'].__loader.require("ember-metal/computed").ComputedProperty;
   var computed = _ember['default'].computed;
-
-  var saturateActiveQueue = function saturateActiveQueue(task) {
-    while (task._activeTaskInstances.length < task._maxConcurrency) {
-      var taskInstance = task._queuedTaskInstances.shift();
-      if (!taskInstance) {
-        break;
-      }
-      task._activeTaskInstances.push(taskInstance);
-    }
-  };
-
-  var spliceTaskInstances = function spliceTaskInstances(taskInstances, index, count) {
-    for (var i = index; i < index + count; ++i) {
-      taskInstances[i].cancel();
-    }
-    taskInstances.splice(index, count);
-  };
-
-  function numPerformSlots(task) {
-    return task._maxConcurrency - task._queuedTaskInstances.length - task._activeTaskInstances.length;
-  }
-
-  var enqueueTasksPolicy = {
-    requiresUnboundedConcurrency: true,
-    schedule: function schedule(task) {
-      // [a,b,_] [c,d,e,f] becomes
-      // [a,b,c] [d,e,f]
-      saturateActiveQueue(task);
-    },
-    getNextPerformStatus: function getNextPerformStatus(task) {
-      return numPerformSlots(task) > 0 ? 'succeed' : 'enqueue';
-    }
-  };
-
-  var dropQueuedTasksPolicy = {
-    schedule: function schedule(task) {
-      // [a,b,_] [c,d,e,f] becomes
-      // [a,b,c] []
-      saturateActiveQueue(task);
-      spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length);
-    },
-    getNextPerformStatus: function getNextPerformStatus(task) {
-      return numPerformSlots(task) > 0 ? 'succeed' : 'drop';
-    }
-  };
-
-  var cancelOngoingTasksPolicy = {
-    schedule: function schedule(task) {
-      // [a,b,_] [c,d,e,f] becomes
-      // [d,e,f] []
-      var activeTaskInstances = task._activeTaskInstances;
-      var queuedTaskInstances = task._queuedTaskInstances;
-      activeTaskInstances.push.apply(activeTaskInstances, _toConsumableArray(queuedTaskInstances));
-      queuedTaskInstances.length = 0;
-
-      var numToShift = Math.max(0, activeTaskInstances.length - task._maxConcurrency);
-      spliceTaskInstances(activeTaskInstances, 0, numToShift);
-    },
-    getNextPerformStatus: function getNextPerformStatus(task) {
-      return numPerformSlots(task) > 0 ? 'succeed' : 'cancel_previous';
-    }
-  };
-
-  var dropButKeepLatestPolicy = {
-    schedule: function schedule(task) {
-      // [a,b,_] [c,d,e,f] becomes
-      // [d,e,f] []
-      saturateActiveQueue(task);
-      spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length - 1);
-    }
-  };
 
   function isSuccess(nextPerformState) {
     return nextPerformState === 'succeed' || nextPerformState === 'cancel_previous';
@@ -96209,6 +96384,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     _activeTaskInstances: null,
     _needsFlush: null,
     _propertyName: null,
+    _origin: null,
 
     name: computed.oneWay('_propertyName'),
 
@@ -96318,7 +96494,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
 
       this._needsFlush = _ember['default'].run.bind(this, this._scheduleFlush);
 
-      cleanupOnDestroy(this.context, this, 'cancelAll');
+      (0, _emberConcurrencyUtils._cleanupOnDestroy)(this.context, this, 'cancelAll');
     },
 
     /**
@@ -96356,8 +96532,19 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @instance
      */
     cancelAll: function cancelAll() {
-      spliceTaskInstances(this._activeTaskInstances, 0, this._activeTaskInstances.length);
-      spliceTaskInstances(this._queuedTaskInstances, 0, this._queuedTaskInstances.length);
+      this.spliceTaskInstances(this._activeTaskInstances, 0, this._activeTaskInstances.length);
+      this.spliceTaskInstances(this._queuedTaskInstances, 0, this._queuedTaskInstances.length);
+    },
+
+    spliceTaskInstances: function spliceTaskInstances(taskInstances, index, count) {
+      for (var i = index; i < index + count; ++i) {
+        taskInstances[i].cancel();
+      }
+      taskInstances.splice(index, count);
+    },
+
+    toString: function toString() {
+      return '<Task:' + _ember['default'].guidFor(this) + '> of ' + this._origin;
     },
 
     _perform: function _perform() {
@@ -96368,7 +96555,9 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
       var taskInstance = _emberConcurrencyTaskInstance['default'].create({
         fn: this.fn,
         args: args,
-        context: this.context
+        context: this.context,
+        task: this,
+        _origin: this
       });
 
       if (this.get('_performs') && !this.get('performWillSucceed')) {
@@ -96386,11 +96575,14 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
       return taskInstance;
     },
 
+    _flushScheduled: false,
     _scheduleFlush: function _scheduleFlush() {
+      this._flushScheduled = true;
       _ember['default'].run.once(this, this._flushQueues);
     },
 
     _flushQueues: function _flushQueues() {
+      this._flushScheduled = false;
       this._activeTaskInstances = _ember['default'].A(this._activeTaskInstances.filterBy('isFinished', false));
 
       this.bufferPolicy.schedule(this);
@@ -96398,14 +96590,40 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
       for (var i = 0; i < this._activeTaskInstances.length; ++i) {
         var taskInstance = this._activeTaskInstances[i];
         if (!taskInstance.hasStarted) {
-          taskInstance._start().then(this._needsFlush, this._needsFlush);
+          // use internal promise so that it doesn't cancel error reporting
+          taskInstance._start()._defer.promise.then(this._needsFlush, this._needsFlush);
         }
       }
 
       this.notifyPropertyChange('nextPerformState');
-      this.set('concurrency', this._activeTaskInstances.length);
+
+      var concurrency = this._activeTaskInstances.length;
+      this.set('concurrency', concurrency);
+      if (this._completionDefer && concurrency === 0) {
+        this._completionDefer.resolve();
+        this._completionDefer = null;
+      }
+    },
+
+    _completionDefer: null,
+    _getCompletionPromise: function _getCompletionPromise() {
+      var _this2 = this;
+
+      return new _ember['default'].RSVP.Promise(function (r) {
+        _ember['default'].run.schedule('actions', null, function () {
+          var defer = _ember['default'].RSVP.defer();
+          if (!_this2._flushScheduled && _this2._activeTaskInstances.length === 0 && _this2._queuedTaskInstances.length === 0) {
+            defer.resolve();
+          } else {
+            _this2._completionDefer = defer;
+          }
+          defer.promise.then(r);
+        });
+      });
     }
   });
+
+  exports.Task = Task;
 
   /**
     A {@link TaskProperty} is the Computed Property-like object returned
@@ -96430,14 +96648,16 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
       return Task.create({
         fn: taskFn,
         context: this,
+        _origin: this,
         bufferPolicy: tp.bufferPolicy,
         _maxConcurrency: tp._maxConcurrency,
         _performsPath: tp._performsPath && tp._performsPath[0],
-        _propertyName: _propertyName
+        _propertyName: _propertyName,
+        _debugName: ""
       });
     });
 
-    this.bufferPolicy = enqueueTasksPolicy;
+    this.bufferPolicy = _emberConcurrencyBufferPolicy.enqueueTasksPolicy;
     this._maxConcurrency = Infinity;
     this.eventNames = null;
     this.cancelEventNames = null;
@@ -96518,7 +96738,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
    * @instance
    */
   TaskProperty.prototype.restartable = function () {
-    this.bufferPolicy = cancelOngoingTasksPolicy;
+    this.bufferPolicy = _emberConcurrencyBufferPolicy.cancelOngoingTasksPolicy;
     this._setDefaultMaxConcurrency(1);
     return this;
   };
@@ -96533,7 +96753,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
    * @instance
    */
   TaskProperty.prototype.enqueue = function () {
-    this.bufferPolicy = enqueueTasksPolicy;
+    this.bufferPolicy = _emberConcurrencyBufferPolicy.enqueueTasksPolicy;
     this._setDefaultMaxConcurrency(1);
     return this;
   };
@@ -96548,7 +96768,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
    * @instance
    */
   TaskProperty.prototype.drop = function () {
-    this.bufferPolicy = dropQueuedTasksPolicy;
+    this.bufferPolicy = _emberConcurrencyBufferPolicy.dropQueuedTasksPolicy;
     this._setDefaultMaxConcurrency(1);
     return this;
   };
@@ -96557,7 +96777,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
    * @private
    */
   TaskProperty.prototype.keepLatest = function () {
-    this.bufferPolicy = dropButKeepLatestPolicy;
+    this.bufferPolicy = _emberConcurrencyBufferPolicy.dropButKeepLatestPolicy;
     this._setDefaultMaxConcurrency(1);
     return this;
   };
@@ -96627,28 +96847,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
       task[method].apply(task, arguments);
     };
   }
-
-  function cleanupOnDestroy(owner, object, cleanupMethodName) {
-    // TODO: find a non-mutate-y, hacky way of doing this.
-    if (!owner.willDestroy.__ember_processes_destroyers__) {
-      (function () {
-        var oldWillDestroy = owner.willDestroy;
-        var disposers = [];
-
-        owner.willDestroy = function () {
-          for (var i = 0, l = disposers.length; i < l; i++) {
-            disposers[i]();
-          }
-          oldWillDestroy.apply(owner, arguments);
-        };
-        owner.willDestroy.__ember_processes_destroyers__ = disposers;
-      })();
-    }
-
-    owner.willDestroy.__ember_processes_destroyers__.push(function () {
-      object[cleanupMethodName]();
-    });
-  }
 });
 define('ember-concurrency/-yieldables', ['exports', 'ember', 'ember-concurrency/-task-instance'], function (exports, _ember, _emberConcurrencyTaskInstance) {
   'use strict';
@@ -96715,17 +96913,18 @@ define('ember-concurrency/-yieldables', ['exports', 'ember', 'ember-concurrency/
       };
 
       var promise = defer.promise['finally'](cancelAll);
-      promise.__ec_dispose__ = cancelAll;
+      promise.__ec_cancel__ = cancelAll;
       return promise;
     };
   }
 });
-define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-evented-observable', 'ember-concurrency/-yieldables'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyEventedObservable, _emberConcurrencyYieldables) {
+define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-evented-observable', 'ember-concurrency/-subscribe', 'ember-concurrency/-yieldables'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyEventedObservable, _emberConcurrencySubscribe, _emberConcurrencyYieldables) {
   'use strict';
 
   exports.task = task;
   exports.interval = interval;
   exports.timeout = timeout;
+  exports.events = events;
 
   var testGenFn = regeneratorRuntime.mark(function testGenFn() {
     return regeneratorRuntime.wrap(function testGenFn$(context$1$0) {
@@ -96830,12 +97029,24 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
    */
 
   function timeout(ms) {
-    return interval(ms);
+    var timerId = undefined;
+    var promise = new _ember['default'].RSVP.Promise(function (r) {
+      timerId = setTimeout(r, ms);
+    });
+    promise.__ec_cancel__ = function () {
+      return window.clearTimeout(timerId);
+    };
+    return promise;
+  }
+
+  function events(obj, eventName) {
+    return _emberConcurrencyEventedObservable['default'].create({ obj: obj, eventName: eventName });
   }
 
   exports.createObservable = _emberConcurrencyUtils.createObservable;
   exports.all = _emberConcurrencyYieldables.all;
   exports.race = _emberConcurrencyYieldables.race;
+  exports.subscribe = _emberConcurrencySubscribe.subscribe;
 });
 define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
@@ -96843,6 +97054,7 @@ define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _embe
   exports.isGeneratorIterator = isGeneratorIterator;
   exports.Arguments = Arguments;
   exports.createObservable = createObservable;
+  exports._cleanupOnDestroy = _cleanupOnDestroy;
 
   function isGeneratorIterator(iter) {
     return iter && typeof iter.next === 'function' && typeof iter['return'] === 'function' && typeof iter['throw'] === 'function';
@@ -96863,14 +97075,15 @@ define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _embe
     return {
       subscribe: function subscribe(onNext, onError, onCompleted) {
         var isDisposed = false;
+        var isComplete = false;
         var publish = function publish(v) {
-          if (isDisposed) {
+          if (isDisposed || isComplete) {
             return;
           }
           joinAndSchedule(null, onNext, v);
         };
         publish.error = function (e) {
-          if (isDisposed) {
+          if (isDisposed || isComplete) {
             return;
           }
           joinAndSchedule(function () {
@@ -96882,6 +97095,18 @@ define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _embe
             }
           });
         };
+        publish.complete = function () {
+          if (isDisposed || isComplete) {
+            return;
+          }
+          isComplete = true;
+          joinAndSchedule(function () {
+            if (onCompleted) {
+              onCompleted();
+            }
+          });
+        };
+
         // TODO: publish.complete?
 
         var maybeDisposer = fn(publish);
@@ -96911,6 +97136,32 @@ define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _embe
       (_Ember$run = _ember['default'].run).schedule.apply(_Ember$run, ['actions'].concat(args));
     });
   }
+
+  function _cleanupOnDestroy(owner, object, cleanupMethodName) {
+    // TODO: find a non-mutate-y, hacky way of doing this.
+    if (!owner.willDestroy.__ember_processes_destroyers__) {
+      (function () {
+        var oldWillDestroy = owner.willDestroy;
+        var disposers = [];
+
+        owner.willDestroy = function () {
+          for (var i = 0, l = disposers.length; i < l; i++) {
+            disposers[i]();
+          }
+          oldWillDestroy.apply(owner, arguments);
+        };
+        owner.willDestroy.__ember_processes_destroyers__ = disposers;
+      })();
+    }
+
+    owner.willDestroy.__ember_processes_destroyers__.push(function () {
+      object[cleanupMethodName]();
+    });
+  }
+
+  // TODO: Symbol polyfill?
+  var yieldableSymbol = "__ec_yieldable__";
+  exports.yieldableSymbol = yieldableSymbol;
 });
 define('ember-getowner-polyfill/fake-owner', ['exports', 'ember'], function (exports, _ember) {
   'use strict';

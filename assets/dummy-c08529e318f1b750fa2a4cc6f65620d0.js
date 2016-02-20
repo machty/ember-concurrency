@@ -4197,6 +4197,297 @@ define("dummy/docs/examples/loading-ui/template", ["exports"], function (exports
     };
   })());
 });
+define('dummy/docs/examples/observables/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+
+  var Observable = window.Rx.Observable;
+
+  var range = Observable.range;
+  exports['default'] = _ember['default'].Controller.extend(_ember['default'].Evented, {
+    values: null,
+
+    // BEGIN-SNIPPET observables-timetable
+    computeStuff: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      var values;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            values = _ember['default'].A();
+
+            this.set('values', values);
+            context$1$0.next = 4;
+            return (0, _emberConcurrency.subscribe)(range(5, 5), regeneratorRuntime.mark(function callee$1$0(x) {
+              return regeneratorRuntime.wrap(function callee$1$0$(context$2$0) {
+                while (1) switch (context$2$0.prev = context$2$0.next) {
+                  case 0:
+                    context$2$0.next = 2;
+                    return (0, _emberConcurrency.subscribe)(range(10, 3), regeneratorRuntime.mark(function callee$2$0(y) {
+                      return regeneratorRuntime.wrap(function callee$2$0$(context$3$0) {
+                        while (1) switch (context$3$0.prev = context$3$0.next) {
+                          case 0:
+                            values.pushObject({ message: 'What is ' + x + ' x ' + y + ' ? ' });
+                            context$3$0.next = 3;
+                            return (0, _emberConcurrency.timeout)(200);
+
+                          case 3:
+                            values.pushObject({ message: x * y + '. ' });
+
+                          case 4:
+                          case 'end':
+                            return context$3$0.stop();
+                        }
+                      }, callee$2$0, this);
+                    })).enqueue();
+
+                  case 2:
+                    values.pushObject({ message: "\n" });
+
+                  case 3:
+                  case 'end':
+                    return context$2$0.stop();
+                }
+              }, callee$1$0, this);
+            })).enqueue();
+
+          case 4:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    })).restartable(),
+    // END-SNIPPET
+
+    // BEGIN-SNIPPET observables-evented
+    fooStatus: null,
+    listenForFooInternally: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            this.set('fooStatus', 'Waiting for values...');
+
+            context$1$0.next = 3;
+            return (0, _emberConcurrency.subscribe)((0, _emberConcurrency.events)(this, 'foo'), regeneratorRuntime.mark(function callee$1$0(x) {
+              return regeneratorRuntime.wrap(function callee$1$0$(context$2$0) {
+                while (1) switch (context$2$0.prev = context$2$0.next) {
+                  case 0:
+                    this.set('fooStatus', 'Got value ' + x + ', thinking...');
+                    context$2$0.next = 3;
+                    return (0, _emberConcurrency.timeout)(1500);
+
+                  case 3:
+                    this.set('fooStatus', this.fooStatus + ' Done');
+                    context$2$0.next = 6;
+                    return (0, _emberConcurrency.timeout)(200);
+
+                  case 6:
+                  case 'end':
+                    return context$2$0.stop();
+                }
+              }, callee$1$0, this);
+            })).enqueue();
+
+          case 3:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    })).on('init'),
+
+    actions: {
+      triggerFoo: function triggerFoo() {
+        this.trigger('foo', Math.floor(100 * Math.random()));
+      }
+    }
+    // END-SNIPPET
+  });
+});
+define("dummy/docs/examples/observables/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 21,
+              "column": 5
+            },
+            "end": {
+              "line": 21,
+              "column": 41
+            }
+          },
+          "moduleName": "dummy/docs/examples/observables/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
+          dom.insertBoundary(fragment, 0);
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [["content", "v.message", ["loc", [null, [21, 28], [21, 41]]]]],
+        locals: ["v"],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 39,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/examples/observables/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Experimental: Observables");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("strong");
+        var el3 = dom.createTextNode("ember-concurrency");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" integrates with Observables\n  and lets you apply the same concurrency constraints to\n  subscriptions to Observables that you could apply to a task —\n  just as you can configure a Task to ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".drop()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" new\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".perform()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("s while the task is already running, so can\n  you configure the subscription to an async sequence of events\n  (the Observable) to ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".drop()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" events while the\n  previous event is being handled (or use any other task modifier\n  you like).\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Live Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Nested loop of Observable range of numbers");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("button");
+        var el2 = dom.createTextNode("Compute Stuff");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("pre");
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Subscribing to Observable of Evented events");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  This works by reopening Ember.Evented and overriding\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".on()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" to return an observable if the\n  handler function argument is omitted.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Status: ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("button");
+        var el2 = dom.createTextNode("Trigger Foo");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [8]);
+        var element1 = dom.childAt(fragment, [20]);
+        var morphs = new Array(6);
+        morphs[0] = dom.createElementMorph(element0);
+        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [10]), 0, 0);
+        morphs[2] = dom.createMorphAt(fragment, 12, 12, contextualElement);
+        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [18]), 1, 1);
+        morphs[4] = dom.createElementMorph(element1);
+        morphs[5] = dom.createMorphAt(fragment, 22, 22, contextualElement);
+        return morphs;
+      },
+      statements: [["element", "action", [["get", "computeStuff.perform", ["loc", [null, [19, 17], [19, 37]]]]], [], ["loc", [null, [19, 8], [19, 39]]]], ["block", "each", [["get", "values", ["loc", [null, [21, 13], [21, 19]]]]], [], 0, null, ["loc", [null, [21, 5], [21, 50]]]], ["inline", "code-snippet", [], ["name", "observables-timetable.js"], ["loc", [null, [23, 0], [23, 48]]]], ["content", "fooStatus", ["loc", [null, [33, 12], [33, 25]]]], ["element", "action", ["triggerFoo"], [], ["loc", [null, [35, 8], [35, 31]]]], ["inline", "code-snippet", [], ["name", "observables-evented.js"], ["loc", [null, [37, 0], [37, 46]]]]],
+      locals: [],
+      templates: [child0]
+    };
+  })());
+});
 define('dummy/docs/examples/route-tasks/controller', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller.extend({
     ids: [1, 2, 3, 4, 10, 50, 200]
@@ -6576,6 +6867,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
         });
         this.route('joining-tasks');
         this.route('decorating-tasks');
+        this.route('observables');
       });
     });
     this.route('experimental-prediction');
@@ -6621,6 +6913,8 @@ define("dummy/snippets", ["exports"], function (exports) {
     "lifetime-template.hbs": "<h5>\n  Count-up:\n  {{#if isDisplaying}}\n    {{count-up}}\n  {{else}}\n    ...\n  {{/if}}\n</h5>",
     "lifetime.js": "export default Ember.Controller.extend({\n  isDisplaying: false,\n\n  togglingLoop: task(function * () {\n    while (true) {\n      this.toggleProperty('isDisplaying');\n      yield timeout(1500);\n    }\n  }).on('init'),\n});",
     "loading-ui-controller.js": "export default Ember.Controller.extend({\n  askQuestion: task(function * () {\n    yield timeout(1000);\n    this.set('result', Math.random());\n  }).drop(),\n\n  result: null,\n});",
+    "observables-evented.js": "  fooStatus: null,\n  listenForFooInternally: task(function * () {\n    this.set('fooStatus', `Waiting for values...`);\n\n    yield subscribe(events(this, 'foo'), function * (x) {\n      this.set('fooStatus', `Got value ${x}, thinking...`);\n      yield timeout(1500);\n      this.set('fooStatus', `${this.fooStatus} Done`);\n      yield timeout(200);\n    }).enqueue();\n  }).on('init'),\n\n  actions: {\n    triggerFoo() {\n      this.trigger('foo', Math.floor(100*Math.random()));\n    },\n  }",
+    "observables-timetable.js": "  computeStuff: task(function * () {\n    let values = Ember.A();\n    this.set('values', values);\n    yield subscribe(range(5,5), function * (x) {\n      yield subscribe(range(10,3), function * (y) {\n        values.pushObject({ message: `What is ${x} x ${y} ? ` });\n        yield timeout(200);\n        values.pushObject({ message: `${x*y}. `});\n      }).enqueue();\n      values.pushObject({ message: \"\\n\" });\n    }).enqueue();\n  }).restartable(),",
     "press-and-hold-buttons.hbs": "<p>\n  {{#press-and-hold-button\n    press=(action incrementBy.perform -1)\n    release=(action incrementBy.perform 0)}}\n      --Decrease\n  {{/press-and-hold-button}}\n\n  {{#press-and-hold-button\n    press=(action incrementBy.perform 1)\n    release=(action incrementBy.perform 0)}}\n      Increase++\n  {{/press-and-hold-button}}\n</p>",
     "scrambled-text.js": "  startScrambling: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      let pauseTime = 140;\n      while (pauseTime > 5) {\n        this.set('scrambledText', scramble(text));\n        yield timeout(pauseTime);\n        pauseTime = pauseTime * 0.95;\n      }\n      this.set('scrambledText', text);\n      yield timeout(1500);\n    }\n  }).on('init'),",
     "shared-tasks-concurrent.js": "export default Ember.Controller.extend({\n  restartableTask3: task(SHARED_TASK_FN).maxConcurrency(3).restartable(),\n  enqueuedTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueue(),\n  droppingTask3:    task(SHARED_TASK_FN).maxConcurrency(3).drop(),\n});",
@@ -6971,7 +7265,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.8+d8b93568"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.10"});
 }
 
 /* jshint ignore:end */

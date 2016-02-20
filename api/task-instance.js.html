@@ -321,7 +321,7 @@ function normalizeObservable(value) {
   } else if (typeof value.then === 'function') {
     return createObservable(publish => {
       value.then(publish, publish.error);
-      return value.__ec_dispose__;
+      return value.__ec_cancel__;
     });
   } else if (typeof value.subscribe === 'function') {
     // TODO: check for scheduler interface for Rx rather than
