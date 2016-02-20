@@ -176,4 +176,38 @@ test("subscribe() within subscribe() with inner drop", function(assert) {
   assert.deepEqual(values, [10, 11, 12]);
 });
 
+test("subscribe() can be passed a Task to run", function(assert) {
+  assert.expect(11);
+
+  let values = [];
+  let defer;
+  let Obj = Ember.Object.extend({
+    foo: task(function * () {
+      yield subscribe(oneTwoThree, function * (v) {
+        yield subscribe(Observable.range(v*10, 3), this.get('handleEvent'));
+      }).enqueue();
+    }).on('init'),
+
+    handleEvent: task(function * (v) {
+      values.push(v);
+      defer = Ember.RSVP.defer();
+      yield defer.promise;
+    }).enqueue(),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+  });
+
+  let num = 9;
+  while (num--) {
+    assert.equal(obj.get('foo.concurrency'), 1);
+    Ember.run(null, defer.resolve);
+  }
+  assert.equal(obj.get('foo.concurrency'), 0);
+  assert.deepEqual(values, [10, 11, 12, 20, 21, 22, 30, 31, 32]);
+});
+
+
 

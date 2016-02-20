@@ -23,13 +23,18 @@ let loopTaskAttrs = {
   _innerTask: computed(function() {
     this._taskHasStarted = true;
 
-    let task = Task.create({
-      fn: this._fn,
-      context: this._taskInstance.context,
-      bufferPolicy: this._bufferPolicy,
-      _maxConcurrency: this._maxConcurrency,
-      _propertyName: `${this._taskInstance.get('name')}:inner subscribe() task`,
-    });
+    let task;
+    if (this._fnOrTask instanceof Task) {
+      task = this._fnOrTask;
+    } else {
+      task = Task.create({
+        fn: this._fnOrTask,
+        context: this._taskInstance.context,
+        bufferPolicy: this._bufferPolicy,
+        _maxConcurrency: this._maxConcurrency,
+        _propertyName: `${this._taskInstance.get('name')}:inner subscribe() task`,
+      });
+    }
 
     this._subscription = this._observable.subscribe(v => {
       task.perform(v);
@@ -126,13 +131,13 @@ function bufferPolicySetter(name, bufferPolicy) {
   };
 }
 
-export function subscribe(observable, fn) {
+export function subscribe(observable, fnOrTask) {
   let taskInstance = _getRunningTaskInstance();
   Ember.assert("subscribe() can only be called from within a task function (e.g. function * () { yield subscribe(...) })", taskInstance);
 
   return LoopTask.create({
     _taskInstance: taskInstance,
-    _fn: fn,
+    _fnOrTask: fnOrTask,
     _observable: observable,
     _origin: taskInstance,
   });
