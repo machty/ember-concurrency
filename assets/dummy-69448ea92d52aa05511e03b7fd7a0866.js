@@ -4356,7 +4356,7 @@ define("dummy/docs/examples/observables/template", ["exports"], function (export
             "column": 0
           },
           "end": {
-            "line": 39,
+            "line": 33,
             "column": 0
           }
         },
@@ -4438,18 +4438,6 @@ define("dummy/docs/examples/observables/template", ["exports"], function (export
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  This works by reopening Ember.Evented and overriding\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode(".on()");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" to return an observable if the\n  handler function argument is omitted.\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
         var el1 = dom.createElement("h5");
         var el2 = dom.createTextNode("Status: ");
         dom.appendChild(el1, el2);
@@ -4472,17 +4460,17 @@ define("dummy/docs/examples/observables/template", ["exports"], function (export
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [8]);
-        var element1 = dom.childAt(fragment, [20]);
+        var element1 = dom.childAt(fragment, [18]);
         var morphs = new Array(6);
         morphs[0] = dom.createElementMorph(element0);
         morphs[1] = dom.createMorphAt(dom.childAt(fragment, [10]), 0, 0);
         morphs[2] = dom.createMorphAt(fragment, 12, 12, contextualElement);
-        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [18]), 1, 1);
+        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [16]), 1, 1);
         morphs[4] = dom.createElementMorph(element1);
-        morphs[5] = dom.createMorphAt(fragment, 22, 22, contextualElement);
+        morphs[5] = dom.createMorphAt(fragment, 20, 20, contextualElement);
         return morphs;
       },
-      statements: [["element", "action", [["get", "computeStuff.perform", ["loc", [null, [19, 17], [19, 37]]]]], [], ["loc", [null, [19, 8], [19, 39]]]], ["block", "each", [["get", "values", ["loc", [null, [21, 13], [21, 19]]]]], [], 0, null, ["loc", [null, [21, 5], [21, 50]]]], ["inline", "code-snippet", [], ["name", "observables-timetable.js"], ["loc", [null, [23, 0], [23, 48]]]], ["content", "fooStatus", ["loc", [null, [33, 12], [33, 25]]]], ["element", "action", ["triggerFoo"], [], ["loc", [null, [35, 8], [35, 31]]]], ["inline", "code-snippet", [], ["name", "observables-evented.js"], ["loc", [null, [37, 0], [37, 46]]]]],
+      statements: [["element", "action", [["get", "computeStuff.perform", ["loc", [null, [19, 17], [19, 37]]]]], [], ["loc", [null, [19, 8], [19, 39]]]], ["block", "each", [["get", "values", ["loc", [null, [21, 13], [21, 19]]]]], [], 0, null, ["loc", [null, [21, 5], [21, 50]]]], ["inline", "code-snippet", [], ["name", "observables-timetable.js"], ["loc", [null, [23, 0], [23, 48]]]], ["content", "fooStatus", ["loc", [null, [27, 12], [27, 25]]]], ["element", "action", ["triggerFoo"], [], ["loc", [null, [29, 8], [29, 31]]]], ["inline", "code-snippet", [], ["name", "observables-evented.js"], ["loc", [null, [31, 0], [31, 46]]]]],
       locals: [],
       templates: [child0]
     };
@@ -7265,7 +7253,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.10"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.10+31949bb6"});
 }
 
 /* jshint ignore:end */
