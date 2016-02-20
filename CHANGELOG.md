@@ -1,4 +1,7 @@
 # Changelog
+### 0.5.10:
+ - EXPERIMENTAL: integration with observables via `subscribe` function
+
 ### 0.5.9:
  - Prevent promises from being swallowed in some cases
 
