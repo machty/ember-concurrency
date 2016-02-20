@@ -1,79 +1,15 @@
 import Ember from 'ember';
 import TaskInstance from './-task-instance';
+import { _cleanupOnDestroy } from './utils';
+import {
+  enqueueTasksPolicy,
+  dropQueuedTasksPolicy,
+  cancelOngoingTasksPolicy,
+  dropButKeepLatestPolicy
+} from './-buffer-policy';
 
 const ComputedProperty = Ember.__loader.require("ember-metal/computed").ComputedProperty;
 const { computed } = Ember;
-
-const saturateActiveQueue = (task) => {
-  while (task._activeTaskInstances.length < task._maxConcurrency) {
-    let taskInstance = task._queuedTaskInstances.shift();
-    if (!taskInstance) { break; }
-    task._activeTaskInstances.push(taskInstance);
-  }
-};
-
-const spliceTaskInstances = (taskInstances, index, count) => {
-  for (let i = index; i < index + count; ++i) {
-    taskInstances[i].cancel();
-  }
-  taskInstances.splice(index, count);
-};
-
-function numPerformSlots(task) {
-  return task._maxConcurrency -
-    task._queuedTaskInstances.length -
-    task._activeTaskInstances.length;
-}
-
-const enqueueTasksPolicy = {
-  requiresUnboundedConcurrency: true,
-  schedule(task) {
-    // [a,b,_] [c,d,e,f] becomes
-    // [a,b,c] [d,e,f]
-    saturateActiveQueue(task);
-  },
-  getNextPerformStatus(task) {
-    return numPerformSlots(task) > 0 ? 'succeed' : 'enqueue';
-  }
-};
-
-const dropQueuedTasksPolicy = {
-  schedule(task) {
-    // [a,b,_] [c,d,e,f] becomes
-    // [a,b,c] []
-    saturateActiveQueue(task);
-    spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length);
-  },
-  getNextPerformStatus(task) {
-    return numPerformSlots(task) > 0 ? 'succeed' : 'drop';
-  }
-};
-
-const cancelOngoingTasksPolicy = {
-  schedule(task) {
-    // [a,b,_] [c,d,e,f] becomes
-    // [d,e,f] []
-    let activeTaskInstances = task._activeTaskInstances;
-    let queuedTaskInstances = task._queuedTaskInstances;
-    activeTaskInstances.push(...queuedTaskInstances);
-    queuedTaskInstances.length = 0;
-
-    let numToShift = Math.max(0, activeTaskInstances.length - task._maxConcurrency);
-    spliceTaskInstances(activeTaskInstances, 0, numToShift);
-  },
-  getNextPerformStatus(task) {
-    return numPerformSlots(task) > 0 ? 'succeed' : 'cancel_previous';
-  }
-};
-
-const dropButKeepLatestPolicy = {
-  schedule(task) {
-    // [a,b,_] [c,d,e,f] becomes
-    // [d,e,f] []
-    saturateActiveQueue(task);
-    spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length - 1);
-  }
-};
 
 function isSuccess(nextPerformState) {
   return nextPerformState === 'succeed' || nextPerformState === 'cancel_previous';
@@ -96,7 +32,7 @@ function isSuccess(nextPerformState) {
 
   @class Task
 */
-const Task = Ember.Object.extend({
+export const Task = Ember.Object.extend({
   fn: null,
   context: null,
   bufferPolicy: null,
@@ -109,6 +45,7 @@ const Task = Ember.Object.extend({
   _activeTaskInstances: null,
   _needsFlush: null,
   _propertyName: null,
+  _origin: null,
 
   name: computed.oneWay('_propertyName'),
 
@@ -216,7 +153,7 @@ const Task = Ember.Object.extend({
 
     this._needsFlush = Ember.run.bind(this, this._scheduleFlush);
 
-    cleanupOnDestroy(this.context, this, 'cancelAll');
+    _cleanupOnDestroy(this.context, this, 'cancelAll');
   },
 
   /**
@@ -254,8 +191,19 @@ const Task = Ember.Object.extend({
    * @instance
    */
   cancelAll() {
-    spliceTaskInstances(this._activeTaskInstances, 0, this._activeTaskInstances.length);
-    spliceTaskInstances(this._queuedTaskInstances, 0, this._queuedTaskInstances.length);
+    this.spliceTaskInstances(this._activeTaskInstances, 0, this._activeTaskInstances.length);
+    this.spliceTaskInstances(this._queuedTaskInstances, 0, this._queuedTaskInstances.length);
+  },
+
+  spliceTaskInstances(taskInstances, index, count) {
+    for (let i = index; i < index + count; ++i) {
+      taskInstances[i].cancel();
+    }
+    taskInstances.splice(index, count);
+  },
+
+  toString() {
+    return `<Task:${Ember.guidFor(this)}> of ${this._origin}`;
   },
 
   _perform(...args) {
@@ -263,6 +211,8 @@ const Task = Ember.Object.extend({
       fn: this.fn,
       args,
       context: this.context,
+      task: this,
+      _origin: this,
     });
 
     if (this.get('_performs') && !this.get('performWillSucceed')) {
@@ -280,11 +230,14 @@ const Task = Ember.Object.extend({
     return taskInstance;
   },
 
+  _flushScheduled: false,
   _scheduleFlush() {
+    this._flushScheduled = true;
     Ember.run.once(this, this._flushQueues);
   },
 
   _flushQueues() {
+    this._flushScheduled = false;
     this._activeTaskInstances = Ember.A(this._activeTaskInstances.filterBy('isFinished', false));
 
     this.bufferPolicy.schedule(this);
@@ -298,7 +251,30 @@ const Task = Ember.Object.extend({
     }
 
     this.notifyPropertyChange('nextPerformState');
-    this.set('concurrency', this._activeTaskInstances.length);
+
+    let concurrency = this._activeTaskInstances.length;
+    this.set('concurrency', concurrency);
+    if (this._completionDefer && concurrency === 0) {
+      this._completionDefer.resolve();
+      this._completionDefer = null;
+    }
+  },
+
+  _completionDefer: null,
+  _getCompletionPromise() {
+    return new Ember.RSVP.Promise(r => {
+      Ember.run.schedule('actions', null, () => {
+        let defer = Ember.RSVP.defer();
+        if (!this._flushScheduled &&
+            this._activeTaskInstances.length === 0 &&
+            this._queuedTaskInstances.length === 0) {
+          defer.resolve();
+        } else {
+          this._completionDefer = defer;
+        }
+        defer.promise.then(r);
+      });
+    });
   },
 });
 
@@ -324,10 +300,12 @@ export function TaskProperty(taskFn) {
     return Task.create({
       fn: taskFn,
       context: this,
+      _origin: this,
       bufferPolicy: tp.bufferPolicy,
       _maxConcurrency: tp._maxConcurrency,
       _performsPath: tp._performsPath && tp._performsPath[0],
       _propertyName,
+      _debugName: "",
     });
   });
 
@@ -521,25 +499,4 @@ function makeListener(taskName, method) {
     task[method].apply(task, arguments);
   };
 }
-
-function cleanupOnDestroy(owner, object, cleanupMethodName) {
-  // TODO: find a non-mutate-y, hacky way of doing this.
-  if (!owner.willDestroy.__ember_processes_destroyers__) {
-    let oldWillDestroy = owner.willDestroy;
-    let disposers = [];
-
-    owner.willDestroy = function() {
-      for (let i = 0, l = disposers.length; i < l; i ++) {
-        disposers[i]();
-      }
-      oldWillDestroy.apply(owner, arguments);
-    };
-    owner.willDestroy.__ember_processes_destroyers__ = disposers;
-  }
-
-  owner.willDestroy.__ember_processes_destroyers__.push(() => {
-    object[cleanupMethodName]();
-  });
-}
-
 

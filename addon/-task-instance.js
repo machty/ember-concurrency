@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { createObservable } from './utils';
+import { createObservable, yieldableSymbol } from './utils';
 
 function forwardToInternalPromise(method) {
   return function(...args) {
@@ -8,6 +8,10 @@ function forwardToInternalPromise(method) {
   };
 }
 
+let CURRENT_TASK_INSTANCE;
+export function _getRunningTaskInstance() {
+  return CURRENT_TASK_INSTANCE;
+}
 
 /**
   A `TaskInstance` represent a single execution of a
@@ -27,10 +31,11 @@ function forwardToInternalPromise(method) {
 
   @class TaskInstance
 */
-let TaskInstance = Ember.Object.extend({
+let taskInstanceAttrs = {
   iterator: null,
   _disposable: null,
   _ignorePromiseErrors: false,
+  task: null,
 
   /**
    * True if the task instance was canceled before it could run to completion.
@@ -141,6 +146,10 @@ let TaskInstance = Ember.Object.extend({
     return this;
   },
 
+  toString() {
+    return `<TaskInstance:${Ember.guidFor(this)}> of ${this._origin}`;
+  },
+
   /**
    * Cancels the task instance. Has no effect if the task instance has
    * already been canceled or has already finished running.
@@ -226,9 +235,12 @@ let TaskInstance = Ember.Object.extend({
 
   _takeSafeStep(nextValue, iteratorMethod) {
     try {
+      CURRENT_TASK_INSTANCE = this;
       return this.iterator[iteratorMethod](nextValue);
     } catch(e) {
       return { value: e, error: true };
+    } finally {
+      CURRENT_TASK_INSTANCE = null;
     }
   },
 
@@ -278,18 +290,24 @@ let TaskInstance = Ember.Object.extend({
       // something that completes without producing a value.
     });
   },
-});
+};
+
+taskInstanceAttrs[yieldableSymbol] = function () {
+  return createObservable(publish => {
+    this.then(publish, publish.error);
+    return () => {
+      this.cancel();
+    };
+  });
+};
+
+let TaskInstance = Ember.Object.extend(taskInstanceAttrs);
 
 function normalizeObservable(value) {
   if (!value) { return null; }
 
-  if (value instanceof TaskInstance) {
-    return createObservable(publish => {
-      value.then(publish, publish.error);
-      return () => {
-        value.cancel();
-      };
-    });
+  if (value[yieldableSymbol]) {
+    return value[yieldableSymbol]();
   } else if (typeof value.then === 'function') {
     return createObservable(publish => {
       value.then(publish, publish.error);

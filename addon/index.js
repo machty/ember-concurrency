@@ -1,7 +1,8 @@
 import Ember from 'ember';
 import { isGeneratorIterator, createObservable } from './utils';
 import { TaskProperty } from './-task-property';
-import { EventedObservable } from './-evented-observable';
+//import { EventedObservable } from './-evented-observable';
+import { subscribe } from './-subscribe';
 import { all, race } from './-yieldables';
 
 let testGenFn = function * () {};
@@ -108,4 +109,4 @@ export function timeout(ms) {
   return promise;
 }
 
-export { createObservable, all, race };
+export { createObservable, all, race, subscribe };
