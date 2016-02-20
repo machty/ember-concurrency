@@ -1,4 +1,7 @@
 # Changelog
+### 0.5.9:
+ - Prevent promises from being swallowed in some cases
+
 ### 0.5.8:
  - EXPERIMENTAL: Task#performWillSucceed boolean property
  - EXPERIMENTAL: TaskProperty#.performs() for linking

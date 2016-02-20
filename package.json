@@ -1,6 +1,6 @@
 {
   "name": "ember-concurrency",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "description": "Improved concurrency/async primitives for Ember.js",
   "directories": {
     "doc": "doc",
