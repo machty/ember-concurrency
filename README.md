@@ -1,4 +1,4 @@
-# ember-concurrency [![Build Status](https://travis-ci.org/machty/ember-concurrency.svg?branch=master)](https://travis-ci.org/machty/ember-concurrency)
+# ember-concurrency [![Build Status](https://travis-ci.org/machty/ember-concurrency.svg?branch=master)](https://travis-ci.org/machty/ember-concurrency)[![Ember Observer Score](http://emberobserver.com/badges/ember-concurrency.svg)](http://emberobserver.com/addons/ember-concurrency)
 
 Improved concurrency primitives for Ember.js. Documentation can be
 found [here](http://ember-concurrency.com).
