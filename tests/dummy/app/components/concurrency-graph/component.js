@@ -6,36 +6,40 @@ let Tracker = Ember.Object.extend({
   id: null,
   performTime: null,
   startTime: null,
-  endTime: Infinity,
+  endTime: computed.oneWay('comp.timeElapsed'),
+  comp: null,
   taskInstance: null,
   isCanceled: computed.oneWay('taskInstance.isCanceled'),
   state: computed('taskInstance.state', function() {
     return Ember.String.capitalize(this.get('taskInstance.state'));
   }),
+  hasStarted: false,
 });
-
-let nextId = 0;
 
 export default Ember.Component.extend({
   task: null,
   trackers: null,
   timeElapsed: 0,
   startTime: null,
+  nextId: 0,
 
   lowerLimit: Ember.computed('trackers.[]', function() {
-    let v = Math.min(...this.get('trackers').mapBy('performTime'));
+    let trackers = this.get('trackers');
+    if (!trackers) { return 0; }
+    let v = Math.min(...trackers.mapBy('performTime'));
     return v;
   }),
 
-  upperLimit: Ember.computed.oneWay('timeElapsed'),
+  upperLimit: Ember.computed('timeElapsed', function() {
+    let timeElapsed = this.get('timeElapsed');
+    return Math.max(10000, timeElapsed);
+  }),
 
   colors: [ 'red', 'green', 'blue' ],
 
-  labelHeights: [ 40, 60, 80, 100, 120 ],
+  labelHeights: [ 0, 20, 40, 60, 80, 100 ],
 
   ticker: task(function * () {
-    this.restart();
-
     while (true) {
       let now = +new Date();
       this.set('timeElapsed', now - this.startTime);
@@ -44,20 +48,25 @@ export default Ember.Component.extend({
       window.requestAnimationFrame(defer.resolve);
       yield defer.promise;
     }
-  }).on('init'),
+  }).drop(),
 
-  restart() {
-    this.startTime = +new Date();
-    this.set('timeElapsed', 0);
+  restart: Ember.on('init', function () {
+    this.nextId = 0;
     this.set('trackers', Ember.A());
-  },
+    this.get('ticker').cancelAll();
+    this.set('timeElapsed', 0);
+    this.startTime = 0;
+  }),
 
   actions: {
     startTask() {
+      this.startTime = this.startTime || +new Date();
       let tracker = Tracker.create({
-        id: nextId++,
+        id: this.nextId++,
         performTime: this.timeElapsed,
+        comp: this,
         start: () => {
+          tracker.set('hasStarted', true);
           tracker.set('startTime', this.timeElapsed);
         },
         end: () => {
@@ -70,6 +79,7 @@ export default Ember.Component.extend({
       tracker.set('taskInstance', taskInstance);
 
       this.get('trackers').pushObject(tracker);
+      this.get('ticker').perform();
     },
 
     restart() {
@@ -77,4 +87,5 @@ export default Ember.Component.extend({
     }
   }
 });
+
 
