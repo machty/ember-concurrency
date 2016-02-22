@@ -545,43 +545,48 @@ define('dummy/components/concurrency-graph/component', ['exports', 'ember', 'emb
     id: null,
     performTime: null,
     startTime: null,
-    endTime: Infinity,
+    endTime: computed.oneWay('comp.timeElapsed'),
+    comp: null,
     taskInstance: null,
     isCanceled: computed.oneWay('taskInstance.isCanceled'),
     state: computed('taskInstance.state', function () {
       return _ember['default'].String.capitalize(this.get('taskInstance.state'));
-    })
+    }),
+    hasStarted: false
   });
-
-  var nextId = 0;
 
   exports['default'] = _ember['default'].Component.extend({
     task: null,
     trackers: null,
     timeElapsed: 0,
     startTime: null,
+    nextId: 0,
 
     lowerLimit: _ember['default'].computed('trackers.[]', function () {
-      var v = Math.min.apply(Math, _toConsumableArray(this.get('trackers').mapBy('performTime')));
+      var trackers = this.get('trackers');
+      if (!trackers) {
+        return 0;
+      }
+      var v = Math.min.apply(Math, _toConsumableArray(trackers.mapBy('performTime')));
       return v;
     }),
 
-    upperLimit: _ember['default'].computed.oneWay('timeElapsed'),
+    upperLimit: _ember['default'].computed('timeElapsed', function () {
+      var timeElapsed = this.get('timeElapsed');
+      return Math.max(10000, timeElapsed);
+    }),
 
     colors: ['red', 'green', 'blue'],
 
-    labelHeights: [40, 60, 80, 100, 120],
+    labelHeights: [0, 20, 40, 60, 80, 100],
 
     ticker: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
       var now, defer;
       return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
           case 0:
-            this.restart();
-
-          case 1:
             if (!true) {
-              context$1$0.next = 10;
+              context$1$0.next = 9;
               break;
             }
 
@@ -592,34 +597,39 @@ define('dummy/components/concurrency-graph/component', ['exports', 'ember', 'emb
             defer = _ember['default'].RSVP.defer();
 
             window.requestAnimationFrame(defer.resolve);
-            context$1$0.next = 8;
+            context$1$0.next = 7;
             return defer.promise;
 
-          case 8:
-            context$1$0.next = 1;
+          case 7:
+            context$1$0.next = 0;
             break;
 
-          case 10:
+          case 9:
           case 'end':
             return context$1$0.stop();
         }
       }, callee$0$0, this);
-    })).on('init'),
+    })).drop(),
 
-    restart: function restart() {
-      this.startTime = +new Date();
-      this.set('timeElapsed', 0);
+    restart: _ember['default'].on('init', function () {
+      this.nextId = 0;
       this.set('trackers', _ember['default'].A());
-    },
+      this.get('ticker').cancelAll();
+      this.set('timeElapsed', 0);
+      this.startTime = 0;
+    }),
 
     actions: {
       startTask: function startTask() {
         var _this = this;
 
+        this.startTime = this.startTime || +new Date();
         var tracker = Tracker.create({
-          id: nextId++,
+          id: this.nextId++,
           performTime: this.timeElapsed,
+          comp: this,
           start: function start() {
+            tracker.set('hasStarted', true);
             tracker.set('startTime', _this.timeElapsed);
           },
           end: function end() {
@@ -632,6 +642,7 @@ define('dummy/components/concurrency-graph/component', ['exports', 'ember', 'emb
         tracker.set('taskInstance', taskInstance);
 
         this.get('trackers').pushObject(tracker);
+        this.get('ticker').perform();
       },
 
       restart: function restart() {
@@ -677,9 +688,9 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element3 = dom.childAt(fragment, [1]);
+          var element4 = dom.childAt(fragment, [1]);
           var morphs = new Array(1);
-          morphs[0] = dom.createElementMorph(element3);
+          morphs[0] = dom.createElementMorph(element4);
           return morphs;
         },
         statements: [["element", "action", ["cancelAll"], ["target", ["get", "task", ["loc", [null, [4, 38], [4, 42]]]]], ["loc", [null, [4, 10], [4, 44]]]]],
@@ -701,7 +712,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
                   "column": 6
                 },
                 "end": {
-                  "line": 25,
+                  "line": 26,
                   "column": 6
                 }
               },
@@ -718,21 +729,22 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
               var el1 = dom.createElement("rect");
               dom.setAttribute(el1, "height", "20px");
               dom.setAttribute(el1, "stroke", "black");
-              dom.setAttribute(el1, "fill-opacity", "0.5");
+              dom.setAttribute(el1, "fill-opacity", "0.3");
               dom.appendChild(el0, el1);
               var el1 = dom.createTextNode("\n");
               dom.appendChild(el0, el1);
               return el0;
             },
             buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var element2 = dom.childAt(fragment, [1]);
-              var morphs = new Array(3);
-              morphs[0] = dom.createAttrMorph(element2, 'x');
-              morphs[1] = dom.createAttrMorph(element2, 'width');
-              morphs[2] = dom.createAttrMorph(element2, 'fill');
+              var element3 = dom.childAt(fragment, [1]);
+              var morphs = new Array(4);
+              morphs[0] = dom.createAttrMorph(element3, 'x');
+              morphs[1] = dom.createAttrMorph(element3, 'y');
+              morphs[2] = dom.createAttrMorph(element3, 'width');
+              morphs[3] = dom.createAttrMorph(element3, 'fill');
               return morphs;
             },
-            statements: [["attribute", "x", ["concat", [["subexpr", "scale", [["subexpr", "subtract", [["get", "tracker.startTime", ["loc", [null, [19, 35], [19, 52]]]], ["get", "lowerLimit", ["loc", [null, [19, 53], [19, 63]]]]], [], ["loc", [null, [19, 25], [19, 64]]]], ["get", "lowerLimit", ["loc", [null, [19, 65], [19, 75]]]], ["get", "upperLimit", ["loc", [null, [19, 76], [19, 86]]]]], [], ["loc", [null, [19, 17], [19, 88]]]], "%"]]], ["attribute", "width", ["concat", [["subexpr", "scale", [["subexpr", "width", [["get", "tracker.startTime", ["loc", [null, [21, 36], [21, 53]]]], ["get", "tracker.endTime", ["loc", [null, [21, 54], [21, 69]]]], ["get", "upperLimit", ["loc", [null, [21, 70], [21, 80]]]]], [], ["loc", [null, [21, 29], [21, 81]]]], ["get", "lowerLimit", ["loc", [null, [21, 82], [21, 92]]]], ["get", "upperLimit", ["loc", [null, [21, 93], [21, 103]]]]], [], ["loc", [null, [21, 21], [21, 105]]]], "%"]]], ["attribute", "fill", ["get", "color", ["loc", [null, [23, 21], [23, 26]]]]]],
+            statements: [["attribute", "x", ["concat", [["subexpr", "scale", [["subexpr", "subtract", [["get", "tracker.startTime", ["loc", [null, [19, 35], [19, 52]]]], ["get", "lowerLimit", ["loc", [null, [19, 53], [19, 63]]]]], [], ["loc", [null, [19, 25], [19, 64]]]], ["get", "lowerLimit", ["loc", [null, [19, 65], [19, 75]]]], ["get", "upperLimit", ["loc", [null, [19, 76], [19, 86]]]]], [], ["loc", [null, [19, 17], [19, 88]]]], "%"]]], ["attribute", "y", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [20, 28], [20, 40]]]], ["get", "tracker.id", ["loc", [null, [20, 41], [20, 51]]]]], [], ["loc", [null, [20, 16], [20, 53]]]]], ["attribute", "width", ["concat", [["subexpr", "scale", [["subexpr", "width", [["get", "tracker.startTime", ["loc", [null, [22, 36], [22, 53]]]], ["get", "tracker.endTime", ["loc", [null, [22, 54], [22, 69]]]], ["get", "upperLimit", ["loc", [null, [22, 70], [22, 80]]]]], [], ["loc", [null, [22, 29], [22, 81]]]], ["get", "lowerLimit", ["loc", [null, [22, 82], [22, 92]]]], ["get", "upperLimit", ["loc", [null, [22, 93], [22, 103]]]]], [], ["loc", [null, [22, 21], [22, 105]]]], "%"]]], ["attribute", "fill", ["get", "color", ["loc", [null, [24, 21], [24, 26]]]]]],
             locals: [],
             templates: []
           };
@@ -745,11 +757,11 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 27,
+                  "line": 28,
                   "column": 6
                 },
                 "end": {
-                  "line": 38,
+                  "line": 39,
                   "column": 6
                 }
               },
@@ -776,29 +788,29 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
               var el1 = dom.createTextNode("\n        ");
               dom.appendChild(el0, el1);
               var el1 = dom.createElement("line");
-              dom.setAttribute(el1, "y1", "20");
+              dom.setAttribute(el1, "y1", "0");
               dom.appendChild(el0, el1);
               var el1 = dom.createTextNode("\n");
               dom.appendChild(el0, el1);
               return el0;
             },
             buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var element0 = dom.childAt(fragment, [1]);
-              var element1 = dom.childAt(fragment, [3]);
+              var element1 = dom.childAt(fragment, [1]);
+              var element2 = dom.childAt(fragment, [3]);
               var morphs = new Array(10);
-              morphs[0] = dom.createAttrMorph(element0, 'x');
-              morphs[1] = dom.createAttrMorph(element0, 'y');
-              morphs[2] = dom.createAttrMorph(element0, 'fill');
-              morphs[3] = dom.createAttrMorph(element0, 'text-decoration');
-              morphs[4] = dom.createAttrMorph(element0, 'font-style');
-              morphs[5] = dom.createMorphAt(element0, 1, 1);
-              morphs[6] = dom.createAttrMorph(element1, 'x1');
-              morphs[7] = dom.createAttrMorph(element1, 'x2');
-              morphs[8] = dom.createAttrMorph(element1, 'y2');
-              morphs[9] = dom.createAttrMorph(element1, 'stroke');
+              morphs[0] = dom.createAttrMorph(element1, 'x');
+              morphs[1] = dom.createAttrMorph(element1, 'y');
+              morphs[2] = dom.createAttrMorph(element1, 'fill');
+              morphs[3] = dom.createAttrMorph(element1, 'text-decoration');
+              morphs[4] = dom.createAttrMorph(element1, 'font-style');
+              morphs[5] = dom.createMorphAt(element1, 1, 1);
+              morphs[6] = dom.createAttrMorph(element2, 'x1');
+              morphs[7] = dom.createAttrMorph(element2, 'x2');
+              morphs[8] = dom.createAttrMorph(element2, 'y2');
+              morphs[9] = dom.createAttrMorph(element2, 'stroke');
               return morphs;
             },
-            statements: [["attribute", "x", ["concat", [["subexpr", "sum", [0.5, ["get", "x", ["loc", [null, [28, 27], [28, 28]]]]], [], ["loc", [null, [28, 17], [28, 30]]]], "%"]]], ["attribute", "y", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [29, 28], [29, 40]]]], ["get", "tracker.id", ["loc", [null, [29, 41], [29, 51]]]]], [], ["loc", [null, [29, 16], [29, 53]]]]], ["attribute", "fill", ["get", "color", ["loc", [null, [31, 21], [31, 26]]]]], ["attribute", "text-decoration", ["subexpr", "if", [["get", "tracker.isCanceled", ["loc", [null, [33, 35], [33, 53]]]], "line-through", "none"], [], ["loc", [null, [33, 30], [33, 77]]]]], ["attribute", "font-style", ["subexpr", "if", [["get", "tracker.startTime", ["loc", [null, [34, 30], [34, 47]]]], "normal", "italic"], [], ["loc", [null, [34, 25], [34, 67]]]]], ["content", "tracker.state", ["loc", [null, [35, 10], [35, 27]]]], ["attribute", "x1", ["concat", [["get", "x", ["loc", [null, [37, 20], [37, 21]]]], "%"]]], ["attribute", "x2", ["concat", [["get", "x", ["loc", [null, [37, 40], [37, 41]]]], "%"]]], ["attribute", "y2", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [37, 61], [37, 73]]]], ["get", "tracker.id", ["loc", [null, [37, 74], [37, 84]]]]], [], ["loc", [null, [37, 49], [37, 86]]]]], ["attribute", "stroke", ["get", "color", ["loc", [null, [37, 96], [37, 101]]]]]],
+            statements: [["attribute", "x", ["concat", [["subexpr", "sum", [0.5, ["get", "x", ["loc", [null, [29, 27], [29, 28]]]]], [], ["loc", [null, [29, 17], [29, 30]]]], "%"]]], ["attribute", "y", ["subexpr", "sum", [15, ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [30, 36], [30, 48]]]], ["get", "tracker.id", ["loc", [null, [30, 49], [30, 59]]]]], [], ["loc", [null, [30, 25], [30, 60]]]]], [], ["loc", [null, [30, 16], [30, 62]]]]], ["attribute", "fill", ["get", "color", ["loc", [null, [32, 21], [32, 26]]]]], ["attribute", "text-decoration", ["subexpr", "if", [["get", "tracker.isCanceled", ["loc", [null, [34, 35], [34, 53]]]], "line-through", "none"], [], ["loc", [null, [34, 30], [34, 77]]]]], ["attribute", "font-style", ["subexpr", "if", [["get", "tracker.startTime", ["loc", [null, [35, 30], [35, 47]]]], "normal", "italic"], [], ["loc", [null, [35, 25], [35, 67]]]]], ["content", "tracker.state", ["loc", [null, [36, 10], [36, 27]]]], ["attribute", "x1", ["concat", [["get", "x", ["loc", [null, [38, 20], [38, 21]]]], "%"]]], ["attribute", "x2", ["concat", [["get", "x", ["loc", [null, [38, 39], [38, 40]]]], "%"]]], ["attribute", "y2", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [38, 60], [38, 72]]]], ["get", "tracker.id", ["loc", [null, [38, 73], [38, 83]]]]], [], ["loc", [null, [38, 48], [38, 85]]]]], ["attribute", "stroke", ["get", "color", ["loc", [null, [38, 95], [38, 100]]]]]],
             locals: ["x"],
             templates: []
           };
@@ -814,7 +826,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
                 "column": 4
               },
               "end": {
-                "line": 39,
+                "line": 42,
                 "column": 4
               }
             },
@@ -832,6 +844,8 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
             dom.appendChild(el0, el1);
             var el1 = dom.createComment("");
             dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n\n");
+            dom.appendChild(el0, el1);
             return el0;
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
@@ -839,10 +853,9 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
             morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
             morphs[1] = dom.createMorphAt(fragment, 2, 2, contextualElement);
             dom.insertBoundary(fragment, 0);
-            dom.insertBoundary(fragment, null);
             return morphs;
           },
-          statements: [["block", "if", [["get", "tracker.startTime", ["loc", [null, [18, 12], [18, 29]]]]], [], 0, null, ["loc", [null, [18, 6], [25, 13]]]], ["block", "with", [["subexpr", "scale", [["subexpr", "subtract", [["get", "tracker.performTime", ["loc", [null, [27, 31], [27, 50]]]], ["get", "lowerLimit", ["loc", [null, [27, 51], [27, 61]]]]], [], ["loc", [null, [27, 21], [27, 62]]]], ["get", "lowerLimit", ["loc", [null, [27, 63], [27, 73]]]], ["get", "upperLimit", ["loc", [null, [27, 74], [27, 84]]]]], [], ["loc", [null, [27, 14], [27, 85]]]]], [], 1, null, ["loc", [null, [27, 6], [38, 15]]]]],
+          statements: [["block", "if", [["get", "tracker.hasStarted", ["loc", [null, [18, 12], [18, 30]]]]], [], 0, null, ["loc", [null, [18, 6], [26, 13]]]], ["block", "with", [["subexpr", "scale", [["subexpr", "subtract", [["get", "tracker.performTime", ["loc", [null, [28, 31], [28, 50]]]], ["get", "lowerLimit", ["loc", [null, [28, 51], [28, 61]]]]], [], ["loc", [null, [28, 21], [28, 62]]]], ["get", "lowerLimit", ["loc", [null, [28, 63], [28, 73]]]], ["get", "upperLimit", ["loc", [null, [28, 74], [28, 84]]]]], [], ["loc", [null, [28, 14], [28, 85]]]]], [], 1, null, ["loc", [null, [28, 6], [39, 15]]]]],
           locals: ["color"],
           templates: [child0, child1]
         };
@@ -858,7 +871,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
               "column": 0
             },
             "end": {
-              "line": 41,
+              "line": 44,
               "column": 0
             }
           },
@@ -890,9 +903,56 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
           morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
           return morphs;
         },
-        statements: [["block", "with", [["subexpr", "pick-from", [["get", "colors", ["loc", [null, [17, 23], [17, 29]]]], ["get", "tracker.id", ["loc", [null, [17, 30], [17, 40]]]]], [], ["loc", [null, [17, 12], [17, 41]]]]], [], 0, null, ["loc", [null, [17, 4], [39, 13]]]]],
+        statements: [["block", "with", [["subexpr", "pick-from", [["get", "colors", ["loc", [null, [17, 23], [17, 29]]]], ["get", "tracker.id", ["loc", [null, [17, 30], [17, 40]]]]], [], ["loc", [null, [17, 12], [17, 41]]]]], [], 0, null, ["loc", [null, [17, 4], [42, 13]]]]],
         locals: ["tracker"],
         templates: [child0]
+      };
+    })();
+    var child2 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 46,
+              "column": 0
+            },
+            "end": {
+              "line": 48,
+              "column": 0
+            }
+          },
+          "moduleName": "dummy/components/concurrency-graph/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("line");
+          dom.setAttribute(el1, "y1", "0");
+          dom.setAttribute(el1, "y2", "100");
+          dom.setAttribute(el1, "stroke", "black");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1]);
+          var morphs = new Array(2);
+          morphs[0] = dom.createAttrMorph(element0, 'x1');
+          morphs[1] = dom.createAttrMorph(element0, 'x2');
+          return morphs;
+        },
+        statements: [["attribute", "x1", ["concat", [["get", "x", ["loc", [null, [47, 14], [47, 15]]]], "%"]]], ["attribute", "x2", ["concat", [["get", "x", ["loc", [null, [47, 33], [47, 34]]]], "%"]]]],
+        locals: ["x"],
+        templates: []
       };
     })();
     return {
@@ -909,7 +969,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
             "column": 0
           },
           "end": {
-            "line": 44,
+            "line": 53,
             "column": 0
           }
         },
@@ -951,24 +1011,32 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
+        var el1 = dom.createTextNode("\n\n\n");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element4 = dom.childAt(fragment, [0]);
-        var element5 = dom.childAt(fragment, [2]);
-        var morphs = new Array(4);
-        morphs[0] = dom.createElementMorph(element4);
-        morphs[1] = dom.createElementMorph(element5);
+        var element5 = dom.childAt(fragment, [0]);
+        var element6 = dom.childAt(fragment, [2]);
+        var element7 = dom.childAt(fragment, [8]);
+        var morphs = new Array(5);
+        morphs[0] = dom.createElementMorph(element5);
+        morphs[1] = dom.createElementMorph(element6);
         morphs[2] = dom.createMorphAt(fragment, 4, 4, contextualElement);
-        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [8]), 1, 1);
+        morphs[3] = dom.createMorphAt(element7, 1, 1);
+        morphs[4] = dom.createMorphAt(element7, 3, 3);
         return morphs;
       },
-      statements: [["element", "action", ["startTask"], [], ["loc", [null, [1, 8], [1, 30]]]], ["element", "action", ["restart"], [], ["loc", [null, [2, 8], [2, 28]]]], ["block", "if", [["get", "task.isRunning", ["loc", [null, [3, 6], [3, 20]]]]], [], 0, null, ["loc", [null, [3, 0], [5, 7]]]], ["block", "each", [["get", "trackers", ["loc", [null, [15, 8], [15, 16]]]]], [], 1, null, ["loc", [null, [15, 0], [41, 9]]]]],
+      statements: [["element", "action", ["startTask"], [], ["loc", [null, [1, 8], [1, 30]]]], ["element", "action", ["restart"], [], ["loc", [null, [2, 8], [2, 28]]]], ["block", "if", [["get", "task.isRunning", ["loc", [null, [3, 6], [3, 20]]]]], [], 0, null, ["loc", [null, [3, 0], [5, 7]]]], ["block", "each", [["get", "trackers", ["loc", [null, [15, 8], [15, 16]]]]], [], 1, null, ["loc", [null, [15, 0], [44, 9]]]], ["block", "with", [["subexpr", "scale", [["get", "timeElapsed", ["loc", [null, [46, 15], [46, 26]]]], ["get", "lowerLimit", ["loc", [null, [46, 27], [46, 37]]]], ["get", "upperLimit", ["loc", [null, [46, 38], [46, 48]]]]], [], ["loc", [null, [46, 8], [46, 49]]]]], [], 2, null, ["loc", [null, [46, 0], [48, 9]]]]],
       locals: [],
-      templates: [child0, child1]
+      templates: [child0, child1, child2]
     };
   })());
 });
@@ -7253,7 +7321,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.10+31949bb6"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.10+3acd64dc"});
 }
 
 /* jshint ignore:end */
