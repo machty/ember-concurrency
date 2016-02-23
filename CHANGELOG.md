@@ -1,4 +1,10 @@
 # Changelog
+### 0.5.11:
+ - Added perform and cancel-all helper for a more familiar
+   approach to calling tasks from templates:
+   `onclick={{perform taskName 1 2 3}}` and
+   `onclick={{cancel-all taskName}}`
+
 ### 0.5.10:
  - EXPERIMENTAL: integration with observables via `subscribe` function
 
