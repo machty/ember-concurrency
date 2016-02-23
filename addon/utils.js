@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import { Task } from './-task-property';
 
 export function isGeneratorIterator(iter) {
   return (iter &&
@@ -83,20 +82,6 @@ export function _cleanupOnDestroy(owner, object, cleanupMethodName) {
   owner.willDestroy.__ember_processes_destroyers__.push(() => {
     object[cleanupMethodName]();
   });
-}
-
-export function taskHelperClosure(helperName, taskMethod, _args) {
-  let task = _args[0];
-  let args = _args.slice(1);
-
-  if (!(task instanceof Task)) {
-    debugger;
-    Ember.assert(`The first argument passed to the \`${helperName}\` helper should be a Task object (without quotes); you passed ${task}`, false);
-  }
-
-  return () => {
-    task[taskMethod].apply(task, args);
-  };
 }
 
 // TODO: Symbol polyfill?

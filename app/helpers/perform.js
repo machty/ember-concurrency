@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-import { taskHelperClosure } from 'ember-concurrency/utils';
+import { taskHelperClosure } from 'ember-concurrency/-helpers';
 
 export function performHelper(args) {
   return taskHelperClosure('perform', 'perform', args);
