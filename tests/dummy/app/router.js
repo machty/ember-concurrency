@@ -29,6 +29,7 @@ Router.map(function() {
     });
   });
   this.route('experimental-prediction');
+  this.route('helpers-test');
 });
 
 export default Router;
