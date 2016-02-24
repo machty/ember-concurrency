@@ -750,6 +750,53 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
           };
         })();
         var child1 = (function () {
+          var child0 = (function () {
+            return {
+              meta: {
+                "fragmentReason": false,
+                "revision": "Ember@2.3.1",
+                "loc": {
+                  "source": null,
+                  "start": {
+                    "line": 38,
+                    "column": 8
+                  },
+                  "end": {
+                    "line": 40,
+                    "column": 8
+                  }
+                },
+                "moduleName": "dummy/components/concurrency-graph/template.hbs"
+              },
+              isEmpty: false,
+              arity: 1,
+              cachedFragment: null,
+              hasRendered: false,
+              buildFragment: function buildFragment(dom) {
+                var el0 = dom.createDocumentFragment();
+                var el1 = dom.createTextNode("          ");
+                dom.appendChild(el0, el1);
+                var el1 = dom.createElement("line");
+                dom.appendChild(el0, el1);
+                var el1 = dom.createTextNode("\n");
+                dom.appendChild(el0, el1);
+                return el0;
+              },
+              buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+                var element1 = dom.childAt(fragment, [1]);
+                var morphs = new Array(5);
+                morphs[0] = dom.createAttrMorph(element1, 'x1');
+                morphs[1] = dom.createAttrMorph(element1, 'y1');
+                morphs[2] = dom.createAttrMorph(element1, 'x2');
+                morphs[3] = dom.createAttrMorph(element1, 'y2');
+                morphs[4] = dom.createAttrMorph(element1, 'stroke');
+                return morphs;
+              },
+              statements: [["attribute", "x1", ["concat", [["get", "x", ["loc", [null, [39, 22], [39, 23]]]], "%"]]], ["attribute", "y1", ["get", "y", ["loc", [null, [39, 33], [39, 34]]]]], ["attribute", "x2", ["concat", [["get", "x", ["loc", [null, [39, 43], [39, 44]]]], "%"]]], ["attribute", "y2", ["subexpr", "sum", [20, ["get", "y", ["loc", [null, [39, 61], [39, 62]]]]], [], ["loc", [null, [39, 52], [39, 64]]]]], ["attribute", "stroke", ["get", "color", ["loc", [null, [39, 74], [39, 79]]]]]],
+              locals: ["y"],
+              templates: []
+            };
+          })();
           return {
             meta: {
               "fragmentReason": false,
@@ -761,7 +808,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
                   "column": 6
                 },
                 "end": {
-                  "line": 39,
+                  "line": 41,
                   "column": 6
                 }
               },
@@ -785,34 +832,28 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
               var el2 = dom.createTextNode("\n        ");
               dom.appendChild(el1, el2);
               dom.appendChild(el0, el1);
-              var el1 = dom.createTextNode("\n        ");
-              dom.appendChild(el0, el1);
-              var el1 = dom.createElement("line");
-              dom.setAttribute(el1, "y1", "0");
-              dom.appendChild(el0, el1);
               var el1 = dom.createTextNode("\n");
+              dom.appendChild(el0, el1);
+              var el1 = dom.createComment("");
               dom.appendChild(el0, el1);
               return el0;
             },
             buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-              var element1 = dom.childAt(fragment, [1]);
-              var element2 = dom.childAt(fragment, [3]);
-              var morphs = new Array(10);
-              morphs[0] = dom.createAttrMorph(element1, 'x');
-              morphs[1] = dom.createAttrMorph(element1, 'y');
-              morphs[2] = dom.createAttrMorph(element1, 'fill');
-              morphs[3] = dom.createAttrMorph(element1, 'text-decoration');
-              morphs[4] = dom.createAttrMorph(element1, 'font-style');
-              morphs[5] = dom.createMorphAt(element1, 1, 1);
-              morphs[6] = dom.createAttrMorph(element2, 'x1');
-              morphs[7] = dom.createAttrMorph(element2, 'x2');
-              morphs[8] = dom.createAttrMorph(element2, 'y2');
-              morphs[9] = dom.createAttrMorph(element2, 'stroke');
+              var element2 = dom.childAt(fragment, [1]);
+              var morphs = new Array(7);
+              morphs[0] = dom.createAttrMorph(element2, 'x');
+              morphs[1] = dom.createAttrMorph(element2, 'y');
+              morphs[2] = dom.createAttrMorph(element2, 'fill');
+              morphs[3] = dom.createAttrMorph(element2, 'text-decoration');
+              morphs[4] = dom.createAttrMorph(element2, 'font-style');
+              morphs[5] = dom.createMorphAt(element2, 1, 1);
+              morphs[6] = dom.createMorphAt(fragment, 3, 3, contextualElement);
+              dom.insertBoundary(fragment, null);
               return morphs;
             },
-            statements: [["attribute", "x", ["concat", [["subexpr", "sum", [0.5, ["get", "x", ["loc", [null, [29, 27], [29, 28]]]]], [], ["loc", [null, [29, 17], [29, 30]]]], "%"]]], ["attribute", "y", ["subexpr", "sum", [15, ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [30, 36], [30, 48]]]], ["get", "tracker.id", ["loc", [null, [30, 49], [30, 59]]]]], [], ["loc", [null, [30, 25], [30, 60]]]]], [], ["loc", [null, [30, 16], [30, 62]]]]], ["attribute", "fill", ["get", "color", ["loc", [null, [32, 21], [32, 26]]]]], ["attribute", "text-decoration", ["subexpr", "if", [["get", "tracker.isCanceled", ["loc", [null, [34, 35], [34, 53]]]], "line-through", "none"], [], ["loc", [null, [34, 30], [34, 77]]]]], ["attribute", "font-style", ["subexpr", "if", [["get", "tracker.startTime", ["loc", [null, [35, 30], [35, 47]]]], "normal", "italic"], [], ["loc", [null, [35, 25], [35, 67]]]]], ["content", "tracker.state", ["loc", [null, [36, 10], [36, 27]]]], ["attribute", "x1", ["concat", [["get", "x", ["loc", [null, [38, 20], [38, 21]]]], "%"]]], ["attribute", "x2", ["concat", [["get", "x", ["loc", [null, [38, 39], [38, 40]]]], "%"]]], ["attribute", "y2", ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [38, 60], [38, 72]]]], ["get", "tracker.id", ["loc", [null, [38, 73], [38, 83]]]]], [], ["loc", [null, [38, 48], [38, 85]]]]], ["attribute", "stroke", ["get", "color", ["loc", [null, [38, 95], [38, 100]]]]]],
+            statements: [["attribute", "x", ["concat", [["subexpr", "sum", [0.5, ["get", "x", ["loc", [null, [29, 27], [29, 28]]]]], [], ["loc", [null, [29, 17], [29, 30]]]], "%"]]], ["attribute", "y", ["subexpr", "sum", [15, ["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [30, 36], [30, 48]]]], ["get", "tracker.id", ["loc", [null, [30, 49], [30, 59]]]]], [], ["loc", [null, [30, 25], [30, 60]]]]], [], ["loc", [null, [30, 16], [30, 62]]]]], ["attribute", "fill", ["get", "color", ["loc", [null, [32, 21], [32, 26]]]]], ["attribute", "text-decoration", ["subexpr", "if", [["get", "tracker.isCanceled", ["loc", [null, [34, 35], [34, 53]]]], "line-through", "none"], [], ["loc", [null, [34, 30], [34, 77]]]]], ["attribute", "font-style", ["subexpr", "if", [["get", "tracker.startTime", ["loc", [null, [35, 30], [35, 47]]]], "normal", "italic"], [], ["loc", [null, [35, 25], [35, 67]]]]], ["content", "tracker.state", ["loc", [null, [36, 10], [36, 27]]]], ["block", "with", [["subexpr", "pick-from", [["get", "labelHeights", ["loc", [null, [38, 27], [38, 39]]]], ["get", "tracker.id", ["loc", [null, [38, 40], [38, 50]]]]], [], ["loc", [null, [38, 16], [38, 51]]]]], [], 0, null, ["loc", [null, [38, 8], [40, 17]]]]],
             locals: ["x"],
-            templates: []
+            templates: [child0]
           };
         })();
         return {
@@ -844,8 +885,6 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
             dom.appendChild(el0, el1);
             var el1 = dom.createComment("");
             dom.appendChild(el0, el1);
-            var el1 = dom.createTextNode("\n\n");
-            dom.appendChild(el0, el1);
             return el0;
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
@@ -853,9 +892,10 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
             morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
             morphs[1] = dom.createMorphAt(fragment, 2, 2, contextualElement);
             dom.insertBoundary(fragment, 0);
+            dom.insertBoundary(fragment, null);
             return morphs;
           },
-          statements: [["block", "if", [["get", "tracker.hasStarted", ["loc", [null, [18, 12], [18, 30]]]]], [], 0, null, ["loc", [null, [18, 6], [26, 13]]]], ["block", "with", [["subexpr", "scale", [["subexpr", "subtract", [["get", "tracker.performTime", ["loc", [null, [28, 31], [28, 50]]]], ["get", "lowerLimit", ["loc", [null, [28, 51], [28, 61]]]]], [], ["loc", [null, [28, 21], [28, 62]]]], ["get", "lowerLimit", ["loc", [null, [28, 63], [28, 73]]]], ["get", "upperLimit", ["loc", [null, [28, 74], [28, 84]]]]], [], ["loc", [null, [28, 14], [28, 85]]]]], [], 1, null, ["loc", [null, [28, 6], [39, 15]]]]],
+          statements: [["block", "if", [["get", "tracker.hasStarted", ["loc", [null, [18, 12], [18, 30]]]]], [], 0, null, ["loc", [null, [18, 6], [26, 13]]]], ["block", "with", [["subexpr", "scale", [["subexpr", "subtract", [["get", "tracker.performTime", ["loc", [null, [28, 31], [28, 50]]]], ["get", "lowerLimit", ["loc", [null, [28, 51], [28, 61]]]]], [], ["loc", [null, [28, 21], [28, 62]]]], ["get", "lowerLimit", ["loc", [null, [28, 63], [28, 73]]]], ["get", "upperLimit", ["loc", [null, [28, 74], [28, 84]]]]], [], ["loc", [null, [28, 14], [28, 85]]]]], [], 1, null, ["loc", [null, [28, 6], [41, 15]]]]],
           locals: ["color"],
           templates: [child0, child1]
         };
@@ -6637,6 +6677,15 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
     };
   })());
 });
+define('dummy/helpers/cancel-all', ['exports', 'ember', 'ember-concurrency/-helpers'], function (exports, _ember, _emberConcurrencyHelpers) {
+  exports.cancelHelper = cancelHelper;
+
+  function cancelHelper(args) {
+    return (0, _emberConcurrencyHelpers.taskHelperClosure)('cancel-all', 'cancelAll', args);
+  }
+
+  exports['default'] = _ember['default'].Helper.helper(cancelHelper);
+});
 define("dummy/helpers/caps-bool", ["exports", "ember"], function (exports, _ember) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
 
@@ -6694,6 +6743,15 @@ define('dummy/helpers/ember-power-select-option-classes', ['exports', 'ember-pow
       return _emberPowerSelectHelpersEmberPowerSelectOptionClasses.emberPowerSelectOptionClasses;
     }
   });
+});
+define('dummy/helpers/perform', ['exports', 'ember', 'ember-concurrency/-helpers'], function (exports, _ember, _emberConcurrencyHelpers) {
+  exports.performHelper = performHelper;
+
+  function performHelper(args) {
+    return (0, _emberConcurrencyHelpers.taskHelperClosure)('perform', 'perform', args);
+  }
+
+  exports['default'] = _ember['default'].Helper.helper(performHelper);
 });
 define('dummy/helpers/pick-from', ['exports', 'ember'], function (exports, _ember) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
@@ -6820,6 +6878,114 @@ define('dummy/helpers/width', ['exports', 'ember'], function (exports, _ember) {
 
   exports['default'] = _ember['default'].Helper.helper(computeWidth);
 });
+define('dummy/helpers-test/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  exports['default'] = _ember['default'].Controller.extend({
+    status: null,
+    myTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      var _len,
+          args,
+          _key,
+          args$1$0 = arguments;
+
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            context$1$0.prev = 0;
+
+            for (_len = args$1$0.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+              args[_key] = args$1$0[_key];
+            }
+
+            this.set('status', args.join('-'));
+            context$1$0.next = 5;
+            return _ember['default'].RSVP.defer().promise;
+
+          case 5:
+            context$1$0.prev = 5;
+
+            this.set('status', 'canceled');
+            return context$1$0.finish(5);
+
+          case 8:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this, [[0,, 5, 8]]);
+    }))
+  });
+});
+define("dummy/helpers-test/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes"]
+        },
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 8,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/helpers-test/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h1");
+        var el2 = dom.createTextNode("Helpers Test");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        dom.setAttribute(el1, "class", "task-status");
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("button");
+        dom.setAttribute(el1, "class", "perform-task");
+        var el2 = dom.createTextNode("Perform");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("button");
+        dom.setAttribute(el1, "class", "cancel-task");
+        var el2 = dom.createTextNode("Cancel");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [4]);
+        var element1 = dom.childAt(fragment, [6]);
+        var morphs = new Array(3);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [2]), 0, 0);
+        morphs[1] = dom.createAttrMorph(element0, 'onclick');
+        morphs[2] = dom.createAttrMorph(element1, 'onclick');
+        return morphs;
+      },
+      statements: [["content", "status", ["loc", [null, [3, 23], [3, 33]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [5, 29], [5, 35]]]], 1, 2, 3], [], ["loc", [null, [5, 16], [5, 43]]]]], ["attribute", "onclick", ["subexpr", "cancel-all", [["get", "myTask", ["loc", [null, [6, 29], [6, 35]]]], 1, 2, 3], [], ["loc", [null, [6, 16], [6, 43]]]]]],
+      locals: [],
+      templates: []
+    };
+  })());
+});
 define('dummy/initializers/app-version', ['exports', 'ember-cli-app-version/initializer-factory', 'dummy/config/environment'], function (exports, _emberCliAppVersionInitializerFactory, _dummyConfigEnvironment) {
   exports['default'] = {
     name: 'App Version',
@@ -6927,6 +7093,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
       });
     });
     this.route('experimental-prediction');
+    this.route('helpers-test');
   });
 
   exports['default'] = Router;
@@ -7321,7 +7488,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.10+3acd64dc"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.11+72e886d3"});
 }
 
 /* jshint ignore:end */

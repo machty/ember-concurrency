@@ -95840,6 +95840,24 @@ define('ember-concurrency/-evented-observable', ['exports', 'ember'], function (
     }
   });
 });
+define('ember-concurrency/-helpers', ['exports', 'ember', 'ember-concurrency/-task-property'], function (exports, _ember, _emberConcurrencyTaskProperty) {
+  'use strict';
+
+  exports.taskHelperClosure = taskHelperClosure;
+
+  function taskHelperClosure(helperName, taskMethod, _args) {
+    var task = _args[0];
+    var args = _args.slice(1);
+
+    if (!(task instanceof _emberConcurrencyTaskProperty.Task)) {
+      _ember['default'].assert('The first argument passed to the `' + helperName + '` helper should be a Task object (without quotes); you passed ' + task, false);
+    }
+
+    return function () {
+      task[taskMethod].apply(task, args);
+    };
+  }
+});
 define('ember-concurrency/-subscribe', ['exports', 'ember', 'ember-concurrency/-task-property', 'ember-concurrency/-task-instance', 'ember-concurrency/utils', 'ember-concurrency/-buffer-policy'], function (exports, _ember, _emberConcurrencyTaskProperty, _emberConcurrencyTaskInstance, _emberConcurrencyUtils, _emberConcurrencyBufferPolicy) {
   'use strict';
 
