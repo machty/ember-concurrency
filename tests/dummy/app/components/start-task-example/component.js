@@ -3,7 +3,7 @@ import { task, timeout } from 'ember-concurrency';
 
 export default Ember.Component.extend({
   init() {
-    this._super();
+    this._super(...arguments);
     this.set('messages', Ember.A());
   },
 

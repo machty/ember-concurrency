@@ -54,7 +54,7 @@ let loopTaskAttrs = {
   },
 
   init() {
-    this._super();
+    this._super(...arguments);
     this._onCompleteDefer = Ember.RSVP.defer();
     Ember.run.schedule('actions', null, () => {
       Ember.assert(`You must \`yield\` calls to subscribe(), e.g. \`yield subscribe()\`: ${this}`, this._taskHasStarted);

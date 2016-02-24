@@ -125,7 +125,7 @@ let taskInstanceAttrs = {
   _index: 1,
 
   init() {
-    this._super();
+    this._super(...arguments);
     this._defer = Ember.RSVP.defer();
     this._cancelationIgnorer = this._defer.promise.catch(e => {
       if (this._ignorePromiseErrors) { return; }
