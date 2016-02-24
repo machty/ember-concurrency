@@ -35,10 +35,10 @@ g:hover {
               font-style={{if tracker.startTime 'normal' 'italic'}} >
           {{tracker.state}}
         </text>
-        <line x1="{{x}}%" y1="0" x2="{{x}}%" y2={{pick-from labelHeights tracker.id}} stroke={{color}} />
+        {{#with (pick-from labelHeights tracker.id) as |y|}}
+          <line x1="{{x}}%" y1={{y}} x2="{{x}}%" y2={{sum 20 y}} stroke={{color}} />
+        {{/with}}
       {{/with}}
-
-
     {{/with}}
   </g>
 {{/each}}
