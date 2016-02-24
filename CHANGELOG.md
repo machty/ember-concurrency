@@ -1,4 +1,7 @@
 # Changelog
+### 0.5.12:
+ - bugfix: perform helper properly curries arguments
+
 ### 0.5.11:
  - Added perform and cancel-all helper for a more familiar
    approach to calling tasks from templates:
