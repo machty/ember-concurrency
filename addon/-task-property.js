@@ -142,7 +142,7 @@ export const Task = Ember.Object.extend({
   performWillCancelPrevious: computed.equal('nextPerformState', 'cancel_previous'),
 
   init() {
-    this._super();
+    this._super(...arguments);
     this._activeTaskInstances = Ember.A();
     this._queuedTaskInstances = Ember.A();
 
