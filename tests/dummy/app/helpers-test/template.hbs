@@ -2,6 +2,6 @@
 
 <p class="task-status">{{status}}</p>
 
-<button onclick={{perform    myTask 1 2 3}} class="perform-task">Perform</button>
-<button onclick={{cancel-all myTask 1 2 3}} class="cancel-task">Cancel</button>
+{{#my-button action=(perform    myTask 1 2) class="perform-task"}}Perform{{/my-button}}
+{{#my-button action=(cancel-all myTask 1 2) class="cancel-task" }}Cancel{{/my-button}}
 

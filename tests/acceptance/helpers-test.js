@@ -11,7 +11,7 @@ test('visiting /', function(assert) {
     assert.equal(currentURL(), '/helpers-test');
     click('.perform-task');
   }).then(() => {
-    assert.equal(find('.task-status').text(), '1-2-3');
+    assert.equal(find('.task-status').text(), '1-2-3-4');
     click('.cancel-task');
   }).then(() => {
     assert.equal(find('.task-status').text(), 'canceled');
