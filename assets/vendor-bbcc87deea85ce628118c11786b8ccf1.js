@@ -95845,16 +95845,28 @@ define('ember-concurrency/-helpers', ['exports', 'ember', 'ember-concurrency/-ta
 
   exports.taskHelperClosure = taskHelperClosure;
 
+  function _toConsumableArray(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];return arr2;
+    } else {
+      return Array.from(arr);
+    }
+  }
+
   function taskHelperClosure(helperName, taskMethod, _args) {
     var task = _args[0];
-    var args = _args.slice(1);
+    var outerArgs = _args.slice(1);
 
     if (!(task instanceof _emberConcurrencyTaskProperty.Task)) {
       _ember['default'].assert('The first argument passed to the `' + helperName + '` helper should be a Task object (without quotes); you passed ' + task, false);
     }
 
     return function () {
-      task[taskMethod].apply(task, args);
+      for (var _len = arguments.length, innerArgs = Array(_len), _key = 0; _key < _len; _key++) {
+        innerArgs[_key] = arguments[_key];
+      }
+
+      return task[taskMethod].apply(task, _toConsumableArray(outerArgs).concat(innerArgs));
     };
   }
 });

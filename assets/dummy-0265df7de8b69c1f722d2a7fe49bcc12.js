@@ -1395,6 +1395,25 @@ define("dummy/components/intro-task-oldschool/template", ["exports"], function (
     };
   })());
 });
+define('dummy/components/my-button/component', ['exports', 'ember'], function (exports, _ember) {
+  exports['default'] = _ember['default'].Component.extend({
+    click: function click() {
+      var val = this.attrs.action(3, 4);
+      if (!val) {
+        return;
+      }
+      val.then(function (v) {
+        if (v !== 10) {
+          throw new Error("returned value wasn't 10");
+        }
+      })['catch'](function (e) {
+        if (e.name !== 'TaskCancelation') {
+          throw e;
+        }
+      });
+    }
+  });
+});
 define('dummy/components/nav-header/component', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Component.extend({
     tagName: ''
@@ -2958,7 +2977,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
         morphs[2] = dom.createMorphAt(fragment, 16, 16, contextualElement);
         return morphs;
       },
-      statements: [["block", "power-select", [], ["search", ["subexpr", "@mut", [["get", "searchRepo.perform", ["loc", [null, [20, 25], [20, 43]]]]], [], []], "selected", ["subexpr", "@mut", [["get", "selected", ["loc", [null, [21, 27], [21, 35]]]]], [], []], "onchange", ["subexpr", "action", [["subexpr", "mut", [["get", "selected", ["loc", [null, [22, 40], [22, 48]]]]], [], ["loc", [null, [22, 35], [22, 49]]]]], [], ["loc", [null, [22, 27], [22, 50]]]]], 0, null, ["loc", [null, [20, 2], [24, 19]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation.js"], ["loc", [null, [30, 0], [30, 60]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation-template.hbs"], ["loc", [null, [34, 0], [34, 70]]]]],
+      statements: [["block", "power-select", [], ["search", ["subexpr", "perform", [["get", "searchRepo", ["loc", [null, [20, 34], [20, 44]]]]], [], ["loc", [null, [20, 25], [20, 45]]]], "selected", ["subexpr", "@mut", [["get", "selected", ["loc", [null, [21, 27], [21, 35]]]]], [], []], "onchange", ["subexpr", "action", [["subexpr", "mut", [["get", "selected", ["loc", [null, [22, 40], [22, 48]]]]], [], ["loc", [null, [22, 35], [22, 49]]]]], [], ["loc", [null, [22, 27], [22, 50]]]]], 0, null, ["loc", [null, [20, 2], [24, 19]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation.js"], ["loc", [null, [30, 0], [30, 60]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation-template.hbs"], ["loc", [null, [34, 0], [34, 70]]]]],
       locals: [],
       templates: [child0]
     };
@@ -6924,16 +6943,137 @@ define('dummy/helpers-test/controller', ['exports', 'ember', 'ember-concurrency'
             return context$1$0.stop();
         }
       }, callee$0$0, this, [[0,, 5, 8]]);
+    })),
+
+    returnValue: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            return context$1$0.abrupt('return', 10);
+
+          case 1:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
     }))
   });
 });
 define("dummy/helpers-test/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 5,
+              "column": 0
+            },
+            "end": {
+              "line": 5,
+              "column": 73
+            }
+          },
+          "moduleName": "dummy/helpers-test/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("Perform");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 6,
+              "column": 0
+            },
+            "end": {
+              "line": 6,
+              "column": 72
+            }
+          },
+          "moduleName": "dummy/helpers-test/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("Cancel");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child2 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 7,
+              "column": 0
+            },
+            "end": {
+              "line": 7,
+              "column": 80
+            }
+          },
+          "moduleName": "dummy/helpers-test/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("Return a Value");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
     return {
       meta: {
         "fragmentReason": {
           "name": "missing-wrapper",
-          "problems": ["multiple-nodes"]
+          "problems": ["multiple-nodes", "wrong-type"]
         },
         "revision": "Ember@2.3.1",
         "loc": {
@@ -6943,7 +7083,7 @@ define("dummy/helpers-test/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 8,
+            "line": 9,
             "column": 0
           }
         },
@@ -6968,34 +7108,31 @@ define("dummy/helpers-test/template", ["exports"], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("button");
-        dom.setAttribute(el1, "class", "perform-task");
-        var el2 = dom.createTextNode("Perform");
-        dom.appendChild(el1, el2);
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("button");
-        dom.setAttribute(el1, "class", "cancel-task");
-        var el2 = dom.createTextNode("Cancel");
-        dom.appendChild(el1, el2);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element0 = dom.childAt(fragment, [4]);
-        var element1 = dom.childAt(fragment, [6]);
-        var morphs = new Array(3);
+        var morphs = new Array(4);
         morphs[0] = dom.createMorphAt(dom.childAt(fragment, [2]), 0, 0);
-        morphs[1] = dom.createAttrMorph(element0, 'onclick');
-        morphs[2] = dom.createAttrMorph(element1, 'onclick');
+        morphs[1] = dom.createMorphAt(fragment, 4, 4, contextualElement);
+        morphs[2] = dom.createMorphAt(fragment, 6, 6, contextualElement);
+        morphs[3] = dom.createMorphAt(fragment, 8, 8, contextualElement);
         return morphs;
       },
-      statements: [["content", "status", ["loc", [null, [3, 23], [3, 33]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [5, 29], [5, 35]]]], 1, 2, 3], [], ["loc", [null, [5, 16], [5, 43]]]]], ["attribute", "onclick", ["subexpr", "cancel-all", [["get", "myTask", ["loc", [null, [6, 29], [6, 35]]]], 1, 2, 3], [], ["loc", [null, [6, 16], [6, 43]]]]]],
+      statements: [["content", "status", ["loc", [null, [3, 23], [3, 33]]]], ["block", "my-button", [], ["action", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [5, 32], [5, 38]]]], 1, 2], [], ["loc", [null, [5, 20], [5, 43]]]], "class", "perform-task"], 0, null, ["loc", [null, [5, 0], [5, 87]]]], ["block", "my-button", [], ["action", ["subexpr", "cancel-all", [["get", "myTask", ["loc", [null, [6, 32], [6, 38]]]], 1, 2], [], ["loc", [null, [6, 20], [6, 43]]]], "class", "cancel-task"], 1, null, ["loc", [null, [6, 0], [6, 86]]]], ["block", "my-button", [], ["action", ["subexpr", "perform", [["get", "returnValue", ["loc", [null, [7, 32], [7, 43]]]]], [], ["loc", [null, [7, 20], [7, 44]]]], "class", "value-task"], 2, null, ["loc", [null, [7, 0], [7, 94]]]]],
       locals: [],
-      templates: []
+      templates: [child0, child1, child2]
     };
   })());
 });
@@ -7132,7 +7269,7 @@ define("dummy/snippets", ["exports"], function (exports) {
     "child-tasks-template.hbs": "<h5>{{status}}</h5>\n\n<ul>\n  <li>Parent Task:     {{parentTask.state}}</li>\n  <li>Child Task:      {{childTask.state}}</li>\n  <li>Grandchild Task: {{grandchildTask.state}}</li>\n</ul>\n\n<button {{action parentTask.perform}}>\n  {{#if parentTask.isRunning}}\n    Restart Parent Task\n  {{else}}\n    Perform Parent Task\n  {{/if}}\n</button>",
     "child-tasks.js": "export default Ember.Controller.extend({\n  status: \"Waiting to start\",\n\n  parentTask: task(function * () {\n    this.set('status', \"1. Parent: one moment...\");\n    yield timeout(1000);\n    let value = yield this.get('childTask').perform();\n    this.set('status', `5. Parent: child says \"${value}\"`);\n    yield timeout(1000);\n    this.set('status', \"6. Done!\");\n  }).restartable(),\n\n  childTask: task(function * () {\n    this.set('status', \"2. Child: one moment...\");\n    yield timeout(1000);\n    let value = yield this.get('grandchildTask').perform();\n    this.set('status', `4. Child: grandchild says \"${value}\"`);\n    yield timeout(1000);\n    return \"What's up\";\n  }),\n\n  grandchildTask: task(function * () {\n    this.set('status', \"3. Grandchild: one moment...\");\n    yield timeout(1000);\n    return \"Hello\";\n  }),\n});",
     "count-up.js": "  countUp: task(function * () {\n    while (true) {\n      this.incrementProperty('count');\n      yield timeout(100);\n    }\n  }).on('init'),",
-    "debounced-search-with-cancelation-template.hbs": "  {{#power-select search=searchRepo.perform\n                  selected=selected\n                  onchange=(action (mut selected)) as |repo|}}\n    {{repo.full_name}}\n  {{/power-select}}",
+    "debounced-search-with-cancelation-template.hbs": "  {{#power-select search=(perform searchRepo)\n                  selected=selected\n                  onchange=(action (mut selected)) as |repo|}}\n    {{repo.full_name}}\n  {{/power-select}}",
     "debounced-search-with-cancelation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because this\n    // task is `.restartable()`, if the user starts typing again,\n    // the current search will be canceled at this point and\n    // start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `https://api.github.com/search/repositories?q=${term}`;\n\n    // We yield an AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield this.get('getJSON').perform(url);\n    return json.items;\n  }).restartable(),\n\n  getJSON: task(function * (url) {\n    let xhr;\n    try {\n      xhr = Ember.$.getJSON(url);\n      yield xhr.promise();\n    } finally {\n      xhr.abort();\n    }\n  }),\n});",
     "decorating-tasks-template-isIdle.hbs": "<p>\n  {{#each tasks as |task|}}\n    <button {{action task.perform}} class={{if task.isIdle 'button-primary'}}>\n      {{task.name}}\n    </button>\n  {{/each}}\n</p>",
     "decorating-tasks-template-performWillSucceed.hbs": "<p>\n  {{#each tasks as |task|}}\n    <button {{action task.perform}} class={{if task.performWillSucceed 'button-primary'}}>\n      {{task.name}}\n    </button>\n  {{/each}}\n</p>",
@@ -7501,7 +7638,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.11+9bf482eb"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.13"});
 }
 
 /* jshint ignore:end */
