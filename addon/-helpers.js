@@ -9,7 +9,7 @@ export function taskHelperClosure(helperName, taskMethod, _args) {
   }
 
   return (...innerArgs) => {
-    task[taskMethod](...outerArgs, ...innerArgs);
+    return task[taskMethod](...outerArgs, ...innerArgs);
   };
 }
 

@@ -11,5 +11,9 @@ export default Ember.Controller.extend({
       this.set('status', 'canceled');
     }
   }),
+
+  returnValue: task(function * () {
+    return 10;
+  }),
 });
 
