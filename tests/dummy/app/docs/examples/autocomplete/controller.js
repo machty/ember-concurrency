@@ -1,17 +1,5 @@
 import Ember from 'ember';
-import { task, timeout, createObservable } from 'ember-concurrency';
-
-// Wrap the $.getJSON API so that it's cancelable.
-function cancelableGetJSON(url) {
-  return createObservable(publish => {
-    let xhr = Ember.$.getJSON(url);
-    xhr.then(publish, publish.error);
-
-    return () => {
-      xhr.abort();
-    };
-  });
-}
+import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET debounced-search-with-cancelation
 const DEBOUNCE_MS = 250;
@@ -31,9 +19,19 @@ export default Ember.Controller.extend({
     // We yield an AJAX request and wait for it to complete. If the task
     // is restarted before this request completes, the XHR request
     // is aborted (open the inspector and see for yourself :)
-    let json = yield cancelableGetJSON(url);
+    let json = yield this.get('getJSON').perform(url);
     return json.items;
   }).restartable(),
+
+  getJSON: task(function * (url) {
+    let xhr;
+    try {
+      xhr = Ember.$.getJSON(url);
+      yield xhr.promise();
+    } finally {
+      xhr.abort();
+    }
+  }),
 });
 // END-SNIPPET
 
