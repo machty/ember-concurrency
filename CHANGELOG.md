@@ -1,4 +1,7 @@
 # Changelog
+### 0.5.13:
+ - bugfix: perform helper returns the performed TaskInstance
+
 ### 0.5.12:
  - bugfix: perform helper properly curries arguments
 
