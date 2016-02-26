@@ -8,9 +8,8 @@
   <li>Tricky time-based operations like acceleration are simplified
       by the sequential style of task functions</li>
   <li>
-    Tasks integrate with the template actions API: you can use
-    <code>taskName.perform</code> in place of anywhere you
-    might want to use a classic Ember action name.
+    You can use <code>(perform taskName)</code> in place of anywhere you
+    might want to use a classic Ember action.
   </li>
 </ul>
 
@@ -23,14 +22,14 @@
 {{! BEGIN-SNIPPET press-and-hold-buttons }}
 <p>
   {{#press-and-hold-button
-    press=(action incrementBy.perform -1)
-    release=(action incrementBy.perform 0)}}
+    press=(perform incrementBy -1)
+    release=(cancel-all incrementBy)}}
       --Decrease
   {{/press-and-hold-button}}
 
   {{#press-and-hold-button
-    press=(action incrementBy.perform 1)
-    release=(action incrementBy.perform 0)}}
+    press=(perform incrementBy 1)
+    release=(cancel-all incrementBy)}}
       Increase++
   {{/press-and-hold-button}}
 </p>
