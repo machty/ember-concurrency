@@ -3369,37 +3369,29 @@ define('dummy/docs/examples/increment-buttons/controller', ['exports', 'ember', 
       return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
           case 0:
-            if (inc) {
-              context$1$0.next = 2;
-              break;
-            }
-
-            return context$1$0.abrupt('return');
-
-          case 2:
             speed = 400;
 
-          case 3:
+          case 1:
             if (!true) {
-              context$1$0.next = 10;
+              context$1$0.next = 8;
               break;
             }
 
             this.incrementProperty('count', inc);
-            context$1$0.next = 7;
+            context$1$0.next = 5;
             return (0, _emberConcurrency.timeout)(speed);
 
-          case 7:
+          case 5:
             speed = Math.max(50, speed * 0.8);
-            context$1$0.next = 3;
+            context$1$0.next = 1;
             break;
 
-          case 10:
+          case 8:
           case 'end':
             return context$1$0.stop();
         }
       }, callee$0$0, this);
-    })).restartable()
+    }))
   });
 
   // END-SNIPPET
@@ -3414,11 +3406,11 @@ define("dummy/docs/examples/increment-buttons/template", ["exports"], function (
           "loc": {
             "source": null,
             "start": {
-              "line": 25,
+              "line": 24,
               "column": 2
             },
             "end": {
-              "line": 29,
+              "line": 28,
               "column": 2
             }
           },
@@ -3450,11 +3442,11 @@ define("dummy/docs/examples/increment-buttons/template", ["exports"], function (
           "loc": {
             "source": null,
             "start": {
-              "line": 31,
+              "line": 30,
               "column": 2
             },
             "end": {
-              "line": 35,
+              "line": 34,
               "column": 2
             }
           },
@@ -3492,7 +3484,7 @@ define("dummy/docs/examples/increment-buttons/template", ["exports"], function (
             "column": 0
           },
           "end": {
-            "line": 51,
+            "line": 50,
             "column": 0
           }
         },
@@ -3526,13 +3518,13 @@ define("dummy/docs/examples/increment-buttons/template", ["exports"], function (
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("li");
-        var el3 = dom.createTextNode("\n    Tasks integrate with the template actions API: you can use\n    ");
+        var el3 = dom.createTextNode("\n    You can use ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("code");
-        var el4 = dom.createTextNode("taskName.perform");
+        var el4 = dom.createTextNode("(perform taskName)");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode(" in place of anywhere you\n    might want to use a classic Ember action name.\n  ");
+        var el3 = dom.createTextNode(" in place of anywhere you\n    might want to use a classic Ember action.\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
@@ -3617,7 +3609,7 @@ define("dummy/docs/examples/increment-buttons/template", ["exports"], function (
         morphs[5] = dom.createMorphAt(fragment, 25, 25, contextualElement);
         return morphs;
       },
-      statements: [["content", "count", ["loc", [null, [19, 9], [19, 18]]]], ["block", "press-and-hold-button", [], ["press", ["subexpr", "action", [["get", "incrementBy.perform", ["loc", [null, [26, 18], [26, 37]]]], -1], [], ["loc", [null, [26, 10], [26, 41]]]], "release", ["subexpr", "action", [["get", "incrementBy.perform", ["loc", [null, [27, 20], [27, 39]]]], 0], [], ["loc", [null, [27, 12], [27, 42]]]]], 0, null, ["loc", [null, [25, 2], [29, 28]]]], ["block", "press-and-hold-button", [], ["press", ["subexpr", "action", [["get", "incrementBy.perform", ["loc", [null, [32, 18], [32, 37]]]], 1], [], ["loc", [null, [32, 10], [32, 40]]]], "release", ["subexpr", "action", [["get", "incrementBy.perform", ["loc", [null, [33, 20], [33, 39]]]], 0], [], ["loc", [null, [33, 12], [33, 42]]]]], 1, null, ["loc", [null, [31, 2], [35, 28]]]], ["inline", "code-snippet", [], ["name", "increment-button-task.js"], ["loc", [null, [41, 0], [41, 48]]]], ["inline", "code-snippet", [], ["name", "increment-button.js"], ["loc", [null, [45, 0], [45, 43]]]], ["inline", "code-snippet", [], ["name", "press-and-hold-buttons.hbs"], ["loc", [null, [49, 0], [49, 50]]]]],
+      statements: [["content", "count", ["loc", [null, [18, 9], [18, 18]]]], ["block", "press-and-hold-button", [], ["press", ["subexpr", "perform", [["get", "incrementBy", ["loc", [null, [25, 19], [25, 30]]]], -1], [], ["loc", [null, [25, 10], [25, 34]]]], "release", ["subexpr", "cancel-all", [["get", "incrementBy", ["loc", [null, [26, 24], [26, 35]]]]], [], ["loc", [null, [26, 12], [26, 36]]]]], 0, null, ["loc", [null, [24, 2], [28, 28]]]], ["block", "press-and-hold-button", [], ["press", ["subexpr", "perform", [["get", "incrementBy", ["loc", [null, [31, 19], [31, 30]]]], 1], [], ["loc", [null, [31, 10], [31, 33]]]], "release", ["subexpr", "cancel-all", [["get", "incrementBy", ["loc", [null, [32, 24], [32, 35]]]]], [], ["loc", [null, [32, 12], [32, 36]]]]], 1, null, ["loc", [null, [30, 2], [34, 28]]]], ["inline", "code-snippet", [], ["name", "increment-button-task.js"], ["loc", [null, [40, 0], [40, 48]]]], ["inline", "code-snippet", [], ["name", "increment-button.js"], ["loc", [null, [44, 0], [44, 43]]]], ["inline", "code-snippet", [], ["name", "press-and-hold-buttons.hbs"], ["loc", [null, [48, 0], [48, 50]]]]],
       locals: [],
       templates: [child0, child1]
     };
@@ -7277,7 +7269,7 @@ define("dummy/snippets", ["exports"], function (exports) {
     "detail-route.js": "export default Ember.Route.extend({\n  notify: Ember.inject.service('notify'),\n\n  setupController(controller, model) {\n    this.get('pollServerForChanges').perform(model.id);\n  },\n\n  pollServerForChanges: task(function * (id) {\n    let notify = this.get('notify');\n    yield timeout(500);\n    try {\n      notify.info(`Thing ${id}: Starting to poll for changes`);\n      while (true) {\n        yield timeout(5000);\n        notify.info(`Thing ${id}: Polling now...`);\n      }\n    } finally {\n      notify.warning(`Thing ${id}: No longer polling for changes`);\n    }\n  }).cancelOn('deactivate').restartable(),\n});",
     "ember-app-config.js": "var app = new EmberApp({\n  babel: {\n    includePolyfill: true,\n\n    // you might need this too, depending on your version of babel\n    // browserPolyfill: true,\n  },\n});\n\n",
     "ember-install.sh": "ember install ember-concurrency\n",
-    "increment-button-task.js": "export default Ember.Controller.extend({\n  count: 0,\n  incrementBy: task(function * (inc) {\n    if (!inc) { return; }\n\n    let speed = 400;\n    while (true) {\n      this.incrementProperty('count', inc);\n      yield timeout(speed);\n      speed = Math.max(50, speed * 0.8);\n    }\n  }).restartable(),\n});",
+    "increment-button-task.js": "export default Ember.Controller.extend({\n  count: 0,\n  incrementBy: task(function * (inc) {\n    let speed = 400;\n    while (true) {\n      this.incrementProperty('count', inc);\n      yield timeout(speed);\n      speed = Math.max(50, speed * 0.8);\n    }\n  })\n});",
     "increment-button.js": "function sendPress() {\n  this.sendAction('press');\n}\n\nfunction sendRelease() {\n  this.sendAction('release');\n}\n\nexport default Ember.Component.extend({\n  tagName: 'button',\n\n  touchStart: sendPress,\n  mouseDown:  sendPress,\n  touchEnd:   sendRelease,\n  mouseLeave: sendRelease,\n  mouseUp:    sendRelease,\n});",
     "intro-task-oldschool.js": "import Ember from 'ember';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  startCounting() {\n    this.cancelTimer();\n    this.set('count', 0);\n    this.step();\n  },\n\n  step() {\n    if (this.count < 5) {\n      this.incrementProperty('count');\n      this.timerId = Ember.run.later(this, this.step, 300);\n    } else {\n      this.set('count', \"DONE!\");\n    }\n  },\n\n  willDestroy() {\n    this.cancelTimer();\n  },\n\n  cancelTimer() {\n    if (this.timerId) {\n      Ember.run.cancel(this.timerId);\n      this.timerId = null;\n    }\n  },\n\n  actions: {\n    startCounting() {\n      this.startCounting();\n    }\n  }\n});",
     "intro-task.js": "import Ember from 'ember';\nimport { task, timeout } from 'ember-concurrency';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  countingTask: task(function * () {\n    this.set('count', 0);\n    while (this.count < 5) {\n      this.incrementProperty('count');\n      yield timeout(300);\n    }\n    this.set('count', \"DONE!\");\n  }).restartable()\n});",
@@ -7288,7 +7280,7 @@ define("dummy/snippets", ["exports"], function (exports) {
     "loading-ui-controller.js": "export default Ember.Controller.extend({\n  askQuestion: task(function * () {\n    yield timeout(1000);\n    this.set('result', Math.random());\n  }).drop(),\n\n  result: null,\n});",
     "observables-evented.js": "  fooStatus: null,\n  listenForFooInternally: task(function * () {\n    this.set('fooStatus', `Waiting for values...`);\n\n    yield subscribe(events(this, 'foo'), function * (x) {\n      this.set('fooStatus', `Got value ${x}, thinking...`);\n      yield timeout(1500);\n      this.set('fooStatus', `${this.fooStatus} Done`);\n      yield timeout(200);\n    }).enqueue();\n  }).on('init'),\n\n  actions: {\n    triggerFoo() {\n      this.trigger('foo', Math.floor(100*Math.random()));\n    },\n  }",
     "observables-timetable.js": "  computeStuff: task(function * () {\n    let values = Ember.A();\n    this.set('values', values);\n    yield subscribe(range(5,5), function * (x) {\n      yield subscribe(range(10,3), function * (y) {\n        values.pushObject({ message: `What is ${x} x ${y} ? ` });\n        yield timeout(200);\n        values.pushObject({ message: `${x*y}. `});\n      }).enqueue();\n      values.pushObject({ message: \"\\n\" });\n    }).enqueue();\n  }).restartable(),",
-    "press-and-hold-buttons.hbs": "<p>\n  {{#press-and-hold-button\n    press=(action incrementBy.perform -1)\n    release=(action incrementBy.perform 0)}}\n      --Decrease\n  {{/press-and-hold-button}}\n\n  {{#press-and-hold-button\n    press=(action incrementBy.perform 1)\n    release=(action incrementBy.perform 0)}}\n      Increase++\n  {{/press-and-hold-button}}\n</p>",
+    "press-and-hold-buttons.hbs": "<p>\n  {{#press-and-hold-button\n    press=(perform incrementBy -1)\n    release=(cancel-all incrementBy)}}\n      --Decrease\n  {{/press-and-hold-button}}\n\n  {{#press-and-hold-button\n    press=(perform incrementBy 1)\n    release=(cancel-all incrementBy)}}\n      Increase++\n  {{/press-and-hold-button}}\n</p>",
     "scrambled-text.js": "  startScrambling: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      let pauseTime = 140;\n      while (pauseTime > 5) {\n        this.set('scrambledText', scramble(text));\n        yield timeout(pauseTime);\n        pauseTime = pauseTime * 0.95;\n      }\n      this.set('scrambledText', text);\n      yield timeout(1500);\n    }\n  }).on('init'),",
     "shared-tasks-concurrent.js": "export default Ember.Controller.extend({\n  restartableTask3: task(SHARED_TASK_FN).maxConcurrency(3).restartable(),\n  enqueuedTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueue(),\n  droppingTask3:    task(SHARED_TASK_FN).maxConcurrency(3).drop(),\n});",
     "shared-tasks.js": "export default Ember.Controller.extend({\n  defaultTask:     task(SHARED_TASK_FN),\n  restartableTask: task(SHARED_TASK_FN).restartable(),\n  enqueuedTask:    task(SHARED_TASK_FN).enqueue(),\n  droppingTask:    task(SHARED_TASK_FN).drop(),\n});",
@@ -7638,7 +7630,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.13"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.13+e0aab2fe"});
 }
 
 /* jshint ignore:end */
