@@ -1768,29 +1768,23 @@ define("dummy/components/scrambled-text/template", ["exports"], function (export
 });
 define('dummy/components/start-task-example/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
   exports['default'] = _ember['default'].Component.extend({
-    init: function init() {
-      this._super.apply(this, arguments);
-      this.set('messages', _ember['default'].A());
-    },
-
-    messages: null,
+    status: null,
 
     // BEGIN-SNIPPET start-task-example
     myTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0(msg) {
-      var m;
+      var status;
       return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
           case 0:
-            m = {
-              text: 'myTask invoked with the following: ' + (msg || "init") + '... '
-            };
+            status = 'myTask.perform("' + (msg || "init") + '")...';
 
-            this.messages.pushObject(m);
+            this.set('status', status);
+
             context$1$0.next = 4;
             return (0, _emberConcurrency.timeout)(500);
 
           case 4:
-            _ember['default'].set(m, 'text', m.text + "Done");
+            this.set('status', status + ' Done');
 
           case 5:
           case 'end':
@@ -1803,8 +1797,8 @@ define('dummy/components/start-task-example/component', ['exports', 'ember', 'em
       performTask: function performTask(msg) {
         // This demonstrates how you can .get() a reference
         // to a task and then run it with .perform(), but
-        // ideally you should just invoke myTask.perform
-        // directly from the template.
+        // ideally you should just invoke myTask directly
+        // from the template using the `perform` helper.
         this.get('myTask').perform(msg);
       },
       triggerFoo: function triggerFoo(msg) {
@@ -1816,50 +1810,6 @@ define('dummy/components/start-task-example/component', ['exports', 'ember', 'em
 });
 define("dummy/components/start-task-example/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
-    var child0 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.3.1",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 20,
-              "column": 2
-            },
-            "end": {
-              "line": 22,
-              "column": 2
-            }
-          },
-          "moduleName": "dummy/components/start-task-example/template.hbs"
-        },
-        isEmpty: false,
-        arity: 1,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("    ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("li");
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
-          return morphs;
-        },
-        statements: [["content", "m.text", ["loc", [null, [21, 8], [21, 18]]]]],
-        locals: ["m"],
-        templates: []
-      };
-    })();
     return {
       meta: {
         "fragmentReason": {
@@ -1874,7 +1824,7 @@ define("dummy/components/start-task-example/template", ["exports"], function (ex
             "column": 0
           },
           "end": {
-            "line": 33,
+            "line": 27,
             "column": 0
           }
         },
@@ -1912,14 +1862,8 @@ define("dummy/components/start-task-example/template", ["exports"], function (ex
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h6");
-        var el2 = dom.createTextNode("Messages Received:");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("ul");
-        var el2 = dom.createTextNode("\n");
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Status: ");
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
@@ -1955,16 +1899,16 @@ define("dummy/components/start-task-example/template", ["exports"], function (ex
         var element3 = dom.childAt(element0, [6]);
         var morphs = new Array(6);
         morphs[0] = dom.createElementMorph(element1);
-        morphs[1] = dom.createElementMorph(element2);
+        morphs[1] = dom.createAttrMorph(element2, 'onclick');
         morphs[2] = dom.createElementMorph(element3);
-        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [4]), 1, 1);
-        morphs[4] = dom.createMorphAt(fragment, 8, 8, contextualElement);
-        morphs[5] = dom.createMorphAt(fragment, 12, 12, contextualElement);
+        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [2]), 1, 1);
+        morphs[4] = dom.createMorphAt(fragment, 6, 6, contextualElement);
+        morphs[5] = dom.createMorphAt(fragment, 10, 10, contextualElement);
         return morphs;
       },
-      statements: [["element", "action", ["performTask", "one"], [], ["loc", [null, [3, 10], [3, 40]]]], ["element", "action", [["get", "myTask.perform", ["loc", [null, [7, 19], [7, 33]]]], "two"], [], ["loc", [null, [7, 10], [7, 41]]]], ["element", "action", ["triggerFoo", "three"], [], ["loc", [null, [11, 10], [11, 41]]]], ["block", "each", [["get", "messages", ["loc", [null, [20, 10], [20, 18]]]]], [], 0, null, ["loc", [null, [20, 2], [22, 11]]]], ["inline", "code-snippet", [], ["name", "start-task-example.js"], ["loc", [null, [27, 0], [27, 45]]]], ["inline", "code-snippet", [], ["name", "start-task-example-template.hbs"], ["loc", [null, [31, 0], [31, 55]]]]],
+      statements: [["element", "action", ["performTask", "one"], [], ["loc", [null, [3, 10], [3, 40]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [7, 28], [7, 34]]]], "two"], [], ["loc", [null, [7, 18], [7, 42]]]]], ["element", "action", ["triggerFoo", "three"], [], ["loc", [null, [11, 10], [11, 41]]]], ["content", "status", ["loc", [null, [17, 12], [17, 22]]]], ["inline", "code-snippet", [], ["name", "start-task-example.js"], ["loc", [null, [21, 0], [21, 45]]]], ["inline", "code-snippet", [], ["name", "start-task-example-template.hbs"], ["loc", [null, [25, 0], [25, 55]]]]],
       locals: [],
-      templates: [child0]
+      templates: []
     };
   })());
 });
@@ -2626,7 +2570,7 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
   exports["default"] = _ember["default"].Controller.extend({
     appController: _ember["default"].inject.controller('application'),
 
-    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.installation", title: "Installation" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { route: "docs.cancelation", title: "Cancelation" }, { route: "docs.lifetime", title: "Lifetime" }, { route: "docs.child-tasks", title: "Child Tasks" }, { title: "Examples", route: "docs.examples",
+    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.installation", title: "Installation" }, { route: "docs.writing-tasks", title: "Your First Task" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { route: "docs.cancelation", title: "Cancelation" }, { route: "docs.lifetime", title: "Lifetime" }, { route: "docs.child-tasks", title: "Child Tasks" }, { title: "Examples", route: "docs.examples",
       children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" }, { route: "docs.examples.route-tasks", title: "Route Tasks" }, { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" }]
     }],
 
@@ -6374,7 +6318,7 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 49,
+            "line": 57,
             "column": 0
           }
         },
@@ -6387,13 +6331,37 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
       buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h3");
-        var el2 = dom.createTextNode("Writing Tasks");
+        var el2 = dom.createTextNode("Writing Your First Task");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Step 1: Deciding where the Task will live");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Step one of writing a task is deciding which object it'll live on —\n  an ember-concurrency task is scoped to the lifetime of the object it lives\n  on, such that when that host object is destroyed, the task is canceled. So if\n  you want the task to cancel when a component is unrendered, put it on a component.\n  If you want it to have a longer life span than a component, perhaps it belongs on\n  a service.\n");
+        var el2 = dom.createTextNode("\n  Should you define a task on Component? Or perhaps a Service?\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  This choice is important because ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("strong");
+        var el3 = dom.createTextNode("Tasks get automatically canceled\n  when they object they live on is destroyed");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(".\n  So if you want the task to cancel when a component is unrendered, define\n  it on a Component class, but if you need it to outlive a component's lifespan,\n  it probably belongs on a Service or Controller.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Step 2: Implementing the task");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -6408,14 +6376,14 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h3");
-        var el2 = dom.createTextNode("Starting a task");
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Step 3: Performing the task");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  There are three ways to start a task:\n");
+        var el2 = dom.createTextNode("\n  Now that you've implemented your Task, you'll need some way to actually\n  perform it. You have three options:\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -6436,13 +6404,19 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("li");
-        var el3 = dom.createTextNode("\n    In your Handlebars template, use ");
+        var el3 = dom.createTextNode("\n    In your Handlebars template, use the ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("code");
-        var el4 = dom.createTextNode("nameOfTask.perform");
+        var el4 = dom.createTextNode("perform");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode(" in place of anywhere\n    you would normally use the name of an action.\n  ");
+        var el3 = dom.createTextNode(" helper\n    (e.g. ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("(perform myTask)");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(").\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n  ");
@@ -6474,7 +6448,7 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h5");
+        var el1 = dom.createElement("h3");
         var el2 = dom.createTextNode("Live Example");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
@@ -6488,11 +6462,11 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var morphs = new Array(2);
-        morphs[0] = dom.createMorphAt(fragment, 6, 6, contextualElement);
-        morphs[1] = dom.createMorphAt(fragment, 18, 18, contextualElement);
+        morphs[0] = dom.createMorphAt(fragment, 12, 12, contextualElement);
+        morphs[1] = dom.createMorphAt(fragment, 24, 24, contextualElement);
         return morphs;
       },
-      statements: [["inline", "code-snippet", [], ["name", "writing-tasks.js"], ["loc", [null, [17, 0], [17, 40]]]], ["content", "start-task-example", ["loc", [null, [46, 0], [46, 22]]]]],
+      statements: [["inline", "code-snippet", [], ["name", "writing-tasks.js"], ["loc", [null, [24, 0], [24, 40]]]], ["content", "start-task-example", ["loc", [null, [54, 0], [54, 22]]]]],
       locals: [],
       templates: []
     };
@@ -7315,8 +7289,8 @@ define("dummy/snippets", ["exports"], function (exports) {
     "scrambled-text.js": "  startScrambling: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      let pauseTime = 140;\n      while (pauseTime > 5) {\n        this.set('scrambledText', scramble(text));\n        yield timeout(pauseTime);\n        pauseTime = pauseTime * 0.95;\n      }\n      this.set('scrambledText', text);\n      yield timeout(1500);\n    }\n  }).on('init'),",
     "shared-tasks-concurrent.js": "export default Ember.Controller.extend({\n  restartableTask3: task(SHARED_TASK_FN).maxConcurrency(3).restartable(),\n  enqueuedTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueue(),\n  droppingTask3:    task(SHARED_TASK_FN).maxConcurrency(3).drop(),\n});",
     "shared-tasks.js": "export default Ember.Controller.extend({\n  defaultTask:     task(SHARED_TASK_FN),\n  restartableTask: task(SHARED_TASK_FN).restartable(),\n  enqueuedTask:    task(SHARED_TASK_FN).enqueue(),\n  droppingTask:    task(SHARED_TASK_FN).drop(),\n});",
-    "start-task-example-template.hbs": "  <button {{action 'performTask' \"one\"}}>\n    1. task.perform(...)\n  </button>\n\n  <button {{action myTask.perform \"two\"}}>\n    2. task.perform action\n  </button>\n\n  <button {{action \"triggerFoo\" \"three\"}}>\n    3. .on('foo')\n  </button>",
-    "start-task-example.js": "  myTask: task(function * (msg) {\n    let m = {\n      text: `myTask invoked with the following: ${msg || \"init\"}... `\n    };\n    this.messages.pushObject(m);\n    yield timeout(500);\n    Ember.set(m, 'text', m.text + \"Done\");\n  }).on('init', 'foo'),\n\n  actions: {\n    performTask(msg) {\n      // This demonstrates how you can .get() a reference\n      // to a task and then run it with .perform(), but\n      // ideally you should just invoke myTask.perform\n      // directly from the template.\n      this.get('myTask').perform(msg);\n    },\n    triggerFoo(msg) {\n      this.trigger('foo', msg);\n    }\n  }",
+    "start-task-example-template.hbs": "  <button {{action 'performTask' \"one\"}}>\n    1. task.perform(...)\n  </button>\n\n  <button onclick={{perform myTask \"two\"}}>\n    2. task.perform action\n  </button>\n\n  <button {{action \"triggerFoo\" \"three\"}}>\n    3. .on('foo')\n  </button>",
+    "start-task-example.js": "  myTask: task(function * (msg) {\n    let status = `myTask.perform(\"${msg || \"init\"}\")...`;\n    this.set('status', status);\n\n    yield timeout(500);\n    this.set('status', `${status} Done`);\n  }).on('init', 'foo'),\n\n  actions: {\n    performTask(msg) {\n      // This demonstrates how you can .get() a reference\n      // to a task and then run it with .perform(), but\n      // ideally you should just invoke myTask directly\n      // from the template using the `perform` helper.\n      this.get('myTask').perform(msg);\n    },\n    triggerFoo(msg) {\n      this.trigger('foo', msg);\n    }\n  }",
     "writing-tasks.js": "import Ember from 'ember';\nimport { task } from 'ember-concurrency';\n\nexport default Ember.Component.extend({\n  myTask: task(function * () {\n    alert(\"hello!\");\n  })\n});\n\n"
   };
 });
@@ -7661,7 +7635,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.13+ae2bc2b1"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.13+00571907"});
 }
 
 /* jshint ignore:end */
