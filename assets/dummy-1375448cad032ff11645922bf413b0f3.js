@@ -1769,7 +1769,7 @@ define("dummy/components/scrambled-text/template", ["exports"], function (export
 define('dummy/components/start-task-example/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
   exports['default'] = _ember['default'].Component.extend({
     init: function init() {
-      this._super();
+      this._super.apply(this, arguments);
       this.set('messages', _ember['default'].A());
     },
 
@@ -1973,6 +1973,13 @@ define('dummy/controllers/array', ['exports', 'ember'], function (exports, _embe
 });
 define('dummy/controllers/object', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller;
+});
+define('dummy/docs/404/route', ['exports', 'ember'], function (exports, _ember) {
+  exports['default'] = _ember['default'].Route.extend({
+    redirect: function redirect() {
+      this.transitionTo('docs');
+    }
+  });
 });
 define('dummy/docs/cancelation/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
 
@@ -2619,7 +2626,7 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
   exports["default"] = _ember["default"].Controller.extend({
     appController: _ember["default"].inject.controller('application'),
 
-    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.getting-started", title: "Getting Started" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { route: "docs.cancelation", title: "Cancelation" }, { route: "docs.lifetime", title: "Lifetime" }, { route: "docs.child-tasks", title: "Child Tasks" }, { title: "Examples", route: "docs.examples",
+    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.installation", title: "Installation" }, { route: "docs.writing-tasks", title: "Writing Tasks" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { route: "docs.cancelation", title: "Cancelation" }, { route: "docs.lifetime", title: "Lifetime" }, { route: "docs.child-tasks", title: "Child Tasks" }, { title: "Examples", route: "docs.examples",
       children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" }, { route: "docs.examples.route-tasks", title: "Route Tasks" }, { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" }]
     }],
 
@@ -4958,92 +4965,6 @@ define('dummy/docs/examples/task-concurrency/route', ['exports', 'ember'], funct
     }
   });
 });
-define("dummy/docs/getting-started/template", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template((function () {
-    return {
-      meta: {
-        "fragmentReason": {
-          "name": "missing-wrapper",
-          "problems": ["multiple-nodes", "wrong-type"]
-        },
-        "revision": "Ember@2.3.1",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 17,
-            "column": 0
-          }
-        },
-        "moduleName": "dummy/docs/getting-started/template.hbs"
-      },
-      isEmpty: false,
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("h3");
-        var el2 = dom.createTextNode("Getting Started");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Within your ember-cli project, run the following:\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Then modify your ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("ember-cli-build.js");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" (or ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("Brocfile.js");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(")\n  as set ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("babel.includePolyfill");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" to true to enable ES6 generator function\n  transpilation.\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(2);
-        morphs[0] = dom.createMorphAt(fragment, 4, 4, contextualElement);
-        morphs[1] = dom.createMorphAt(fragment, 8, 8, contextualElement);
-        return morphs;
-      },
-      statements: [["inline", "code-snippet", [], ["name", "ember-install.sh"], ["loc", [null, [7, 0], [7, 40]]]], ["inline", "code-snippet", [], ["name", "ember-app-config.js"], ["loc", [null, [15, 0], [15, 43]]]]],
-      locals: [],
-      templates: []
-    };
-  })());
-});
 define("dummy/docs/index/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
@@ -5060,7 +4981,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 72,
+            "line": 81,
             "column": 0
           }
         },
@@ -5085,13 +5006,36 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode("ember-concurrency");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" is a toolset that supplements\n  Ember's existing tools and conventions for handling concurrency and\n  asynchrony. The primary tool that ember-concurrency provides is\n  the ");
+        var el2 = dom.createTextNode(" is a small but powerful toolset that supplements\n  Ember's existing tools and conventions for handling concurrency and\n  asynchrony.\n");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("strong");
-        var el3 = dom.createTextNode("Task");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  If you'd like a video introduction to the ideas and concepts behind ember-concurrency,\n  check out the video below from the Ember.js NYC meetup\n  (");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("a");
+        dom.setAttribute(el2, "href", "http://alexmatchneer.com/ec-prezo");
+        var el3 = dom.createTextNode("slides available here");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(".\n");
+        var el2 = dom.createTextNode("):\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        dom.setAttribute(el1, "style", "text-align: center");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("iframe");
+        dom.setAttribute(el2, "width", "560");
+        dom.setAttribute(el2, "height", "315");
+        dom.setAttribute(el2, "src", "https://www.youtube.com/embed/uVr5HWzecKI");
+        dom.setAttribute(el2, "frameborder", "0");
+        dom.setAttribute(el2, "allowfullscreen", "");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -5225,13 +5169,99 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var morphs = new Array(4);
-        morphs[0] = dom.createMorphAt(fragment, 8, 8, contextualElement);
-        morphs[1] = dom.createMorphAt(fragment, 10, 10, contextualElement);
-        morphs[2] = dom.createMorphAt(fragment, 20, 20, contextualElement);
-        morphs[3] = dom.createMorphAt(fragment, 22, 22, contextualElement);
+        morphs[0] = dom.createMorphAt(fragment, 12, 12, contextualElement);
+        morphs[1] = dom.createMorphAt(fragment, 14, 14, contextualElement);
+        morphs[2] = dom.createMorphAt(fragment, 24, 24, contextualElement);
+        morphs[3] = dom.createMorphAt(fragment, 26, 26, contextualElement);
         return morphs;
       },
-      statements: [["content", "intro-task", ["loc", [null, [19, 0], [19, 14]]]], ["inline", "code-snippet", [], ["name", "intro-task.js"], ["loc", [null, [21, 0], [21, 37]]]], ["content", "intro-task-oldschool", ["loc", [null, [48, 0], [48, 24]]]], ["inline", "code-snippet", [], ["name", "intro-task-oldschool.js"], ["loc", [null, [50, 0], [50, 47]]]]],
+      statements: [["content", "intro-task", ["loc", [null, [28, 0], [28, 14]]]], ["inline", "code-snippet", [], ["name", "intro-task.js"], ["loc", [null, [30, 0], [30, 37]]]], ["content", "intro-task-oldschool", ["loc", [null, [57, 0], [57, 24]]]], ["inline", "code-snippet", [], ["name", "intro-task-oldschool.js"], ["loc", [null, [59, 0], [59, 47]]]]],
+      locals: [],
+      templates: []
+    };
+  })());
+});
+define("dummy/docs/installation/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 17,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/installation/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Installation");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Within your ember-cli project, run the following:\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Then open ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("ember-cli-build.js");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" (or ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("Brocfile.js");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(")\n  and set ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("babel.includePolyfill");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" to true to enable ES6 generator function\n  transpilation.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(2);
+        morphs[0] = dom.createMorphAt(fragment, 4, 4, contextualElement);
+        morphs[1] = dom.createMorphAt(fragment, 8, 8, contextualElement);
+        return morphs;
+      },
+      statements: [["inline", "code-snippet", [], ["name", "ember-install.sh"], ["loc", [null, [7, 0], [7, 40]]]], ["inline", "code-snippet", [], ["name", "ember-app-config.js"], ["loc", [null, [15, 0], [15, 43]]]]],
       locals: [],
       templates: []
     };
@@ -7213,7 +7243,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
 
   Router.map(function () {
     this.route('docs', function () {
-      this.route('getting-started');
+      this.route('installation');
       this.route('writing-tasks');
       this.route('task-concurrency');
       this.route('task-concurrency-advanced');
@@ -7233,6 +7263,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
         this.route('decorating-tasks');
         this.route('observables');
       });
+      this.route('404', { path: '*path' });
     });
     this.route('experimental-prediction');
     this.route('helpers-test');
@@ -7267,7 +7298,7 @@ define("dummy/snippets", ["exports"], function (exports) {
     "decorating-tasks-template-performWillSucceed.hbs": "<p>\n  {{#each tasks as |task|}}\n    <button {{action task.perform}} class={{if task.performWillSucceed 'button-primary'}}>\n      {{task.name}}\n    </button>\n  {{/each}}\n</p>",
     "decorating-tasks.js": "function taskWithCooldown(taskPath, ms) {\n  return task(function * (...args) {\n    // perform the task...\n    yield this.get(taskPath).perform(...args);\n\n    // ...and wait for cooldown timer.\n    yield timeout(ms);\n  }).drop().performs(taskPath);\n}\n\nexport default Ember.Controller.extend({\n  sharedTask: task(function * () {\n    yield timeout(1000);\n  }).drop(),\n\n  halfSecond: taskWithCooldown('sharedTask', 500),\n  oneSecond:  taskWithCooldown('sharedTask', 1000),\n  twoSeconds: taskWithCooldown('sharedTask', 2000),\n\n  tasks: Ember.computed(function() {\n    return [\n      this.get('halfSecond'),\n      this.get('oneSecond'),\n      this.get('twoSeconds')\n    ];\n  }),\n});",
     "detail-route.js": "export default Ember.Route.extend({\n  notify: Ember.inject.service('notify'),\n\n  setupController(controller, model) {\n    this.get('pollServerForChanges').perform(model.id);\n  },\n\n  pollServerForChanges: task(function * (id) {\n    let notify = this.get('notify');\n    yield timeout(500);\n    try {\n      notify.info(`Thing ${id}: Starting to poll for changes`);\n      while (true) {\n        yield timeout(5000);\n        notify.info(`Thing ${id}: Polling now...`);\n      }\n    } finally {\n      notify.warning(`Thing ${id}: No longer polling for changes`);\n    }\n  }).cancelOn('deactivate').restartable(),\n});",
-    "ember-app-config.js": "var app = new EmberApp({\n  babel: {\n    includePolyfill: true,\n\n    // you might need this too, depending on your version of babel\n    // browserPolyfill: true,\n  },\n});\n\n",
+    "ember-app-config.js": "var app = new EmberApp({\n  babel: {\n    includePolyfill: true,\n  },\n});\n\n",
     "ember-install.sh": "ember install ember-concurrency\n",
     "increment-button-task.js": "export default Ember.Controller.extend({\n  count: 0,\n  incrementBy: task(function * (inc) {\n    let speed = 400;\n    while (true) {\n      this.incrementProperty('count', inc);\n      yield timeout(speed);\n      speed = Math.max(50, speed * 0.8);\n    }\n  })\n});",
     "increment-button.js": "function sendPress() {\n  this.sendAction('press');\n}\n\nfunction sendRelease() {\n  this.sendAction('release');\n}\n\nexport default Ember.Component.extend({\n  tagName: 'button',\n\n  touchStart: sendPress,\n  mouseDown:  sendPress,\n  touchEnd:   sendRelease,\n  mouseLeave: sendRelease,\n  mouseUp:    sendRelease,\n});",
@@ -7630,7 +7661,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.13+e0aab2fe"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.13+4265a306"});
 }
 
 /* jshint ignore:end */

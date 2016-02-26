@@ -95925,7 +95925,7 @@ define('ember-concurrency/-subscribe', ['exports', 'ember', 'ember-concurrency/-
     init: function init() {
       var _this2 = this;
 
-      this._super();
+      this._super.apply(this, arguments);
       this._onCompleteDefer = _ember['default'].RSVP.defer();
       _ember['default'].run.schedule('actions', null, function () {
         _ember['default'].assert('You must `yield` calls to subscribe(), e.g. `yield subscribe()`: ' + _this2, _this2._taskHasStarted);
@@ -96152,7 +96152,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     init: function init() {
       var _this = this;
 
-      this._super();
+      this._super.apply(this, arguments);
       this._defer = _ember['default'].RSVP.defer();
       this._cancelationIgnorer = this._defer.promise['catch'](function (e) {
         if (_this._ignorePromiseErrors) {
@@ -96513,7 +96513,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     init: function init() {
       var _this = this;
 
-      this._super();
+      this._super.apply(this, arguments);
       this._activeTaskInstances = _ember['default'].A();
       this._queuedTaskInstances = _ember['default'].A();
 
