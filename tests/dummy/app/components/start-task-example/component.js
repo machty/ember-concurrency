@@ -2,29 +2,23 @@ import Ember from 'ember';
 import { task, timeout } from 'ember-concurrency';
 
 export default Ember.Component.extend({
-  init() {
-    this._super(...arguments);
-    this.set('messages', Ember.A());
-  },
-
-  messages: null,
+  status: null,
 
 // BEGIN-SNIPPET start-task-example
   myTask: task(function * (msg) {
-    let m = {
-      text: `myTask invoked with the following: ${msg || "init"}... `
-    };
-    this.messages.pushObject(m);
+    let status = `myTask.perform("${msg || "init"}")...`;
+    this.set('status', status);
+
     yield timeout(500);
-    Ember.set(m, 'text', m.text + "Done");
+    this.set('status', `${status} Done`);
   }).on('init', 'foo'),
 
   actions: {
     performTask(msg) {
       // This demonstrates how you can .get() a reference
       // to a task and then run it with .perform(), but
-      // ideally you should just invoke myTask.perform
-      // directly from the template.
+      // ideally you should just invoke myTask directly
+      // from the template using the `perform` helper.
       this.get('myTask').perform(msg);
     },
     triggerFoo(msg) {

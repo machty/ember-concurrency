@@ -4,7 +4,7 @@
     1. task.perform(...)
   </button>
 
-  <button {{action myTask.perform "two"}}>
+  <button onclick={{perform myTask "two"}}>
     2. task.perform action
   </button>
 
@@ -14,13 +14,7 @@
 {{! END-SNIPPET }}
 </p>
 
-<h6>Messages Received:</h6>
-
-<ul>
-  {{#each messages as |m|}}
-    <li>{{m.text}}</li>
-  {{/each}}
-</ul>
+<h4>Status: {{status}}</h4>
 
 <h5>JavaScript</h5>
 

@@ -8,7 +8,7 @@ export default Ember.Controller.extend({
   tableOfContents: [
     { route: "docs",   title: "Introduction"},
     { route: "docs.installation", title: "Installation"},
-    { route: "docs.writing-tasks", title: "Writing Tasks"},
+    { route: "docs.writing-tasks", title: "Your First Task"},
     { route: "docs.task-concurrency", title: "Managing Task Concurrency"},
     { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency"},
     { route: "docs.cancelation", title: "Cancelation"},
