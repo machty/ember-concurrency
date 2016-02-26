@@ -7,7 +7,7 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
   this.route('docs', function() {
-    this.route('getting-started');
+    this.route('installation');
     this.route('writing-tasks');
     this.route('task-concurrency');
     this.route('task-concurrency-advanced');
@@ -27,6 +27,7 @@ Router.map(function() {
       this.route('decorating-tasks');
       this.route('observables');
     });
+    this.route('404', { path: '*path' });
   });
   this.route('experimental-prediction');
   this.route('helpers-test');
