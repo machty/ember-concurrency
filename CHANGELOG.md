@@ -1,4 +1,8 @@
 # Changelog
+### 0.5.14:
+ - bugfix: No longer treat the most recent yield as the implicit
+   return of a function.
+
 ### 0.5.13:
  - bugfix: perform helper returns the performed TaskInstance
 
