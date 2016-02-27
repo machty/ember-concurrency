@@ -146,9 +146,12 @@ export const Task = Ember.Object.extend({
     this._activeTaskInstances = Ember.A();
     this._queuedTaskInstances = Ember.A();
 
-    // TODO: {{perform}} helper
-    this.perform = (...args) => {
-      return this._perform(...args);
+    let self = this;
+    this.perform = function(...args) {
+      if (this !== self) {
+        console.warn(`The use of ${self._propertyName}.perform within a template is deprecated and won't be supported in future versions of ember-concurrency. Please use the \`perform\` helper instead, e.g. {{perform ${self._propertyName}}}`);
+      }
+      return self._perform(...args);
     };
 
     this._needsFlush = Ember.run.bind(this, this._scheduleFlush);

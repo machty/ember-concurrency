@@ -19,7 +19,7 @@
   <li>Grandchild Task: {{grandchildTask.state}}</li>
 </ul>
 
-<button {{action parentTask.perform}}>
+<button onclick={{perform parentTask}}>
   {{#if parentTask.isRunning}}
     Restart Parent Task
   {{else}}

@@ -29,8 +29,8 @@
 
 {{! BEGIN-SNIPPET joining-tasks-template }}
 <p>
-  <button {{action parent.perform 'all'}}>all()</button>
-  <button {{action parent.perform 'race'}}>race()</button>
+  <button onclick={{perform parent 'all'}}>all()</button>
+  <button onclick={{perform parent 'race'}}>race()</button>
 </p>
 {{! END-SNIPPET }}
 

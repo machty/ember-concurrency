@@ -3,7 +3,7 @@ import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
 
 moduleForAcceptance('Acceptance | helpers');
 
-test('visiting /', function(assert) {
+test('perform and cancel-all', function(assert) {
   assert.expect(3);
   visit('/helpers-test');
 
@@ -16,5 +16,11 @@ test('visiting /', function(assert) {
   }).then(() => {
     assert.equal(find('.task-status').text(), 'canceled');
   });
+});
+
+test('deprecate task.perform action', function(assert) {
+  assert.expect(0);
+  visit('/deprecation-test');
+  click('.deprecated-button');
 });
 

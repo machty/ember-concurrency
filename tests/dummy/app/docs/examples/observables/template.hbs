@@ -16,7 +16,7 @@
 
 <h4>Nested loop of Observable range of numbers</h4>
 
-<button {{action computeStuff.perform}}>Compute Stuff</button>
+<button onclick={{perform computeStuff}}>Compute Stuff</button>
 
 <pre>{{#each values as |v|}}{{v.message}}{{/each}}</pre>
 
