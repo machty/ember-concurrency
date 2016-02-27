@@ -55,7 +55,8 @@
     "concurrency",
     "task",
     "tasks",
-    "cancellation"
+    "cancellation",
+    "cancelation"
   ],
   "dependencies": {
     "ember-cli-babel": "^5.1.5",
