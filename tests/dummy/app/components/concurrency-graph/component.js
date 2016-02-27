@@ -67,7 +67,7 @@ export default Ember.Component.extend({
         comp: this,
         start: () => {
           tracker.set('hasStarted', true);
-          tracker.set('startTime', this.timeElapsed);
+          tracker.set('startTime', this.timeElapsed || 1);
         },
         end: () => {
           tracker.set('endTime', this.timeElapsed);
