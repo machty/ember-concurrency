@@ -17,7 +17,7 @@ test('visiting /', function(assert) {
 
 test('visiting all docs', function(assert) {
   visit('/');
-  assert.expect(16);
+  assert.expect(15);
 
   let contents = DocsController.proto().get('flatContents');
   let i = 0;
