@@ -96511,15 +96511,16 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     performWillCancelPrevious: computed.equal('nextPerformState', 'cancel_previous'),
 
     init: function init() {
-      var _this = this;
-
       this._super.apply(this, arguments);
       this._activeTaskInstances = _ember['default'].A();
       this._queuedTaskInstances = _ember['default'].A();
 
-      // TODO: {{perform}} helper
+      var self = this;
       this.perform = function () {
-        return _this._perform.apply(_this, arguments);
+        if (this !== self) {
+          console.warn('The use of ' + self._propertyName + '.perform within a template is deprecated and won\'t be supported in future versions of ember-concurrency. Please use the `perform` helper instead, e.g. {{perform ' + self._propertyName + '}}');
+        }
+        return self._perform.apply(self, arguments);
       };
 
       this._needsFlush = _ember['default'].run.bind(this, this._scheduleFlush);
@@ -96637,15 +96638,15 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
 
     _completionDefer: null,
     _getCompletionPromise: function _getCompletionPromise() {
-      var _this2 = this;
+      var _this = this;
 
       return new _ember['default'].RSVP.Promise(function (r) {
         _ember['default'].run.schedule('actions', null, function () {
           var defer = _ember['default'].RSVP.defer();
-          if (!_this2._flushScheduled && _this2._activeTaskInstances.length === 0 && _this2._queuedTaskInstances.length === 0) {
+          if (!_this._flushScheduled && _this._activeTaskInstances.length === 0 && _this._queuedTaskInstances.length === 0) {
             defer.resolve();
           } else {
-            _this2._completionDefer = defer;
+            _this._completionDefer = defer;
           }
           defer.promise.then(r);
         });
