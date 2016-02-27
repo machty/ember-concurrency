@@ -149,6 +149,21 @@ test(".then() resolves with the returned value", function(assert) {
   });
 });
 
+test("returning promises resolves the promise", function(assert) {
+  assert.expect(1);
+
+  Ember.run(() => {
+    TaskInstance.create({
+      fn: function * () {
+        return Ember.RSVP.resolve(123);
+      },
+      args: [],
+    })._start().then(v => {
+      assert.equal(v, 123);
+    });
+  });
+});
+
 test("don't use the most recent yield as a return value if there's no explicit return", function(assert) {
   assert.expect(1);
   Ember.run(() => {
