@@ -149,6 +149,20 @@ test(".then() resolves with the returned value", function(assert) {
   });
 });
 
+test("don't use the most recent yield as a return value if there's no explicit return", function(assert) {
+  assert.expect(1);
+  Ember.run(() => {
+    TaskInstance.create({
+      fn: function * () {
+        yield 5;
+      },
+      args: [],
+    })._start().then(v => {
+      assert.equal(v, undefined);
+    });
+  });
+});
+
 test("exception handling", function(assert) {
   assert.expect(7);
 
@@ -307,5 +321,4 @@ test("yielding to other tasks: child task gets canceled", function(assert) {
 
   Ember.run(null, defer.resolve, "naw");
 });
-
 

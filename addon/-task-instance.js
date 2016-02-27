@@ -269,26 +269,33 @@ let taskInstanceAttrs = {
     } else {
       if (done && value === undefined) {
         this.set('isFinished', true);
-        this._finalize(nextValue);
+        this._finalize(value);
         return;
       }
     }
 
     let observable = normalizeObservable(value);
     if (!observable) {
-      // TODO: assert that user is doing something weird?
-      this._proceed(index, value);
+      this._proceedOrFinalize(done, index, value);
       return;
     }
 
     this._disposable = observable.subscribe(v => {
-      this._proceed(index, v);
+      this._proceedOrFinalize(done, index, v);
     }, error => {
       this._proceed(index, error, 'throw');
     }, () => {
       // TODO: test, and figure out what it means to yield
       // something that completes without producing a value.
     });
+  },
+
+  _proceedOrFinalize(done, index, value) {
+    if (done) {
+      this._finalize(value);
+    } else {
+      this._proceed(index, value);
+    }
   },
 };
 

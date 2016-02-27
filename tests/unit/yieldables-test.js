@@ -23,7 +23,8 @@ test("all behaves like Promise.all", function(assert) {
     child: task(function * () {
       let defer = Ember.RSVP.defer();
       defers.push(defer);
-      yield defer.promise;
+      let value = yield defer.promise;
+      return value;
     }),
   });
 
