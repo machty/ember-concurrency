@@ -16,7 +16,7 @@ export default Ember.Controller.extend({
       ]
     },
     { route: "docs.cancelation", title: "Cancelation"},
-    { route: "docs.lifetime", title: "Lifetime"},
+    //{ route: "docs.lifetime", title: "Lifetime"},
     { route: "docs.child-tasks", title: "Child Tasks"},
     { title: "Examples", route: "docs.examples",
       children: [
