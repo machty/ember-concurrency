@@ -164,6 +164,21 @@ test("returning promises resolves the promise", function(assert) {
   });
 });
 
+test("returning rejecting promise rejects TaskInstance's promise", function(assert) {
+  assert.expect(1);
+
+  Ember.run(() => {
+    TaskInstance.create({
+      fn: function * () {
+        return Ember.RSVP.reject(123);
+      },
+      args: [],
+    })._start().then(null, v => {
+      assert.equal(v, 123);
+    });
+  });
+});
+
 test("don't use the most recent yield as a return value if there's no explicit return", function(assert) {
   assert.expect(1);
   Ember.run(() => {
