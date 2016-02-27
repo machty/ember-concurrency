@@ -9,6 +9,7 @@ Router.map(function() {
   this.route('docs', function() {
     this.route('installation');
     this.route('writing-tasks');
+    this.route('task-function-syntax');
     this.route('task-concurrency');
     this.route('task-concurrency-advanced');
     this.route('cancelation');
