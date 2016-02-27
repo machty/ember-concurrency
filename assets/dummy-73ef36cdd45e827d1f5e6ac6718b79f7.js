@@ -1912,6 +1912,358 @@ define("dummy/components/start-task-example/template", ["exports"], function (ex
     };
   })());
 });
+define('dummy/components/task-function-syntax-1/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  exports['default'] = _ember['default'].Component.extend({
+    status: null,
+
+    // BEGIN-SNIPPET task-function-syntax-1
+    waitAFewSeconds: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            this.set('status', "Gimme one second...");
+            context$1$0.next = 3;
+            return (0, _emberConcurrency.timeout)(1000);
+
+          case 3:
+            this.set('status', "Gimme one more second...");
+            context$1$0.next = 6;
+            return (0, _emberConcurrency.timeout)(1000);
+
+          case 6:
+            this.set('status', "OK, I'm done.");
+
+          case 7:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    }))
+  });
+});
+// END-SNIPPET
+define("dummy/components/task-function-syntax-1/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": false,
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 5,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/components/task-function-syntax-1/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode("Wait A Few Seconds");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [0]);
+        var element1 = dom.childAt(element0, [1]);
+        var morphs = new Array(2);
+        morphs[0] = dom.createAttrMorph(element1, 'onclick');
+        morphs[1] = dom.createMorphAt(element0, 3, 3);
+        return morphs;
+      },
+      statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "waitAFewSeconds", ["loc", [null, [2, 28], [2, 43]]]]], [], ["loc", [null, [2, 18], [2, 45]]]]], ["content", "status", ["loc", [null, [3, 2], [3, 12]]]]],
+      locals: [],
+      templates: []
+    };
+  })());
+});
+define('dummy/components/task-function-syntax-2/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  exports['default'] = _ember['default'].Component.extend({
+    status: null,
+
+    // BEGIN-SNIPPET task-function-syntax-2
+    pickRandomNumbers: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      var nums, i;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            nums = [];
+
+            for (i = 0; i < 3; i++) {
+              nums.push(Math.floor(Math.random() * 10));
+            }
+
+            this.set('status', 'My favorite numbers: ' + nums.join(', '));
+
+          case 3:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    }))
+  });
+});
+// END-SNIPPET
+define("dummy/components/task-function-syntax-2/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": false,
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 6,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/components/task-function-syntax-2/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode("Wait One Second");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [0]);
+        var element1 = dom.childAt(element0, [1]);
+        var morphs = new Array(2);
+        morphs[0] = dom.createAttrMorph(element1, 'onclick');
+        morphs[1] = dom.createMorphAt(element0, 3, 3);
+        return morphs;
+      },
+      statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "pickRandomNumbers", ["loc", [null, [2, 28], [2, 45]]]]], [], ["loc", [null, [2, 18], [2, 47]]]]], ["content", "status", ["loc", [null, [3, 2], [3, 12]]]]],
+      locals: [],
+      templates: []
+    };
+  })());
+});
+define('dummy/components/task-function-syntax-3/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  exports['default'] = _ember['default'].Component.extend({
+    status: null,
+
+    // BEGIN-SNIPPET task-function-syntax-3
+    myTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      var promise, resolvedValue;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            this.set('status', 'Thinking...');
+            promise = (0, _emberConcurrency.timeout)(1000).then(function () {
+              return 123;
+            });
+            context$1$0.next = 4;
+            return promise;
+
+          case 4:
+            resolvedValue = context$1$0.sent;
+
+            this.set('status', 'The value is ' + resolvedValue);
+
+          case 6:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    }))
+  });
+});
+// END-SNIPPET
+define("dummy/components/task-function-syntax-3/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": false,
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 6,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/components/task-function-syntax-3/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode("Perform myTask");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [0]);
+        var element1 = dom.childAt(element0, [1]);
+        var morphs = new Array(2);
+        morphs[0] = dom.createAttrMorph(element1, 'onclick');
+        morphs[1] = dom.createMorphAt(element0, 3, 3);
+        return morphs;
+      },
+      statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [2, 28], [2, 34]]]]], [], ["loc", [null, [2, 18], [2, 36]]]]], ["content", "status", ["loc", [null, [3, 2], [3, 12]]]]],
+      locals: [],
+      templates: []
+    };
+  })());
+});
+define('dummy/components/task-function-syntax-4/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  exports['default'] = _ember['default'].Component.extend({
+    status: null,
+
+    // BEGIN-SNIPPET task-function-syntax-4
+    myTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            this.set('status', 'Thinking...');
+            context$1$0.prev = 1;
+            context$1$0.next = 4;
+            return (0, _emberConcurrency.timeout)(1000).then(function () {
+              throw "Ahhhhh!!!!";
+            });
+
+          case 4:
+            this.set('status', 'This does not get used!');
+            context$1$0.next = 10;
+            break;
+
+          case 7:
+            context$1$0.prev = 7;
+            context$1$0.t0 = context$1$0['catch'](1);
+
+            this.set('status', 'Caught value: ' + context$1$0.t0);
+
+          case 10:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this, [[1, 7]]);
+    }))
+  });
+});
+// END-SNIPPET
+define("dummy/components/task-function-syntax-4/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": false,
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 6,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/components/task-function-syntax-4/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode("Perform myTask");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [0]);
+        var element1 = dom.childAt(element0, [1]);
+        var morphs = new Array(2);
+        morphs[0] = dom.createAttrMorph(element1, 'onclick');
+        morphs[1] = dom.createMorphAt(element0, 3, 3);
+        return morphs;
+      },
+      statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [2, 28], [2, 34]]]]], [], ["loc", [null, [2, 18], [2, 36]]]]], ["content", "status", ["loc", [null, [3, 2], [3, 12]]]]],
+      locals: [],
+      templates: []
+    };
+  })());
+});
 define('dummy/controllers/array', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller;
 });
@@ -2570,7 +2922,7 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
   exports["default"] = _ember["default"].Controller.extend({
     appController: _ember["default"].inject.controller('application'),
 
-    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.installation", title: "Installation" }, { route: "docs.writing-tasks", title: "Your First Task" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { route: "docs.cancelation", title: "Cancelation" }, { route: "docs.lifetime", title: "Lifetime" }, { route: "docs.child-tasks", title: "Child Tasks" }, { title: "Examples", route: "docs.examples",
+    tableOfContents: [{ route: "docs", title: "Introduction" }, { route: "docs.installation", title: "Installation" }, { route: "docs.writing-tasks", title: "Your First Task" }, { route: "docs.task-function-syntax", title: "Task Function Syntax" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency" }, { route: "docs.task-concurrency-advanced", title: "Advanced Task Concurrency" }, { route: "docs.cancelation", title: "Cancelation" }, { route: "docs.lifetime", title: "Lifetime" }, { route: "docs.child-tasks", title: "Child Tasks" }, { title: "Examples", route: "docs.examples",
       children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Auto-Search + ember-power-select" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" }, { route: "docs.examples.route-tasks", title: "Route Tasks" }, { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" }]
     }],
 
@@ -5886,6 +6238,256 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
     };
   })());
 });
+define("dummy/docs/task-function-syntax/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 76,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/task-function-syntax/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Task Function Syntax");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  When a task is performed, it runs the code in the task function\n  you passed into ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("task()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(". This function must\n  be a ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("a");
+        dom.setAttribute(el2, "href", "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*");
+        var el3 = dom.createTextNode("generator function");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  — it must use the ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("function *");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" syntax, and cannot\n  be just a regular JavaScript function.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  This example demonstrates how, in ember-concurrency, generator\n  functions behave ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("em");
+        var el3 = dom.createTextNode("just like regular functions");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(". Anything you can\n  do in a regular function, you can do in a generator function.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Using the ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("yield");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" keyword");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Much of the power of Tasks is unleashed once you start making\n  use of the ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("yield");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" keyword within generator functions.\n  The ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("yield");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" keyword, when used with a promise, let's you\n  pause execution of your task function until that promise resolves, at\n  which point the task function will continue running from where it\n  had paused.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  This example demonstrates how you can ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("yield timeout(1000)");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  to pause execution for 1000 ms (one second). The ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("timeout()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  helper function, which ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("strong");
+        var el3 = dom.createTextNode("ember-concurrency");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" provides,\n  simply returns a promise that resolves after the specified number of milliseconds.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  When you ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("yield");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" a promise, the ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("yield");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" expression\n  evaluates to the resolved value of the promise. In other words, you can\n  set a variable equal to a yielded promise, and when the promise resolves,\n  the task function will resume and the value stored into that variable will\n  be the resolved value of the promise.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  If you ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("yield");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" a promise that rejects, the task function will\n  throw the rejected value (likely an exception object) from the point in\n  task function where the rejecting promise was yielded. This means you can\n  use ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("try {} catch(e) {} finally {}");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" blocks, just as you would\n  for code that runs synchronously.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  The behavior of yielding promises within task generator functions\n  is designed to closely follow the behavior of the proposed\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("a");
+        dom.setAttribute(el2, "href", "https://github.com/tc39/ecmascript-asyncawait");
+        var el3 = dom.createTextNode("async/await");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  syntax, but instead of ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("async function");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(", you use\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("function *");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(", and instead of ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("await");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(", you\n  use ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("yield");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(".\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(8);
+        morphs[0] = dom.createMorphAt(fragment, 6, 6, contextualElement);
+        morphs[1] = dom.createMorphAt(fragment, 8, 8, contextualElement);
+        morphs[2] = dom.createMorphAt(fragment, 16, 16, contextualElement);
+        morphs[3] = dom.createMorphAt(fragment, 18, 18, contextualElement);
+        morphs[4] = dom.createMorphAt(fragment, 22, 22, contextualElement);
+        morphs[5] = dom.createMorphAt(fragment, 24, 24, contextualElement);
+        morphs[6] = dom.createMorphAt(fragment, 28, 28, contextualElement);
+        morphs[7] = dom.createMorphAt(fragment, 30, 30, contextualElement);
+        return morphs;
+      },
+      statements: [["content", "task-function-syntax-2", ["loc", [null, [17, 0], [17, 26]]]], ["inline", "code-snippet", [], ["name", "task-function-syntax-2.js"], ["loc", [null, [19, 0], [19, 49]]]], ["content", "task-function-syntax-1", ["loc", [null, [39, 0], [39, 26]]]], ["inline", "code-snippet", [], ["name", "task-function-syntax-1.js"], ["loc", [null, [41, 0], [41, 49]]]], ["content", "task-function-syntax-3", ["loc", [null, [51, 0], [51, 26]]]], ["inline", "code-snippet", [], ["name", "task-function-syntax-3.js"], ["loc", [null, [53, 0], [53, 49]]]], ["content", "task-function-syntax-4", ["loc", [null, [63, 0], [63, 26]]]], ["inline", "code-snippet", [], ["name", "task-function-syntax-4.js"], ["loc", [null, [65, 0], [65, 49]]]]],
+      locals: [],
+      templates: []
+    };
+  })());
+});
 define("dummy/docs/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     var child0 = (function () {
@@ -6318,7 +6920,7 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 57,
+            "line": 63,
             "column": 0
           }
         },
@@ -6373,6 +6975,16 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  The next section on ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" goes\n  into greater detail about the generator function syntax and how you can use it\n  to write tasks.\n");
+        dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
@@ -6461,12 +7073,13 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(2);
+        var morphs = new Array(3);
         morphs[0] = dom.createMorphAt(fragment, 12, 12, contextualElement);
-        morphs[1] = dom.createMorphAt(fragment, 24, 24, contextualElement);
+        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [14]), 1, 1);
+        morphs[2] = dom.createMorphAt(fragment, 26, 26, contextualElement);
         return morphs;
       },
-      statements: [["inline", "code-snippet", [], ["name", "writing-tasks.js"], ["loc", [null, [24, 0], [24, 40]]]], ["content", "start-task-example", ["loc", [null, [54, 0], [54, 22]]]]],
+      statements: [["inline", "code-snippet", [], ["name", "writing-tasks.js"], ["loc", [null, [24, 0], [24, 40]]]], ["inline", "link-to", ["Task Function Syntax", "docs.task-function-syntax"], [], ["loc", [null, [27, 22], [27, 84]]]], ["content", "start-task-example", ["loc", [null, [60, 0], [60, 22]]]]],
       locals: [],
       templates: []
     };
@@ -7219,6 +7832,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
     this.route('docs', function () {
       this.route('installation');
       this.route('writing-tasks');
+      this.route('task-function-syntax');
       this.route('task-concurrency');
       this.route('task-concurrency-advanced');
       this.route('cancelation');
@@ -7291,6 +7905,10 @@ define("dummy/snippets", ["exports"], function (exports) {
     "shared-tasks.js": "export default Ember.Controller.extend({\n  defaultTask:     task(SHARED_TASK_FN),\n  restartableTask: task(SHARED_TASK_FN).restartable(),\n  enqueuedTask:    task(SHARED_TASK_FN).enqueue(),\n  droppingTask:    task(SHARED_TASK_FN).drop(),\n});",
     "start-task-example-template.hbs": "  <button {{action 'performTask' \"one\"}}>\n    1. task.perform(...)\n  </button>\n\n  <button onclick={{perform myTask \"two\"}}>\n    2. task.perform action\n  </button>\n\n  <button {{action \"triggerFoo\" \"three\"}}>\n    3. .on('foo')\n  </button>",
     "start-task-example.js": "  myTask: task(function * (msg) {\n    let status = `myTask.perform(\"${msg || \"init\"}\")...`;\n    this.set('status', status);\n\n    yield timeout(500);\n    this.set('status', `${status} Done`);\n  }).on('init', 'foo'),\n\n  actions: {\n    performTask(msg) {\n      // This demonstrates how you can .get() a reference\n      // to a task and then run it with .perform(), but\n      // ideally you should just invoke myTask directly\n      // from the template using the `perform` helper.\n      this.get('myTask').perform(msg);\n    },\n    triggerFoo(msg) {\n      this.trigger('foo', msg);\n    }\n  }",
+    "task-function-syntax-1.js": "  waitAFewSeconds: task(function * () {\n    this.set('status', \"Gimme one second...\");\n    yield timeout(1000);\n    this.set('status', \"Gimme one more second...\");\n    yield timeout(1000);\n    this.set('status', \"OK, I'm done.\");\n  }),",
+    "task-function-syntax-2.js": "  pickRandomNumbers: task(function * () {\n    let nums = [];\n    for (let i = 0; i < 3; i++) {\n      nums.push(Math.floor(Math.random() * 10));\n    }\n\n    this.set('status', `My favorite numbers: ${nums.join(', ')}`);\n  }),",
+    "task-function-syntax-3.js": "  myTask: task(function * () {\n    this.set('status', `Thinking...`);\n    let promise = timeout(1000).then(() => 123);\n    let resolvedValue = yield promise;\n    this.set('status', `The value is ${resolvedValue}`);\n  }),",
+    "task-function-syntax-4.js": "  myTask: task(function * () {\n    this.set('status', `Thinking...`);\n    try {\n      yield timeout(1000).then(() => {\n        throw \"Ahhhhh!!!!\";\n      });\n      this.set('status', `This does not get used!`);\n    } catch(e) {\n      this.set('status', `Caught value: ${e}`);\n    }\n  }),",
     "writing-tasks.js": "import Ember from 'ember';\nimport { task } from 'ember-concurrency';\n\nexport default Ember.Component.extend({\n  myTask: task(function * () {\n    alert(\"hello!\");\n  })\n});\n\n"
   };
 });
@@ -7635,7 +8253,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.13+00571907"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.13+19cbc9c3"});
 }
 
 /* jshint ignore:end */
