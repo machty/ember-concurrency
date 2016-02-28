@@ -5397,7 +5397,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         var el2 = dom.createElement("iframe");
         dom.setAttribute(el2, "width", "560");
         dom.setAttribute(el2, "height", "315");
-        dom.setAttribute(el2, "src", "https://www.youtube.com/embed/uVr5HWzecKI");
+        dom.setAttribute(el2, "src", "https://www.youtube.com/watch?v=uVr5HWzecKI&t=1h8m14s");
         dom.setAttribute(el2, "frameborder", "0");
         dom.setAttribute(el2, "allowfullscreen", "");
         dom.appendChild(el1, el2);
@@ -8328,7 +8328,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.13+9dd5048c"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.14+f7955aee"});
 }
 
 /* jshint ignore:end */

@@ -96311,26 +96311,33 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       } else {
         if (done && value === undefined) {
           this.set('isFinished', true);
-          this._finalize(nextValue);
+          this._finalize(value);
           return;
         }
       }
 
       var observable = normalizeObservable(value);
       if (!observable) {
-        // TODO: assert that user is doing something weird?
-        this._proceed(index, value);
+        this._proceedOrFinalize(done, index, value);
         return;
       }
 
       this._disposable = observable.subscribe(function (v) {
-        _this2._proceed(index, v);
+        _this2._proceedOrFinalize(done, index, v);
       }, function (error) {
         _this2._proceed(index, error, 'throw');
       }, function () {
         // TODO: test, and figure out what it means to yield
         // something that completes without producing a value.
       });
+    },
+
+    _proceedOrFinalize: function _proceedOrFinalize(done, index, value) {
+      if (done) {
+        this._finalize(value);
+      } else {
+        this._proceed(index, value);
+      }
     }
   };
 
