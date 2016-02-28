@@ -8332,7 +8332,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.14+5ba7df2a"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.14+3d587360"});
 }
 
 /* jshint ignore:end */

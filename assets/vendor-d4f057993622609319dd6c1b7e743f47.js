@@ -96412,8 +96412,33 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     fn: null,
     context: null,
     bufferPolicy: null,
+
+    /**
+     * This property is true if this task is NOT running, i.e. the number
+     * of currently running TaskInstances is zero.
+     *
+     * This property is useful for driving the state/style of buttons
+     * and loading UI, among other things.
+     *
+     * @memberof Task
+     * @instance
+     * @readOnly
+     */
     isIdle: computed.equal('concurrency', 0),
+
+    /**
+     * This property is true if this task is running, i.e. the number
+     * of currently running TaskInstances is greater than zero.
+     *
+     * This property is useful for driving the state/style of buttons
+     * and loading UI, among other things.
+     *
+     * @memberof Task
+     * @instance
+     * @readOnly
+     */
     isRunning: _ember['default'].computed.not('isIdle'),
+
     state: computed('isIdle', function () {
       return this.get('isIdle') ? 'idle' : 'running';
     }),
