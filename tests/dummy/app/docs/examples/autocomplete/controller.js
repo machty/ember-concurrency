@@ -27,7 +27,8 @@ export default Ember.Controller.extend({
     let xhr;
     try {
       xhr = Ember.$.getJSON(url);
-      yield xhr.promise();
+      let result = yield xhr.promise();
+      return result;
     } finally {
       xhr.abort();
     }
