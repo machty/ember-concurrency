@@ -29,6 +29,13 @@ export default Ember.Controller.extend({
       xhr = Ember.$.getJSON(url);
       let result = yield xhr.promise();
       return result;
+
+      // NOTE: could also write this as
+      // return yield xhr;
+      //
+      // either way, the important thing is to yield before returning
+      // so that the `finally` block doesn't run until after the
+      // promise resolves (or the task is canceled).
     } finally {
       xhr.abort();
     }
