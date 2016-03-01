@@ -322,7 +322,9 @@ export const Task = Ember.Object.extend({
 
   @class TaskProperty
 */
-export function TaskProperty(taskFn) {
+export function TaskProperty(...decorators) {
+  let taskFn = decorators.pop();
+
   let tp = this;
   ComputedProperty.call(this, function(_propertyName) {
     return Task.create({
@@ -342,6 +344,10 @@ export function TaskProperty(taskFn) {
   this.eventNames = null;
   this.cancelEventNames = null;
   this._performsPath = null;
+
+  for (let i = 0; i < decorators.length; ++i) {
+    decorators[i](this);
+  }
 }
 
 TaskProperty.prototype = Object.create(ComputedProperty.prototype);

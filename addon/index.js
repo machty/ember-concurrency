@@ -4,6 +4,7 @@ import { TaskProperty } from './-task-property';
 import EventedObservable from './-evented-observable';
 import { subscribe } from './-subscribe';
 import { all, race } from './-yieldables';
+import { drop, restartable, enqueue, maxConcurrency } from './-decorators';
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -55,8 +56,8 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
  * @param {function} generatorFunction the generator function backing the task.
  * @returns {TaskProperty}
  */
-export function task(generatorFunction) {
-  return new TaskProperty(generatorFunction);
+export function task(...args) {
+  return new TaskProperty(...args);
 }
 
 /**
@@ -113,4 +114,14 @@ export function events(obj, eventName) {
   return EventedObservable.create({ obj, eventName });
 }
 
-export { createObservable, all, race, subscribe };
+export {
+  createObservable,
+  all,
+  race,
+  subscribe,
+  drop,
+  restartable,
+  enqueue,
+  maxConcurrency
+};
+
