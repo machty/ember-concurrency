@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task, interval, drop, restartable, enqueue, maxConcurrency } from 'ember-concurrency';
+import { task, drop, restartable, enqueue, maxConcurrency } from 'ember-concurrency';
 import {
   enqueueTasksPolicy,
   dropQueuedTasksPolicy,
