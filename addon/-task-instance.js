@@ -159,7 +159,7 @@ let taskInstanceAttrs = {
    * @instance
    */
   cancel() {
-    if (this.isCanceled) { return; }
+    if (this.isCanceled || this.isFinished) { return; }
     this._rejectWithCancelation();
 
     // eagerly advance index so that pending promise resolutions

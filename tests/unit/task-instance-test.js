@@ -352,3 +352,24 @@ test("yielding to other tasks: child task gets canceled", function(assert) {
   Ember.run(null, defer.resolve, "naw");
 });
 
+test("canceling a finished task shouldn't mark it as canceled", function(assert) {
+  assert.expect(5);
+
+  let taskInstance, didRun = false;
+  Ember.run(() => {
+    taskInstance = TaskInstance.create({
+      fn: function * () {
+        didRun = true;
+      },
+      args: [],
+    })._start();
+  });
+
+  assert.ok(didRun);
+  assert.equal(taskInstance.get('isFinished'), true);
+  assert.equal(taskInstance.get('isCanceled'), false);
+  Ember.run(taskInstance, 'cancel');
+  assert.equal(taskInstance.get('isFinished'), true);
+  assert.equal(taskInstance.get('isCanceled'), false);
+});
+
