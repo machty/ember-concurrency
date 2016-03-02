@@ -5,6 +5,10 @@
    infinite loops in tasks that pause with a timer can pause
    your acceptance tests until they timeout unless you break
    the loop somehow; one way to do this is to call Ember.run.cancelTimers()
+ - bugfix: fixed a few more corner cases where a TaskCancelation error
+   unnecessarily bubbled to the top even though the user hadn't opted
+   into handling cancelations (by calling .then() on the TaskInstance returned
+   from task.perform()).
 
 ### 0.5.15:
  - feature: add "prefix" variants of task modifiers, for example
