@@ -1,10 +1,10 @@
 import Ember from 'ember';
-import { task, timeout, restartable } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET debounced-search-with-cancelation
 const DEBOUNCE_MS = 250;
 export default Ember.Controller.extend({
-  searchRepo: task(restartable, function * (term) {
+  searchRepo: task(function * (term) {
     if (Ember.isBlank(term)) { return []; }
 
     // Pause here for DEBOUNCE_MS milliseconds. Because this
@@ -21,7 +21,7 @@ export default Ember.Controller.extend({
     // is aborted (open the inspector and see for yourself :)
     let json = yield this.get('getJSON').perform(url);
     return json.items;
-  }),
+  }).restartable(),
 
   getJSON: task(function * (url) {
     let xhr;
