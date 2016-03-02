@@ -23,9 +23,10 @@ export default Component.extend({
 You can find a description of all the Task Modifiers
 under the [Task Property API docs](TaskProperty.html).
 
-- [.enqueue()](TaskProperty.html#enqueue)
-- [.drop()](TaskProperty.html#drop)
-- [.maxConcurrency()](TaskProperty.html#maxConcurrency)
+- [restartable](TaskProperty.html#restartable)
+- [enqueue](TaskProperty.html#enqueue)
+- [drop](TaskProperty.html#drop)
+- [maxConcurrency](TaskProperty.html#maxConcurrency)
 
 
 ## The full API

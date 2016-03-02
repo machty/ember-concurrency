@@ -426,6 +426,20 @@ TaskProperty.prototype.cancelOn = function() {
  *
  * [See the Live Example](/#/docs/examples/route-tasks/1)
  *
+ * Another way to apply the `restartable` modifier is to import
+ * it and pass it in as an argument to the {@linkcode task}
+ * function. Writing it this way allows you to see a task's modifiers
+ * up front, rather than having to look to the end of the
+ * task function to see which modifiers have been applied.
+ * For example:
+ *
+ *     import { task, restartable } from 'ember-concurrency';
+ *     export default Component.extend({
+ *       myTask: task(restartable, function * () {
+ *         // ...
+ *       }),
+ *     });
+ *
  * @method restartable
  * @memberof TaskProperty
  * @instance
@@ -441,6 +455,20 @@ TaskProperty.prototype.restartable = function() {
  * the order they were `.perform()`ed. Sets default
  * maxConcurrency to 1.
  *
+ * Another way to apply the `enqueue` modifier is to import
+ * it and pass it in as an argument to the {@linkcode task}
+ * function. Writing it this way allows you to see a task's modifiers
+ * up front, rather than having to look to the end of the
+ * task function to see which modifiers have been applied.
+ * For example:
+ *
+ *     import { task, enqueue } from 'ember-concurrency';
+ *     export default Component.extend({
+ *       myTask: task(enqueue, function * () {
+ *         // ...
+ *       }),
+ *     });
+ *
  * @method enqueue
  * @memberof TaskProperty
  * @instance
@@ -455,6 +483,20 @@ TaskProperty.prototype.enqueue = function() {
  * Configures the task to immediately cancel (i.e. drop) any
  * task instances performed when the task is already running
  * at maxConcurrency. Sets default maxConcurrency to 1.
+ *
+ * Another way to apply the `drop` modifier is to import
+ * it and pass it in as an argument to the {@linkcode task}
+ * function. Writing it this way allows you to see a task's modifiers
+ * up front, rather than having to look to the end of the
+ * task function to see which modifiers have been applied.
+ * For example:
+ *
+ *     import { task, drop } from 'ember-concurrency';
+ *     export default Component.extend({
+ *       myTask: task(drop, function * () {
+ *         // ...
+ *       }),
+ *     });
  *
  * @method drop
  * @memberof TaskProperty
@@ -502,6 +544,20 @@ TaskProperty.prototype.keepLatest = function() {
  *   this.get('doSomeAjax').perform("http://www.example.com/json");
  * },
  * ```
+ *
+ * Another way to apply the `maxConcurrency` modifier is to import
+ * it and pass it in as an argument to the {@linkcode task}
+ * function. Writing it this way allows you to see a task's modifiers
+ * up front, rather than having to look to the end of the
+ * task function to see which modifiers have been applied.
+ * For example:
+ *
+ *     import { task, maxConcurrency } from 'ember-concurrency';
+ *     export default Component.extend({
+ *       myTask: task(maxConcurrency(5), function * () {
+ *         // ...
+ *       }),
+ *     });
  *
  * @method maxConcurrency
  * @memberof TaskProperty
