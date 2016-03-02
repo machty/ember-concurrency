@@ -1,4 +1,11 @@
 # Changelog
+### 0.?.?:
+ - bugfix: timeout() internally uses Ember.run.later() now so that
+   Ember testing helpers know to wait for it. Note: this means that
+   infinite loops in tasks that pause with a timer can pause
+   your acceptance tests until they timeout unless you break
+   the loop somehow; one way to do this is to call Ember.run.cancelTimers()
+
 ### 0.5.15:
  - feature: add "prefix" variants of task modifiers, for example
    you can import { task, drop } from 'ember-concurrency' and

@@ -15,23 +15,11 @@ test('visiting /', function(assert) {
   });
 });
 
-test('visiting all docs', function(assert) {
-  visit('/');
-  assert.expect(15);
-
-  let contents = DocsController.proto().get('flatContents');
-  let i = 0;
-  function step() {
-    let page = contents[i++];
-    if (!page) { return; }
-
+DocsController.proto().get('flatContents').forEach(page => {
+  test(`visiting ${page.route}`, function(assert) {
+    assert.expect(0);
     let url = page.route.replace(/\./g, '/');
-    return visit(url).then(() => {
-      assert.ok(true, "page rendered ok");
-      return step();
-    });
-  }
-
-  return step();
+    visit(url);
+  });
 });
 

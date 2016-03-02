@@ -14,5 +14,9 @@ export default function startApp(attrs) {
     application.injectTestHelpers();
   });
 
+  window._breakTimerLoopsId = Ember.run.later(() => {
+    Ember.run.cancelTimers();
+  }, 500);
+
   return application;
 }

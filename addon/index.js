@@ -104,9 +104,11 @@ export function interval(ms) {
 export function timeout(ms) {
   let timerId;
   let promise = new Ember.RSVP.Promise(r => {
-    timerId = setTimeout(r, ms);
+    timerId = Ember.run.later(r, ms);
   });
-  promise.__ec_cancel__ = () => window.clearTimeout(timerId);
+  promise.__ec_cancel__ = () => {
+    Ember.run.cancel(timerId);
+  };
   return promise;
 }
 
