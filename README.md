@@ -14,7 +14,7 @@ included in your app. The easiest way to ensure this is to enable
 the `babel.includePolyfill` option in your `ember-cli-build.js`
 or `Brocfile.js` files.
 
-    var app = new EmberAddon(defaults, {
+    var app = new EmberApp(defaults, {
       babel: {
         includePolyfill: true,
       },
