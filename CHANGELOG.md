@@ -1,5 +1,5 @@
 # Changelog
-### 0.?.?:
+### 0.5.16:
  - bugfix: timeout() internally uses Ember.run.later() now so that
    Ember testing helpers know to wait for it. Note: this means that
    infinite loops in tasks that pause with a timer can pause
