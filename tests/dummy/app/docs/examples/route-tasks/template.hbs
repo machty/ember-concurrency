@@ -44,7 +44,7 @@
     and uses the <code>finally</code> block to notify when it is being canceled.
   </li>
   <li>
-    We use <code>.restartable()</code> to ensure that only one instance of the
+    We use <code>restartable</code> to ensure that only one instance of the
     task is running at a time, hence any time <code>setupController</code>
     performs the task, any prior instances are canceled.
   </li>

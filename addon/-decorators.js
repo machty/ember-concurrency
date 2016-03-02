@@ -1,16 +1,24 @@
-let modifierNames = ['restartable', 'drop', 'enqueue', 'maxConcurrency'];
+let modifierNames = ['restartable', 'drop', 'enqueue', 'maxConcurrency', 'cancelOn'];
 let decorators = {};
 
-for (let i = 0; i < modifierNames.length; ++i) {
-  let modifierName = modifierNames[i];
+function makeDecorator(modifierName, methodName) {
   let fn = (...args) => {
-    return (taskProperty) => taskProperty[modifierName](...args);
+    return (taskProperty) => taskProperty[methodName](...args);
   };
   decorators[modifierName] = fn;
 }
+
+for (let i = 0; i < modifierNames.length; ++i) {
+  let modifierName = modifierNames[i];
+  makeDecorator(modifierName, modifierName);
+}
+
+makeDecorator('performOn', 'on');
 
 export let restartable    = decorators.restartable;
 export let drop           = decorators.drop;
 export let enqueue        = decorators.enqueue;
 export let maxConcurrency = decorators.maxConcurrency;
+export let cancelOn       = decorators.cancelOn;
+export let performOn      = decorators.performOn;
 

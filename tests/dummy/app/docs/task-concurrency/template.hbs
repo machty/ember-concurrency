@@ -39,10 +39,10 @@
 {{concurrency-graph task=defaultTask}}
 
 
-<h4>.restartable()</h4>
+<h4>restartable</h4>
 
 <p>
-  The <code>.restartable()</code> modifier ensures that only one instance
+  The <code>restartable</code> modifier ensures that only one instance
   of a task is running by canceling any currently-running tasks and starting
   a new task instance immediately. Note how there is no task overlap,
   and how currently running tasks get canceled
@@ -53,17 +53,17 @@
 <p>
   <em>
     Check out {{link-to 'Debounced Auto-Search' 'docs.examples.autocomplete'}} for
-    a practical example of .restartable()
+    a practical example of restartable
   </em>
 </p>
 
 
 {{concurrency-graph task=restartableTask}}
 
-<h4>.enqueue()</h4>
+<h4>enqueue</h4>
 
 <p>
-  The <code>.enqueue()</code> modifier ensures that only one instance
+  The <code>enqueue</code> modifier ensures that only one instance
   of a task is running be maintaining a queue of pending tasks and
   running them sequentially. Note how there is no task overlap, but no
   tasks are canceled either.
@@ -72,17 +72,17 @@
 {{concurrency-graph task=enqueuedTask}}
 
 
-<h4>.drop()</h4>
+<h4>drop</h4>
 
 <p>
-  The <code>.drop()</code> modifier drops tasks that are <code>.perform</code>ed
+  The <code>drop</code> modifier drops tasks that are <code>.perform</code>ed
   while another is already running. Dropped tasks' functions are never even called.
 </p>
 
 <p>
   <em>
     Check out the {{link-to 'Loading UI' 'docs.examples.loading-ui'}} example for a common
-    use case for <code>.drop()</code>
+    use case for <code>drop</code>
   </em>
 </p>
 

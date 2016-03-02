@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task, timeout } from 'ember-concurrency';
+import { timeout } from 'ember-concurrency';
 
 function * SHARED_TASK_FN(tracker) {
   tracker.start();
@@ -12,10 +12,11 @@ function * SHARED_TASK_FN(tracker) {
 }
 
 // BEGIN-SNIPPET shared-tasks-concurrent
+import { task, restartable, enqueue, drop, maxConcurrency } from 'ember-concurrency';
 export default Ember.Controller.extend({
-  restartableTask3: task(SHARED_TASK_FN).maxConcurrency(3).restartable(),
-  enqueuedTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueue(),
-  droppingTask3:    task(SHARED_TASK_FN).maxConcurrency(3).drop(),
+  restartableTask3: task(restartable, maxConcurrency(3), SHARED_TASK_FN),
+  enqueuedTask3:    task(enqueue,     maxConcurrency(3), SHARED_TASK_FN),
+  droppingTask3:    task(drop,        maxConcurrency(3), SHARED_TASK_FN),
 });
 // END-SNIPPET
 

@@ -23,7 +23,7 @@
 
 {{code-snippet name="shared-tasks-concurrent.js"}}
 
-<h4>.restartable() with .maxConcurrency(3)</h4>
+<h4>restartable with .maxConcurrency(3)</h4>
 
 <p>
   When concurrency exceeds maxConcurrency, the oldest running task is canceled.
@@ -33,18 +33,18 @@
 
 <p>
   <em>
-    TODO: while .restartable() is an excellent name when maxConcurrency
+    TODO: while restartable is an excellent name when maxConcurrency
     is 1, it poorly describes the behavior for values greater than 1.
     A better name in this case might be .sliding(), as in sliding buffer.
   </em>
 </p>
 
 
-<h4>.enqueue() with .maxConcurrency(3)</h4>
+<h4>enqueue with .maxConcurrency(3)</h4>
 
 {{concurrency-graph task=enqueuedTask3}}
 
-<h4>.drop() with .maxConcurrency(3)</h4>
+<h4>drop with .maxConcurrency(3)</h4>
 
 {{concurrency-graph task=droppingTask3}}
 

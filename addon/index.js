@@ -4,7 +4,7 @@ import { TaskProperty } from './-task-property';
 import EventedObservable from './-evented-observable';
 import { subscribe } from './-subscribe';
 import { all, race } from './-yieldables';
-import { drop, restartable, enqueue, maxConcurrency } from './-decorators';
+import { drop, restartable, enqueue, maxConcurrency, cancelOn, performOn } from './-decorators';
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -122,6 +122,8 @@ export {
   drop,
   restartable,
   enqueue,
-  maxConcurrency
+  maxConcurrency,
+  cancelOn,
+  performOn
 };
 
