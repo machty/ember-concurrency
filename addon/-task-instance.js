@@ -3,7 +3,7 @@ import { createObservable, yieldableSymbol } from './utils';
 
 function forwardToInternalPromise(method) {
   return function(...args) {
-    this._ignorePromiseErrors = true;
+    this._userWillHandlePromise = true;
     return this._defer.promise[method](...args);
   };
 }
@@ -11,6 +11,10 @@ function forwardToInternalPromise(method) {
 let CURRENT_TASK_INSTANCE;
 export function _getRunningTaskInstance() {
   return CURRENT_TASK_INSTANCE;
+}
+
+function spliceSlice(str, index, count, add) {
+  return str.slice(0, index) + (add || "") + str.slice(index + count);
 }
 
 /**
@@ -34,8 +38,9 @@ export function _getRunningTaskInstance() {
 let taskInstanceAttrs = {
   iterator: null,
   _disposable: null,
-  _ignorePromiseErrors: false,
+  _userWillHandlePromise: false,
   task: null,
+  args: null,
 
   /**
    * True if the task instance was canceled before it could run to completion.
@@ -128,10 +133,10 @@ let taskInstanceAttrs = {
     this._super(...arguments);
     this._defer = Ember.RSVP.defer();
     this._cancelationIgnorer = this._defer.promise.catch(e => {
-      if (this._ignorePromiseErrors) { return; }
+      if (this._userWillHandlePromise) { return; }
 
-      if (e && e.name === 'TaskCancelation' && e.taskInstance === this) {
-        // swallow cancelations that belong to the same task.
+      if (e && e.name === 'TaskCancelation') {
+        // default behavior: swallow cancelations
       } else {
         return Ember.RSVP.reject(e);
       }
@@ -147,7 +152,8 @@ let taskInstanceAttrs = {
   },
 
   toString() {
-    return `<TaskInstance:${Ember.guidFor(this)}> of ${this._origin}`;
+    let taskString = ""+this.task;
+    return spliceSlice(taskString, -1, 0, `.perform(${this.args.join(',')})`);
   },
 
   /**
@@ -160,12 +166,17 @@ let taskInstanceAttrs = {
    */
   cancel() {
     if (this.isCanceled || this.isFinished) { return; }
-    this._rejectWithCancelation();
+
+    let error = new Error("TaskCancelation");
+    error.name = "TaskCancelation";
+    error.taskInstance = this;
+    this._defer.reject(error);
+    this.set('isCanceled', true);
 
     // eagerly advance index so that pending promise resolutions
     // are ignored
     this._index++;
-    this._proceed(this._index, undefined);
+    this._proceed(this._index, error, 'throw');
   },
 
   /**
@@ -197,19 +208,6 @@ let taskInstanceAttrs = {
    */
   finally: forwardToInternalPromise('finally'),
 
-  _rejectWithCancelation() {
-    if (this.isCanceled) { return; }
-    let error = new Error("TaskCancelation");
-    error.name = "TaskCancelation";
-    error.taskInstance = this;
-    this._reject(error);
-    this.set('isCanceled', true);
-  },
-
-  _reject(error) {
-    this._defer.reject(error);
-  },
-
   _defer: null,
 
   _proceed(index, nextValue, method) {
@@ -217,12 +215,15 @@ let taskInstanceAttrs = {
     Ember.run.once(this, this._takeStep, index, nextValue, method);
   },
 
-  _hasBegunShutdown: false,
   _hasResolved: false,
 
-  _finalize(value) {
+  _finalize(value, isError) {
     this.set('isFinished', true);
-    this._defer.resolve(value);
+    if (isError) {
+      this._defer.reject(value);
+    } else {
+      this._defer.resolve(value);
+    }
     this._dispose();
   },
 
@@ -234,6 +235,18 @@ let taskInstanceAttrs = {
   },
 
   _takeSafeStep(nextValue, iteratorMethod) {
+    if (!this.hasStarted) {
+      // calling .return/.throw on an unstarted generator iterator
+      // doesn't do the intuitive thing, so watch out for it.
+
+      if (iteratorMethod === 'return') {
+        return { done: true, value: undefined };
+      }
+      if (iteratorMethod === 'throw') {
+        return { done: true, value: undefined, error: true };
+      }
+    }
+
     try {
       CURRENT_TASK_INSTANCE = this;
       return this.iterator[iteratorMethod](nextValue);
@@ -247,29 +260,15 @@ let taskInstanceAttrs = {
   _takeStep(index, nextValue, method) {
     if (index !== this._index) { return; }
 
-    let result;
-    if (this.isCanceled && !this._hasBegunShutdown) {
-      this._hasBegunShutdown = true;
-      if (this.hasStarted) {
-        result = this._takeSafeStep(nextValue, 'return');
-      } else {
-        // calling .return on an unstarted generator iterator
-        // doesn't do the intuitive thing, so just skip it.
-        result = { done: true, value: undefined };
-      }
-    } else {
-      result = this._takeSafeStep(nextValue, method || 'next');
-    }
-
-    let { done, value, error } = result;
+    let { done, value, error } = this._takeSafeStep(nextValue, method || 'next');
 
     if (error) {
-      this._finalize(Ember.RSVP.reject(value));
+      this._finalize(value, true);
       return;
     } else {
       if (done && value === undefined) {
         this.set('isFinished', true);
-        this._finalize(value);
+        this._finalize(value, false);
         return;
       }
     }
@@ -292,7 +291,7 @@ let taskInstanceAttrs = {
 
   _proceedOrFinalize(done, index, value) {
     if (done) {
-      this._finalize(value);
+      this._finalize(value, false);
     } else {
       this._proceed(index, value);
     }
@@ -301,7 +300,7 @@ let taskInstanceAttrs = {
 
 taskInstanceAttrs[yieldableSymbol] = function () {
   return createObservable(publish => {
-    this.then(publish, publish.error);
+    this._defer.promise.then(publish, publish.error);
     return () => {
       this.cancel();
     };

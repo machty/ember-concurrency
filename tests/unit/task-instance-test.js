@@ -317,6 +317,10 @@ test("yielding to other tasks: parent task gets canceled", function(assert) {
   Ember.run(null, defer.resolve, "naw");
 });
 
+function shouldNotGetCalled() {
+  QUnit.ok(false, "should not be called");
+}
+
 test("yielding to other tasks: child task gets canceled", function(assert) {
   assert.expect(4);
 
@@ -332,6 +336,7 @@ test("yielding to other tasks: child task gets canceled", function(assert) {
           },
           args: [],
         })._start();
+        taskInstance1.then(shouldNotGetCalled);
         let value = yield taskInstance1;
         assert.equal(value, 123);
       },

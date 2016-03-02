@@ -231,7 +231,7 @@ export const Task = Ember.Object.extend({
   },
 
   toString() {
-    return `<Task:${Ember.guidFor(this)}> of ${this._origin}`;
+    return `<Task:${this._propertyName}>`;
   },
 
   _perform(...args) {
