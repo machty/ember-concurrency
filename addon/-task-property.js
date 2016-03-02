@@ -346,7 +346,14 @@ export function TaskProperty(...decorators) {
   this._performsPath = null;
 
   for (let i = 0; i < decorators.length; ++i) {
-    decorators[i](this);
+    applyDecorator(this, decorators[i]);
+  }
+}
+
+function applyDecorator(taskProperty, decorator) {
+  let value = decorator(taskProperty);
+  if (typeof value === 'function') {
+    value(taskProperty);
   }
 }
 
