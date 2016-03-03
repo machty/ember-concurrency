@@ -95815,6 +95815,50 @@ define('ember-concurrency/-buffer-policy', ['exports'], function (exports) {
   };
   exports.dropButKeepLatestPolicy = dropButKeepLatestPolicy;
 });
+define('ember-concurrency/-decorators', ['exports'], function (exports) {
+  'use strict';
+
+  var modifierNames = ['restartable', 'drop', 'enqueue', 'maxConcurrency', 'cancelOn'];
+  var decorators = {};
+
+  function makeDecorator(modifierName, methodName) {
+    var fn = function fn() {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return function (taskProperty) {
+        return taskProperty[methodName].apply(taskProperty, args);
+      };
+    };
+    decorators[modifierName] = fn;
+  }
+
+  for (var i = 0; i < modifierNames.length; ++i) {
+    var modifierName = modifierNames[i];
+    makeDecorator(modifierName, modifierName);
+  }
+
+  makeDecorator('performOn', 'on');
+
+  var restartable = decorators.restartable;
+  exports.restartable = restartable;
+
+  var drop = decorators.drop;
+  exports.drop = drop;
+
+  var enqueue = decorators.enqueue;
+  exports.enqueue = enqueue;
+
+  var maxConcurrency = decorators.maxConcurrency;
+  exports.maxConcurrency = maxConcurrency;
+
+  var cancelOn = decorators.cancelOn;
+  exports.cancelOn = cancelOn;
+
+  var performOn = decorators.performOn;
+  exports.performOn = performOn;
+});
 define('ember-concurrency/-evented-observable', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
@@ -96027,7 +96071,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     return function () {
       var _defer$promise;
 
-      this._ignorePromiseErrors = true;
+      this._userWillHandlePromise = true;
       return (_defer$promise = this._defer.promise)[method].apply(_defer$promise, arguments);
     };
   }
@@ -96036,6 +96080,10 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
   function _getRunningTaskInstance() {
     return CURRENT_TASK_INSTANCE;
+  }
+
+  function spliceSlice(str, index, count, add) {
+    return str.slice(0, index) + (add || "") + str.slice(index + count);
   }
 
   /**
@@ -96059,8 +96107,9 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
   var taskInstanceAttrs = {
     iterator: null,
     _disposable: null,
-    _ignorePromiseErrors: false,
+    _userWillHandlePromise: false,
     task: null,
+    args: null,
 
     /**
      * True if the task instance was canceled before it could run to completion.
@@ -96155,12 +96204,12 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       this._super.apply(this, arguments);
       this._defer = _ember['default'].RSVP.defer();
       this._cancelationIgnorer = this._defer.promise['catch'](function (e) {
-        if (_this._ignorePromiseErrors) {
+        if (_this._userWillHandlePromise) {
           return;
         }
 
-        if (e && e.name === 'TaskCancelation' && e.taskInstance === _this) {
-          // swallow cancelations that belong to the same task.
+        if (e && e.name === 'TaskCancelation') {
+          // default behavior: swallow cancelations
         } else {
             return _ember['default'].RSVP.reject(e);
           }
@@ -96178,7 +96227,8 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     },
 
     toString: function toString() {
-      return '<TaskInstance:' + _ember['default'].guidFor(this) + '> of ' + this._origin;
+      var taskString = "" + this.task;
+      return spliceSlice(taskString, -1, 0, '.perform(' + this.args.join(',') + ')');
     },
 
     /**
@@ -96190,15 +96240,28 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
      * @instance
      */
     cancel: function cancel() {
-      if (this.isCanceled) {
+      if (this.isCanceled || this.isFinished) {
         return;
       }
-      this._rejectWithCancelation();
+
+      if (this._debugCallback) {
+        this._debugCallback({
+          type: 'cancel',
+          taskInstance: this,
+          task: this.task
+        });
+      }
+
+      var error = new Error("TaskCancelation");
+      error.name = "TaskCancelation";
+      error.taskInstance = this;
+      this._defer.reject(error);
+      this.set('isCanceled', true);
 
       // eagerly advance index so that pending promise resolutions
       // are ignored
       this._index++;
-      this._proceed(this._index, undefined);
+      this._proceed(this._index, error, 'throw');
     },
 
     /**
@@ -96230,21 +96293,6 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
      */
     'finally': forwardToInternalPromise('finally'),
 
-    _rejectWithCancelation: function _rejectWithCancelation() {
-      if (this.isCanceled) {
-        return;
-      }
-      var error = new Error("TaskCancelation");
-      error.name = "TaskCancelation";
-      error.taskInstance = this;
-      this._reject(error);
-      this.set('isCanceled', true);
-    },
-
-    _reject: function _reject(error) {
-      this._defer.reject(error);
-    },
-
     _defer: null,
 
     _proceed: function _proceed(index, nextValue, method) {
@@ -96252,12 +96300,15 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       _ember['default'].run.once(this, this._takeStep, index, nextValue, method);
     },
 
-    _hasBegunShutdown: false,
     _hasResolved: false,
 
-    _finalize: function _finalize(value) {
+    _finalize: function _finalize(value, isError) {
       this.set('isFinished', true);
-      this._defer.resolve(value);
+      if (isError) {
+        this._defer.reject(value);
+      } else {
+        this._defer.resolve(value);
+      }
       this._dispose();
     },
 
@@ -96269,6 +96320,18 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     },
 
     _takeSafeStep: function _takeSafeStep(nextValue, iteratorMethod) {
+      if (!this.hasStarted) {
+        // calling .return/.throw on an unstarted generator iterator
+        // doesn't do the intuitive thing, so watch out for it.
+
+        if (iteratorMethod === 'return') {
+          return { done: true, value: undefined };
+        }
+        if (iteratorMethod === 'throw') {
+          return { done: true, value: undefined, error: true };
+        }
+      }
+
       try {
         CURRENT_TASK_INSTANCE = this;
         return this.iterator[iteratorMethod](nextValue);
@@ -96286,32 +96349,19 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
         return;
       }
 
-      var result = undefined;
-      if (this.isCanceled && !this._hasBegunShutdown) {
-        this._hasBegunShutdown = true;
-        if (this.hasStarted) {
-          result = this._takeSafeStep(nextValue, 'return');
-        } else {
-          // calling .return on an unstarted generator iterator
-          // doesn't do the intuitive thing, so just skip it.
-          result = { done: true, value: undefined };
-        }
-      } else {
-        result = this._takeSafeStep(nextValue, method || 'next');
-      }
+      var _takeSafeStep2 = this._takeSafeStep(nextValue, method || 'next');
 
-      var _result = result;
-      var done = _result.done;
-      var value = _result.value;
-      var error = _result.error;
+      var done = _takeSafeStep2.done;
+      var value = _takeSafeStep2.value;
+      var error = _takeSafeStep2.error;
 
       if (error) {
-        this._finalize(_ember['default'].RSVP.reject(value));
+        this._finalize(value, true);
         return;
       } else {
         if (done && value === undefined) {
           this.set('isFinished', true);
-          this._finalize(value);
+          this._finalize(value, false);
           return;
         }
       }
@@ -96334,7 +96384,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
     _proceedOrFinalize: function _proceedOrFinalize(done, index, value) {
       if (done) {
-        this._finalize(value);
+        this._finalize(value, false);
       } else {
         this._proceed(index, value);
       }
@@ -96345,7 +96395,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     var _this3 = this;
 
     return (0, _emberConcurrencyUtils.createObservable)(function (publish) {
-      _this3.then(publish, publish.error);
+      _this3._defer.promise.then(publish, publish.error);
       return function () {
         _this3.cancel();
       };
@@ -96607,7 +96657,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     },
 
     toString: function toString() {
-      return '<Task:' + _ember['default'].guidFor(this) + '> of ' + this._origin;
+      return '<Task:' + this._propertyName + '>';
     },
 
     _perform: function _perform() {
@@ -96615,13 +96665,27 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
         args[_key] = arguments[_key];
       }
 
+      var performsTask = this.get('_performs');
+      if (performsTask) {
+        args.unshift(performsTask);
+      }
+
       var taskInstance = _emberConcurrencyTaskInstance['default'].create({
         fn: this.fn,
         args: args,
         context: this.context,
         task: this,
-        _origin: this
+        _origin: this,
+        _debugCallback: this._debugCallback
       });
+
+      if (this._debugCallback) {
+        this._debugCallback({
+          type: 'perform',
+          taskInstance: taskInstance,
+          task: this
+        });
+      }
 
       if (this.get('_performs') && !this.get('performWillSucceed')) {
         // tasks linked via .performs() should be immediately dropped
@@ -96705,7 +96769,14 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     @class TaskProperty
   */
 
-  function TaskProperty(taskFn) {
+  function TaskProperty() {
+    for (var _len2 = arguments.length, decorators = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      decorators[_key2] = arguments[_key2];
+    }
+
+    var taskFn = decorators.pop();
+    var _performsPath = undefined;
+
     var tp = this;
     ComputedProperty.call(this, function (_propertyName) {
       return Task.create({
@@ -96714,9 +96785,10 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
         _origin: this,
         bufferPolicy: tp.bufferPolicy,
         _maxConcurrency: tp._maxConcurrency,
-        _performsPath: tp._performsPath && tp._performsPath[0],
+        _performsPath: _performsPath,
         _propertyName: _propertyName,
-        _debugName: ""
+        _debugName: "",
+        _debugCallback: tp._debugCallback
       });
     });
 
@@ -96724,7 +96796,23 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     this._maxConcurrency = Infinity;
     this.eventNames = null;
     this.cancelEventNames = null;
-    this._performsPath = null;
+    this._debugCallback = null;
+
+    for (var i = 0; i < decorators.length; ++i) {
+      var decorator = decorators[i];
+      if (typeof decorator === 'function') {
+        applyDecorator(this, decorator);
+      } else {
+        _performsPath = decorator;
+      }
+    }
+  }
+
+  function applyDecorator(taskProperty, decorator) {
+    var value = decorator(taskProperty);
+    if (typeof value === 'function') {
+      value(taskProperty);
+    }
   }
 
   TaskProperty.prototype = Object.create(ComputedProperty.prototype);
@@ -96889,9 +96977,12 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     }
   };
 
-  TaskProperty.prototype.performs = function () {
-    this._performsPath = this._performsPath || [];
-    this._performsPath.push.apply(this._performsPath, arguments);
+  function defaultDebugCallback(payload) {
+    console.log(payload);
+  }
+
+  TaskProperty.prototype._debug = function (cb) {
+    this._debugCallback = cb || defaultDebugCallback;
     return this;
   };
 
@@ -96981,9 +97072,10 @@ define('ember-concurrency/-yieldables', ['exports', 'ember', 'ember-concurrency/
     };
   }
 });
-define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-evented-observable', 'ember-concurrency/-subscribe', 'ember-concurrency/-yieldables'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyEventedObservable, _emberConcurrencySubscribe, _emberConcurrencyYieldables) {
+define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-evented-observable', 'ember-concurrency/-subscribe', 'ember-concurrency/-yieldables', 'ember-concurrency/-decorators'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyEventedObservable, _emberConcurrencySubscribe, _emberConcurrencyYieldables, _emberConcurrencyDecorators) {
   'use strict';
 
+  var _bind = Function.prototype.bind;
   exports.task = task;
   exports.interval = interval;
   exports.timeout = timeout;
@@ -97042,8 +97134,12 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
    * @returns {TaskProperty}
    */
 
-  function task(generatorFunction) {
-    return new _emberConcurrencyTaskProperty.TaskProperty(generatorFunction);
+  function task() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return new (_bind.apply(_emberConcurrencyTaskProperty.TaskProperty, [null].concat(args)))();
   }
 
   /**
@@ -97094,10 +97190,10 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   function timeout(ms) {
     var timerId = undefined;
     var promise = new _ember['default'].RSVP.Promise(function (r) {
-      timerId = setTimeout(r, ms);
+      timerId = _ember['default'].run.later(r, ms);
     });
     promise.__ec_cancel__ = function () {
-      return window.clearTimeout(timerId);
+      _ember['default'].run.cancel(timerId);
     };
     return promise;
   }
@@ -97110,6 +97206,12 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   exports.all = _emberConcurrencyYieldables.all;
   exports.race = _emberConcurrencyYieldables.race;
   exports.subscribe = _emberConcurrencySubscribe.subscribe;
+  exports.drop = _emberConcurrencyDecorators.drop;
+  exports.restartable = _emberConcurrencyDecorators.restartable;
+  exports.enqueue = _emberConcurrencyDecorators.enqueue;
+  exports.maxConcurrency = _emberConcurrencyDecorators.maxConcurrency;
+  exports.cancelOn = _emberConcurrencyDecorators.cancelOn;
+  exports.performOn = _emberConcurrencyDecorators.performOn;
 });
 define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _ember) {
   'use strict';

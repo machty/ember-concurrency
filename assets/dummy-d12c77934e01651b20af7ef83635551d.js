@@ -3199,7 +3199,7 @@ define('dummy/docs/examples/autocomplete/controller', ['exports', 'ember', 'embe
 });
 
 // Pause here for DEBOUNCE_MS milliseconds. Because this
-// task is `.restartable()`, if the user starts typing again,
+// task is `restartable`, if the user starts typing again,
 // the current search will be canceled at this point and
 // start over from the beginning. This is the
 // ember-concurrency way of debouncing a task.
@@ -3371,15 +3371,16 @@ define('dummy/docs/examples/decorating-tasks/controller', ['exports', 'ember', '
 
   // BEGIN-SNIPPET decorating-tasks
   function taskWithCooldown(taskPath, ms) {
-    return (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$1$0() {
-      var _get;
+    return (0, _emberConcurrency.task)(taskPath, regeneratorRuntime.mark(function callee$1$0(otherTask) {
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
 
-      var args$2$0 = arguments;
       return regeneratorRuntime.wrap(function callee$1$0$(context$2$0) {
         while (1) switch (context$2$0.prev = context$2$0.next) {
           case 0:
             context$2$0.next = 2;
-            return (_get = this.get(taskPath)).perform.apply(_get, args$2$0);
+            return otherTask.perform.apply(otherTask, args);
 
           case 2:
             context$2$0.next = 4;
@@ -3390,7 +3391,7 @@ define('dummy/docs/examples/decorating-tasks/controller', ['exports', 'ember', '
             return context$2$0.stop();
         }
       }, callee$1$0, this);
-    })).drop().performs(taskPath);
+    })).drop();
   }
 
   exports['default'] = _ember['default'].Controller.extend({
@@ -3619,7 +3620,7 @@ define("dummy/docs/examples/decorating-tasks/template", ["exports"], function (e
         var el2 = dom.createTextNode(" and the tasks\n  with cooldown applied, are configured to ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode(".drop");
+        var el3 = dom.createTextNode("drop");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode(" performs while\n  they're running.\n");
@@ -3674,13 +3675,7 @@ define("dummy/docs/examples/decorating-tasks/template", ["exports"], function (e
         var el3 = dom.createTextNode(".performWillSucceed");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" takes into consideration whether the task\n  linked via the ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode(".performs(otherTask)");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" Task Modifier can be performed at this time.\n  This explains why the buttons below ");
+        var el2 = dom.createTextNode(" takes into consideration whether the linked task\n  (via the string arg path to the task) can be performed at this time.\n  This explains why the buttons below ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("em");
         var el3 = dom.createTextNode("all");
@@ -4639,7 +4634,7 @@ define("dummy/docs/examples/loading-ui/template", ["exports"], function (exports
         var el2 = dom.createTextNode(" property of\n  a task, which is false when the task is running, and true otherwise. This eliminates\n  a lot of the boilerplate of setting a property at the beginning of some async operation,\n  and unsetting when the operation completes. Also, because the task in the example\n  below uses the ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode(".drop()");
+        var el3 = dom.createTextNode("drop()");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode(" modifier\n  (see ");
@@ -4900,7 +4895,7 @@ define("dummy/docs/examples/observables/template", ["exports"], function (export
         var el2 = dom.createTextNode(" integrates with Observables\n  and lets you apply the same concurrency constraints to\n  subscriptions to Observables that you could apply to a task —\n  just as you can configure a Task to ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode(".drop()");
+        var el3 = dom.createTextNode("drop()");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode(" new\n  ");
@@ -4912,7 +4907,7 @@ define("dummy/docs/examples/observables/template", ["exports"], function (export
         var el2 = dom.createTextNode("s while the task is already running, so can\n  you configure the subscription to an async sequence of events\n  (the Observable) to ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode(".drop()");
+        var el3 = dom.createTextNode("drop()");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode(" events while the\n  previous event is being handled (or use any other task modifier\n  you like).\n");
@@ -5288,7 +5283,7 @@ define("dummy/docs/examples/route-tasks/template", ["exports"], function (export
         var el3 = dom.createTextNode("\n    We use ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("code");
-        var el4 = dom.createTextNode(".restartable()");
+        var el4 = dom.createTextNode("restartable");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode(" to ensure that only one instance of the\n    task is running at a time, hence any time ");
@@ -5998,7 +5993,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("h4");
-        var el2 = dom.createTextNode(".restartable()");
+        var el2 = dom.createTextNode("restartable");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -6007,7 +6002,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  The ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode(".restartable()");
+        var el3 = dom.createTextNode("restartable");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode(" modifier ensures that only one instance\n  of a task is running by canceling any currently-running tasks and starting\n  a new task instance immediately. Note how there is no task overlap,\n  and how currently running tasks get canceled\n  (");
@@ -6030,7 +6025,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode(" for\n    a practical example of .restartable()\n  ");
+        var el3 = dom.createTextNode(" for\n    a practical example of restartable\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
@@ -6043,7 +6038,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("h4");
-        var el2 = dom.createTextNode(".enqueue()");
+        var el2 = dom.createTextNode("enqueue");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -6052,7 +6047,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  The ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode(".enqueue()");
+        var el3 = dom.createTextNode("enqueue");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode(" modifier ensures that only one instance\n  of a task is running be maintaining a queue of pending tasks and\n  running them sequentially. Note how there is no task overlap, but no\n  tasks are canceled either.\n");
@@ -6065,7 +6060,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("h4");
-        var el2 = dom.createTextNode(".drop()");
+        var el2 = dom.createTextNode("drop");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -6074,7 +6069,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  The ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode(".drop()");
+        var el3 = dom.createTextNode("drop");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode(" modifier drops tasks that are ");
@@ -6099,7 +6094,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode(" example for a common\n    use case for ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("code");
-        var el4 = dom.createTextNode(".drop()");
+        var el4 = dom.createTextNode("drop");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n  ");
@@ -6248,7 +6243,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("h4");
-        var el2 = dom.createTextNode(".restartable() with .maxConcurrency(3)");
+        var el2 = dom.createTextNode("restartable with .maxConcurrency(3)");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -6267,7 +6262,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("em");
-        var el3 = dom.createTextNode("\n    TODO: while .restartable() is an excellent name when maxConcurrency\n    is 1, it poorly describes the behavior for values greater than 1.\n    A better name in this case might be .sliding(), as in sliding buffer.\n  ");
+        var el3 = dom.createTextNode("\n    TODO: while restartable is an excellent name when maxConcurrency\n    is 1, it poorly describes the behavior for values greater than 1.\n    A better name in this case might be .sliding(), as in sliding buffer.\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
@@ -6276,7 +6271,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
         var el1 = dom.createTextNode("\n\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("h4");
-        var el2 = dom.createTextNode(".enqueue() with .maxConcurrency(3)");
+        var el2 = dom.createTextNode("enqueue with .maxConcurrency(3)");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -6286,7 +6281,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("h4");
-        var el2 = dom.createTextNode(".drop() with .maxConcurrency(3)");
+        var el2 = dom.createTextNode("drop with .maxConcurrency(3)");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -7381,7 +7376,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
         var el2 = dom.createTextNode("\n\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("p");
-        var el3 = dom.createTextNode("\n    Because the \"buffering policy\" for a task is declaratively\n    specified up front (via task modifiers like .drop, .enqueue),\n    someone who wants to .perform a task can know up front whether\n    perform()ing that task right now would 1) immediately execute\n    the task instance, 2) immediately cancel (drop) the task\n    instance, or 3) enqueue the task instance for later execution.\n  ");
+        var el3 = dom.createTextNode("\n    Because the \"buffering policy\" for a task is declaratively\n    specified up front (via task modifiers like drop, enqueue),\n    someone who wants to .perform a task can know up front whether\n    perform()ing that task right now would 1) immediately execute\n    the task instance, 2) immediately cancel (drop) the task\n    instance, or 3) enqueue the task instance for later execution.\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n\n  ");
@@ -8258,10 +8253,10 @@ define("dummy/snippets", ["exports"], function (exports) {
     "child-tasks.js": "export default Ember.Controller.extend({\n  status: \"Waiting to start\",\n\n  parentTask: task(function * () {\n    this.set('status', \"1. Parent: one moment...\");\n    yield timeout(1000);\n    let value = yield this.get('childTask').perform();\n    this.set('status', `5. Parent: child says \"${value}\"`);\n    yield timeout(1000);\n    this.set('status', \"6. Done!\");\n  }).restartable(),\n\n  childTask: task(function * () {\n    this.set('status', \"2. Child: one moment...\");\n    yield timeout(1000);\n    let value = yield this.get('grandchildTask').perform();\n    this.set('status', `4. Child: grandchild says \"${value}\"`);\n    yield timeout(1000);\n    return \"What's up\";\n  }),\n\n  grandchildTask: task(function * () {\n    this.set('status', \"3. Grandchild: one moment...\");\n    yield timeout(1000);\n    return \"Hello\";\n  }),\n});",
     "count-up.js": "  countUp: task(function * () {\n    while (true) {\n      this.incrementProperty('count');\n      yield timeout(100);\n    }\n  }).on('init'),",
     "debounced-search-with-cancelation-template.hbs": "  {{#power-select search=(perform searchRepo)\n                  selected=selected\n                  onchange=(action (mut selected)) as |repo|}}\n    {{repo.full_name}}\n  {{/power-select}}",
-    "debounced-search-with-cancelation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because this\n    // task is `.restartable()`, if the user starts typing again,\n    // the current search will be canceled at this point and\n    // start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `https://api.github.com/search/repositories?q=${term}`;\n\n    // We yield an AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield this.get('getJSON').perform(url);\n    return json.items;\n  }).restartable(),\n\n  getJSON: task(function * (url) {\n    let xhr;\n    try {\n      xhr = Ember.$.getJSON(url);\n      let result = yield xhr.promise();\n      return result;\n\n      // NOTE: could also write this as\n      // return yield xhr;\n      //\n      // either way, the important thing is to yield before returning\n      // so that the `finally` block doesn't run until after the\n      // promise resolves (or the task is canceled).\n    } finally {\n      xhr.abort();\n    }\n  }),\n});",
+    "debounced-search-with-cancelation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because this\n    // task is `restartable`, if the user starts typing again,\n    // the current search will be canceled at this point and\n    // start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `https://api.github.com/search/repositories?q=${term}`;\n\n    // We yield an AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield this.get('getJSON').perform(url);\n    return json.items;\n  }).restartable(),\n\n  getJSON: task(function * (url) {\n    let xhr;\n    try {\n      xhr = Ember.$.getJSON(url);\n      let result = yield xhr.promise();\n      return result;\n\n      // NOTE: could also write this as\n      // return yield xhr;\n      //\n      // either way, the important thing is to yield before returning\n      // so that the `finally` block doesn't run until after the\n      // promise resolves (or the task is canceled).\n    } finally {\n      xhr.abort();\n    }\n  }),\n});",
     "decorating-tasks-template-isIdle.hbs": "<p>\n  {{#each tasks as |task|}}\n    <button {{action task.perform}} class={{if task.isIdle 'button-primary'}}>\n      {{task.name}}\n    </button>\n  {{/each}}\n</p>",
     "decorating-tasks-template-performWillSucceed.hbs": "<p>\n  {{#each tasks as |task|}}\n    <button {{action task.perform}} class={{if task.performWillSucceed 'button-primary'}}>\n      {{task.name}}\n    </button>\n  {{/each}}\n</p>",
-    "decorating-tasks.js": "function taskWithCooldown(taskPath, ms) {\n  return task(function * (...args) {\n    // perform the task...\n    yield this.get(taskPath).perform(...args);\n\n    // ...and wait for cooldown timer.\n    yield timeout(ms);\n  }).drop().performs(taskPath);\n}\n\nexport default Ember.Controller.extend({\n  sharedTask: task(function * () {\n    yield timeout(1000);\n  }).drop(),\n\n  halfSecond: taskWithCooldown('sharedTask', 500),\n  oneSecond:  taskWithCooldown('sharedTask', 1000),\n  twoSeconds: taskWithCooldown('sharedTask', 2000),\n\n  tasks: Ember.computed(function() {\n    return [\n      this.get('halfSecond'),\n      this.get('oneSecond'),\n      this.get('twoSeconds')\n    ];\n  }),\n});",
+    "decorating-tasks.js": "function taskWithCooldown(taskPath, ms) {\n  return task(taskPath, function * (otherTask, ...args) {\n    // perform the task...\n    yield otherTask.perform(...args);\n\n    // ...and wait for cooldown timer.\n    yield timeout(ms);\n  }).drop()\n}\n\nexport default Ember.Controller.extend({\n  sharedTask: task(function * () {\n    yield timeout(1000);\n  }).drop(),\n\n  halfSecond: taskWithCooldown('sharedTask', 500),\n  oneSecond:  taskWithCooldown('sharedTask', 1000),\n  twoSeconds: taskWithCooldown('sharedTask', 2000),\n\n  tasks: Ember.computed(function() {\n    return [\n      this.get('halfSecond'),\n      this.get('oneSecond'),\n      this.get('twoSeconds')\n    ];\n  }),\n});",
     "detail-route.js": "export default Ember.Route.extend({\n  notify: Ember.inject.service('notify'),\n\n  setupController(controller, model) {\n    this.get('pollServerForChanges').perform(model.id);\n  },\n\n  pollServerForChanges: task(function * (id) {\n    let notify = this.get('notify');\n    yield timeout(500);\n    try {\n      notify.info(`Thing ${id}: Starting to poll for changes`);\n      while (true) {\n        yield timeout(5000);\n        notify.info(`Thing ${id}: Polling now...`);\n      }\n    } finally {\n      notify.warning(`Thing ${id}: No longer polling for changes`);\n    }\n  }).cancelOn('deactivate').restartable(),\n});",
     "ember-app-config.js": "var app = new EmberApp({\n  babel: {\n    includePolyfill: true,\n  },\n});\n\n",
     "ember-install.sh": "ember install ember-concurrency\n",
@@ -8367,7 +8362,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.14+cd7a6353"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.16+153aee59"});
 }
 
 /* jshint ignore:end */

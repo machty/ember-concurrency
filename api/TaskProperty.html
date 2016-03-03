@@ -252,7 +252,7 @@ specified events fire on the parent object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line391">line 391</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line404">line 404</a>
     </li></ul></dd>
     
 
@@ -293,6 +293,18 @@ specified events fire on the parent object.</p>
     <p>Configures the task to immediately cancel (i.e. drop) any
 task instances performed when the task is already running
 at maxConcurrency. Sets default maxConcurrency to 1.</p>
+<p>Another way to apply the <code>drop</code> modifier is to import
+it and pass it in as an argument to the <a href="global.html#task"><code>task</code></a>
+function. Writing it this way allows you to see a task's modifiers
+up front, rather than having to look to the end of the
+task function to see which modifiers have been applied.
+For example:</p>
+<pre class="prettyprint source"><code>import { task, drop } from 'ember-concurrency';
+export default Component.extend({
+  myTask: task(drop, function * () {
+    // ...
+  }),
+});</code></pre>
 </div>
 
 
@@ -336,7 +348,7 @@ at maxConcurrency. Sets default maxConcurrency to 1.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line441">line 441</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line482">line 482</a>
     </li></ul></dd>
     
 
@@ -377,6 +389,18 @@ at maxConcurrency. Sets default maxConcurrency to 1.</p>
     <p>Configures the task to run task instances one-at-a-time in
 the order they were <code>.perform()</code>ed. Sets default
 maxConcurrency to 1.</p>
+<p>Another way to apply the <code>enqueue</code> modifier is to import
+it and pass it in as an argument to the <a href="global.html#task"><code>task</code></a>
+function. Writing it this way allows you to see a task's modifiers
+up front, rather than having to look to the end of the
+task function to see which modifiers have been applied.
+For example:</p>
+<pre class="prettyprint source"><code>import { task, enqueue } from 'ember-concurrency';
+export default Component.extend({
+  myTask: task(enqueue, function * () {
+    // ...
+  }),
+});</code></pre>
 </div>
 
 
@@ -420,7 +444,7 @@ maxConcurrency to 1.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line426">line 426</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line453">line 453</a>
     </li></ul></dd>
     
 
@@ -478,7 +502,18 @@ to 3.</p>
 
 elsewhere() {
   this.get('doSomeAjax').perform(&quot;http://www.example.com/json&quot;);
-},</code></pre>
+},</code></pre><p>Another way to apply the <code>maxConcurrency</code> modifier is to import
+it and pass it in as an argument to the <a href="global.html#task"><code>task</code></a>
+function. Writing it this way allows you to see a task's modifiers
+up front, rather than having to look to the end of the
+task function to see which modifiers have been applied.
+For example:</p>
+<pre class="prettyprint source"><code>import { task, maxConcurrency } from 'ember-concurrency';
+export default Component.extend({
+  myTask: task(maxConcurrency(5), function * () {
+    // ...
+  }),
+});</code></pre>
 </div>
 
 
@@ -571,7 +606,7 @@ elsewhere() {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line465">line 465</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line520">line 520</a>
     </li></ul></dd>
     
 
@@ -719,7 +754,7 @@ when the host object is initialized.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line354">line 354</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line367">line 367</a>
     </li></ul></dd>
     
 
@@ -761,6 +796,18 @@ when the host object is initialized.</p>
 to make room for a new one to perform. Sets default
 maxConcurrency to 1.</p>
 <p><a href="/#/docs/examples/route-tasks/1">See the Live Example</a></p>
+<p>Another way to apply the <code>restartable</code> modifier is to import
+it and pass it in as an argument to the <a href="global.html#task"><code>task</code></a>
+function. Writing it this way allows you to see a task's modifiers
+up front, rather than having to look to the end of the
+task function to see which modifiers have been applied.
+For example:</p>
+<pre class="prettyprint source"><code>import { task, restartable } from 'ember-concurrency';
+export default Component.extend({
+  myTask: task(restartable, function * () {
+    // ...
+  }),
+});</code></pre>
 </div>
 
 
@@ -804,7 +851,7 @@ maxConcurrency to 1.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line409">line 409</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line422">line 422</a>
     </li></ul></dd>
     
 
@@ -852,7 +899,7 @@ maxConcurrency to 1.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Feb 28 2016 14:25:16 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Mar 02 2016 07:46:15 GMT-0500 (EST)
 </footer>
 
 <script> prettyPrint(); </script>
