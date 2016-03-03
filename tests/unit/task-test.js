@@ -122,8 +122,8 @@ test("task().cancelOn", function(assert) {
   });
 });
 
-test(".performs() links two tasks such that if the target task next perform will fail, the calling task will immediately drop", function(assert) {
-  assert.expect(13);
+test("string arg decorate links two tasks such that if the target task next perform will fail, the calling task will immediately drop", function(assert) {
+  assert.expect(14);
 
   let defer;
   let canCallBar = false;
@@ -133,9 +133,10 @@ test(".performs() links two tasks such that if the target task next perform will
       yield defer.promise;
     }).drop(),
 
-    bar: task(function * () {
+    bar: task('foo', function * (foo) {
+      assert.equal(foo, this.get('foo'));
       assert.ok(canCallBar, "bar shouldn't be called at this time");
-    }).performs('foo'),
+    }),
   });
 
   let obj, error;
@@ -166,7 +167,7 @@ test(".performs() links two tasks such that if the target task next perform will
   });
 });
 
-test(".performs() allows caller's perform to succeed when maxConcurrency isn't constraining", function(assert) {
+test("string arg decorator allows caller's perform to succeed when maxConcurrency isn't constraining", function(assert) {
   assert.expect(4);
 
   let defer;
@@ -176,9 +177,9 @@ test(".performs() allows caller's perform to succeed when maxConcurrency isn't c
       yield defer.promise;
     }),
 
-    bar: task(function * () {
-      yield this.get('foo').perform();
-    }).performs('foo'),
+    bar: task('foo', function * (foo) {
+      yield foo.perform();
+    }),
   });
 
   let obj;
@@ -195,7 +196,7 @@ test(".performs() allows caller's perform to succeed when maxConcurrency isn't c
   assert.equal(obj.get('bar.concurrency'), 0);
 });
 
-test(".performs() allows caller's perform to succeed when maxConcurrency isn't constraining", function(assert) {
+test("string arg decorator allows caller's perform to succeed when maxConcurrency isn't constraining", function(assert) {
   assert.expect(1);
 
   let Obj = Ember.Object.extend({

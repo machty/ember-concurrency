@@ -235,6 +235,11 @@ export const Task = Ember.Object.extend({
   },
 
   _perform(...args) {
+    let performsTask = this.get('_performs');
+    if (performsTask) {
+      args.unshift(performsTask);
+    }
+
     let taskInstance = TaskInstance.create({
       fn: this.fn,
       args,
@@ -333,6 +338,7 @@ export const Task = Ember.Object.extend({
 */
 export function TaskProperty(...decorators) {
   let taskFn = decorators.pop();
+  let _performsPath;
 
   let tp = this;
   ComputedProperty.call(this, function(_propertyName) {
@@ -342,7 +348,7 @@ export function TaskProperty(...decorators) {
       _origin: this,
       bufferPolicy: tp.bufferPolicy,
       _maxConcurrency: tp._maxConcurrency,
-      _performsPath: tp._performsPath && tp._performsPath[0],
+      _performsPath,
       _propertyName,
       _debugName: "",
       _debugCallback: tp._debugCallback,
@@ -353,11 +359,15 @@ export function TaskProperty(...decorators) {
   this._maxConcurrency = Infinity;
   this.eventNames = null;
   this.cancelEventNames = null;
-  this._performsPath = null;
   this._debugCallback = null;
 
   for (let i = 0; i < decorators.length; ++i) {
-    applyDecorator(this, decorators[i]);
+    let decorator = decorators[i];
+    if (typeof decorator === 'function') {
+      applyDecorator(this, decorator);
+    } else {
+      _performsPath = decorator;
+    }
   }
 }
 
@@ -584,12 +594,6 @@ TaskProperty.prototype._setDefaultMaxConcurrency = function(n) {
   if (this._maxConcurrency === Infinity) {
     this._maxConcurrency = n;
   }
-};
-
-TaskProperty.prototype.performs = function() {
-  this._performsPath = this._performsPath || [];
-  this._performsPath.push.apply(this._performsPath, arguments);
-  return this;
 };
 
 function defaultDebugCallback(payload) {

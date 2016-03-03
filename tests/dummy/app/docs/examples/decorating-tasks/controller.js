@@ -3,13 +3,13 @@ import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET decorating-tasks
 function taskWithCooldown(taskPath, ms) {
-  return task(function * (...args) {
+  return task(taskPath, function * (otherTask, ...args) {
     // perform the task...
-    yield this.get(taskPath).perform(...args);
+    yield otherTask.perform(...args);
 
     // ...and wait for cooldown timer.
     yield timeout(ms);
-  }).drop().performs(taskPath);
+  }).drop()
 }
 
 export default Ember.Controller.extend({

@@ -51,8 +51,8 @@
   when the state of the task is such that calling <code>.perform()</code> on it
   will immediately execute (rather than being dropped or enqueued). While <code>isIdle</code>
   only takes into considering whether the specified task is running,
-  <code>.performWillSucceed</code> takes into consideration whether the task
-  linked via the <code>.performs(otherTask)</code> Task Modifier can be performed at this time.
+  <code>.performWillSucceed</code> takes into consideration whether the linked task
+  (via the string arg path to the task) can be performed at this time.
   This explains why the buttons below <em>all</em> are stylized as unclickable when
   <em>anyone</em> is performing <code>sharedTask</code>.
 </p>
