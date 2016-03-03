@@ -11,13 +11,6 @@
    from task.perform()).
 
 ### 0.5.15:
- - feature: add "prefix" variants of task modifiers, for example
-   you can import { task, drop } from 'ember-concurrency' and
-   declare a dropping task via: `myTask: task(drop, function * () {...})`.
-   This form allows you to specify your concurrency constraints up
-   front rather than having to look at the bottom of the task to see which
-   chained task modifiers were applied, which is cumbersome
-   for large/long tasks (that can't necessarily be split up).
  - bugfix: don't set taskInstance.isCanceled to true if cancel()
    is called after a successful finish.
 

@@ -9,7 +9,7 @@ function taskWithCooldown(taskPath, ms) {
 
     // ...and wait for cooldown timer.
     yield timeout(ms);
-  }).drop()
+  }).drop();
 }
 
 export default Ember.Controller.extend({
