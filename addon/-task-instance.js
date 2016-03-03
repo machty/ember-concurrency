@@ -167,6 +167,14 @@ let taskInstanceAttrs = {
   cancel() {
     if (this.isCanceled || this.isFinished) { return; }
 
+    if (this._debugCallback) {
+      this._debugCallback({
+        type: 'cancel',
+        taskInstance: this,
+        task: this.task,
+      });
+    }
+
     let error = new Error("TaskCancelation");
     error.name = "TaskCancelation";
     error.taskInstance = this;

@@ -241,7 +241,16 @@ export const Task = Ember.Object.extend({
       context: this.context,
       task: this,
       _origin: this,
+      _debugCallback: this._debugCallback,
     });
+
+    if (this._debugCallback) {
+      this._debugCallback({
+        type: 'perform',
+        taskInstance,
+        task: this,
+      });
+    }
 
     if (this.get('_performs') && !this.get('performWillSucceed')) {
       // tasks linked via .performs() should be immediately dropped
@@ -336,6 +345,7 @@ export function TaskProperty(...decorators) {
       _performsPath: tp._performsPath && tp._performsPath[0],
       _propertyName,
       _debugName: "",
+      _debugCallback: tp._debugCallback,
     });
   });
 
@@ -344,6 +354,7 @@ export function TaskProperty(...decorators) {
   this.eventNames = null;
   this.cancelEventNames = null;
   this._performsPath = null;
+  this._debugCallback = null;
 
   for (let i = 0; i < decorators.length; ++i) {
     applyDecorator(this, decorators[i]);
@@ -578,6 +589,15 @@ TaskProperty.prototype._setDefaultMaxConcurrency = function(n) {
 TaskProperty.prototype.performs = function() {
   this._performsPath = this._performsPath || [];
   this._performsPath.push.apply(this._performsPath, arguments);
+  return this;
+};
+
+function defaultDebugCallback(payload) {
+  console.log(payload);
+}
+
+TaskProperty.prototype._debug = function(cb) {
+  this._debugCallback = cb || defaultDebugCallback;
   return this;
 };
 
