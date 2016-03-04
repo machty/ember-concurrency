@@ -1,4 +1,7 @@
 # Changelog
+### 0.5.17:
+ - experimental: support for linking tasks
+
 ### 0.5.16:
  - bugfix: timeout() internally uses Ember.run.later() now so that
    Ember testing helpers know to wait for it. Note: this means that
