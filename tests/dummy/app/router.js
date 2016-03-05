@@ -33,6 +33,7 @@ Router.map(function() {
   this.route('experimental-prediction');
   this.route('helpers-test');
   this.route('deprecation-test');
+  this.route('data-test');
 });
 
 export default Router;
