@@ -6,6 +6,7 @@
     "ember-cli-test-loader": "0.2.2",
     "ember-qunit-notifications": "0.1.0",
     "fastclick": "~1.0.6",
-    "font-awesome": "~4.5.0"
+    "font-awesome": "~4.5.0",
+    "pretender": "~0.12.0"
   }
 }
