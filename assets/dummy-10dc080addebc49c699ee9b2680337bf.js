@@ -6,6 +6,17 @@
 
 /* jshint ignore:end */
 
+define('dummy/adapters/user', ['exports', 'ember', 'ember-data'], function (exports, _ember, _emberData) {
+  exports['default'] = _emberData['default'].Adapter.extend({
+    query: function query() {
+      return new _ember['default'].RSVP.Promise(function (resolve) {
+        _ember['default'].run.later(function () {
+          return resolve([{ id: 1, username: "machty" }, { id: 2, username: "snoop" }]);
+        }, 200);
+      });
+    }
+  });
+});
 define('dummy/app', ['exports', 'ember', 'dummy/resolver', 'ember-load-initializers', 'dummy/config/environment'], function (exports, _ember, _dummyResolver, _emberLoadInitializers, _dummyConfigEnvironment) {
 
   var App = undefined;
@@ -2269,6 +2280,215 @@ define('dummy/controllers/array', ['exports', 'ember'], function (exports, _embe
 });
 define('dummy/controllers/object', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller;
+});
+define('dummy/data-test/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  exports['default'] = _ember['default'].Controller.extend({
+    users: null,
+    myTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      var users;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            this.set('users', null);
+            context$1$0.next = 3;
+            return this.store.query('user', {});
+
+          case 3:
+            users = context$1$0.sent;
+
+            this.set('users', users);
+
+          case 5:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    }))
+  });
+});
+define("dummy/data-test/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 4,
+              "column": 2
+            },
+            "end": {
+              "line": 6,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/data-test/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    Loading\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 6,
+              "column": 2
+            },
+            "end": {
+              "line": 8,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/data-test/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    Load\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child2 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 12,
+              "column": 2
+            },
+            "end": {
+              "line": 14,
+              "column": 2
+            }
+          },
+          "moduleName": "dummy/data-test/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("li");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
+          return morphs;
+        },
+        statements: [["content", "u.username", ["loc", [null, [13, 8], [13, 22]]]]],
+        locals: ["u"],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes"]
+        },
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 17,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/data-test/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h1");
+        var el2 = dom.createTextNode("Ember Data Test");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("button");
+        dom.setAttribute(el1, "data-test-selector", "load-data-button");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ul");
+        dom.setAttribute(el1, "data-test-selector", "loaded-users");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [2]);
+        var morphs = new Array(3);
+        morphs[0] = dom.createAttrMorph(element0, 'onclick');
+        morphs[1] = dom.createMorphAt(element0, 1, 1);
+        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [4]), 1, 1);
+        return morphs;
+      },
+      statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [3, 26], [3, 32]]]]], [], ["loc", [null, [3, 16], [3, 34]]]]], ["block", "if", [["get", "myTask.isRunning", ["loc", [null, [4, 8], [4, 24]]]]], [], 0, 1, ["loc", [null, [4, 2], [8, 9]]]], ["block", "each", [["get", "users", ["loc", [null, [12, 10], [12, 15]]]]], [], 2, null, ["loc", [null, [12, 2], [14, 11]]]]],
+      locals: [],
+      templates: [child0, child1, child2]
+    };
+  })());
 });
 define('dummy/deprecation-test/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
   exports['default'] = _ember['default'].Controller.extend({
@@ -7497,6 +7717,9 @@ define('dummy/helpers/pick-from', ['exports', 'ember'], function (exports, _embe
 
   exports['default'] = _ember['default'].Helper.helper(pickFrom);
 });
+define('dummy/helpers/pluralize', ['exports', 'ember-inflector/lib/helpers/pluralize'], function (exports, _emberInflectorLibHelpersPluralize) {
+  exports['default'] = _emberInflectorLibHelpersPluralize['default'];
+});
 define('dummy/helpers/progress-style', ['exports', 'ember'], function (exports, _ember) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
@@ -7556,6 +7779,9 @@ define('dummy/helpers/scale', ['exports', 'ember'], function (exports, _ember) {
   }
 
   exports['default'] = _ember['default'].Helper.helper(scale);
+});
+define('dummy/helpers/singularize', ['exports', 'ember-inflector/lib/helpers/singularize'], function (exports, _emberInflectorLibHelpersSingularize) {
+  exports['default'] = _emberInflectorLibHelpersSingularize['default'];
 });
 define('dummy/helpers/subtract', ['exports', 'ember'], function (exports, _ember) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
@@ -8134,6 +8360,21 @@ define('dummy/initializers/container-debug-adapter', ['exports', 'ember-resolver
     }
   };
 });
+define('dummy/initializers/data-adapter', ['exports', 'ember'], function (exports, _ember) {
+
+  /*
+    This initializer is here to keep backwards compatibility with code depending
+    on the `data-adapter` initializer (before Ember Data was an addon).
+  
+    Should be removed for Ember Data 3.x
+  */
+
+  exports['default'] = {
+    name: 'data-adapter',
+    before: 'store',
+    initialize: _ember['default'].K
+  };
+});
 define('dummy/initializers/ember-cli-fastclick', ['exports', 'ember'], function (exports, _ember) {
 
   var EmberCliFastclickInitializer = {
@@ -8156,6 +8397,45 @@ define('dummy/initializers/ember-concurrency', ['exports', 'ember-concurrency'],
 });
 // This initializer exists only to make sure that the following
 // imports happen before the app boots.
+define('dummy/initializers/ember-data', ['exports', 'ember-data/setup-container', 'ember-data/-private/core'], function (exports, _emberDataSetupContainer, _emberDataPrivateCore) {
+
+  /*
+  
+    This code initializes Ember-Data onto an Ember application.
+  
+    If an Ember.js developer defines a subclass of DS.Store on their application,
+    as `App.StoreService` (or via a module system that resolves to `service:store`)
+    this code will automatically instantiate it and make it available on the
+    router.
+  
+    Additionally, after an application's controllers have been injected, they will
+    each have the store made available to them.
+  
+    For example, imagine an Ember.js application with the following classes:
+  
+    App.StoreService = DS.Store.extend({
+      adapter: 'custom'
+    });
+  
+    App.PostsController = Ember.ArrayController.extend({
+      // ...
+    });
+  
+    When the application is initialized, `App.ApplicationStore` will automatically be
+    instantiated, and the instance of `App.PostsController` will have its `store`
+    property set to that instance.
+  
+    Note that this code will only be run if the `ember-application` package is
+    loaded. If Ember Data is being used in an environment other than a
+    typical application (e.g., node.js where only `ember-runtime` is available),
+    this code will be ignored.
+  */
+
+  exports['default'] = {
+    name: 'ember-data',
+    initialize: _emberDataSetupContainer['default']
+  };
+});
 define('dummy/initializers/export-application-global', ['exports', 'ember', 'dummy/config/environment'], function (exports, _ember, _dummyConfigEnvironment) {
   exports.initialize = initialize;
 
@@ -8189,6 +8469,62 @@ define('dummy/initializers/export-application-global', ['exports', 'ember', 'dum
 
     initialize: initialize
   };
+});
+define('dummy/initializers/injectStore', ['exports', 'ember'], function (exports, _ember) {
+
+  /*
+    This initializer is here to keep backwards compatibility with code depending
+    on the `injectStore` initializer (before Ember Data was an addon).
+  
+    Should be removed for Ember Data 3.x
+  */
+
+  exports['default'] = {
+    name: 'injectStore',
+    before: 'store',
+    initialize: _ember['default'].K
+  };
+});
+define('dummy/initializers/store', ['exports', 'ember'], function (exports, _ember) {
+
+  /*
+    This initializer is here to keep backwards compatibility with code depending
+    on the `store` initializer (before Ember Data was an addon).
+  
+    Should be removed for Ember Data 3.x
+  */
+
+  exports['default'] = {
+    name: 'store',
+    after: 'ember-data',
+    initialize: _ember['default'].K
+  };
+});
+define('dummy/initializers/transforms', ['exports', 'ember'], function (exports, _ember) {
+
+  /*
+    This initializer is here to keep backwards compatibility with code depending
+    on the `transforms` initializer (before Ember Data was an addon).
+  
+    Should be removed for Ember Data 3.x
+  */
+
+  exports['default'] = {
+    name: 'transforms',
+    before: 'store',
+    initialize: _ember['default'].K
+  };
+});
+define("dummy/instance-initializers/ember-data", ["exports", "ember-data/-private/instance-initializers/initialize-store-service"], function (exports, _emberDataPrivateInstanceInitializersInitializeStoreService) {
+  exports["default"] = {
+    name: "ember-data",
+    initialize: _emberDataPrivateInstanceInitializersInitializeStoreService["default"]
+  };
+});
+define('dummy/models/user', ['exports', 'ember-data'], function (exports, _emberData) {
+  exports['default'] = _emberData['default'].Model.extend({
+    username: _emberData['default'].attr('string')
+  });
 });
 define('dummy/resolver', ['exports', 'ember-resolver'], function (exports, _emberResolver) {
   exports['default'] = _emberResolver['default'];
@@ -8227,6 +8563,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
     this.route('experimental-prediction');
     this.route('helpers-test');
     this.route('deprecation-test');
+    this.route('data-test');
   });
 
   exports['default'] = Router;
@@ -8256,7 +8593,7 @@ define("dummy/snippets", ["exports"], function (exports) {
     "debounced-search-with-cancelation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because this\n    // task is `restartable`, if the user starts typing again,\n    // the current search will be canceled at this point and\n    // start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `https://api.github.com/search/repositories?q=${term}`;\n\n    // We yield an AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield this.get('getJSON').perform(url);\n    return json.items;\n  }).restartable(),\n\n  getJSON: task(function * (url) {\n    let xhr;\n    try {\n      xhr = Ember.$.getJSON(url);\n      let result = yield xhr.promise();\n      return result;\n\n      // NOTE: could also write this as\n      // return yield xhr;\n      //\n      // either way, the important thing is to yield before returning\n      // so that the `finally` block doesn't run until after the\n      // promise resolves (or the task is canceled).\n    } finally {\n      xhr.abort();\n    }\n  }),\n});",
     "decorating-tasks-template-isIdle.hbs": "<p>\n  {{#each tasks as |task|}}\n    <button {{action task.perform}} class={{if task.isIdle 'button-primary'}}>\n      {{task.name}}\n    </button>\n  {{/each}}\n</p>",
     "decorating-tasks-template-performWillSucceed.hbs": "<p>\n  {{#each tasks as |task|}}\n    <button {{action task.perform}} class={{if task.performWillSucceed 'button-primary'}}>\n      {{task.name}}\n    </button>\n  {{/each}}\n</p>",
-    "decorating-tasks.js": "function taskWithCooldown(taskPath, ms) {\n  return task(taskPath, function * (otherTask, ...args) {\n    // perform the task...\n    yield otherTask.perform(...args);\n\n    // ...and wait for cooldown timer.\n    yield timeout(ms);\n  }).drop()\n}\n\nexport default Ember.Controller.extend({\n  sharedTask: task(function * () {\n    yield timeout(1000);\n  }).drop(),\n\n  halfSecond: taskWithCooldown('sharedTask', 500),\n  oneSecond:  taskWithCooldown('sharedTask', 1000),\n  twoSeconds: taskWithCooldown('sharedTask', 2000),\n\n  tasks: Ember.computed(function() {\n    return [\n      this.get('halfSecond'),\n      this.get('oneSecond'),\n      this.get('twoSeconds')\n    ];\n  }),\n});",
+    "decorating-tasks.js": "function taskWithCooldown(taskPath, ms) {\n  return task(taskPath, function * (otherTask, ...args) {\n    // perform the task...\n    yield otherTask.perform(...args);\n\n    // ...and wait for cooldown timer.\n    yield timeout(ms);\n  }).drop();\n}\n\nexport default Ember.Controller.extend({\n  sharedTask: task(function * () {\n    yield timeout(1000);\n  }).drop(),\n\n  halfSecond: taskWithCooldown('sharedTask', 500),\n  oneSecond:  taskWithCooldown('sharedTask', 1000),\n  twoSeconds: taskWithCooldown('sharedTask', 2000),\n\n  tasks: Ember.computed(function() {\n    return [\n      this.get('halfSecond'),\n      this.get('oneSecond'),\n      this.get('twoSeconds')\n    ];\n  }),\n});",
     "detail-route.js": "export default Ember.Route.extend({\n  notify: Ember.inject.service('notify'),\n\n  setupController(controller, model) {\n    this.get('pollServerForChanges').perform(model.id);\n  },\n\n  pollServerForChanges: task(function * (id) {\n    let notify = this.get('notify');\n    yield timeout(500);\n    try {\n      notify.info(`Thing ${id}: Starting to poll for changes`);\n      while (true) {\n        yield timeout(5000);\n        notify.info(`Thing ${id}: Polling now...`);\n      }\n    } finally {\n      notify.warning(`Thing ${id}: No longer polling for changes`);\n    }\n  }).cancelOn('deactivate').restartable(),\n});",
     "ember-app-config.js": "var app = new EmberApp({\n  babel: {\n    includePolyfill: true,\n  },\n});\n\n",
     "ember-install.sh": "ember install ember-concurrency\n",
@@ -8362,7 +8699,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.16+153aee59"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+59f5eb2f"});
 }
 
 /* jshint ignore:end */
