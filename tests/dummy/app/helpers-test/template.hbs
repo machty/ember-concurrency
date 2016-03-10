@@ -6,3 +6,5 @@
 {{#my-button action=(cancel-all myTask 1 2) class="cancel-task" }}Cancel{{/my-button}}
 {{#my-button action=(perform    returnValue) class="value-task" }}Return a Value{{/my-button}}
 
+<button onclick={{perform valueTask value="target.innerHTML"}} class="set-value-option-task">Set value option</button>
+

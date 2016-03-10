@@ -12,6 +12,10 @@ export default Ember.Controller.extend({
     }
   }),
 
+  valueTask: task(function * (value) {
+    QUnit.equal(value, "Set value option");
+  }),
+
   returnValue: task(function * () {
     return 10;
   }),

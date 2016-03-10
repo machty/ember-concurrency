@@ -24,3 +24,9 @@ test('deprecate task.perform action', function(assert) {
   click('.deprecated-button');
 });
 
+test('setting value="..." should behave like closure actions and rewrite event arg', function(assert) {
+  assert.expect(1);
+  visit('/helpers-test');
+  click('.set-value-option-task');
+});
+
