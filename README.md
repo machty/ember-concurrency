@@ -28,6 +28,14 @@ ember-concurrency's [dummy test app](https://github.com/machty/ember-concurrency
 (thanks to [ef4](https://github.com/ef4) for spearheading this
 approach).
 
+## Problems?
+
+Whether you've found a bug or just have a question about
+ember-concurrency, feel free to [Open an Issue](https://github.com/machty/ember-concurrency/issues).
+Also, I highly recommend heading over to the
+[Ember.js Community Slack](https://embercommunity.slack.com)
+and asking your question in the `#ember-concurrency` channel.
+
 ## Addon Maintenance
 
 ### Installation
