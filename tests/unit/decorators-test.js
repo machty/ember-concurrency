@@ -34,7 +34,7 @@ function decoratorTest(decoratorName, decorator, bufferPolicy) {
     Ember.run(() => {
       let obj = Obj.create();
       let task = obj.get('myTask');
-      assert.equal(task.bufferPolicy, bufferPolicy);
+      assert.equal(task._bufferPolicy, bufferPolicy);
     });
   });
 }

@@ -35,7 +35,7 @@ function isSuccess(nextPerformState) {
 export const Task = Ember.Object.extend({
   fn: null,
   context: null,
-  bufferPolicy: null,
+  _bufferPolicy: null,
 
   /**
    * This property is true if this task is NOT running, i.e. the number
@@ -109,7 +109,7 @@ export const Task = Ember.Object.extend({
   nextPerformState: computed('_performsState', function() {
     let performsState = this.get('_performsState');
     return isSuccess(performsState) ?
-      this.bufferPolicy.getNextPerformStatus(this) :
+      this._bufferPolicy.getNextPerformStatus(this) :
       performsState;
   }),
 
@@ -282,7 +282,7 @@ export const Task = Ember.Object.extend({
     this._flushScheduled = false;
     this._activeTaskInstances = Ember.A(this._activeTaskInstances.filterBy('isFinished', false));
 
-    this.bufferPolicy.schedule(this);
+    this._bufferPolicy.schedule(this);
 
     for (let i = 0; i < this._activeTaskInstances.length; ++i) {
       let taskInstance = this._activeTaskInstances[i];
@@ -346,7 +346,7 @@ export function TaskProperty(...decorators) {
       fn: taskFn,
       context: this,
       _origin: this,
-      bufferPolicy: tp.bufferPolicy,
+      _bufferPolicy: tp._bufferPolicy,
       _maxConcurrency: tp._maxConcurrency,
       _performsPath,
       _propertyName,
@@ -355,7 +355,7 @@ export function TaskProperty(...decorators) {
     });
   });
 
-  this.bufferPolicy = enqueueTasksPolicy;
+  this._bufferPolicy = enqueueTasksPolicy;
   this._maxConcurrency = Infinity;
   this.eventNames = null;
   this.cancelEventNames = null;
@@ -452,7 +452,7 @@ TaskProperty.prototype.cancelOn = function() {
  * @instance
  */
 TaskProperty.prototype.restartable = function() {
-  this.bufferPolicy = cancelOngoingTasksPolicy;
+  this._bufferPolicy = cancelOngoingTasksPolicy;
   this._setDefaultMaxConcurrency(1);
   return this;
 };
@@ -467,7 +467,7 @@ TaskProperty.prototype.restartable = function() {
  * @instance
  */
 TaskProperty.prototype.enqueue = function() {
-  this.bufferPolicy = enqueueTasksPolicy;
+  this._bufferPolicy = enqueueTasksPolicy;
   this._setDefaultMaxConcurrency(1);
   return this;
 };
@@ -482,7 +482,7 @@ TaskProperty.prototype.enqueue = function() {
  * @instance
  */
 TaskProperty.prototype.drop = function() {
-  this.bufferPolicy = dropQueuedTasksPolicy;
+  this._bufferPolicy = dropQueuedTasksPolicy;
   this._setDefaultMaxConcurrency(1);
   return this;
 };
@@ -491,7 +491,7 @@ TaskProperty.prototype.drop = function() {
  * @private
  */
 TaskProperty.prototype.keepLatest = function() {
-  this.bufferPolicy = dropButKeepLatestPolicy;
+  this._bufferPolicy = dropButKeepLatestPolicy;
   this._setDefaultMaxConcurrency(1);
   return this;
 };

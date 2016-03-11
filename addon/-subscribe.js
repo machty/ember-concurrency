@@ -30,7 +30,7 @@ let loopTaskAttrs = {
       task = Task.create({
         fn: this._fnOrTask,
         context: this._taskInstance.context,
-        bufferPolicy: this._bufferPolicy,
+        _bufferPolicy: this._bufferPolicy,
         _maxConcurrency: this._maxConcurrency,
         _propertyName: `${this._taskInstance.get('name')}:inner subscribe() task`,
       });
