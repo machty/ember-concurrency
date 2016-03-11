@@ -1,3 +1,4 @@
+/*
 import Ember from 'ember';
 import { task, subscribe } from 'ember-concurrency';
 
@@ -208,6 +209,5 @@ test("subscribe() can be passed a Task to run", function(assert) {
   assert.equal(obj.get('foo.concurrency'), 0);
   assert.deepEqual(values, [10, 11, 12, 20, 21, 22, 30, 31, 32]);
 });
-
-
+*/
 

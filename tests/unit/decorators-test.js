@@ -34,7 +34,7 @@ function decoratorTest(decoratorName, decorator, bufferPolicy) {
     Ember.run(() => {
       let obj = Obj.create();
       let task = obj.get('myTask');
-      assert.equal(task._bufferPolicy, bufferPolicy);
+      assert.equal(task._scheduler.bufferPolicy, bufferPolicy);
     });
   });
 }
@@ -49,7 +49,7 @@ test(`task accepts maxConcurrency as a decorator arg`, function(assert) {
   Ember.run(() => {
     let obj = Obj.create();
     let task = obj.get('myTask');
-    assert.equal(task._maxConcurrency, 5);
+    assert.equal(task._scheduler.maxConcurrency, 5);
   });
 });
 

@@ -122,6 +122,7 @@ test("task().cancelOn", function(assert) {
   });
 });
 
+/*
 test("string arg decorate links two tasks such that if the target task next perform will fail, the calling task will immediately drop", function(assert) {
   assert.expect(14);
 
@@ -213,4 +214,5 @@ test("string arg decorator allows caller's perform to succeed when maxConcurrenc
     assert.equal(e.message, "wat");
   }
 });
+*/
 

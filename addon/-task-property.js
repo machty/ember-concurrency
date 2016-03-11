@@ -1,19 +1,9 @@
 import Ember from 'ember';
 import TaskInstance from './-task-instance';
-import { _cleanupOnDestroy } from './utils';
-import {
-  enqueueTasksPolicy,
-  dropQueuedTasksPolicy,
-  cancelOngoingTasksPolicy,
-  dropButKeepLatestPolicy
-} from './-buffer-policy';
-
-const ComputedProperty = Ember.__loader.require("ember-metal/computed").ComputedProperty;
-const { computed } = Ember;
-
-function isSuccess(nextPerformState) {
-  return nextPerformState === 'succeed' || nextPerformState === 'cancel_previous';
-}
+import TaskStateMixin from './-task-state-mixin';
+import { TaskGroup } from './-task-group';
+import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
+import { _cleanupOnDestroy, _ComputedProperty } from './utils';
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -32,10 +22,24 @@ function isSuccess(nextPerformState) {
 
   @class Task
 */
-export const Task = Ember.Object.extend({
+export const Task = Ember.Object.extend(TaskStateMixin, {
   fn: null,
   context: null,
   _bufferPolicy: null,
+
+  init() {
+    this._super(...arguments);
+
+    let self = this;
+    this.perform = function(...args) {
+      if (this !== self) {
+        console.warn(`The use of ${self._propertyName}.perform within a template is deprecated and won't be supported in future versions of ember-concurrency. Please use the \`perform\` helper instead, e.g. {{perform ${self._propertyName}}}`);
+      }
+      return self._perform(...args);
+    };
+
+    _cleanupOnDestroy(this.context, this, 'cancelAll');
+  },
 
   /**
    * This property is true if this task is NOT running, i.e. the number
@@ -48,7 +52,6 @@ export const Task = Ember.Object.extend({
    * @instance
    * @readOnly
    */
-  isIdle: computed.equal('concurrency', 0),
 
   /**
    * This property is true if this task is running, i.e. the number
@@ -61,34 +64,6 @@ export const Task = Ember.Object.extend({
    * @instance
    * @readOnly
    */
-  isRunning: Ember.computed.not('isIdle'),
-
-  state: computed('isIdle', function() {
-    return this.get('isIdle') ? 'idle' : 'running';
-  }),
-  _maxConcurrency: Infinity,
-  _activeTaskInstances: null,
-  _needsFlush: null,
-  _propertyName: null,
-  _origin: null,
-
-  name: computed.oneWay('_propertyName'),
-
-  _performsPath: null,
-  _performs: computed('_performsPath', function() {
-    let path = this.get('_performsPath');
-    if (!path) { return; }
-
-    let task = this.context.get(path);
-    if (!(task instanceof Task)) {
-      throw new Error(`You wrote .performs('${path}'), but the object at '${path}' is not a Task`);
-    }
-    return task;
-  }),
-
-  _performsState: computed('_performs.nextPerformState', function() {
-    return this.get('_performs.nextPerformState') || 'succeed';
-  }),
 
   /**
    * EXPERIMENTAL
@@ -106,12 +81,6 @@ export const Task = Ember.Object.extend({
    * @private
    * @readOnly
    */
-  nextPerformState: computed('_performsState', function() {
-    let performsState = this.get('_performsState');
-    return isSuccess(performsState) ?
-      this._bufferPolicy.getNextPerformStatus(this) :
-      performsState;
-  }),
 
   /**
    * EXPERIMENTAL
@@ -124,9 +93,6 @@ export const Task = Ember.Object.extend({
    * @private
    * @readOnly
    */
-  performWillSucceed: computed('nextPerformState', function() {
-    return isSuccess(this.get('nextPerformState'));
-  }),
 
   /**
    * EXPERIMENTAL
@@ -139,7 +105,6 @@ export const Task = Ember.Object.extend({
    * @private
    * @readOnly
    */
-  performWillDrop: computed.equal('nextPerformState', 'drop'),
 
   /**
    * EXPERIMENTAL
@@ -152,7 +117,6 @@ export const Task = Ember.Object.extend({
    * @private
    * @readOnly
    */
-  performWillEnqueue: computed.equal('nextPerformState', 'enqueue'),
 
   /**
    * EXPERIMENTAL
@@ -164,25 +128,7 @@ export const Task = Ember.Object.extend({
    * @private
    * @readOnly
    */
-  performWillCancelPrevious: computed.equal('nextPerformState', 'cancel_previous'),
 
-  init() {
-    this._super(...arguments);
-    this._activeTaskInstances = Ember.A();
-    this._queuedTaskInstances = Ember.A();
-
-    let self = this;
-    this.perform = function(...args) {
-      if (this !== self) {
-        console.warn(`The use of ${self._propertyName}.perform within a template is deprecated and won't be supported in future versions of ember-concurrency. Please use the \`perform\` helper instead, e.g. {{perform ${self._propertyName}}}`);
-      }
-      return self._perform(...args);
-    };
-
-    this._needsFlush = Ember.run.bind(this, this._scheduleFlush);
-
-    _cleanupOnDestroy(this.context, this, 'cancelAll');
-  },
 
   /**
    * The current number of active running task instances. This
@@ -192,7 +138,6 @@ export const Task = Ember.Object.extend({
    * @instance
    * @readOnly
    */
-  concurrency: 0,
 
   /**
    * Creates a new {@linkcode TaskInstance} and attempts to run it right away.
@@ -218,27 +163,16 @@ export const Task = Ember.Object.extend({
    * @memberof Task
    * @instance
    */
-  cancelAll() {
-    this.spliceTaskInstances(this._activeTaskInstances, 0, this._activeTaskInstances.length);
-    this.spliceTaskInstances(this._queuedTaskInstances, 0, this._queuedTaskInstances.length);
-  },
-
-  spliceTaskInstances(taskInstances, index, count) {
-    for (let i = index; i < index + count; ++i) {
-      taskInstances[i].cancel();
-    }
-    taskInstances.splice(index, count);
-  },
 
   toString() {
     return `<Task:${this._propertyName}>`;
   },
 
   _perform(...args) {
-    let performsTask = this.get('_performs');
-    if (performsTask) {
-      args.unshift(performsTask);
-    }
+    //let performsTask = this.get('_performs');
+    //if (performsTask) {
+      //args.unshift(performsTask);
+    //}
 
     let taskInstance = TaskInstance.create({
       fn: this.fn,
@@ -249,74 +183,20 @@ export const Task = Ember.Object.extend({
       _debugCallback: this._debugCallback,
     });
 
-    if (this._debugCallback) {
-      this._debugCallback({
-        type: 'perform',
-        taskInstance,
-        task: this,
-      });
-    }
+    //if (this._debugCallback) {
+      //this._debugCallback({
+        //type: 'perform',
+        //taskInstance,
+        //task: this,
+      //});
+    //}
 
-    if (this.get('_performs') && !this.get('performWillSucceed')) {
-      // tasks linked via .performs() should be immediately dropped
-      // before they even have a chance to run if we know that
-      // .performWillSucceed is false.
-      taskInstance.cancel();
-      return taskInstance;
-    }
-
-    this._queuedTaskInstances.push(taskInstance);
-    this._needsFlush();
-    this.notifyPropertyChange('nextPerformState');
-
+    this._scheduler.schedule(taskInstance);
     return taskInstance;
   },
 
-  _flushScheduled: false,
-  _scheduleFlush() {
-    this._flushScheduled = true;
-    Ember.run.once(this, this._flushQueues);
-  },
-
-  _flushQueues() {
-    this._flushScheduled = false;
-    this._activeTaskInstances = Ember.A(this._activeTaskInstances.filterBy('isFinished', false));
-
-    this._bufferPolicy.schedule(this);
-
-    for (let i = 0; i < this._activeTaskInstances.length; ++i) {
-      let taskInstance = this._activeTaskInstances[i];
-      if (!taskInstance.hasStarted) {
-        // use internal promise so that it doesn't cancel error reporting
-        taskInstance._start()._defer.promise.then(this._needsFlush, this._needsFlush);
-      }
-    }
-
-    this.notifyPropertyChange('nextPerformState');
-
-    let concurrency = this._activeTaskInstances.length;
-    this.set('concurrency', concurrency);
-    if (this._completionDefer && concurrency === 0) {
-      this._completionDefer.resolve();
-      this._completionDefer = null;
-    }
-  },
-
-  _completionDefer: null,
   _getCompletionPromise() {
-    return new Ember.RSVP.Promise(r => {
-      Ember.run.schedule('actions', null, () => {
-        let defer = Ember.RSVP.defer();
-        if (!this._flushScheduled &&
-            this._activeTaskInstances.length === 0 &&
-            this._queuedTaskInstances.length === 0) {
-          defer.resolve();
-        } else {
-          this._completionDefer = defer;
-        }
-        defer.promise.then(r);
-      });
-    });
+    return this._scheduler.getCompletionPromise();
   },
 });
 
@@ -341,22 +221,18 @@ export function TaskProperty(...decorators) {
   let _performsPath;
 
   let tp = this;
-  ComputedProperty.call(this, function(_propertyName) {
+  _ComputedProperty.call(this, function(_propertyName) {
     return Task.create({
       fn: taskFn,
       context: this,
       _origin: this,
-      _bufferPolicy: tp._bufferPolicy,
-      _maxConcurrency: tp._maxConcurrency,
-      _performsPath,
+      _scheduler: resolveScheduler(tp, this, TaskGroup),
+      //_performsPath,
       _propertyName,
-      _debugName: "",
       _debugCallback: tp._debugCallback,
     });
   });
 
-  this._bufferPolicy = enqueueTasksPolicy;
-  this._maxConcurrency = Infinity;
   this.eventNames = null;
   this.cancelEventNames = null;
   this._debugCallback = null;
@@ -378,176 +254,145 @@ function applyDecorator(taskProperty, decorator) {
   }
 }
 
-TaskProperty.prototype = Object.create(ComputedProperty.prototype);
-TaskProperty.prototype.constructor = TaskProperty;
-TaskProperty.prototype.setup = function(proto, keyname) {
-  addListenersToPrototype(proto, this.eventNames, keyname, '_perform');
-  addListenersToPrototype(proto, this.cancelEventNames, keyname, 'cancelAll');
-};
+TaskProperty.prototype = Object.create(_ComputedProperty.prototype);
+Object.assign(TaskProperty.prototype, propertyModifiers, {
+  constructor: TaskProperty,
 
-/**
- * Calling `task(...).on(eventName)` configures the task to be
- * automatically performed when the specified events fire. In
- * this way, it behaves like
- * [Ember.on](http://emberjs.com/api/classes/Ember.html#method_on).
- *
- * You can use `task(...).on('init')` to perform the task
- * when the host object is initialized.
- *
- * ```js
- * export default Ember.Component.extend({
- *   pollForUpdates: task(function * () {
- *     // ... this runs when the Component is first created
- *     // because we specified .on('init')
- *   }).on('init'),
- *
- *   handleFoo: task(function * (a, b, c) {
- *     // this gets performed automatically if the 'foo'
- *     // event fires on this Component,
- *     // e.g., if someone called component.trigger('foo')
- *   }).on('foo'),
- * });
- * ```
- *
- * [See the Writing Tasks Docs for more info](/#/docs/writing-tasks)
- *
- * @method on
- * @memberof TaskProperty
- * @param {String} eventNames*
- * @instance
- */
-TaskProperty.prototype.on = function() {
-  this.eventNames = this.eventNames || [];
-  this.eventNames.push.apply(this.eventNames, arguments);
-  return this;
-};
+  setup(proto, keyname) {
+    addListenersToPrototype(proto, this.eventNames, keyname, '_perform');
+    addListenersToPrototype(proto, this.cancelEventNames, keyname, 'cancelAll');
+  },
 
-/**
- * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
- * but instead will cause the task to be canceled if any of the
- * specified events fire on the parent object.
- *
- * [See the Live Example](/#/docs/examples/route-tasks/1)
- *
- * @method cancelOn
- * @memberof TaskProperty
- * @param {String} eventNames*
- * @instance
- */
-TaskProperty.prototype.cancelOn = function() {
-  this.cancelEventNames = this.cancelEventNames || [];
-  this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
-  return this;
-};
+  /**
+   * Calling `task(...).on(eventName)` configures the task to be
+   * automatically performed when the specified events fire. In
+   * this way, it behaves like
+   * [Ember.on](http://emberjs.com/api/classes/Ember.html#method_on).
+   *
+   * You can use `task(...).on('init')` to perform the task
+   * when the host object is initialized.
+   *
+   * ```js
+   * export default Ember.Component.extend({
+   *   pollForUpdates: task(function * () {
+   *     // ... this runs when the Component is first created
+   *     // because we specified .on('init')
+   *   }).on('init'),
+   *
+   *   handleFoo: task(function * (a, b, c) {
+   *     // this gets performed automatically if the 'foo'
+   *     // event fires on this Component,
+   *     // e.g., if someone called component.trigger('foo')
+   *   }).on('foo'),
+   * });
+   * ```
+   *
+   * [See the Writing Tasks Docs for more info](/#/docs/writing-tasks)
+   *
+   * @method on
+   * @memberof TaskProperty
+   * @param {String} eventNames*
+   * @instance
+   */
+  on() {
+    this.eventNames = this.eventNames || [];
+    this.eventNames.push.apply(this.eventNames, arguments);
+    return this;
+  },
 
-/**
- * Configures the task to cancel old currently task instances
- * to make room for a new one to perform. Sets default
- * maxConcurrency to 1.
- *
- * [See the Live Example](/#/docs/examples/route-tasks/1)
- *
- * @method restartable
- * @memberof TaskProperty
- * @instance
- */
-TaskProperty.prototype.restartable = function() {
-  this._bufferPolicy = cancelOngoingTasksPolicy;
-  this._setDefaultMaxConcurrency(1);
-  return this;
-};
+  /**
+   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
+   * but instead will cause the task to be canceled if any of the
+   * specified events fire on the parent object.
+   *
+   * [See the Live Example](/#/docs/examples/route-tasks/1)
+   *
+   * @method cancelOn
+   * @memberof TaskProperty
+   * @param {String} eventNames*
+   * @instance
+   */
+  cancelOn() {
+    this.cancelEventNames = this.cancelEventNames || [];
+    this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
+    return this;
+  },
 
-/**
- * Configures the task to run task instances one-at-a-time in
- * the order they were `.perform()`ed. Sets default
- * maxConcurrency to 1.
- *
- * @method enqueue
- * @memberof TaskProperty
- * @instance
- */
-TaskProperty.prototype.enqueue = function() {
-  this._bufferPolicy = enqueueTasksPolicy;
-  this._setDefaultMaxConcurrency(1);
-  return this;
-};
+  /**
+   * Configures the task to cancel old currently task instances
+   * to make room for a new one to perform. Sets default
+   * maxConcurrency to 1.
+   *
+   * [See the Live Example](/#/docs/examples/route-tasks/1)
+   *
+   * @method restartable
+   * @memberof TaskProperty
+   * @instance
+   */
 
-/**
- * Configures the task to immediately cancel (i.e. drop) any
- * task instances performed when the task is already running
- * at maxConcurrency. Sets default maxConcurrency to 1.
- *
- * @method drop
- * @memberof TaskProperty
- * @instance
- */
-TaskProperty.prototype.drop = function() {
-  this._bufferPolicy = dropQueuedTasksPolicy;
-  this._setDefaultMaxConcurrency(1);
-  return this;
-};
+  /**
+   * Configures the task to run task instances one-at-a-time in
+   * the order they were `.perform()`ed. Sets default
+   * maxConcurrency to 1.
+   *
+   * @method enqueue
+   * @memberof TaskProperty
+   * @instance
+   */
 
-/**
- * @private
- */
-TaskProperty.prototype.keepLatest = function() {
-  this._bufferPolicy = dropButKeepLatestPolicy;
-  this._setDefaultMaxConcurrency(1);
-  return this;
-};
+  /**
+   * Configures the task to immediately cancel (i.e. drop) any
+   * task instances performed when the task is already running
+   * at maxConcurrency. Sets default maxConcurrency to 1.
+   *
+   * @method drop
+   * @memberof TaskProperty
+   * @instance
+   */
 
-/**
- * Sets the maximum number of task instances that are allowed
- * to run at the same time. By default, with no task modifiers
- * applied, this number is Infinity (there is no limit
- * to the number of tasks that can run at the same time).
- * {@linkcode TaskProperty#restartable .restartable()},
- * {@linkcode TaskProperty#enqueue .enqueue()}, and
- * {@linkcode TaskProperty#drop .drop()} set the default
- * maxConcurrency to 1, but you can override this value
- * to set the maximum number of concurrently running tasks
- * to a number greater than 1.
- *
- * [See the AJAX Throttling example](/#/docs/examples/ajax-throttling)
- *
- * The example below uses a task with `maxConcurrency(3)` to limit
- * the number of concurrent AJAX requests (for anyone using this task)
- * to 3.
- *
- * ```js
- * doSomeAjax: task(function * (url) {
- *   return Ember.$.getJSON(url).promise();
- * }).maxConcurrency(3),
- *
- * elsewhere() {
- *   this.get('doSomeAjax').perform("http://www.example.com/json");
- * },
- * ```
- *
- * @method maxConcurrency
- * @memberof TaskProperty
- * @param {Number} n The maximum number of concurrently running tasks
- * @instance
- */
-TaskProperty.prototype.maxConcurrency = function(n) {
-  this._maxConcurrency = n;
-  return this;
-};
+  /**
+   * Sets the maximum number of task instances that are allowed
+   * to run at the same time. By default, with no task modifiers
+   * applied, this number is Infinity (there is no limit
+   * to the number of tasks that can run at the same time).
+   * {@linkcode TaskProperty#restartable .restartable()},
+   * {@linkcode TaskProperty#enqueue .enqueue()}, and
+   * {@linkcode TaskProperty#drop .drop()} set the default
+   * maxConcurrency to 1, but you can override this value
+   * to set the maximum number of concurrently running tasks
+   * to a number greater than 1.
+   *
+   * [See the AJAX Throttling example](/#/docs/examples/ajax-throttling)
+   *
+   * The example below uses a task with `maxConcurrency(3)` to limit
+   * the number of concurrent AJAX requests (for anyone using this task)
+   * to 3.
+   *
+   * ```js
+   * doSomeAjax: task(function * (url) {
+   *   return Ember.$.getJSON(url).promise();
+   * }).maxConcurrency(3),
+   *
+   * elsewhere() {
+   *   this.get('doSomeAjax').perform("http://www.example.com/json");
+   * },
+   * ```
+   *
+   * @method maxConcurrency
+   * @memberof TaskProperty
+   * @param {Number} n The maximum number of concurrently running tasks
+   * @instance
+   */
 
-TaskProperty.prototype._setDefaultMaxConcurrency = function(n) {
-  if (this._maxConcurrency === Infinity) {
-    this._maxConcurrency = n;
-  }
-};
+  _debug(cb) {
+    this._debugCallback = cb || defaultDebugCallback;
+    return this;
+  },
+});
 
 function defaultDebugCallback(payload) {
   console.log(payload);
 }
-
-TaskProperty.prototype._debug = function(cb) {
-  this._debugCallback = cb || defaultDebugCallback;
-  return this;
-};
 
 function addListenersToPrototype(proto, eventNames, taskName, taskMethod) {
   if (eventNames) {

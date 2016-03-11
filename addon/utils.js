@@ -87,3 +87,5 @@ export function _cleanupOnDestroy(owner, object, cleanupMethodName) {
 // TODO: Symbol polyfill?
 export const yieldableSymbol = "__ec_yieldable__";
 
+export const _ComputedProperty = Ember.__loader.require("ember-metal/computed").ComputedProperty;
+
