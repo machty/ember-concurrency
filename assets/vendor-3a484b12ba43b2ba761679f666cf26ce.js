@@ -95744,73 +95744,73 @@ define('ember-concurrency/-buffer-policy', ['exports'], function (exports) {
     }
   }
 
-  var saturateActiveQueue = function saturateActiveQueue(task) {
-    while (task._activeTaskInstances.length < task._maxConcurrency) {
-      var taskInstance = task._queuedTaskInstances.shift();
+  var saturateActiveQueue = function saturateActiveQueue(scheduler) {
+    while (scheduler.activeTaskInstances.length < scheduler.maxConcurrency) {
+      var taskInstance = scheduler.queuedTaskInstances.shift();
       if (!taskInstance) {
         break;
       }
-      task._activeTaskInstances.push(taskInstance);
+      scheduler.activeTaskInstances.push(taskInstance);
     }
   };
 
-  function numPerformSlots(task) {
-    return task._maxConcurrency - task._queuedTaskInstances.length - task._activeTaskInstances.length;
+  function numPerformSlots(scheduler) {
+    return scheduler.maxConcurrency - scheduler.queuedTaskInstances.length - scheduler.activeTaskInstances.length;
   }
 
   var enqueueTasksPolicy = {
     requiresUnboundedConcurrency: true,
-    schedule: function schedule(task) {
+    schedule: function schedule(scheduler) {
       // [a,b,_] [c,d,e,f] becomes
       // [a,b,c] [d,e,f]
-      saturateActiveQueue(task);
+      saturateActiveQueue(scheduler);
     },
-    getNextPerformStatus: function getNextPerformStatus(task) {
-      return numPerformSlots(task) > 0 ? 'succeed' : 'enqueue';
+    getNextPerformStatus: function getNextPerformStatus(scheduler) {
+      return numPerformSlots(scheduler) > 0 ? 'succeed' : 'enqueue';
     }
   };
 
   exports.enqueueTasksPolicy = enqueueTasksPolicy;
 
   var dropQueuedTasksPolicy = {
-    schedule: function schedule(task) {
+    schedule: function schedule(scheduler) {
       // [a,b,_] [c,d,e,f] becomes
       // [a,b,c] []
-      saturateActiveQueue(task);
-      task.spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length);
+      saturateActiveQueue(scheduler);
+      scheduler.spliceTaskInstances(scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length);
     },
-    getNextPerformStatus: function getNextPerformStatus(task) {
-      return numPerformSlots(task) > 0 ? 'succeed' : 'drop';
+    getNextPerformStatus: function getNextPerformStatus(scheduler) {
+      return numPerformSlots(scheduler) > 0 ? 'succeed' : 'drop';
     }
   };
 
   exports.dropQueuedTasksPolicy = dropQueuedTasksPolicy;
 
   var cancelOngoingTasksPolicy = {
-    schedule: function schedule(task) {
+    schedule: function schedule(scheduler) {
       // [a,b,_] [c,d,e,f] becomes
       // [d,e,f] []
-      var activeTaskInstances = task._activeTaskInstances;
-      var queuedTaskInstances = task._queuedTaskInstances;
+      var activeTaskInstances = scheduler.activeTaskInstances;
+      var queuedTaskInstances = scheduler.queuedTaskInstances;
       activeTaskInstances.push.apply(activeTaskInstances, _toConsumableArray(queuedTaskInstances));
       queuedTaskInstances.length = 0;
 
-      var numToShift = Math.max(0, activeTaskInstances.length - task._maxConcurrency);
-      task.spliceTaskInstances(activeTaskInstances, 0, numToShift);
+      var numToShift = Math.max(0, activeTaskInstances.length - scheduler.maxConcurrency);
+      scheduler.spliceTaskInstances(activeTaskInstances, 0, numToShift);
     },
-    getNextPerformStatus: function getNextPerformStatus(task) {
-      return numPerformSlots(task) > 0 ? 'succeed' : 'cancel_previous';
+    getNextPerformStatus: function getNextPerformStatus(scheduler) {
+      return numPerformSlots(scheduler) > 0 ? 'succeed' : 'cancel_previous';
     }
   };
 
   exports.cancelOngoingTasksPolicy = cancelOngoingTasksPolicy;
 
   var dropButKeepLatestPolicy = {
-    schedule: function schedule(task) {
+    schedule: function schedule(scheduler) {
       // [a,b,_] [c,d,e,f] becomes
       // [d,e,f] []
-      saturateActiveQueue(task);
-      task.spliceTaskInstances(task._queuedTaskInstances, 0, task._queuedTaskInstances.length - 1);
+      saturateActiveQueue(scheduler);
+      scheduler.spliceTaskInstances(scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length - 1);
     }
   };
   exports.dropButKeepLatestPolicy = dropButKeepLatestPolicy;
@@ -95897,7 +95897,7 @@ define('ember-concurrency/-helpers', ['exports', 'ember', 'ember-concurrency/-ta
     }
   }
 
-  function taskHelperClosure(helperName, taskMethod, _args) {
+  function taskHelperClosure(helperName, taskMethod, _args, hash) {
     var task = _args[0];
     var outerArgs = _args.slice(1);
 
@@ -95910,9 +95910,201 @@ define('ember-concurrency/-helpers', ['exports', 'ember', 'ember-concurrency/-ta
         innerArgs[_key] = arguments[_key];
       }
 
+      if (hash && hash.value) {
+        var _event = innerArgs.pop();
+        innerArgs.push(_ember['default'].get(_event, hash.value));
+      }
+
       return task[taskMethod].apply(task, _toConsumableArray(outerArgs).concat(innerArgs));
     };
   }
+});
+define('ember-concurrency/-property-modifiers-mixin', ['exports', 'ember', 'ember-concurrency/-scheduler', 'ember-concurrency/-buffer-policy'], function (exports, _ember, _emberConcurrencyScheduler, _emberConcurrencyBufferPolicy) {
+  'use strict';
+
+  exports.resolveScheduler = resolveScheduler;
+
+  var propertyModifiers = {
+    // by default, task(...) expands to task(...).enqueue().maxConcurrency(Infinity)
+    _bufferPolicy: _emberConcurrencyBufferPolicy.enqueueTasksPolicy,
+    _maxConcurrency: Infinity,
+    _taskGroupPath: null,
+    _hasUsedModifier: false,
+
+    restartable: function restartable() {
+      return setBufferPolicy(this, _emberConcurrencyBufferPolicy.cancelOngoingTasksPolicy);
+    },
+
+    enqueue: function enqueue() {
+      return setBufferPolicy(this, _emberConcurrencyBufferPolicy.enqueueTasksPolicy);
+    },
+
+    drop: function drop() {
+      return setBufferPolicy(this, _emberConcurrencyBufferPolicy.dropQueuedTasksPolicy);
+    },
+
+    keepLatest: function keepLatest() {
+      return setBufferPolicy(this, _emberConcurrencyBufferPolicy.dropButKeepLatestPolicy);
+    },
+
+    maxConcurrency: function maxConcurrency(n) {
+      this._hasUsedModifier = true;
+      this._maxConcurrency = n;
+      assertModifiersNotMixedWithGroup(this);
+      return this;
+    },
+
+    group: function group(taskGroupPath) {
+      this._taskGroupPath = taskGroupPath;
+      assertModifiersNotMixedWithGroup(this);
+      return this;
+    }
+  };
+
+  exports.propertyModifiers = propertyModifiers;
+
+  function setBufferPolicy(obj, policy) {
+    obj._hasUsedModifier = true;
+    obj._bufferPolicy = policy;
+    assertModifiersNotMixedWithGroup(obj);
+
+    if (obj._maxConcurrency === Infinity) {
+      obj._maxConcurrency = 1;
+    }
+
+    return obj;
+  }
+
+  function assertModifiersNotMixedWithGroup(obj) {
+    _ember['default'].assert('ember-concurrency does not currently support using both .group() with other task modifiers (e.g. drop(), enqueue(), restartable())', !obj._hasUsedModifier || !obj._taskGroupPath);
+  }
+
+  function resolveScheduler(propertyObj, obj, TaskGroup) {
+    if (propertyObj._taskGroupPath) {
+      var taskGroup = obj.get(propertyObj._taskGroupPath);
+      _ember['default'].assert('Expected path \'' + propertyObj._taskGroupPath + '\' to resolve to a TaskGroup object, but instead was ' + taskGroup, taskGroup instanceof TaskGroup);
+      return taskGroup._scheduler;
+    } else {
+      return _emberConcurrencyScheduler['default'].create({
+        bufferPolicy: propertyObj._bufferPolicy,
+        maxConcurrency: propertyObj._maxConcurrency
+      });
+    }
+  }
+});
+define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, _ember) {
+  'use strict';
+
+  var Scheduler = _ember['default'].Object.extend({
+    init: function init() {
+      this._super.apply(this, arguments);
+      this.activeTaskInstances = _ember['default'].A();
+      this.queuedTaskInstances = _ember['default'].A();
+      this._needsFlush = _ember['default'].run.bind(this, this._scheduleFlush);
+    },
+
+    cancelAll: function cancelAll() {
+      this.spliceTaskInstances(this.activeTaskInstances, 0, this.activeTaskInstances.length);
+      this.spliceTaskInstances(this.queuedTaskInstances, 0, this.queuedTaskInstances.length);
+    },
+
+    spliceTaskInstances: function spliceTaskInstances(taskInstances, index, count) {
+      for (var i = index; i < index + count; ++i) {
+        taskInstances[i].cancel();
+      }
+      taskInstances.splice(index, count);
+    },
+
+    schedule: function schedule(taskInstance) {
+      this.queuedTaskInstances.push(taskInstance);
+      this._needsFlush();
+      //this.notifyPropertyChange('nextPerformState');
+    },
+
+    _needsFlush: null,
+
+    _flushScheduled: false,
+    _scheduleFlush: function _scheduleFlush() {
+      this._flushScheduled = true;
+      _ember['default'].run.once(this, this._flushQueues);
+    },
+
+    _flushQueues: function _flushQueues() {
+      this._flushScheduled = false;
+      var seen = {};
+
+      for (var i = 0; i < this.activeTaskInstances.length; ++i) {
+        var task = this.activeTaskInstances[i].task;
+        seen[_ember['default'].guidFor(task)] = task;
+      }
+
+      this.activeTaskInstances = _ember['default'].A(this.activeTaskInstances.filterBy('isFinished', false));
+      this.bufferPolicy.schedule(this);
+
+      for (var i = 0; i < this.activeTaskInstances.length; ++i) {
+        var taskInstance = this.activeTaskInstances[i];
+        if (!taskInstance.hasStarted) {
+          // use internal promise so that it doesn't cancel error reporting
+          taskInstance._start()._defer.promise.then(this._needsFlush, this._needsFlush);
+        }
+        var task = taskInstance.task;
+        seen[_ember['default'].guidFor(task)] = task;
+        task._numRunning++;
+      }
+
+      for (var i = 0; i < this.queuedTaskInstances.length; ++i) {
+        var task = this.queuedTaskInstances[i].task;
+        seen[_ember['default'].guidFor(task)] = task;
+        task._numQueued++;
+      }
+
+      flushTaskCounts(seen);
+
+      var concurrency = this.activeTaskInstances.length;
+      this.set('concurrency', concurrency);
+      if (this.completionDefer && concurrency === 0) {
+        this.completionDefer.resolve();
+        this.completionDefer = null;
+      }
+    },
+
+    completionDefer: null,
+    getCompletionPromise: function getCompletionPromise() {
+      var _this = this;
+
+      return new _ember['default'].RSVP.Promise(function (r) {
+        _ember['default'].run.schedule('actions', null, function () {
+          var defer = _ember['default'].RSVP.defer();
+          if (!_this._flushScheduled && _this.activeTaskInstances.length === 0 && _this.queuedTaskInstances.length === 0) {
+            defer.resolve();
+          } else {
+            _this.completionDefer = defer;
+          }
+          defer.promise.then(r);
+        });
+      });
+    }
+  });
+
+  function flushTaskCounts(tasks) {
+    for (var guid in tasks) {
+      updateTaskChainCounts(tasks[guid]);
+    }
+  }
+
+  function updateTaskChainCounts(_task) {
+    var task = _task;
+    var numRunning = task._numRunning;
+    var numQueued = task._numQueued;
+    while (task) {
+      task.set('numRunning', numRunning);
+      task.set('numQueued', numQueued);
+      task._numRunning = task._numQueued = 0;
+      task = task.get('group');
+    }
+  }
+
+  exports['default'] = Scheduler;
 });
 define('ember-concurrency/-subscribe', ['exports', 'ember', 'ember-concurrency/-task-property', 'ember-concurrency/-task-instance', 'ember-concurrency/utils', 'ember-concurrency/-buffer-policy'], function (exports, _ember, _emberConcurrencyTaskProperty, _emberConcurrencyTaskInstance, _emberConcurrencyUtils, _emberConcurrencyBufferPolicy) {
   'use strict';
@@ -95943,7 +96135,7 @@ define('ember-concurrency/-subscribe', ['exports', 'ember', 'ember-concurrency/-
         task = _emberConcurrencyTaskProperty.Task.create({
           fn: this._fnOrTask,
           context: this._taskInstance.context,
-          bufferPolicy: this._bufferPolicy,
+          _bufferPolicy: this._bufferPolicy,
           _maxConcurrency: this._maxConcurrency,
           _propertyName: this._taskInstance.get('name') + ':inner subscribe() task'
         });
@@ -96061,6 +96253,55 @@ define('ember-concurrency/-subscribe', ['exports', 'ember', 'ember-concurrency/-
       _origin: taskInstance
     });
   }
+});
+define('ember-concurrency/-task-group', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-property-modifiers-mixin'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskStateMixin, _emberConcurrencyPropertyModifiersMixin) {
+  'use strict';
+
+  exports.TaskGroupProperty = TaskGroupProperty;
+
+  var TaskGroup = _ember['default'].Object.extend(_emberConcurrencyTaskStateMixin['default'], {
+    toString: function toString() {
+      return '<TaskGroup:' + this._propertyName + '>';
+    },
+
+    // FIXME: this is hacky and perhaps wrong
+    isRunning: _ember['default'].computed.or('numRunning', 'numQueued'),
+    isQueued: false
+
+  });
+
+  exports.TaskGroup = TaskGroup;
+
+  function TaskGroupProperty() {
+    for (var _len = arguments.length, decorators = Array(_len), _key = 0; _key < _len; _key++) {
+      decorators[_key] = arguments[_key];
+    }
+
+    var taskFn = decorators.pop();
+    var tp = this;
+    _emberConcurrencyUtils._ComputedProperty.call(this, function (_propertyName) {
+      return TaskGroup.create({
+        fn: taskFn,
+        context: this,
+        _origin: this,
+        _taskGroupPath: tp._taskGroupPath,
+        _scheduler: (0, _emberConcurrencyPropertyModifiersMixin.resolveScheduler)(tp, this, TaskGroup),
+        _propertyName: _propertyName,
+        _debugCallback: tp._debugCallback
+      });
+    });
+  }
+
+  TaskGroupProperty.prototype = Object.create(_emberConcurrencyUtils._ComputedProperty.prototype);
+  Object.assign(TaskGroupProperty.prototype, _emberConcurrencyPropertyModifiersMixin.propertyModifiers, {
+    constructor: TaskGroupProperty,
+
+    _maxConcurrency: 1
+
+  });
+  //maxConcurrency() {
+  //throw new Error("Setting .maxConcurrency() on a taskGroup() is not currently supported");
+  //},
 });
 define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _emberConcurrencyUtils) {
   'use strict';
@@ -96429,17 +96670,10 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
   exports['default'] = TaskInstance;
 });
-define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/utils', 'ember-concurrency/-buffer-policy'], function (exports, _ember, _emberConcurrencyTaskInstance, _emberConcurrencyUtils, _emberConcurrencyBufferPolicy) {
+define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-task-group', 'ember-concurrency/-property-modifiers-mixin', 'ember-concurrency/utils'], function (exports, _ember, _emberConcurrencyTaskInstance, _emberConcurrencyTaskStateMixin, _emberConcurrencyTaskGroup, _emberConcurrencyPropertyModifiersMixin, _emberConcurrencyUtils) {
   'use strict';
 
   exports.TaskProperty = TaskProperty;
-
-  var ComputedProperty = _ember['default'].__loader.require("ember-metal/computed").ComputedProperty;
-  var computed = _ember['default'].computed;
-
-  function isSuccess(nextPerformState) {
-    return nextPerformState === 'succeed' || nextPerformState === 'cancel_previous';
-  }
 
   /**
     The `Task` object lives on a host Ember object (e.g.
@@ -96458,10 +96692,24 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
   
     @class Task
   */
-  var Task = _ember['default'].Object.extend({
+  var Task = _ember['default'].Object.extend(_emberConcurrencyTaskStateMixin['default'], {
     fn: null,
     context: null,
-    bufferPolicy: null,
+    _bufferPolicy: null,
+
+    init: function init() {
+      this._super.apply(this, arguments);
+
+      var self = this;
+      this.perform = function () {
+        if (this !== self) {
+          console.warn('The use of ' + self._propertyName + '.perform within a template is deprecated and won\'t be supported in future versions of ember-concurrency. Please use the `perform` helper instead, e.g. {{perform ' + self._propertyName + '}}');
+        }
+        return self._perform.apply(self, arguments);
+      };
+
+      (0, _emberConcurrencyUtils._cleanupOnDestroy)(this.context, this, 'cancelAll');
+    },
 
     /**
      * This property is true if this task is NOT running, i.e. the number
@@ -96474,7 +96722,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @instance
      * @readOnly
      */
-    isIdle: computed.equal('concurrency', 0),
 
     /**
      * This property is true if this task is running, i.e. the number
@@ -96487,36 +96734,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @instance
      * @readOnly
      */
-    isRunning: _ember['default'].computed.not('isIdle'),
-
-    state: computed('isIdle', function () {
-      return this.get('isIdle') ? 'idle' : 'running';
-    }),
-    _maxConcurrency: Infinity,
-    _activeTaskInstances: null,
-    _needsFlush: null,
-    _propertyName: null,
-    _origin: null,
-
-    name: computed.oneWay('_propertyName'),
-
-    _performsPath: null,
-    _performs: computed('_performsPath', function () {
-      var path = this.get('_performsPath');
-      if (!path) {
-        return;
-      }
-
-      var task = this.context.get(path);
-      if (!(task instanceof Task)) {
-        throw new Error('You wrote .performs(\'' + path + '\'), but the object at \'' + path + '\' is not a Task');
-      }
-      return task;
-    }),
-
-    _performsState: computed('_performs.nextPerformState', function () {
-      return this.get('_performs.nextPerformState') || 'succeed';
-    }),
 
     /**
      * EXPERIMENTAL
@@ -96534,10 +96751,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @private
      * @readOnly
      */
-    nextPerformState: computed('_performsState', function () {
-      var performsState = this.get('_performsState');
-      return isSuccess(performsState) ? this.bufferPolicy.getNextPerformStatus(this) : performsState;
-    }),
 
     /**
      * EXPERIMENTAL
@@ -96550,9 +96763,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @private
      * @readOnly
      */
-    performWillSucceed: computed('nextPerformState', function () {
-      return isSuccess(this.get('nextPerformState'));
-    }),
 
     /**
      * EXPERIMENTAL
@@ -96565,7 +96775,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @private
      * @readOnly
      */
-    performWillDrop: computed.equal('nextPerformState', 'drop'),
 
     /**
      * EXPERIMENTAL
@@ -96578,7 +96787,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @private
      * @readOnly
      */
-    performWillEnqueue: computed.equal('nextPerformState', 'enqueue'),
 
     /**
      * EXPERIMENTAL
@@ -96590,25 +96798,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @private
      * @readOnly
      */
-    performWillCancelPrevious: computed.equal('nextPerformState', 'cancel_previous'),
-
-    init: function init() {
-      this._super.apply(this, arguments);
-      this._activeTaskInstances = _ember['default'].A();
-      this._queuedTaskInstances = _ember['default'].A();
-
-      var self = this;
-      this.perform = function () {
-        if (this !== self) {
-          console.warn('The use of ' + self._propertyName + '.perform within a template is deprecated and won\'t be supported in future versions of ember-concurrency. Please use the `perform` helper instead, e.g. {{perform ' + self._propertyName + '}}');
-        }
-        return self._perform.apply(self, arguments);
-      };
-
-      this._needsFlush = _ember['default'].run.bind(this, this._scheduleFlush);
-
-      (0, _emberConcurrencyUtils._cleanupOnDestroy)(this.context, this, 'cancelAll');
-    },
 
     /**
      * The current number of active running task instances. This
@@ -96618,7 +96807,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @instance
      * @readOnly
      */
-    concurrency: 0,
 
     /**
      * Creates a new {@linkcode TaskInstance} and attempts to run it right away.
@@ -96644,17 +96832,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
      * @memberof Task
      * @instance
      */
-    cancelAll: function cancelAll() {
-      this.spliceTaskInstances(this._activeTaskInstances, 0, this._activeTaskInstances.length);
-      this.spliceTaskInstances(this._queuedTaskInstances, 0, this._queuedTaskInstances.length);
-    },
-
-    spliceTaskInstances: function spliceTaskInstances(taskInstances, index, count) {
-      for (var i = index; i < index + count; ++i) {
-        taskInstances[i].cancel();
-      }
-      taskInstances.splice(index, count);
-    },
 
     toString: function toString() {
       return '<Task:' + this._propertyName + '>';
@@ -96665,10 +96842,10 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
         args[_key] = arguments[_key];
       }
 
-      var performsTask = this.get('_performs');
-      if (performsTask) {
-        args.unshift(performsTask);
-      }
+      //let performsTask = this.get('_performs');
+      //if (performsTask) {
+      //args.unshift(performsTask);
+      //}
 
       var taskInstance = _emberConcurrencyTaskInstance['default'].create({
         fn: this.fn,
@@ -96679,74 +96856,20 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
         _debugCallback: this._debugCallback
       });
 
-      if (this._debugCallback) {
-        this._debugCallback({
-          type: 'perform',
-          taskInstance: taskInstance,
-          task: this
-        });
-      }
+      //if (this._debugCallback) {
+      //this._debugCallback({
+      //type: 'perform',
+      //taskInstance,
+      //task: this,
+      //});
+      //}
 
-      if (this.get('_performs') && !this.get('performWillSucceed')) {
-        // tasks linked via .performs() should be immediately dropped
-        // before they even have a chance to run if we know that
-        // .performWillSucceed is false.
-        taskInstance.cancel();
-        return taskInstance;
-      }
-
-      this._queuedTaskInstances.push(taskInstance);
-      this._needsFlush();
-      this.notifyPropertyChange('nextPerformState');
-
+      this._scheduler.schedule(taskInstance);
       return taskInstance;
     },
 
-    _flushScheduled: false,
-    _scheduleFlush: function _scheduleFlush() {
-      this._flushScheduled = true;
-      _ember['default'].run.once(this, this._flushQueues);
-    },
-
-    _flushQueues: function _flushQueues() {
-      this._flushScheduled = false;
-      this._activeTaskInstances = _ember['default'].A(this._activeTaskInstances.filterBy('isFinished', false));
-
-      this.bufferPolicy.schedule(this);
-
-      for (var i = 0; i < this._activeTaskInstances.length; ++i) {
-        var taskInstance = this._activeTaskInstances[i];
-        if (!taskInstance.hasStarted) {
-          // use internal promise so that it doesn't cancel error reporting
-          taskInstance._start()._defer.promise.then(this._needsFlush, this._needsFlush);
-        }
-      }
-
-      this.notifyPropertyChange('nextPerformState');
-
-      var concurrency = this._activeTaskInstances.length;
-      this.set('concurrency', concurrency);
-      if (this._completionDefer && concurrency === 0) {
-        this._completionDefer.resolve();
-        this._completionDefer = null;
-      }
-    },
-
-    _completionDefer: null,
     _getCompletionPromise: function _getCompletionPromise() {
-      var _this = this;
-
-      return new _ember['default'].RSVP.Promise(function (r) {
-        _ember['default'].run.schedule('actions', null, function () {
-          var defer = _ember['default'].RSVP.defer();
-          if (!_this._flushScheduled && _this._activeTaskInstances.length === 0 && _this._queuedTaskInstances.length === 0) {
-            defer.resolve();
-          } else {
-            _this._completionDefer = defer;
-          }
-          defer.promise.then(r);
-        });
-      });
+      return this._scheduler.getCompletionPromise();
     }
   });
 
@@ -96778,22 +96901,19 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     var _performsPath = undefined;
 
     var tp = this;
-    ComputedProperty.call(this, function (_propertyName) {
+    _emberConcurrencyUtils._ComputedProperty.call(this, function (_propertyName) {
       return Task.create({
         fn: taskFn,
         context: this,
         _origin: this,
-        bufferPolicy: tp.bufferPolicy,
-        _maxConcurrency: tp._maxConcurrency,
-        _performsPath: _performsPath,
+        _taskGroupPath: tp._taskGroupPath,
+        _scheduler: (0, _emberConcurrencyPropertyModifiersMixin.resolveScheduler)(tp, this, _emberConcurrencyTaskGroup.TaskGroup),
+        //_performsPath,
         _propertyName: _propertyName,
-        _debugName: "",
         _debugCallback: tp._debugCallback
       });
     });
 
-    this.bufferPolicy = _emberConcurrencyBufferPolicy.enqueueTasksPolicy;
-    this._maxConcurrency = Infinity;
     this.eventNames = null;
     this.cancelEventNames = null;
     this._debugCallback = null;
@@ -96815,176 +96935,145 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     }
   }
 
-  TaskProperty.prototype = Object.create(ComputedProperty.prototype);
-  TaskProperty.prototype.constructor = TaskProperty;
-  TaskProperty.prototype.setup = function (proto, keyname) {
-    addListenersToPrototype(proto, this.eventNames, keyname, '_perform');
-    addListenersToPrototype(proto, this.cancelEventNames, keyname, 'cancelAll');
-  };
+  TaskProperty.prototype = Object.create(_emberConcurrencyUtils._ComputedProperty.prototype);
+  Object.assign(TaskProperty.prototype, _emberConcurrencyPropertyModifiersMixin.propertyModifiers, {
+    constructor: TaskProperty,
 
-  /**
-   * Calling `task(...).on(eventName)` configures the task to be
-   * automatically performed when the specified events fire. In
-   * this way, it behaves like
-   * [Ember.on](http://emberjs.com/api/classes/Ember.html#method_on).
-   *
-   * You can use `task(...).on('init')` to perform the task
-   * when the host object is initialized.
-   *
-   * ```js
-   * export default Ember.Component.extend({
-   *   pollForUpdates: task(function * () {
-   *     // ... this runs when the Component is first created
-   *     // because we specified .on('init')
-   *   }).on('init'),
-   *
-   *   handleFoo: task(function * (a, b, c) {
-   *     // this gets performed automatically if the 'foo'
-   *     // event fires on this Component,
-   *     // e.g., if someone called component.trigger('foo')
-   *   }).on('foo'),
-   * });
-   * ```
-   *
-   * [See the Writing Tasks Docs for more info](/#/docs/writing-tasks)
-   *
-   * @method on
-   * @memberof TaskProperty
-   * @param {String} eventNames*
-   * @instance
-   */
-  TaskProperty.prototype.on = function () {
-    this.eventNames = this.eventNames || [];
-    this.eventNames.push.apply(this.eventNames, arguments);
-    return this;
-  };
+    setup: function setup(proto, keyname) {
+      addListenersToPrototype(proto, this.eventNames, keyname, '_perform');
+      addListenersToPrototype(proto, this.cancelEventNames, keyname, 'cancelAll');
+    },
 
-  /**
-   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
-   * but instead will cause the task to be canceled if any of the
-   * specified events fire on the parent object.
-   *
-   * [See the Live Example](/#/docs/examples/route-tasks/1)
-   *
-   * @method cancelOn
-   * @memberof TaskProperty
-   * @param {String} eventNames*
-   * @instance
-   */
-  TaskProperty.prototype.cancelOn = function () {
-    this.cancelEventNames = this.cancelEventNames || [];
-    this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
-    return this;
-  };
+    /**
+     * Calling `task(...).on(eventName)` configures the task to be
+     * automatically performed when the specified events fire. In
+     * this way, it behaves like
+     * [Ember.on](http://emberjs.com/api/classes/Ember.html#method_on).
+     *
+     * You can use `task(...).on('init')` to perform the task
+     * when the host object is initialized.
+     *
+     * ```js
+     * export default Ember.Component.extend({
+     *   pollForUpdates: task(function * () {
+     *     // ... this runs when the Component is first created
+     *     // because we specified .on('init')
+     *   }).on('init'),
+     *
+     *   handleFoo: task(function * (a, b, c) {
+     *     // this gets performed automatically if the 'foo'
+     *     // event fires on this Component,
+     *     // e.g., if someone called component.trigger('foo')
+     *   }).on('foo'),
+     * });
+     * ```
+     *
+     * [See the Writing Tasks Docs for more info](/#/docs/writing-tasks)
+     *
+     * @method on
+     * @memberof TaskProperty
+     * @param {String} eventNames*
+     * @instance
+     */
+    on: function on() {
+      this.eventNames = this.eventNames || [];
+      this.eventNames.push.apply(this.eventNames, arguments);
+      return this;
+    },
 
-  /**
-   * Configures the task to cancel old currently task instances
-   * to make room for a new one to perform. Sets default
-   * maxConcurrency to 1.
-   *
-   * [See the Live Example](/#/docs/examples/route-tasks/1)
-   *
-   * @method restartable
-   * @memberof TaskProperty
-   * @instance
-   */
-  TaskProperty.prototype.restartable = function () {
-    this.bufferPolicy = _emberConcurrencyBufferPolicy.cancelOngoingTasksPolicy;
-    this._setDefaultMaxConcurrency(1);
-    return this;
-  };
+    /**
+     * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
+     * but instead will cause the task to be canceled if any of the
+     * specified events fire on the parent object.
+     *
+     * [See the Live Example](/#/docs/examples/route-tasks/1)
+     *
+     * @method cancelOn
+     * @memberof TaskProperty
+     * @param {String} eventNames*
+     * @instance
+     */
+    cancelOn: function cancelOn() {
+      this.cancelEventNames = this.cancelEventNames || [];
+      this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
+      return this;
+    },
 
-  /**
-   * Configures the task to run task instances one-at-a-time in
-   * the order they were `.perform()`ed. Sets default
-   * maxConcurrency to 1.
-   *
-   * @method enqueue
-   * @memberof TaskProperty
-   * @instance
-   */
-  TaskProperty.prototype.enqueue = function () {
-    this.bufferPolicy = _emberConcurrencyBufferPolicy.enqueueTasksPolicy;
-    this._setDefaultMaxConcurrency(1);
-    return this;
-  };
+    /**
+     * Configures the task to cancel old currently task instances
+     * to make room for a new one to perform. Sets default
+     * maxConcurrency to 1.
+     *
+     * [See the Live Example](/#/docs/examples/route-tasks/1)
+     *
+     * @method restartable
+     * @memberof TaskProperty
+     * @instance
+     */
 
-  /**
-   * Configures the task to immediately cancel (i.e. drop) any
-   * task instances performed when the task is already running
-   * at maxConcurrency. Sets default maxConcurrency to 1.
-   *
-   * @method drop
-   * @memberof TaskProperty
-   * @instance
-   */
-  TaskProperty.prototype.drop = function () {
-    this.bufferPolicy = _emberConcurrencyBufferPolicy.dropQueuedTasksPolicy;
-    this._setDefaultMaxConcurrency(1);
-    return this;
-  };
+    /**
+     * Configures the task to run task instances one-at-a-time in
+     * the order they were `.perform()`ed. Sets default
+     * maxConcurrency to 1.
+     *
+     * @method enqueue
+     * @memberof TaskProperty
+     * @instance
+     */
 
-  /**
-   * @private
-   */
-  TaskProperty.prototype.keepLatest = function () {
-    this.bufferPolicy = _emberConcurrencyBufferPolicy.dropButKeepLatestPolicy;
-    this._setDefaultMaxConcurrency(1);
-    return this;
-  };
+    /**
+     * Configures the task to immediately cancel (i.e. drop) any
+     * task instances performed when the task is already running
+     * at maxConcurrency. Sets default maxConcurrency to 1.
+     *
+     * @method drop
+     * @memberof TaskProperty
+     * @instance
+     */
 
-  /**
-   * Sets the maximum number of task instances that are allowed
-   * to run at the same time. By default, with no task modifiers
-   * applied, this number is Infinity (there is no limit
-   * to the number of tasks that can run at the same time).
-   * {@linkcode TaskProperty#restartable .restartable()},
-   * {@linkcode TaskProperty#enqueue .enqueue()}, and
-   * {@linkcode TaskProperty#drop .drop()} set the default
-   * maxConcurrency to 1, but you can override this value
-   * to set the maximum number of concurrently running tasks
-   * to a number greater than 1.
-   *
-   * [See the AJAX Throttling example](/#/docs/examples/ajax-throttling)
-   *
-   * The example below uses a task with `maxConcurrency(3)` to limit
-   * the number of concurrent AJAX requests (for anyone using this task)
-   * to 3.
-   *
-   * ```js
-   * doSomeAjax: task(function * (url) {
-   *   return Ember.$.getJSON(url).promise();
-   * }).maxConcurrency(3),
-   *
-   * elsewhere() {
-   *   this.get('doSomeAjax').perform("http://www.example.com/json");
-   * },
-   * ```
-   *
-   * @method maxConcurrency
-   * @memberof TaskProperty
-   * @param {Number} n The maximum number of concurrently running tasks
-   * @instance
-   */
-  TaskProperty.prototype.maxConcurrency = function (n) {
-    this._maxConcurrency = n;
-    return this;
-  };
+    /**
+     * Sets the maximum number of task instances that are allowed
+     * to run at the same time. By default, with no task modifiers
+     * applied, this number is Infinity (there is no limit
+     * to the number of tasks that can run at the same time).
+     * {@linkcode TaskProperty#restartable .restartable()},
+     * {@linkcode TaskProperty#enqueue .enqueue()}, and
+     * {@linkcode TaskProperty#drop .drop()} set the default
+     * maxConcurrency to 1, but you can override this value
+     * to set the maximum number of concurrently running tasks
+     * to a number greater than 1.
+     *
+     * [See the AJAX Throttling example](/#/docs/examples/ajax-throttling)
+     *
+     * The example below uses a task with `maxConcurrency(3)` to limit
+     * the number of concurrent AJAX requests (for anyone using this task)
+     * to 3.
+     *
+     * ```js
+     * doSomeAjax: task(function * (url) {
+     *   return Ember.$.getJSON(url).promise();
+     * }).maxConcurrency(3),
+     *
+     * elsewhere() {
+     *   this.get('doSomeAjax').perform("http://www.example.com/json");
+     * },
+     * ```
+     *
+     * @method maxConcurrency
+     * @memberof TaskProperty
+     * @param {Number} n The maximum number of concurrently running tasks
+     * @instance
+     */
 
-  TaskProperty.prototype._setDefaultMaxConcurrency = function (n) {
-    if (this._maxConcurrency === Infinity) {
-      this._maxConcurrency = n;
+    _debug: function _debug(cb) {
+      this._debugCallback = cb || defaultDebugCallback;
+      return this;
     }
-  };
+  });
 
   function defaultDebugCallback(payload) {
     console.log(payload);
   }
-
-  TaskProperty.prototype._debug = function (cb) {
-    this._debugCallback = cb || defaultDebugCallback;
-    return this;
-  };
 
   function addListenersToPrototype(proto, eventNames, taskName, taskMethod) {
     if (eventNames) {
@@ -97001,6 +97090,84 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
       task[method].apply(task, arguments);
     };
   }
+});
+define('ember-concurrency/-task-state-mixin', ['exports', 'ember'], function (exports, _ember) {
+  'use strict';
+
+  var computed = _ember['default'].computed;
+
+  // this is a mixin of properties/methods shared between Tasks and TaskGroups
+  exports['default'] = _ember['default'].Mixin.create({
+    isRunning: computed.gt('numRunning', 0),
+    isQueued: computed.gt('numQueued', 0),
+    isIdle: computed('isRunning', 'isQueued', function () {
+      return !this.get('isRunning') && !this.get('isQueued');
+    }),
+
+    state: computed('isRunning', 'isQueued', function () {
+      if (this.get('isRunning')) {
+        return 'running';
+      } else if (this.get('isQueued')) {
+        return 'queued';
+      } else {
+        return 'idle';
+      }
+    }),
+
+    _propertyName: null,
+    _origin: null,
+    name: computed.alias('_propertyName'),
+
+    concurrency: computed.alias('numRunning'),
+
+    numRunning: 0,
+    numQueued: 0,
+
+    // used as a scratchpad
+    _numRunning: 0,
+    _numQueued: 0,
+
+    cancelAll: function cancelAll() {
+      this._scheduler.cancelAll();
+    },
+
+    group: computed(function () {
+      return this._taskGroupPath && this.context.get(this._taskGroupPath);
+    }),
+
+    _scheduler: null
+
+  });
+
+  //function isSuccess(nextPerformState) {
+  //return nextPerformState === 'succeed' || nextPerformState === 'cancel_previous';
+  //}
+  /* TODO: re-add this to work w task groups... right now it's coupled to .performs
+   _performs: computed('_performsPath', function() {
+    let path = this.get('_performsPath');
+    if (!path) { return; }
+     let task = this.context.get(path);
+    if (!(task instanceof Task)) {
+      throw new Error(`You wrote .performs('${path}'), but the object at '${path}' is not a Task`);
+    }
+    return task;
+  }),
+   _performsState: computed('_performs.nextPerformState', function() {
+    return this.get('_performs.nextPerformState') || 'succeed';
+  }),
+   nextPerformState: computed('_performsState', function() {
+    let performsState = this.get('_performsState');
+    return isSuccess(performsState) ?
+      this._bufferPolicy.getNextPerformStatus(this) :
+      performsState;
+  }),
+   performWillSucceed: computed('nextPerformState', function() {
+    return isSuccess(this.get('nextPerformState'));
+  }),
+   performWillDrop: computed.equal('nextPerformState', 'drop'),
+   performWillEnqueue: computed.equal('nextPerformState', 'enqueue'),
+   performWillCancelPrevious: computed.equal('nextPerformState', 'cancel_previous'),
+  */
 });
 define('ember-concurrency/-yieldables', ['exports', 'ember', 'ember-concurrency/-task-instance'], function (exports, _ember, _emberConcurrencyTaskInstance) {
   'use strict';
@@ -97072,11 +97239,12 @@ define('ember-concurrency/-yieldables', ['exports', 'ember', 'ember-concurrency/
     };
   }
 });
-define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-evented-observable', 'ember-concurrency/-subscribe', 'ember-concurrency/-yieldables', 'ember-concurrency/-decorators'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyEventedObservable, _emberConcurrencySubscribe, _emberConcurrencyYieldables, _emberConcurrencyDecorators) {
+define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-task-group', 'ember-concurrency/-evented-observable', 'ember-concurrency/-subscribe', 'ember-concurrency/-yieldables', 'ember-concurrency/-decorators'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyTaskGroup, _emberConcurrencyEventedObservable, _emberConcurrencySubscribe, _emberConcurrencyYieldables, _emberConcurrencyDecorators) {
   'use strict';
 
   var _bind = Function.prototype.bind;
   exports.task = task;
+  exports.taskGroup = taskGroup;
   exports.interval = interval;
   exports.timeout = timeout;
   exports.events = events;
@@ -97140,6 +97308,14 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
     }
 
     return new (_bind.apply(_emberConcurrencyTaskProperty.TaskProperty, [null].concat(args)))();
+  }
+
+  function taskGroup() {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    return new (_bind.apply(_emberConcurrencyTaskGroup.TaskGroupProperty, [null].concat(args)))();
   }
 
   /**
@@ -97326,7 +97502,11 @@ define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _embe
 
   // TODO: Symbol polyfill?
   var yieldableSymbol = "__ec_yieldable__";
+
   exports.yieldableSymbol = yieldableSymbol;
+
+  var _ComputedProperty = _ember['default'].__loader.require("ember-metal/computed").ComputedProperty;
+  exports._ComputedProperty = _ComputedProperty;
 });
 define('ember-data/-private/adapters/build-url-mixin', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
