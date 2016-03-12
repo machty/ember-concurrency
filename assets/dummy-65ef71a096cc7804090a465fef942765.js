@@ -2275,6 +2275,250 @@ define("dummy/components/task-function-syntax-4/template", ["exports"], function
     };
   })());
 });
+define('dummy/components/task-group-example/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  var marked0$0 = [shortPause].map(regeneratorRuntime.mark);
+
+  function shortPause() {
+    return regeneratorRuntime.wrap(function shortPause$(context$1$0) {
+      while (1) switch (context$1$0.prev = context$1$0.next) {
+        case 0:
+          context$1$0.next = 2;
+          return (0, _emberConcurrency.timeout)(2000);
+
+        case 2:
+        case 'end':
+          return context$1$0.stop();
+      }
+    }, marked0$0[0], this);
+  }
+
+  // BEGIN-SNIPPET task-group-component
+  exports['default'] = _ember['default'].Component.extend({
+    taskGroup: null, // passed-in
+
+    chores: (0, _emberConcurrency.taskGroup)().group('taskGroup'),
+    changeDiapers: (0, _emberConcurrency.task)(shortPause).group('chores'),
+    doDishes: (0, _emberConcurrency.task)(shortPause).group('chores'),
+    mowTheLawn: (0, _emberConcurrency.task)(shortPause).group('chores'),
+
+    fun: (0, _emberConcurrency.taskGroup)().group('taskGroup'),
+    playGames: (0, _emberConcurrency.task)(shortPause).group('fun'),
+    dance: (0, _emberConcurrency.task)(shortPause).group('fun'),
+    sing: (0, _emberConcurrency.task)(shortPause).group('fun'),
+
+    tasks: _ember['default'].computed(function () {
+      return [this.get('changeDiapers'), this.get('doDishes'), this.get('mowTheLawn'), this.get('playGames'), this.get('dance'), this.get('sing')];
+    })
+  });
+
+  // END-SNIPPET
+});
+define("dummy/components/task-group-example/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 17,
+              "column": 4
+            },
+            "end": {
+              "line": 28,
+              "column": 4
+            }
+          },
+          "moduleName": "dummy/components/task-group-example/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("      ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("tr");
+          var el2 = dom.createTextNode("\n        ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("td");
+          var el3 = dom.createTextNode("\n          ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("button");
+          var el4 = dom.createTextNode("\n            ");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createComment("");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createTextNode("\n          ");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n        ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n        ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("td");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n        ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("td");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n        ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("td");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1]);
+          var element1 = dom.childAt(element0, [1, 1]);
+          var morphs = new Array(6);
+          morphs[0] = dom.createAttrMorph(element1, 'onclick');
+          morphs[1] = dom.createAttrMorph(element1, 'class');
+          morphs[2] = dom.createMorphAt(element1, 1, 1);
+          morphs[3] = dom.createMorphAt(dom.childAt(element0, [3]), 0, 0);
+          morphs[4] = dom.createMorphAt(dom.childAt(element0, [5]), 0, 0);
+          morphs[5] = dom.createMorphAt(dom.childAt(element0, [7]), 0, 0);
+          return morphs;
+        },
+        statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "task", ["loc", [null, [20, 36], [20, 40]]]]], [], ["loc", [null, [20, 26], [20, 42]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isIdle", ["loc", [null, [20, 54], [20, 65]]]], "button-primary"], [], ["loc", [null, [20, 49], [20, 84]]]]], ["content", "task.name", ["loc", [null, [21, 12], [21, 25]]]], ["content", "task.state", ["loc", [null, [24, 12], [24, 26]]]], ["content", "task.group.name", ["loc", [null, [25, 12], [25, 31]]]], ["content", "task.group.state", ["loc", [null, [26, 12], [26, 32]]]]],
+        locals: ["task"],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes"]
+        },
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 32,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/components/task-group-example/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(": ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("button");
+        var el2 = dom.createTextNode("\n  Cancel ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("table");
+        dom.setAttribute(el1, "class", "u-full-width");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("thead");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("tr");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createTextNode("Perform");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createTextNode("State");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createTextNode("Group");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("th");
+        var el5 = dom.createTextNode("Group State");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("tbody");
+        var el3 = dom.createTextNode("\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element2 = dom.childAt(fragment, [0]);
+        var element3 = dom.childAt(fragment, [2]);
+        var morphs = new Array(6);
+        morphs[0] = dom.createMorphAt(element2, 0, 0);
+        morphs[1] = dom.createMorphAt(element2, 2, 2);
+        morphs[2] = dom.createAttrMorph(element3, 'onclick');
+        morphs[3] = dom.createAttrMorph(element3, 'class');
+        morphs[4] = dom.createMorphAt(element3, 1, 1);
+        morphs[5] = dom.createMorphAt(dom.childAt(fragment, [4, 3]), 1, 1);
+        return morphs;
+      },
+      statements: [["content", "taskGroup.name", ["loc", [null, [1, 4], [1, 22]]]], ["content", "taskGroup.state", ["loc", [null, [1, 24], [1, 43]]]], ["attribute", "onclick", ["subexpr", "cancel-all", [["get", "taskGroup", ["loc", [null, [3, 29], [3, 38]]]]], [], ["loc", [null, [3, 16], [3, 40]]]]], ["attribute", "class", ["subexpr", "if", [["get", "taskGroup.isRunning", ["loc", [null, [3, 52], [3, 71]]]], "button-primary"], [], ["loc", [null, [3, 47], [3, 90]]]]], ["content", "taskGroup.name", ["loc", [null, [4, 9], [4, 27]]]], ["block", "each", [["get", "tasks", ["loc", [null, [17, 12], [17, 17]]]]], [], 0, null, ["loc", [null, [17, 4], [28, 13]]]]],
+      locals: [],
+      templates: [child0]
+    };
+  })());
+});
 define('dummy/controllers/array', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller;
 });
@@ -5558,38 +5802,19 @@ define('dummy/docs/examples/task-concurrency/route', ['exports', 'ember'], funct
   });
 });
 define('dummy/docs/examples/task-groups/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
-  var marked0$0 = [shortPause].map(regeneratorRuntime.mark);
-
-  function shortPause() {
-    return regeneratorRuntime.wrap(function shortPause$(context$1$0) {
-      while (1) switch (context$1$0.prev = context$1$0.next) {
-        case 0:
-          context$1$0.next = 2;
-          return (0, _emberConcurrency.timeout)(3000);
-
-        case 2:
-        case 'end':
-          return context$1$0.stop();
-      }
-    }, marked0$0[0], this);
-  }
 
   // BEGIN-SNIPPET task-groups
   exports['default'] = _ember['default'].Controller.extend({
-    everything: (0, _emberConcurrency.taskGroup)().drop(),
+    everything: (0, _emberConcurrency.taskGroup)(),
+    everythingDropped: (0, _emberConcurrency.taskGroup)().drop(),
+    everythingEnqueue: (0, _emberConcurrency.taskGroup)().enqueue(),
+    everythingRestart: (0, _emberConcurrency.taskGroup)().restartable(),
+    everythingDropped3: (0, _emberConcurrency.taskGroup)().maxConcurrency(3).drop(),
+    everythingEnqueue3: (0, _emberConcurrency.taskGroup)().maxConcurrency(3).enqueue(),
+    everythingRestart3: (0, _emberConcurrency.taskGroup)().maxConcurrency(3).restartable(),
 
-    chores: (0, _emberConcurrency.taskGroup)().group('everything'),
-    changeDiapers: (0, _emberConcurrency.task)(shortPause).group('chores'),
-    doDishes: (0, _emberConcurrency.task)(shortPause).group('chores'),
-    mowTheLawn: (0, _emberConcurrency.task)(shortPause).group('chores'),
-
-    fun: (0, _emberConcurrency.taskGroup)().group('everything'),
-    playGames: (0, _emberConcurrency.task)(shortPause).group('fun'),
-    dance: (0, _emberConcurrency.task)(shortPause).group('fun'),
-    sing: (0, _emberConcurrency.task)(shortPause).group('fun'),
-
-    tasks: _ember['default'].computed(function () {
-      return [this.get('changeDiapers'), this.get('doDishes'), this.get('mowTheLawn'), this.get('playGames'), this.get('dance'), this.get('sing')];
+    taskGroups: _ember['default'].computed(function () {
+      return [this.get('everything'), this.get('everythingDropped'), this.get('everythingEnqueue'), this.get('everythingRestart'), this.get('everythingDropped3'), this.get('everythingEnqueue3'), this.get('everythingRestart3')];
     })
   });
 
@@ -5605,12 +5830,12 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
           "loc": {
             "source": null,
             "start": {
-              "line": 23,
-              "column": 4
+              "line": 59,
+              "column": 0
             },
             "end": {
-              "line": 34,
-              "column": 4
+              "line": 61,
+              "column": 0
             }
           },
           "moduleName": "dummy/docs/examples/task-groups/template.hbs"
@@ -5621,64 +5846,21 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("      ");
+          var el1 = dom.createTextNode("  ");
           dom.appendChild(el0, el1);
-          var el1 = dom.createElement("tr");
-          var el2 = dom.createTextNode("\n        ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("td");
-          var el3 = dom.createTextNode("\n          ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createElement("button");
-          var el4 = dom.createTextNode("\n            ");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createComment("");
-          dom.appendChild(el3, el4);
-          var el4 = dom.createTextNode("\n          ");
-          dom.appendChild(el3, el4);
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n        ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n        ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("td");
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n        ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("td");
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n        ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("td");
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n      ");
-          dom.appendChild(el1, el2);
+          var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
           dom.appendChild(el0, el1);
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element0 = dom.childAt(fragment, [1]);
-          var element1 = dom.childAt(element0, [1, 1]);
-          var morphs = new Array(6);
-          morphs[0] = dom.createAttrMorph(element1, 'onclick');
-          morphs[1] = dom.createAttrMorph(element1, 'class');
-          morphs[2] = dom.createMorphAt(element1, 1, 1);
-          morphs[3] = dom.createMorphAt(dom.childAt(element0, [3]), 0, 0);
-          morphs[4] = dom.createMorphAt(dom.childAt(element0, [5]), 0, 0);
-          morphs[5] = dom.createMorphAt(dom.childAt(element0, [7]), 0, 0);
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
           return morphs;
         },
-        statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "task", ["loc", [null, [26, 36], [26, 40]]]]], [], ["loc", [null, [26, 26], [26, 42]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isIdle", ["loc", [null, [26, 54], [26, 65]]]], "button-primary"], [], ["loc", [null, [26, 49], [26, 84]]]]], ["content", "task.name", ["loc", [null, [27, 12], [27, 25]]]], ["content", "task.state", ["loc", [null, [30, 12], [30, 26]]]], ["content", "task.group.name", ["loc", [null, [31, 12], [31, 31]]]], ["content", "task.group.state", ["loc", [null, [32, 12], [32, 32]]]]],
-        locals: ["task"],
+        statements: [["inline", "task-group-example", [], ["taskGroup", ["subexpr", "@mut", [["get", "group", ["loc", [null, [60, 33], [60, 38]]]]], [], []]], ["loc", [null, [60, 2], [60, 40]]]]],
+        locals: ["group"],
         templates: []
       };
     })();
@@ -5696,7 +5878,7 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
             "column": 0
           },
           "end": {
-            "line": 43,
+            "line": 64,
             "column": 0
           }
         },
@@ -5709,85 +5891,140 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
       buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h3");
-        var el2 = dom.createTextNode("Task Groups (alpha)");
+        var el2 = dom.createTextNode("Task Groups (beta)");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h3");
-        var el2 = dom.createTextNode("Live Example");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h4");
-        var el2 = dom.createTextNode("State of everything: ");
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  To constrain the concurrency of a single task,\n  you use ");
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("button");
-        var el2 = dom.createTextNode("\n  Cancel Everything\n");
+        var el2 = dom.createTextNode(",\n  but what if you want to ensure that\n  two (or more) separate tasks don't run at the same time?\n  In these cases, you use ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("strong");
+        var el3 = dom.createTextNode("Task Groups");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(":\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("table");
-        dom.setAttribute(el1, "class", "u-full-width");
+        var el1 = dom.createElement("ol");
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("thead");
-        var el3 = dom.createTextNode("\n    ");
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("Declare a task group via ");
         dom.appendChild(el2, el3);
-        var el3 = dom.createElement("tr");
-        var el4 = dom.createTextNode("\n      ");
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("nameOfGroup: taskGroup()");
         dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createTextNode("Perform");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createTextNode("State");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createTextNode("Group");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n      ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("th");
-        var el5 = dom.createTextNode("Group State");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n    ");
-        dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("tbody");
-        var el3 = dom.createTextNode("\n");
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    Apply any desired ");
         dom.appendChild(el2, el3);
         var el3 = dom.createComment("");
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("  ");
+        var el3 = dom.createTextNode("\n    to that task group (just as you would with a normal task).\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    Append ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".group('nameOfGroup')");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" to any tasks you want to\n    be considered part of the group.\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Whereas using a modifier like ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("drop()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" on a single task\n  prevents that single task from running concurrently, using\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("drop()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" on a Task Group ensures that only one\n  task in that Task Group can be running at any given time.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Cancelation");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Additionally, just as you can ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("cancelAll");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" running\n  instances of a task, the Task Group object exposes the\n  same ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("cancelAll");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" method (and ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("cancel-all");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  template helper) which will cancel any running task instances\n  that belong to that group.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Nested Task Groups");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Task Groups can be ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("strong");
+        var el3 = dom.createTextNode(".group()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("ed to other\n  Task Groups, forming a hierarchy with Tasks at the leaves.\n  In such a hierarchy, all Tasks will share the concurrency\n  constraints of the root task group\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Live Examples");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  The following examples demonstrate nested task groups\n");
+        dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
@@ -5798,21 +6035,23 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element2 = dom.childAt(fragment, [6]);
-        var morphs = new Array(6);
-        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [4]), 1, 1);
-        morphs[1] = dom.createAttrMorph(element2, 'onclick');
-        morphs[2] = dom.createAttrMorph(element2, 'class');
-        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [9, 3]), 1, 1);
-        morphs[4] = dom.createMorphAt(fragment, 12, 12, contextualElement);
-        morphs[5] = dom.createMorphAt(fragment, 14, 14, contextualElement);
+        var morphs = new Array(5);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [2]), 1, 1);
+        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [4, 3]), 1, 1);
+        morphs[2] = dom.createMorphAt(fragment, 20, 20, contextualElement);
+        morphs[3] = dom.createMorphAt(fragment, 22, 22, contextualElement);
+        morphs[4] = dom.createMorphAt(fragment, 24, 24, contextualElement);
         return morphs;
       },
-      statements: [["content", "everything.state", ["loc", [null, [5, 25], [5, 45]]]], ["attribute", "onclick", ["subexpr", "cancel-all", [["get", "everything", ["loc", [null, [7, 29], [7, 39]]]]], [], ["loc", [null, [7, 16], [7, 41]]]]], ["attribute", "class", ["subexpr", "if", [["get", "everything.isRunning", ["loc", [null, [7, 53], [7, 73]]]], "button-primary"], [], ["loc", [null, [7, 48], [7, 92]]]]], ["block", "each", [["get", "tasks", ["loc", [null, [23, 12], [23, 17]]]]], [], 0, null, ["loc", [null, [23, 4], [34, 13]]]], ["inline", "code-snippet", [], ["name", "task-groups.js"], ["loc", [null, [40, 0], [40, 38]]]], ["inline", "code-snippet", [], ["name", "task-groups-template.hbs"], ["loc", [null, [41, 0], [41, 48]]]]],
+      statements: [["inline", "link-to", ["Task Modifiers", "docs.task-concurrency"], [], ["loc", [null, [5, 10], [5, 62]]]], ["inline", "link-to", ["Task Modifiers", "docs.task-concurrency"], [], ["loc", [null, [14, 22], [14, 74]]]], ["inline", "code-snippet", [], ["name", "task-groups.js"], ["loc", [null, [55, 0], [55, 38]]]], ["inline", "code-snippet", [], ["name", "task-group-component.js"], ["loc", [null, [56, 0], [56, 47]]]], ["block", "each", [["get", "taskGroups", ["loc", [null, [59, 8], [59, 18]]]]], [], 0, null, ["loc", [null, [59, 0], [61, 9]]]]],
       locals: [],
       templates: [child0]
     };
@@ -8912,8 +9151,9 @@ define("dummy/snippets", ["exports"], function (exports) {
     "task-function-syntax-2.js": "  pickRandomNumbers: task(function * () {\n    let nums = [];\n    for (let i = 0; i < 3; i++) {\n      nums.push(Math.floor(Math.random() * 10));\n    }\n\n    this.set('status', `My favorite numbers: ${nums.join(', ')}`);\n  }),",
     "task-function-syntax-3.js": "  myTask: task(function * () {\n    this.set('status', `Thinking...`);\n    let promise = timeout(1000).then(() => 123);\n    let resolvedValue = yield promise;\n    this.set('status', `The value is ${resolvedValue}`);\n  }),",
     "task-function-syntax-4.js": "  myTask: task(function * () {\n    this.set('status', `Thinking...`);\n    try {\n      yield timeout(1000).then(() => {\n        throw \"Ahhhhh!!!!\";\n      });\n      this.set('status', `This does not get used!`);\n    } catch(e) {\n      this.set('status', `Caught value: ${e}`);\n    }\n  }),",
-    "task-groups-template.hbs": "\n<table class=\"u-full-width\">\n  <thead>\n    <tr>\n      <th>Perform</th>\n      <th>State</th>\n      <th>Group</th>\n      <th>Group State</th>\n    </tr>\n  </thead>\n  <tbody>\n    {{#each tasks as |task|}}\n      <tr>\n        <td>\n          <button onclick={{perform task}} class={{if task.isIdle 'button-primary'}}>\n            {{task.name}}\n          </button>\n        </td>\n        <td>{{task.state}}</td>\n        <td>{{task.group.name}}</td>\n        <td>{{task.group.state}}</td>\n      </tr>\n    {{/each}}\n  </tbody>\n</table>",
-    "task-groups.js": "export default Ember.Controller.extend({\n  everything:    taskGroup().drop(),\n\n  chores:        taskGroup().group('everything'),\n  changeDiapers: task(shortPause).group('chores'),\n  doDishes:      task(shortPause).group('chores'),\n  mowTheLawn:    task(shortPause).group('chores'),\n\n  fun:           taskGroup().group('everything'),\n  playGames:     task(shortPause).group('fun'),\n  dance:         task(shortPause).group('fun'),\n  sing:          task(shortPause).group('fun'),\n\n  tasks: Ember.computed(function() {\n    return [\n      this.get('changeDiapers'),\n      this.get('doDishes'),\n      this.get('mowTheLawn'),\n      this.get('playGames'),\n      this.get('dance'),\n      this.get('sing'),\n    ];\n  }),\n});",
+    "task-group-component.js": "export default Ember.Component.extend({\n  taskGroup: null, // passed-in\n\n  chores:        taskGroup().group('taskGroup'),\n  changeDiapers: task(shortPause).group('chores'),\n  doDishes:      task(shortPause).group('chores'),\n  mowTheLawn:    task(shortPause).group('chores'),\n\n  fun:           taskGroup().group('taskGroup'),\n  playGames:     task(shortPause).group('fun'),\n  dance:         task(shortPause).group('fun'),\n  sing:          task(shortPause).group('fun'),\n\n  tasks: Ember.computed(function() {\n    return [\n      this.get('changeDiapers'),\n      this.get('doDishes'),\n      this.get('mowTheLawn'),\n      this.get('playGames'),\n      this.get('dance'),\n      this.get('sing'),\n    ];\n  }),\n});",
+    "task-groups-template.hbs": "{{#each taskGroups as |group|}}\n  {{task-group-example taskGroup=group}}\n{{/each}}",
+    "task-groups.js": "export default Ember.Controller.extend({\n  everything:         taskGroup(),\n  everythingDropped:  taskGroup().drop(),\n  everythingEnqueue:  taskGroup().enqueue(),\n  everythingRestart:  taskGroup().restartable(),\n  everythingDropped3: taskGroup().maxConcurrency(3).drop(),\n  everythingEnqueue3: taskGroup().maxConcurrency(3).enqueue(),\n  everythingRestart3: taskGroup().maxConcurrency(3).restartable(),\n\n  taskGroups: Ember.computed(function () {\n    return [\n      this.get('everything'),\n      this.get('everythingDropped'),\n      this.get('everythingEnqueue'),\n      this.get('everythingRestart'),\n      this.get('everythingDropped3'),\n      this.get('everythingEnqueue3'),\n      this.get('everythingRestart3'),\n    ];\n  }),\n});",
     "writing-tasks.js": "import Ember from 'ember';\nimport { task } from 'ember-concurrency';\n\nexport default Ember.Component.extend({\n  myTask: task(function * () {\n    alert(\"hello!\");\n  })\n});\n\n"
   };
 });
@@ -8995,7 +9235,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+847c6a3d"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+75307b41"});
 }
 
 /* jshint ignore:end */
