@@ -11,42 +11,53 @@ export const propertyModifiers = {
   // by default, task(...) expands to task(...).enqueue().maxConcurrency(Infinity)
   _bufferPolicy: enqueueTasksPolicy,
   _maxConcurrency: Infinity,
+  _taskGroupPath: null,
+  _hasUsedModifier: false,
 
   restartable() {
-    this._bufferPolicy = cancelOngoingTasksPolicy;
-    this._setDefaultMaxConcurrency(1);
-    return this;
+    return setBufferPolicy(this, cancelOngoingTasksPolicy);
   },
 
   enqueue() {
-    this._bufferPolicy = enqueueTasksPolicy;
-    this._setDefaultMaxConcurrency(1);
-    return this;
+    return setBufferPolicy(this, enqueueTasksPolicy);
   },
 
   drop() {
-    this._bufferPolicy = dropQueuedTasksPolicy;
-    this._setDefaultMaxConcurrency(1);
-    return this;
+    return setBufferPolicy(this, dropQueuedTasksPolicy);
   },
 
   keepLatest() {
-    this._bufferPolicy = dropButKeepLatestPolicy;
-    this._setDefaultMaxConcurrency(1);
-    return this;
+    return setBufferPolicy(this, dropButKeepLatestPolicy);
   },
 
   maxConcurrency(n) {
+    this._hasUsedModifier = true;
     this._maxConcurrency = n;
     return this;
   },
 
-  _setDefaultMaxConcurrency(n) {
-    if (this._maxConcurrency === Infinity) {
-      this._maxConcurrency = n;
-    }
+  group(taskGroupPath) {
+    this._taskGroupPath = taskGroupPath;
+    assertModifiersNotMixedWithGroup(this);
+    return this;
   },
 };
+
+function setBufferPolicy(obj, policy) {
+  obj._hasUsedModifier = true;
+  obj._bufferPolicy = policy;
+  assertModifiersNotMixedWithGroup(obj);
+
+  if (obj._maxConcurrency === Infinity) {
+    obj._maxConcurrency = 1;
+  }
+
+  return obj;
+}
+
+function assertModifiersNotMixedWithGroup(obj) {
+  Ember.assert(`ember-concurrency does not currently support using both .group() with other task modifiers (e.g. drop(), enqueue(), restartable())`, !obj._hasUsedModifier || !obj._taskGroupPath);
+}
 
 export function resolveScheduler(propertyObj, obj, TaskGroup) {
   if (propertyObj._taskGroupPath) {

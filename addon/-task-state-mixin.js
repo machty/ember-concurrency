@@ -3,20 +3,28 @@ import Ember from 'ember';
 const { computed } = Ember;
 
 export default Ember.Mixin.create({
-  isIdle: computed.equal('concurrency', 0),
-  isRunning: Ember.computed.not('isIdle'),
+  isRunning: computed.gt('numRunning', 0),
+  isQueued:  computed.gt('numQueued',  0),
+  isIdle:    computed('isRunning', 'isQueued', function() {
+    return !this.get('isRunning') && !this.get('isQueued');
+  }),
 
   state: computed('isIdle', function() {
     return this.get('isIdle') ? 'idle' : 'running';
   }),
 
-  _maxConcurrency: Infinity,
-
   _propertyName: null,
   _origin: null,
-  name: computed.oneWay('_propertyName'),
+  name: computed.alias('_propertyName'),
 
-  concurrency: computed.alias('_scheduler.concurrency'),
+  concurrency: computed.alias('numRunning'),
+
+  numRunning: 0,
+  numQueued: 0,
+
+  // used as a scratchpad
+  _numRunning: 0,
+  _numQueued: 0,
 
   cancelAll() {
     this._scheduler.cancelAll();

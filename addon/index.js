@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import { isGeneratorIterator, createObservable } from './utils';
 import { TaskProperty } from './-task-property';
+import { TaskGroupProperty } from './-task-group';
 import EventedObservable from './-evented-observable';
 import { subscribe } from './-subscribe';
 import { all, race } from './-yieldables';
@@ -58,6 +59,10 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
  */
 export function task(...args) {
   return new TaskProperty(...args);
+}
+
+export function taskGroup(...args) {
+  return new TaskGroupProperty(...args);
 }
 
 /**

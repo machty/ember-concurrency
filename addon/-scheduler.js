@@ -1,8 +1,6 @@
 import Ember from 'ember';
 
 const Scheduler = Ember.Object.extend({
-  concurrency: 0,
-
   init() {
     this._super(...arguments);
     this.activeTaskInstances = Ember.A();
@@ -25,7 +23,7 @@ const Scheduler = Ember.Object.extend({
   schedule(taskInstance) {
     this.queuedTaskInstances.push(taskInstance);
     this._needsFlush();
-    this.notifyPropertyChange('nextPerformState');
+    //this.notifyPropertyChange('nextPerformState');
   },
 
   _needsFlush: null,
@@ -38,8 +36,14 @@ const Scheduler = Ember.Object.extend({
 
   _flushQueues() {
     this._flushScheduled = false;
-    this.activeTaskInstances = Ember.A(this.activeTaskInstances.filterBy('isFinished', false));
+    let seen = {};
 
+    for (let i = 0; i < this.activeTaskInstances.length; ++i) {
+      let task = this.activeTaskInstances[i].task;
+      seen[Ember.guidFor(task)] = task;
+    }
+
+    this.activeTaskInstances = Ember.A(this.activeTaskInstances.filterBy('isFinished', false));
     this.bufferPolicy.schedule(this);
 
     for (let i = 0; i < this.activeTaskInstances.length; ++i) {
@@ -48,9 +52,18 @@ const Scheduler = Ember.Object.extend({
         // use internal promise so that it doesn't cancel error reporting
         taskInstance._start()._defer.promise.then(this._needsFlush, this._needsFlush);
       }
+      let task = taskInstance.task;
+      seen[Ember.guidFor(task)] = task;
+      task._numRunning++;
     }
 
-    this.notifyPropertyChange('nextPerformState');
+    for (let i = 0; i < this.queuedTaskInstances.length; ++i) {
+      let task = this.queuedTaskInstances[i].task;
+      seen[Ember.guidFor(task)] = task;
+      task._numQueued++;
+    }
+
+    flushTaskCounts(seen);
 
     let concurrency = this.activeTaskInstances.length;
     this.set('concurrency', concurrency);
@@ -77,6 +90,15 @@ const Scheduler = Ember.Object.extend({
     });
   },
 });
+
+function flushTaskCounts(tasks) {
+  for (let guid in tasks) {
+    let task = tasks[guid];
+    task.set('numRunning', task._numRunning);
+    task.set('numQueued', task._numQueued);
+    task._numRunning = task._numQueued = 0;
+  }
+}
 
 export default Scheduler;
 
