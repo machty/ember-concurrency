@@ -93,10 +93,19 @@ const Scheduler = Ember.Object.extend({
 
 function flushTaskCounts(tasks) {
   for (let guid in tasks) {
-    let task = tasks[guid];
-    task.set('numRunning', task._numRunning);
-    task.set('numQueued', task._numQueued);
+    updateTaskChainCounts(tasks[guid]);
+  }
+}
+
+function updateTaskChainCounts(_task) {
+  let task = _task;
+  let numRunning = task._numRunning;
+  let numQueued  = task._numQueued;
+  while (task) {
+    task.set('numRunning', numRunning);
+    task.set('numQueued', numQueued);
     task._numRunning = task._numQueued = 0;
+    task = task.get('group');
   }
 }
 

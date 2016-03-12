@@ -10,7 +10,7 @@ function assertStates(task, isRunning, isQueued, isIdle, suffix) {
 }
 
 test("task groups enforce that only one member runs at a time", function(assert) {
-  assert.expect(33);
+  assert.expect(48);
 
   let deferA, deferB;
   let Obj = Ember.Object.extend({
@@ -27,13 +27,15 @@ test("task groups enforce that only one member runs at a time", function(assert)
     }).group('tg'),
   });
 
-  let obj, taskA, taskB, suffix;
+  let obj, taskA, taskB, suffix, tg;
   Ember.run(() => {
     obj = Obj.create();
+    tg = obj.get('tg');
     taskA = obj.get('taskA');
     taskB = obj.get('taskB');
 
     suffix = "before anything has been performed";
+    assertStates(tg,    false, false, true, suffix);
     assertStates(taskA, false, false, true, suffix);
     assertStates(taskB, false, false, true, suffix);
 
@@ -41,12 +43,14 @@ test("task groups enforce that only one member runs at a time", function(assert)
   });
 
   suffix = "after taskA is performed";
+  assertStates(tg,    true, false, false, suffix);
   assertStates(taskA, true, false, false, suffix);
   assertStates(taskB, false, false, true, suffix);
 
   Ember.run(taskB, 'perform');
 
   suffix = "after taskB is performed, but before taskA is finished";
+  assertStates(tg,    true, false, false, suffix);
   assertStates(taskA, true, false, false, suffix);
   assertStates(taskB, false, true, false, suffix);
   assert.ok(deferA);
@@ -55,6 +59,7 @@ test("task groups enforce that only one member runs at a time", function(assert)
   Ember.run(deferA, deferA.resolve);
 
   suffix = "after taskA has finished";
+  assertStates(tg,    true, false, false, suffix);
   assertStates(taskA, false, false, true, suffix);
   assertStates(taskB, true, false, false, suffix);
   assert.ok(deferB);
@@ -62,6 +67,7 @@ test("task groups enforce that only one member runs at a time", function(assert)
   Ember.run(deferB, deferB.resolve);
 
   suffix = "after taskB has finished";
+  assertStates(tg,    false, false, true, suffix);
   assertStates(taskA, false, false, true, suffix);
   assertStates(taskB, false, false, true, suffix);
 });

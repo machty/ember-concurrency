@@ -7,6 +7,11 @@ export const TaskGroup = Ember.Object.extend(TaskStateMixin, {
   toString() {
     return `<TaskGroup:${this._propertyName}>`;
   },
+
+  // FIXME: this is hacky and perhaps wrong
+  isRunning: Ember.computed.or('numRunning', 'numQueued'),
+  isQueued:  false,
+
 });
 
 export function TaskGroupProperty(...decorators) {

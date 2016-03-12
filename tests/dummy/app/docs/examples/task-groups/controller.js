@@ -7,7 +7,7 @@ function * shortPause() {
 
 // BEGIN-SNIPPET task-groups
 export default Ember.Controller.extend({
-  everything:    taskGroup().maxConcurrency(2),
+  everything:    taskGroup().drop(),
 
   chores:        taskGroup().group('everything'),
   changeDiapers: task(shortPause).group('chores'),
