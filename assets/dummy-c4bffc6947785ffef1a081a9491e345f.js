@@ -5565,7 +5565,7 @@ define('dummy/docs/examples/task-groups/controller', ['exports', 'ember', 'ember
       while (1) switch (context$1$0.prev = context$1$0.next) {
         case 0:
           context$1$0.next = 2;
-          return (0, _emberConcurrency.timeout)(1500);
+          return (0, _emberConcurrency.timeout)(3000);
 
         case 2:
         case 'end':
@@ -5605,11 +5605,11 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
           "loc": {
             "source": null,
             "start": {
-              "line": 19,
+              "line": 23,
               "column": 4
             },
             "end": {
-              "line": 30,
+              "line": 34,
               "column": 4
             }
           },
@@ -5677,7 +5677,7 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
           morphs[5] = dom.createMorphAt(dom.childAt(element0, [7]), 0, 0);
           return morphs;
         },
-        statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "task", ["loc", [null, [22, 36], [22, 40]]]]], [], ["loc", [null, [22, 26], [22, 42]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isIdle", ["loc", [null, [22, 54], [22, 65]]]], "button-primary"], [], ["loc", [null, [22, 49], [22, 84]]]]], ["content", "task.name", ["loc", [null, [23, 12], [23, 25]]]], ["content", "task.state", ["loc", [null, [26, 12], [26, 26]]]], ["content", "task.group.name", ["loc", [null, [27, 12], [27, 31]]]], ["content", "task.group.state", ["loc", [null, [28, 12], [28, 32]]]]],
+        statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "task", ["loc", [null, [26, 36], [26, 40]]]]], [], ["loc", [null, [26, 26], [26, 42]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isIdle", ["loc", [null, [26, 54], [26, 65]]]], "button-primary"], [], ["loc", [null, [26, 49], [26, 84]]]]], ["content", "task.name", ["loc", [null, [27, 12], [27, 25]]]], ["content", "task.state", ["loc", [null, [30, 12], [30, 26]]]], ["content", "task.group.name", ["loc", [null, [31, 12], [31, 31]]]], ["content", "task.group.state", ["loc", [null, [32, 12], [32, 32]]]]],
         locals: ["task"],
         templates: []
       };
@@ -5696,7 +5696,7 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
             "column": 0
           },
           "end": {
-            "line": 39,
+            "line": 43,
             "column": 0
           }
         },
@@ -5724,6 +5724,12 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
         var el2 = dom.createTextNode("State of everything: ");
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("button");
+        var el2 = dom.createTextNode("\n  Cancel Everything\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -5759,7 +5765,7 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
         var el4 = dom.createTextNode("\n      ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("th");
-        var el5 = dom.createTextNode("G. State");
+        var el5 = dom.createTextNode("Group State");
         dom.appendChild(el4, el5);
         dom.appendChild(el3, el4);
         var el4 = dom.createTextNode("\n    ");
@@ -5796,14 +5802,17 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(4);
+        var element2 = dom.childAt(fragment, [6]);
+        var morphs = new Array(6);
         morphs[0] = dom.createMorphAt(dom.childAt(fragment, [4]), 1, 1);
-        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [7, 3]), 1, 1);
-        morphs[2] = dom.createMorphAt(fragment, 10, 10, contextualElement);
-        morphs[3] = dom.createMorphAt(fragment, 12, 12, contextualElement);
+        morphs[1] = dom.createAttrMorph(element2, 'onclick');
+        morphs[2] = dom.createAttrMorph(element2, 'class');
+        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [9, 3]), 1, 1);
+        morphs[4] = dom.createMorphAt(fragment, 12, 12, contextualElement);
+        morphs[5] = dom.createMorphAt(fragment, 14, 14, contextualElement);
         return morphs;
       },
-      statements: [["content", "everything.state", ["loc", [null, [5, 25], [5, 45]]]], ["block", "each", [["get", "tasks", ["loc", [null, [19, 12], [19, 17]]]]], [], 0, null, ["loc", [null, [19, 4], [30, 13]]]], ["inline", "code-snippet", [], ["name", "task-groups.js"], ["loc", [null, [36, 0], [36, 38]]]], ["inline", "code-snippet", [], ["name", "task-groups-template.hbs"], ["loc", [null, [37, 0], [37, 48]]]]],
+      statements: [["content", "everything.state", ["loc", [null, [5, 25], [5, 45]]]], ["attribute", "onclick", ["subexpr", "cancel-all", [["get", "everything", ["loc", [null, [7, 29], [7, 39]]]]], [], ["loc", [null, [7, 16], [7, 41]]]]], ["attribute", "class", ["subexpr", "if", [["get", "everything.isRunning", ["loc", [null, [7, 53], [7, 73]]]], "button-primary"], [], ["loc", [null, [7, 48], [7, 92]]]]], ["block", "each", [["get", "tasks", ["loc", [null, [23, 12], [23, 17]]]]], [], 0, null, ["loc", [null, [23, 4], [34, 13]]]], ["inline", "code-snippet", [], ["name", "task-groups.js"], ["loc", [null, [40, 0], [40, 38]]]], ["inline", "code-snippet", [], ["name", "task-groups-template.hbs"], ["loc", [null, [41, 0], [41, 48]]]]],
       locals: [],
       templates: [child0]
     };
@@ -7881,7 +7890,12 @@ define('dummy/helpers/cancel-all', ['exports', 'ember', 'ember-concurrency/-help
   exports.cancelHelper = cancelHelper;
 
   function cancelHelper(args) {
-    return (0, _emberConcurrencyHelpers.taskHelperClosure)('cancel-all', 'cancelAll', args);
+    var cancelable = args[0];
+    if (!cancelable || typeof cancelable.cancelAll !== 'function') {
+      _ember['default'].assert('The first argument passed to the `cancel-all` helper should be a Task or TaskGroup (without quotes); you passed ' + cancelable, false);
+    }
+
+    return (0, _emberConcurrencyHelpers.taskHelperClosure)('cancelAll', args);
   }
 
   exports['default'] = _ember['default'].Helper.helper(cancelHelper);
@@ -7944,11 +7958,16 @@ define('dummy/helpers/ember-power-select-option-classes', ['exports', 'ember-pow
     }
   });
 });
-define('dummy/helpers/perform', ['exports', 'ember', 'ember-concurrency/-helpers'], function (exports, _ember, _emberConcurrencyHelpers) {
+define('dummy/helpers/perform', ['exports', 'ember', 'ember-concurrency/-task-property', 'ember-concurrency/-helpers'], function (exports, _ember, _emberConcurrencyTaskProperty, _emberConcurrencyHelpers) {
   exports.performHelper = performHelper;
 
   function performHelper(args, hash) {
-    return (0, _emberConcurrencyHelpers.taskHelperClosure)('perform', 'perform', args, hash);
+    var task = args[0];
+    if (!(task instanceof _emberConcurrencyTaskProperty.Task)) {
+      _ember['default'].assert('The first argument passed to the `perform` helper should be a Task object (without quotes); you passed ' + task, false);
+    }
+
+    return (0, _emberConcurrencyHelpers.taskHelperClosure)('perform', args, hash);
   }
 
   exports['default'] = _ember['default'].Helper.helper(performHelper);
@@ -8893,7 +8912,7 @@ define("dummy/snippets", ["exports"], function (exports) {
     "task-function-syntax-2.js": "  pickRandomNumbers: task(function * () {\n    let nums = [];\n    for (let i = 0; i < 3; i++) {\n      nums.push(Math.floor(Math.random() * 10));\n    }\n\n    this.set('status', `My favorite numbers: ${nums.join(', ')}`);\n  }),",
     "task-function-syntax-3.js": "  myTask: task(function * () {\n    this.set('status', `Thinking...`);\n    let promise = timeout(1000).then(() => 123);\n    let resolvedValue = yield promise;\n    this.set('status', `The value is ${resolvedValue}`);\n  }),",
     "task-function-syntax-4.js": "  myTask: task(function * () {\n    this.set('status', `Thinking...`);\n    try {\n      yield timeout(1000).then(() => {\n        throw \"Ahhhhh!!!!\";\n      });\n      this.set('status', `This does not get used!`);\n    } catch(e) {\n      this.set('status', `Caught value: ${e}`);\n    }\n  }),",
-    "task-groups-template.hbs": "\n<table class=\"u-full-width\">\n  <thead>\n    <tr>\n      <th>Perform</th>\n      <th>State</th>\n      <th>Group</th>\n      <th>G. State</th>\n    </tr>\n  </thead>\n  <tbody>\n    {{#each tasks as |task|}}\n      <tr>\n        <td>\n          <button onclick={{perform task}} class={{if task.isIdle 'button-primary'}}>\n            {{task.name}}\n          </button>\n        </td>\n        <td>{{task.state}}</td>\n        <td>{{task.group.name}}</td>\n        <td>{{task.group.state}}</td>\n      </tr>\n    {{/each}}\n  </tbody>\n</table>",
+    "task-groups-template.hbs": "\n<table class=\"u-full-width\">\n  <thead>\n    <tr>\n      <th>Perform</th>\n      <th>State</th>\n      <th>Group</th>\n      <th>Group State</th>\n    </tr>\n  </thead>\n  <tbody>\n    {{#each tasks as |task|}}\n      <tr>\n        <td>\n          <button onclick={{perform task}} class={{if task.isIdle 'button-primary'}}>\n            {{task.name}}\n          </button>\n        </td>\n        <td>{{task.state}}</td>\n        <td>{{task.group.name}}</td>\n        <td>{{task.group.state}}</td>\n      </tr>\n    {{/each}}\n  </tbody>\n</table>",
     "task-groups.js": "export default Ember.Controller.extend({\n  everything:    taskGroup().drop(),\n\n  chores:        taskGroup().group('everything'),\n  changeDiapers: task(shortPause).group('chores'),\n  doDishes:      task(shortPause).group('chores'),\n  mowTheLawn:    task(shortPause).group('chores'),\n\n  fun:           taskGroup().group('everything'),\n  playGames:     task(shortPause).group('fun'),\n  dance:         task(shortPause).group('fun'),\n  sing:          task(shortPause).group('fun'),\n\n  tasks: Ember.computed(function() {\n    return [\n      this.get('changeDiapers'),\n      this.get('doDishes'),\n      this.get('mowTheLawn'),\n      this.get('playGames'),\n      this.get('dance'),\n      this.get('sing'),\n    ];\n  }),\n});",
     "writing-tasks.js": "import Ember from 'ember';\nimport { task } from 'ember-concurrency';\n\nexport default Ember.Component.extend({\n  myTask: task(function * () {\n    alert(\"hello!\");\n  })\n});\n\n"
   };
@@ -8976,7 +8995,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+b702028a"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+847c6a3d"});
 }
 
 /* jshint ignore:end */

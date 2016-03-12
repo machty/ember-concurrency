@@ -95884,7 +95884,7 @@ define('ember-concurrency/-evented-observable', ['exports', 'ember'], function (
     }
   });
 });
-define('ember-concurrency/-helpers', ['exports', 'ember', 'ember-concurrency/-task-property'], function (exports, _ember, _emberConcurrencyTaskProperty) {
+define('ember-concurrency/-helpers', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
   exports.taskHelperClosure = taskHelperClosure;
@@ -95897,13 +95897,9 @@ define('ember-concurrency/-helpers', ['exports', 'ember', 'ember-concurrency/-ta
     }
   }
 
-  function taskHelperClosure(helperName, taskMethod, _args, hash) {
+  function taskHelperClosure(taskMethod, _args, hash) {
     var task = _args[0];
     var outerArgs = _args.slice(1);
-
-    if (!(task instanceof _emberConcurrencyTaskProperty.Task)) {
-      _ember['default'].assert('The first argument passed to the `' + helperName + '` helper should be a Task object (without quotes); you passed ' + task, false);
-    }
 
     return function () {
       for (var _len = arguments.length, innerArgs = Array(_len), _key = 0; _key < _len; _key++) {
@@ -96004,13 +96000,19 @@ define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, 
     },
 
     cancelAll: function cancelAll() {
-      this.spliceTaskInstances(this.activeTaskInstances, 0, this.activeTaskInstances.length);
-      this.spliceTaskInstances(this.queuedTaskInstances, 0, this.queuedTaskInstances.length);
+      var seen = {};
+      this.spliceTaskInstances(this.activeTaskInstances, 0, this.activeTaskInstances.length, seen);
+      this.spliceTaskInstances(this.queuedTaskInstances, 0, this.queuedTaskInstances.length, seen);
+      flushTaskCounts(seen);
     },
 
-    spliceTaskInstances: function spliceTaskInstances(taskInstances, index, count) {
+    spliceTaskInstances: function spliceTaskInstances(taskInstances, index, count, seen) {
       for (var i = index; i < index + count; ++i) {
-        taskInstances[i].cancel();
+        var taskInstance = taskInstances[i];
+        taskInstance.cancel();
+        if (seen) {
+          seen[_ember['default'].guidFor(taskInstance)] = taskInstance.task;
+        }
       }
       taskInstances.splice(index, count);
     },
@@ -96267,7 +96269,6 @@ define('ember-concurrency/-task-group', ['exports', 'ember', 'ember-concurrency/
     // FIXME: this is hacky and perhaps wrong
     isRunning: _ember['default'].computed.or('numRunning', 'numQueued'),
     isQueued: false
-
   });
 
   exports.TaskGroup = TaskGroup;
@@ -96294,14 +96295,8 @@ define('ember-concurrency/-task-group', ['exports', 'ember', 'ember-concurrency/
 
   TaskGroupProperty.prototype = Object.create(_emberConcurrencyUtils._ComputedProperty.prototype);
   Object.assign(TaskGroupProperty.prototype, _emberConcurrencyPropertyModifiersMixin.propertyModifiers, {
-    constructor: TaskGroupProperty,
-
-    _maxConcurrency: 1
-
+    constructor: TaskGroupProperty
   });
-  //maxConcurrency() {
-  //throw new Error("Setting .maxConcurrency() on a taskGroup() is not currently supported");
-  //},
 });
 define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _emberConcurrencyUtils) {
   'use strict';
