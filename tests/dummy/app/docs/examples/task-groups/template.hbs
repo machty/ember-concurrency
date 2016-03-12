@@ -1,42 +1,63 @@
-<h3>Task Groups (alpha)</h3>
+<h3>Task Groups (beta)</h3>
 
-<h3>Live Example</h3>
+<p>
+  To constrain the concurrency of a single task,
+  you use {{link-to 'Task Modifiers' 'docs.task-concurrency'}},
+  but what if you want to ensure that
+  two (or more) separate tasks don't run at the same time?
+  In these cases, you use <strong>Task Groups</strong>:
+</p>
 
-<h4>State of everything: {{everything.state}}</h4>
+<ol>
+  <li>Declare a task group via <code>nameOfGroup: taskGroup()</code></li>
+  <li>
+    Apply any desired {{link-to 'Task Modifiers' 'docs.task-concurrency'}}
+    to that task group (just as you would with a normal task).
+  </li>
+  <li>
+    Append <code>.group('nameOfGroup')</code> to any tasks you want to
+    be considered part of the group.
+  </li>
+</ol>
 
-<button onclick={{cancel-all everything}} class={{if everything.isRunning 'button-primary'}}>
-  Cancel Everything
-</button>
+<p>
+  Whereas using a modifier like <code>drop()</code> on a single task
+  prevents that single task from running concurrently, using
+  <code>drop()</code> on a Task Group ensures that only one
+  task in that Task Group can be running at any given time.
+</p>
 
-{{! BEGIN-SNIPPET task-groups-template }}
+<h5>Cancelation</h5>
 
-<table class="u-full-width">
-  <thead>
-    <tr>
-      <th>Perform</th>
-      <th>State</th>
-      <th>Group</th>
-      <th>Group State</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each tasks as |task|}}
-      <tr>
-        <td>
-          <button onclick={{perform task}} class={{if task.isIdle 'button-primary'}}>
-            {{task.name}}
-          </button>
-        </td>
-        <td>{{task.state}}</td>
-        <td>{{task.group.name}}</td>
-        <td>{{task.group.state}}</td>
-      </tr>
-    {{/each}}
-  </tbody>
-</table>
-{{! END-SNIPPET }}
+<p>
+  Additionally, just as you can <code>cancelAll</code> running
+  instances of a task, the Task Group object exposes the
+  same <code>cancelAll</code> method (and <code>cancel-all</code>
+  template helper) which will cancel any running task instances
+  that belong to that group.
+</p>
 
+<h5>Nested Task Groups</h5>
+
+<p>
+  Task Groups can be <strong>.group()</strong>ed to other
+  Task Groups, forming a hierarchy with Tasks at the leaves.
+  In such a hierarchy, all Tasks will share the concurrency
+  constraints of the root task group
+</p>
+
+<h3>Live Examples</h3>
+
+<p>
+  The following examples demonstrate nested task groups
+</p>
 
 {{code-snippet name="task-groups.js"}}
-{{code-snippet name="task-groups-template.hbs"}}
+{{code-snippet name="task-group-component.js"}}
+
+{{! BEGIN-SNIPPET task-groups-template }}
+{{#each taskGroups as |group|}}
+  {{task-group-example taskGroup=group}}
+{{/each}}
+{{! END-SNIPPET }}
 

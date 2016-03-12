@@ -1,0 +1,31 @@
+<h4>{{taskGroup.name}}: {{taskGroup.state}}</h4>
+
+<button onclick={{cancel-all taskGroup}} class={{if taskGroup.isRunning 'button-primary'}}>
+  Cancel {{taskGroup.name}}
+</button>
+
+<table class="u-full-width">
+  <thead>
+    <tr>
+      <th>Perform</th>
+      <th>State</th>
+      <th>Group</th>
+      <th>Group State</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each tasks as |task|}}
+      <tr>
+        <td>
+          <button onclick={{perform task}} class={{if task.isIdle 'button-primary'}}>
+            {{task.name}}
+          </button>
+        </td>
+        <td>{{task.state}}</td>
+        <td>{{task.group.name}}</td>
+        <td>{{task.group.state}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+

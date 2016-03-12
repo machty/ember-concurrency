@@ -1,32 +1,25 @@
 import Ember from 'ember';
-import { task, taskGroup, timeout } from 'ember-concurrency';
-
-function * shortPause() {
-  yield timeout(3000);
-}
+import { taskGroup } from 'ember-concurrency';
 
 // BEGIN-SNIPPET task-groups
 export default Ember.Controller.extend({
-  everything:    taskGroup().drop(),
+  everything:         taskGroup(),
+  everythingDropped:  taskGroup().drop(),
+  everythingEnqueue:  taskGroup().enqueue(),
+  everythingRestart:  taskGroup().restartable(),
+  everythingDropped3: taskGroup().maxConcurrency(3).drop(),
+  everythingEnqueue3: taskGroup().maxConcurrency(3).enqueue(),
+  everythingRestart3: taskGroup().maxConcurrency(3).restartable(),
 
-  chores:        taskGroup().group('everything'),
-  changeDiapers: task(shortPause).group('chores'),
-  doDishes:      task(shortPause).group('chores'),
-  mowTheLawn:    task(shortPause).group('chores'),
-
-  fun:           taskGroup().group('everything'),
-  playGames:     task(shortPause).group('fun'),
-  dance:         task(shortPause).group('fun'),
-  sing:          task(shortPause).group('fun'),
-
-  tasks: Ember.computed(function() {
+  taskGroups: Ember.computed(function () {
     return [
-      this.get('changeDiapers'),
-      this.get('doDishes'),
-      this.get('mowTheLawn'),
-      this.get('playGames'),
-      this.get('dance'),
-      this.get('sing'),
+      this.get('everything'),
+      this.get('everythingDropped'),
+      this.get('everythingEnqueue'),
+      this.get('everythingRestart'),
+      this.get('everythingDropped3'),
+      this.get('everythingEnqueue3'),
+      this.get('everythingRestart3'),
     ];
   }),
 });
