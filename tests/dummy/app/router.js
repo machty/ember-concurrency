@@ -27,6 +27,7 @@ Router.map(function() {
       this.route('joining-tasks');
       this.route('decorating-tasks');
       this.route('observables');
+      this.route('task-groups');
     });
     this.route('404', { path: '*path' });
   });

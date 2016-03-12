@@ -1,0 +1,46 @@
+<h3>Task Groups (alpha)</h3>
+
+<p>
+  Wat
+</p>
+
+<h3>Live Example</h3>
+
+<h4>Chores: {{chores.state}}</h4>
+
+<p>
+  What the hell
+</p>
+
+{{! BEGIN-SNIPPET task-groups-template }}
+
+<table class="u-full-width">
+  <thead>
+    <tr>
+      <th>Perform</th>
+      <th>State</th>
+      <th>Group</th>
+      <th>G. State</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each tasks as |task|}}
+      <tr>
+        <td>
+          <button onclick={{perform task}} class={{if task.isIdle 'button-primary'}}>
+            {{task.name}}
+          </button>
+        </td>
+        <td>{{task.state}}</td>
+        <td>{{task.group.name}}</td>
+        <td>{{task.group.state}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+{{! END-SNIPPET }}
+
+
+{{code-snippet name="task-groups.js"}}
+{{code-snippet name="task-groups-template.hbs"}}
+

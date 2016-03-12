@@ -4,6 +4,9 @@ import TaskStateMixin from './-task-state-mixin';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
 
 export const TaskGroup = Ember.Object.extend(TaskStateMixin, {
+  toString() {
+    return `<TaskGroup:${this._propertyName}>`;
+  },
 });
 
 export function TaskGroupProperty(...decorators) {
@@ -14,6 +17,7 @@ export function TaskGroupProperty(...decorators) {
       fn: taskFn,
       context: this,
       _origin: this,
+      _taskGroupPath: tp._taskGroupPath,
       _scheduler: resolveScheduler(tp, this, TaskGroup),
       _propertyName,
       _debugCallback: tp._debugCallback,
@@ -26,5 +30,9 @@ Object.assign(TaskGroupProperty.prototype, propertyModifiers, {
   constructor: TaskGroupProperty,
 
   _maxConcurrency: 1,
+
+  //maxConcurrency() {
+    //throw new Error("Setting .maxConcurrency() on a taskGroup() is not currently supported");
+  //},
 });
 

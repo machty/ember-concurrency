@@ -2,6 +2,7 @@ import Ember from 'ember';
 
 const { computed } = Ember;
 
+// this is a mixin of properties/methods shared between Tasks and TaskGroups
 export default Ember.Mixin.create({
   isRunning: computed.gt('numRunning', 0),
   isQueued:  computed.gt('numQueued',  0),
@@ -9,8 +10,14 @@ export default Ember.Mixin.create({
     return !this.get('isRunning') && !this.get('isQueued');
   }),
 
-  state: computed('isIdle', function() {
-    return this.get('isIdle') ? 'idle' : 'running';
+  state: computed('isRunning', 'isQueued', function() {
+    if (this.get('isRunning')) {
+      return 'running';
+    } else if (this.get('isQueued')) {
+      return 'queued';
+    } else {
+      return 'idle';
+    }
   }),
 
   _propertyName: null,
@@ -29,6 +36,12 @@ export default Ember.Mixin.create({
   cancelAll() {
     this._scheduler.cancelAll();
   },
+
+  group: computed(function() {
+    return this._taskGroupPath && this.context.get(this._taskGroupPath);
+  }),
+
+  _scheduler: null,
 
   /* TODO: re-add this to work w task groups... right now it's coupled to .performs
 

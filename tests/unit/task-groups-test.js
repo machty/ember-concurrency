@@ -66,3 +66,17 @@ test("task groups enforce that only one member runs at a time", function(assert)
   assertStates(taskB, false, false, true, suffix);
 });
 
+test("task groups enforce that only one member runs at a time", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    tg: taskGroup(),
+    taskA: task(function * () {}).group('tg')
+  });
+
+  Ember.run(() => {
+    assert.equal(Obj.create().get('taskA.group.name'), 'tg');
+  });
+});
+
+

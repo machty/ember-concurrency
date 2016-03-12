@@ -33,6 +33,7 @@ export const propertyModifiers = {
   maxConcurrency(n) {
     this._hasUsedModifier = true;
     this._maxConcurrency = n;
+    assertModifiersNotMixedWithGroup(this);
     return this;
   },
 
