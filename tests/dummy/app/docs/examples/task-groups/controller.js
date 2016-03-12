@@ -2,7 +2,7 @@ import Ember from 'ember';
 import { task, taskGroup, timeout } from 'ember-concurrency';
 
 function * shortPause() {
-  yield timeout(1500);
+  yield timeout(3000);
 }
 
 // BEGIN-SNIPPET task-groups

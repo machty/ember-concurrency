@@ -4,6 +4,10 @@
 
 <h4>State of everything: {{everything.state}}</h4>
 
+<button onclick={{cancel-all everything}} class={{if everything.isRunning 'button-primary'}}>
+  Cancel Everything
+</button>
+
 {{! BEGIN-SNIPPET task-groups-template }}
 
 <table class="u-full-width">
@@ -12,7 +16,7 @@
       <th>Perform</th>
       <th>State</th>
       <th>Group</th>
-      <th>G. State</th>
+      <th>Group State</th>
     </tr>
   </thead>
   <tbody>

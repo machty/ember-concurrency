@@ -9,12 +9,12 @@ function assertStates(task, isRunning, isQueued, isIdle, suffix) {
   QUnit.equal(task.get('isIdle'),    isIdle,    `${task._propertyName} is ${isIdle ? '' : 'not'} idle ${suffix}`);
 }
 
-test("task groups enforce that only one member runs at a time", function(assert) {
+test("task groups allow tasks to share concurrency constraints", function(assert) {
   assert.expect(48);
 
   let deferA, deferB;
   let Obj = Ember.Object.extend({
-    tg: taskGroup(),
+    tg: taskGroup().enqueue(),
 
     taskA: task(function * () {
       deferA = Ember.RSVP.defer();
@@ -85,4 +85,39 @@ test("task groups enforce that only one member runs at a time", function(assert)
   });
 });
 
+test("task groups can be cancelled", function(assert) {
+  assert.expect(9);
+
+  let deferA, deferB;
+  let Obj = Ember.Object.extend({
+    tg: taskGroup().enqueue(),
+
+    taskA: task(function * () {
+      deferA = Ember.RSVP.defer();
+      yield deferA.promise;
+    }).group('tg'),
+
+    taskB: task(function * () {
+      deferB = Ember.RSVP.defer();
+      yield deferB.promise;
+    }).group('tg'),
+  });
+
+  let obj, taskA, taskB, suffix, tg;
+  Ember.run(() => {
+    obj = Obj.create();
+    tg = obj.get('tg');
+    taskA = obj.get('taskA');
+    taskB = obj.get('taskB');
+    taskA.perform();
+    taskB.perform();
+  });
+
+  Ember.run(tg, 'cancelAll');
+
+  suffix = "after tg.cancelAll()";
+  assertStates(tg,    false, false, true, suffix);
+  assertStates(taskA, false, false, true, suffix);
+  assertStates(taskB, false, false, true, suffix);
+});
 

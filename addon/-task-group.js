@@ -11,7 +11,6 @@ export const TaskGroup = Ember.Object.extend(TaskStateMixin, {
   // FIXME: this is hacky and perhaps wrong
   isRunning: Ember.computed.or('numRunning', 'numQueued'),
   isQueued:  false,
-
 });
 
 export function TaskGroupProperty(...decorators) {
@@ -33,11 +32,5 @@ export function TaskGroupProperty(...decorators) {
 TaskGroupProperty.prototype = Object.create(_ComputedProperty.prototype);
 Object.assign(TaskGroupProperty.prototype, propertyModifiers, {
   constructor: TaskGroupProperty,
-
-  _maxConcurrency: 1,
-
-  //maxConcurrency() {
-    //throw new Error("Setting .maxConcurrency() on a taskGroup() is not currently supported");
-  //},
 });
 

@@ -9,13 +9,19 @@ const Scheduler = Ember.Object.extend({
   },
 
   cancelAll() {
-    this.spliceTaskInstances(this.activeTaskInstances, 0, this.activeTaskInstances.length);
-    this.spliceTaskInstances(this.queuedTaskInstances, 0, this.queuedTaskInstances.length);
+    let seen = {};
+    this.spliceTaskInstances(this.activeTaskInstances, 0, this.activeTaskInstances.length, seen);
+    this.spliceTaskInstances(this.queuedTaskInstances, 0, this.queuedTaskInstances.length, seen);
+    flushTaskCounts(seen);
   },
 
-  spliceTaskInstances(taskInstances, index, count) {
+  spliceTaskInstances(taskInstances, index, count, seen) {
     for (let i = index; i < index + count; ++i) {
-      taskInstances[i].cancel();
+      let taskInstance = taskInstances[i];
+      taskInstance.cancel();
+      if (seen) {
+        seen[Ember.guidFor(taskInstance)] = taskInstance.task;
+      }
     }
     taskInstances.splice(index, count);
   },
