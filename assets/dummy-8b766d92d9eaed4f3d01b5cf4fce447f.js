@@ -9235,7 +9235,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+75307b41"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+7b2e0d8f"});
 }
 
 /* jshint ignore:end */
