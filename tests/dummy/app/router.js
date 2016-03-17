@@ -16,6 +16,7 @@ Router.map(function() {
     this.route('child-tasks');
     this.route('lifetime');
     this.route('examples', function() {
+      this.route('wait-hover');
       this.route('increment-buttons');
       this.route('loading-ui');
       this.route('autocomplete');
