@@ -3792,6 +3792,724 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
     };
   })());
 });
+define('dummy/docs/examples/completion-state/controller', ['exports', 'ember', 'ember-concurrency', 'dummy/utils'], function (exports, _ember, _emberConcurrency, _dummyUtils) {
+  function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
+  var marked0$0 = [sharedFn].map(regeneratorRuntime.mark);
+
+  var i = 0;
+  function sharedFn(shouldError) {
+    var words, wordsString;
+    return regeneratorRuntime.wrap(function sharedFn$(context$1$0) {
+      while (1) switch (context$1$0.prev = context$1$0.next) {
+        case 0:
+          i++;
+
+          context$1$0.next = 3;
+          return (0, _emberConcurrency.timeout)(1000);
+
+        case 3:
+          words = [(0, _dummyUtils.randomWord)(), (0, _dummyUtils.randomWord)(), (0, _dummyUtils.randomWord)()];
+          wordsString = i + ': ' + words;
+
+          if (!shouldError) {
+            context$1$0.next = 9;
+            break;
+          }
+
+          throw new Error(wordsString);
+
+        case 9:
+          return context$1$0.abrupt('return', wordsString);
+
+        case 10:
+        case 'end':
+          return context$1$0.stop();
+      }
+    }, marked0$0[0], this);
+  }
+
+  // BEGIN-SNIPPET completion-state-controller
+  exports['default'] = _ember['default'].Controller.extend({
+    doStuff: (0, _emberConcurrency.task)(sharedFn),
+    doStuffDrop: (0, _emberConcurrency.task)(sharedFn).drop(),
+    doStuffEnqueue: (0, _emberConcurrency.task)(sharedFn).enqueue(),
+    doStuffRestartable: (0, _emberConcurrency.task)(sharedFn).restartable(),
+
+    showLessCommon: false,
+
+    tasks: ["doStuff", "doStuffDrop", "doStuffEnqueue", "doStuffRestartable"],
+
+    taskProperties: _ember['default'].computed('showLessCommon', function () {
+      return [].concat(_toConsumableArray(this.get('commonTaskProperties')), _toConsumableArray(this.get('showLessCommon') ? this.get('lessCommonTaskProperties') : []));
+    }),
+
+    commonTaskProperties: ["last", "lastSuccessful", "lastErrored"],
+
+    lessCommonTaskProperties: ["lastComplete", "lastPerformed", "lastIncomplete", "lastCanceled"],
+
+    actions: {
+      performAll: function performAll() {}
+    }
+  });
+
+  // END-SNIPPET
+});
+define("dummy/docs/examples/completion-state/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      var child0 = (function () {
+        var child0 = (function () {
+          var child0 = (function () {
+            return {
+              meta: {
+                "fragmentReason": false,
+                "revision": "Ember@2.3.1",
+                "loc": {
+                  "source": null,
+                  "start": {
+                    "line": 119,
+                    "column": 12
+                  },
+                  "end": {
+                    "line": 121,
+                    "column": 12
+                  }
+                },
+                "moduleName": "dummy/docs/examples/completion-state/template.hbs"
+              },
+              isEmpty: false,
+              arity: 1,
+              cachedFragment: null,
+              hasRendered: false,
+              buildFragment: function buildFragment(dom) {
+                var el0 = dom.createDocumentFragment();
+                var el1 = dom.createTextNode("              ");
+                dom.appendChild(el0, el1);
+                var el1 = dom.createElement("div");
+                dom.setAttribute(el1, "class", "completion-status completion-success");
+                var el2 = dom.createComment("");
+                dom.appendChild(el1, el2);
+                dom.appendChild(el0, el1);
+                var el1 = dom.createTextNode("\n");
+                dom.appendChild(el0, el1);
+                return el0;
+              },
+              buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+                var morphs = new Array(1);
+                morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
+                return morphs;
+              },
+              statements: [["content", "v", ["loc", [null, [120, 64], [120, 69]]]]],
+              locals: ["v"],
+              templates: []
+            };
+          })();
+          var child1 = (function () {
+            return {
+              meta: {
+                "fragmentReason": false,
+                "revision": "Ember@2.3.1",
+                "loc": {
+                  "source": null,
+                  "start": {
+                    "line": 124,
+                    "column": 12
+                  },
+                  "end": {
+                    "line": 126,
+                    "column": 12
+                  }
+                },
+                "moduleName": "dummy/docs/examples/completion-state/template.hbs"
+              },
+              isEmpty: false,
+              arity: 1,
+              cachedFragment: null,
+              hasRendered: false,
+              buildFragment: function buildFragment(dom) {
+                var el0 = dom.createDocumentFragment();
+                var el1 = dom.createTextNode("              ");
+                dom.appendChild(el0, el1);
+                var el1 = dom.createElement("div");
+                dom.setAttribute(el1, "class", "completion-status completion-error");
+                var el2 = dom.createComment("");
+                dom.appendChild(el1, el2);
+                dom.appendChild(el0, el1);
+                var el1 = dom.createTextNode("\n");
+                dom.appendChild(el0, el1);
+                return el0;
+              },
+              buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+                var morphs = new Array(1);
+                morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
+                return morphs;
+              },
+              statements: [["content", "v", ["loc", [null, [125, 62], [125, 67]]]]],
+              locals: ["v"],
+              templates: []
+            };
+          })();
+          return {
+            meta: {
+              "fragmentReason": false,
+              "revision": "Ember@2.3.1",
+              "loc": {
+                "source": null,
+                "start": {
+                  "line": 113,
+                  "column": 8
+                },
+                "end": {
+                  "line": 129,
+                  "column": 8
+                }
+              },
+              "moduleName": "dummy/docs/examples/completion-state/template.hbs"
+            },
+            isEmpty: false,
+            arity: 1,
+            cachedFragment: null,
+            hasRendered: false,
+            buildFragment: function buildFragment(dom) {
+              var el0 = dom.createDocumentFragment();
+              var el1 = dom.createTextNode("        ");
+              dom.appendChild(el0, el1);
+              var el1 = dom.createElement("tr");
+              var el2 = dom.createTextNode("\n          ");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createElement("td");
+              var el3 = dom.createTextNode("\n            ");
+              dom.appendChild(el2, el3);
+              var el3 = dom.createElement("strong");
+              var el4 = dom.createTextNode("myTask.");
+              dom.appendChild(el3, el4);
+              var el4 = dom.createComment("");
+              dom.appendChild(el3, el4);
+              dom.appendChild(el2, el3);
+              var el3 = dom.createTextNode("\n          ");
+              dom.appendChild(el2, el3);
+              dom.appendChild(el1, el2);
+              var el2 = dom.createTextNode("\n          ");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createElement("td");
+              var el3 = dom.createTextNode("\n");
+              dom.appendChild(el2, el3);
+              var el3 = dom.createComment("");
+              dom.appendChild(el2, el3);
+              var el3 = dom.createTextNode("          ");
+              dom.appendChild(el2, el3);
+              dom.appendChild(el1, el2);
+              var el2 = dom.createTextNode("\n          ");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createElement("td");
+              var el3 = dom.createTextNode("\n");
+              dom.appendChild(el2, el3);
+              var el3 = dom.createComment("");
+              dom.appendChild(el2, el3);
+              var el3 = dom.createTextNode("          ");
+              dom.appendChild(el2, el3);
+              dom.appendChild(el1, el2);
+              var el2 = dom.createTextNode("\n        ");
+              dom.appendChild(el1, el2);
+              dom.appendChild(el0, el1);
+              var el1 = dom.createTextNode("\n");
+              dom.appendChild(el0, el1);
+              return el0;
+            },
+            buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+              var element0 = dom.childAt(fragment, [1]);
+              var morphs = new Array(3);
+              morphs[0] = dom.createMorphAt(dom.childAt(element0, [1, 1]), 1, 1);
+              morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]), 1, 1);
+              morphs[2] = dom.createMorphAt(dom.childAt(element0, [5]), 1, 1);
+              return morphs;
+            },
+            statements: [["content", "tp", ["loc", [null, [116, 27], [116, 33]]]], ["block", "with", [["subexpr", "get", [["get", "task", ["loc", [null, [119, 25], [119, 29]]]], ["subexpr", "concat", [["get", "tp", ["loc", [null, [119, 38], [119, 40]]]], ".value"], [], ["loc", [null, [119, 30], [119, 50]]]]], [], ["loc", [null, [119, 20], [119, 51]]]]], [], 0, null, ["loc", [null, [119, 12], [121, 21]]]], ["block", "with", [["subexpr", "get", [["get", "task", ["loc", [null, [124, 25], [124, 29]]]], ["subexpr", "concat", [["get", "tp", ["loc", [null, [124, 38], [124, 40]]]], ".error"], [], ["loc", [null, [124, 30], [124, 50]]]]], [], ["loc", [null, [124, 20], [124, 51]]]]], [], 1, null, ["loc", [null, [124, 12], [126, 21]]]]],
+            locals: ["tp"],
+            templates: [child0, child1]
+          };
+        })();
+        return {
+          meta: {
+            "fragmentReason": false,
+            "revision": "Ember@2.3.1",
+            "loc": {
+              "source": null,
+              "start": {
+                "line": 86,
+                "column": 2
+              },
+              "end": {
+                "line": 133,
+                "column": 2
+              }
+            },
+            "moduleName": "dummy/docs/examples/completion-state/template.hbs"
+          },
+          isEmpty: false,
+          arity: 1,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("h5");
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n\n    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("p");
+            var el2 = dom.createTextNode("\n      ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createElement("button");
+            var el3 = dom.createTextNode("\n        Run to Completion\n      ");
+            dom.appendChild(el2, el3);
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n      ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createElement("button");
+            var el3 = dom.createTextNode("\n        Run until Error\n      ");
+            dom.appendChild(el2, el3);
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n      ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createElement("button");
+            var el3 = dom.createTextNode("\n        Cancel\n      ");
+            dom.appendChild(el2, el3);
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n    ");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n\n    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("table");
+            dom.setAttribute(el1, "class", "u-full-width completion-state-table");
+            var el2 = dom.createTextNode("\n      ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createElement("thead");
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("tr");
+            var el4 = dom.createTextNode("\n          ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("th");
+            var el5 = dom.createTextNode("Completion Property");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode("\n          ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("th");
+            var el5 = dom.createTextNode(".value");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode("\n          ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("th");
+            var el5 = dom.createTextNode(".error");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode("\n        ");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n      ");
+            dom.appendChild(el2, el3);
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n      ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createElement("tbody");
+            var el3 = dom.createTextNode("\n");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createComment("");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("      ");
+            dom.appendChild(el2, el3);
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n    ");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("br");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+            var element1 = dom.childAt(fragment, [3]);
+            var element2 = dom.childAt(element1, [1]);
+            var element3 = dom.childAt(element1, [3]);
+            var element4 = dom.childAt(element1, [5]);
+            var morphs = new Array(8);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
+            morphs[1] = dom.createAttrMorph(element2, 'onclick');
+            morphs[2] = dom.createAttrMorph(element2, 'class');
+            morphs[3] = dom.createAttrMorph(element3, 'onclick');
+            morphs[4] = dom.createAttrMorph(element3, 'class');
+            morphs[5] = dom.createAttrMorph(element4, 'onclick');
+            morphs[6] = dom.createAttrMorph(element4, 'class');
+            morphs[7] = dom.createMorphAt(dom.childAt(fragment, [5, 3]), 1, 1);
+            return morphs;
+          },
+          statements: [["content", "task.name", ["loc", [null, [87, 8], [87, 21]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "task", ["loc", [null, [90, 32], [90, 36]]]], false], [], ["loc", [null, [90, 22], [90, 44]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isIdle", ["loc", [null, [91, 19], [91, 30]]]], "button-primary"], [], ["loc", [null, [91, 14], [91, 49]]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "task", ["loc", [null, [94, 32], [94, 36]]]], true], [], ["loc", [null, [94, 22], [94, 43]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isIdle", ["loc", [null, [95, 19], [95, 30]]]], "button-primary"], [], ["loc", [null, [95, 14], [95, 49]]]]], ["attribute", "onclick", ["subexpr", "cancel-all", [["get", "task", ["loc", [null, [98, 35], [98, 39]]]]], [], ["loc", [null, [98, 22], [98, 41]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isRunning", ["loc", [null, [99, 19], [99, 33]]]], "button-primary"], [], ["loc", [null, [99, 14], [99, 52]]]]], ["block", "each", [["get", "taskProperties", ["loc", [null, [113, 16], [113, 30]]]]], [], 0, null, ["loc", [null, [113, 8], [129, 17]]]]],
+          locals: ["task"],
+          templates: [child0]
+        };
+      })();
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 85,
+              "column": 0
+            },
+            "end": {
+              "line": 134,
+              "column": 0
+            }
+          },
+          "moduleName": "dummy/docs/examples/completion-state/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
+          dom.insertBoundary(fragment, 0);
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [["block", "with", [["subexpr", "get", [["get", "this", ["loc", [null, [86, 15], [86, 19]]]], ["get", "taskName", ["loc", [null, [86, 20], [86, 28]]]]], [], ["loc", [null, [86, 10], [86, 29]]]]], [], 0, null, ["loc", [null, [86, 2], [133, 11]]]]],
+        locals: ["taskName"],
+        templates: [child0]
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 136,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/examples/completion-state/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Beta: Completion State");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  If you want to display the result of a task (e.g. displaying a success\n  or \"Try Again\" banner), generally speaking, you have two options:\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ol");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".set");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" the success or error result to some property from within the task");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("Use the Completion State properties automatically supplied by the Task object,\n      as described below.");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("TaskInstance.value and TaskInstance.error");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  The value returned from ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("someTask.perform()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" is\n  a ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("em");
+        var el3 = dom.createTextNode("TaskInstance");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" — a single execution of that task.\n  When a TaskInstance finishes running, it will set one of two\n  properties, depending on whether it ran to completion, was canceled,\n  or an error was thrown:\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ul");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".value");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(": the value returned from the task");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".error");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(": the error thrown from the task or a TaskCancelation error");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Assuming you've saved the TaskInstance returned from a ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".perform()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  to some property that the template can see, you could use\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".value");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" or ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".error");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" to display success or error\n  banners, e.g. when a form is submitted. But while there may be some use\n  cases that require manually stashing the TaskInstance, Task objects\n  already expose properties that give you access to that TaskInstance\n  so that you don't have to stash it yourself.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("TaskInstance properties on the Task object");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  The Task object, in addition to exposing helpful properties like\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("isRunning");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" and ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("isIdle");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(", exposes a handful\n  of properties to point to TaskInstances that have been performed.\n  Because there are many different use cases for when to display and hide\n  success and error UI, there cannot just be one single property to\n  rule them all, but the following list has been ordered by the\n  most common task instances you'd want to use.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ul");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("last");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(": this points to the most recent TaskInstance that\n    started running (so any ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("drop");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("ped task instances won't show up here,\n    and ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("enqueue");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("d task instances will only show up once they start\n    running). ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("myTask.last.value");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" and ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("myTask.last.error");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    start off null when the task instance starts running, and then get set\n    when the task instance returns/throws/is canceled.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("lastSuccessful");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(": this gets set when the task\n    runs to completion, i.e. it returned a value.\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("myTask.lastSuccessful.value");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" is the value returned from\n    the most recent ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("myTask.perform");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(".\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("lastErrored");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(": this gets set when the task\n    threw an error (or yielded a promise that rejected).\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("myTask.lastErrored.error");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" is the error of the\n    the most recent ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("myTask.perform");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(".\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    The other less common properties available are\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("lastComplete");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(", ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("lastPerformed");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(",\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("lastIncomplete");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(", and ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("lastCanceled");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(".\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Live Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" Show less common properties\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(2);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [22]), 1, 1);
+        morphs[1] = dom.createMorphAt(fragment, 24, 24, contextualElement);
+        return morphs;
+      },
+      statements: [["inline", "input", [], ["type", "checkbox", "checked", ["subexpr", "@mut", [["get", "showLessCommon", ["loc", [null, [82, 34], [82, 48]]]]], [], []]], ["loc", [null, [82, 2], [82, 50]]]], ["block", "each", [["get", "tasks", ["loc", [null, [85, 8], [85, 13]]]]], [], 0, null, ["loc", [null, [85, 0], [134, 9]]]]],
+      locals: [],
+      templates: [child0]
+    };
+  })());
+});
 define('dummy/docs/examples/decorating-tasks/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
 
   // BEGIN-SNIPPET decorating-tasks
@@ -4496,12 +5214,7 @@ define("dummy/docs/examples/index/template", ["exports"], function (exports) {
     };
   })());
 });
-define('dummy/docs/examples/joining-tasks/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
-
-  var WORDS = ['ember', 'tomster', 'swag', 'yolo', 'turbo', 'ajax'];
-  function randomWord() {
-    return WORDS[Math.floor(Math.random() * WORDS.length)];
-  }
+define('dummy/docs/examples/joining-tasks/controller', ['exports', 'ember', 'dummy/utils', 'ember-concurrency'], function (exports, _ember, _dummyUtils, _emberConcurrency) {
 
   var ProgressTracker = _ember['default'].Object.extend({
     id: null,
@@ -4572,7 +5285,7 @@ define('dummy/docs/examples/joining-tasks/controller', ['exports', 'ember', 'emb
             break;
 
           case 8:
-            word = randomWord();
+            word = (0, _dummyUtils.randomWord)();
 
             tracker.set('word', word);
             return context$1$0.abrupt('return', word);
@@ -8774,6 +9487,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
         this.route('decorating-tasks');
         this.route('observables');
         this.route('task-groups');
+        this.route('completion-state');
       });
       this.route('404', { path: '*path' });
     });
@@ -8805,6 +9519,7 @@ define("dummy/snippets", ["exports"], function (exports) {
     "caps-marquee.js": "  marqueeLoop: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      this.set('formattedText', text);\n      yield timeout(1500);\n      for (let i = 0; i < text.length; ++i) {\n        this.set('formattedText', capitalizeAt(text, i));\n        yield timeout(50);\n      }\n    }\n  }).on('init'),",
     "child-tasks-template.hbs": "<h5>{{status}}</h5>\n\n<ul>\n  <li>Parent Task:     {{parentTask.state}}</li>\n  <li>Child Task:      {{childTask.state}}</li>\n  <li>Grandchild Task: {{grandchildTask.state}}</li>\n</ul>\n\n<button onclick={{perform parentTask}}>\n  {{#if parentTask.isRunning}}\n    Restart Parent Task\n  {{else}}\n    Perform Parent Task\n  {{/if}}\n</button>",
     "child-tasks.js": "export default Ember.Controller.extend({\n  status: \"Waiting to start\",\n\n  parentTask: task(function * () {\n    this.set('status', \"1. Parent: one moment...\");\n    yield timeout(1000);\n    let value = yield this.get('childTask').perform();\n    this.set('status', `5. Parent: child says \"${value}\"`);\n    yield timeout(1000);\n    this.set('status', \"6. Done!\");\n  }).restartable(),\n\n  childTask: task(function * () {\n    this.set('status', \"2. Child: one moment...\");\n    yield timeout(1000);\n    let value = yield this.get('grandchildTask').perform();\n    this.set('status', `4. Child: grandchild says \"${value}\"`);\n    yield timeout(1000);\n    return \"What's up\";\n  }),\n\n  grandchildTask: task(function * () {\n    this.set('status', \"3. Grandchild: one moment...\");\n    yield timeout(1000);\n    return \"Hello\";\n  }),\n});",
+    "completion-state-controller.js": "export default Ember.Controller.extend({\n  doStuff:            task(sharedFn),\n  doStuffDrop:        task(sharedFn).drop(),\n  doStuffEnqueue:     task(sharedFn).enqueue(),\n  doStuffRestartable: task(sharedFn).restartable(),\n\n  showLessCommon: false,\n\n  tasks: [\n    \"doStuff\",\n    \"doStuffDrop\",\n    \"doStuffEnqueue\",\n    \"doStuffRestartable\",\n  ],\n\n  taskProperties: Ember.computed('showLessCommon', function() {\n    return [\n      ...this.get('commonTaskProperties'),\n      ...(this.get('showLessCommon') ? this.get('lessCommonTaskProperties') : [])\n    ];\n  }),\n\n  commonTaskProperties: [\n    \"last\",\n    \"lastSuccessful\",\n    \"lastErrored\",\n  ],\n\n  lessCommonTaskProperties: [\n    \"lastComplete\",\n    \"lastPerformed\",\n    \"lastIncomplete\",\n    \"lastCanceled\",\n  ],\n\n  actions: {\n    performAll() {\n    }\n  }\n});",
     "count-up.js": "  countUp: task(function * () {\n    while (true) {\n      this.incrementProperty('count');\n      yield timeout(100);\n    }\n  }).on('init'),",
     "debounced-search-with-cancelation-template.hbs": "  {{#power-select search=(perform searchRepo)\n                  selected=selected\n                  onchange=(action (mut selected)) as |repo|}}\n    {{repo.full_name}}\n  {{/power-select}}",
     "debounced-search-with-cancelation.js": "const DEBOUNCE_MS = 250;\nexport default Ember.Controller.extend({\n  searchRepo: task(function * (term) {\n    if (Ember.isBlank(term)) { return []; }\n\n    // Pause here for DEBOUNCE_MS milliseconds. Because this\n    // task is `restartable`, if the user starts typing again,\n    // the current search will be canceled at this point and\n    // start over from the beginning. This is the\n    // ember-concurrency way of debouncing a task.\n    yield timeout(DEBOUNCE_MS);\n\n    let url = `https://api.github.com/search/repositories?q=${term}`;\n\n    // We yield an AJAX request and wait for it to complete. If the task\n    // is restarted before this request completes, the XHR request\n    // is aborted (open the inspector and see for yourself :)\n    let json = yield this.get('getJSON').perform(url);\n    return json.items;\n  }).restartable(),\n\n  getJSON: task(function * (url) {\n    let xhr;\n    try {\n      xhr = Ember.$.getJSON(url);\n      let result = yield xhr.promise();\n      return result;\n\n      // NOTE: could also write this as\n      // return yield xhr;\n      //\n      // either way, the important thing is to yield before returning\n      // so that the `finally` block doesn't run until after the\n      // promise resolves (or the task is canceled).\n    } finally {\n      xhr.abort();\n    }\n  }),\n});",
@@ -8887,6 +9602,14 @@ define("dummy/templates/components/code-snippet", ["exports"], function (exports
     };
   })());
 });
+define('dummy/utils', ['exports'], function (exports) {
+  exports.randomWord = randomWord;
+  var WORDS = ['ember', 'tomster', 'swag', 'yolo', 'turbo', 'ajax'];
+
+  function randomWord() {
+    return WORDS[Math.floor(Math.random() * WORDS.length)];
+  }
+});
 /* jshint ignore:start */
 
 
@@ -8919,7 +9642,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+72f70b6c"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+c15b08cb"});
 }
 
 /* jshint ignore:end */

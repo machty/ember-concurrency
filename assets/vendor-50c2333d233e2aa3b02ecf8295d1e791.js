@@ -95992,11 +95992,21 @@ define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, 
   'use strict';
 
   var Scheduler = _ember['default'].Object.extend({
+    lastPerformed: null,
+    lastStarted: null,
+    lastSuccessful: null,
+    lastComplete: null,
+    lastErrored: null,
+    lastCanceled: null,
+    lastIncomplete: null,
+
+    boundHandleFulfill: null,
+    boundHandleReject: null,
+
     init: function init() {
       this._super.apply(this, arguments);
       this.activeTaskInstances = _ember['default'].A();
       this.queuedTaskInstances = _ember['default'].A();
-      this._needsFlush = _ember['default'].run.bind(this, this._scheduleFlush);
     },
 
     cancelAll: function cancelAll() {
@@ -96018,12 +96028,11 @@ define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, 
     },
 
     schedule: function schedule(taskInstance) {
+      this.set('lastPerformed', taskInstance);
       this.queuedTaskInstances.push(taskInstance);
-      this._needsFlush();
+      this._scheduleFlush();
       //this.notifyPropertyChange('nextPerformState');
     },
-
-    _needsFlush: null,
 
     _flushScheduled: false,
     _scheduleFlush: function _scheduleFlush() {
@@ -96032,6 +96041,8 @@ define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, 
     },
 
     _flushQueues: function _flushQueues() {
+      var _this = this;
+
       this._flushScheduled = false;
       var seen = {};
 
@@ -96043,15 +96054,33 @@ define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, 
       this.activeTaskInstances = _ember['default'].A(this.activeTaskInstances.filterBy('isFinished', false));
       this.bufferPolicy.schedule(this);
 
-      for (var i = 0; i < this.activeTaskInstances.length; ++i) {
-        var taskInstance = this.activeTaskInstances[i];
+      var _loop = function _loop(i) {
+        var taskInstance = _this.activeTaskInstances[i];
         if (!taskInstance.hasStarted) {
           // use internal promise so that it doesn't cancel error reporting
-          taskInstance._start()._defer.promise.then(this._needsFlush, this._needsFlush);
+          taskInstance._start()._defer.promise.then(function () {
+            _this.set('lastSuccessful', taskInstance);
+            _this.set('lastComplete', taskInstance);
+            _this._scheduleFlush();
+          }, function (error) {
+            if (error && error.name === 'TaskCancelation') {
+              _this.set('lastCanceled', taskInstance);
+            } else {
+              _this.set('lastErrored', taskInstance);
+            }
+            _this.set('lastComplete', taskInstance);
+            _this.set('lastIncomplete', taskInstance);
+            _this._scheduleFlush();
+          });
+          _this.set('lastStarted', taskInstance);
         }
         var task = taskInstance.task;
         seen[_ember['default'].guidFor(task)] = task;
         task._numRunning++;
+      };
+
+      for (var i = 0; i < this.activeTaskInstances.length; ++i) {
+        _loop(i);
       }
 
       for (var i = 0; i < this.queuedTaskInstances.length; ++i) {
@@ -96072,15 +96101,15 @@ define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, 
 
     completionDefer: null,
     getCompletionPromise: function getCompletionPromise() {
-      var _this = this;
+      var _this2 = this;
 
       return new _ember['default'].RSVP.Promise(function (r) {
         _ember['default'].run.schedule('actions', null, function () {
           var defer = _ember['default'].RSVP.defer();
-          if (!_this._flushScheduled && _this.activeTaskInstances.length === 0 && _this.queuedTaskInstances.length === 0) {
+          if (!_this2._flushScheduled && _this2.activeTaskInstances.length === 0 && _this2.queuedTaskInstances.length === 0) {
             defer.resolve();
           } else {
-            _this.completionDefer = defer;
+            _this2.completionDefer = defer;
           }
           defer.promise.then(r);
         });
@@ -96322,6 +96351,10 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     return str.slice(0, index) + (add || "") + str.slice(index + count);
   }
 
+  var SUCCESS = "success";
+  var ERROR = "error";
+  var CANCELATION = "cancel";
+
   /**
     A `TaskInstance` represent a single execution of a
     {@linkcode Task}. Every call to {@linkcode Task#perform} returns
@@ -96346,6 +96379,8 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     _userWillHandlePromise: false,
     task: null,
     args: null,
+    value: null,
+    error: null,
 
     /**
      * True if the task instance was canceled before it could run to completion.
@@ -96491,13 +96526,15 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       var error = new Error("TaskCancelation");
       error.name = "TaskCancelation";
       error.taskInstance = this;
-      this._defer.reject(error);
-      this.set('isCanceled', true);
 
-      // eagerly advance index so that pending promise resolutions
-      // are ignored
-      this._index++;
-      this._proceed(this._index, error, 'throw');
+      this._finalize(error, CANCELATION);
+
+      if (this.hasStarted) {
+        // eagerly advance index so that pending promise resolutions
+        // are ignored
+        this._index++;
+        this._proceed(this._index, error, 'throw');
+      }
     },
 
     /**
@@ -96538,13 +96575,25 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
     _hasResolved: false,
 
-    _finalize: function _finalize(value, isError) {
+    _finalize: function _finalize(value, completion) {
       this.set('isFinished', true);
-      if (isError) {
-        this._defer.reject(value);
-      } else {
-        this._defer.resolve(value);
+
+      switch (completion) {
+        case SUCCESS:
+          this._defer.resolve(value);
+          this.set('value', value);
+          break;
+        case ERROR:
+          this.set('error', value);
+          this._defer.reject(value);
+          break;
+        case CANCELATION:
+          this.set('error', value);
+          this.set('isCanceled', true);
+          this._defer.reject(value);
+          break;
       }
+
       this._dispose();
     },
 
@@ -96592,12 +96641,12 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       var error = _takeSafeStep2.error;
 
       if (error) {
-        this._finalize(value, true);
+        this._finalize(value, ERROR);
         return;
       } else {
         if (done && value === undefined) {
           this.set('isFinished', true);
-          this._finalize(value, false);
+          this._finalize(value, SUCCESS);
           return;
         }
       }
@@ -96620,7 +96669,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
     _proceedOrFinalize: function _proceedOrFinalize(done, index, value) {
       if (done) {
-        this._finalize(value, false);
+        this._finalize(value, SUCCESS);
       } else {
         this._proceed(index, value);
       }
@@ -97090,6 +97139,7 @@ define('ember-concurrency/-task-state-mixin', ['exports', 'ember'], function (ex
   'use strict';
 
   var computed = _ember['default'].computed;
+  var alias = computed.alias;
 
   // this is a mixin of properties/methods shared between Tasks and TaskGroups
   exports['default'] = _ember['default'].Mixin.create({
@@ -97111,9 +97161,16 @@ define('ember-concurrency/-task-state-mixin', ['exports', 'ember'], function (ex
 
     _propertyName: null,
     _origin: null,
-    name: computed.alias('_propertyName'),
+    name: alias('_propertyName'),
 
-    concurrency: computed.alias('numRunning'),
+    concurrency: alias('numRunning'),
+    last: alias('_scheduler.lastStarted'),
+    lastPerformed: alias('_scheduler.lastPerformed'),
+    lastSuccessful: alias('_scheduler.lastSuccessful'),
+    lastComplete: alias('_scheduler.lastComplete'),
+    lastErrored: alias('_scheduler.lastErrored'),
+    lastCanceled: alias('_scheduler.lastCanceled'),
+    lastIncomplete: alias('_scheduler.lastIncomplete'),
 
     numRunning: 0,
     numQueued: 0,
