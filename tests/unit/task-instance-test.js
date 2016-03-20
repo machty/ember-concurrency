@@ -78,13 +78,13 @@ test("cancelation", function(assert) {
     // tick as a cancel.
     defer0.resolve();
     taskInstance.cancel();
-    assert.ok(!taskInstance.get('isFinished'));
+    assert.ok(taskInstance.get('isFinished'));
     assert.ok(taskInstance.get('isCanceled'));
   });
 
   Ember.run(null, defer1.resolve, 123);
   assert.ok(taskInstance.get('isCanceled'));
-  assert.ok(!taskInstance.get('isFinished'));
+  assert.ok(taskInstance.get('isFinished'));
   Ember.run(null, defer2.resolve, 456);
   assert.ok(taskInstance.get('isCanceled'));
   assert.ok(taskInstance.get('isFinished'));
@@ -377,4 +377,60 @@ test("canceling a finished task shouldn't mark it as canceled", function(assert)
   assert.equal(taskInstance.get('isFinished'), true);
   assert.equal(taskInstance.get('isCanceled'), false);
 });
+
+test("taskInstance.value is null until task instance completes successfully", function(assert) {
+  assert.expect(2);
+
+  let taskInstance = Ember.run(() => {
+    return TaskInstance.create({
+      fn: function * () {
+        return 123;
+      },
+      args: [],
+    });
+  });
+
+  assert.equal(taskInstance.get('value'), null);
+  Ember.run(taskInstance, '_start');
+  assert.equal(taskInstance.get('value'), 123);
+});
+
+test("taskInstance.error is null until task instance errors", function(assert) {
+  assert.expect(3);
+
+  let taskInstance = Ember.run(() => {
+    return TaskInstance.create({
+      fn: function * () {
+        throw "justin bailey";
+      },
+      args: [],
+    });
+  });
+
+  assert.equal(taskInstance.get('error'), null);
+  try {
+    Ember.run(taskInstance, '_start');
+  } catch(e) {
+    assert.equal(e, "justin bailey");
+    assert.equal(taskInstance.get('error'), "justin bailey");
+  }
+});
+
+test("taskInstance.error is set when task cancels", function(assert) {
+  assert.expect(1);
+
+  let taskInstance = Ember.run(() => {
+    return TaskInstance.create({
+      fn: function * () {
+        yield Ember.RSVP.defer().promise;
+      },
+      args: [],
+    });
+  });
+
+  Ember.run(taskInstance, '_start');
+  Ember.run(taskInstance, 'cancel');
+  assert.equal(taskInstance.get('error.name'), "TaskCancelation");
+});
+
 

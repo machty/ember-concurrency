@@ -1,6 +1,7 @@
 import Ember from 'ember';
 
 const { computed } = Ember;
+const { alias } = computed;
 
 // this is a mixin of properties/methods shared between Tasks and TaskGroups
 export default Ember.Mixin.create({
@@ -22,9 +23,16 @@ export default Ember.Mixin.create({
 
   _propertyName: null,
   _origin: null,
-  name: computed.alias('_propertyName'),
+  name: alias('_propertyName'),
 
-  concurrency: computed.alias('numRunning'),
+  concurrency:    alias('numRunning'),
+  lastPerformed:  alias('_scheduler.lastPerformed'),
+  lastStarted:    alias('_scheduler.lastStarted'),
+  lastSuccessful: alias('_scheduler.lastSuccessful'),
+  lastComplete:   alias('_scheduler.lastComplete'),
+  lastErrored:    alias('_scheduler.lastErrored'),
+  lastCanceled:   alias('_scheduler.lastCanceled'),
+  lastIncomplete: alias('_scheduler.lastIncomplete'),
 
   numRunning: 0,
   numQueued: 0,

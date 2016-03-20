@@ -1,11 +1,21 @@
 import Ember from 'ember';
 
 const Scheduler = Ember.Object.extend({
+  lastPerformed:  null,
+  lastStarted:    null,
+  lastSuccessful: null,
+  lastComplete:   null,
+  lastErrored:    null,
+  lastCanceled:   null,
+  lastIncomplete: null,
+
+  boundHandleFulfill: null,
+  boundHandleReject: null,
+
   init() {
     this._super(...arguments);
     this.activeTaskInstances = Ember.A();
     this.queuedTaskInstances = Ember.A();
-    this._needsFlush = Ember.run.bind(this, this._scheduleFlush);
   },
 
   cancelAll() {
@@ -27,12 +37,11 @@ const Scheduler = Ember.Object.extend({
   },
 
   schedule(taskInstance) {
+    this.set('lastPerformed', taskInstance);
     this.queuedTaskInstances.push(taskInstance);
-    this._needsFlush();
+    this._scheduleFlush();
     //this.notifyPropertyChange('nextPerformState');
   },
-
-  _needsFlush: null,
 
   _flushScheduled: false,
   _scheduleFlush() {
@@ -56,7 +65,21 @@ const Scheduler = Ember.Object.extend({
       let taskInstance = this.activeTaskInstances[i];
       if (!taskInstance.hasStarted) {
         // use internal promise so that it doesn't cancel error reporting
-        taskInstance._start()._defer.promise.then(this._needsFlush, this._needsFlush);
+        taskInstance._start()._defer.promise.then(() => {
+          this.set('lastSuccessful', taskInstance);
+          this.set('lastComplete', taskInstance);
+          this._scheduleFlush();
+        }, error => {
+          if (error && error.name === 'TaskCancelation') {
+            this.set('lastCanceled', taskInstance);
+          } else {
+            this.set('lastErrored', taskInstance);
+          }
+          this.set('lastComplete', taskInstance);
+          this.set('lastIncomplete', taskInstance);
+          this._scheduleFlush();
+        });
+        this.set('lastStarted', taskInstance);
       }
       let task = taskInstance.task;
       seen[Ember.guidFor(task)] = task;

@@ -17,6 +17,10 @@ function spliceSlice(str, index, count, add) {
   return str.slice(0, index) + (add || "") + str.slice(index + count);
 }
 
+const SUCCESS     = "success";
+const ERROR       = "error";
+const CANCELATION = "cancel";
+
 /**
   A `TaskInstance` represent a single execution of a
   {@linkcode Task}. Every call to {@linkcode Task#perform} returns
@@ -41,6 +45,8 @@ let taskInstanceAttrs = {
   _userWillHandlePromise: false,
   task: null,
   args: null,
+  value: null,
+  error: null,
 
   /**
    * True if the task instance was canceled before it could run to completion.
@@ -178,8 +184,8 @@ let taskInstanceAttrs = {
     let error = new Error("TaskCancelation");
     error.name = "TaskCancelation";
     error.taskInstance = this;
-    this._defer.reject(error);
-    this.set('isCanceled', true);
+
+    this._finalize(error, CANCELATION);
 
     // eagerly advance index so that pending promise resolutions
     // are ignored
@@ -225,13 +231,25 @@ let taskInstanceAttrs = {
 
   _hasResolved: false,
 
-  _finalize(value, isError) {
+  _finalize(value, completion) {
     this.set('isFinished', true);
-    if (isError) {
-      this._defer.reject(value);
-    } else {
-      this._defer.resolve(value);
+
+    switch (completion) {
+      case SUCCESS:
+        this._defer.resolve(value);
+        this.set('value', value);
+        break;
+      case ERROR:
+        this.set('error', value);
+        this._defer.reject(value);
+        break;
+      case CANCELATION:
+        this.set('error', value);
+        this.set('isCanceled', true);
+        this._defer.reject(value);
+        break;
     }
+
     this._dispose();
   },
 
@@ -271,12 +289,12 @@ let taskInstanceAttrs = {
     let { done, value, error } = this._takeSafeStep(nextValue, method || 'next');
 
     if (error) {
-      this._finalize(value, true);
+      this._finalize(value, ERROR);
       return;
     } else {
       if (done && value === undefined) {
         this.set('isFinished', true);
-        this._finalize(value, false);
+        this._finalize(value, SUCCESS);
         return;
       }
     }
@@ -299,7 +317,7 @@ let taskInstanceAttrs = {
 
   _proceedOrFinalize(done, index, value) {
     if (done) {
-      this._finalize(value, false);
+      this._finalize(value, SUCCESS);
     } else {
       this._proceed(index, value);
     }
