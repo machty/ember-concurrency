@@ -433,4 +433,22 @@ test("taskInstance.error is set when task cancels", function(assert) {
   assert.equal(taskInstance.get('error.name'), "TaskCancelation");
 });
 
+test("taskInstance.error is set when task is dropped", function(assert) {
+  assert.expect(1);
+
+  let taskInstance = Ember.run(() => {
+    return TaskInstance.create({
+      fn: function * () {
+        yield Ember.RSVP.defer().promise;
+      },
+      args: [],
+    });
+  });
+
+  Ember.run(taskInstance, 'cancel');
+  assert.equal(taskInstance.get('error.name'), "TaskCancelation");
+});
+
+
+
 

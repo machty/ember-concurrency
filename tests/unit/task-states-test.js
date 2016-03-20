@@ -86,6 +86,25 @@ test(".lastPerformed is set when task.perform is called", function(assert) {
   });
 });
 
+test("a dropped .lastPerformed shows up as canceled", function(assert) {
+  assert.expect(3);
+
+  let Obj = Ember.Object.extend({
+    myTask: task(function * () { }).drop(),
+  });
+
+  let myTask, taskInstance0, taskInstance1;
+  Ember.run(() => {
+    let obj = Obj.create();
+    myTask = obj.get('myTask');
+    taskInstance0 = myTask.perform();
+    taskInstance1 = myTask.perform();
+    assert.equal(myTask.get('lastPerformed'), taskInstance1);
+  });
+  assert.equal(taskInstance1.get('error.name'), "TaskCancelation");
+  assert.equal(myTask.get('lastPerformed.error.name'), "TaskCancelation");
+});
+
 test(".lastStarted is set when a task starts", function(assert) {
   assert.expect(4);
 

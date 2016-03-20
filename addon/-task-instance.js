@@ -187,10 +187,12 @@ let taskInstanceAttrs = {
 
     this._finalize(error, CANCELATION);
 
-    // eagerly advance index so that pending promise resolutions
-    // are ignored
-    this._index++;
-    this._proceed(this._index, error, 'throw');
+    if (this.hasStarted) {
+      // eagerly advance index so that pending promise resolutions
+      // are ignored
+      this._index++;
+      this._proceed(this._index, error, 'throw');
+    }
   },
 
   /**
