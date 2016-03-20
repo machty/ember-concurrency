@@ -3868,11 +3868,11 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
                 "loc": {
                   "source": null,
                   "start": {
-                    "line": 119,
+                    "line": 141,
                     "column": 12
                   },
                   "end": {
-                    "line": 121,
+                    "line": 143,
                     "column": 12
                   }
                 },
@@ -3900,7 +3900,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
                 morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
                 return morphs;
               },
-              statements: [["content", "v", ["loc", [null, [120, 64], [120, 69]]]]],
+              statements: [["content", "v", ["loc", [null, [142, 64], [142, 69]]]]],
               locals: ["v"],
               templates: []
             };
@@ -3913,11 +3913,11 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
                 "loc": {
                   "source": null,
                   "start": {
-                    "line": 124,
+                    "line": 146,
                     "column": 12
                   },
                   "end": {
-                    "line": 126,
+                    "line": 148,
                     "column": 12
                   }
                 },
@@ -3945,7 +3945,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
                 morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
                 return morphs;
               },
-              statements: [["content", "v", ["loc", [null, [125, 62], [125, 67]]]]],
+              statements: [["content", "v", ["loc", [null, [147, 62], [147, 67]]]]],
               locals: ["v"],
               templates: []
             };
@@ -3957,11 +3957,11 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 113,
+                  "line": 135,
                   "column": 8
                 },
                 "end": {
-                  "line": 129,
+                  "line": 151,
                   "column": 8
                 }
               },
@@ -4025,7 +4025,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
               morphs[2] = dom.createMorphAt(dom.childAt(element0, [5]), 1, 1);
               return morphs;
             },
-            statements: [["content", "tp", ["loc", [null, [116, 27], [116, 33]]]], ["block", "with", [["subexpr", "get", [["get", "task", ["loc", [null, [119, 25], [119, 29]]]], ["subexpr", "concat", [["get", "tp", ["loc", [null, [119, 38], [119, 40]]]], ".value"], [], ["loc", [null, [119, 30], [119, 50]]]]], [], ["loc", [null, [119, 20], [119, 51]]]]], [], 0, null, ["loc", [null, [119, 12], [121, 21]]]], ["block", "with", [["subexpr", "get", [["get", "task", ["loc", [null, [124, 25], [124, 29]]]], ["subexpr", "concat", [["get", "tp", ["loc", [null, [124, 38], [124, 40]]]], ".error"], [], ["loc", [null, [124, 30], [124, 50]]]]], [], ["loc", [null, [124, 20], [124, 51]]]]], [], 1, null, ["loc", [null, [124, 12], [126, 21]]]]],
+            statements: [["content", "tp", ["loc", [null, [138, 27], [138, 33]]]], ["block", "with", [["subexpr", "get", [["get", "task", ["loc", [null, [141, 25], [141, 29]]]], ["subexpr", "concat", [["get", "tp", ["loc", [null, [141, 38], [141, 40]]]], ".value"], [], ["loc", [null, [141, 30], [141, 50]]]]], [], ["loc", [null, [141, 20], [141, 51]]]]], [], 0, null, ["loc", [null, [141, 12], [143, 21]]]], ["block", "with", [["subexpr", "get", [["get", "task", ["loc", [null, [146, 25], [146, 29]]]], ["subexpr", "concat", [["get", "tp", ["loc", [null, [146, 38], [146, 40]]]], ".error"], [], ["loc", [null, [146, 30], [146, 50]]]]], [], ["loc", [null, [146, 20], [146, 51]]]]], [], 1, null, ["loc", [null, [146, 12], [148, 21]]]]],
             locals: ["tp"],
             templates: [child0, child1]
           };
@@ -4037,11 +4037,11 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
             "loc": {
               "source": null,
               "start": {
-                "line": 86,
+                "line": 108,
                 "column": 2
               },
               "end": {
-                "line": 133,
+                "line": 155,
                 "column": 2
               }
             },
@@ -4154,7 +4154,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
             morphs[7] = dom.createMorphAt(dom.childAt(fragment, [5, 3]), 1, 1);
             return morphs;
           },
-          statements: [["content", "task.name", ["loc", [null, [87, 8], [87, 21]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "task", ["loc", [null, [90, 32], [90, 36]]]], false], [], ["loc", [null, [90, 22], [90, 44]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isIdle", ["loc", [null, [91, 19], [91, 30]]]], "button-primary"], [], ["loc", [null, [91, 14], [91, 49]]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "task", ["loc", [null, [94, 32], [94, 36]]]], true], [], ["loc", [null, [94, 22], [94, 43]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isIdle", ["loc", [null, [95, 19], [95, 30]]]], "button-primary"], [], ["loc", [null, [95, 14], [95, 49]]]]], ["attribute", "onclick", ["subexpr", "cancel-all", [["get", "task", ["loc", [null, [98, 35], [98, 39]]]]], [], ["loc", [null, [98, 22], [98, 41]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isRunning", ["loc", [null, [99, 19], [99, 33]]]], "button-primary"], [], ["loc", [null, [99, 14], [99, 52]]]]], ["block", "each", [["get", "taskProperties", ["loc", [null, [113, 16], [113, 30]]]]], [], 0, null, ["loc", [null, [113, 8], [129, 17]]]]],
+          statements: [["content", "task.name", ["loc", [null, [109, 8], [109, 21]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "task", ["loc", [null, [112, 32], [112, 36]]]], false], [], ["loc", [null, [112, 22], [112, 44]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isIdle", ["loc", [null, [113, 19], [113, 30]]]], "button-primary"], [], ["loc", [null, [113, 14], [113, 49]]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "task", ["loc", [null, [116, 32], [116, 36]]]], true], [], ["loc", [null, [116, 22], [116, 43]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isIdle", ["loc", [null, [117, 19], [117, 30]]]], "button-primary"], [], ["loc", [null, [117, 14], [117, 49]]]]], ["attribute", "onclick", ["subexpr", "cancel-all", [["get", "task", ["loc", [null, [120, 35], [120, 39]]]]], [], ["loc", [null, [120, 22], [120, 41]]]]], ["attribute", "class", ["subexpr", "if", [["get", "task.isRunning", ["loc", [null, [121, 19], [121, 33]]]], "button-primary"], [], ["loc", [null, [121, 14], [121, 52]]]]], ["block", "each", [["get", "taskProperties", ["loc", [null, [135, 16], [135, 30]]]]], [], 0, null, ["loc", [null, [135, 8], [151, 17]]]]],
           locals: ["task"],
           templates: [child0]
         };
@@ -4166,11 +4166,11 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
           "loc": {
             "source": null,
             "start": {
-              "line": 85,
+              "line": 107,
               "column": 0
             },
             "end": {
-              "line": 134,
+              "line": 156,
               "column": 0
             }
           },
@@ -4193,7 +4193,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
           dom.insertBoundary(fragment, null);
           return morphs;
         },
-        statements: [["block", "with", [["subexpr", "get", [["get", "this", ["loc", [null, [86, 15], [86, 19]]]], ["get", "taskName", ["loc", [null, [86, 20], [86, 28]]]]], [], ["loc", [null, [86, 10], [86, 29]]]]], [], 0, null, ["loc", [null, [86, 2], [133, 11]]]]],
+        statements: [["block", "with", [["subexpr", "get", [["get", "this", ["loc", [null, [108, 15], [108, 19]]]], ["get", "taskName", ["loc", [null, [108, 20], [108, 28]]]]], [], ["loc", [null, [108, 10], [108, 29]]]]], [], 0, null, ["loc", [null, [108, 2], [155, 11]]]]],
         locals: ["taskName"],
         templates: [child0]
       };
@@ -4212,7 +4212,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
             "column": 0
           },
           "end": {
-            "line": 136,
+            "line": 158,
             "column": 0
           }
         },
@@ -4226,6 +4226,34 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("h3");
         var el2 = dom.createTextNode("Beta: Completion State");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("strong");
+        var el3 = dom.createTextNode("\n    INCUBATING FEATURE: we definitely want this feature but there are\n    a few things to sort out before it's shipped (and @machty would\n    appreciate feedback :)\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("br");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("br");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    Outstanding Issue 1: right now taskInstances expose .value and .error,\n    which allows for idiomatic myTask.last.value, etc., but it's not clear\n    whether cancelations should should show up within .error, or some other\n    property name.\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("br");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("br");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    Outstanding Issue 2: erroring tasks still bubble exceptions to the top\n    unless you manually do myTask.perform().then(..., ...), which opts you\n    into handling errors yourself. This opt-in behavior makes sense, but\n    now that we expose .error as a template-bindable property, and now that\n    we're advertising Completion State as idiomatic ember-concurrency usage,\n    there should be some way to opt-in/out of these errors bubbling to the top.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -4500,11 +4528,11 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var morphs = new Array(2);
-        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [22]), 1, 1);
-        morphs[1] = dom.createMorphAt(fragment, 24, 24, contextualElement);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [24]), 1, 1);
+        morphs[1] = dom.createMorphAt(fragment, 26, 26, contextualElement);
         return morphs;
       },
-      statements: [["inline", "input", [], ["type", "checkbox", "checked", ["subexpr", "@mut", [["get", "showLessCommon", ["loc", [null, [82, 34], [82, 48]]]]], [], []]], ["loc", [null, [82, 2], [82, 50]]]], ["block", "each", [["get", "tasks", ["loc", [null, [85, 8], [85, 13]]]]], [], 0, null, ["loc", [null, [85, 0], [134, 9]]]]],
+      statements: [["inline", "input", [], ["type", "checkbox", "checked", ["subexpr", "@mut", [["get", "showLessCommon", ["loc", [null, [104, 34], [104, 48]]]]], [], []]], ["loc", [null, [104, 2], [104, 50]]]], ["block", "each", [["get", "tasks", ["loc", [null, [107, 8], [107, 13]]]]], [], 0, null, ["loc", [null, [107, 0], [156, 9]]]]],
       locals: [],
       templates: [child0]
     };
@@ -9642,7 +9670,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+c15b08cb"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+74366b8b"});
 }
 
 /* jshint ignore:end */
