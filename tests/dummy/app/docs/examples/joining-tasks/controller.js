@@ -1,9 +1,5 @@
 import Ember from 'ember';
-
-const WORDS = ['ember', 'tomster', 'swag', 'yolo', 'turbo', 'ajax'];
-function randomWord() {
-  return WORDS[Math.floor(Math.random() * WORDS.length)];
-}
+import { randomWord } from 'dummy/utils';
 
 const ProgressTracker = Ember.Object.extend({
   id: null,

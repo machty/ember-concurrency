@@ -104,3 +104,36 @@ th, td {
   min-width: 60px;
 }
 
+.completion-state-table {
+  th, td {
+    width: 33%;
+  }
+  tbody tr {
+    height: 65px;
+    /*vertical-align: top;*/
+  }
+}
+
+.completion-status {
+  @extend .button;
+  @extend .button-primary;
+
+  border: none;
+  cursor: auto;
+  margin: 0;
+
+  &.completion-success {
+    &:hover {
+      background-color: #1BBD92;
+    }
+    background-color: #1BBD92;
+  }
+
+  &.completion-error {
+    &:hover {
+      background-color: #F33F3F;
+    }
+    background-color: #F33F3F;
+  }
+}
+
