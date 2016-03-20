@@ -1,6 +1,28 @@
 <h3>Beta: Completion State</h3>
 
 <p>
+  <strong>
+    INCUBATING FEATURE: we definitely want this feature but there are
+    a few things to sort out before it's shipped (and @machty would
+    appreciate feedback :)
+    <br />
+    <br />
+    Outstanding Issue 1: right now taskInstances expose .value and .error,
+    which allows for idiomatic myTask.last.value, etc., but it's not clear
+    whether cancelations should should show up within .error, or some other
+    property name.
+    <br />
+    <br />
+    Outstanding Issue 2: erroring tasks still bubble exceptions to the top
+    unless you manually do myTask.perform().then(..., ...), which opts you
+    into handling errors yourself. This opt-in behavior makes sense, but
+    now that we expose .error as a template-bindable property, and now that
+    we're advertising Completion State as idiomatic ember-concurrency usage,
+    there should be some way to opt-in/out of these errors bubbling to the top.
+  </strong>
+</p>
+
+<p>
   If you want to display the result of a task (e.g. displaying a success
   or "Try Again" banner), generally speaking, you have two options:
 </p>
