@@ -96768,6 +96768,12 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
         return self._perform.apply(self, arguments);
       };
 
+      if (_emberConcurrencyPerformable['default'].detect(this.fn)) {
+        this._taskInstanceFactory = this.fn;
+      } else if (typeof this.fn === 'object') {
+        this._taskInstanceFactory = _emberConcurrencyPerformable['default'].extend(this.fn);
+      }
+
       (0, _emberConcurrencyUtils._cleanupOnDestroy)(this.context, this, 'cancelAll');
     },
 
@@ -96897,6 +96903,8 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
       return '<Task:' + this._propertyName + '>';
     },
 
+    _taskInstanceFactory: _emberConcurrencyTaskInstance['default'],
+
     _perform: function _perform() {
       for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
@@ -96907,15 +96915,11 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
       //args.unshift(performsTask);
       //}
 
-      var Factory = _emberConcurrencyTaskInstance['default'];
-      if (_emberConcurrencyPerformable['default'].detect(this.fn)) {
-        Factory = this.fn;
-      }
-
-      var taskInstance = Factory.create({
+      var taskInstance = this._taskInstanceFactory.create({
         fn: this.fn,
         args: args,
         context: this.context,
+        owner: this.context,
         task: this,
         _origin: this,
         _debugCallback: this._debugCallback
