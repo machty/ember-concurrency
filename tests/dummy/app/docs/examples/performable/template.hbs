@@ -1,0 +1,39 @@
+<h3>Experimental: Performables</h3>
+
+<p>
+  Normally, you define tasks by passing a generator function to <code>task(...)</code>.
+  Sometimes though, blah blah blah here is an example.
+</p>
+
+<h3>Live Example</h3>
+
+{{! BEGIN-SNIPPET performable-template }}
+<p>
+  <button onclick={{perform uploadFile makeRandomUrl}}>
+    Start Upload
+  </button>
+</p>
+
+<h5>Queued Uploads: {{uploadFile.numQueued}}</h5>
+
+{{#if uploadFile.last}}
+  <h5>
+    Uploading to {{uploadFile.last.url}}:
+    {{uploadFile.last.progress}}%
+  </h5>
+{{/if}}
+
+{{#if uploadFile.lastSuccessful}}
+  <h5 style="color: green;">
+    <strong>
+    Upload to {{uploadFile.lastSuccessful.url}}:
+    {{uploadFile.lastSuccessful.value}}
+    </strong>
+  </h5>
+{{/if}}
+
+{{! END-SNIPPET }}
+
+{{code-snippet name="performable-controller.js"}}
+{{code-snippet name="performable-template.hbs"}}
+

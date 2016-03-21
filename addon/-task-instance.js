@@ -147,7 +147,11 @@ let taskInstanceAttrs = {
         return Ember.RSVP.reject(e);
       }
     });
-    this.iterator = this.fn.apply(this.context, this.args);
+    this.iterator = this._makeIterator();
+  },
+
+  _makeIterator() {
+    return this.fn.apply(this.context, this.args);
   },
 
   _start() {

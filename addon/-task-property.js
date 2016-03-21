@@ -4,6 +4,7 @@ import TaskStateMixin from './-task-state-mixin';
 import { TaskGroup } from './-task-group';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
 import { _cleanupOnDestroy, _ComputedProperty } from './utils';
+import Performable from './-performable';
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -25,7 +26,6 @@ import { _cleanupOnDestroy, _ComputedProperty } from './utils';
 export const Task = Ember.Object.extend(TaskStateMixin, {
   fn: null,
   context: null,
-  _bufferPolicy: null,
 
   init() {
     this._super(...arguments);
@@ -174,7 +174,12 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       //args.unshift(performsTask);
     //}
 
-    let taskInstance = TaskInstance.create({
+    let Factory = TaskInstance;
+    if (Performable.detect(this.fn)) {
+      Factory = this.fn;
+    }
+
+    let taskInstance = Factory.create({
       fn: this.fn,
       args,
       context: this.context,

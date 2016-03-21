@@ -29,6 +29,7 @@ Router.map(function() {
       this.route('observables');
       this.route('task-groups');
       this.route('completion-state');
+      this.route('performable');
     });
     this.route('404', { path: '*path' });
   });
