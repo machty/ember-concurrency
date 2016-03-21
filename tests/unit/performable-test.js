@@ -31,3 +31,25 @@ test("Performables can be used instead of generator functions", function(assert)
   Ember.run(defer, 'resolve');
 });
 
+test("Performables can be specified inline via a pojo", function(assert) {
+  assert.expect(2);
+
+  let Obj = Ember.Object.extend({
+    myTask: task({
+      foo: 123,
+      perform: function * (...args) {
+        assert.deepEqual(args, [1,2,3]);
+        return this.foo;
+      }
+    }),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+    obj.get('myTask').perform(1,2,3);
+  });
+  assert.equal(obj.get('myTask.last.value'), 123);
+});
+
+

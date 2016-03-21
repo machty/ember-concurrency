@@ -38,6 +38,12 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       return self._perform(...args);
     };
 
+    if (Performable.detect(this.fn)) {
+      this._taskInstanceFactory = this.fn;
+    } else if (typeof this.fn === 'object') {
+      this._taskInstanceFactory = Performable.extend(this.fn);
+    }
+
     _cleanupOnDestroy(this.context, this, 'cancelAll');
   },
 
@@ -168,18 +174,15 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
     return `<Task:${this._propertyName}>`;
   },
 
+  _taskInstanceFactory: TaskInstance,
+
   _perform(...args) {
     //let performsTask = this.get('_performs');
     //if (performsTask) {
       //args.unshift(performsTask);
     //}
 
-    let Factory = TaskInstance;
-    if (Performable.detect(this.fn)) {
-      Factory = this.fn;
-    }
-
-    let taskInstance = Factory.create({
+    let taskInstance = this._taskInstanceFactory.create({
       fn: this.fn,
       args,
       context: this.context,
