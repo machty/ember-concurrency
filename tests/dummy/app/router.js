@@ -39,6 +39,7 @@ Router.map(function() {
   this.route('helpers-test');
   this.route('deprecation-test');
   this.route('data-test');
+  this.route('task-injection-test');
 });
 
 export default Router;

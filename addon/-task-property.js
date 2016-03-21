@@ -5,6 +5,7 @@ import { TaskGroup } from './-task-group';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
 import { _cleanupOnDestroy, _ComputedProperty } from './utils';
 import Performable from './-performable';
+import getOwner from 'ember-getowner-polyfill';
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -38,10 +39,10 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       return self._perform(...args);
     };
 
-    if (Performable.detect(this.fn)) {
-      this._taskInstanceFactory = this.fn;
-    } else if (typeof this.fn === 'object') {
-      this._taskInstanceFactory = Performable.extend(this.fn);
+    if (typeof this.fn === 'object') {
+      let owner = getOwner(this.context);
+      let ownerInjection = owner ? owner.ownerInjection() : {};
+      this._taskInstanceFactory = Performable.extend(ownerInjection, this.fn);
     }
 
     _cleanupOnDestroy(this.context, this, 'cancelAll');

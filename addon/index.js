@@ -4,7 +4,6 @@ import { TaskProperty } from './-task-property';
 import { TaskGroupProperty } from './-task-group';
 import EventedObservable from './-evented-observable';
 import { subscribe } from './-subscribe';
-import Performable from './-performable';
 import { all, race } from './-yieldables';
 import { drop, restartable, enqueue, maxConcurrency, cancelOn, performOn } from './-decorators';
 
@@ -132,7 +131,6 @@ export {
   enqueue,
   maxConcurrency,
   cancelOn,
-  performOn,
-  Performable
+  performOn
 };
 
