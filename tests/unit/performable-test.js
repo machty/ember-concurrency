@@ -12,12 +12,13 @@ test("Performables can be used instead of generator functions", function(assert)
       assert.deepEqual(args, [1,2,3]);
       defer = Ember.RSVP.defer();
       yield defer.promise;
-      return 123;
+      return this.owner.foo;
     }
   });
 
   let Obj = Ember.Object.extend({
     myTask: task(MyPerformable),
+    foo: 123,
   });
 
   let obj;

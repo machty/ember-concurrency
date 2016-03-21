@@ -183,6 +183,7 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       fn: this.fn,
       args,
       context: this.context,
+      owner: this.context,
       task: this,
       _origin: this,
       _debugCallback: this._debugCallback,
