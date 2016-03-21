@@ -1,15 +1,15 @@
 import Ember from 'ember';
 import { randomWord } from 'dummy/utils';
 
+// BEGIN-SNIPPET joining-tasks
+import { task, timeout, all, race } from 'ember-concurrency';
+const methods = { all, race };
+
 const ProgressTracker = Ember.Object.extend({
   id: null,
   percent: 0,
   word: null,
 });
-
-// BEGIN-SNIPPET joining-tasks
-import { task, timeout, all, race } from 'ember-concurrency';
-const methods = { all, race };
 
 export default Ember.Controller.extend({
   status: "Waiting...",

@@ -1,0 +1,32 @@
+<h3>Awaiting Multiple Child Tasks (or, cancelable Promise.all, Promise.race)</h3>
+
+<p>
+  This is a rewrite of the {{link-to 'Awaiting Multiple Child Tasks' 'docs.examples.joining-tasks'}}
+  example, using performables and completion state on task objects.
+</p>
+
+<h3>Live Example</h3>
+
+<h5>Status: {{status}}</h5>
+
+{{! BEGIN-SNIPPET joining-tasks-2-template }}
+<p>
+  <button onclick={{perform parent 'all'}}>all()</button>
+  <button onclick={{perform parent 'race'}}>race()</button>
+</p>
+{{! END-SNIPPET }}
+
+{{#each childTasks as |ti|}}
+  <div class="progress-outer">
+    <div class="progress-inner" style={{progress-style ti.percent ti.id colors}}>
+      Progress: {{ti.percent}}%
+      {{#if ti.value}}
+        Word: {{ti.value}}
+      {{/if}}
+    </div>
+  </div>
+{{/each}}
+
+{{code-snippet name="joining-tasks-2.js"}}
+{{code-snippet name="joining-tasks-2-template.hbs"}}
+

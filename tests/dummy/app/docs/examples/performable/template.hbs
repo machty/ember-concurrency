@@ -2,7 +2,22 @@
 
 <p>
   Normally, you define tasks by passing a generator function to <code>task(...)</code>.
-  Sometimes though, blah blah blah here is an example.
+  Often though, you want to be able to expose additional state of the task,
+  e.g. you might want to show the percentage progress of an <code>uploadFile</code> task,
+  but unless you're using the techniques describes below there's no good
+  place to expose that data to the template other than to set some properties
+  on the host object, but then you lose a lot of the benefits of encapsulation
+  in the process.
+</p>
+
+<p>
+  In cases like these, you can use Performables, which are objects with
+  a <code>perform</code> method and other state that you can use in the
+  place of the generator function you normally supply to <code>task()</code>.
+  When you use a Performable, the value of <code>this</code> in the <code>perform</code>
+  generator function is the Performable object, which means it's a good place to
+  set encapsulated values specific to that running task instance. And if you
+  ever need access to the object the task lives on, you can use <code>this.owner</code>.
 </p>
 
 <h3>Live Example</h3>

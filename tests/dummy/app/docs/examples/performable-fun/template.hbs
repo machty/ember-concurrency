@@ -1,0 +1,27 @@
+<h3>Experimental: Performables</h3>
+
+<p>
+  Normally, you define tasks by passing a generator function to <code>task(...)</code>.
+  Sometimes though, blah blah blah here is an example.
+</p>
+
+<h3>Live Example</h3>
+
+{{! BEGIN-SNIPPET performable-fun-template }}
+<p>
+  <button onclick={{perform doStuff}}>
+    Do Stuff
+  </button>
+</p>
+
+{{#with doStuff.last as |t|}}
+  <h5>value: {{t.value}}</h5>
+  <h5>foo:   {{t.foo.last.value}}</h5>
+  <h5>bar:   {{t.bar.last.value}}</h5>
+  <h5>baz:   {{t.baz.last.value}}</h5>
+{{/with}}
+{{! END-SNIPPET }}
+
+{{code-snippet name="performable-fun-controller.js"}}
+{{code-snippet name="performable-fun-template.hbs"}}
+
