@@ -95915,6 +95915,19 @@ define('ember-concurrency/-helpers', ['exports', 'ember'], function (exports, _e
     };
   }
 });
+define('ember-concurrency/-performable', ['exports', 'ember', 'ember-concurrency/-task-instance'], function (exports, _ember, _emberConcurrencyTaskInstance) {
+  'use strict';
+
+  exports['default'] = _emberConcurrencyTaskInstance['default'].extend({
+    _makeIterator: function _makeIterator() {
+      var perform = this.get('perform');
+      _ember['default'].assert("Subclasses of Performable must define a `perform` generator function, e.g. `perform: function * () {...}`", typeof perform === 'function');
+      return perform.apply(this, this.args);
+    },
+
+    perform: null
+  });
+});
 define('ember-concurrency/-property-modifiers-mixin', ['exports', 'ember', 'ember-concurrency/-scheduler', 'ember-concurrency/-buffer-policy'], function (exports, _ember, _emberConcurrencyScheduler, _emberConcurrencyBufferPolicy) {
   'use strict';
 
@@ -96485,7 +96498,11 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
             return _ember['default'].RSVP.reject(e);
           }
       });
-      this.iterator = this.fn.apply(this.context, this.args);
+      this.iterator = this._makeIterator();
+    },
+
+    _makeIterator: function _makeIterator() {
+      return this.fn.apply(this.context, this.args);
     },
 
     _start: function _start() {
@@ -96714,7 +96731,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
   exports['default'] = TaskInstance;
 });
-define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-task-group', 'ember-concurrency/-property-modifiers-mixin', 'ember-concurrency/utils'], function (exports, _ember, _emberConcurrencyTaskInstance, _emberConcurrencyTaskStateMixin, _emberConcurrencyTaskGroup, _emberConcurrencyPropertyModifiersMixin, _emberConcurrencyUtils) {
+define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-task-group', 'ember-concurrency/-property-modifiers-mixin', 'ember-concurrency/utils', 'ember-concurrency/-performable'], function (exports, _ember, _emberConcurrencyTaskInstance, _emberConcurrencyTaskStateMixin, _emberConcurrencyTaskGroup, _emberConcurrencyPropertyModifiersMixin, _emberConcurrencyUtils, _emberConcurrencyPerformable) {
   'use strict';
 
   exports.TaskProperty = TaskProperty;
@@ -96739,7 +96756,6 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
   var Task = _ember['default'].Object.extend(_emberConcurrencyTaskStateMixin['default'], {
     fn: null,
     context: null,
-    _bufferPolicy: null,
 
     init: function init() {
       this._super.apply(this, arguments);
@@ -96891,7 +96907,12 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
       //args.unshift(performsTask);
       //}
 
-      var taskInstance = _emberConcurrencyTaskInstance['default'].create({
+      var Factory = _emberConcurrencyTaskInstance['default'];
+      if (_emberConcurrencyPerformable['default'].detect(this.fn)) {
+        Factory = this.fn;
+      }
+
+      var taskInstance = Factory.create({
         fn: this.fn,
         args: args,
         context: this.context,
@@ -97291,7 +97312,7 @@ define('ember-concurrency/-yieldables', ['exports', 'ember', 'ember-concurrency/
     };
   }
 });
-define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-task-group', 'ember-concurrency/-evented-observable', 'ember-concurrency/-subscribe', 'ember-concurrency/-yieldables', 'ember-concurrency/-decorators'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyTaskGroup, _emberConcurrencyEventedObservable, _emberConcurrencySubscribe, _emberConcurrencyYieldables, _emberConcurrencyDecorators) {
+define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-task-group', 'ember-concurrency/-evented-observable', 'ember-concurrency/-subscribe', 'ember-concurrency/-performable', 'ember-concurrency/-yieldables', 'ember-concurrency/-decorators'], function (exports, _ember, _emberConcurrencyUtils, _emberConcurrencyTaskProperty, _emberConcurrencyTaskGroup, _emberConcurrencyEventedObservable, _emberConcurrencySubscribe, _emberConcurrencyPerformable, _emberConcurrencyYieldables, _emberConcurrencyDecorators) {
   'use strict';
 
   var _bind = Function.prototype.bind;
@@ -97440,6 +97461,7 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   exports.maxConcurrency = _emberConcurrencyDecorators.maxConcurrency;
   exports.cancelOn = _emberConcurrencyDecorators.cancelOn;
   exports.performOn = _emberConcurrencyDecorators.performOn;
+  exports.Performable = _emberConcurrencyPerformable['default'];
 });
 define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _ember) {
   'use strict';

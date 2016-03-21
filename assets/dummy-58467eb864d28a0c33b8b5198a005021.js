@@ -6153,6 +6153,281 @@ define("dummy/docs/examples/observables/template", ["exports"], function (export
     };
   })());
 });
+define('dummy/docs/examples/performable/controller', ['exports', 'ember', 'dummy/utils', 'ember-concurrency'], function (exports, _ember, _dummyUtils, _emberConcurrency) {
+
+  var FileUpload = _emberConcurrency.Performable.extend({
+    progress: 0,
+    url: null,
+    perform: regeneratorRuntime.mark(function perform(makeUrl) {
+      var newProgress;
+      return regeneratorRuntime.wrap(function perform$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            this.set('url', makeUrl());
+
+          case 1:
+            if (!(this.progress < 100)) {
+              context$1$0.next = 8;
+              break;
+            }
+
+            context$1$0.next = 4;
+            return (0, _emberConcurrency.timeout)(100);
+
+          case 4:
+            newProgress = this.progress + Math.floor(Math.random() * 6) + 5;
+
+            this.set('progress', Math.min(100, newProgress));
+            context$1$0.next = 1;
+            break;
+
+          case 8:
+            return context$1$0.abrupt('return', "Success!");
+
+          case 9:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, perform, this);
+    })
+  });
+
+  exports['default'] = _ember['default'].Controller.extend({
+    uploadFile: (0, _emberConcurrency.task)(FileUpload).enqueue(),
+
+    makeRandomUrl: function makeRandomUrl() {
+      return 'https://www.' + (0, _dummyUtils.randomWord)() + '.edu';
+    }
+  });
+
+  // END-SNIPPET
+});
+
+// BEGIN-SNIPPET performable-controller
+define("dummy/docs/examples/performable/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 19,
+              "column": 0
+            },
+            "end": {
+              "line": 24,
+              "column": 0
+            }
+          },
+          "moduleName": "dummy/docs/examples/performable/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h5");
+          var el2 = dom.createTextNode("\n    Uploading to ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode(":\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("%\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element1 = dom.childAt(fragment, [1]);
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(element1, 1, 1);
+          morphs[1] = dom.createMorphAt(element1, 3, 3);
+          return morphs;
+        },
+        statements: [["content", "uploadFile.last.url", ["loc", [null, [21, 17], [21, 40]]]], ["content", "uploadFile.last.progress", ["loc", [null, [22, 4], [22, 32]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 26,
+              "column": 0
+            },
+            "end": {
+              "line": 33,
+              "column": 0
+            }
+          },
+          "moduleName": "dummy/docs/examples/performable/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h5");
+          dom.setAttribute(el1, "style", "color: green;");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("strong");
+          var el3 = dom.createTextNode("\n    Upload to ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode(":\n    ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n    ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1, 1]);
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(element0, 1, 1);
+          morphs[1] = dom.createMorphAt(element0, 3, 3);
+          return morphs;
+        },
+        statements: [["content", "uploadFile.lastSuccessful.url", ["loc", [null, [29, 14], [29, 47]]]], ["content", "uploadFile.lastSuccessful.value", ["loc", [null, [30, 4], [30, 39]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.3.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 40,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/examples/performable/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Experimental: Performables");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Normally, you define tasks by passing a generator function to ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("task(...)");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(".\n  Sometimes though, blah blah blah here is an example.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Live Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode("\n    Start Upload\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Queued Uploads: ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element2 = dom.childAt(fragment, [6, 1]);
+        var morphs = new Array(6);
+        morphs[0] = dom.createAttrMorph(element2, 'onclick');
+        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [8]), 1, 1);
+        morphs[2] = dom.createMorphAt(fragment, 10, 10, contextualElement);
+        morphs[3] = dom.createMorphAt(fragment, 12, 12, contextualElement);
+        morphs[4] = dom.createMorphAt(fragment, 15, 15, contextualElement);
+        morphs[5] = dom.createMorphAt(fragment, 17, 17, contextualElement);
+        return morphs;
+      },
+      statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "uploadFile", ["loc", [null, [12, 28], [12, 38]]]], ["get", "makeRandomUrl", ["loc", [null, [12, 39], [12, 52]]]]], [], ["loc", [null, [12, 18], [12, 54]]]]], ["content", "uploadFile.numQueued", ["loc", [null, [17, 20], [17, 44]]]], ["block", "if", [["get", "uploadFile.last", ["loc", [null, [19, 6], [19, 21]]]]], [], 0, null, ["loc", [null, [19, 0], [24, 7]]]], ["block", "if", [["get", "uploadFile.lastSuccessful", ["loc", [null, [26, 6], [26, 31]]]]], [], 1, null, ["loc", [null, [26, 0], [33, 7]]]], ["inline", "code-snippet", [], ["name", "performable-controller.js"], ["loc", [null, [37, 0], [37, 49]]]], ["inline", "code-snippet", [], ["name", "performable-template.hbs"], ["loc", [null, [38, 0], [38, 48]]]]],
+      locals: [],
+      templates: [child0, child1]
+    };
+  })());
+});
 define('dummy/docs/examples/route-tasks/controller', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller.extend({
     ids: [1, 2, 3, 4, 10, 50, 200]
@@ -9516,6 +9791,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
         this.route('observables');
         this.route('task-groups');
         this.route('completion-state');
+        this.route('performable');
       });
       this.route('404', { path: '*path' });
     });
@@ -9568,6 +9844,8 @@ define("dummy/snippets", ["exports"], function (exports) {
     "loading-ui-controller.js": "export default Ember.Controller.extend({\n  askQuestion: task(function * () {\n    yield timeout(1000);\n    this.set('result', Math.random());\n  }).drop(),\n\n  result: null,\n});",
     "observables-evented.js": "  fooStatus: null,\n  listenForFooInternally: task(function * () {\n    this.set('fooStatus', `Waiting for values...`);\n\n    yield subscribe(events(this, 'foo'), function * (x) {\n      this.set('fooStatus', `Got value ${x}, thinking...`);\n      yield timeout(1500);\n      this.set('fooStatus', `${this.fooStatus} Done`);\n      yield timeout(200);\n    }).enqueue();\n  }).on('init'),\n\n  actions: {\n    triggerFoo() {\n      this.trigger('foo', Math.floor(100*Math.random()));\n    },\n  }",
     "observables-timetable.js": "  computeStuff: task(function * () {\n    let values = Ember.A();\n    this.set('values', values);\n    yield subscribe(range(5,5), function * (x) {\n      yield subscribe(range(10,3), function * (y) {\n        values.pushObject({ message: `What is ${x} x ${y} ? ` });\n        yield timeout(200);\n        values.pushObject({ message: `${x*y}. `});\n      }).enqueue();\n      values.pushObject({ message: \"\\n\" });\n    }).enqueue();\n  }).restartable(),",
+    "performable-controller.js": "import { task, timeout, Performable } from 'ember-concurrency';\n\nlet FileUpload = Performable.extend({\n  progress: 0,\n  url: null,\n  perform: function * (makeUrl) {\n    this.set('url', makeUrl());\n\n    while (this.progress < 100) {\n      yield timeout(100);\n      let newProgress = this.progress + Math.floor(Math.random() * 6) + 5;\n      this.set('progress', Math.min(100, newProgress));\n    }\n\n    return \"Success!\";\n  },\n});\n\nexport default Ember.Controller.extend({\n  uploadFile: task(FileUpload).enqueue(),\n\n  makeRandomUrl() {\n    return `https://www.${randomWord()}.edu`;\n  }\n});",
+    "performable-template.hbs": "<p>\n  <button onclick={{perform uploadFile makeRandomUrl}}>\n    Start Upload\n  </button>\n</p>\n\n<h5>Queued Uploads: {{uploadFile.numQueued}}</h5>\n\n{{#if uploadFile.last}}\n  <h5>\n    Uploading to {{uploadFile.last.url}}:\n    {{uploadFile.last.progress}}%\n  </h5>\n{{/if}}\n\n{{#if uploadFile.lastSuccessful}}\n  <h5 style=\"color: green;\">\n    <strong>\n    Upload to {{uploadFile.lastSuccessful.url}}:\n    {{uploadFile.lastSuccessful.value}}\n    </strong>\n  </h5>\n{{/if}}\n",
     "press-and-hold-buttons.hbs": "<p>\n  {{#press-and-hold-button\n    press=(perform incrementBy -1)\n    release=(cancel-all incrementBy)}}\n      --Decrease\n  {{/press-and-hold-button}}\n\n  {{#press-and-hold-button\n    press=(perform incrementBy 1)\n    release=(cancel-all incrementBy)}}\n      Increase++\n  {{/press-and-hold-button}}\n</p>",
     "scrambled-text.js": "  startScrambling: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      let pauseTime = 140;\n      while (pauseTime > 5) {\n        this.set('scrambledText', scramble(text));\n        yield timeout(pauseTime);\n        pauseTime = pauseTime * 0.95;\n      }\n      this.set('scrambledText', text);\n      yield timeout(1500);\n    }\n  }).on('init'),",
     "shared-tasks-concurrent.js": "export default Ember.Controller.extend({\n  restartableTask3: task(SHARED_TASK_FN).maxConcurrency(3).restartable(),\n  enqueuedTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueue(),\n  droppingTask3:    task(SHARED_TASK_FN).maxConcurrency(3).drop(),\n});",
@@ -9670,7 +9948,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+74366b8b"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+41dfe09d"});
 }
 
 /* jshint ignore:end */
