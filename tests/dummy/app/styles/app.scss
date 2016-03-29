@@ -1,6 +1,8 @@
 @import "./normalize";
 @import "./skeleton";
 @import "bower_components/font-awesome/scss/font-awesome";
+@import "ember-modal-dialog/ember-modal-structure";
+@import "ember-modal-dialog/ember-modal-appearance";
 
 $ember-power-select-border-color: #64A5ED;
 $ember-power-select-border-radius: 0;
@@ -135,5 +137,13 @@ th, td {
     }
     background-color: #F33F3F;
   }
+}
+
+.fun-modal-container {
+  width: 500px;
+}
+
+.clickable {
+  @extend .button-primary;
 }
 

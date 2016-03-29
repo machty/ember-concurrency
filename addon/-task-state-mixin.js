@@ -27,6 +27,7 @@ export default Ember.Mixin.create({
 
   concurrency:    alias('numRunning'),
   last:           alias('_scheduler.lastStarted'),
+  lastRunning:    alias('_scheduler.lastRunning'),
   lastPerformed:  alias('_scheduler.lastPerformed'),
   lastSuccessful: alias('_scheduler.lastSuccessful'),
   lastComplete:   alias('_scheduler.lastComplete'),

@@ -3,6 +3,7 @@ import Ember from 'ember';
 const Scheduler = Ember.Object.extend({
   lastPerformed:  null,
   lastStarted:    null,
+  lastRunning:    null,
   lastSuccessful: null,
   lastComplete:   null,
   lastErrored:    null,
@@ -61,7 +62,9 @@ const Scheduler = Ember.Object.extend({
     this.activeTaskInstances = Ember.A(this.activeTaskInstances.filterBy('isFinished', false));
     this.bufferPolicy.schedule(this);
 
+    let lastStarted = null;
     for (let i = 0; i < this.activeTaskInstances.length; ++i) {
+
       let taskInstance = this.activeTaskInstances[i];
       if (!taskInstance.hasStarted) {
         // use internal promise so that it doesn't cancel error reporting
@@ -80,11 +83,17 @@ const Scheduler = Ember.Object.extend({
           this._scheduleFlush();
         });
         this.set('lastStarted', taskInstance);
+        lastStarted = taskInstance;
       }
       let task = taskInstance.task;
       seen[Ember.guidFor(task)] = task;
       task._numRunning++;
     }
+
+    if (lastStarted) {
+      this.set('lastStarted', lastStarted);
+    }
+    this.set('lastRunning', lastStarted);
 
     for (let i = 0; i < this.queuedTaskInstances.length; ++i) {
       let task = this.queuedTaskInstances[i].task;

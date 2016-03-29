@@ -1,4 +1,4 @@
-<h3>Experimental: Performables</h3>
+<h3>Experimental: Encapsulated Tasks</h3>
 
 <p>
   Normally, you define tasks by passing a generator function to <code>task(...)</code>.
@@ -11,13 +11,35 @@
 </p>
 
 <p>
-  In cases like these, you can use Performables, which are objects with
+  In cases like these, you can use Encapsulated Tasks, which behave just
+  like regular tasks, except that they don't have access to the object
+  they're attached to, but rather can only set properties (or emit events)
+  on themselves. Defining Encapsulated Tasks is easy: instead of passing
+  a generator function directly to <code>task(...)</code>, you pass an
+  object with a <code>perform</code> method.
+</p>
+
+{{code-snippet name="encapsulated-task.js"}}
+
+<p>
+
+
+
+
+  pass an object with a
+  <code>perform</code> method to the <code>task(...)</code> function
+
+
+  instead of passing
+  a generator function to <code>task(...)</code>, you pass an object
+  with a <code>perform</code> method.
+
+  , which are objects with
   a <code>perform</code> method and other state that you can use in the
   place of the generator function you normally supply to <code>task()</code>.
   When you use a Performable, the value of <code>this</code> in the <code>perform</code>
   generator function is the Performable object, which means it's a good place to
-  set encapsulated values specific to that running task instance. And if you
-  ever need access to the object the task lives on, you can use <code>this.owner</code>.
+  set encapsulated values specific to that running task instance.
 </p>
 
 <h3>Live Example</h3>
