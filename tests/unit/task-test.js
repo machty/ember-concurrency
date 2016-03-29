@@ -122,6 +122,41 @@ test("task().cancelOn", function(assert) {
   });
 });
 
+test(".observes re-performs the task every time the observed property changes in a coalesced manner", function(assert) {
+  assert.expect(2);
+
+  let values = [];
+  let Obj = Ember.Object.extend({
+    foo: 0,
+
+    observingTask: task(function * () {
+      values.push(this.get('foo'));
+    }).observes('foo'),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+  });
+
+  Ember.run(() => {
+    obj.set('foo', 1);
+    obj.set('foo', 2);
+    obj.set('foo', 3);
+  });
+
+  assert.deepEqual(values, [3]);
+  values = [];
+
+  Ember.run(() => {
+    obj.set('foo', 4);
+    obj.set('foo', 5);
+    obj.set('foo', 6);
+  });
+
+  assert.deepEqual(values, [6]);
+});
+
 /*
 test("string arg decorate links two tasks such that if the target task next perform will fail, the calling task will immediately drop", function(assert) {
   assert.expect(14);

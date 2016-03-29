@@ -27,6 +27,7 @@ import getOwner from 'ember-getowner-polyfill';
 export const Task = Ember.Object.extend(TaskStateMixin, {
   fn: null,
   context: null,
+  _observes: null,
 
   init() {
     this._super(...arguments);
@@ -247,6 +248,7 @@ export function TaskProperty(...decorators) {
   this.eventNames = null;
   this.cancelEventNames = null;
   this._debugCallback = null;
+  this._observes = null;
 
   for (let i = 0; i < decorators.length; ++i) {
     let decorator = decorators[i];
@@ -269,9 +271,10 @@ TaskProperty.prototype = Object.create(_ComputedProperty.prototype);
 Object.assign(TaskProperty.prototype, propertyModifiers, {
   constructor: TaskProperty,
 
-  setup(proto, keyname) {
-    addListenersToPrototype(proto, this.eventNames, keyname, '_perform');
-    addListenersToPrototype(proto, this.cancelEventNames, keyname, 'cancelAll');
+  setup(proto, taskName) {
+    registerOnPrototype(Ember.addListener, proto, this.eventNames, taskName, '_perform', false);
+    registerOnPrototype(Ember.addListener, proto, this.cancelEventNames, taskName, 'cancelAll', false);
+    registerOnPrototype(Ember.addObserver, proto, this._observes, taskName, '_perform', true);
   },
 
   /**
@@ -326,6 +329,11 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
   cancelOn() {
     this.cancelEventNames = this.cancelEventNames || [];
     this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
+    return this;
+  },
+
+  observes(...properties) {
+    this._observes = properties;
     return this;
   },
 
@@ -405,19 +413,24 @@ function defaultDebugCallback(payload) {
   console.log(payload);
 }
 
-function addListenersToPrototype(proto, eventNames, taskName, taskMethod) {
-  if (eventNames) {
-    for (let i = 0; i < eventNames.length; ++i) {
-      let eventName = eventNames[i];
-      Ember.addListener(proto, eventName, null, makeListener(taskName, taskMethod));
+function registerOnPrototype(addListenerOrObserver, proto, names, taskName, taskMethod, once) {
+  if (names) {
+    for (let i = 0; i < names.length; ++i) {
+      let name = names[i];
+      addListenerOrObserver(proto, name, null, makeTaskCallback(taskName, taskMethod, once));
     }
   }
 }
 
-function makeListener(taskName, method) {
+function makeTaskCallback(taskName, method, once) {
   return function() {
     let task = this.get(taskName);
-    task[method].apply(task, arguments);
+
+    if (once) {
+      Ember.run.scheduleOnce('actions', task, method, ...arguments);
+    } else {
+      task[method].apply(task, arguments);
+    }
   };
 }
 
