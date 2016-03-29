@@ -233,6 +233,28 @@ test(".observes has the same lazy/live semantics as normal Ember.observer(...).o
   assert.deepEqual(values, [4]);
 });
 
+test("performing a task on a destroyed object returns an immediately-canceled taskInstance", function(assert) {
+  assert.expect(2);
+
+  let Obj = Ember.Object.extend({
+    myTask: task(function * () {
+      throw new Error("shouldn't get here");
+    }),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+    obj.destroy();
+    assert.equal(obj.get('myTask').perform().get('isDropped'), true);
+  });
+
+  Ember.run(() => {
+    assert.equal(obj.get('myTask').perform().get('isDropped'), true);
+  });
+});
+
+
 
 /*
 test("string arg decorate links two tasks such that if the target task next perform will fail, the calling task will immediately drop", function(assert) {

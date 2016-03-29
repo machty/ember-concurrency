@@ -194,6 +194,10 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       _debugCallback: this._debugCallback,
     });
 
+    if (this.context.isDestroying) {
+      taskInstance.cancel();
+    }
+
     //if (this._debugCallback) {
       //this._debugCallback({
         //type: 'perform',
