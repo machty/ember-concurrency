@@ -157,6 +157,83 @@ test(".observes re-performs the task every time the observed property changes in
   assert.deepEqual(values, [6]);
 });
 
+test(".observes coalesces even with multiple properties", function(assert) {
+  assert.expect(2);
+
+  let values = [];
+  let Obj = Ember.Object.extend({
+    foo: 0,
+    bar: 0,
+
+    observingTask: task(function * () {
+      values.push(this.get('foo'));
+      values.push(this.get('bar'));
+    }).observes('foo', 'bar'),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+  });
+
+  Ember.run(() => {
+    obj.set('foo', 1);
+    obj.set('foo', 2);
+    obj.set('bar', 1);
+    obj.set('bar', 2);
+  });
+
+  assert.deepEqual(values, [2,2]);
+  values = [];
+
+  Ember.run(() => {
+    obj.set('foo', 3);
+    obj.set('foo', 4);
+    obj.set('bar', 3);
+    obj.set('bar', 4);
+  });
+
+  assert.deepEqual(values, [4,4]);
+});
+
+
+test(".observes has the same lazy/live semantics as normal Ember.observer(...).on('init')", function(assert) {
+  assert.expect(2);
+
+  let values = [];
+  let Obj = Ember.Object.extend({
+    foo: 0,
+    bar: Ember.computed('foo', function() {
+      return this.get('foo');
+    }),
+
+    observingTask: task(function * () {
+      values.push(this.get('bar'));
+    }).observes('bar').on('init'),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+  });
+
+  Ember.run(() => {
+    obj.set('foo', 1);
+    obj.set('foo', 2);
+  });
+
+  assert.deepEqual(values, [0,2]);
+  values = [];
+
+  Ember.run(() => {
+    obj.set('foo', 3);
+    obj.set('foo', 4);
+  });
+
+  assert.deepEqual(values, [4]);
+});
+
+
 /*
 test("string arg decorate links two tasks such that if the target task next perform will fail, the calling task will immediately drop", function(assert) {
   assert.expect(14);
