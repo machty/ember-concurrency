@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import { task } from 'ember-concurrency';
 
-module('Unit: Performable');
+module('Unit: EncapsulatedTask');
 
 test("tasks can be specified via a pojos with perform methods", function(assert) {
   assert.expect(2);

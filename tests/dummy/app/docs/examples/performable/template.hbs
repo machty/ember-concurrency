@@ -37,14 +37,14 @@
   , which are objects with
   a <code>perform</code> method and other state that you can use in the
   place of the generator function you normally supply to <code>task()</code>.
-  When you use a Performable, the value of <code>this</code> in the <code>perform</code>
-  generator function is the Performable object, which means it's a good place to
+  When you use a EncapsulatedTask, the value of <code>this</code> in the <code>perform</code>
+  generator function is the EncapsulatedTask object, which means it's a good place to
   set encapsulated values specific to that running task instance.
 </p>
 
 <h3>Live Example</h3>
 
-{{! BEGIN-SNIPPET performable-template }}
+{{! BEGIN-SNIPPET encapsulated-task-template }}
 <p>
   <button onclick={{perform uploadFile makeRandomUrl}}>
     Start Upload
@@ -71,6 +71,6 @@
 
 {{! END-SNIPPET }}
 
-{{code-snippet name="performable-controller.js"}}
-{{code-snippet name="performable-template.hbs"}}
+{{code-snippet name="encapsulated-task-controller.js"}}
+{{code-snippet name="encapsulated-task-template.hbs"}}
 

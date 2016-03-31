@@ -30,8 +30,8 @@ Router.map(function() {
       this.route('observables');
       this.route('task-groups');
       this.route('completion-state');
-      this.route('performable');
-      this.route('performable-fun');
+      this.route('encapsulated-task');
+      this.route('encapsulated-task-fun');
       this.route('modal-fun');
     });
     this.route('404', { path: '*path' });

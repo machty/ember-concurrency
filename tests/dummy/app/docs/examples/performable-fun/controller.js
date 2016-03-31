@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import { randomWord } from 'dummy/utils';
 
-// BEGIN-SNIPPET performable-fun-controller
+// BEGIN-SNIPPET encapsulated-task-fun-controller
 import { task, timeout, all } from 'ember-concurrency';
 
 function * sharedFn() {

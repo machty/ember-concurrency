@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import { randomWord } from 'dummy/utils';
 
-// BEGIN-SNIPPET performable-controller
+// BEGIN-SNIPPET encapsulated-task-controller
 import { task, timeout } from 'ember-concurrency';
 
 export default Ember.Controller.extend({

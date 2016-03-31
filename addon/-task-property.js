@@ -4,7 +4,7 @@ import TaskStateMixin from './-task-state-mixin';
 import { TaskGroup } from './-task-group';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
 import { _cleanupOnDestroy, _ComputedProperty } from './utils';
-import Performable from './-performable';
+import EncapsulatedTask from './-encapsulated-task';
 import getOwner from 'ember-getowner-polyfill';
 
 /**
@@ -44,7 +44,7 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
     if (typeof this.fn === 'object') {
       let owner = getOwner(this.context);
       let ownerInjection = owner ? owner.ownerInjection() : {};
-      this._taskInstanceFactory = Performable.extend(ownerInjection, this.fn);
+      this._taskInstanceFactory = EncapsulatedTask.extend(ownerInjection, this.fn);
     }
 
     _cleanupOnDestroy(this.context, this, 'cancelAll');
