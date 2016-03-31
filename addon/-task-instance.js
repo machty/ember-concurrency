@@ -45,7 +45,27 @@ let taskInstanceAttrs = {
   _userWillHandlePromise: false,
   task: null,
   args: null,
+
+  /**
+   * If this TaskInstance runs to completion by returning a property
+   * other than a rejecting promise, this property will be set
+   * with that value.
+   *
+   * @memberof TaskInstance
+   * @instance
+   * @readOnly
+   */
   value: null,
+
+  /**
+   * If this TaskInstance is canceled or throws an error (or yields
+   * a promise that rejects), this property will be set with that error.
+   * Otherwise, it is null.
+   *
+   * @memberof TaskInstance
+   * @instance
+   * @readOnly
+   */
   error: null,
 
   /**

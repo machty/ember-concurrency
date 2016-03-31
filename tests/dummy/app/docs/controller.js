@@ -19,6 +19,7 @@ export default Ember.Controller.extend({
     //{ route: "docs.lifetime", title: "Lifetime"},
     { route: "docs.child-tasks", title: "Child Tasks"},
     { route: "docs.task-groups", title: "Task Groups"},
+    { route: "docs.derived-state", title: "Derived State"},
     { title: "Examples", route: "docs.examples",
       children: [
         {route: "docs.examples.loading-ui", title: "Loading UI"},

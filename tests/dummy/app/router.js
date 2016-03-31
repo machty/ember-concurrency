@@ -15,7 +15,7 @@ Router.map(function() {
     this.route('cancelation');
     this.route('child-tasks');
     this.route('task-groups');
-    this.route('lifetime');
+    this.route('derived-state');
     this.route('examples', function() {
       this.route('increment-buttons');
       this.route('loading-ui');
