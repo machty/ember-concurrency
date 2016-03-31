@@ -30,7 +30,6 @@ Router.map(function() {
       this.route('observables');
       this.route('task-groups');
       this.route('completion-state');
-      this.route('exp-backoff');
       this.route('performable');
       this.route('performable-fun');
       this.route('modal-fun');

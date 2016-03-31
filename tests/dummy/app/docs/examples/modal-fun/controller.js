@@ -1,13 +1,13 @@
 import Ember from 'ember';
-import { randomWord } from 'dummy/utils';
 
 let { computed } = Ember;
 let { alias } = computed;
 
 function reverse(s) {
   var o = '';
-  for (var i = s.length - 1; i >= 0; i--)
+  for (var i = s.length - 1; i >= 0; i--) {
     o += s[i];
+  }
   return o;
 }
 
