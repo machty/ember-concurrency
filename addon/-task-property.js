@@ -28,6 +28,7 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
   fn: null,
   context: null,
   _observes: null,
+  _curryArgs: null,
 
   init() {
     this._super(...arguments);
@@ -47,6 +48,24 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
     }
 
     _cleanupOnDestroy(this.context, this, 'cancelAll');
+  },
+
+  _curry(...args) {
+    let task = this._clone();
+    task._curryArgs = [...(this._curryArgs || []), ...args];
+    return task;
+  },
+
+  _clone() {
+    return Task.create({
+      fn: this.fn,
+      context: this.context,
+      _origin: this._origin,
+      _taskGroupPath: this._taskGroupPath,
+      _scheduler: this._scheduler,
+      _propertyName: this._propertyName,
+      _debugCallback: this._debugCallback,
+    });
   },
 
   /**
@@ -184,9 +203,10 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       //args.unshift(performsTask);
     //}
 
+    let fullArgs = this._curryArgs ? [...this._curryArgs, ...args] : args;
     let taskInstance = this._taskInstanceFactory.create({
       fn: this.fn,
-      args,
+      args: fullArgs,
       context: this.context,
       owner: this.context,
       task: this,
