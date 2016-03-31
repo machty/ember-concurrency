@@ -1,4 +1,20 @@
 # Changelog
+### 0.6.0
+  - feature: Task Groups: http://ember-concurrency.com/#/docs/task-groups.
+    Task Groups let you enforce concurrency constraints across multiple
+    tasks, which previously wasn't possible.
+  - feature: Moar Derived State: http://ember-concurrency.com/#/docs/derived-state
+    Task Instances now expose .value and .error properties for the
+    value returned from the task function, or the error thrown from it.
+    Furthermore: Task objects expose `last` and `lastSuccessful`, which
+    point to recently performed TaskInstances, which then make it
+    possible to idiomatically access .value and .error, e.g.
+    `{{myTask.last.value}}` or `{{myTask.last.error}}`. This is
+    a continuation of ember-concurrency's goal of exposing as
+    much Derived State as possible, and minimizing boilerplate.
+  - bugfix: once an object is destroyed, any attempts to perform
+    a task on that object will be immediately canceled.
+
 ### 0.5.17:
  - experimental: support for linking tasks
 
