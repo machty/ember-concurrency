@@ -2355,12 +2355,13 @@ define('dummy/components/start-task-example/component', ['exports', 'ember', 'em
     status: null,
 
     // BEGIN-SNIPPET start-task-example
-    myTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0(msg) {
+    myTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      var msg = arguments.length <= 0 || arguments[0] === undefined ? "init" : arguments[0];
       var status;
       return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
           case 0:
-            status = 'myTask.perform("' + (msg || "init") + '")...';
+            status = 'myTask.perform(' + msg + ')...';
 
             this.set('status', status);
 
@@ -2408,7 +2409,7 @@ define("dummy/components/start-task-example/template", ["exports"], function (ex
             "column": 0
           },
           "end": {
-            "line": 27,
+            "line": 31,
             "column": 0
           }
         },
@@ -2441,7 +2442,12 @@ define("dummy/components/start-task-example/template", ["exports"], function (ex
         var el3 = dom.createTextNode("\n    3. .on('foo')\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
+        var el2 = dom.createTextNode("\n\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("input");
+        dom.setAttribute(el2, "type", "checkbox");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  4. Checkbox\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -2481,16 +2487,18 @@ define("dummy/components/start-task-example/template", ["exports"], function (ex
         var element1 = dom.childAt(element0, [2]);
         var element2 = dom.childAt(element0, [4]);
         var element3 = dom.childAt(element0, [6]);
-        var morphs = new Array(6);
+        var element4 = dom.childAt(element0, [8]);
+        var morphs = new Array(7);
         morphs[0] = dom.createElementMorph(element1);
         morphs[1] = dom.createAttrMorph(element2, 'onclick');
         morphs[2] = dom.createElementMorph(element3);
-        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [2]), 1, 1);
-        morphs[4] = dom.createMorphAt(fragment, 6, 6, contextualElement);
-        morphs[5] = dom.createMorphAt(fragment, 10, 10, contextualElement);
+        morphs[3] = dom.createAttrMorph(element4, 'onchange');
+        morphs[4] = dom.createMorphAt(dom.childAt(fragment, [2]), 1, 1);
+        morphs[5] = dom.createMorphAt(fragment, 6, 6, contextualElement);
+        morphs[6] = dom.createMorphAt(fragment, 10, 10, contextualElement);
         return morphs;
       },
-      statements: [["element", "action", ["performTask", "one"], [], ["loc", [null, [3, 10], [3, 40]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [7, 28], [7, 34]]]], "two"], [], ["loc", [null, [7, 18], [7, 42]]]]], ["element", "action", ["triggerFoo", "three"], [], ["loc", [null, [11, 10], [11, 41]]]], ["content", "status", ["loc", [null, [17, 12], [17, 22]]]], ["inline", "code-snippet", [], ["name", "start-task-example.js"], ["loc", [null, [21, 0], [21, 45]]]], ["inline", "code-snippet", [], ["name", "start-task-example-template.hbs"], ["loc", [null, [25, 0], [25, 55]]]]],
+      statements: [["element", "action", ["performTask", "one"], [], ["loc", [null, [3, 10], [3, 40]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [7, 28], [7, 34]]]], "two"], [], ["loc", [null, [7, 18], [7, 42]]]]], ["element", "action", ["triggerFoo", "three"], [], ["loc", [null, [11, 10], [11, 41]]]], ["attribute", "onchange", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [16, 28], [16, 34]]]]], ["value", "target.checked"], ["loc", [null, [16, 18], [16, 59]]]]], ["content", "status", ["loc", [null, [21, 12], [21, 22]]]], ["inline", "code-snippet", [], ["name", "start-task-example.js"], ["loc", [null, [25, 0], [25, 45]]]], ["inline", "code-snippet", [], ["name", "start-task-example-template.hbs"], ["loc", [null, [29, 0], [29, 55]]]]],
       locals: [],
       templates: []
     };
@@ -12134,8 +12142,8 @@ define("dummy/snippets", ["exports"], function (exports) {
     "scrambled-text.js": "  startScrambling: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      let pauseTime = 140;\n      while (pauseTime > 5) {\n        this.set('scrambledText', scramble(text));\n        yield timeout(pauseTime);\n        pauseTime = pauseTime * 0.95;\n      }\n      this.set('scrambledText', text);\n      yield timeout(1500);\n    }\n  }).on('init'),",
     "shared-tasks-concurrent.js": "export default Ember.Controller.extend({\n  restartableTask3: task(SHARED_TASK_FN).maxConcurrency(3).restartable(),\n  enqueuedTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueue(),\n  droppingTask3:    task(SHARED_TASK_FN).maxConcurrency(3).drop(),\n});",
     "shared-tasks.js": "export default Ember.Controller.extend({\n  defaultTask:     task(SHARED_TASK_FN),\n  restartableTask: task(SHARED_TASK_FN).restartable(),\n  enqueuedTask:    task(SHARED_TASK_FN).enqueue(),\n  droppingTask:    task(SHARED_TASK_FN).drop(),\n});",
-    "start-task-example-template.hbs": "  <button {{action 'performTask' \"one\"}}>\n    1. task.perform(...)\n  </button>\n\n  <button onclick={{perform myTask \"two\"}}>\n    2. (perform taskName)\n  </button>\n\n  <button {{action \"triggerFoo\" \"three\"}}>\n    3. .on('foo')\n  </button>",
-    "start-task-example.js": "  myTask: task(function * (msg) {\n    let status = `myTask.perform(\"${msg || \"init\"}\")...`;\n    this.set('status', status);\n\n    yield timeout(500);\n    this.set('status', `${status} Done`);\n  }).on('init', 'foo'),\n\n  actions: {\n    performTask(msg) {\n      // This demonstrates how you can .get() a reference\n      // to a task and then run it with .perform(), but\n      // ideally you should just invoke myTask directly\n      // from the template using the `perform` helper.\n      this.get('myTask').perform(msg);\n    },\n    triggerFoo(msg) {\n      this.trigger('foo', msg);\n    }\n  }",
+    "start-task-example-template.hbs": "  <button {{action 'performTask' \"one\"}}>\n    1. task.perform(...)\n  </button>\n\n  <button onclick={{perform myTask \"two\"}}>\n    2. (perform taskName)\n  </button>\n\n  <button {{action \"triggerFoo\" \"three\"}}>\n    3. .on('foo')\n  </button>\n\n  <input type=\"checkbox\"\n         onchange={{perform myTask value=\"target.checked\"}} />\n  4. Checkbox",
+    "start-task-example.js": "  myTask: task(function * (msg = \"init\") {\n    let status = `myTask.perform(${msg})...`;\n    this.set('status', status);\n\n    yield timeout(500);\n    this.set('status', `${status} Done`);\n  }).on('init', 'foo'),\n\n  actions: {\n    performTask(msg) {\n      // This demonstrates how you can .get() a reference\n      // to a task and then run it with .perform(), but\n      // ideally you should just invoke myTask directly\n      // from the template using the `perform` helper.\n      this.get('myTask').perform(msg);\n    },\n    triggerFoo(msg) {\n      this.trigger('foo', msg);\n    }\n  }",
     "task-function-syntax-1.js": "  waitAFewSeconds: task(function * () {\n    this.set('status', \"Gimme one second...\");\n    yield timeout(1000);\n    this.set('status', \"Gimme one more second...\");\n    yield timeout(1000);\n    this.set('status', \"OK, I'm done.\");\n  }),",
     "task-function-syntax-2.js": "  pickRandomNumbers: task(function * () {\n    let nums = [];\n    for (let i = 0; i < 3; i++) {\n      nums.push(Math.floor(Math.random() * 10));\n    }\n\n    this.set('status', `My favorite numbers: ${nums.join(', ')}`);\n  }),",
     "task-function-syntax-3.js": "  myTask: task(function * () {\n    this.set('status', `Thinking...`);\n    let promise = timeout(1000).then(() => 123);\n    let resolvedValue = yield promise;\n    this.set('status', `The value is ${resolvedValue}`);\n  }),",
@@ -14399,7 +14407,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.5.17+b35a2ae8"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.6.0+b89fbb3d"});
 }
 
 /* jshint ignore:end */
