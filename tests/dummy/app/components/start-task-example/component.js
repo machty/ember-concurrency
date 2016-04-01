@@ -5,8 +5,8 @@ export default Ember.Component.extend({
   status: null,
 
 // BEGIN-SNIPPET start-task-example
-  myTask: task(function * (msg) {
-    let status = `myTask.perform("${msg || "init"}")...`;
+  myTask: task(function * (msg = "init") {
+    let status = `myTask.perform(${msg})...`;
     this.set('status', status);
 
     yield timeout(500);
