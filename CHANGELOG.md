@@ -12,6 +12,9 @@
     `{{myTask.last.value}}` or `{{myTask.last.error}}`. This is
     a continuation of ember-concurrency's goal of exposing as
     much Derived State as possible, and minimizing boilerplate.
+  - feature: .observes() Task Modifier: appending .observes('foo', 'bar')
+    to a task will automatically perform the task when 'foo' or 'bar'
+    changes. Thanks to @ofbriggs for co-authoring this feature.
   - bugfix: once an object is destroyed, any attempts to perform
     a task on that object will be immediately canceled.
 
