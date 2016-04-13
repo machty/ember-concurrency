@@ -9194,7 +9194,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 85,
+            "line": 86,
             "column": 0
           }
         },
@@ -9232,10 +9232,17 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode("\n    ember-concurrency: the solution to so many problems you never knew you had");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(".\n  If you'd prefer a video introduction to the ideas and concepts behind ember-concurrency,\n  check out the video below from the Ember.js NYC meetup\n  (");
+        var el2 = dom.createTextNode(".\n  If you'd prefer a video introduction to the ideas and concepts behind ember-concurrency,\n  check out the video below from the\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("a");
-        dom.setAttribute(el2, "href", "http://alexmatchneer.com/ec-prezo");
+        dom.setAttribute(el2, "href", "https://twitter.com/EmberMeetup");
+        var el3 = dom.createTextNode("Ember Global Meetup");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  (");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("a");
+        dom.setAttribute(el2, "href", "http://alexmatchneer.com/ember-concurrency-global-meetup-slides/");
         var el3 = dom.createTextNode("slides available here");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
@@ -9249,10 +9256,12 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("iframe");
-        dom.setAttribute(el2, "width", "560");
-        dom.setAttribute(el2, "height", "315");
-        dom.setAttribute(el2, "src", "https://www.youtube.com/embed/uVr5HWzecKI?start=4094");
+        dom.setAttribute(el2, "src", "https://player.vimeo.com/video/162329769");
+        dom.setAttribute(el2, "width", "500");
+        dom.setAttribute(el2, "height", "281");
         dom.setAttribute(el2, "frameborder", "0");
+        dom.setAttribute(el2, "webkitallowfullscreen", "");
+        dom.setAttribute(el2, "mozallowfullscreen", "");
         dom.setAttribute(el2, "allowfullscreen", "");
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
@@ -9395,7 +9404,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         morphs[3] = dom.createMorphAt(fragment, 26, 26, contextualElement);
         return morphs;
       },
-      statements: [["content", "intro-task", ["loc", [null, [32, 0], [32, 14]]]], ["inline", "code-snippet", [], ["name", "intro-task.js"], ["loc", [null, [34, 0], [34, 37]]]], ["content", "intro-task-oldschool", ["loc", [null, [61, 0], [61, 24]]]], ["inline", "code-snippet", [], ["name", "intro-task-oldschool.js"], ["loc", [null, [63, 0], [63, 47]]]]],
+      statements: [["content", "intro-task", ["loc", [null, [33, 0], [33, 14]]]], ["inline", "code-snippet", [], ["name", "intro-task.js"], ["loc", [null, [35, 0], [35, 37]]]], ["content", "intro-task-oldschool", ["loc", [null, [62, 0], [62, 24]]]], ["inline", "code-snippet", [], ["name", "intro-task-oldschool.js"], ["loc", [null, [64, 0], [64, 47]]]]],
       locals: [],
       templates: []
     };
@@ -14407,7 +14416,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.6.0+b89fbb3d"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.6.0+9ff607c3"});
 }
 
 /* jshint ignore:end */
