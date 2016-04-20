@@ -1,4 +1,8 @@
 # Changelog
+### 0.6.1
+  - Fixed bug when using ember-concurrency in an addon that is consumed
+    by another app. #46
+
 ### 0.6.0
   - feature: Task Groups: http://ember-concurrency.com/#/docs/task-groups.
     Task Groups let you enforce concurrency constraints across multiple
