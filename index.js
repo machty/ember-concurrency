@@ -4,10 +4,10 @@
 module.exports = {
   name: 'ember-concurrency',
 
-  included: function() {
+  included: function(app) {
     this._super.included.apply(this, arguments);
 
-    this._includePolyfill();
+    this._includePolyfill(app);
   },
 
   /*
@@ -16,13 +16,13 @@ module.exports = {
    done once at the top level (we don't want to
    include the polyfill more than once)
    */
-  _includePolyfill: function() {
-    var hostApp = this._findApp();
+  _includePolyfill: function(app) {
+    var hostApp = this._findApp(app);
     hostApp.options.babel.includePolyfill = true;
   },
 
-  _findApp: function() {
-    var app = this.app;
+  _findApp: function(hostApp) {
+    var app = this.app || hostApp;
     while (app.app) {
       app = app.app;
     }
