@@ -9549,7 +9549,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 91,
+            "line": 90,
             "column": 0
           }
         },
@@ -9642,14 +9642,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode("restartable");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" modifier ensures that only one instance\n  of a task is running by canceling any currently-running tasks and starting\n  a new task instance immediately. Note how there is no task overlap,\n  and how currently running tasks get canceled\n  (");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("span");
-        dom.setAttribute(el2, "style", "text-decoration:line-through;");
-        var el3 = dom.createTextNode(".perform()");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" is crossed out)\n  if a new task starts before a prior one completes.\n");
+        var el2 = dom.createTextNode(" modifier ensures that only one instance\n  of a task is running by canceling any currently-running tasks and starting\n  a new task instance immediately. Note how there is no task overlap,\n  and how currently running tasks get canceled\n  if a new task starts before a prior one completes.\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -9759,7 +9752,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         morphs[6] = dom.createMorphAt(fragment, 38, 38, contextualElement);
         return morphs;
       },
-      statements: [["inline", "code-snippet", [], ["name", "shared-tasks.js"], ["loc", [null, [30, 0], [30, 39]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "defaultTask", ["loc", [null, [39, 25], [39, 36]]]]], [], []]], ["loc", [null, [39, 0], [39, 38]]]], ["inline", "link-to", ["Debounced Auto-Search", "docs.examples.autocomplete"], [], ["loc", [null, [55, 14], [55, 78]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "restartableTask", ["loc", [null, [61, 25], [61, 40]]]]], [], []]], ["loc", [null, [61, 0], [61, 42]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "enqueuedTask", ["loc", [null, [72, 25], [72, 37]]]]], [], []]], ["loc", [null, [72, 0], [72, 39]]]], ["inline", "link-to", ["Loading UI", "docs.examples.loading-ui"], [], ["loc", [null, [84, 18], [84, 69]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "droppingTask", ["loc", [null, [89, 25], [89, 37]]]]], [], []]], ["loc", [null, [89, 0], [89, 39]]]]],
+      statements: [["inline", "code-snippet", [], ["name", "shared-tasks.js"], ["loc", [null, [30, 0], [30, 39]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "defaultTask", ["loc", [null, [39, 25], [39, 36]]]]], [], []]], ["loc", [null, [39, 0], [39, 38]]]], ["inline", "link-to", ["Debounced Auto-Search", "docs.examples.autocomplete"], [], ["loc", [null, [54, 14], [54, 78]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "restartableTask", ["loc", [null, [60, 25], [60, 40]]]]], [], []]], ["loc", [null, [60, 0], [60, 42]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "enqueuedTask", ["loc", [null, [71, 25], [71, 37]]]]], [], []]], ["loc", [null, [71, 0], [71, 39]]]], ["inline", "link-to", ["Loading UI", "docs.examples.loading-ui"], [], ["loc", [null, [83, 18], [83, 69]]]], ["inline", "concurrency-graph", [], ["task", ["subexpr", "@mut", [["get", "droppingTask", ["loc", [null, [88, 25], [88, 37]]]]], [], []]], ["loc", [null, [88, 0], [88, 39]]]]],
       locals: [],
       templates: []
     };
@@ -10066,7 +10059,7 @@ define("dummy/docs/task-function-syntax/template", ["exports"], function (export
         var el3 = dom.createTextNode("yield");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" keyword, when used with a promise, let's you\n  pause execution of your task function until that promise resolves, at\n  which point the task function will continue running from where it\n  had paused.\n");
+        var el2 = dom.createTextNode(" keyword, when used with a promise, lets you\n  pause execution of your task function until that promise resolves, at\n  which point the task function will continue running from where it\n  had paused.\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -14416,7 +14409,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.6.0+9ff607c3"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.6.1+3285fe79"});
 }
 
 /* jshint ignore:end */
