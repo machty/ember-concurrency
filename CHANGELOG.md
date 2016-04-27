@@ -1,4 +1,8 @@
 # Changelog
+### 0.6.2
+  - bugfix: errors thrown from child tasks don't "rethrow" when
+    caught by parent task
+
 ### 0.6.1
   - Fixed bug when using ember-concurrency in an addon that is consumed
     by another app. #46
