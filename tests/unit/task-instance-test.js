@@ -449,6 +449,75 @@ test("taskInstance.error is set when task is dropped", function(assert) {
   assert.equal(taskInstance.get('error.name'), "TaskCancelation");
 });
 
+test("if a parent task catches a child tasks, it prevents the error from bubbling", function(assert) {
+  assert.expect(1);
+
+  let taskInstance0;
+  Ember.run(() => {
+    taskInstance0 = TaskInstance.create({
+      fn: function * () {
+        try {
+          yield Ember.RSVP.reject("wat");
+        } catch(e) {
+          assert.equal(e, "wat");
+        }
+      },
+      args: [],
+    })._start();
+  });
+});
+
+test("if a parent task catches a child task that throws, it prevents the error from bubbling", function(assert) {
+  assert.expect(1);
+
+  let taskInstance0, taskInstance1;
+  Ember.run(() => {
+    taskInstance0 = TaskInstance.create({
+      fn: function * () {
+        taskInstance1 = TaskInstance.create({
+          fn: function * () {
+            throw "wat";
+          },
+          args: [],
+        })._start();
+
+        try {
+          yield taskInstance1;
+        } catch(e) {
+          assert.equal(e, "wat");
+        }
+      },
+      args: [],
+    })._start();
+  });
+});
+
+test("if a parent task catches a child task that returns a rejecting promise, it prevents the error from bubbling", function(assert) {
+  assert.expect(1);
+
+  let taskInstance0, taskInstance1;
+  Ember.run(() => {
+    taskInstance0 = TaskInstance.create({
+      fn: function * () {
+        taskInstance1 = TaskInstance.create({
+          fn: function * () {
+            return Ember.RSVP.reject("wat");
+          },
+          args: [],
+        })._start();
+
+        try {
+          yield taskInstance1;
+        } catch(e) {
+          assert.equal(e, "wat");
+        }
+      },
+      args: [],
+    })._start();
+  });
+});
+
+
 
 
 
