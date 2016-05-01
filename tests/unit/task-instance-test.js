@@ -1,7 +1,11 @@
 import Ember from 'ember';
 import TaskInstance from 'ember-concurrency/-task-instance';
 
-module('Unit: task instance');
+module('Unit: task instance', {
+  teardown() {
+    Ember.Test.adapter = null;
+  }
+});
 
 test("basics", function(assert) {
   assert.expect(2);
@@ -517,7 +521,62 @@ test("if a parent task catches a child task that returns a rejecting promise, it
   });
 });
 
+test("in a hierarchy of child task performs, a bubbling exception should only print to console once", function(assert) {
+  assert.expect(1);
 
+  Ember.Test.adapter = {
+    exception(e) {
+      assert.equal(e, "wat");
+    }
+  };
+
+  Ember.run(() => {
+    TaskInstance.create({
+      fn: function * () {
+        yield TaskInstance.create({
+          fn: function * () {
+            yield TaskInstance.create({
+              fn: function * () {
+                return Ember.RSVP.reject("wat");
+              },
+              args: [],
+            })._start();
+          },
+          args: [],
+        })._start();
+      },
+      args: [],
+    })._start();
+  });
+});
+
+test("in a hierarchy of child task performs, a bubbling cancel should not be considered an error", function(assert) {
+  assert.expect(1);
+
+  let taskInstance0;
+  Ember.run(() => {
+    TaskInstance.create({
+      fn: function * () {
+        yield TaskInstance.create({
+          fn: function * () {
+            taskInstance0 = TaskInstance.create({
+              fn: function * () {
+                return Ember.RSVP.defer().promise;
+              },
+              args: [],
+            })._start();
+            yield taskInstance0;
+          },
+          args: [],
+        })._start();
+      },
+      args: [],
+    })._start();
+  });
+
+  assert.ok(taskInstance0.get('isRunning'));
+  Ember.run(taskInstance0, 'cancel');
+});
 
 
 

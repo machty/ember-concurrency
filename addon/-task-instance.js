@@ -286,8 +286,6 @@ let taskInstanceAttrs = {
     }
   },
 
-  _lastYieldedValue: null,
-
   _takeSafeStep(nextValue, iteratorMethod) {
     if (!this.hasStarted) {
       // calling .return/.throw on an unstarted generator iterator
@@ -303,20 +301,7 @@ let taskInstanceAttrs = {
 
     try {
       CURRENT_TASK_INSTANCE = this;
-      let value = this.iterator[iteratorMethod](nextValue);
-
-      if (iteratorMethod === 'throw') {
-        // the generator function recovered from a throw; if it was
-        // a Task Instance that was thrown, we should make sure to
-        // catch its internal rejected promise so it doesn't bubble
-        if (this._lastYieldedValue && this._lastYieldedValue.value._cancelationIgnorer) {
-          this._lastYieldedValue.value._cancelationIgnorer.catch(Ember.K);
-        }
-      }
-
-      this._lastYieldedValue = value;
-
-      return value;
+      return this.iterator[iteratorMethod](nextValue);
     } catch(e) {
       return { value: e, error: true };
     } finally {
@@ -367,7 +352,7 @@ let taskInstanceAttrs = {
 
 taskInstanceAttrs[yieldableSymbol] = function () {
   return createObservable(publish => {
-    this._defer.promise.then(publish, publish.error);
+    this.then(publish, publish.error);
     return () => {
       this.cancel();
     };
