@@ -1,6 +1,31 @@
 import Ember from 'ember';
 import { createObservable, yieldableSymbol } from './utils';
 
+const TASK_CANCELATION_NAME = 'TaskCancelation';
+
+/**
+ * Returns true if the object passed to it is a TaskCancelation error.
+ * If you call `someTask.perform().catch(...)` or otherwise treat
+ * a {@linkcode TaskInstance} like a promise, you may need to
+ * handle the cancelation of a TaskInstance differently from
+ * other kinds of errors it might throw, and you can use this
+ * convenience function to distinguish cancelation from errors.
+ *
+ * ```js
+ * click() {
+ *   this.get('myTask').perform().catch(e => {
+ *     if (!didCancel(e)) { throw e; }
+ *   });
+ * }
+ * ```
+ *
+ * @param {Object} error the caught error, which might be a TaskCancelation
+ * @returns {Boolean}
+ */
+export function didCancel(e) {
+  return e && e.name === TASK_CANCELATION_NAME;
+}
+
 function forwardToInternalPromise(method) {
   return function(...args) {
     this._userWillHandlePromise = true;
@@ -20,6 +45,10 @@ function spliceSlice(str, index, count, add) {
 const SUCCESS     = "success";
 const ERROR       = "error";
 const CANCELATION = "cancel";
+
+const RESUME_NEXT   = "next";
+const RESUME_THROW  = "throw";
+const RESUME_RETURN = "return";
 
 /**
   A `TaskInstance` represent a single execution of a
@@ -206,7 +235,7 @@ let taskInstanceAttrs = {
     }
 
     let error = new Error("TaskCancelation");
-    error.name = "TaskCancelation";
+    error.name = TASK_CANCELATION_NAME;
     error.taskInstance = this;
 
     this._finalize(error, CANCELATION);
@@ -215,7 +244,7 @@ let taskInstanceAttrs = {
       // eagerly advance index so that pending promise resolutions
       // are ignored
       this._index++;
-      this._proceed(this._index, error, 'throw');
+      this._proceed(this._index, error, RESUME_RETURN);
     }
   },
 
@@ -257,7 +286,13 @@ let taskInstanceAttrs = {
 
   _hasResolved: false,
 
-  _finalize(value, completion) {
+  _finalize(value, _completion) {
+    let completion = _completion;
+
+    if (didCancel(value)) {
+      completion = CANCELATION;
+    }
+
     this.set('isFinished', true);
 
     switch (completion) {
@@ -312,7 +347,7 @@ let taskInstanceAttrs = {
   _takeStep(index, nextValue, method) {
     if (index !== this._index) { return; }
 
-    let { done, value, error } = this._takeSafeStep(nextValue, method || 'next');
+    let { done, value, error } = this._takeSafeStep(nextValue, method || RESUME_NEXT);
 
     if (error) {
       this._finalize(value, ERROR);
@@ -334,7 +369,11 @@ let taskInstanceAttrs = {
     this._disposable = observable.subscribe(v => {
       this._proceedOrFinalize(done, index, v);
     }, error => {
-      this._proceed(index, error, 'throw');
+      if (didCancel(error)) {
+        this._proceed(index, error, RESUME_RETURN);
+      } else {
+        this._proceed(index, error, RESUME_THROW);
+      }
     }, () => {
       // TODO: test, and figure out what it means to yield
       // something that completes without producing a value.

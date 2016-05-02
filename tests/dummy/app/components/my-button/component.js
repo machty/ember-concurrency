@@ -1,5 +1,7 @@
 import Ember from 'ember';
 
+import { didCancel } from 'ember-concurrency';
+
 export default Ember.Component.extend({
   click() {
     let val = this.attrs.action(3, 4);
@@ -9,7 +11,7 @@ export default Ember.Component.extend({
         throw new Error("returned value wasn't 10");
       }
     }).catch(e => {
-      if (e.name !== 'TaskCancelation') {
+      if (!didCancel(e)) {
         throw e;
       }
     });
