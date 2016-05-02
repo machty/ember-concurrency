@@ -1,4 +1,8 @@
 # Changelog
+### 0.6.3
+  - bugfix: errors that bubble throw arbitrary depths of child tasks
+    will only call window/Ember.onerror once
+
 ### 0.6.2
   - bugfix: errors thrown from child tasks don't "rethrow" when
     caught by parent task
