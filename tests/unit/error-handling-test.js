@@ -56,9 +56,8 @@ test("parent task canceled by restartable policy: no errors", function(assert) {
 });
 
 test("parent task perform attempt canceled by drop policy: no errors", function(assert) {
-  assert.expect(5);
+  assert.expect(1);
 
-  let childCancelationCount = 0;
   let childDefer;
   let Obj = Ember.Object.extend({
     parent: task(function * () {
@@ -70,8 +69,7 @@ test("parent task perform attempt canceled by drop policy: no errors", function(
       try {
         yield childDefer.promise;
       } catch(e) {
-        assert.equal(e.name, 'TaskCancelation');
-        childCancelationCount++;
+        assert.ok(false);
       }
     }),
   });
@@ -82,17 +80,14 @@ test("parent task perform attempt canceled by drop policy: no errors", function(
     obj.get('parent').perform(1);
   });
   assert.ok(childDefer);
-  assert.equal(childCancelationCount, 0);
 
   Ember.run(() => {
     obj.get('parent').perform(2);
   });
-  assert.equal(childCancelationCount, 0);
 
   Ember.run(() => {
     obj.get('parent').cancelAll();
   });
-  assert.equal(childCancelationCount, 1);
 });
 
 

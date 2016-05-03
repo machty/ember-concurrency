@@ -341,8 +341,8 @@ test("yielding to other tasks: child task gets canceled", function(assert) {
           args: [],
         })._start();
         taskInstance1.then(shouldNotGetCalled);
-        let value = yield taskInstance1;
-        assert.equal(value, 123);
+        yield taskInstance1;
+        assert.ok(false);
       },
       args: [],
     })._start();
@@ -355,7 +355,7 @@ test("yielding to other tasks: child task gets canceled", function(assert) {
     assert.equal(e.taskInstance, taskInstance1);
   }
 
-  assert.equal(taskInstance0.get('state'), 'finished'); // TODO: this is up for debate
+  assert.equal(taskInstance0.get('state'), 'canceled');
   assert.equal(taskInstance1.get('state'), 'canceled');
 
   Ember.run(null, defer.resolve, "naw");
@@ -578,5 +578,48 @@ test("in a hierarchy of child task performs, a bubbling cancel should not be con
   Ember.run(taskInstance0, 'cancel');
 });
 
+test("task cancelation should skip over catch blocks within task functions", function(assert) {
+  assert.expect(1);
+
+  let taskInstance0;
+  Ember.run(() => {
+    TaskInstance.create({
+      fn: function * () {
+        try {
+          yield TaskInstance.create({
+            fn: function * () {
+              try {
+                taskInstance0 = TaskInstance.create({
+                  fn: function * () {
+                    try {
+                      yield Ember.RSVP.defer().promise;
+                      assert.ok(false, "one");
+                    } catch(e) {
+                      assert.ok(false, "one catch");
+                    }
+                  },
+                  args: [],
+                })._start();
+                yield taskInstance0;
+                assert.ok(false, "two");
+              } catch(e) {
+                assert.ok(false, "two catch");
+              }
+            },
+            args: [],
+          })._start();
+          assert.ok(false, "three");
+        } catch(e) {
+          assert.ok(false, "three catch");
+        }
+      },
+      args: [],
+    })._start().catch(e => {
+      assert.equal(e.name, 'TaskCancelation');
+    });
+  });
+
+  Ember.run(taskInstance0, 'cancel');
+});
 
 
