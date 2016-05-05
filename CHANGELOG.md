@@ -1,4 +1,21 @@
 # Changelog
+### 0.7.0
+  - within a task generator function, TaskCancelation "errors" are
+    longer "catchable" in the catch block of a try/catch. This means
+    you no longer have to check if the error thrown is a cancelation
+    in order to handle it differently than an exception.
+  - That said, since promises have no concept of cancelation, if
+    you perform a task within a promise (or you call
+    `someTask.perform().then(...).catch(...)`), then any promise
+    `catch` handlers _will_ be called with TaskCancelation "errors",
+    and if you need to distinguish between cancelation and exceptions
+    thrown, you can import and use the new `didCancel` utility function,
+    which returns true if the error passed to it is a TaskCancelation.
+    Previously, the only safe way to test this was to check
+    `err && err.name === 'TaskCancelation'`; now you can just
+    `import { didCancel } from 'ember-concurrency'` and
+    check `didCancel(err)`.
+
 ### 0.6.3
   - bugfix: errors that bubble throw arbitrary depths of child tasks
     will only call window/Ember.onerror once
