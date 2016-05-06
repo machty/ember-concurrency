@@ -9573,7 +9573,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 86,
+            "line": 97,
             "column": 0
           }
         },
@@ -9642,6 +9642,58 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         dom.setAttribute(el2, "webkitallowfullscreen", "");
         dom.setAttribute(el2, "mozallowfullscreen", "");
         dom.setAttribute(el2, "allowfullscreen", "");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Key Ideas / Goals");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ul");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("It should be easy to write ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("cancelable, asynchronous operations");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" (this is hard to do with Promises).");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("It should be easy to prevent two or more async operations from happening at the same time (this is hard to do with Promises and Observables).");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("Minimize boilerplate");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" and ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("maximize implicit state");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" so that common UI tasks like\n      displaying loading spinners or styling inactive buttons requires as little code as possible.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("The API should feel familiar and \"at home\" for Ember developers.");
+        dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
@@ -9777,13 +9829,13 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var morphs = new Array(4);
-        morphs[0] = dom.createMorphAt(fragment, 12, 12, contextualElement);
-        morphs[1] = dom.createMorphAt(fragment, 14, 14, contextualElement);
-        morphs[2] = dom.createMorphAt(fragment, 24, 24, contextualElement);
-        morphs[3] = dom.createMorphAt(fragment, 26, 26, contextualElement);
+        morphs[0] = dom.createMorphAt(fragment, 16, 16, contextualElement);
+        morphs[1] = dom.createMorphAt(fragment, 18, 18, contextualElement);
+        morphs[2] = dom.createMorphAt(fragment, 28, 28, contextualElement);
+        morphs[3] = dom.createMorphAt(fragment, 30, 30, contextualElement);
         return morphs;
       },
-      statements: [["content", "intro-task", ["loc", [null, [33, 0], [33, 14]]]], ["inline", "code-snippet", [], ["name", "intro-task.js"], ["loc", [null, [35, 0], [35, 37]]]], ["content", "intro-task-oldschool", ["loc", [null, [62, 0], [62, 24]]]], ["inline", "code-snippet", [], ["name", "intro-task-oldschool.js"], ["loc", [null, [64, 0], [64, 47]]]]],
+      statements: [["content", "intro-task", ["loc", [null, [44, 0], [44, 14]]]], ["inline", "code-snippet", [], ["name", "intro-task.js"], ["loc", [null, [46, 0], [46, 37]]]], ["content", "intro-task-oldschool", ["loc", [null, [73, 0], [73, 24]]]], ["inline", "code-snippet", [], ["name", "intro-task-oldschool.js"], ["loc", [null, [75, 0], [75, 47]]]]],
       locals: [],
       templates: []
     };
@@ -14791,7 +14843,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.0+913ad55a"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.0+57bd88b4"});
 }
 
 /* jshint ignore:end */
