@@ -13,6 +13,7 @@ Router.map(function() {
     this.route('task-concurrency');
     this.route('task-concurrency-advanced');
     this.route('cancelation');
+    this.route('error-vs-cancelation');
     this.route('child-tasks');
     this.route('task-groups');
     this.route('derived-state');

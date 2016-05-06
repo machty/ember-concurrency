@@ -15,7 +15,11 @@ export default Ember.Controller.extend({
         { route: "docs.task-concurrency-advanced", title: "Using maxConcurrency"},
       ]
     },
-    { route: "docs.cancelation", title: "Cancelation"},
+    { route: "docs.cancelation", title: "Cancelation",
+      children: [
+        { route: "docs.error-vs-cancelation", title: "Errors vs. Cancelation (try/catch/finally)"},
+      ]
+    },
     //{ route: "docs.lifetime", title: "Lifetime"},
     { route: "docs.child-tasks", title: "Child Tasks"},
     { route: "docs.task-groups", title: "Task Groups"},
