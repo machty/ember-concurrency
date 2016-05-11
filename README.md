@@ -34,7 +34,7 @@ Whether you've found a bug or just have a question about
 ember-concurrency, feel free to [Open an Issue](https://github.com/machty/ember-concurrency/issues).
 Also, I highly recommend heading over to the
 [Ember.js Community Slack](https://embercommunity.slack.com)
-and asking your question in the `#ember-concurrency` channel.
+and asking your question in the `#e-concurrency` channel.
 
 ## Addon Maintenance
 
