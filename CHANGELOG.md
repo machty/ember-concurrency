@@ -1,4 +1,7 @@
 # Changelog
+### 0.7.1
+  - Support for Ember 1.13.0
+
 ### 0.7.0
   - within a task generator function, TaskCancelation "errors" are
     longer "catchable" in the catch block of a try/catch. This means
