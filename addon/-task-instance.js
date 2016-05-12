@@ -29,7 +29,7 @@ export function didCancel(e) {
 function forwardToInternalPromise(method) {
   return function(...args) {
     this._userWillHandlePromise = true;
-    return this._defer.promise[method](...args);
+    return this._defer.promise[method](...args).catch(deferToLastRunLoopQueue);
   };
 }
 
@@ -40,6 +40,17 @@ export function _getRunningTaskInstance() {
 
 function spliceSlice(str, index, count, add) {
   return str.slice(0, index) + (add || "") + str.slice(index + count);
+}
+
+let run = Ember.run;
+
+// this backports the Ember 2.0+ RSVP _onError 'after' microtask behavior to Ember < 2.0
+function deferToLastRunLoopQueue(e) {
+  return new Ember.RSVP.Promise((_, reject) => {
+    run.schedule(run.queues[run.queues.length - 1], () => {
+      reject(e);
+    });
+  });
 }
 
 const SUCCESS     = "success";
@@ -422,4 +433,5 @@ function normalizeObservable(value) {
 }
 
 export default TaskInstance;
+
 
