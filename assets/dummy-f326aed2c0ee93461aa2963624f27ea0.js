@@ -4113,7 +4113,7 @@ define("dummy/docs/derived-state/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 111,
+            "line": 108,
             "column": 0
           }
         },
@@ -4306,7 +4306,7 @@ define("dummy/docs/derived-state/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode(".perform()");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  on a task). There are multiple of these properties because, depending\n  on your UI needs, you might in one case want to access state on, for example,\n  the last task instance that ran to completion, yet in another case\n  you want to access the state of a task instance that just started running\n  (but perhaps hasn't yet completed).\n");
+        var el2 = dom.createTextNode("\n  on a task).\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -4354,7 +4354,7 @@ define("dummy/docs/derived-state/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode(".perform()");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  to some property for later access in case the above properties don't\n  hit your use cases (but please open a GitHub issue if you find yourself\n  doing this often).\n");
+        var el2 = dom.createTextNode("\n  to some property for later access in case the above properties don't\n  hit your use cases (but please open a GitHub issue if you find yourself\n  doing this often because this might suggest room for improvement in\n  ember-concurrency's API).\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -9573,7 +9573,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 97,
+            "line": 96,
             "column": 0
           }
         },
@@ -9782,7 +9782,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  To understand everything that ember-concurrency tasks afford you, here\n  is a reimplementation of the above example without using tasks:\n");
+        var el2 = dom.createTextNode("\n  If you were to rewrite the above example without using tasks,\n  it would look something like this:\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -9805,7 +9805,7 @@ define("dummy/docs/index/template", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("li");
-        var el3 = dom.createTextNode("\n    You have to stop the currently running operation before starting a new\n    operation in its place; in other words, you need to prevent accidental\n    concurrency\n  ");
+        var el3 = dom.createTextNode("\n    You have to stop the currently running operation before starting a new\n    operation in its place; in other words, you need to constrain concurrency\n  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n  ");
@@ -10017,7 +10017,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Often, you want to guarantee that no more than one instance of a task\n  runs at the same time; for instance, if you have a task that saves\n  model state to the server, you probably don't want that task to run\n  concurrently — you want it to run sequentially, or you might\n  want to ignore attempts to perform the task. In practice,\n  enforcing these constraints is tricky and often results\n  in redundant, error-prone boilerplate, but ember-concurrency\n  makes it easy to reign in this undesired concurrency with the\n  modifiers described below.\n");
+        var el2 = dom.createTextNode("\n  Often, you want to guarantee that no more than one instance of a task\n  runs at the same time; for instance, if you have a task that saves\n  model state to the server, you probably don't want that task to run\n  concurrently — you want it to run sequentially, or you might\n  want to ignore attempts to perform the task if it's already running.\n  Manually enforcing these constraints is tricky and often results\n  in redundant, error-prone boilerplate, but ember-concurrency\n  makes it easy to reign in this undesired concurrency with the\n  modifiers described below.\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -14843,7 +14843,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.1+f8fca9b4"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.1+da24bcf9"});
 }
 
 /* jshint ignore:end */
