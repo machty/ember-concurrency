@@ -66,8 +66,8 @@
 <h3>Without Tasks</h3>
 
 <p>
-  To understand everything that ember-concurrency tasks afford you, here
-  is a reimplementation of the above example without using tasks:
+  If you were to rewrite the above example without using tasks,
+  it would look something like this:
 </p>
 
 {{intro-task-oldschool}}
@@ -82,8 +82,7 @@
 <ul>
   <li>
     You have to stop the currently running operation before starting a new
-    operation in its place; in other words, you need to prevent accidental
-    concurrency
+    operation in its place; in other words, you need to constrain concurrency
   </li>
   <li>
     You have to stop the operation when the parent object is destroyed
