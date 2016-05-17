@@ -51,11 +51,7 @@
 <p>
   Tasks also expose properties for accessing specific
   Task Instances (which are created every time you call <code>.perform()</code>
-  on a task). There are multiple of these properties because, depending
-  on your UI needs, you might in one case want to access state on, for example,
-  the last task instance that ran to completion, yet in another case
-  you want to access the state of a task instance that just started running
-  (but perhaps hasn't yet completed).
+  on a task).
 </p>
 
 <ul>
@@ -74,7 +70,8 @@
   also just save the TaskInstance returned from <code>.perform()</code>
   to some property for later access in case the above properties don't
   hit your use cases (but please open a GitHub issue if you find yourself
-  doing this often).
+  doing this often because this might suggest room for improvement in
+  ember-concurrency's API).
 </p>
 
 <h4>Properties on <a href="/api/TaskInstance.html">Task Instances</a></h4>

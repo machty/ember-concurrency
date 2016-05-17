@@ -12,8 +12,8 @@
   runs at the same time; for instance, if you have a task that saves
   model state to the server, you probably don't want that task to run
   concurrently &mdash; you want it to run sequentially, or you might
-  want to ignore attempts to perform the task. In practice,
-  enforcing these constraints is tricky and often results
+  want to ignore attempts to perform the task if it's already running.
+  Manually enforcing these constraints is tricky and often results
   in redundant, error-prone boilerplate, but ember-concurrency
   makes it easy to reign in this undesired concurrency with the
   modifiers described below.
