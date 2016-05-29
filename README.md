@@ -1,4 +1,9 @@
-# ember-concurrency [![Build Status](https://travis-ci.org/machty/ember-concurrency.svg?branch=master)](https://travis-ci.org/machty/ember-concurrency)[![Ember Observer Score](http://emberobserver.com/badges/ember-concurrency.svg)](http://emberobserver.com/addons/ember-concurrency)
+# ember-concurrency
+
+[![Build Status][build-status-img]][build-status-link]
+[![NPM][npm-badge-img]][npm-badge-link]
+[![Ember Observer Score][ember-observer-badge]][ember-observer-url]
+![Ember Version][ember-version]
 
 Improved concurrency primitives for Ember.js. Documentation can be
 found [here](http://ember-concurrency.com).
@@ -67,3 +72,10 @@ TODO: use build pipeline.
 
     ./builddocs.sh
 
+[build-status-img]: https://travis-ci.org/machty/ember-concurrency.svg?branch=master
+[build-status-link]: https://travis-ci.org/machty/ember-concurrency
+[npm-badge-img]: https://badge.fury.io/js/ember-concurrency.svg
+[npm-badge-link]: http://badge.fury.io/js/ember-concurrency
+[ember-observer-badge]: http://emberobserver.com/badges/ember-concurrency.svg
+[ember-observer-url]: http://emberobserver.com/addons/ember-concurrency
+[ember-version]: https://embadge.io/v1/badge.svg?start=1.13.0
