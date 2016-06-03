@@ -394,6 +394,15 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    */
 
   /**
+   * Configures the task to drop all but the most recently
+   * performed {@linkcode TaskInstance }.
+   *
+   * @method keepLatest
+   * @memberof TaskProperty
+   * @instance
+   */
+
+  /**
    * Sets the maximum number of task instances that are allowed
    * to run at the same time. By default, with no task modifiers
    * applied, this number is Infinity (there is no limit

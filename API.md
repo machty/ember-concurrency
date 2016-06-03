@@ -26,6 +26,7 @@ under the [Task Property API docs](TaskProperty.html).
 - [restartable](TaskProperty.html#restartable)
 - [enqueue](TaskProperty.html#enqueue)
 - [drop](TaskProperty.html#drop)
+- [keepLatest](TaskProperty.html#keepLatest)
 - [maxConcurrency](TaskProperty.html#maxConcurrency)
 
 
