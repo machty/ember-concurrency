@@ -1,4 +1,11 @@
 # Changelog
+### 0.7.2
+  - (perform) and (cancel-all) helpers no longer cause run loop autoruns
+  - The .keepLatest() task modifier has been redocumented due
+    to popular demand; it's useful for when you want to enqueue
+    only the most recent intermediate .perform() and drop everything
+    in between.
+
 ### 0.7.1
   - Support for Ember 1.13.0
 
