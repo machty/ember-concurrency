@@ -87,3 +87,28 @@
 
 {{concurrency-graph task=droppingTask}}
 
+
+<h4>.keepLatest()</h4>
+
+<p>
+  The <code>.keepLatest()</code> modifier enqueues intermediate <code>.perform()</code>s
+  but drops all but the most recent (the latest) perform.
+</p>
+
+<p>
+  <em>
+    Use case: you want to centralize app updates in a single task, and you 1)
+    don't want this task to be cancelable and 2) if staleness events occur
+    while the task is running, you only need to respond to the most recent one.
+  </em>
+</p>
+
+{{concurrency-graph task=keepLatestTask}}
+
+<p>
+  <em>
+    Thanks to <a href="https://github.com/ef4">Edward Faulkner</a> for providing
+    a starting point for the graphs :)
+  </em>
+</p>
+
