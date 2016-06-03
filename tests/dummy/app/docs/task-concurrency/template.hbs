@@ -91,15 +91,15 @@
 <h4>.keepLatest()</h4>
 
 <p>
-  The <code>.keepLatest()</code> modifier enqueues intermediate <code>.perform()</code>s
-  but drops all but the most recent (the latest) perform.
+  The <code>.keepLatest()</code> will drop all by the most recent intermediate <code>.perform()</code>,
+  which is enqueued to run later.
 </p>
 
 <p>
   <em>
-    Use case: you want to centralize app updates in a single task, and you 1)
-    don't want this task to be cancelable and 2) if staleness events occur
-    while the task is running, you only need to respond to the most recent one.
+    Use case: you poll the server in a loop, but during the server request,
+    you get some other indication (say, via websockets) that the data is stale
+    and you need to query the server again when the initial request completed.
   </em>
 </p>
 
