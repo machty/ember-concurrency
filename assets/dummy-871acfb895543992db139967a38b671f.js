@@ -6291,6 +6291,572 @@ define("dummy/docs/examples/decorating-tasks/template", ["exports"], function (e
     };
   })());
 });
+define('dummy/docs/examples/encapsulated-task/controller', ['exports', 'ember', 'dummy/utils', 'ember-concurrency'], function (exports, _ember, _dummyUtils, _emberConcurrency) {
+  exports['default'] = _ember['default'].Controller.extend({
+    uploadFile: (0, _emberConcurrency.task)({
+      progress: 0,
+      url: null,
+      perform: regeneratorRuntime.mark(function perform(makeUrl) {
+        var newProgress;
+        return regeneratorRuntime.wrap(function perform$(context$1$0) {
+          while (1) switch (context$1$0.prev = context$1$0.next) {
+            case 0:
+              this.set('url', makeUrl());
+
+            case 1:
+              if (!(this.progress < 100)) {
+                context$1$0.next = 8;
+                break;
+              }
+
+              context$1$0.next = 4;
+              return (0, _emberConcurrency.timeout)(100);
+
+            case 4:
+              newProgress = this.progress + Math.floor(Math.random() * 6) + 5;
+
+              this.set('progress', Math.min(100, newProgress));
+              context$1$0.next = 1;
+              break;
+
+            case 8:
+              return context$1$0.abrupt('return', "Success!");
+
+            case 9:
+            case 'end':
+              return context$1$0.stop();
+          }
+        }, perform, this);
+      })
+    }).enqueue(),
+
+    makeRandomUrl: function makeRandomUrl() {
+      return 'https://www.' + (0, _dummyUtils.randomWord)() + '.edu';
+    }
+  });
+
+  // END-SNIPPET
+});
+
+// BEGIN-SNIPPET encapsulated-task-controller
+define("dummy/docs/examples/encapsulated-task/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 56,
+              "column": 0
+            },
+            "end": {
+              "line": 61,
+              "column": 0
+            }
+          },
+          "moduleName": "dummy/docs/examples/encapsulated-task/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h5");
+          var el2 = dom.createTextNode("\n    Uploading to ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode(":\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("%\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element1 = dom.childAt(fragment, [1]);
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(element1, 1, 1);
+          morphs[1] = dom.createMorphAt(element1, 3, 3);
+          return morphs;
+        },
+        statements: [["content", "uploadFile.last.url", ["loc", [null, [58, 17], [58, 40]]]], ["content", "uploadFile.last.progress", ["loc", [null, [59, 4], [59, 32]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 63,
+              "column": 0
+            },
+            "end": {
+              "line": 70,
+              "column": 0
+            }
+          },
+          "moduleName": "dummy/docs/examples/encapsulated-task/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h5");
+          dom.setAttribute(el1, "style", "color: green;");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("strong");
+          var el3 = dom.createTextNode("\n    Upload to ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode(":\n    ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n    ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1, 1]);
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(element0, 1, 1);
+          morphs[1] = dom.createMorphAt(element0, 3, 3);
+          return morphs;
+        },
+        statements: [["content", "uploadFile.lastSuccessful.url", ["loc", [null, [66, 14], [66, 47]]]], ["content", "uploadFile.lastSuccessful.value", ["loc", [null, [67, 4], [67, 39]]]]],
+        locals: [],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.3.2",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 77,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/examples/encapsulated-task/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Experimental: Encapsulated Tasks");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Normally, you define tasks by passing a generator function to ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("task(...)");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(".\n  Often though, you want to be able to expose additional state of the task,\n  e.g. you might want to show the percentage progress of an ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("uploadFile");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" task,\n  but unless you're using the techniques describes below there's no good\n  place to expose that data to the template other than to set some properties\n  on the host object, but then you lose a lot of the benefits of encapsulation\n  in the process.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  In cases like these, you can use Encapsulated Tasks, which behave just\n  like regular tasks, except that they don't have access to the object\n  they're attached to, but rather can only set properties (or emit events)\n  on themselves. Defining Encapsulated Tasks is easy: instead of passing\n  a generator function directly to ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("task(...)");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(", you pass an\n  object with a ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("perform");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" method.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n\n\n\n\n  pass an object with a\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("perform");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" method to the ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("task(...)");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" function\n\n\n  instead of passing\n  a generator function to ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("task(...)");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(", you pass an object\n  with a ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("perform");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" method.\n\n  , which are objects with\n  a ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("perform");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" method and other state that you can use in the\n  place of the generator function you normally supply to ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("task()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(".\n  When you use a EncapsulatedTask, the value of ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("this");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" in the ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("perform");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  generator function is the EncapsulatedTask object, which means it's a good place to\n  set encapsulated values specific to that running task instance.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Live Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode("\n    Start Upload\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h5");
+        var el2 = dom.createTextNode("Queued Uploads: ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element2 = dom.childAt(fragment, [12, 1]);
+        var morphs = new Array(7);
+        morphs[0] = dom.createMorphAt(fragment, 6, 6, contextualElement);
+        morphs[1] = dom.createAttrMorph(element2, 'onclick');
+        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [14]), 1, 1);
+        morphs[3] = dom.createMorphAt(fragment, 16, 16, contextualElement);
+        morphs[4] = dom.createMorphAt(fragment, 18, 18, contextualElement);
+        morphs[5] = dom.createMorphAt(fragment, 21, 21, contextualElement);
+        morphs[6] = dom.createMorphAt(fragment, 23, 23, contextualElement);
+        return morphs;
+      },
+      statements: [["inline", "code-snippet", [], ["name", "encapsulated-task.js"], ["loc", [null, [22, 0], [22, 44]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "uploadFile", ["loc", [null, [49, 28], [49, 38]]]], ["get", "makeRandomUrl", ["loc", [null, [49, 39], [49, 52]]]]], [], ["loc", [null, [49, 18], [49, 54]]]]], ["content", "uploadFile.numQueued", ["loc", [null, [54, 20], [54, 44]]]], ["block", "if", [["get", "uploadFile.last", ["loc", [null, [56, 6], [56, 21]]]]], [], 0, null, ["loc", [null, [56, 0], [61, 7]]]], ["block", "if", [["get", "uploadFile.lastSuccessful", ["loc", [null, [63, 6], [63, 31]]]]], [], 1, null, ["loc", [null, [63, 0], [70, 7]]]], ["inline", "code-snippet", [], ["name", "encapsulated-task-controller.js"], ["loc", [null, [74, 0], [74, 55]]]], ["inline", "code-snippet", [], ["name", "encapsulated-task-template.hbs"], ["loc", [null, [75, 0], [75, 54]]]]],
+      locals: [],
+      templates: [child0, child1]
+    };
+  })());
+});
+define('dummy/docs/examples/encapsulated-task-fun/controller', ['exports', 'ember', 'dummy/utils', 'ember-concurrency'], function (exports, _ember, _dummyUtils, _emberConcurrency) {
+  var marked0$0 = [sharedFn].map(regeneratorRuntime.mark);
+
+  function sharedFn() {
+    return regeneratorRuntime.wrap(function sharedFn$(context$1$0) {
+      while (1) switch (context$1$0.prev = context$1$0.next) {
+        case 0:
+          context$1$0.next = 2;
+          return (0, _emberConcurrency.timeout)(Math.random() * 2000);
+
+        case 2:
+          return context$1$0.abrupt('return', (0, _dummyUtils.randomWord)());
+
+        case 3:
+        case 'end':
+          return context$1$0.stop();
+      }
+    }, marked0$0[0], this);
+  }
+
+  exports['default'] = _ember['default'].Controller.extend({
+    doStuff: (0, _emberConcurrency.task)({
+      perform: regeneratorRuntime.mark(function perform() {
+        return regeneratorRuntime.wrap(function perform$(context$1$0) {
+          while (1) switch (context$1$0.prev = context$1$0.next) {
+            case 0:
+              return context$1$0.abrupt('return', (0, _emberConcurrency.all)([this.get('foo').perform(), this.get('bar').perform(), this.get('baz').perform()]));
+
+            case 1:
+            case 'end':
+              return context$1$0.stop();
+          }
+        }, perform, this);
+      }),
+
+      foo: (0, _emberConcurrency.task)(sharedFn),
+      bar: (0, _emberConcurrency.task)(sharedFn),
+      baz: (0, _emberConcurrency.task)(sharedFn)
+    }).restartable()
+  });
+
+  // END-SNIPPET
+});
+
+// BEGIN-SNIPPET encapsulated-task-fun-controller
+define("dummy/docs/examples/encapsulated-task-fun/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.3.2",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 17,
+              "column": 0
+            },
+            "end": {
+              "line": 22,
+              "column": 0
+            }
+          },
+          "moduleName": "dummy/docs/examples/encapsulated-task-fun/template.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h5");
+          var el2 = dom.createTextNode("value: ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h5");
+          var el2 = dom.createTextNode("foo:   ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h5");
+          var el2 = dom.createTextNode("bar:   ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("h5");
+          var el2 = dom.createTextNode("baz:   ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(4);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
+          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [3]), 1, 1);
+          morphs[2] = dom.createMorphAt(dom.childAt(fragment, [5]), 1, 1);
+          morphs[3] = dom.createMorphAt(dom.childAt(fragment, [7]), 1, 1);
+          return morphs;
+        },
+        statements: [["content", "t.value", ["loc", [null, [18, 13], [18, 24]]]], ["content", "t.foo.last.value", ["loc", [null, [19, 13], [19, 33]]]], ["content", "t.bar.last.value", ["loc", [null, [20, 13], [20, 33]]]], ["content", "t.baz.last.value", ["loc", [null, [21, 13], [21, 33]]]]],
+        locals: ["t"],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.3.2",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 28,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/examples/encapsulated-task-fun/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Experimental: EncapsulatedTasks");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Normally, you define tasks by passing a generator function to ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("task(...)");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(".\n  Sometimes though, blah blah blah here is an example.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Live Example");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode("\n    Do Stuff\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [6, 1]);
+        var morphs = new Array(4);
+        morphs[0] = dom.createAttrMorph(element0, 'onclick');
+        morphs[1] = dom.createMorphAt(fragment, 8, 8, contextualElement);
+        morphs[2] = dom.createMorphAt(fragment, 10, 10, contextualElement);
+        morphs[3] = dom.createMorphAt(fragment, 12, 12, contextualElement);
+        return morphs;
+      },
+      statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "doStuff", ["loc", [null, [12, 28], [12, 35]]]]], [], ["loc", [null, [12, 18], [12, 37]]]]], ["block", "with", [["get", "doStuff.last", ["loc", [null, [17, 8], [17, 20]]]]], [], 0, null, ["loc", [null, [17, 0], [22, 9]]]], ["inline", "code-snippet", [], ["name", "encapsulated-task-fun-controller.js"], ["loc", [null, [25, 0], [25, 59]]]], ["inline", "code-snippet", [], ["name", "encapsulated-task-fun-template.hbs"], ["loc", [null, [26, 0], [26, 58]]]]],
+      locals: [],
+      templates: [child0]
+    };
+  })());
+});
 define('dummy/docs/examples/increment-buttons/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
 
   // BEGIN-SNIPPET increment-button-task
@@ -8380,572 +8946,6 @@ define("dummy/docs/examples/observables/template", ["exports"], function (export
         return morphs;
       },
       statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "computeStuff", ["loc", [null, [19, 26], [19, 38]]]]], [], ["loc", [null, [19, 16], [19, 40]]]]], ["block", "each", [["get", "values", ["loc", [null, [21, 13], [21, 19]]]]], [], 0, null, ["loc", [null, [21, 5], [21, 50]]]], ["inline", "code-snippet", [], ["name", "observables-timetable.js"], ["loc", [null, [23, 0], [23, 48]]]], ["content", "fooStatus", ["loc", [null, [27, 12], [27, 25]]]], ["element", "action", ["triggerFoo"], [], ["loc", [null, [29, 8], [29, 31]]]], ["inline", "code-snippet", [], ["name", "observables-evented.js"], ["loc", [null, [31, 0], [31, 46]]]]],
-      locals: [],
-      templates: [child0]
-    };
-  })());
-});
-define('dummy/docs/examples/performable/controller', ['exports', 'ember', 'dummy/utils', 'ember-concurrency'], function (exports, _ember, _dummyUtils, _emberConcurrency) {
-  exports['default'] = _ember['default'].Controller.extend({
-    uploadFile: (0, _emberConcurrency.task)({
-      progress: 0,
-      url: null,
-      perform: regeneratorRuntime.mark(function perform(makeUrl) {
-        var newProgress;
-        return regeneratorRuntime.wrap(function perform$(context$1$0) {
-          while (1) switch (context$1$0.prev = context$1$0.next) {
-            case 0:
-              this.set('url', makeUrl());
-
-            case 1:
-              if (!(this.progress < 100)) {
-                context$1$0.next = 8;
-                break;
-              }
-
-              context$1$0.next = 4;
-              return (0, _emberConcurrency.timeout)(100);
-
-            case 4:
-              newProgress = this.progress + Math.floor(Math.random() * 6) + 5;
-
-              this.set('progress', Math.min(100, newProgress));
-              context$1$0.next = 1;
-              break;
-
-            case 8:
-              return context$1$0.abrupt('return', "Success!");
-
-            case 9:
-            case 'end':
-              return context$1$0.stop();
-          }
-        }, perform, this);
-      })
-    }).enqueue(),
-
-    makeRandomUrl: function makeRandomUrl() {
-      return 'https://www.' + (0, _dummyUtils.randomWord)() + '.edu';
-    }
-  });
-
-  // END-SNIPPET
-});
-
-// BEGIN-SNIPPET encapsulated-task-controller
-define("dummy/docs/examples/performable/template", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template((function () {
-    var child0 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.3.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 56,
-              "column": 0
-            },
-            "end": {
-              "line": 61,
-              "column": 0
-            }
-          },
-          "moduleName": "dummy/docs/examples/performable/template.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("h5");
-          var el2 = dom.createTextNode("\n    Uploading to ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode(":\n    ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("%\n  ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element1 = dom.childAt(fragment, [1]);
-          var morphs = new Array(2);
-          morphs[0] = dom.createMorphAt(element1, 1, 1);
-          morphs[1] = dom.createMorphAt(element1, 3, 3);
-          return morphs;
-        },
-        statements: [["content", "uploadFile.last.url", ["loc", [null, [58, 17], [58, 40]]]], ["content", "uploadFile.last.progress", ["loc", [null, [59, 4], [59, 32]]]]],
-        locals: [],
-        templates: []
-      };
-    })();
-    var child1 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.3.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 63,
-              "column": 0
-            },
-            "end": {
-              "line": 70,
-              "column": 0
-            }
-          },
-          "moduleName": "dummy/docs/examples/performable/template.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("h5");
-          dom.setAttribute(el1, "style", "color: green;");
-          var el2 = dom.createTextNode("\n    ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("strong");
-          var el3 = dom.createTextNode("\n    Upload to ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode(":\n    ");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createComment("");
-          dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n    ");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n  ");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element0 = dom.childAt(fragment, [1, 1]);
-          var morphs = new Array(2);
-          morphs[0] = dom.createMorphAt(element0, 1, 1);
-          morphs[1] = dom.createMorphAt(element0, 3, 3);
-          return morphs;
-        },
-        statements: [["content", "uploadFile.lastSuccessful.url", ["loc", [null, [66, 14], [66, 47]]]], ["content", "uploadFile.lastSuccessful.value", ["loc", [null, [67, 4], [67, 39]]]]],
-        locals: [],
-        templates: []
-      };
-    })();
-    return {
-      meta: {
-        "fragmentReason": {
-          "name": "missing-wrapper",
-          "problems": ["multiple-nodes", "wrong-type"]
-        },
-        "revision": "Ember@2.3.2",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 77,
-            "column": 0
-          }
-        },
-        "moduleName": "dummy/docs/examples/performable/template.hbs"
-      },
-      isEmpty: false,
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("h3");
-        var el2 = dom.createTextNode("Experimental: Encapsulated Tasks");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Normally, you define tasks by passing a generator function to ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("task(...)");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(".\n  Often though, you want to be able to expose additional state of the task,\n  e.g. you might want to show the percentage progress of an ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("uploadFile");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" task,\n  but unless you're using the techniques describes below there's no good\n  place to expose that data to the template other than to set some properties\n  on the host object, but then you lose a lot of the benefits of encapsulation\n  in the process.\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  In cases like these, you can use Encapsulated Tasks, which behave just\n  like regular tasks, except that they don't have access to the object\n  they're attached to, but rather can only set properties (or emit events)\n  on themselves. Defining Encapsulated Tasks is easy: instead of passing\n  a generator function directly to ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("task(...)");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(", you pass an\n  object with a ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("perform");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" method.\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n\n\n\n\n  pass an object with a\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("perform");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" method to the ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("task(...)");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" function\n\n\n  instead of passing\n  a generator function to ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("task(...)");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(", you pass an object\n  with a ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("perform");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" method.\n\n  , which are objects with\n  a ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("perform");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" method and other state that you can use in the\n  place of the generator function you normally supply to ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("task()");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(".\n  When you use a EncapsulatedTask, the value of ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("this");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" in the ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("perform");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  generator function is the EncapsulatedTask object, which means it's a good place to\n  set encapsulated values specific to that running task instance.\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h3");
-        var el2 = dom.createTextNode("Live Example");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("button");
-        var el3 = dom.createTextNode("\n    Start Upload\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h5");
-        var el2 = dom.createTextNode("Queued Uploads: ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element2 = dom.childAt(fragment, [12, 1]);
-        var morphs = new Array(7);
-        morphs[0] = dom.createMorphAt(fragment, 6, 6, contextualElement);
-        morphs[1] = dom.createAttrMorph(element2, 'onclick');
-        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [14]), 1, 1);
-        morphs[3] = dom.createMorphAt(fragment, 16, 16, contextualElement);
-        morphs[4] = dom.createMorphAt(fragment, 18, 18, contextualElement);
-        morphs[5] = dom.createMorphAt(fragment, 21, 21, contextualElement);
-        morphs[6] = dom.createMorphAt(fragment, 23, 23, contextualElement);
-        return morphs;
-      },
-      statements: [["inline", "code-snippet", [], ["name", "encapsulated-task.js"], ["loc", [null, [22, 0], [22, 44]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "uploadFile", ["loc", [null, [49, 28], [49, 38]]]], ["get", "makeRandomUrl", ["loc", [null, [49, 39], [49, 52]]]]], [], ["loc", [null, [49, 18], [49, 54]]]]], ["content", "uploadFile.numQueued", ["loc", [null, [54, 20], [54, 44]]]], ["block", "if", [["get", "uploadFile.last", ["loc", [null, [56, 6], [56, 21]]]]], [], 0, null, ["loc", [null, [56, 0], [61, 7]]]], ["block", "if", [["get", "uploadFile.lastSuccessful", ["loc", [null, [63, 6], [63, 31]]]]], [], 1, null, ["loc", [null, [63, 0], [70, 7]]]], ["inline", "code-snippet", [], ["name", "encapsulated-task-controller.js"], ["loc", [null, [74, 0], [74, 55]]]], ["inline", "code-snippet", [], ["name", "encapsulated-task-template.hbs"], ["loc", [null, [75, 0], [75, 54]]]]],
-      locals: [],
-      templates: [child0, child1]
-    };
-  })());
-});
-define('dummy/docs/examples/performable-fun/controller', ['exports', 'ember', 'dummy/utils', 'ember-concurrency'], function (exports, _ember, _dummyUtils, _emberConcurrency) {
-  var marked0$0 = [sharedFn].map(regeneratorRuntime.mark);
-
-  function sharedFn() {
-    return regeneratorRuntime.wrap(function sharedFn$(context$1$0) {
-      while (1) switch (context$1$0.prev = context$1$0.next) {
-        case 0:
-          context$1$0.next = 2;
-          return (0, _emberConcurrency.timeout)(Math.random() * 2000);
-
-        case 2:
-          return context$1$0.abrupt('return', (0, _dummyUtils.randomWord)());
-
-        case 3:
-        case 'end':
-          return context$1$0.stop();
-      }
-    }, marked0$0[0], this);
-  }
-
-  exports['default'] = _ember['default'].Controller.extend({
-    doStuff: (0, _emberConcurrency.task)({
-      perform: regeneratorRuntime.mark(function perform() {
-        return regeneratorRuntime.wrap(function perform$(context$1$0) {
-          while (1) switch (context$1$0.prev = context$1$0.next) {
-            case 0:
-              return context$1$0.abrupt('return', (0, _emberConcurrency.all)([this.get('foo').perform(), this.get('bar').perform(), this.get('baz').perform()]));
-
-            case 1:
-            case 'end':
-              return context$1$0.stop();
-          }
-        }, perform, this);
-      }),
-
-      foo: (0, _emberConcurrency.task)(sharedFn),
-      bar: (0, _emberConcurrency.task)(sharedFn),
-      baz: (0, _emberConcurrency.task)(sharedFn)
-    }).restartable()
-  });
-
-  // END-SNIPPET
-});
-
-// BEGIN-SNIPPET encapsulated-task-fun-controller
-define("dummy/docs/examples/performable-fun/template", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template((function () {
-    var child0 = (function () {
-      return {
-        meta: {
-          "fragmentReason": false,
-          "revision": "Ember@2.3.2",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 17,
-              "column": 0
-            },
-            "end": {
-              "line": 22,
-              "column": 0
-            }
-          },
-          "moduleName": "dummy/docs/examples/performable-fun/template.hbs"
-        },
-        isEmpty: false,
-        arity: 1,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("h5");
-          var el2 = dom.createTextNode("value: ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("h5");
-          var el2 = dom.createTextNode("foo:   ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("h5");
-          var el2 = dom.createTextNode("bar:   ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("h5");
-          var el2 = dom.createTextNode("baz:   ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(4);
-          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
-          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [3]), 1, 1);
-          morphs[2] = dom.createMorphAt(dom.childAt(fragment, [5]), 1, 1);
-          morphs[3] = dom.createMorphAt(dom.childAt(fragment, [7]), 1, 1);
-          return morphs;
-        },
-        statements: [["content", "t.value", ["loc", [null, [18, 13], [18, 24]]]], ["content", "t.foo.last.value", ["loc", [null, [19, 13], [19, 33]]]], ["content", "t.bar.last.value", ["loc", [null, [20, 13], [20, 33]]]], ["content", "t.baz.last.value", ["loc", [null, [21, 13], [21, 33]]]]],
-        locals: ["t"],
-        templates: []
-      };
-    })();
-    return {
-      meta: {
-        "fragmentReason": {
-          "name": "missing-wrapper",
-          "problems": ["multiple-nodes", "wrong-type"]
-        },
-        "revision": "Ember@2.3.2",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 28,
-            "column": 0
-          }
-        },
-        "moduleName": "dummy/docs/examples/performable-fun/template.hbs"
-      },
-      isEmpty: false,
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("h3");
-        var el2 = dom.createTextNode("Experimental: EncapsulatedTasks");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Normally, you define tasks by passing a generator function to ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("task(...)");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(".\n  Sometimes though, blah blah blah here is an example.\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h3");
-        var el2 = dom.createTextNode("Live Example");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("button");
-        var el3 = dom.createTextNode("\n    Do Stuff\n  ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element0 = dom.childAt(fragment, [6, 1]);
-        var morphs = new Array(4);
-        morphs[0] = dom.createAttrMorph(element0, 'onclick');
-        morphs[1] = dom.createMorphAt(fragment, 8, 8, contextualElement);
-        morphs[2] = dom.createMorphAt(fragment, 10, 10, contextualElement);
-        morphs[3] = dom.createMorphAt(fragment, 12, 12, contextualElement);
-        return morphs;
-      },
-      statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "doStuff", ["loc", [null, [12, 28], [12, 35]]]]], [], ["loc", [null, [12, 18], [12, 37]]]]], ["block", "with", [["get", "doStuff.last", ["loc", [null, [17, 8], [17, 20]]]]], [], 0, null, ["loc", [null, [17, 0], [22, 9]]]], ["inline", "code-snippet", [], ["name", "encapsulated-task-fun-controller.js"], ["loc", [null, [25, 0], [25, 59]]]], ["inline", "code-snippet", [], ["name", "encapsulated-task-fun-template.hbs"], ["loc", [null, [26, 0], [26, 58]]]]],
       locals: [],
       templates: [child0]
     };
@@ -14897,7 +14897,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.2"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.2+faf5c92e"});
 }
 
 /* jshint ignore:end */
