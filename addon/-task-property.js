@@ -3,7 +3,7 @@ import TaskInstance from './-task-instance';
 import TaskStateMixin from './-task-state-mixin';
 import { TaskGroup } from './-task-group';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
-import { _cleanupOnDestroy, _ComputedProperty } from './utils';
+import { INVOKE, _cleanupOnDestroy, _ComputedProperty } from './utils';
 import EncapsulatedTask from './-encapsulated-task';
 import getOwner from 'ember-getowner-polyfill';
 
@@ -232,6 +232,10 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
 
   _getCompletionPromise() {
     return this._scheduler.getCompletionPromise();
+  },
+
+  [INVOKE](...args) {
+    return this.perform(...args);
   },
 });
 
