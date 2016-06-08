@@ -1,4 +1,9 @@
 # Changelog
+### 0.7.3
+  - removed any attempt to auto-polyfill using babel.includePolyfill,
+    fixing #57. The auto-polyfill was never working reliably so it
+    shouldn't break anyone's code.
+
 ### 0.7.2
   - (perform) and (cancel-all) helpers no longer cause run loop autoruns
   - The .keepLatest() task modifier has been redocumented due
