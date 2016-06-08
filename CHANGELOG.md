@@ -1,4 +1,14 @@
 # Changelog
+### 0.7.4
+  - When using Ember 2.5.0 or higher, you can now pass task objects
+    directly to the closure `action` helper, e.g.
+    `onclick={{action myTask 1 2 3}}`. This works exactly the same
+    as `onclick={{perform myTask 1 2 3}}` but it's nice because
+    any component that fires actions using the `(action)` helper
+    can now directly be passed a task and have it run properly,
+    rather than having to cast to an action using the `(perform)`
+    helper.
+
 ### 0.7.3
   - removed any attempt to auto-polyfill using babel.includePolyfill,
     fixing #57. The auto-polyfill was never working reliably so it
