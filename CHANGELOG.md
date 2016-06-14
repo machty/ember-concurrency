@@ -1,4 +1,11 @@
 # Changelog
+### 0.7.7
+  - Upgraded ember-maybe-import-regenerator so that other
+    addons can consume/depend on ember-concurrency without
+    making the end user have to make any additional
+    configuration to support transpiled generator function
+    syntax.
+
 ### 0.7.6
   - Upgraded to more Node-backwards-compatible version of
     ember-maybe-import-regenerator.
