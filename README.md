@@ -14,16 +14,10 @@ found [here](http://ember-concurrency.com).
 
     ember install ember-concurrency
 
-`ember-concurrency` also requires that the Regenerator runtime be
-included in your app. The easiest way to ensure this is to enable
-the `babel.includePolyfill` option in your `ember-cli-build.js`
-or `Brocfile.js` files.
+If you're using a version of `ember-concurrency` older than 0.7.5,
+you'll also need to run:
 
-    var app = new EmberApp(defaults, {
-      babel: {
-        includePolyfill: true,
-      },
-    });
+    ember install ember-maybe-import-regenerator
 
 ## Documentation
 
