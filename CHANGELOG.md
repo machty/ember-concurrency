@@ -1,4 +1,13 @@
 # Changelog
+### 0.7.5
+  - You no longer have to set `includePolyfill:true` in
+    ember-cli-build.js as a requirement for using
+    ember-concurrency. `regenerator-runtime` is now
+    provided by https://github.com/machty/ember-maybe-import-regenerator,
+    which gracefully no-ops if you still want to keep
+    `includePolyfill:true`. Babel's polyfill is 98kb minified,
+    whereas the regenerator runtime is only 4kb minified.
+
 ### 0.7.4
   - When using Ember 2.5.0 or higher, you can now pass task objects
     directly to the closure `action` helper, e.g.
