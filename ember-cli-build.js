@@ -13,6 +13,10 @@ module.exports = function(defaults) {
 
     emberCliFontAwesome: {
       useScss: true
+    },
+
+    babel: {
+      includePolyfill: true
     }
   });
 
