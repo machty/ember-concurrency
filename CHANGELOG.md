@@ -1,4 +1,8 @@
 # Changelog
+### 0.7.6
+  - Upgraded to more Node-backwards-compatible version of
+    ember-maybe-import-regenerator.
+
 ### 0.7.5
   - You no longer have to set `includePolyfill:true` in
     ember-cli-build.js as a requirement for using
