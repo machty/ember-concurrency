@@ -3,7 +3,7 @@ import TaskInstance from './-task-instance';
 import TaskStateMixin from './-task-state-mixin';
 import { TaskGroup } from './-task-group';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
-import { INVOKE, _cleanupOnDestroy, _ComputedProperty } from './utils';
+import { objectAssign, INVOKE, _cleanupOnDestroy, _ComputedProperty } from './utils';
 import EncapsulatedTask from './-encapsulated-task';
 import getOwner from 'ember-getowner-polyfill';
 
@@ -296,7 +296,7 @@ function applyDecorator(taskProperty, decorator) {
 }
 
 TaskProperty.prototype = Object.create(_ComputedProperty.prototype);
-Object.assign(TaskProperty.prototype, propertyModifiers, {
+objectAssign(TaskProperty.prototype, propertyModifiers, {
   constructor: TaskProperty,
 
   setup(proto, taskName) {
