@@ -18,7 +18,8 @@ Arguments.prototype.resolve = function(value) {
   }
 };
 
-export function objectAssign(target) {
+
+export let objectAssign = Object.assign || function objectAssign(target) {
   'use strict';
   if (target == null) {
     throw new TypeError('Cannot convert undefined or null to object');
@@ -36,7 +37,7 @@ export function objectAssign(target) {
     }
   }
   return target;
-}
+};
 
 export function createObservable(fn) {
   return {
