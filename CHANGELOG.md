@@ -1,4 +1,9 @@
 # Changelog
+### 0.7.8
+  - Adds Object.assign polyfill so that tests pass on
+    on non-supporting browsers for apps that don't
+    set includePolyfill:true
+
 ### 0.7.7
   - Upgraded ember-maybe-import-regenerator so that other
     addons can consume/depend on ember-concurrency without
