@@ -1,7 +1,8 @@
 import Ember from 'ember';
-import { _ComputedProperty } from './utils';
+import { objectAssign, _ComputedProperty } from './utils';
 import TaskStateMixin from './-task-state-mixin';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
+
 
 export const TaskGroup = Ember.Object.extend(TaskStateMixin, {
   toString() {
@@ -30,7 +31,7 @@ export function TaskGroupProperty(...decorators) {
 }
 
 TaskGroupProperty.prototype = Object.create(_ComputedProperty.prototype);
-Object.assign(TaskGroupProperty.prototype, propertyModifiers, {
+objectAssign(TaskGroupProperty.prototype, propertyModifiers, {
   constructor: TaskGroupProperty,
 });
 

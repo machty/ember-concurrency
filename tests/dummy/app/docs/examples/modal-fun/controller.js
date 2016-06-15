@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { objectAssign } from 'ember-concurrency/utils';
 
 let { computed } = Ember;
 let { alias } = computed;
@@ -63,7 +64,7 @@ function state(attrs) {
       yield PAUSE_FOREVER;
     }
   };
-  Object.assign(defaultAttrs, attrs);
+  objectAssign(defaultAttrs, attrs);
   return task(defaultAttrs).group('states');
 }
 
