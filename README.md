@@ -29,11 +29,9 @@ approach).
 
 ## Problems?
 
-Whether you've found a bug or just have a question about
-ember-concurrency, feel free to [Open an Issue](https://github.com/machty/ember-concurrency/issues).
-Also, I highly recommend heading over to the
-[Ember.js Community Slack](https://embercommunity.slack.com)
-and asking your question in the `#e-concurrency` channel.
+- [Open an Issue](https://github.com/machty/ember-concurrency/issues).
+  - Try to replicate the issue within an [ember-twiddle][twiddle-starter]
+- Ask a question in the `#e-concurrency` channel at the [Ember.js Community Slack](https://embercommunity.slack.com)
 
 ## Addon Maintenance
 
@@ -73,3 +71,4 @@ TODO: use build pipeline.
 [ember-observer-badge]: http://emberobserver.com/badges/ember-concurrency.svg
 [ember-observer-url]: http://emberobserver.com/addons/ember-concurrency
 [ember-version]: https://embadge.io/v1/badge.svg?start=1.13.0
+[twiddle-starter]: https://ember-twiddle.com/db930bdb658035626a9be9268bc39845?openFiles=templates.application.hbs%2C
