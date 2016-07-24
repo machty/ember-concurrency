@@ -87,6 +87,13 @@ function joinAndSchedule(...args) {
 
 export function _cleanupOnDestroy(owner, object, cleanupMethodName) {
   // TODO: find a non-mutate-y, hacky way of doing this.
+
+  if (!owner.willDestroy)
+  {
+    // we're running in non Ember object (possibly in a test mock)
+    return;
+  }
+
   if (!owner.willDestroy.__ember_processes_destroyers__) {
     let oldWillDestroy = owner.willDestroy;
     let disposers = [];
