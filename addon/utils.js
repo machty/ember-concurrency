@@ -106,11 +106,21 @@ export function _cleanupOnDestroy(owner, object, cleanupMethodName) {
 }
 
 export let INVOKE = "__invoke_symbol__";
-try { INVOKE = Ember.__loader.require('ember-routing-htmlbars/keywords/closure-action')['INVOKE'] || INVOKE; } catch(e) {}
-try { INVOKE = Ember.__loader.require('ember-routing/keywords/closure-action')['INVOKE'] || INVOKE; } catch(e) {}
+
+let locations = [
+  'ember-glimmer/helpers/action',
+  'ember-routing-htmlbars/keywords/closure-action',
+  'ember-routing/keywords/closure-action'
+];
+
+for (let i = 0; i < locations.length; i++) {
+  if (locations[i] in Ember.__loader.registry) {
+    INVOKE = Ember.__loader.require(locations[i])['INVOKE'];
+    break;
+  }
+}
 
 // TODO: Symbol polyfill?
 export const yieldableSymbol = "__ec_yieldable__";
 
 export const _ComputedProperty = Ember.__loader.require("ember-metal/computed").ComputedProperty;
-
