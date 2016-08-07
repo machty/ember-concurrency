@@ -25,6 +25,114 @@ import getOwner from 'ember-getowner-polyfill';
   @class Task
 */
 export const Task = Ember.Object.extend(TaskStateMixin, {
+  /**
+   * `true` if any current task instances are running.
+   *
+   * @memberof Task
+   * @member {boolean} isRunning
+   * @instance
+   * @readOnly
+   */
+
+  /**
+   * `true` if any future task instances are queued.
+   *
+   * @memberof Task
+   * @member {boolean} isQueued
+   * @instance
+   * @readOnly
+   */
+
+  /**
+   * `true` if the task is not in the running or queued state.
+   *
+   * @memberof Task
+   * @member {boolean} isIdle
+   * @instance
+   * @readOnly
+   */
+
+  /**
+   * The current state of the task: `"running"`, `"queued"` or `"idle"`.
+   *
+   * @memberof Task
+   * @member {string} state
+   * @instance
+   * @readOnly
+   */
+
+  /**
+   * The most recently started task instance.
+   *
+   * @memberof Task
+   * @member {TaskInstance} last
+   * @instance
+   * @readOnly
+   */
+
+  /**
+   * The most recent task instance that is currently running.
+   *
+   * @memberof Task
+   * @member {TaskInstance} lastRunning
+   * @instance
+   * @readOnly
+   */
+
+  /**
+   * The most recently performed task instance.
+   *
+   * @memberof Task
+   * @member {TaskInstance} lastPerformed
+   * @instance
+   * @readOnly
+   */
+
+  /**
+   * The most recent task instance that succeeded.
+   *
+   * @memberof Task
+   * @member {TaskInstance} lastSuccessful
+   * @instance
+   * @readOnly
+   */
+
+  /**
+   * The most recently completed task instance.
+   *
+   * @memberof Task
+   * @member {TaskInstance} lastComplete
+   * @instance
+   * @readOnly
+   */
+
+  /**
+   * The most recent task instance that errored.
+   *
+   * @memberof Task
+   * @member {TaskInstance} lastErrored
+   * @instance
+   * @readOnly
+   */
+
+  /**
+   * The most recently canceled task instance.
+   *
+   * @memberof Task
+   * @member {TaskInstance} lastCanceled
+   * @instance
+   * @readOnly
+   */
+
+  /**
+   * The most recent task instance that is incomplete.
+   *
+   * @memberof Task
+   * @member {TaskInstance} lastIncomplete
+   * @instance
+   * @readOnly
+   */
+
   fn: null,
   context: null,
   _observes: null,
