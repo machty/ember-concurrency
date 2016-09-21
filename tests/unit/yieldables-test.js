@@ -153,7 +153,7 @@ test("allSettled behaves like Promise.allSettled", function(assert) {
 });
 
 test("allSettled does not cancel all other joined tasks if one of them fails", function(assert) {
-  assert.expect(6);
+  assert.expect(9);
 
   let defers = [];
   let Obj = Ember.Object.extend({
@@ -166,7 +166,12 @@ test("allSettled does not cancel all other joined tasks if one of them fails", f
       ]);
       assert.equal(typeof allPromise.then, 'function');
       let values = yield allPromise;
-      assert.deepEqual(values, [{ state: 'fulfilled', value: 'a' }, { state: 'rejected', reason: { wat: 'lol' } }, { state: 'fulfilled', value: 'c' }]);
+      let fulfilled = values.filter((value) => value.state === 'fulfilled');
+      let rejected = values.filter((value) => value.state !== 'fulfilled');
+      assert.deepEqual(fulfilled, [{ state: 'fulfilled', value: 'a' }, { state: 'fulfilled', value: 'c' }]);
+      assert.equal(rejected.length, 1);
+      assert.equal(rejected[0].state, 'rejected');
+      assert.equal(rejected[0].reason.message, 'wat');
     }),
 
     child: task(function * () {
@@ -187,7 +192,7 @@ test("allSettled does not cancel all other joined tasks if one of them fails", f
   assert.equal(childTask.get('concurrency'), 3);
   Ember.run(() => defers.shift().resolve('a'));
   assert.equal(childTask.get('concurrency'), 2);
-  Ember.run(() => defers.shift().reject({ wat: 'lol' }));
+  Ember.run(() => defers.shift().reject(new Error('wat')));
   assert.equal(childTask.get('concurrency'), 1);
   Ember.run(() => defers.shift().resolve('c'));
   assert.equal(childTask.get('concurrency'), 0);
