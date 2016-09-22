@@ -1,4 +1,7 @@
 # Changelog
+### 0.7.9
+  - Add task-aware `allSettled` promise equivalent (#75)
+
 ### 0.7.8
   - Adds Object.assign polyfill so that tests pass on
     on non-supporting browsers for apps that don't
