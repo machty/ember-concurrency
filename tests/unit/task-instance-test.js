@@ -1,11 +1,8 @@
 import Ember from 'ember';
 import TaskInstance from 'ember-concurrency/-task-instance';
+import { module, test } from 'qunit';
 
-module('Unit: task instance', {
-  teardown() {
-    Ember.Test.adapter = null;
-  }
-});
+module('Unit: task instance');
 
 test("basics", function(assert) {
   assert.expect(2);
@@ -41,11 +38,11 @@ test("blocks on async yields", function(assert) {
   Ember.run(null, defer.resolve, 123);
 });
 
-function expectCancelation(promise) {
+function expectCancelation(assert, promise) {
   promise.then(() => {
-    QUnit.ok(false, "promise should have rejected");
+    assert.ok(false, "promise should have rejected");
   }, e => {
-    QUnit.equal(e.name, 'TaskCancelation', "promise rejection is a cancelation");
+    assert.equal(e.name, 'TaskCancelation', "promise rejection is a cancelation");
   });
 }
 
@@ -73,7 +70,7 @@ test("cancelation", function(assert) {
     })._start();
   });
 
-  expectCancelation(taskInstance);
+  expectCancelation(assert, taskInstance);
 
   Ember.run(() => {
     assert.ok(!taskInstance.get('isCanceled'));
@@ -128,7 +125,7 @@ test("deferred start: .cancel() before ._start()", function(assert) {
     });
   });
 
-  expectCancelation(taskInstance);
+  expectCancelation(assert, taskInstance);
 
   Ember.run(() => {
     taskInstance.cancel();
@@ -322,7 +319,7 @@ test("yielding to other tasks: parent task gets canceled", function(assert) {
 });
 
 function shouldNotGetCalled() {
-  QUnit.ok(false, "should not be called");
+  throw new Error("should not be called");
 }
 
 test("yielding to other tasks: child task gets canceled", function(assert) {
@@ -524,30 +521,29 @@ test("if a parent task catches a child task that returns a rejecting promise, it
 test("in a hierarchy of child task performs, a bubbling exception should only print to console once", function(assert) {
   assert.expect(1);
 
-  Ember.Test.adapter = {
-    exception(e) {
-      assert.equal(e, "wat");
-    }
-  };
-
-  Ember.run(() => {
-    TaskInstance.create({
-      fn: function * () {
-        yield TaskInstance.create({
-          fn: function * () {
-            yield TaskInstance.create({
-              fn: function * () {
-                return Ember.RSVP.reject("wat");
-              },
-              args: [],
-            })._start();
-          },
-          args: [],
-        })._start();
-      },
-      args: [],
-    })._start();
-  });
+  try {
+    Ember.run(() => {
+      TaskInstance.create({
+        fn: function * () {
+          yield TaskInstance.create({
+            fn: function * () {
+              yield TaskInstance.create({
+                fn: function * () {
+                  return Ember.RSVP.reject("wat");
+                },
+                args: [],
+              })._start();
+            },
+            args: [],
+          })._start();
+        },
+        args: [],
+      })._start();
+    });
+    assert.ok(false);
+  } catch(e) {
+    assert.equal(e, "wat");
+  }
 });
 
 test("in a hierarchy of child task performs, a bubbling cancel should not be considered an error", function(assert) {

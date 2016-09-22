@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import { task, all, allSettled } from 'ember-concurrency';
+import { module, test } from 'qunit';
 
 module('Unit: yieldables');
 

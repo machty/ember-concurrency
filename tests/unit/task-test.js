@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import { task, interval } from 'ember-concurrency';
+import { module, test } from 'qunit';
 
 module('Unit: task');
 
@@ -65,7 +66,7 @@ test("task Evented event discontinues after destruction", function(assert) {
 });
 
 test("task discontinues after destruction when blocked on async values", function(assert) {
-  QUnit.stop();
+  let start = assert.async();
   assert.expect(1);
 
   let Obj = Ember.Object.extend(Ember.Evented, {
@@ -84,7 +85,7 @@ test("task discontinues after destruction when blocked on async values", functio
 
   Ember.run.later(() => {
     obj.destroy();
-    QUnit.start();
+    start();
   });
 });
 

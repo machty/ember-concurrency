@@ -5,6 +5,7 @@ import {
   dropQueuedTasksPolicy,
   cancelOngoingTasksPolicy,
 } from 'ember-concurrency/-buffer-policy';
+import { module, test } from 'qunit';
 
 
 let decorators = { drop, restartable, enqueue };

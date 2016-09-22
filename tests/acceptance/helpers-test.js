@@ -7,7 +7,7 @@ test('perform and cancel-all', function(assert) {
   assert.expect(3);
   visit('/helpers-test');
 
-  andThen(function() {
+  return wait().then(function() {
     assert.equal(currentURL(), '/helpers-test');
     click('.perform-task');
   }).then(() => {
@@ -25,7 +25,7 @@ test('deprecate task.perform action', function(assert) {
 });
 
 test('setting value="..." should behave like closure actions and rewrite event arg', function(assert) {
-  assert.expect(1);
+  assert.expect(0);
   visit('/helpers-test');
   click('.set-value-option-task');
 });

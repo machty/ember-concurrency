@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import { task, timeout } from 'ember-concurrency';
+import { module, test } from 'qunit';
 
 const Observable = window.Rx.Observable;
 
@@ -28,7 +29,7 @@ module('Unit: buffering');
 
 function doBufferingTest(description, observable, bufferPolicyFn, expectations, maxConcurrency) {
   test(description, function(assert) {
-    QUnit.stop();
+    let start = assert.async();
     assert.expect(2);
 
     let last = expectations[expectations.length-1];
@@ -48,9 +49,9 @@ function doBufferingTest(description, observable, bufferPolicyFn, expectations, 
         arr.push(v);
         if (v === last) {
           Ember.run.later(() => {
-            QUnit.start();
             assert.equal(maxSem, maxConcurrency, "assert expected maxConcurrency");
             assert.deepEqual(arr, expectations);
+            start();
           }, 20);
         }
       } finally {
