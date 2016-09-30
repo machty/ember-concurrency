@@ -13,6 +13,8 @@ export const propertyModifiers = {
   _maxConcurrency: Infinity,
   _taskGroupPath: null,
   _hasUsedModifier: false,
+  _hasSetBufferPolicy: false,
+  _hasSetMaxConcurrency: false,
 
   restartable() {
     return setBufferPolicy(this, cancelOngoingTasksPolicy);
@@ -31,6 +33,7 @@ export const propertyModifiers = {
   },
 
   maxConcurrency(n) {
+    this._hasSetMaxConcurrency = true;
     this._hasUsedModifier = true;
     this._maxConcurrency = n;
     assertModifiersNotMixedWithGroup(this);
@@ -45,6 +48,7 @@ export const propertyModifiers = {
 };
 
 function setBufferPolicy(obj, policy) {
+  obj._hasSetBufferPolicy = true;
   obj._hasUsedModifier = true;
   obj._bufferPolicy = policy;
   assertModifiersNotMixedWithGroup(obj);

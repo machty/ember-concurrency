@@ -408,6 +408,10 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
   constructor: TaskProperty,
 
   setup(proto, taskName) {
+    if (this._hasSetMaxConcurrency && !this._hasSetBufferPolicy) {
+      Ember.Logger.warn(`The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${this._maxConcurrency})\``);
+    }
+    
     registerOnPrototype(Ember.addListener, proto, this.eventNames, taskName, '_perform', false);
     registerOnPrototype(Ember.addListener, proto, this.cancelEventNames, taskName, 'cancelAll', false);
     registerOnPrototype(Ember.addObserver, proto, this._observes, taskName, '_perform', true);
