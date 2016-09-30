@@ -44,7 +44,7 @@ test(`task accepts maxConcurrency as a decorator arg`, function(assert) {
   assert.expect(1);
 
   let Obj = Ember.Object.extend({
-    myTask: task(maxConcurrency(5), function * () { }),
+    myTask: task(enqueue, maxConcurrency(5), function * () { }),
   });
 
   Ember.run(() => {
