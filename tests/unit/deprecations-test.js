@@ -17,7 +17,7 @@ module('Deprecations', {
 });
 
 test("performing a task on a destroyed object returns an immediately-canceled taskInstance", function(assert) {
-  assert.expect(4);
+  assert.expect(3);
 
   let Obj = Ember.Object.extend({
     a: task(function * () { }).maxConcurrency(3),
@@ -35,7 +35,6 @@ test("performing a task on a destroyed object returns an immediately-canceled ta
   });
   warnings.sort();
   assert.equal(warnings.length, 2);
-  assert.ok(warnings.length, 2);
   assert.ok(warnings[0].match(/a: task/));
   assert.ok(warnings[1].match(/g: task/));
 });
