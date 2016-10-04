@@ -1,4 +1,11 @@
 # Changelog
+### 0.7.10
+  - tasks can be tested in component integration tests (#66)
+  - deprecation: using `.maxConcurrency()` without any other
+    task modifier will produce a deprecation warning because
+    it is unclear/ambiguous as to _how_ to constrain concurrency
+    in such a case (#79)
+
 ### 0.7.9
   - Add task-aware `allSettled` promise equivalent (#75)
 
