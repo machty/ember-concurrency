@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { module, test } from 'qunit';
 import { task } from 'ember-concurrency';
 
 module('Unit: test environment');
