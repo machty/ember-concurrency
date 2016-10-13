@@ -101,7 +101,7 @@ test("task.cancelAll cancels all running task instances", function(assert) {
   let instances;
   Ember.run(() => {
     let obj = Obj.create();
-    let task = obj.get('doStuff');
+    let task = obj.doStuff;
     instances = Ember.A([ task.perform(), task.perform(), task.perform() ]);
     task.cancelAll();
   });
@@ -247,11 +247,11 @@ test("performing a task on a destroyed object returns an immediately-canceled ta
   Ember.run(() => {
     obj = Obj.create();
     obj.destroy();
-    assert.equal(obj.get('myTask').perform().get('isDropped'), true);
+    assert.equal(obj.myTask.perform().get('isDropped'), true);
   });
 
   Ember.run(() => {
-    assert.equal(obj.get('myTask').perform().get('isDropped'), true);
+    assert.equal(obj.myTask.perform().get('isDropped'), true);
   });
 });
 

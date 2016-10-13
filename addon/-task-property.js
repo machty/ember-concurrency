@@ -415,6 +415,13 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
     registerOnPrototype(Ember.addListener, proto, this.eventNames, taskName, '_perform', false);
     registerOnPrototype(Ember.addListener, proto, this.cancelEventNames, taskName, 'cancelAll', false);
     registerOnPrototype(Ember.addObserver, proto, this._observes, taskName, '_perform', true);
+
+    let cp = this;
+    Object.defineProperty(proto, taskName, {
+      get() {
+        return cp.get(this, taskName);
+      }
+    });
   },
 
   /**
