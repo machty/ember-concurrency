@@ -1,4 +1,9 @@
 # Changelog
+### 0.7.11
+  - support for `this.myTask.perform()`, i.e. you can get a
+    reference to a Task using simple JavaScript accessors
+    rather than having to write `this.get('myTask').perform()`
+
 ### 0.7.10
   - tasks can be tested in component integration tests (#66)
   - deprecation: using `.maxConcurrency()` without any other
