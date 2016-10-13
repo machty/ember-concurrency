@@ -16,7 +16,7 @@ module('Deprecations', {
   }
 });
 
-test("performing a task on a destroyed object returns an immediately-canceled taskInstance", function(assert) {
+test("warn if using maxConcurrency without specifying other task modifier", function(assert) {
   assert.expect(3);
 
   let Obj = Ember.Object.extend({
