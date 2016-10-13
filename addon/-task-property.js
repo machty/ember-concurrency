@@ -549,7 +549,7 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
    * }).maxConcurrency(3),
    *
    * elsewhere() {
-   *   this.get('doSomeAjax').perform("http://www.example.com/json");
+   *   this.doSomeAjax.perform("http://www.example.com/json");
    * },
    * ```
    *
