@@ -418,6 +418,8 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
 
     let cp = this;
     Object.defineProperty(proto, taskName, {
+      configurable: true,
+      writable: true,
       get() {
         return cp.get(this, taskName);
       }
