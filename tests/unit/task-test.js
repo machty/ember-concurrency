@@ -255,6 +255,32 @@ test("performing a task on a destroyed object returns an immediately-canceled ta
   });
 });
 
+test("tasks can be overridden on subclasses", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    myTask: task(function * () {
+      throw new Error("shouldn't get here");
+    }),
+  });
+
+  let Obj2 = Obj.extend({
+    foo: null,
+    myTask: task(function * () {
+      this.set('foo', 123);
+    }),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj2.create();
+    obj.myTask.perform();
+  });
+
+  assert.equal(obj.foo, 123);
+});
+
+
 
 
 /*

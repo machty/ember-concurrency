@@ -418,9 +418,14 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
 
     let cp = this;
     Object.defineProperty(proto, taskName, {
+      configurable: true,
       get() {
         return cp.get(this, taskName);
-      }
+      },
+
+      // ideally we shouldn't need this, but ember-metal overwrites with a
+      // property set when mixins are being merged
+      set() {}
     });
   },
 
