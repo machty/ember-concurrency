@@ -1,4 +1,7 @@
 # Changelog
+### 0.7.12
+  - fix tasks not being overridable in subclass (#81)
+
 ### 0.7.11
   - support for `this.myTask.perform()`, i.e. you can get a
     reference to a Task using simple JavaScript accessors
