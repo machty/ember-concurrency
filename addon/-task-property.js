@@ -413,8 +413,8 @@ function defineTaskProperty(object, taskName, maybeTaskProperty) {
         return maybeTaskProperty;
       }
     },
-    set(maybeTaskProperty) {
-      defineTaskProperty(this, taskName, maybeTaskProperty);
+    set(value) {
+      defineTaskProperty(this, taskName, value);
     }
   });
 }
