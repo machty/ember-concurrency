@@ -1,4 +1,8 @@
 # Changelog
+### 0.7.13
+  - fix not being able to mock tasks in tests (#84) and
+    other related bugs
+
 ### 0.7.12
   - fix tasks not being overridable in subclass (#81)
 
