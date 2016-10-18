@@ -1,4 +1,8 @@
 # Changelog
+### 0.7.14
+  - no functional changes; just removed unneeded files from NPM package
+    to decrease package size
+
 ### 0.7.13
   - fix not being able to mock tasks in tests (#84) and
     other related bugs
