@@ -403,6 +403,22 @@ function applyDecorator(taskProperty, decorator) {
   }
 }
 
+function defineTaskProperty(object, taskName, maybeTaskProperty) {
+  Object.defineProperty(object, taskName, {
+    configurable: true,
+    get() {
+      if (maybeTaskProperty instanceof TaskProperty) {
+        return maybeTaskProperty.get(this, taskName);
+      } else {
+        return maybeTaskProperty;
+      }
+    },
+    set(value) {
+      defineTaskProperty(this, taskName, value);
+    }
+  });
+}
+
 TaskProperty.prototype = Object.create(_ComputedProperty.prototype);
 objectAssign(TaskProperty.prototype, propertyModifiers, {
   constructor: TaskProperty,
@@ -416,17 +432,7 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
     registerOnPrototype(Ember.addListener, proto, this.cancelEventNames, taskName, 'cancelAll', false);
     registerOnPrototype(Ember.addObserver, proto, this._observes, taskName, '_perform', true);
 
-    let cp = this;
-    Object.defineProperty(proto, taskName, {
-      configurable: true,
-      get() {
-        return cp.get(this, taskName);
-      },
-
-      // ideally we shouldn't need this, but ember-metal overwrites with a
-      // property set when mixins are being merged
-      set() {}
-    });
+    defineTaskProperty(proto, taskName, this);
   },
 
   /**

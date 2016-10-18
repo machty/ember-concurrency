@@ -256,6 +256,45 @@ test("performing a task on a destroyed object returns an immediately-canceled ta
 });
 
 test("tasks can be overridden on subclasses", function(assert) {
+  assert.expect(3);
+
+  let Parent = Ember.Object.extend({
+    foo: null,
+    myTask: task(function * () {
+      this.set('foo', 'parent');
+    }),
+  });
+
+  let Child1 = Parent.extend({
+    foo: null,
+    myTask: task(function * () {
+      this.set('foo', 'child1');
+    }),
+  });
+
+  let Child2 = Parent.extend({
+    foo: null,
+    myTask: task(function * () {
+      this.set('foo', 'child2');
+    }),
+  });
+
+  let parent, child1, child2;
+  Ember.run(() => {
+    parent = Parent.create();
+    child1 = Child1.create();
+    child2 = Child2.create();
+    parent.myTask.perform();
+    child1.myTask.perform();
+    child2.myTask.perform();
+  });
+
+  assert.equal(parent.foo, 'parent');
+  assert.equal(child1.foo, 'child1');
+  assert.equal(child2.foo, 'child2');
+});
+
+test("tasks can be overridden with mocks", function(assert) {
   assert.expect(1);
 
   let Obj = Ember.Object.extend({
@@ -264,22 +303,44 @@ test("tasks can be overridden on subclasses", function(assert) {
     }),
   });
 
-  let Obj2 = Obj.extend({
-    foo: null,
-    myTask: task(function * () {
-      this.set('foo', 123);
+  let objInstance = Obj.create({
+    myTask: {
+      perform() {
+        assert.ok(true);
+      }
+    },
+  });
+
+  Ember.run(() => {
+    objInstance.myTask.perform();
+  });
+});
+
+test("tasks can be overridden with sets at runtime", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    values: [],
+    foo: task(function * () {}),
+    myTask: task(function * (v) {
+      this.values.push(v);
     }),
   });
 
-  let obj;
+  let objInstance = Obj.create();
   Ember.run(() => {
-    obj = Obj2.create();
-    obj.myTask.perform();
+    objInstance.foo = objInstance.myTask;
+    objInstance.wat = objInstance.myTask;
+    objInstance.set('baz', objInstance.myTask);
+    objInstance.reopen({ lex: objInstance.myTask });
+
+    objInstance.foo.perform(1);
+    objInstance.wat.perform(2);
+    objInstance.baz.perform(3);
+    objInstance.lex.perform(4);
   });
-
-  assert.equal(obj.foo, 123);
+  assert.deepEqual(objInstance.values, [1, 2, 3, 4]);
 });
-
 
 
 
