@@ -1,5 +1,7 @@
 /bower_components
 /config/ember-try.js
+/config/deploy.js
+/config/release.js
 /dist
 /tests
 /tmp
@@ -14,3 +16,9 @@
 bower.json
 ember-cli-build.js
 testem.json
+TODO.md
+vendor/dummy-deps
+builddocs.sh
+API.md
+CNAME
+
