@@ -280,6 +280,53 @@ test("tasks can be overridden on subclasses", function(assert) {
   assert.equal(obj.foo, 123);
 });
 
+test("tasks can be overridden with mocks", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    myTask: task(function * () {
+      throw new Error("shouldn't get here");
+    }),
+  });
+
+  let objInstance = Obj.create({
+    myTask: {
+      perform() {
+        assert.ok(true);
+      }
+    },
+  });
+
+  Ember.run(() => {
+    objInstance.myTask.perform();
+  });
+});
+
+test("tasks can be overridden with sets at runtime", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    values: [],
+    foo: task(function * () {}),
+    myTask: task(function * (v) {
+      this.values.push(v);
+    }),
+  });
+
+  let objInstance = Obj.create();
+  Ember.run(() => {
+    objInstance.foo = objInstance.myTask;
+    objInstance.wat = objInstance.myTask;
+    objInstance.set('baz', objInstance.myTask);
+    objInstance.reopen({ lex: objInstance.myTask });
+
+    objInstance.foo.perform(1);
+    objInstance.wat.perform(2);
+    objInstance.baz.perform(3);
+    objInstance.lex.perform(4);
+  });
+  assert.deepEqual(objInstance.values, [1, 2, 3, 4]);
+});
 
 
 

@@ -417,15 +417,15 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
     registerOnPrototype(Ember.addObserver, proto, this._observes, taskName, '_perform', true);
 
     let cp = this;
+    let cached = null;
     Object.defineProperty(proto, taskName, {
       configurable: true,
       get() {
-        return cp.get(this, taskName);
+        return cached || cp.get(this, taskName);
       },
-
-      // ideally we shouldn't need this, but ember-metal overwrites with a
-      // property set when mixins are being merged
-      set() {}
+      set(value) {
+        cached = value;
+      }
     });
   },
 
