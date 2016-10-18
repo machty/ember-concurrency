@@ -256,28 +256,42 @@ test("performing a task on a destroyed object returns an immediately-canceled ta
 });
 
 test("tasks can be overridden on subclasses", function(assert) {
-  assert.expect(1);
+  assert.expect(3);
 
-  let Obj = Ember.Object.extend({
-    myTask: task(function * () {
-      throw new Error("shouldn't get here");
-    }),
-  });
-
-  let Obj2 = Obj.extend({
+  let Parent = Ember.Object.extend({
     foo: null,
     myTask: task(function * () {
-      this.set('foo', 123);
+      this.set('foo', 'parent');
     }),
   });
 
-  let obj;
-  Ember.run(() => {
-    obj = Obj2.create();
-    obj.myTask.perform();
+  let Child1 = Parent.extend({
+    foo: null,
+    myTask: task(function * () {
+      this.set('foo', 'child1');
+    }),
   });
 
-  assert.equal(obj.foo, 123);
+  let Child2 = Parent.extend({
+    foo: null,
+    myTask: task(function * () {
+      this.set('foo', 'child2');
+    }),
+  });
+
+  let parent, child1, child2;
+  Ember.run(() => {
+    parent = Parent.create();
+    child1 = Child1.create();
+    child2 = Child2.create();
+    parent.myTask.perform();
+    child1.myTask.perform();
+    child2.myTask.perform();
+  });
+
+  assert.equal(parent.foo, 'parent');
+  assert.equal(child1.foo, 'child1');
+  assert.equal(child2.foo, 'child2');
 });
 
 test("tasks can be overridden with mocks", function(assert) {
