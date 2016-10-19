@@ -1,4 +1,14 @@
 # Changelog
+### 0.7.15
+  - BREAKING: revert the feature introduced in 0.7.11 for being
+    able to do `this.myTask.perform()` instead of
+    `this.get('myTask').perform()`. The internal semantics
+    of ember-metal are too different between versions of Ember
+    to be able to support this with any confidence; we'll just
+    have to wait for ES5 getter syntax to come to Computed Properties
+    in general in order to support this. Apologies for too eagerly
+    introducing this broken feature.
+
 ### 0.7.14
   - no functional changes; just removed unneeded files from NPM package
     to decrease package size
