@@ -20,7 +20,7 @@ let PAUSE_FOREVER = Ember.RSVP.defer().promise;
 export default Ember.Controller.extend({
   openWizard: task({
     perform: function * () {
-      this.stepOne.perform();
+      this.get('stepOne').perform();
       yield PAUSE_FOREVER;
     },
 

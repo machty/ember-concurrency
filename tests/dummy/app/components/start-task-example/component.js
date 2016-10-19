@@ -19,7 +19,7 @@ export default Ember.Component.extend({
       // to a task and then run it with .perform(), but
       // ideally you should just invoke myTask directly
       // from the template using the `perform` helper.
-      this.myTask.perform(msg);
+      this.get('myTask').perform(msg);
     },
     triggerFoo(msg) {
       this.trigger('foo', msg);

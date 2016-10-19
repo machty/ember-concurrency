@@ -6,7 +6,7 @@ export default Ember.Route.extend({
   notify: Ember.inject.service('notify'),
 
   setupController(controller, model) {
-    this.pollServerForChanges.perform(model.id);
+    this.get('pollServerForChanges').perform(model.id);
   },
 
   pollServerForChanges: task(function * (id) {

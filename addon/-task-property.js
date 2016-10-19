@@ -403,22 +403,6 @@ function applyDecorator(taskProperty, decorator) {
   }
 }
 
-function defineTaskProperty(object, taskName, maybeTaskProperty) {
-  Object.defineProperty(object, taskName, {
-    configurable: true,
-    get() {
-      if (maybeTaskProperty instanceof TaskProperty) {
-        return maybeTaskProperty.get(this, taskName);
-      } else {
-        return maybeTaskProperty;
-      }
-    },
-    set(value) {
-      defineTaskProperty(this, taskName, value);
-    }
-  });
-}
-
 TaskProperty.prototype = Object.create(_ComputedProperty.prototype);
 objectAssign(TaskProperty.prototype, propertyModifiers, {
   constructor: TaskProperty,
@@ -431,8 +415,6 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
     registerOnPrototype(Ember.addListener, proto, this.eventNames, taskName, '_perform', false);
     registerOnPrototype(Ember.addListener, proto, this.cancelEventNames, taskName, 'cancelAll', false);
     registerOnPrototype(Ember.addObserver, proto, this._observes, taskName, '_perform', true);
-
-    defineTaskProperty(proto, taskName, this);
   },
 
   /**
@@ -560,7 +542,7 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
    * }).maxConcurrency(3),
    *
    * elsewhere() {
-   *   this.doSomeAjax.perform("http://www.example.com/json");
+   *   this.get('doSomeAjax').perform("http://www.example.com/json");
    * },
    * ```
    *

@@ -19,7 +19,7 @@ export default Ember.Controller.extend({
     // We yield an AJAX request and wait for it to complete. If the task
     // is restarted before this request completes, the XHR request
     // is aborted (open the inspector and see for yourself :)
-    let json = yield this.getJSON.perform(url);
+    let json = yield this.get('getJSON').perform(url);
     return json.items;
   }).restartable(),
 

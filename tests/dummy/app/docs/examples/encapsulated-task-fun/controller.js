@@ -13,9 +13,9 @@ export default Ember.Controller.extend({
   doStuff: task({
     perform: function * () {
       return all([
-        this.foo.perform(),
-        this.bar.perform(),
-        this.baz.perform(),
+        this.get('foo').perform(),
+        this.get('bar').perform(),
+        this.get('baz').perform(),
       ]);
     },
 

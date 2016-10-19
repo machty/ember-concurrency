@@ -13,7 +13,7 @@ const TASK_CANCELATION_NAME = 'TaskCancelation';
  *
  * ```js
  * click() {
- *   this.myTask.perform().catch(e => {
+ *   this.get('myTask').perform().catch(e => {
  *     if (!didCancel(e)) { throw e; }
  *   });
  * }

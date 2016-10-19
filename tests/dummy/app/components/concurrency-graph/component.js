@@ -79,7 +79,7 @@ export default Ember.Component.extend({
       tracker.set('taskInstance', taskInstance);
 
       this.get('trackers').pushObject(tracker);
-      this.ticker.perform();
+      this.get('ticker').perform();
     },
 
     restart() {
