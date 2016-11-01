@@ -99090,7 +99090,7 @@ define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _embe
 
   exports.yieldableSymbol = yieldableSymbol;
 
-  var _ComputedProperty = _ember['default'].__loader.require("ember-metal/computed").ComputedProperty;
+  var _ComputedProperty = _ember['default'].ComputedProperty;
   exports._ComputedProperty = _ComputedProperty;
 });
 define("ember-data/-private/adapters", ["exports", "ember-data/adapters/json-api", "ember-data/adapters/rest"], function (exports, _emberDataAdaptersJsonApi, _emberDataAdaptersRest) {

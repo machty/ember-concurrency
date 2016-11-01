@@ -11378,7 +11378,7 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
         var el2 = dom.createTextNode("\n  This choice is important because ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("strong");
-        var el3 = dom.createTextNode("Tasks get automatically canceled\n  when they object they live on is destroyed");
+        var el3 = dom.createTextNode("Tasks get automatically canceled\n  when the object they live on is destroyed");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode(".\n  So if you want the task to cancel when a component is unrendered, define\n  it on a Component class, but if you need it to outlive a component's lifespan,\n  it probably belongs on a Service or Controller.\n");
@@ -12927,7 +12927,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.15+d66ca79d"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.15+3692fd3d"});
 }
 
 /* jshint ignore:end */
