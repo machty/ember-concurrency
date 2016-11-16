@@ -1,12 +1,8 @@
-import { or, bool } from '@ember/object/computed';
+import ComputedProperty, { or, bool } from '@ember/object/computed';
 import EmberObject from '@ember/object';
-import { objectAssign, _ComputedProperty } from './utils';
+import { objectAssign } from './utils';
 import TaskStateMixin from './-task-state-mixin';
-import {
-  propertyModifiers,
-  resolveScheduler
-} from './-property-modifiers-mixin';
-
+import { taskModifiers } from './-task-modifiers-mixin';
 
 export const TaskGroup = EmberObject.extend(TaskStateMixin, {
   isTaskGroup: true,
@@ -20,22 +16,12 @@ export const TaskGroup = EmberObject.extend(TaskStateMixin, {
   isQueued:  false
 });
 
-export function TaskGroupProperty(...decorators) {
-  let taskFn = decorators.pop();
-  let tp = this;
-  _ComputedProperty.call(this, function(_propertyName) {
-    return TaskGroup.create({
-      fn: taskFn,
-      context: this,
-      _origin: this,
-      _taskGroupPath: tp._taskGroupPath,
-      _scheduler: resolveScheduler(tp, this, TaskGroup),
-      _propertyName,
-    });
-  });
+export function TaskGroupProperty(taskFn) {
+  this._sharedConstructor(taskFn);
 }
 
-TaskGroupProperty.prototype = Object.create(_ComputedProperty.prototype);
-objectAssign(TaskGroupProperty.prototype, propertyModifiers, {
+TaskGroupProperty.prototype = Object.create(ComputedProperty.prototype);
+objectAssign(TaskGroupProperty.prototype, taskModifiers, {
   constructor: TaskGroupProperty,
+  _TaskConstructor: TaskGroup,
 });

@@ -1,6 +1,5 @@
 import { later, cancel } from '@ember/runloop';
 import { Promise, defer } from 'rsvp';
-import ComputedProperty from '@ember/object/computed';
 import Ember from 'ember';
 
 export function isEventedObject(c) {
@@ -90,8 +89,6 @@ export const YIELDABLE_CONTINUE = "next";
 export const YIELDABLE_THROW = "throw";
 export const YIELDABLE_RETURN = "return";
 export const YIELDABLE_CANCEL = "cancel";
-
-export const _ComputedProperty = ComputedProperty;
 
 /**
  *

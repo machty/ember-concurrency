@@ -2,8 +2,8 @@ import { scheduleOnce } from '@ember/runloop';
 import { addObserver } from '@ember/object/observers';
 import { addListener } from '@ember/object/events';
 import EmberObject from '@ember/object';
+import ComputedProperty from '@ember/object/computed';
 import { getOwner } from '@ember/application';
-import Ember from 'ember';
 import {
   default as TaskInstance,
   getRunningInstance
@@ -14,18 +14,18 @@ import {
   PERFORM_TYPE_LINKED
 } from './-task-instance';
 import TaskStateMixin from './-task-state-mixin';
-import { TaskGroup } from './-task-group';
-import {
-  propertyModifiers,
-  resolveScheduler
-} from './-property-modifiers-mixin';
+import { taskModifiers } from './-task-modifiers-mixin';
 import {
   objectAssign,
   INVOKE,
-  _cleanupOnDestroy,
-  _ComputedProperty
+  _cleanupOnDestroy
 } from './utils';
 import EncapsulatedTask from './-encapsulated-task';
+import Ember from 'ember';
+
+const { WeakMap } = Ember;
+const NULL_OBJECT = {};
+const FUNCTION_REGISTRY = new WeakMap();
 
 const PerformProxy = EmberObject.extend({
   _task: null,
@@ -222,7 +222,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       context: this.context,
       _origin: this._origin,
       _taskGroupPath: this._taskGroupPath,
-      _scheduler: this._scheduler,
+      _scheduler: this.get('_scheduler'),
       _propertyName: this._propertyName,
     });
   },
@@ -388,7 +388,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       taskInstance.cancel();
     }
 
-    this._scheduler.schedule(taskInstance);
+    this.get('_scheduler').schedule(taskInstance);
     return taskInstance;
   },
 
@@ -414,30 +414,17 @@ export const Task = EmberObject.extend(TaskStateMixin, {
   @class TaskProperty
 */
 export function TaskProperty(taskFn) {
-  let tp = this;
-  _ComputedProperty.call(this, function(_propertyName) {
-    taskFn.displayName = `${_propertyName} (task)`;
-    return Task.create({
-      fn: tp.taskFn,
-      context: this,
-      _origin: this,
-      _taskGroupPath: tp._taskGroupPath,
-      _scheduler: resolveScheduler(tp, this, TaskGroup),
-      _propertyName,
-      _debug: tp._debug,
-      _hasEnabledEvents: tp._hasEnabledEvents
-    });
-  });
-
-  this.taskFn = taskFn;
-  this.eventNames = null;
-  this.cancelEventNames = null;
-  this._observes = null;
+  this._sharedConstructor(taskFn);
 }
 
-TaskProperty.prototype = Object.create(_ComputedProperty.prototype);
-objectAssign(TaskProperty.prototype, propertyModifiers, {
+TaskProperty.prototype = Object.create(ComputedProperty.prototype);
+objectAssign(TaskProperty.prototype, taskModifiers, {
   constructor: TaskProperty,
+  _TaskConstructor: Task,
+
+  eventNames: null,
+  cancelEventNames: null,
+  _observes: null,
 
   setup(proto, taskName) {
     if (this._maxConcurrency !== Infinity && !this._hasSetBufferPolicy) {
@@ -608,6 +595,58 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
 
   perform() {
     throw new Error("It looks like you tried to perform a task via `this.nameOfTask.perform()`, which isn't supported. Use `this.get('nameOfTask').perform()` instead.");
+  },
+
+  /**
+   * Casts the TaskProperty to a function that performs the task
+   * when invoked. This essentially makes it possible to use
+   * ember-concurrency tasks on non-Ember objects, even when
+   * task modifiers are being used.
+   *
+   * ```js
+   * function Klass() { }
+   *
+   * Klass.prototype.doDebouncedAsync = task(function * () {
+   *   yield timeout(500);
+   *   yield doAsync();
+   * }).restartable().toFunction();
+   *
+   * let k0 = new Klass();
+   * k0.doDebouncedAsync(); // gets cancelled immediately
+   * k0.doDebouncedAsync();
+   *
+   * // concurrency constraints are scoped to the context of
+   * // the method/function invocation (e.g. `this`), so that
+   * // running `doDebouncedAsync` on another instance of Klass
+   * // won't affect/cancel any running task instances of
+   * // `doDebouncedAsync` on other instances of Klass.
+   * let k1 = new Klass();
+   * k1.doDebouncedAsync();
+   * ```
+   *
+   * @method toFunction
+   * @memberof TaskProperty
+   * @instance
+   */
+  toFunction() {
+    let taskWeakMap = new WeakMap();
+    let tp = this;
+
+    let fn = function(...args) {
+      let context = this || NULL_OBJECT;
+      let task = taskWeakMap.get(context);
+
+      if (!task) {
+        task = tp._createTask(context, "(anonymous task)");
+        taskWeakMap.set(context, task);
+      }
+
+      return task.perform(...args);
+    };
+
+    FUNCTION_REGISTRY.set(fn, taskWeakMap);
+
+    return fn;
   },
 });
 

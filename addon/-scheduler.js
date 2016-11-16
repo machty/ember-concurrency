@@ -4,18 +4,7 @@ import EmberObject, { set, get } from '@ember/object';
 let SEEN_INDEX = 0;
 
 const Scheduler = EmberObject.extend({
-  lastPerformed:  null,
-  lastStarted:    null,
-  lastRunning:    null,
-  lastSuccessful: null,
-  lastComplete:   null,
-  lastErrored:    null,
-  lastCanceled:   null,
-  lastIncomplete: null,
-  performCount: 0,
-
-  boundHandleFulfill: null,
-  boundHandleReject: null,
+  _taskState: null,
 
   init() {
     this._super(...arguments);
@@ -49,9 +38,18 @@ const Scheduler = EmberObject.extend({
     taskInstances.splice(index, count);
   },
 
+  _setTaskState(key, value) {
+    set(this._taskState, key, value);
+  },
+
+  _incrementPerformCount() {
+    const performCount = get(this._taskState, 'performCount');
+    this._setTaskState('performCount', performCount + 1);
+  },
+
   schedule(taskInstance) {
-    set(this, 'lastPerformed', taskInstance);
-    this.incrementProperty('performCount');
+    this._setTaskState('lastPerformed', taskInstance);
+    this._incrementPerformCount();
     taskInstance.task.incrementProperty('numQueued');
     this.queuedTaskInstances.push(taskInstance);
     this._flushQueues();
@@ -79,9 +77,9 @@ const Scheduler = EmberObject.extend({
     }
 
     if (lastStarted) {
-      set(this, 'lastStarted', lastStarted);
+      this._setTaskState('lastStarted', lastStarted);
     }
-    set(this, 'lastRunning', lastStarted);
+    this._setTaskState('lastRunning', lastStarted);
 
     for (let i = 0; i < this.queuedTaskInstances.length; ++i) {
       seen.push(this.queuedTaskInstances[i].task);
@@ -99,16 +97,16 @@ const Scheduler = EmberObject.extend({
     taskInstance._start()._onFinalize(() => {
       task.decrementProperty('numRunning');
       var state = taskInstance._completionState;
-      set(this, 'lastComplete', taskInstance);
+      this._setTaskState('lastComplete', taskInstance);
       if (state === 1) {
-        set(this, 'lastSuccessful', taskInstance);
+        this._setTaskState('lastSuccessful', taskInstance);
       } else {
         if (state === 2) {
-          set(this, 'lastErrored', taskInstance);
+          this._setTaskState('lastErrored', taskInstance);
         } else if (state === 3) {
-          set(this, 'lastCanceled', taskInstance);
+          this._setTaskState('lastCanceled', taskInstance);
         }
-        set(this, 'lastIncomplete', taskInstance);
+        this._setTaskState('lastIncomplete', taskInstance);
       }
       once(this, this._flushQueues);
     });
