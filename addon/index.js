@@ -4,7 +4,6 @@ import { TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
 import { TaskGroupProperty } from './-task-group';
 import EventedObservable from './-evented-observable';
-import { subscribe } from './-subscribe';
 import { all, allSettled, race } from './-yieldables';
 import { drop, restartable, enqueue, maxConcurrency, cancelOn, performOn } from './-decorators';
 
@@ -127,7 +126,6 @@ export {
   all,
   allSettled,
   race,
-  subscribe,
   drop,
   restartable,
   enqueue,
