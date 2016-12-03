@@ -31,4 +31,4 @@ install:
   - bower install
 
 script:
-  - ember try:each
+  - ./node_modules/.bin/ember try:each
