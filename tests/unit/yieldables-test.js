@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task, all, allSettled } from 'ember-concurrency';
+import { task, all, allSettled, hash } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: yieldables');
@@ -228,3 +228,83 @@ test("allSettled cancels all joined tasks if parent task is canceled", function(
   Ember.run(() => obj.get('parent').cancelAll());
   assert.equal(childTask.get('concurrency'), 0);
 });
+
+test("hash", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    parent: task(function * () {
+      let task = this.get('child');
+      let v = yield hash({
+        a: task.perform(1),
+        b: task.perform(2),
+        c: task.perform(3),
+      });
+      assert.deepEqual(v, { a: 1, b: 2, c: 3});
+    }),
+
+    child: task(function * (v) { return v; }),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+    obj.get('parent').perform();
+  });
+});
+
+test("hash cancels the others if one fails", function(assert) {
+  assert.expect(2);
+
+  let Obj = Ember.Object.extend({
+    parent: task(function * () {
+      let task = this.get('child');
+      yield hash({
+        a: task.perform(),
+        b: task.perform(),
+        c: task.perform(),
+      });
+      assert.ok(false, "should not get here");
+    }),
+
+    child: task(function * () { return Ember.RSVP.defer().promise; }),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+    obj.get('parent').perform();
+  });
+  assert.equal(obj.get('child.concurrency'), 3);
+  Ember.run(obj.get('child.last'), 'cancel');
+  assert.equal(obj.get('child.concurrency'), 0);
+});
+
+test("hash cancels children if parent is canceled", function(assert) {
+  assert.expect(2);
+
+  let Obj = Ember.Object.extend({
+    parent: task(function * () {
+      let task = this.get('child');
+      yield hash({
+        a: task.perform(),
+        b: task.perform(),
+        c: task.perform(),
+      });
+      assert.ok(false, "should not get here");
+    }),
+
+    child: task(function * () { return Ember.RSVP.defer().promise; }),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+    obj.get('parent').perform();
+  });
+  assert.equal(obj.get('child.concurrency'), 3);
+  Ember.run(obj.get('parent'), 'cancelAll');
+  assert.equal(obj.get('child.concurrency'), 0);
+});
+
+

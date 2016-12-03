@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: task states');
@@ -22,7 +22,6 @@ test("isIdle is true if the task fn never yields", function(assert) {
 
 test("isIdle is false when task is blocked on a yield", function(assert) {
   assert.expect(3);
-  //assert.expect(7);
 
   let defers = [];
   let Obj = Ember.Object.extend({
@@ -50,24 +49,7 @@ test("isIdle is false when task is blocked on a yield", function(assert) {
     assert.equal(t.get('concurrency'), 1);
     t.perform();
   });
-
-  //Ember.run(() => {
-    //let t = obj.get('myTask');
-    //assert.equal(t.get('isIdle'), false);
-    //assert.equal(t.get('concurrency'), 2);
-    //defers.forEach(d => d.resolve());
-  //});
-
-  //Ember.run(() => {
-    //let t = obj.get('myTask');
-    //assert.equal(t.get('isIdle'), true);
-    //assert.equal(t.get('concurrency'), 0);
-  //});
 });
-
-//test("isIdle returns to true even on errors", function(assert) {
-// TODO: test me...
-//});
 
 test(".lastPerformed is set when task.perform is called", function(assert) {
   assert.expect(3);
@@ -91,7 +73,7 @@ test("a dropped .lastPerformed shows up as canceled", function(assert) {
   assert.expect(3);
 
   let Obj = Ember.Object.extend({
-    myTask: task(function * () { }).drop(),
+    myTask: task(function * () { yield timeout(10); }).drop(),
   });
 
   let myTask, taskInstance0, taskInstance1;
