@@ -2,6 +2,8 @@ import Ember from 'ember';
 
 const { get, set } = Ember;
 
+let SEEN_INDEX = 0;
+
 const Scheduler = Ember.Object.extend({
   lastPerformed:  null,
   lastStarted:    null,
@@ -22,7 +24,7 @@ const Scheduler = Ember.Object.extend({
   },
 
   cancelAll() {
-    let seen = {};
+    let seen = [];
     this.spliceTaskInstances(this.activeTaskInstances, 0, this.activeTaskInstances.length, seen);
     this.spliceTaskInstances(this.queuedTaskInstances, 0, this.queuedTaskInstances.length, seen);
     flushTaskCounts(seen);
@@ -33,7 +35,7 @@ const Scheduler = Ember.Object.extend({
       let taskInstance = taskInstances[i];
       taskInstance.cancel();
       if (seen) {
-        seen[Ember.guidFor(taskInstance)] = taskInstance.task;
+        seen.push(taskInstance.task);
       }
     }
     taskInstances.splice(index, count);
@@ -43,7 +45,6 @@ const Scheduler = Ember.Object.extend({
     set(this, 'lastPerformed', taskInstance);
     this.queuedTaskInstances.push(taskInstance);
     this._scheduleFlush();
-    //this.notifyPropertyChange('nextPerformState');
   },
 
   _flushScheduled: false,
@@ -54,11 +55,11 @@ const Scheduler = Ember.Object.extend({
 
   _flushQueues() {
     this._flushScheduled = false;
-    let seen = {};
+    let seen = [];
 
     for (let i = 0; i < this.activeTaskInstances.length; ++i) {
       let task = this.activeTaskInstances[i].task;
-      seen[Ember.guidFor(task)] = task;
+      seen.push(task);
     }
 
     this.activeTaskInstances = this.activeTaskInstances.filter(t => get(t, 'isFinished') === false);
@@ -89,7 +90,7 @@ const Scheduler = Ember.Object.extend({
         lastStarted = taskInstance;
       }
       let task = taskInstance.task;
-      seen[Ember.guidFor(task)] = task;
+      seen.push(task);
       task._numRunning++;
     }
 
@@ -100,7 +101,7 @@ const Scheduler = Ember.Object.extend({
 
     for (let i = 0; i < this.queuedTaskInstances.length; ++i) {
       let task = this.queuedTaskInstances[i].task;
-      seen[Ember.guidFor(task)] = task;
+      seen.push(task);
       task._numQueued++;
     }
 
@@ -133,8 +134,13 @@ const Scheduler = Ember.Object.extend({
 });
 
 function flushTaskCounts(tasks) {
-  for (let guid in tasks) {
-    updateTaskChainCounts(tasks[guid]);
+  SEEN_INDEX++;
+  for (let i = 0, l = tasks.length; i < l; ++i) {
+    let task = tasks[i];
+    if (task._seenIndex < SEEN_INDEX) {
+      task._seenIndex = SEEN_INDEX;
+      updateTaskChainCounts(task);
+    }
   }
 }
 

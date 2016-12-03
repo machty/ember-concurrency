@@ -37,6 +37,7 @@ export default Ember.Mixin.create({
 
   numRunning: 0,
   numQueued: 0,
+  _seenIndex: 0,
 
   // used as a scratchpad
   _numRunning: 0,
