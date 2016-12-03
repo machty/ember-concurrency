@@ -1,5 +1,7 @@
 import Ember from 'ember';
 
+const { get, set } = Ember;
+
 const Scheduler = Ember.Object.extend({
   lastPerformed:  null,
   lastStarted:    null,
@@ -15,8 +17,8 @@ const Scheduler = Ember.Object.extend({
 
   init() {
     this._super(...arguments);
-    this.activeTaskInstances = Ember.A();
-    this.queuedTaskInstances = Ember.A();
+    this.activeTaskInstances = [];
+    this.queuedTaskInstances = [];
   },
 
   cancelAll() {
@@ -38,7 +40,7 @@ const Scheduler = Ember.Object.extend({
   },
 
   schedule(taskInstance) {
-    this.set('lastPerformed', taskInstance);
+    set(this, 'lastPerformed', taskInstance);
     this.queuedTaskInstances.push(taskInstance);
     this._scheduleFlush();
     //this.notifyPropertyChange('nextPerformState');
@@ -59,7 +61,8 @@ const Scheduler = Ember.Object.extend({
       seen[Ember.guidFor(task)] = task;
     }
 
-    this.activeTaskInstances = Ember.A(this.activeTaskInstances.filterBy('isFinished', false));
+    this.activeTaskInstances = this.activeTaskInstances.filter(t => get(t, 'isFinished') === false);
+
     this.bufferPolicy.schedule(this);
 
     let lastStarted = null;
@@ -69,20 +72,20 @@ const Scheduler = Ember.Object.extend({
       if (!taskInstance.hasStarted) {
         // use internal promise so that it doesn't cancel error reporting
         taskInstance._start()._defer.promise.then(() => {
-          this.set('lastSuccessful', taskInstance);
-          this.set('lastComplete', taskInstance);
+          set(this, 'lastSuccessful', taskInstance);
+          set(this, 'lastComplete', taskInstance);
           this._scheduleFlush();
         }, error => {
           if (error && error.name === 'TaskCancelation') {
-            this.set('lastCanceled', taskInstance);
+            set(this, 'lastCanceled', taskInstance);
           } else {
-            this.set('lastErrored', taskInstance);
+            set(this, 'lastErrored', taskInstance);
           }
-          this.set('lastComplete', taskInstance);
-          this.set('lastIncomplete', taskInstance);
+          set(this, 'lastComplete', taskInstance);
+          set(this, 'lastIncomplete', taskInstance);
           this._scheduleFlush();
         });
-        this.set('lastStarted', taskInstance);
+        set(this, 'lastStarted', taskInstance);
         lastStarted = taskInstance;
       }
       let task = taskInstance.task;
@@ -91,9 +94,9 @@ const Scheduler = Ember.Object.extend({
     }
 
     if (lastStarted) {
-      this.set('lastStarted', lastStarted);
+      set(this, 'lastStarted', lastStarted);
     }
-    this.set('lastRunning', lastStarted);
+    set(this, 'lastRunning', lastStarted);
 
     for (let i = 0; i < this.queuedTaskInstances.length; ++i) {
       let task = this.queuedTaskInstances[i].task;
@@ -104,7 +107,7 @@ const Scheduler = Ember.Object.extend({
     flushTaskCounts(seen);
 
     let concurrency = this.activeTaskInstances.length;
-    this.set('concurrency', concurrency);
+    set(this, 'concurrency', concurrency);
     if (this.completionDefer && concurrency === 0) {
       this.completionDefer.resolve();
       this.completionDefer = null;
@@ -140,8 +143,8 @@ function updateTaskChainCounts(_task) {
   let numRunning = task._numRunning;
   let numQueued  = task._numQueued;
   while (task) {
-    task.set('numRunning', numRunning);
-    task.set('numQueued', numQueued);
+    set(task, 'numRunning', numRunning);
+    set(task, 'numQueued', numQueued);
     task._numRunning = task._numQueued = 0;
     task = task.get('group');
   }
