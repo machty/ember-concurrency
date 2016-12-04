@@ -73,12 +73,10 @@ const Scheduler = Ember.Object.extend({
       if (!taskInstance.hasStarted) {
         taskInstance._start()._onFinalize(() => {
           let state = taskInstance._completionState;
+          set(this, 'lastComplete', taskInstance);
           if (state === 1) {
             set(this, 'lastSuccessful', taskInstance);
-            set(this, 'lastComplete', taskInstance);
           } else {
-            let error = taskInstance.error;
-
             if (state === 2) {
               set(this, 'lastErrored', taskInstance);
             } else if (state === 3) {
