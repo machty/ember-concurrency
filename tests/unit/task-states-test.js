@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: task states');
@@ -73,7 +73,7 @@ test("a dropped .lastPerformed shows up as canceled", function(assert) {
   assert.expect(3);
 
   let Obj = Ember.Object.extend({
-    myTask: task(function * () { }).drop(),
+    myTask: task(function * () { yield timeout(10); }).drop(),
   });
 
   let myTask, taskInstance0, taskInstance1;

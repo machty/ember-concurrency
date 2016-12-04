@@ -115,6 +115,7 @@ test("task().cancelOn", function(assert) {
 
   let Obj = Ember.Object.extend(Ember.Evented, {
     doStuff: task(function * () {
+      yield timeout(10);
       assert.ok(false, "should not get here");
     }).on('init').cancelOn('foo'),
   });

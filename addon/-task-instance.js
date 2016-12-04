@@ -32,9 +32,8 @@ Ember.RSVP.Promise.prototype[yieldableSymbol] = function handleYieldedRsvpPromis
     // future cancel state
     // taskInstance.proceed(resumeIndex, YIELDABLE_CANCEL, this._result);
   } else {
-    this.finally(() => {
-      this[yieldableSymbol](taskInstance, resumeIndex);
-    });
+    let cb = () => { this[yieldableSymbol](taskInstance, resumeIndex); };
+    this.then(cb, cb);
   }
 };
 
@@ -247,7 +246,7 @@ let taskInstanceAttrs = {
   cancel() {
     if (this.isCanceling || get(this, 'isFinished')) { return; }
     set(this, 'isCanceling', true);
-    this.proceed(this._index, YIELDABLE_RETURN, null);
+    this.proceed(this._index, YIELDABLE_CANCEL, null);
   },
 
   _defer: null,
@@ -329,6 +328,10 @@ let taskInstanceAttrs = {
       this._finalizeCallbacks = [];
     }
     this._finalizeCallbacks.push(callback);
+
+    if (this._completionState) {
+      this._runFinalizeCallbacks();
+    }
   },
 
   _runFinalizeCallbacks() {
@@ -475,25 +478,43 @@ let taskInstanceAttrs = {
   _handleYieldedValue() {
     let yieldedValue = this._generatorValue;
     if (!yieldedValue) {
-      this.proceed(this._index, YIELDABLE_CONTINUE, yieldedValue);
+      this._proceedWithSimpleValue(yieldedValue);
       return;
     }
+
+    this._addDisposer(yieldedValue.__ec_cancel__);
 
     if (yieldedValue[yieldableSymbol]) {
       this._invokeYieldable(yieldedValue);
     } else if (typeof yieldedValue.then === 'function') {
       handleYieldedUnknownThenable(yieldedValue, this, this._index);
     } else {
-      this.proceed(this._index, YIELDABLE_CONTINUE, yieldedValue);
+      this._proceedWithSimpleValue(yieldedValue);
+    }
+  },
+
+  _proceedWithSimpleValue(yieldedValue) {
+    this.proceed(this._index, YIELDABLE_CONTINUE, yieldedValue);
+  },
+
+  _addDisposer(maybeDisposer) {
+    if (typeof maybeDisposer === 'function') {
+      let priorDisposer = this._disposer;
+      if (priorDisposer) {
+        this._disposer = () => {
+          priorDisposer();
+          maybeDisposer();
+        };
+      } else {
+        this._disposer = maybeDisposer;
+      }
     }
   },
 
   _invokeYieldable(yieldedValue) {
     try {
       let maybeDisposer = yieldedValue[yieldableSymbol](this, this._index);
-      if (typeof maybeDisposer === 'function') {
-        this._disposer = maybeDisposer;
-      }
+      this._addDisposer(maybeDisposer);
     } catch(e) {
       // TODO: handle erroneous yieldable implementation
     }

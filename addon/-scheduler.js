@@ -67,7 +67,11 @@ const Scheduler = Ember.Object.extend({
       }
       let task = taskInstance.task;
       seen.push(task);
-      task._numRunning++;
+
+      if (!get(taskInstance, 'isFinished')) {
+        // don't increment is taskInstance synchronously finished
+        task._numRunning++;
+      }
     }
 
     if (lastStarted) {
