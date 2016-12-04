@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task, interval } from 'ember-concurrency';
+import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 const originalWarn = Ember.Logger.warn;

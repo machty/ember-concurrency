@@ -71,19 +71,21 @@ const Scheduler = Ember.Object.extend({
 
       let taskInstance = this.activeTaskInstances[i];
       if (!taskInstance.hasStarted) {
-        // use internal promise so that it doesn't cancel error reporting
-        taskInstance._start()._defer.promise.then(() => {
-          set(this, 'lastSuccessful', taskInstance);
-          set(this, 'lastComplete', taskInstance);
-          this._scheduleFlush();
-        }, error => {
-          if (error && error.name === 'TaskCancelation') {
-            set(this, 'lastCanceled', taskInstance);
+        taskInstance._start()._onFinalize(() => {
+          let state = taskInstance._completionState;
+          if (state === 1) {
+            set(this, 'lastSuccessful', taskInstance);
+            set(this, 'lastComplete', taskInstance);
           } else {
-            set(this, 'lastErrored', taskInstance);
+            let error = taskInstance.error;
+
+            if (state === 2) {
+              set(this, 'lastErrored', taskInstance);
+            } else if (state === 3) {
+              set(this, 'lastCanceled', taskInstance);
+            }
+            set(this, 'lastIncomplete', taskInstance);
           }
-          set(this, 'lastComplete', taskInstance);
-          set(this, 'lastIncomplete', taskInstance);
           this._scheduleFlush();
         });
         set(this, 'lastStarted', taskInstance);

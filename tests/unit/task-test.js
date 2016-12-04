@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task, interval } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: task');
@@ -72,9 +72,9 @@ test("task discontinues after destruction when blocked on async values", functio
   let Obj = Ember.Object.extend(Ember.Evented, {
     doStuff: task(function * () {
       assert.ok(true);
-      yield interval(1000);
+      yield timeout(1000);
       assert.ok(false);
-      yield interval(1000);
+      yield timeout(1000);
     }).on('init'),
   });
 
