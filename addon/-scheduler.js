@@ -62,7 +62,7 @@ const Scheduler = Ember.Object.extend({
       seen.push(task);
     }
 
-    this.activeTaskInstances = this.activeTaskInstances.filter(t => get(t, 'isFinished') === false);
+    this.activeTaskInstances = filterFinished(this.activeTaskInstances);
 
     this.bufferPolicy.schedule(this);
 
@@ -156,6 +156,16 @@ function updateTaskChainCounts(_task) {
   }
 }
 
-export default Scheduler;
+function filterFinished(taskInstances) {
+  let ret = [];
+  for (let i = 0, l = taskInstances.length; i < l; ++i) {
+    let taskInstance = taskInstances[i];
+    if (get(taskInstance, 'isFinished') === false) {
+      ret.push(taskInstance);
+    }
+  }
+  return ret;
+}
 
+export default Scheduler;
 
