@@ -44,17 +44,10 @@ const Scheduler = Ember.Object.extend({
   schedule(taskInstance) {
     set(this, 'lastPerformed', taskInstance);
     this.queuedTaskInstances.push(taskInstance);
-    this._scheduleFlush();
-  },
-
-  _flushScheduled: false,
-  _scheduleFlush() {
-    this._flushScheduled = true;
-    Ember.run.once(this, this._flushQueues);
+    this._flushQueues();
   },
 
   _flushQueues() {
-    this._flushScheduled = false;
     let seen = [];
 
     for (let i = 0; i < this.activeTaskInstances.length; ++i) {
@@ -84,7 +77,7 @@ const Scheduler = Ember.Object.extend({
             }
             set(this, 'lastIncomplete', taskInstance);
           }
-          this._scheduleFlush();
+          this._flushQueues();
         });
         set(this, 'lastStarted', taskInstance);
         lastStarted = taskInstance;
@@ -109,27 +102,6 @@ const Scheduler = Ember.Object.extend({
 
     let concurrency = this.activeTaskInstances.length;
     set(this, 'concurrency', concurrency);
-    if (this.completionDefer && concurrency === 0) {
-      this.completionDefer.resolve();
-      this.completionDefer = null;
-    }
-  },
-
-  completionDefer: null,
-  getCompletionPromise() {
-    return new Ember.RSVP.Promise(r => {
-      Ember.run.schedule('actions', null, () => {
-        let defer = Ember.RSVP.defer();
-        if (!this._flushScheduled &&
-            this.activeTaskInstances.length === 0 &&
-            this.queuedTaskInstances.length === 0) {
-          defer.resolve();
-        } else {
-          this.completionDefer = defer;
-        }
-        defer.promise.then(r);
-      });
-    });
   },
 });
 

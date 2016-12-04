@@ -5,7 +5,6 @@ import { didCancel } from './-task-instance';
 import { TaskGroupProperty } from './-task-group';
 import EventedObservable from './-evented-observable';
 import { all, allSettled, race } from './-yieldables';
-import { drop, restartable, enqueue, maxConcurrency, cancelOn, performOn } from './-decorators';
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -106,12 +105,6 @@ export {
   all,
   allSettled,
   race,
-  drop,
-  restartable,
-  enqueue,
-  maxConcurrency,
-  cancelOn,
-  performOn,
   didCancel
 };
 
