@@ -51,35 +51,18 @@ const Scheduler = Ember.Object.extend({
     let seen = [];
 
     for (let i = 0; i < this.activeTaskInstances.length; ++i) {
-      let task = this.activeTaskInstances[i].task;
-      seen.push(task);
+      seen.push(this.activeTaskInstances[i].task);
     }
 
     this.activeTaskInstances = filterFinished(this.activeTaskInstances);
 
     this.bufferPolicy.schedule(this);
 
-    let lastStarted = null;
+    var lastStarted = null;
     for (let i = 0; i < this.activeTaskInstances.length; ++i) {
-
       let taskInstance = this.activeTaskInstances[i];
       if (!taskInstance.hasStarted) {
-        taskInstance._start()._onFinalize(() => {
-          let state = taskInstance._completionState;
-          set(this, 'lastComplete', taskInstance);
-          if (state === 1) {
-            set(this, 'lastSuccessful', taskInstance);
-          } else {
-            if (state === 2) {
-              set(this, 'lastErrored', taskInstance);
-            } else if (state === 3) {
-              set(this, 'lastCanceled', taskInstance);
-            }
-            set(this, 'lastIncomplete', taskInstance);
-          }
-          this._flushQueues();
-        });
-        set(this, 'lastStarted', taskInstance);
+        this._startTaskInstance(taskInstance);
         lastStarted = taskInstance;
       }
       let task = taskInstance.task;
@@ -99,10 +82,26 @@ const Scheduler = Ember.Object.extend({
     }
 
     flushTaskCounts(seen);
-
-    let concurrency = this.activeTaskInstances.length;
-    set(this, 'concurrency', concurrency);
+    set(this, 'concurrency', this.activeTaskInstances.length);
   },
+
+  _startTaskInstance(taskInstance) {
+    taskInstance._start()._onFinalize(() => {
+      var state = taskInstance._completionState;
+      set(this, 'lastComplete', taskInstance);
+      if (state === 1) {
+        set(this, 'lastSuccessful', taskInstance);
+      } else {
+        if (state === 2) {
+          set(this, 'lastErrored', taskInstance);
+        } else if (state === 3) {
+          set(this, 'lastCanceled', taskInstance);
+        }
+        set(this, 'lastIncomplete', taskInstance);
+      }
+      Ember.run.once(this, this._flushQueues);
+    });
+  }
 });
 
 function flushTaskCounts(tasks) {

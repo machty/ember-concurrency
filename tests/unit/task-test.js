@@ -94,6 +94,7 @@ test("task.cancelAll cancels all running task instances", function(assert) {
 
   let Obj = Ember.Object.extend(Ember.Evented, {
     doStuff: task(function * () {
+      yield timeout(1);
       assert.ok(false, "should not get here");
     }),
   });
