@@ -20,9 +20,19 @@ const GENERATOR_STATE_HAS_MORE_VALUES = "HAS_MORE_VALUES";
 const GENERATOR_STATE_DONE = "DONE";
 const GENERATOR_STATE_ERRORED = "ERRORED";
 
+function markRsvpPromiseAsCaught(promise) {
+  if (promise._onError) {
+    // >= 2.0.0
+    promise._onError = null;
+  }
+  if (promise._onerror) {
+    // < 2.0.0
+    promise._onerror = null;
+  }
+}
+
 Ember.RSVP.Promise.prototype[yieldableSymbol] = function handleYieldedRsvpPromise(taskInstance, resumeIndex) {
-  // let the e-c internals handle errors
-  this._onError = this._onerror = null;
+  markRsvpPromiseAsCaught(this);
 
   if (this._state === 1) {
     taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, this._result);
