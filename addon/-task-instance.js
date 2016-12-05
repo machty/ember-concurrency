@@ -22,7 +22,7 @@ const GENERATOR_STATE_ERRORED = "ERRORED";
 
 Ember.RSVP.Promise.prototype[yieldableSymbol] = function handleYieldedRsvpPromise(taskInstance, resumeIndex) {
   // let the e-c internals handle errors
-  this._onError = null;
+  this._onError = this._onerror = null;
 
   if (this._state === 1) {
     taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, this._result);
