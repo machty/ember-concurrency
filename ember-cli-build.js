@@ -3,6 +3,8 @@
 var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function(defaults) {
+  var includePolyfill = process.env.EMBER_ENV === 'production' || process.env.CI;
+
   var app = new EmberAddon(defaults, {
     minifyJS: {
       enabled: false
@@ -15,9 +17,9 @@ module.exports = function(defaults) {
       useScss: true
     },
 
-    babel: {
-      includePolyfill: true
-    }
+    babel: includePolyfill ?
+      { includePolyfill: true } :
+      { blacklist: [ 'regenerator' ] },
   });
 
   /*
