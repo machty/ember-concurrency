@@ -4,7 +4,7 @@ import { TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
 import { TaskGroupProperty } from './-task-group';
 import EventedObservable from './-evented-observable';
-import { all, allSettled, race } from './-yieldables';
+import { all, allSettled, hash, race } from './-yieldables';
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -104,6 +104,7 @@ export function events(obj, eventName) {
 export {
   all,
   allSettled,
+  hash,
   race,
   didCancel
 };
