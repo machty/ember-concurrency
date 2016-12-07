@@ -5,7 +5,8 @@ import { TaskGroup } from './-task-group';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
 import { objectAssign, INVOKE, _cleanupOnDestroy, _ComputedProperty } from './utils';
 import EncapsulatedTask from './-encapsulated-task';
-import getOwner from 'ember-getowner-polyfill';
+
+const { getOwner } = Ember;
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -582,4 +583,3 @@ function makeTaskCallback(taskName, method, once) {
     }
   };
 }
-

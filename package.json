@@ -61,7 +61,7 @@
   ],
   "dependencies": {
     "ember-cli-babel": "^5.1.5",
-    "ember-getowner-polyfill": "1.0.1",
+    "ember-getowner-polyfill": "^1.1.0",
     "ember-maybe-import-regenerator": "^0.1.4"
   },
   "ember-addon": {
