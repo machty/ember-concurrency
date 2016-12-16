@@ -1,4 +1,9 @@
 # Changelog
+### 0.7.16
+  - Fixed Ember 2.10 error when passing (hash) helper values
+    as an arg to a task (#99)
+  - Using ember-owner-polyfill to cut down on bloat
+
 ### 0.7.15
   - BREAKING: revert the feature introduced in 0.7.11 for being
     able to do `this.myTask.perform()` instead of
