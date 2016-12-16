@@ -1,12 +1,10 @@
 import Ember from 'ember';
-import { isGeneratorIterator, createObservable } from './utils';
+import { isGeneratorIterator } from './utils';
 import { TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
 import { TaskGroupProperty } from './-task-group';
 import EventedObservable from './-evented-observable';
-import { subscribe } from './-subscribe';
-import { all, allSettled, race } from './-yieldables';
-import { drop, restartable, enqueue, maxConcurrency, cancelOn, performOn } from './-decorators';
+import { all, allSettled, hash, race } from './-yieldables';
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -67,25 +65,6 @@ export function taskGroup(...args) {
 }
 
 /**
- * @private
- */
-export let _numIntervals = 0;
-
-/**
- * @private
- */
-export function interval(ms) {
-  return createObservable(publish => {
-    let intervalId = setInterval(publish, ms);
-    _numIntervals++;
-    return () => {
-      clearInterval(intervalId);
-      _numIntervals--;
-    };
-  });
-}
-
-/**
  *
  * Yielding `timeout(ms)` will pause a task for the duration
  * of time passed in, in milliseconds.
@@ -123,17 +102,10 @@ export function events(obj, eventName) {
 }
 
 export {
-  createObservable,
   all,
   allSettled,
+  hash,
   race,
-  subscribe,
-  drop,
-  restartable,
-  enqueue,
-  maxConcurrency,
-  cancelOn,
-  performOn,
   didCancel
 };
 

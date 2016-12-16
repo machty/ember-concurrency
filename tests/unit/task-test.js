@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task, interval } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: task');
@@ -72,9 +72,9 @@ test("task discontinues after destruction when blocked on async values", functio
   let Obj = Ember.Object.extend(Ember.Evented, {
     doStuff: task(function * () {
       assert.ok(true);
-      yield interval(1000);
+      yield timeout(1000);
       assert.ok(false);
-      yield interval(1000);
+      yield timeout(1000);
     }).on('init'),
   });
 
@@ -94,6 +94,7 @@ test("task.cancelAll cancels all running task instances", function(assert) {
 
   let Obj = Ember.Object.extend(Ember.Evented, {
     doStuff: task(function * () {
+      yield timeout(1);
       assert.ok(false, "should not get here");
     }),
   });
@@ -114,6 +115,7 @@ test("task().cancelOn", function(assert) {
 
   let Obj = Ember.Object.extend(Ember.Evented, {
     doStuff: task(function * () {
+      yield timeout(10);
       assert.ok(false, "should not get here");
     }).on('init').cancelOn('foo'),
   });

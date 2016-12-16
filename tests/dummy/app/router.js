@@ -30,7 +30,6 @@ Router.map(function() {
       this.route('joining-tasks');
       this.route('joining-tasks-2');
       this.route('decorating-tasks');
-      this.route('observables');
       this.route('task-groups');
       this.route('completion-state');
       this.route('encapsulated-task');
@@ -41,7 +40,6 @@ Router.map(function() {
   });
   this.route('experimental-prediction');
   this.route('helpers-test');
-  this.route('deprecation-test');
   this.route('data-test');
   this.route('task-injection-test');
 });

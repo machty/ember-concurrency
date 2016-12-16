@@ -18,12 +18,6 @@ test('perform and cancel-all', function(assert) {
   });
 });
 
-test('deprecate task.perform action', function(assert) {
-  assert.expect(0);
-  visit('/deprecation-test');
-  click('.deprecated-button');
-});
-
 test('setting value="..." should behave like closure actions and rewrite event arg', function(assert) {
   assert.expect(0);
   visit('/helpers-test');
