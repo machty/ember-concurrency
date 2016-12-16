@@ -4485,7 +4485,7 @@ define("dummy/docs/examples/ajax-throttling/template", ["exports"], function (ex
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  In the example belong, we render a component with 8 different\n  concurrently running tasks that each, within an infinite loop,\n  make (fake) AJAX requests. We've wrapped the code that actually\n  performs the (fake) AJAX request in a task, and we've annotated\n  that task with ");
+        var el2 = dom.createTextNode("\n  In the example below, we render a component with 8 different\n  concurrently running tasks that each, within an infinite loop,\n  make (fake) AJAX requests. We've wrapped the code that actually\n  performs the (fake) AJAX request in a task, and we've annotated\n  that task with ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
         var el3 = dom.createTextNode(".maxConcurrency(3)");
@@ -7623,7 +7623,7 @@ define("dummy/docs/examples/loading-ui/template", ["exports"], function (exports
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Reigning in undesired concurrency is partly what ");
+        var el2 = dom.createTextNode("\n  Reining in undesired concurrency is partly what ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("strong");
         var el3 = dom.createTextNode("ember-concurrency");
@@ -7641,7 +7641,7 @@ define("dummy/docs/examples/loading-ui/template", ["exports"], function (exports
         var el3 = dom.createTextNode(".isIdle");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" property of\n  a task, which is false when the task is running, and true otherwise. This eliminates\n  a lot of the boilerplate of setting a property at the beginning of some async operation,\n  and unsetting when the operation completes. Also, because the task in the example\n  below uses the ");
+        var el2 = dom.createTextNode(" property of\n  a task. This property is false when the task is running, and true otherwise. This eliminates\n  a lot of the boilerplate of setting a property at the beginning of some async operation,\n  and unsetting when the operation completes. Also, because the task in the example\n  below uses the ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
         var el3 = dom.createTextNode("drop()");
@@ -10002,7 +10002,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
         var el3 = dom.createTextNode(".keepLatest()");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" will drop all by the most recent intermediate ");
+        var el2 = dom.createTextNode(" will drop all but the most recent intermediate ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
         var el3 = dom.createTextNode(".perform()");
@@ -12928,7 +12928,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.15+7d81ab89"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.16"});
 }
 
 /* jshint ignore:end */
