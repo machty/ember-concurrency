@@ -255,6 +255,18 @@ test("performing a task on a destroyed object returns an immediately-canceled ta
   });
 });
 
+test("handles prototype-less object args", function(assert) {
+  assert.expect(0);
+
+  let arr = [];
+  let Obj = Ember.Object.extend({
+    doStuff: task(function * () {})
+  });
+
+  Ember.run(() => {
+    let obj = Obj.create().get('doStuff').perform(Object.create(null));
+  });
+});
 
 
 /*

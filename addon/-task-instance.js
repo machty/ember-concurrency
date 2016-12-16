@@ -223,7 +223,7 @@ let taskInstanceAttrs = {
 
   toString() {
     let taskString = ""+this.task;
-    return spliceSlice(taskString, -1, 0, `.perform(${this.args.join(',')})`);
+    return spliceSlice(taskString, -1, 0, `.perform()`);
   },
 
   /**
