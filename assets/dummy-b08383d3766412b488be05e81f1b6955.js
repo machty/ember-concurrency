@@ -4096,11 +4096,11 @@ define("dummy/docs/error-vs-cancelation/template", ["exports"], function (export
           "loc": {
             "source": null,
             "start": {
-              "line": 51,
+              "line": 44,
               "column": 4
             },
             "end": {
-              "line": 51,
+              "line": 44,
               "column": 56
             }
           },
@@ -4134,7 +4134,7 @@ define("dummy/docs/error-vs-cancelation/template", ["exports"], function (export
             "column": 0
           },
           "end": {
-            "line": 91,
+            "line": 84,
             "column": 0
           }
         },
@@ -4199,44 +4199,13 @@ define("dummy/docs/error-vs-cancelation/template", ["exports"], function (export
         var el3 = dom.createTextNode("try/catch");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" blocks\n  to catch exceptions thrown when you yield a rejecting promise, but\n  what about cancelation?\n");
+        var el2 = dom.createTextNode(" blocks\n  to catch exceptions thrown when you yield a rejecting promise, but\n  what about cancelation? Are cancelations considered exceptions/errors, or something else?\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Prior to version 0.7.0 of ember-concurrency, cancelations were treated as\n  exceptions that you could catch within ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("catch(e) {}");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" blocks,\n  but since 0.7.0, cancelation is treated as a\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("a");
-        dom.setAttribute(el2, "href", "https://github.com/domenic/cancelable-promise/blob/master/Third%20State.md");
-        var el3 = dom.createTextNode("Third State");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  — in other words, instead of treating cancelation like a ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("em");
-        var el3 = dom.createTextNode("kind");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" of exception,\n  we treat it like a third and separate way to resume/terminate execution of a task\n  from a ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("code");
-        var el3 = dom.createTextNode("yield");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(", alongside fulfillment and rejection.\n");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  Specifically, this means that if a task is canceled while it is paused on a\n  yield, the task will essentially return from that point,\n  it will skip any ");
+        var el2 = dom.createTextNode("\n  In ember-concurrency, cancelation is considered a third kind of \"completion\"\n  (the other two being a successful return from a function, and throwing an exception\n  from a function).\n  Specifically, this means that if a task is canceled while it is paused on a\n  yield, the task will essentially return from that point,\n  it will skip any ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("code");
         var el3 = dom.createTextNode("catch(e) {}");
@@ -4420,23 +4389,23 @@ define("dummy/docs/error-vs-cancelation/template", ["exports"], function (export
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element0 = dom.childAt(fragment, [20]);
-        var element1 = dom.childAt(fragment, [22]);
-        var element2 = dom.childAt(fragment, [24]);
+        var element0 = dom.childAt(fragment, [18]);
+        var element1 = dom.childAt(fragment, [20]);
+        var element2 = dom.childAt(fragment, [22]);
         var morphs = new Array(10);
         morphs[0] = dom.createMorphAt(dom.childAt(fragment, [6]), 1, 1);
-        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [14, 1]), 3, 3);
+        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [12, 1]), 3, 3);
         morphs[2] = dom.createAttrMorph(element0, 'onclick');
         morphs[3] = dom.createAttrMorph(element1, 'onclick');
         morphs[4] = dom.createMorphAt(dom.childAt(element2, [1]), 1, 1);
         morphs[5] = dom.createMorphAt(dom.childAt(element2, [3]), 1, 1);
         morphs[6] = dom.createMorphAt(dom.childAt(element2, [5]), 1, 1);
         morphs[7] = dom.createMorphAt(dom.childAt(element2, [7]), 1, 1);
-        morphs[8] = dom.createMorphAt(fragment, 27, 27, contextualElement);
-        morphs[9] = dom.createMorphAt(fragment, 29, 29, contextualElement);
+        morphs[8] = dom.createMorphAt(fragment, 25, 25, contextualElement);
+        morphs[9] = dom.createMorphAt(fragment, 27, 27, contextualElement);
         return morphs;
       },
-      statements: [["block", "link-to", ["docs.task-function-syntax"], [], 0, null, ["loc", [null, [15, 6], [15, 73]]]], ["block", "link-to", ["docs.task-concurrency"], [], 1, null, ["loc", [null, [51, 4], [51, 56]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [71, 26], [71, 32]]], 0, 0, 0, 0], false], [], ["loc", [null, [null, null], [71, 40]]], 0, 0], 0, 0, 0, 0], ["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [75, 26], [75, 32]]], 0, 0, 0, 0], true], [], ["loc", [null, [null, null], [75, 39]]], 0, 0], 0, 0, 0, 0], ["content", "myTask.state", ["loc", [null, [80, 18], [80, 34]]], 0, 0, 0, 0], ["content", "numCompletions", ["loc", [null, [81, 19], [81, 37]]], 0, 0, 0, 0], ["content", "numErrors", ["loc", [null, [82, 14], [82, 27]]], 0, 0, 0, 0], ["content", "numFinallys", ["loc", [null, [83, 26], [83, 41]]], 0, 0, 0, 0], ["inline", "code-snippet", [], ["name", "error-vs-cancelation-template.hbs"], ["loc", [null, [88, 0], [88, 57]]], 0, 0], ["inline", "code-snippet", [], ["name", "error-vs-cancelation.js"], ["loc", [null, [89, 0], [89, 47]]], 0, 0]],
+      statements: [["block", "link-to", ["docs.task-function-syntax"], [], 0, null, ["loc", [null, [15, 6], [15, 73]]]], ["block", "link-to", ["docs.task-concurrency"], [], 1, null, ["loc", [null, [44, 4], [44, 56]]]], ["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [64, 26], [64, 32]]], 0, 0, 0, 0], false], [], ["loc", [null, [null, null], [64, 40]]], 0, 0], 0, 0, 0, 0], ["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [68, 26], [68, 32]]], 0, 0, 0, 0], true], [], ["loc", [null, [null, null], [68, 39]]], 0, 0], 0, 0, 0, 0], ["content", "myTask.state", ["loc", [null, [73, 18], [73, 34]]], 0, 0, 0, 0], ["content", "numCompletions", ["loc", [null, [74, 19], [74, 37]]], 0, 0, 0, 0], ["content", "numErrors", ["loc", [null, [75, 14], [75, 27]]], 0, 0, 0, 0], ["content", "numFinallys", ["loc", [null, [76, 26], [76, 41]]], 0, 0, 0, 0], ["inline", "code-snippet", [], ["name", "error-vs-cancelation-template.hbs"], ["loc", [null, [81, 0], [81, 57]]], 0, 0], ["inline", "code-snippet", [], ["name", "error-vs-cancelation.js"], ["loc", [null, [82, 0], [82, 47]]], 0, 0]],
       locals: [],
       templates: [child0, child1]
     };
@@ -12928,7 +12897,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.16+5be8835a"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.16+3f63c4ff"});
 }
 
 /* jshint ignore:end */
