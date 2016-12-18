@@ -1,3 +1,10 @@
 {
-  "plugins": ["plugins/markdown"]
+  "source": {
+    "include":["addon"]
+  },
+  "plugins": ["plugins/markdown"],
+  "opts": {
+    "readme": "API.md",
+    "destination": "tests/dummy/public/api/"
+  }
 }
