@@ -22,5 +22,16 @@ export default Ember.Controller.extend({
   returnValue: task(function * () {
     return 10;
   }),
+
+  maybeNullTask: null,
+  someTask: task(function * () {
+    this.set('status', 'someTask');
+  }),
+
+  actions: {
+    setupTask() {
+      this.set('maybeNullTask', this.get('someTask'));
+    }
+  }
 });
 
