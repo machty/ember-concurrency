@@ -1,0 +1,60 @@
+<h2>FAQ &amp; Fact Sheet &amp; Best Practices</h2>
+
+<h3>Does ember-concurrency work with older browsers?</h3>
+
+<p>
+  Yes. The <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">ES6 Generator Function syntax</a>
+  that ember-concurrency relies on is automatically transpiled using Babel
+  and <a href="https://github.com/facebook/regenerator">regenerator</a>, so
+  it'll work on all browsers supported by Ember.
+</p>
+
+<h3>How do ember-concurrency Tasks compare to...</h3>
+
+<h4>Promises?</h4>
+
+<p>
+  Promises aren't cancelable, and as of 12/2016, there is no active TC39 specification
+  under development for adding cancelation to promises.
+  EC Tasks, in contrast, are cancelable.
+</p>
+
+<p>
+  The design of Promises is such that once a Promise has been created, it's not
+  possible to externally reach in and resolve/reject a Promise. This constraint
+  encourages a clear, unidirectional, structured architecture for building
+  asynchronous chains of logic.
+</p>
+
+<p>
+  Like Promises, the return/reject value of an EC Task cannot be externally
+  set / overridden; in other words, once a Task has been performed, there's
+  no way to externally force it to return/reject early, with the exception of
+  cancelation. When you <code>.cancel()</code> a task instance, the task
+  will "return" from wherever it is currently paused (e.g. at a <code>yield</code>).
+  Presently, there is no API to "delay" the cancelation of a Task once a cancel
+  has been requested, but this functionality might be added to future APIs.
+</p>
+
+<ul>
+  <li>
+    {{link-to 'Docs: implicit vs explicit cancelation' 'docs.cancelation'}}
+  </li>
+  <li>
+    <a href="https://github.com/machty/ember-concurrency/issues/98">
+      API discussion: cancel tokens, non-preemptive APIs
+    </a>
+  </li>
+</ul>
+
+<h4>Observables?</h4>
+
+<p>
+  I should probably write a whole article on this...
+</p>
+
+<p>
+  Much of the motivation behind ember-concurrency 
+</p>
+
+
