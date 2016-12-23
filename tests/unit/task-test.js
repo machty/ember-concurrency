@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task, interval } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: task');
@@ -72,9 +72,9 @@ test("task discontinues after destruction when blocked on async values", functio
   let Obj = Ember.Object.extend(Ember.Evented, {
     doStuff: task(function * () {
       assert.ok(true);
-      yield interval(1000);
+      yield timeout(1000);
       assert.ok(false);
-      yield interval(1000);
+      yield timeout(1000);
     }).on('init'),
   });
 
@@ -94,6 +94,7 @@ test("task.cancelAll cancels all running task instances", function(assert) {
 
   let Obj = Ember.Object.extend(Ember.Evented, {
     doStuff: task(function * () {
+      yield timeout(1);
       assert.ok(false, "should not get here");
     }),
   });
@@ -114,6 +115,7 @@ test("task().cancelOn", function(assert) {
 
   let Obj = Ember.Object.extend(Ember.Evented, {
     doStuff: task(function * () {
+      yield timeout(10);
       assert.ok(false, "should not get here");
     }).on('init').cancelOn('foo'),
   });
@@ -258,108 +260,12 @@ test("performing a task on a destroyed object returns an immediately-canceled ta
 test("handles prototype-less object args", function(assert) {
   assert.expect(0);
 
-  let arr = [];
   let Obj = Ember.Object.extend({
     doStuff: task(function * () {})
   });
 
   Ember.run(() => {
-    let obj = Obj.create().get('doStuff').perform(Object.create(null));
+    Obj.create().get('doStuff').perform(Object.create(null));
   });
 });
-
-
-/*
-test("string arg decorate links two tasks such that if the target task next perform will fail, the calling task will immediately drop", function(assert) {
-  assert.expect(14);
-
-  let defer;
-  let canCallBar = false;
-  let Obj = Ember.Object.extend({
-    foo: task(function * () {
-      defer = Ember.RSVP.defer();
-      yield defer.promise;
-    }).drop(),
-
-    bar: task('foo', function * (foo) {
-      assert.equal(foo, this.get('foo'));
-      assert.ok(canCallBar, "bar shouldn't be called at this time");
-    }),
-  });
-
-  let obj, error;
-  Ember.run(() => {
-    obj = Obj.create();
-    assert.equal(obj.get('foo.isRunning'), false);
-    assert.equal(obj.get('bar.isRunning'), false);
-    assert.equal(obj.get('foo.nextPerformState'), 'succeed');
-    assert.equal(obj.get('bar.nextPerformState'), 'succeed');
-    obj.get('foo').perform();
-    assert.equal(obj.get('bar.nextPerformState'), 'drop');
-    obj.get('bar').perform().catch(e => {
-      error = e;
-    });
-  });
-
-  assert.equal(error.name, 'TaskCancelation');
-  assert.equal(obj.get('foo.isRunning'), true);
-  assert.equal(obj.get('bar.isRunning'), false);
-  Ember.run(defer.resolve);
-  assert.equal(obj.get('foo.isRunning'), false);
-  assert.equal(obj.get('bar.isRunning'), false);
-  assert.equal(obj.get('foo.nextPerformState'), 'succeed');
-  assert.equal(obj.get('bar.nextPerformState'), 'succeed');
-  canCallBar = true;
-  Ember.run(() => {
-    obj.get('bar').perform();
-  });
-});
-
-test("string arg decorator allows caller's perform to succeed when maxConcurrency isn't constraining", function(assert) {
-  assert.expect(4);
-
-  let defer;
-  let Obj = Ember.Object.extend({
-    foo: task(function * () {
-      defer = defer || Ember.RSVP.defer();
-      yield defer.promise;
-    }),
-
-    bar: task('foo', function * (foo) {
-      yield foo.perform();
-    }),
-  });
-
-  let obj;
-  Ember.run(() => {
-    obj = Obj.create();
-    obj.get('foo').perform();
-    obj.get('bar').perform();
-  });
-
-  assert.equal(obj.get('foo.concurrency'), 2);
-  assert.equal(obj.get('bar.concurrency'), 1);
-  Ember.run(defer.resolve);
-  assert.equal(obj.get('foo.concurrency'), 0);
-  assert.equal(obj.get('bar.concurrency'), 0);
-});
-
-test("string arg decorator allows caller's perform to succeed when maxConcurrency isn't constraining", function(assert) {
-  assert.expect(1);
-
-  let Obj = Ember.Object.extend({
-    foo: task(function * () {
-      throw new Error("wat");
-    }),
-  });
-
-  try {
-    Ember.run(() => {
-      Obj.create().get('foo').perform();
-    });
-  } catch(e) {
-    assert.equal(e.message, "wat");
-  }
-});
-*/
 

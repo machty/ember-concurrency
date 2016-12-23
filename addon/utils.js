@@ -39,52 +39,6 @@ export let objectAssign = Object.assign || function objectAssign(target) {
   return target;
 };
 
-export function createObservable(fn) {
-  return {
-    subscribe(onNext, onError, onCompleted) {
-      let isDisposed = false;
-      let isComplete = false;
-      let publish = (v) => {
-        if (isDisposed || isComplete) { return; }
-        joinAndSchedule(null, onNext, v);
-      };
-      publish.error = (e) => {
-        if (isDisposed || isComplete) { return; }
-        joinAndSchedule(() => {
-          if (onError) { onError(e); }
-          if (onCompleted) { onCompleted(); }
-        });
-      };
-      publish.complete = () => {
-        if (isDisposed || isComplete) { return; }
-        isComplete = true;
-        joinAndSchedule(() => {
-          if (onCompleted) { onCompleted(); }
-        });
-      };
-
-      // TODO: publish.complete?
-
-      let maybeDisposer = fn(publish);
-      let disposer = typeof maybeDisposer === 'function' ? maybeDisposer : Ember.K;
-
-      return {
-        dispose() {
-          if (isDisposed) { return; }
-          isDisposed = true;
-          disposer();
-        },
-      };
-    },
-  };
-}
-
-function joinAndSchedule(...args) {
-  Ember.run.join(() => {
-    Ember.run.schedule('actions', ...args);
-  });
-}
-
 export function _cleanupOnDestroy(owner, object, cleanupMethodName) {
   // TODO: find a non-mutate-y, hacky way of doing this.
 
@@ -129,5 +83,9 @@ for (let i = 0; i < locations.length; i++) {
 
 // TODO: Symbol polyfill?
 export const yieldableSymbol = "__ec_yieldable__";
+export const YIELDABLE_CONTINUE = "next";
+export const YIELDABLE_THROW = "throw";
+export const YIELDABLE_RETURN = "return";
+export const YIELDABLE_CANCEL = "cancel";
 
 export const _ComputedProperty = Ember.ComputedProperty;
