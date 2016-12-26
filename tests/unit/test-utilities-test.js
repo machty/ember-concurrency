@@ -3,36 +3,8 @@ import { timeout } from 'ember-concurrency';
 import { test } from 'ember-concurrency/qunit';
 import { module } from 'qunit';
 import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
-import {
-  yieldableSymbol,
-  YIELDABLE_CONTINUE,
-  YIELDABLE_THROW,
-} from 'ember-concurrency/utils';
 
 const { $ } = Ember;
-
-const ELEMENT_MATCHER_TIMEOUT = 5000;
-
-$.fn[yieldableSymbol] = function(taskInstance, resumeIndex) {
-  let startedAt = + new Date();
-  let selector = this.selector;
-  let timeout = ELEMENT_MATCHER_TIMEOUT;
-  let keepTrying = () => {
-    let $el = $(selector);
-    if ($el.length) {
-      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, $el);
-    } else {
-      let now = + new Date();
-      if (now - startedAt > 5000) {
-        taskInstance.proceed(resumeIndex, YIELDABLE_THROW, new Error(`Couldn't find selector "${selector}" after ${timeout}ms`));
-      } else {
-        setTimeout(keepTrying, 20);
-      }
-    }
-  };
-
-  keepTrying();
-};
 
 module('ember-concurrency testing utilities');
 
