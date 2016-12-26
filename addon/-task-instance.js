@@ -114,6 +114,7 @@ let taskInstanceAttrs = {
   task: null,
   args: [],
   _hasSubscribed: false,
+  _runLoop: true,
 
   /**
    * If this TaskInstance runs to completion by returning a property
@@ -413,12 +414,20 @@ let taskInstanceAttrs = {
       return;
     }
 
-    if (!Ember.run.currentRunLoop) {
-      return Ember.run(this, this.proceed, index, yieldResumeType, value);
-    }
-
     this._index++;
 
+    if (this._runLoop && !Ember.run.currentRunLoop) {
+      Ember.run(this, this._proceed, yieldResumeType, value);
+      return;
+    } else if (!this._runLoop && Ember.run.currentRunLoop) {
+      setTimeout(() => this._proceed(yieldResumeType, value), 1);
+      return;
+    } else {
+      this._proceed(yieldResumeType, value);
+    }
+  },
+
+  _proceed(yieldResumeType, value) {
     let state = this._generatorState;
     if (state === GENERATOR_STATE_ERRORED) {
       // If we got here, then `value` isn't resolved; it was
