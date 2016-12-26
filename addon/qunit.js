@@ -14,7 +14,6 @@ function test(description, generatorFn) {
 }
 
 export {
-  module,
   test
 };
 
