@@ -44,6 +44,7 @@ Router.map(function() {
   this.route('deprecation-test');
   this.route('testing-ergo', function() {
     this.route('foo');
+    this.route('slow');
   });
   this.route('task-injection-test');
 });

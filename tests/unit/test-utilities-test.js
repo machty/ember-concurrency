@@ -61,12 +61,22 @@ moduleForAcceptance('ember-concurrency testing utilities (acceptance)', {
   }
 });
 
-test('yielding selectors will wait for them to exist', function * (assert) {
+test('yielding a selector waits for it to exist', function * (assert) {
   visit('/testing-ergo/foo');
 
   let $sel = $(`.eventual-button:contains('Eventual Button')`);
   assert.equal($sel.length, 0);
   let $loadedSel = yield $sel;
   assert.equal($loadedSel.length, 1);
+});
+
+test('it is easy to test loading routes by yielding selectors rather than awaiting "settledness"', function * (assert) {
+  visit('/testing-ergo/slow');
+
+  let $loadingBanner = yield $('.loading-message');
+  assert.equal($loadingBanner.text(), "I am a loading route.");
+
+  let $slowBanner = yield $('.slow-banner');
+  assert.equal($slowBanner.text(), "Welcome to slow route.");
 });
 
