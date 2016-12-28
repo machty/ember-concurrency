@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import TaskInstance from './-task-instance';
-import { yieldableSymbol, } from './utils';
+import { yieldableSymbol } from './utils';
 
 const RSVP = Ember.RSVP;
 
