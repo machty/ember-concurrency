@@ -43,6 +43,17 @@ test('yielding a selector waits for it to exist', function * (assert) {
   assert.equal($loadedSel.length, 1);
 });
 
+test('selectors fail eagerly if waiters settle', function * (assert) {
+  assert.expect(1);
+  visit('/testing-ergo/foo-settimeout');
+
+  try {
+    yield $(`.eventual-button`);
+  } catch(e) {
+    assert.equal(e.message, `Couldn't find selector ".eventual-button", and all test waiters have settled.`);
+  }
+});
+
 test('it is easy to test loading routes by yielding selectors rather than awaiting "settledness"', function * (assert) {
   assert.expect(2);
   visit('/testing-ergo/slow');

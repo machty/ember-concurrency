@@ -89,3 +89,58 @@ export const YIELDABLE_RETURN = "return";
 export const YIELDABLE_CANCEL = "cancel";
 
 export const _ComputedProperty = Ember.ComputedProperty;
+
+/**
+ *
+ * Yielding `timeout(ms)` will pause a task for the duration
+ * of time passed in, in milliseconds.
+ *
+ * The task below, when performed, will print a message to the
+ * console every second.
+ *
+ * ```js
+ * export default Component.extend({
+ *   myTask: task(function * () {
+ *     while (true) {
+ *       console.log("Hello!");
+ *       yield timeout(1000);
+ *     }
+ *   })
+ * });
+ * ```
+ *
+ * @param {number} ms - the amount of time to sleep before resuming
+ *   the task, in milliseconds
+ */
+export function timeout(ms) {
+  let timerId;
+  let promise = new Ember.RSVP.Promise(r => {
+    timerId = Ember.run.later(r, ms);
+  });
+  promise.__ec_cancel__ = () => {
+    Ember.run.cancel(timerId);
+  };
+  return promise;
+}
+
+export function RawValue(value) {
+  this.value = value;
+}
+
+export function raw(value) {
+  return new RawValue(value);
+}
+
+export function rawTimeout(ms) {
+  return {
+    [yieldableSymbol](taskInstance, resumeIndex) {
+      let timerId = setTimeout(() => {
+        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, this._result);
+      }, ms);
+      return () => {
+        window.clearInterval(timerId);
+      };
+    }
+  };
+}
+

@@ -1,37 +1,48 @@
 import Ember from 'ember';
 import { test as qunitTest } from 'qunit';
 import QUnit from 'qunit';
-import TaskInstance from 'ember-concurrency/-task-instance';
+import { wrap, go } from 'ember-concurrency/-task-instance';
+import { race } from 'ember-concurrency/-yieldables';
 import {
   yieldableSymbol,
-  YIELDABLE_CONTINUE,
-  YIELDABLE_THROW,
+  raw,
+  rawTimeout
 } from 'ember-concurrency/utils';
 
 const { $ } = Ember;
 
-function injectJQueryYieldables() {
-  const ELEMENT_MATCHER_TIMEOUT = 5000;
+const find = wrap(function * (selector, options = {}) {
+  let startedAt = + new Date();
+  let timeoutMs = options.timeout;
 
-  $.fn[yieldableSymbol] = function(taskInstance, resumeIndex) {
-    let startedAt = + new Date();
-    let selector = this.selector;
-    let timeout = ELEMENT_MATCHER_TIMEOUT;
-    let keepTrying = () => {
-      let $el = $(selector);
-      if ($el.length) {
-        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, $el);
-      } else {
-        let now = + new Date();
-        if (now - startedAt > ELEMENT_MATCHER_TIMEOUT) {
-          taskInstance.proceed(resumeIndex, YIELDABLE_THROW, new Error(`Couldn't find selector "${selector}" after ${timeout}ms`));
-        } else {
-          setTimeout(keepTrying, 20);
-        }
+  let settled = false;
+  wait().then(() => {
+    settled = true;
+  });
+
+  while(true) {
+    let $el = $(selector);
+
+    if ($el.length) {
+      return raw($el);
+    } else {
+      if (settled) {
+        throw new Error(`Couldn't find selector "${selector}", and all test waiters have settled.`);
       }
-    };
 
-    keepTrying();
+      let now = + new Date();
+      if (timeoutMs && now - startedAt > timeoutMs) {
+        throw new Error(`Couldn't find selector "${selector}" after ${timeoutMs}ms`);
+      }
+
+      yield rawTimeout(15);
+    }
+  }
+});
+
+function injectJQueryYieldables() {
+  $.fn[yieldableSymbol] = function(...args) {
+    return find(this.selector)[yieldableSymbol](...args);
   };
 }
 
@@ -41,16 +52,16 @@ function test(description, generatorFn) {
   qunitTest(description, function(assert) {
     QUnit.config.current._isTaskTest = true;
     let done = assert.async();
-    TaskInstance.create({
+
+    go([assert], generatorFn, {
       _runLoop: false,
-      fn: generatorFn,
-      args: [assert],
       context: this,
-    })._start().finally(done);
+    }).finally(done);
   });
 }
 
 export {
-  test
+  test,
+  find
 };
 

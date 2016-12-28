@@ -4,7 +4,8 @@ import {
   YIELDABLE_CONTINUE,
   YIELDABLE_THROW,
   YIELDABLE_RETURN,
-  YIELDABLE_CANCEL
+  YIELDABLE_CANCEL,
+  RawValue
 } from './utils';
 
 const { set, get, computed } = Ember;
@@ -504,6 +505,11 @@ let taskInstanceAttrs = {
       return;
     }
 
+    if (yieldedValue instanceof RawValue) {
+      this._proceedWithSimpleValue(yieldedValue.value);
+      return;
+    }
+
     this._addDisposer(yieldedValue.__ec_cancel__);
 
     if (yieldedValue[yieldableSymbol]) {
@@ -569,6 +575,18 @@ taskInstanceAttrs[yieldableSymbol] = function handleYieldedTaskInstance(parentTa
 };
 
 let TaskInstance = Ember.Object.extend(taskInstanceAttrs);
+
+export function go(args, fn, attrs = {}) {
+  return TaskInstance.create(
+    Object.assign({ args, fn, context: this }, attrs)
+  )._start();
+}
+
+export function wrap(fn, attrs = {}) {
+  return function wrappedRunnerFunction(...args) {
+    return go.call(this, args, fn, attrs);
+  };
+}
 
 export default TaskInstance;
 
