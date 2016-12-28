@@ -2,9 +2,7 @@ import Ember from 'ember';
 import { test as qunitTest } from 'qunit';
 import QUnit from 'qunit';
 import { wrap, go } from 'ember-concurrency/-task-instance';
-import { race } from 'ember-concurrency/-yieldables';
 import {
-  yieldableSymbol,
   raw,
   rawTimeout
 } from 'ember-concurrency/utils';
@@ -49,15 +47,6 @@ const HELPER_METHODS = {
     return find(...args);
   }
 };
-
-function injectJQueryYieldables() {
-  $.fn[yieldableSymbol] = function(...args) {
-    console.log(this);
-    return find(this.selector)[yieldableSymbol](...args);
-  };
-}
-
-injectJQueryYieldables();
 
 function test(description, generatorFn) {
   qunitTest(description, function(assert) {

@@ -33,28 +33,17 @@ moduleForAcceptance('ember-concurrency testing utilities (acceptance)', {
   }
 });
 
-test('yielding a selector waits for it to exist', function * (assert) {
+test('find() waits for element to exist', function * (assert) {
   assert.expect(2);
   visit('/testing-ergo/foo');
 
-  let $sel = $(`.eventual-button:contains('Eventual Button')`);
-  assert.equal($sel.length, 0);
-  let $loadedSel = yield $sel;
+  let sel = `.eventual-button:contains('Eventual Button')`;
+  assert.equal($(sel).length, 0);
+  let $loadedSel = yield this.find(sel);
   assert.equal($loadedSel.length, 1);
 });
 
-test('selectors fail eagerly if waiters settle ($)', function * (assert) {
-  assert.expect(1);
-  visit('/testing-ergo/foo-settimeout');
-
-  try {
-    yield $(`.eventual-button`);
-  } catch(e) {
-    assert.equal(e.message, `Couldn't find selector ".eventual-button", and all test waiters have settled.`);
-  }
-});
-
-test('selectors fail eagerly if waiters settle (find)', function * (assert) {
+test('find() fails eagerly if waiters settle', function * (assert) {
   assert.expect(1);
   visit('/testing-ergo/foo-settimeout');
 
@@ -83,16 +72,16 @@ test('it is easy to test loading routes by yielding selectors rather than awaiti
   assert.expect(2);
   visit('/testing-ergo/slow');
 
-  let $loadingBanner = yield $('.loading-message');
+  let $loadingBanner = yield this.find('.loading-message');
   assert.equal($loadingBanner.text(), "I am a loading route.");
 
-  let $slowBanner = yield $('.slow-banner');
+  let $slowBanner = yield this.find('.slow-banner');
   assert.equal($slowBanner.text(), "Welcome to slow route.");
 });
 
 test('it is easy to test timer loops', function * (assert) {
   assert.expect(0);
   visit('/testing-ergo/timer-loop');
-  yield $(`.timer-loop-message:contains('foo=5')`);
+  yield this.find(`.timer-loop-message:contains('foo=5')`);
 });
 
