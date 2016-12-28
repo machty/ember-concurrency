@@ -43,10 +43,18 @@ test('find() waits for element to exist', function * (assert) {
   assert.equal($loadedSel.length, 1);
 });
 
+test('find() with count 0 waits for element to not exist', function * (assert) {
+  assert.expect(1);
+  this.visit('/testing-ergo/foo');
+
+  yield this.find(`.disappearing-content`);
+  let $sel = yield this.find(`.disappearing-content`, { count: 0 });
+  assert.equal($sel.length, 0);
+});
+
 test('click() waits for element to exist', function * (assert) {
   assert.expect(0);
   this.visit('/testing-ergo/foo');
-  yield this.find(`.value:contains('value=0')`);
   yield this.click(`.eventual-button`);
   yield this.find(`.value:contains('value=123')`);
 });
