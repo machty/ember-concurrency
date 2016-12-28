@@ -4443,11 +4443,11 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
           "loc": {
             "source": null,
             "start": {
-              "line": 13,
+              "line": 12,
               "column": 10
             },
             "end": {
-              "line": 13,
+              "line": 12,
               "column": 62
             }
           },
@@ -4478,11 +4478,11 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
           "loc": {
             "source": null,
             "start": {
-              "line": 19,
+              "line": 18,
               "column": 34
             },
             "end": {
-              "line": 19,
+              "line": 18,
               "column": 109
             }
           },
@@ -4513,11 +4513,11 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
           "loc": {
             "source": null,
             "start": {
-              "line": 22,
+              "line": 21,
               "column": 8
             },
             "end": {
-              "line": 22,
+              "line": 21,
               "column": 56
             }
           },
@@ -4548,11 +4548,11 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
           "loc": {
             "source": null,
             "start": {
-              "line": 39,
+              "line": 38,
               "column": 2
             },
             "end": {
-              "line": 41,
+              "line": 40,
               "column": 2
             }
           },
@@ -4577,7 +4577,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
           morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
           return morphs;
         },
-        statements: [["inline", "fa-icon", ["spinner"], ["spin", true], ["loc", [null, [40, 4], [40, 35]]], 0, 0]],
+        statements: [["inline", "fa-icon", ["spinner"], ["spin", true], ["loc", [null, [39, 4], [39, 35]]], 0, 0]],
         locals: [],
         templates: []
       };
@@ -4589,11 +4589,11 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
           "loc": {
             "source": null,
             "start": {
-              "line": 44,
+              "line": 43,
               "column": 4
             },
             "end": {
-              "line": 46,
+              "line": 45,
               "column": 4
             }
           },
@@ -4620,7 +4620,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
           morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
           return morphs;
         },
-        statements: [["content", "repo.full_name", ["loc", [null, [45, 10], [45, 28]]], 0, 0, 0, 0]],
+        statements: [["content", "repo.full_name", ["loc", [null, [44, 10], [44, 28]]], 0, 0, 0, 0]],
         locals: ["repo"],
         templates: []
       };
@@ -4635,7 +4635,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
             "column": 0
           },
           "end": {
-            "line": 60,
+            "line": 59,
             "column": 0
           }
         },
@@ -4654,7 +4654,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("p");
-        var el2 = dom.createTextNode("\n  This advanced example combines a lot of ember-concurrency features\n  to build a basic type-ahead search field\n  with the following features:\n");
+        var el2 = dom.createTextNode("\n  This advanced example combines multiple ember-concurrency concepts\n  to build a basic type-ahead search field with the following features:\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
@@ -4786,7 +4786,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
         morphs[7] = dom.createMorphAt(fragment, 18, 18, contextualElement);
         return morphs;
       },
-      statements: [["block", "link-to", ["docs.task-concurrency"], [], 0, null, ["loc", [null, [13, 10], [13, 62]]]], ["block", "link-to", ["docs.error-vs-cancelation"], [], 1, null, ["loc", [null, [19, 34], [19, 109]]]], ["block", "link-to", ["docs.derived-state"], [], 2, null, ["loc", [null, [22, 8], [22, 56]]]], ["attribute", "oninput", ["subexpr", "perform", [["get", "searchRepo", ["loc", [null, [36, 39], [36, 49]]], 0, 0, 0, 0]], ["value", "target.value"], ["loc", [null, [null, null], [36, 72]]], 0, 0], 0, 0, 0, 0], ["block", "if", [["get", "searchRepo.isRunning", ["loc", [null, [39, 8], [39, 28]]], 0, 0, 0, 0]], [], 3, null, ["loc", [null, [39, 2], [41, 9]]]], ["block", "each", [["get", "searchRepo.lastSuccessful.value", ["loc", [null, [44, 12], [44, 43]]], 0, 0, 0, 0]], [], 4, null, ["loc", [null, [44, 4], [46, 13]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation.js"], ["loc", [null, [54, 0], [54, 60]]], 0, 0], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation-template.hbs"], ["loc", [null, [58, 0], [58, 70]]], 0, 0]],
+      statements: [["block", "link-to", ["docs.task-concurrency"], [], 0, null, ["loc", [null, [12, 10], [12, 62]]]], ["block", "link-to", ["docs.error-vs-cancelation"], [], 1, null, ["loc", [null, [18, 34], [18, 109]]]], ["block", "link-to", ["docs.derived-state"], [], 2, null, ["loc", [null, [21, 8], [21, 56]]]], ["attribute", "oninput", ["subexpr", "perform", [["get", "searchRepo", ["loc", [null, [35, 39], [35, 49]]], 0, 0, 0, 0]], ["value", "target.value"], ["loc", [null, [null, null], [35, 72]]], 0, 0], 0, 0, 0, 0], ["block", "if", [["get", "searchRepo.isRunning", ["loc", [null, [38, 8], [38, 28]]], 0, 0, 0, 0]], [], 3, null, ["loc", [null, [38, 2], [40, 9]]]], ["block", "each", [["get", "searchRepo.lastSuccessful.value", ["loc", [null, [43, 12], [43, 43]]], 0, 0, 0, 0]], [], 4, null, ["loc", [null, [43, 4], [45, 13]]]], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation.js"], ["loc", [null, [53, 0], [53, 60]]], 0, 0], ["inline", "code-snippet", [], ["name", "debounced-search-with-cancelation-template.hbs"], ["loc", [null, [57, 0], [57, 70]]], 0, 0]],
       locals: [],
       templates: [child0, child1, child2, child3, child4]
     };
@@ -13135,7 +13135,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.0.0-next2+f0bf5207"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.0.0-next2+884eae33"});
 }
 
 /* jshint ignore:end */
