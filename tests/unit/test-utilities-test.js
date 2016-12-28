@@ -43,6 +43,14 @@ test('find() waits for element to exist', function * (assert) {
   assert.equal($loadedSel.length, 1);
 });
 
+test('click() waits for element to exist', function * (assert) {
+  assert.expect(0);
+  this.visit('/testing-ergo/foo');
+  yield this.find(`.value:contains('value=0')`);
+  yield this.click(`.eventual-button`);
+  yield this.find(`.value:contains('value=123')`);
+});
+
 test('find() fails eagerly if waiters settle', function * (assert) {
   assert.expect(1);
   this.visit('/testing-ergo/foo-settimeout');

@@ -1,3 +1,4 @@
 {{#if isShowingButton}}
-  <div class="eventual-button">Eventual Button</div>
+  <div class="eventual-button" onclick={{action 'setValue'}}>Eventual Button</div>
+  <div class="value">value={{value}}</div>
 {{/if}}

@@ -10,7 +10,7 @@ DocsController.proto().get('flatContents').forEach(page => {
   test(`visiting ${page.route}`, function * (assert) {
     assert.expect(0);
     let url = page.route.replace(/\./g, '/');
-    visit(url);
+    this.visit(url);
     yield timeout(500);
   });
 });
