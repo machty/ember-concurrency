@@ -26,13 +26,15 @@ const find = wrap(function * (selector, options = {}) {
     if ($el.length) {
       return raw($el);
     } else {
-      if (settled) {
-        throw new Error(`Couldn't find selector "${selector}", and all test waiters have settled.`);
-      }
-
-      let now = + new Date();
-      if (timeoutMs && now - startedAt > timeoutMs) {
-        throw new Error(`Couldn't find selector "${selector}" after ${timeoutMs}ms`);
+      if (timeoutMs) {
+        let now = + new Date();
+        if (now - startedAt > timeoutMs) {
+          throw new Error(`Couldn't find selector "${selector}" after ${timeoutMs}ms`);
+        }
+      } else {
+        if (settled) {
+          throw new Error(`Couldn't find selector "${selector}", and all test waiters have settled.`);
+        }
       }
 
       yield rawTimeout(15);
