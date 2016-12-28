@@ -20,7 +20,6 @@ export default Ember.Controller.extend({
         { route: "docs.error-vs-cancelation", title: "Errors vs. Cancelation (try/catch/finally)"},
       ]
     },
-    //{ route: "docs.lifetime", title: "Lifetime"},
     { route: "docs.child-tasks", title: "Child Tasks"},
     { route: "docs.task-groups", title: "Task Groups"},
     { route: "docs.derived-state", title: "Derived State"},
@@ -28,12 +27,11 @@ export default Ember.Controller.extend({
     { title: "Examples", route: "docs.examples",
       children: [
         {route: "docs.examples.loading-ui", title: "Loading UI"},
-        {route: "docs.examples.autocomplete", title: "Auto-Search & ember-power-select"},
+        {route: "docs.examples.autocomplete", title: "Type-Ahead Search"},
         {route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons"},
         {route: "docs.examples.ajax-throttling", title: "AJAX Throttling"},
         {route: "docs.examples.route-tasks", title: "Route Tasks"},
         {route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks"},
-        //{route: "docs.examples.decorating-tasks", title: "Decorating Other Tasks"},
       ]
     },
   ],
