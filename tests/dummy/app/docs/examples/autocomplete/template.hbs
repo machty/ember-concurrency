@@ -1,13 +1,29 @@
-<h3>Auto-Search + ember-power-select + debouncing</h3>
+<h3>Debounced Type-Ahead Search</h3>
 
 <p>
-  This example improves upon
-  the <a href="http://www.ember-power-select.com/cookbook/debounce-searches">Debounced Search</a>
-  example in the ember-power-select docs, which, while reasonably succinct,
-  involves somewhat confusing usage of the
-  <code><a href="http://emberjs.com/api/classes/Ember.run.html#method_debounce">Ember.run.debounce API</a></code>,
-  and doesn't cancel previous AJAX requests when a new search begins.
+  This advanced example combines a lot of ember-concurrency features
+  to build a basic type-ahead search field
+  with the following features:
 </p>
+
+<ul>
+  <li>
+    Debouncing: the browser won't make network requests until the user has
+    stopped typing for more than 250ms. This is accomplished by combining the
+    <code>{{link-to '.restartable()' 'docs.task-concurrency'}}</code> task modifier
+    with a <code>yield timeout(250)</code> at the beginning of the task.
+  </li>
+  <li>
+    XHR cancelation: if the user starts typing while a prior XHR request
+    is underway, that XHR request will be canceled to save network resources
+    (this is accomplished via the {{link-to "try / finally cancelation pattern" 'docs.error-vs-cancelation'}}).
+  </li>
+  <li>
+    Use {{link-to 'Derived State' 'docs.derived-state'}} to display
+    both a loading spinner and the final search results without using
+    a single <code>.set()</code>.
+  </li>
+</ul>
 
 <h5>Live Example</h5>
 
@@ -17,13 +33,21 @@
 
 <p>
 {{! BEGIN-SNIPPET debounced-search-with-cancelation-template }}
-  {{#power-select search=(perform searchRepo)
-                  selected=selected
-                  onchange=(action (mut selected)) as |repo|}}
-    {{repo.full_name}}
-  {{/power-select}}
+  <input type="text" oninput={{perform searchRepo value="target.value"}}
+         placeholder="Search GitHub..." />
+
+  {{#if searchRepo.isRunning}}
+    {{fa-icon "spinner" spin=true}}
+  {{/if}}
+
+  <ul>
+    {{#each searchRepo.lastSuccessful.value as |repo|}}
+      <li>{{repo.full_name}}</li>
+    {{/each}}
+  </ul>
 {{! END-SNIPPET }}
 </p>
+
 
 <h5>JavaScript</h5>
 

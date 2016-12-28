@@ -20,7 +20,7 @@ export default Ember.Controller.extend({
     // is restarted before this request completes, the XHR request
     // is aborted (open the inspector and see for yourself :)
     let json = yield this.get('getJSON').perform(url);
-    return json.items;
+    return json.items.slice(0, 10);
   }).restartable(),
 
   getJSON: task(function * (url) {
