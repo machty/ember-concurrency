@@ -12,7 +12,7 @@ const { $ } = Ember;
 const find = wrap(function * (app, selector, options = {}) {
   let startedAt = + new Date();
   let timeoutMs = options.timeout;
-  let count = options.count || 1;
+  let count = typeof options.count === 'undefined' ? 1 : options.count;
 
   let settled = false;
   app.testHelpers.wait().then(() => {
