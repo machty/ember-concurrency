@@ -8,5 +8,12 @@ export default Ember.Controller.extend({
     yield timeout(200);
     this.set('isShowingButton', true);
   }),
+
+  value: 0,
+  actions: {
+    setValue() {
+      this.set('value', 123);
+    }
+  }
 });
 

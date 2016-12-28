@@ -46,9 +46,12 @@ const HELPER_METHODS = {
     return find(this.application, ...args);
   },
   visit(...args) {
-    //debugger;
     this.application.testHelpers.visit(...args);
   },
+  click: wrap(function * (selector) {
+    yield find(this.application, selector);
+    this.application.testHelpers.click(selector);
+  }),
 };
 
 function test(description, generatorFn) {
