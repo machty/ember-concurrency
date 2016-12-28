@@ -35,7 +35,7 @@ moduleForAcceptance('ember-concurrency testing utilities (acceptance)', {
 
 test('find() waits for element to exist', function * (assert) {
   assert.expect(2);
-  visit('/testing-ergo/foo');
+  this.visit('/testing-ergo/foo');
 
   let sel = `.eventual-button:contains('Eventual Button')`;
   assert.equal($(sel).length, 0);
@@ -45,23 +45,23 @@ test('find() waits for element to exist', function * (assert) {
 
 test('find() fails eagerly if waiters settle', function * (assert) {
   assert.expect(1);
-  visit('/testing-ergo/foo-settimeout');
+  this.visit('/testing-ergo/foo-settimeout');
 
   try {
     yield this.find(`.eventual-button`);
   } catch(e) {
-    assert.equal(e.message, `Couldn't find selector ".eventual-button", and all test waiters have settled.`);
+    assert.equal(e.message, "Tried to find 1 occurrence(s) of \".eventual-button\" before test waiters settled, instead found 0");
   }
 });
 
 test('find() can wait beyond settlement using timeout option', function * (assert) {
   assert.expect(2);
-  visit('/testing-ergo/foo-settimeout');
+  this.visit('/testing-ergo/foo-settimeout');
 
   try {
     yield this.find(`.nonexistent-button`, { timeout: 100 });
   } catch(e) {
-    assert.equal(e.message, `Couldn't find selector ".nonexistent-button" after 100ms`);
+    assert.equal(e.message, "Tried to find 1 occurrence(s) of \".nonexistent-button\" within 100ms, instead found 0");
   }
 
   let $el = yield this.find(`.eventual-button`, { timeout: 1000 });
@@ -70,7 +70,7 @@ test('find() can wait beyond settlement using timeout option', function * (asser
 
 test('it is easy to test loading routes by yielding selectors rather than awaiting "settledness"', function * (assert) {
   assert.expect(2);
-  visit('/testing-ergo/slow');
+  this.visit('/testing-ergo/slow');
 
   let $loadingBanner = yield this.find('.loading-message');
   assert.equal($loadingBanner.text(), "I am a loading route.");
@@ -81,7 +81,7 @@ test('it is easy to test loading routes by yielding selectors rather than awaiti
 
 test('it is easy to test timer loops', function * (assert) {
   assert.expect(0);
-  visit('/testing-ergo/timer-loop');
+  this.visit('/testing-ergo/timer-loop');
   yield this.find(`.timer-loop-message:contains('foo=5')`);
 });
 

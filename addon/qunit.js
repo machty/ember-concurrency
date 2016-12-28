@@ -9,31 +9,30 @@ import {
 
 const { $ } = Ember;
 
-const find = wrap(function * (selector, options = {}) {
+const find = wrap(function * (app, selector, options = {}) {
   let startedAt = + new Date();
   let timeoutMs = options.timeout;
+  let count = options.count || 1;
 
   let settled = false;
-  wait().then(() => {
+  app.testHelpers.wait().then(() => {
     settled = true;
   });
 
   while(true) {
     let $el = $(selector);
 
-    console.log(selector);
-
-    if ($el.length) {
+    if ($el.length === count) {
       return raw($el);
     } else {
       if (timeoutMs) {
         let now = + new Date();
         if (now - startedAt > timeoutMs) {
-          throw new Error(`Couldn't find selector "${selector}" after ${timeoutMs}ms`);
+          throw new Error(`Tried to find ${count} occurrence(s) of "${selector}" within ${timeoutMs}ms, instead found ${$el.length}`);
         }
       } else {
         if (settled) {
-          throw new Error(`Couldn't find selector "${selector}", and all test waiters have settled.`);
+          throw new Error(`Tried to find ${count} occurrence(s) of "${selector}" before test waiters settled, instead found ${$el.length}`);
         }
       }
 
@@ -44,8 +43,12 @@ const find = wrap(function * (selector, options = {}) {
 
 const HELPER_METHODS = {
   find(...args) {
-    return find(...args);
-  }
+    return find(this.application, ...args);
+  },
+  visit(...args) {
+    //debugger;
+    this.application.testHelpers.visit(...args);
+  },
 };
 
 function test(description, generatorFn) {
