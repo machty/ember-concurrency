@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { timeout } from 'ember-concurrency';
-import { test, find } from 'ember-concurrency/qunit';
+import { test } from 'ember-concurrency/qunit';
 import { module } from 'qunit';
 import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
 
@@ -59,7 +59,7 @@ test('selectors fail eagerly if waiters settle (find)', function * (assert) {
   visit('/testing-ergo/foo-settimeout');
 
   try {
-    yield find(`.eventual-button`);
+    yield this.find(`.eventual-button`);
   } catch(e) {
     assert.equal(e.message, `Couldn't find selector ".eventual-button", and all test waiters have settled.`);
   }
@@ -70,12 +70,12 @@ test('find() can wait beyond settlement using timeout option', function * (asser
   visit('/testing-ergo/foo-settimeout');
 
   try {
-    yield find(`.nonexistent-button`, { timeout: 100 });
+    yield this.find(`.nonexistent-button`, { timeout: 100 });
   } catch(e) {
     assert.equal(e.message, `Couldn't find selector ".nonexistent-button" after 100ms`);
   }
 
-  let $el = yield find(`.eventual-button`, { timeout: 1000 });
+  let $el = yield this.find(`.eventual-button`, { timeout: 1000 });
   assert.equal($el.length, 1);
 });
 
