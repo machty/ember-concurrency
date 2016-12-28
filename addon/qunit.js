@@ -42,6 +42,12 @@ const find = wrap(function * (selector, options = {}) {
   }
 });
 
+const HELPER_METHODS = {
+  find(...args) {
+    return find(...args);
+  }
+};
+
 function injectJQueryYieldables() {
   $.fn[yieldableSymbol] = function(...args) {
     return find(this.selector)[yieldableSymbol](...args);
@@ -55,6 +61,8 @@ function test(description, generatorFn) {
     QUnit.config.current._isTaskTest = true;
     let done = assert.async();
 
+    Object.assign(this, HELPER_METHODS);
+
     go([assert], generatorFn, {
       _runLoop: false,
       context: this,
@@ -63,7 +71,6 @@ function test(description, generatorFn) {
 }
 
 export {
-  test,
-  find
+  test
 };
 
