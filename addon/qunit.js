@@ -54,17 +54,20 @@ const HELPER_METHODS = {
   }),
 };
 
-function test(description, generatorFn) {
+function test(description, fn) {
   qunitTest(description, function(assert) {
+    Object.assign(this, HELPER_METHODS);
     QUnit.config.current._isTaskTest = true;
     let done = assert.async();
+    if (fn.constructor.name === 'GeneratorFunction') {
 
-    Object.assign(this, HELPER_METHODS);
-
-    go([assert], generatorFn, {
-      _runLoop: false,
-      context: this,
-    }).finally(done);
+      go([assert], fn, {
+        _runLoop: false,
+        context: this,
+      }).finally(done);
+    } else {
+      Ember.RSVP.resolve(fn.call(this, assert)).finally(done);
+    }
   });
 }
 
