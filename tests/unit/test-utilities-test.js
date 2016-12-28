@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { timeout } from 'ember-concurrency';
-import { test } from 'ember-concurrency/qunit';
+import { test, find } from 'ember-concurrency/qunit';
 import { module } from 'qunit';
 import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
 
@@ -43,7 +43,7 @@ test('yielding a selector waits for it to exist', function * (assert) {
   assert.equal($loadedSel.length, 1);
 });
 
-test('selectors fail eagerly if waiters settle', function * (assert) {
+test('selectors fail eagerly if waiters settle ($)', function * (assert) {
   assert.expect(1);
   visit('/testing-ergo/foo-settimeout');
 
@@ -52,6 +52,31 @@ test('selectors fail eagerly if waiters settle', function * (assert) {
   } catch(e) {
     assert.equal(e.message, `Couldn't find selector ".eventual-button", and all test waiters have settled.`);
   }
+});
+
+test('selectors fail eagerly if waiters settle (find)', function * (assert) {
+  assert.expect(1);
+  visit('/testing-ergo/foo-settimeout');
+
+  try {
+    yield find(`.eventual-button`);
+  } catch(e) {
+    assert.equal(e.message, `Couldn't find selector ".eventual-button", and all test waiters have settled.`);
+  }
+});
+
+test('find() can wait beyond settlement using timeout option', function * (assert) {
+  assert.expect(2);
+  visit('/testing-ergo/foo-settimeout');
+
+  try {
+    yield find(`.nonexistent-button`, { timeout: 100 });
+  } catch(e) {
+    assert.equal(e.message, `Couldn't find selector ".nonexistent-button" after 100ms`);
+  }
+
+  let $el = yield find(`.eventual-button`, { timeout: 1000 });
+  assert.equal($el.length, 1);
 });
 
 test('it is easy to test loading routes by yielding selectors rather than awaiting "settledness"', function * (assert) {
