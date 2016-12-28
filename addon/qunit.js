@@ -23,6 +23,8 @@ const find = wrap(function * (selector, options = {}) {
   while(true) {
     let $el = $(selector);
 
+    console.log(selector);
+
     if ($el.length) {
       return raw($el);
     } else {
@@ -50,6 +52,7 @@ const HELPER_METHODS = {
 
 function injectJQueryYieldables() {
   $.fn[yieldableSymbol] = function(...args) {
+    console.log(this);
     return find(this.selector)[yieldableSymbol](...args);
   };
 }
