@@ -269,3 +269,16 @@ test("handles prototype-less object args", function(assert) {
   });
 });
 
+test("updates derived state synchronously", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    doStuff: task(function * () {
+      assert.ok(this.get('doStuff.isRunning'), "Expected to see self running");
+    })
+  });
+
+  Ember.run(() => {
+    Obj.create().get('doStuff').perform();
+  });
+});
