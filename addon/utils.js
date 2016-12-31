@@ -66,7 +66,7 @@ export function createObservable(fn) {
       // TODO: publish.complete?
 
       let maybeDisposer = fn(publish);
-      let disposer = typeof maybeDisposer === 'function' ? maybeDisposer : Ember.K;
+      let disposer = typeof maybeDisposer === 'function' ? maybeDisposer : function() {};
 
       return {
         dispose() {
