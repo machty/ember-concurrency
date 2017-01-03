@@ -6,6 +6,8 @@ import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
 
 const { $ } = Ember;
 
+//window.Promise = Ember.RSVP.Promise;
+
 module('ember-concurrency testing utilities');
 
 test('sync tests work', function * (assert) {
@@ -97,9 +99,27 @@ test('it is easy to test timer loops', function * (assert) {
 });
 
 
-moduleForAcceptance('ember-concurrency testing utilities (async await acceptance)');
+moduleForAcceptance('ember-concurrency testing utilities (async await)');
 
-test('find() waits for element to exist', async function (assert) {
+test('sync tests work', async function(assert) {
+  assert.expect(1);
+  assert.ok(true);
+});
+
+test('async tests work', async function(assert) {
+  assert.expect(1);
+  await timeout(100);
+  assert.ok(true);
+});
+
+test('tests run outside of run loops', async function(assert) {
+  assert.expect(2);
+  assert.ok(!Ember.run.currentRunLoop);
+  await timeout(100);
+  assert.ok(!Ember.run.currentRunLoop);
+});
+
+test('find() waits for element to exist', async function(assert) {
   assert.expect(2);
   this.visit('/testing-ergo/foo');
 
