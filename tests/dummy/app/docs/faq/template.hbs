@@ -49,12 +49,60 @@
 
 <h4>Observables?</h4>
 
-<p>
-  I should probably write a whole article on this...
-</p>
 
-<p>
-  Much of the motivation behind ember-concurrency 
-</p>
-
+<ul>
+  <li><strong>Cancelability</strong>
+    Both Observable subscriptions and Task instances are cancelable. Observables
+    can be canceled implicitly when all subscribers have unsubscribed, or explicitly
+    by calling <code>.dispose()</code> (though this approach is frowned up in favor
+    of explicitly specifying when an observable should terminate -- e.g. via <code>takeUntil()</code>).
+    {{link-to 'Tasks can be canceled' 'docs.cancelation'}} implicitly (via 1. host object destruction, 2. the
+    <code>.restartable()</code> task modifier) or explicitly (via <code>.cancel() / .cancelAll()</code>), though,
+    like Observables, the implicit approach is preferable.
+  </li>
+  <li><strong>Multiple / Single Values</strong>
+    Observables can emit multiple values over time. Tasks don't really "emit" values,
+    but can <code>.set()</code> values on the object the task lives on so that those
+    values can be easily displayed in the template. Tasks also expose the value / error
+    returned from the task function (see {{link-to 'Derived State' 'docs.derived-state'}}),
+    which are preferable to <code>.set()</code>s where possible.
+  </li>
+  <li><strong>Composability</strong>
+    The degree to which an abstraction "composes" depends highly on the problems
+    it is trying to solve and the constraints therein. Observables as a low-level
+    primitive aren't designed to solve specific problems but rather to be as flexible
+    and composable as possible so that developers can build almost anything on top of
+    them to model just about any domain logic under the sun. So, in a sense,
+    Observables can be considered more composable (compositional?) than Tasks,
+    which, by the time they exist, are bound to the lifetime of the Ember Object
+    they live on, which constrains how and where Tasks can be used, but this tradeoff
+    is deliberate and enables some of the patterns described below.
+  </li>
+  <li><strong>Marble Diagrams vs Block Diagrams</strong>
+    The behavior of Observables and their various combinators can be
+    visualized by <a href="http://rxmarbles.com/">Marble Diagrams</a>, where each
+    marble represents a discrete event emitted. Tasks don't emit multiple values,
+    and instead make a greater emphasis on the concept of task/object lifespans, hence
+    are more easily visualized as
+    {{link-to 'possibly overlapping blocks' 'docs.task-concurrency'}} over time.
+  </li>
+  <li><strong>Readability</strong>
+    Warning: highly subjective. ember-concurrency tasks are designed to "feel" like
+    an Ember-y API; among other design goals, it should be relatively easy for a
+    newcomer to the code base come along and understand the flow and various steps
+    taken from the start to the end of the task. It is the contention of @machty,
+    who is biased but also well-versed in both observables and tasks,
+    that understanding the flow of an ember-concurrency
+    task is much "easier" than untangling a mess of Observable combinators for
+    an observable that does the same amount of work and exposes the same amount
+    of derived state as an ember-concurrency task (and @machty has written plenty
+    of apps with Observables). This clarity is due to 1) the pausable/resumable nature
+    of the generator function syntax that ember-concurrency tasks use,
+    2) the fact that tasks expose a lot of commonplace derivable state that you'd
+    otherwise have to split out / filter / merge yourself using observables
+    (e.g. <code>.isIdle / .isRunning / .concurrency</code>) and 3)
+    it's often easier to model domain state as bindable values rather than
+    discrete events.
+  </li>
+</ul>
 
