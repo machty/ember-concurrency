@@ -24,6 +24,7 @@ export default Ember.Controller.extend({
     { route: "docs.task-groups", title: "Task Groups"},
     { route: "docs.derived-state", title: "Derived State"},
     { route: "docs.testing-debugging", title: "Testing & Debugging"},
+    { route: "docs.faq", title: "FAQ & Fact Sheet"},
     { title: "Examples", route: "docs.examples",
       children: [
         {route: "docs.examples.loading-ui", title: "Loading UI"},

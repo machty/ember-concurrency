@@ -18,6 +18,7 @@ Router.map(function() {
     this.route('task-groups');
     this.route('derived-state');
     this.route('testing-debugging');
+    this.route('faq');
     this.route('examples', function() {
       this.route('increment-buttons');
       this.route('loading-ui');
