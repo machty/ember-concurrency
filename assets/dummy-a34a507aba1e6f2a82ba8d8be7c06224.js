@@ -46,7 +46,7 @@ define("dummy/application/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -237,7 +237,7 @@ define("dummy/components/ajax-throttling-example/template", ["exports"], functio
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -281,7 +281,7 @@ define("dummy/components/ajax-throttling-example/template", ["exports"], functio
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -398,7 +398,7 @@ define("dummy/components/caps-marquee/template", ["exports"], function (exports)
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -618,7 +618,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -664,7 +664,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
         var child0 = (function () {
           return {
             meta: {
-              "revision": "Ember@2.7.3",
+              "revision": "Ember@2.9.0",
               "loc": {
                 "source": null,
                 "start": {
@@ -713,7 +713,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
           var child0 = (function () {
             return {
               meta: {
-                "revision": "Ember@2.7.3",
+                "revision": "Ember@2.9.0",
                 "loc": {
                   "source": null,
                   "start": {
@@ -758,7 +758,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
           })();
           return {
             meta: {
-              "revision": "Ember@2.7.3",
+              "revision": "Ember@2.9.0",
               "loc": {
                 "source": null,
                 "start": {
@@ -816,7 +816,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
         })();
         return {
           meta: {
-            "revision": "Ember@2.7.3",
+            "revision": "Ember@2.9.0",
             "loc": {
               "source": null,
               "start": {
@@ -859,7 +859,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
       })();
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -907,7 +907,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
     var child2 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -952,7 +952,7 @@ define("dummy/components/concurrency-graph/template", ["exports"], function (exp
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -1066,7 +1066,7 @@ define("dummy/components/count-up/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -1181,7 +1181,7 @@ define("dummy/components/github-edit/template", ["exports"], function (exports) 
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -1261,7 +1261,7 @@ define("dummy/components/intro-task-oldschool/template", ["exports"], function (
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -1352,7 +1352,7 @@ define("dummy/components/intro-task/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -1447,7 +1447,7 @@ define("dummy/components/nav-header/template", ["exports"], function (exports) {
       var child0 = (function () {
         return {
           meta: {
-            "revision": "Ember@2.7.3",
+            "revision": "Ember@2.9.0",
             "loc": {
               "source": null,
               "start": {
@@ -1485,7 +1485,7 @@ define("dummy/components/nav-header/template", ["exports"], function (exports) {
       })();
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -1534,7 +1534,7 @@ define("dummy/components/nav-header/template", ["exports"], function (exports) {
       var child0 = (function () {
         return {
           meta: {
-            "revision": "Ember@2.7.3",
+            "revision": "Ember@2.9.0",
             "loc": {
               "source": null,
               "start": {
@@ -1572,7 +1572,7 @@ define("dummy/components/nav-header/template", ["exports"], function (exports) {
       })();
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -1619,7 +1619,7 @@ define("dummy/components/nav-header/template", ["exports"], function (exports) {
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -1763,7 +1763,7 @@ define("dummy/components/scrambled-text/template", ["exports"], function (export
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -1849,7 +1849,7 @@ define("dummy/components/start-task-example/template", ["exports"], function (ex
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -1986,7 +1986,7 @@ define("dummy/components/task-function-syntax-1/template", ["exports"], function
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -2069,7 +2069,7 @@ define("dummy/components/task-function-syntax-2/template", ["exports"], function
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -2156,7 +2156,7 @@ define("dummy/components/task-function-syntax-3/template", ["exports"], function
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -2248,7 +2248,7 @@ define("dummy/components/task-function-syntax-4/template", ["exports"], function
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -2343,7 +2343,7 @@ define("dummy/components/task-group-example/template", ["exports"], function (ex
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -2426,7 +2426,7 @@ define("dummy/components/task-group-example/template", ["exports"], function (ex
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -2583,7 +2583,7 @@ define("dummy/data-test/template", ["exports"], function (exports) {
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -2618,7 +2618,7 @@ define("dummy/data-test/template", ["exports"], function (exports) {
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -2653,7 +2653,7 @@ define("dummy/data-test/template", ["exports"], function (exports) {
     var child2 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -2695,7 +2695,7 @@ define("dummy/data-test/template", ["exports"], function (exports) {
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -2752,6 +2752,68 @@ define("dummy/data-test/template", ["exports"], function (exports) {
       statements: [["attribute", "onclick", ["subexpr", "perform", [["get", "myTask", ["loc", [null, [3, 26], [3, 32]]], 0, 0, 0, 0]], [], ["loc", [null, [null, null], [3, 34]]], 0, 0], 0, 0, 0, 0], ["block", "if", [["get", "myTask.isRunning", ["loc", [null, [4, 8], [4, 24]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [4, 2], [8, 9]]]], ["block", "each", [["get", "users", ["loc", [null, [12, 10], [12, 15]]], 0, 0, 0, 0]], [], 2, null, ["loc", [null, [12, 2], [14, 11]]]]],
       locals: [],
       templates: [child0, child1, child2]
+    };
+  })());
+});
+define('dummy/deprecation-test/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  exports['default'] = _ember['default'].Controller.extend({
+    myTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    }))
+  });
+});
+define("dummy/deprecation-test/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "revision": "Ember@2.9.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 6,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/deprecation-test/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h1");
+        var el2 = dom.createTextNode("Deprecation test");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("button");
+        dom.setAttribute(el1, "class", "deprecated-button");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [2]);
+        var morphs = new Array(1);
+        morphs[0] = dom.createElementMorph(element0);
+        return morphs;
+      },
+      statements: [["element", "action", [["get", "myTask.perform", ["loc", [null, [3, 43], [3, 57]]], 0, 0, 0, 0]], [], ["loc", [null, [3, 34], [3, 59]]], 0, 0]],
+      locals: [],
+      templates: []
     };
   })());
 });
@@ -2819,7 +2881,7 @@ define("dummy/docs/cancelation/template", ["exports"], function (exports) {
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -2854,7 +2916,7 @@ define("dummy/docs/cancelation/template", ["exports"], function (exports) {
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -2898,7 +2960,7 @@ define("dummy/docs/cancelation/template", ["exports"], function (exports) {
     var child2 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -2941,7 +3003,7 @@ define("dummy/docs/cancelation/template", ["exports"], function (exports) {
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -3230,7 +3292,7 @@ define("dummy/docs/child-tasks/template", ["exports"], function (exports) {
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -3265,7 +3327,7 @@ define("dummy/docs/child-tasks/template", ["exports"], function (exports) {
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -3299,7 +3361,7 @@ define("dummy/docs/child-tasks/template", ["exports"], function (exports) {
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -3434,7 +3496,7 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
       children: [{ route: "docs.task-concurrency-advanced", title: "Using maxConcurrency" }]
     }, { route: "docs.cancelation", title: "Cancelation",
       children: [{ route: "docs.error-vs-cancelation", title: "Errors vs. Cancelation (try/catch/finally)" }]
-    }, { route: "docs.child-tasks", title: "Child Tasks" }, { route: "docs.task-groups", title: "Task Groups" }, { route: "docs.derived-state", title: "Derived State" }, { route: "docs.testing-debugging", title: "Testing & Debugging" }, { title: "Examples", route: "docs.examples",
+    }, { route: "docs.child-tasks", title: "Child Tasks" }, { route: "docs.task-groups", title: "Task Groups" }, { route: "docs.derived-state", title: "Derived State" }, { route: "docs.testing-debugging", title: "Testing & Debugging" }, { route: "docs.faq", title: "FAQ & Fact Sheet" }, { title: "Examples", route: "docs.examples",
       children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Type-Ahead Search" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" }, { route: "docs.examples.route-tasks", title: "Route Tasks" }, { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" }]
     }],
 
@@ -3487,7 +3549,7 @@ define("dummy/docs/derived-state/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -3912,7 +3974,7 @@ define("dummy/docs/error-vs-cancelation/template", ["exports"], function (export
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -3947,7 +4009,7 @@ define("dummy/docs/error-vs-cancelation/template", ["exports"], function (export
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -3981,7 +4043,7 @@ define("dummy/docs/error-vs-cancelation/template", ["exports"], function (export
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -4270,7 +4332,7 @@ define("dummy/docs/examples/ajax-throttling/template", ["exports"], function (ex
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -4439,7 +4501,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -4474,7 +4536,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -4509,7 +4571,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
     var child2 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -4544,7 +4606,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
     var child3 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -4585,7 +4647,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
     var child4 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -4627,7 +4689,7 @@ define("dummy/docs/examples/autocomplete/template", ["exports"], function (expor
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -4863,7 +4925,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
           var child0 = (function () {
             return {
               meta: {
-                "revision": "Ember@2.7.3",
+                "revision": "Ember@2.9.0",
                 "loc": {
                   "source": null,
                   "start": {
@@ -4907,7 +4969,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
           var child1 = (function () {
             return {
               meta: {
-                "revision": "Ember@2.7.3",
+                "revision": "Ember@2.9.0",
                 "loc": {
                   "source": null,
                   "start": {
@@ -4950,7 +5012,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
           })();
           return {
             meta: {
-              "revision": "Ember@2.7.3",
+              "revision": "Ember@2.9.0",
               "loc": {
                 "source": null,
                 "start": {
@@ -5029,7 +5091,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
         })();
         return {
           meta: {
-            "revision": "Ember@2.7.3",
+            "revision": "Ember@2.9.0",
             "loc": {
               "source": null,
               "start": {
@@ -5157,7 +5219,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
       })();
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -5195,7 +5257,7 @@ define("dummy/docs/examples/completion-state/template", ["exports"], function (e
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -5591,7 +5653,7 @@ define("dummy/docs/examples/decorating-tasks/template", ["exports"], function (e
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -5641,7 +5703,7 @@ define("dummy/docs/examples/decorating-tasks/template", ["exports"], function (e
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -5690,7 +5752,7 @@ define("dummy/docs/examples/decorating-tasks/template", ["exports"], function (e
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -5944,7 +6006,7 @@ define("dummy/docs/examples/encapsulated-task-fun/template", ["exports"], functi
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -6015,7 +6077,7 @@ define("dummy/docs/examples/encapsulated-task-fun/template", ["exports"], functi
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -6153,7 +6215,7 @@ define("dummy/docs/examples/encapsulated-task/template", ["exports"], function (
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -6206,7 +6268,7 @@ define("dummy/docs/examples/encapsulated-task/template", ["exports"], function (
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -6265,7 +6327,7 @@ define("dummy/docs/examples/encapsulated-task/template", ["exports"], function (
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -6491,7 +6553,7 @@ define("dummy/docs/examples/increment-buttons/template", ["exports"], function (
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -6526,7 +6588,7 @@ define("dummy/docs/examples/increment-buttons/template", ["exports"], function (
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -6560,7 +6622,7 @@ define("dummy/docs/examples/increment-buttons/template", ["exports"], function (
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -6703,7 +6765,7 @@ define("dummy/docs/examples/index/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -6858,7 +6920,7 @@ define("dummy/docs/examples/joining-tasks-2/template", ["exports"], function (ex
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -6894,7 +6956,7 @@ define("dummy/docs/examples/joining-tasks-2/template", ["exports"], function (ex
       var child0 = (function () {
         return {
           meta: {
-            "revision": "Ember@2.7.3",
+            "revision": "Ember@2.9.0",
             "loc": {
               "source": null,
               "start": {
@@ -6934,7 +6996,7 @@ define("dummy/docs/examples/joining-tasks-2/template", ["exports"], function (ex
       })();
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -6995,7 +7057,7 @@ define("dummy/docs/examples/joining-tasks-2/template", ["exports"], function (ex
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -7192,7 +7254,7 @@ define("dummy/docs/examples/joining-tasks/template", ["exports"], function (expo
       var child0 = (function () {
         return {
           meta: {
-            "revision": "Ember@2.7.3",
+            "revision": "Ember@2.9.0",
             "loc": {
               "source": null,
               "start": {
@@ -7232,7 +7294,7 @@ define("dummy/docs/examples/joining-tasks/template", ["exports"], function (expo
       })();
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -7293,7 +7355,7 @@ define("dummy/docs/examples/joining-tasks/template", ["exports"], function (expo
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -7479,7 +7541,7 @@ define("dummy/docs/examples/loading-ui/template", ["exports"], function (exports
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -7514,7 +7576,7 @@ define("dummy/docs/examples/loading-ui/template", ["exports"], function (exports
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -7555,7 +7617,7 @@ define("dummy/docs/examples/loading-ui/template", ["exports"], function (exports
     var child2 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -7590,7 +7652,7 @@ define("dummy/docs/examples/loading-ui/template", ["exports"], function (exports
     var child3 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -7630,7 +7692,7 @@ define("dummy/docs/examples/loading-ui/template", ["exports"], function (exports
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -7876,7 +7938,7 @@ define("dummy/docs/examples/modal-fun/template", ["exports"], function (exports)
         var child0 = (function () {
           return {
             meta: {
-              "revision": "Ember@2.7.3",
+              "revision": "Ember@2.9.0",
               "loc": {
                 "source": null,
                 "start": {
@@ -7927,7 +7989,7 @@ define("dummy/docs/examples/modal-fun/template", ["exports"], function (exports)
         var child1 = (function () {
           return {
             meta: {
-              "revision": "Ember@2.7.3",
+              "revision": "Ember@2.9.0",
               "loc": {
                 "source": null,
                 "start": {
@@ -7977,7 +8039,7 @@ define("dummy/docs/examples/modal-fun/template", ["exports"], function (exports)
         })();
         return {
           meta: {
-            "revision": "Ember@2.7.3",
+            "revision": "Ember@2.9.0",
             "loc": {
               "source": null,
               "start": {
@@ -8073,7 +8135,7 @@ define("dummy/docs/examples/modal-fun/template", ["exports"], function (exports)
       })();
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -8111,7 +8173,7 @@ define("dummy/docs/examples/modal-fun/template", ["exports"], function (exports)
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -8235,12 +8297,115 @@ define("dummy/docs/examples/modal-fun/template", ["exports"], function (exports)
     };
   })());
 });
+define('dummy/docs/examples/observables/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+
+  var Observable = window.Rx.Observable;
+
+  var range = Observable.range;
+  exports['default'] = _ember['default'].Controller.extend(_ember['default'].Evented, {
+    values: null,
+
+    // BEGIN-SNIPPET observables-timetable
+    computeStuff: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      var values;
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            values = _ember['default'].A();
+
+            this.set('values', values);
+            context$1$0.next = 4;
+            return (0, _emberConcurrency.subscribe)(range(5, 5), regeneratorRuntime.mark(function callee$1$0(x) {
+              return regeneratorRuntime.wrap(function callee$1$0$(context$2$0) {
+                while (1) switch (context$2$0.prev = context$2$0.next) {
+                  case 0:
+                    context$2$0.next = 2;
+                    return (0, _emberConcurrency.subscribe)(range(10, 3), regeneratorRuntime.mark(function callee$2$0(y) {
+                      return regeneratorRuntime.wrap(function callee$2$0$(context$3$0) {
+                        while (1) switch (context$3$0.prev = context$3$0.next) {
+                          case 0:
+                            values.pushObject({ message: 'What is ' + x + ' x ' + y + ' ? ' });
+                            context$3$0.next = 3;
+                            return (0, _emberConcurrency.timeout)(200);
+
+                          case 3:
+                            values.pushObject({ message: x * y + '. ' });
+
+                          case 4:
+                          case 'end':
+                            return context$3$0.stop();
+                        }
+                      }, callee$2$0, this);
+                    })).enqueue();
+
+                  case 2:
+                    values.pushObject({ message: "\n" });
+
+                  case 3:
+                  case 'end':
+                    return context$2$0.stop();
+                }
+              }, callee$1$0, this);
+            })).enqueue();
+
+          case 4:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    })).restartable(),
+    // END-SNIPPET
+
+    // BEGIN-SNIPPET observables-evented
+    fooStatus: null,
+    listenForFooInternally: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
+      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+          case 0:
+            this.set('fooStatus', 'Waiting for values...');
+
+            context$1$0.next = 3;
+            return (0, _emberConcurrency.subscribe)((0, _emberConcurrency.events)(this, 'foo'), regeneratorRuntime.mark(function callee$1$0(x) {
+              return regeneratorRuntime.wrap(function callee$1$0$(context$2$0) {
+                while (1) switch (context$2$0.prev = context$2$0.next) {
+                  case 0:
+                    this.set('fooStatus', 'Got value ' + x + ', thinking...');
+                    context$2$0.next = 3;
+                    return (0, _emberConcurrency.timeout)(1500);
+
+                  case 3:
+                    this.set('fooStatus', this.fooStatus + ' Done');
+                    context$2$0.next = 6;
+                    return (0, _emberConcurrency.timeout)(200);
+
+                  case 6:
+                  case 'end':
+                    return context$2$0.stop();
+                }
+              }, callee$1$0, this);
+            })).enqueue();
+
+          case 3:
+          case 'end':
+            return context$1$0.stop();
+        }
+      }, callee$0$0, this);
+    })).on('init'),
+
+    actions: {
+      triggerFoo: function triggerFoo() {
+        this.trigger('foo', Math.floor(100 * Math.random()));
+      }
+    }
+    // END-SNIPPET
+  });
+});
 define("dummy/docs/examples/observables/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -8278,7 +8443,7 @@ define("dummy/docs/examples/observables/template", ["exports"], function (export
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -8479,7 +8644,7 @@ define("dummy/docs/examples/route-tasks/template", ["exports"], function (export
       var child0 = (function () {
         return {
           meta: {
-            "revision": "Ember@2.7.3",
+            "revision": "Ember@2.9.0",
             "loc": {
               "source": null,
               "start": {
@@ -8519,7 +8684,7 @@ define("dummy/docs/examples/route-tasks/template", ["exports"], function (export
       })();
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -8565,7 +8730,7 @@ define("dummy/docs/examples/route-tasks/template", ["exports"], function (export
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -8775,7 +8940,7 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -8810,7 +8975,7 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -8845,7 +9010,7 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
     var child2 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -8885,7 +9050,7 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -9072,11 +9237,418 @@ define("dummy/docs/examples/task-groups/template", ["exports"], function (export
     };
   })());
 });
+define("dummy/docs/faq/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "revision": "Ember@2.9.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 41,
+              "column": 4
+            },
+            "end": {
+              "line": 41,
+              "column": 75
+            }
+          },
+          "moduleName": "dummy/docs/faq/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("Docs: implicit vs explicit cancelation");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "revision": "Ember@2.9.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 59,
+              "column": 4
+            },
+            "end": {
+              "line": 59,
+              "column": 58
+            }
+          },
+          "moduleName": "dummy/docs/faq/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("Tasks can be canceled");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child2 = (function () {
+      return {
+        meta: {
+          "revision": "Ember@2.9.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 67,
+              "column": 41
+            },
+            "end": {
+              "line": 67,
+              "column": 89
+            }
+          },
+          "moduleName": "dummy/docs/faq/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("Derived State");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child3 = (function () {
+      return {
+        meta: {
+          "revision": "Ember@2.9.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 87,
+              "column": 4
+            },
+            "end": {
+              "line": 87,
+              "column": 69
+            }
+          },
+          "moduleName": "dummy/docs/faq/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("possibly overlapping blocks");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "revision": "Ember@2.9.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 109,
+            "column": 0
+          }
+        },
+        "moduleName": "dummy/docs/faq/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("h2");
+        var el2 = dom.createTextNode("FAQ & Fact Sheet & Best Practices");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("Does ember-concurrency work with older browsers?");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Yes. The ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("a");
+        dom.setAttribute(el2, "href", "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*");
+        var el3 = dom.createTextNode("ES6 Generator Function syntax");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  that ember-concurrency relies on is automatically transpiled using Babel\n  and ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("a");
+        dom.setAttribute(el2, "href", "https://github.com/facebook/regenerator");
+        var el3 = dom.createTextNode("regenerator");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(", so\n  it'll work on all browsers supported by Ember.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h3");
+        var el2 = dom.createTextNode("How do ember-concurrency Tasks compare to...");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Promises?");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Promises aren't cancelable, and as of 12/2016, there is no active TC39 specification\n  under development for adding cancelation to promises.\n  EC Tasks, in contrast, are cancelable.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  The design of Promises is such that once a Promise has been created, it's not\n  possible to externally reach in and resolve/reject a Promise. This constraint\n  encourages a clear, unidirectional, structured architecture for building\n  asynchronous chains of logic.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("\n  Like Promises, the return/reject value of an EC Task cannot be externally\n  set / overridden; in other words, once a Task has been performed, there's\n  no way to externally force it to return/reject early, with the exception of\n  cancelation. When you ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode(".cancel()");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(" a task instance, the task\n  will \"return\" from wherever it is currently paused (e.g. at a ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("code");
+        var el3 = dom.createTextNode("yield");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode(").\n  Presently, there is no API to \"delay\" the cancelation of a Task once a cancel\n  has been requested, but this functionality might be added to future APIs.\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ul");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("a");
+        dom.setAttribute(el3, "href", "https://github.com/machty/ember-concurrency/issues/98");
+        var el4 = dom.createTextNode("\n      API discussion: cancel tokens, non-preemptive APIs\n    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("h4");
+        var el2 = dom.createTextNode("Observables?");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("ul");
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("Cancelability");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    Both Observable subscriptions and Task instances are cancelable. Observables\n    can be canceled implicitly when all subscribers have unsubscribed, or explicitly\n    by calling ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".dispose()");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" (though this approach is frowned up in favor\n    of explicitly specifying when an observable should terminate -- e.g. via ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode("takeUntil()");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(").\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" implicitly (via 1. host object destruction, 2. the\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".restartable()");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" task modifier) or explicitly (via ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".cancel() / .cancelAll()");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("), though,\n    like Observables, the implicit approach is preferable.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("Multiple / Single Values");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    Observables can emit multiple values over time. Tasks don't really \"emit\" values,\n    but can ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".set()");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" values on the object the task lives on so that those\n    values can be easily displayed in the template. Tasks also expose the value / error\n    returned from the task function (see ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("),\n    which are preferable to ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".set()");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("s where possible.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("Composability");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    The degree to which an abstraction \"composes\" depends highly on the problems\n    it is trying to solve and the constraints therein. Observables as a low-level\n    primitive aren't designed to solve specific problems but rather to be as flexible\n    and composable as possible so that developers can build almost anything on top of\n    them to model just about any domain logic under the sun. So, in a sense,\n    Observables can be considered more composable (compositional?) than Tasks,\n    which, by the time they exist, are bound to the lifetime of the Ember Object\n    they live on, which constrains how and where Tasks can be used, but this tradeoff\n    is deliberate and enables some of the patterns described below.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("Marble Diagrams vs Block Diagrams");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    The behavior of Observables and their various combinators can be\n    visualized by ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("a");
+        dom.setAttribute(el3, "href", "http://rxmarbles.com/");
+        var el4 = dom.createTextNode("Marble Diagrams");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(", where each\n    marble represents a discrete event emitted. Tasks don't emit multiple values,\n    and instead make a greater emphasis on the concept of task/object lifespans, hence\n    are more easily visualized as\n    ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(" over time.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n  ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("li");
+        var el3 = dom.createElement("strong");
+        var el4 = dom.createTextNode("Readability");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    Warning: highly subjective. ember-concurrency tasks are designed to \"feel\" like\n    an Ember-y API; among other design goals, it should be relatively easy for a\n    newcomer to the code base come along and understand the flow and various steps\n    taken from the start to the end of the task. It is the contention of @machty,\n    who is biased but also well-versed in both observables and tasks,\n    that understanding the flow of an ember-concurrency\n    task is much \"easier\" than untangling a mess of Observable combinators for\n    an observable that does the same amount of work and exposes the same amount\n    of derived state as an ember-concurrency task (and @machty has written plenty\n    of apps with Observables). This clarity is due to 1) the pausable/resumable nature\n    of the generator function syntax that ember-concurrency tasks use,\n    2) the fact that tasks expose a lot of commonplace derivable state that you'd\n    otherwise have to split out / filter / merge yourself using observables\n    (e.g. ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("code");
+        var el4 = dom.createTextNode(".isIdle / .isRunning / .concurrency");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode(") and 3)\n    it's often easier to model domain state as bindable values rather than\n    discrete events.\n  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [20]);
+        var morphs = new Array(4);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [16, 1]), 1, 1);
+        morphs[1] = dom.createMorphAt(dom.childAt(element0, [1]), 6, 6);
+        morphs[2] = dom.createMorphAt(dom.childAt(element0, [3]), 4, 4);
+        morphs[3] = dom.createMorphAt(dom.childAt(element0, [7]), 4, 4);
+        return morphs;
+      },
+      statements: [["block", "link-to", ["docs.cancelation"], [], 0, null, ["loc", [null, [41, 4], [41, 75]]]], ["block", "link-to", ["docs.cancelation"], [], 1, null, ["loc", [null, [59, 4], [59, 58]]]], ["block", "link-to", ["docs.derived-state"], [], 2, null, ["loc", [null, [67, 41], [67, 89]]]], ["block", "link-to", ["docs.task-concurrency"], [], 3, null, ["loc", [null, [87, 4], [87, 69]]]]],
+      locals: [],
+      templates: [child0, child1, child2, child3]
+    };
+  })());
+});
 define("dummy/docs/index/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -9356,7 +9928,7 @@ define("dummy/docs/installation/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -9446,7 +10018,7 @@ define("dummy/docs/task-concurrency-advanced/template", ["exports"], function (e
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -9653,7 +10225,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -9688,7 +10260,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -9722,7 +10294,7 @@ define("dummy/docs/task-concurrency/template", ["exports"], function (exports) {
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -9984,7 +10556,7 @@ define("dummy/docs/task-function-syntax/template", ["exports"], function (export
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -10263,7 +10835,7 @@ define("dummy/docs/task-groups/template", ["exports"], function (exports) {
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -10298,7 +10870,7 @@ define("dummy/docs/task-groups/template", ["exports"], function (exports) {
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -10344,7 +10916,7 @@ define("dummy/docs/task-groups/template", ["exports"], function (exports) {
     var child2 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -10389,7 +10961,7 @@ define("dummy/docs/task-groups/template", ["exports"], function (exports) {
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -10566,7 +11138,7 @@ define("dummy/docs/template", ["exports"], function (exports) {
         var child0 = (function () {
           return {
             meta: {
-              "revision": "Ember@2.7.3",
+              "revision": "Ember@2.9.0",
               "loc": {
                 "source": null,
                 "start": {
@@ -10604,7 +11176,7 @@ define("dummy/docs/template", ["exports"], function (exports) {
         })();
         return {
           meta: {
-            "revision": "Ember@2.7.3",
+            "revision": "Ember@2.9.0",
             "loc": {
               "source": null,
               "start": {
@@ -10645,7 +11217,7 @@ define("dummy/docs/template", ["exports"], function (exports) {
       var child1 = (function () {
         return {
           meta: {
-            "revision": "Ember@2.7.3",
+            "revision": "Ember@2.9.0",
             "loc": {
               "source": null,
               "start": {
@@ -10688,7 +11260,7 @@ define("dummy/docs/template", ["exports"], function (exports) {
           var child0 = (function () {
             return {
               meta: {
-                "revision": "Ember@2.7.3",
+                "revision": "Ember@2.9.0",
                 "loc": {
                   "source": null,
                   "start": {
@@ -10726,7 +11298,7 @@ define("dummy/docs/template", ["exports"], function (exports) {
           })();
           return {
             meta: {
-              "revision": "Ember@2.7.3",
+              "revision": "Ember@2.9.0",
               "loc": {
                 "source": null,
                 "start": {
@@ -10772,7 +11344,7 @@ define("dummy/docs/template", ["exports"], function (exports) {
         })();
         return {
           meta: {
-            "revision": "Ember@2.7.3",
+            "revision": "Ember@2.9.0",
             "loc": {
               "source": null,
               "start": {
@@ -10818,7 +11390,7 @@ define("dummy/docs/template", ["exports"], function (exports) {
       })();
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -10870,7 +11442,7 @@ define("dummy/docs/template", ["exports"], function (exports) {
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -10878,7 +11450,7 @@ define("dummy/docs/template", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 39,
+            "line": 41,
             "column": 0
           }
         },
@@ -10938,6 +11510,22 @@ define("dummy/docs/template", ["exports"], function (exports) {
         dom.appendChild(el3, el4);
         var el4 = dom.createTextNode("\n\n      ");
         dom.appendChild(el3, el4);
+        var el4 = dom.createElement("br");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode(" ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("br");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode(" ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("br");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode(" ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("br");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode(" \n\n      ");
+        dom.appendChild(el3, el4);
         var el4 = dom.createComment("");
         dom.appendChild(el3, el4);
         var el4 = dom.createTextNode("\n    ");
@@ -10961,10 +11549,10 @@ define("dummy/docs/template", ["exports"], function (exports) {
         morphs[1] = dom.createMorphAt(element2, 1, 1);
         morphs[2] = dom.createMorphAt(element2, 3, 3);
         morphs[3] = dom.createMorphAt(element2, 5, 5);
-        morphs[4] = dom.createMorphAt(element2, 7, 7);
+        morphs[4] = dom.createMorphAt(element2, 15, 15);
         return morphs;
       },
-      statements: [["block", "each", [["get", "tableOfContents", ["loc", [null, [6, 18], [6, 33]]], 0, 0, 0, 0]], ["key", "route"], 0, null, ["loc", [null, [6, 10], [24, 19]]]], ["inline", "nav-header", [], ["nextTopic", ["subexpr", "@mut", [["get", "nextTopic", ["loc", [null, [30, 29], [30, 38]]], 0, 0, 0, 0]], [], [], 0, 0], "prevTopic", ["subexpr", "@mut", [["get", "prevTopic", ["loc", [null, [30, 49], [30, 58]]], 0, 0, 0, 0]], [], [], 0, 0]], ["loc", [null, [30, 6], [30, 60]]], 0, 0], ["content", "github-edit", ["loc", [null, [31, 6], [31, 21]]], 0, 0, 0, 0], ["content", "outlet", ["loc", [null, [33, 6], [33, 16]]], 0, 0, 0, 0], ["inline", "nav-header", [], ["nextTopic", ["subexpr", "@mut", [["get", "nextTopic", ["loc", [null, [35, 29], [35, 38]]], 0, 0, 0, 0]], [], [], 0, 0], "prevTopic", ["subexpr", "@mut", [["get", "prevTopic", ["loc", [null, [35, 49], [35, 58]]], 0, 0, 0, 0]], [], [], 0, 0]], ["loc", [null, [35, 6], [35, 60]]], 0, 0]],
+      statements: [["block", "each", [["get", "tableOfContents", ["loc", [null, [6, 18], [6, 33]]], 0, 0, 0, 0]], ["key", "route"], 0, null, ["loc", [null, [6, 10], [24, 19]]]], ["inline", "nav-header", [], ["nextTopic", ["subexpr", "@mut", [["get", "nextTopic", ["loc", [null, [30, 29], [30, 38]]], 0, 0, 0, 0]], [], [], 0, 0], "prevTopic", ["subexpr", "@mut", [["get", "prevTopic", ["loc", [null, [30, 49], [30, 58]]], 0, 0, 0, 0]], [], [], 0, 0]], ["loc", [null, [30, 6], [30, 60]]], 0, 0], ["content", "github-edit", ["loc", [null, [31, 6], [31, 21]]], 0, 0, 0, 0], ["content", "outlet", ["loc", [null, [33, 6], [33, 16]]], 0, 0, 0, 0], ["inline", "nav-header", [], ["nextTopic", ["subexpr", "@mut", [["get", "nextTopic", ["loc", [null, [37, 29], [37, 38]]], 0, 0, 0, 0]], [], [], 0, 0], "prevTopic", ["subexpr", "@mut", [["get", "prevTopic", ["loc", [null, [37, 49], [37, 58]]], 0, 0, 0, 0]], [], [], 0, 0]], ["loc", [null, [37, 6], [37, 60]]], 0, 0]],
       locals: [],
       templates: [child0]
     };
@@ -10974,7 +11562,7 @@ define("dummy/docs/testing-debugging/template", ["exports"], function (exports) 
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -11234,7 +11822,7 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -11268,7 +11856,7 @@ define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -11487,7 +12075,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -11610,7 +12198,7 @@ define("dummy/experimental-prediction/template", ["exports"], function (exports)
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -11765,7 +12353,7 @@ define("dummy/helpers-test/template", ["exports"], function (exports) {
     var child0 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -11800,7 +12388,7 @@ define("dummy/helpers-test/template", ["exports"], function (exports) {
     var child1 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -11835,7 +12423,7 @@ define("dummy/helpers-test/template", ["exports"], function (exports) {
     var child2 = (function () {
       return {
         meta: {
-          "revision": "Ember@2.7.3",
+          "revision": "Ember@2.9.0",
           "loc": {
             "source": null,
             "start": {
@@ -11869,7 +12457,7 @@ define("dummy/helpers-test/template", ["exports"], function (exports) {
     })();
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -12051,6 +12639,27 @@ define('dummy/helpers/scale', ['exports', 'ember'], function (exports, _ember) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
   exports.scale = scale;
+
+  /*
+  export function scale([value, lowLimit, highLimit]) {
+    if (value === Infinity) {
+      value = highLimit;
+    }
+  
+    let denom = (highLimit - lowLimit);
+    if (denom === 0) {
+      return 0;
+    }
+  
+    let val = 100 * (value - lowLimit) / denom;
+  
+    if (val < 0) {
+      debugger;
+    }
+  
+    return Math.min(100, val);
+  }
+  */
 
   function scale(_ref /*, hash*/) {
     var _ref2 = _slicedToArray(_ref, 3);
@@ -12368,6 +12977,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
       this.route('task-groups');
       this.route('derived-state');
       this.route('testing-debugging');
+      this.route('faq');
       this.route('examples', function () {
         this.route('increment-buttons');
         this.route('loading-ui');
@@ -12380,6 +12990,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
         this.route('joining-tasks');
         this.route('joining-tasks-2');
         this.route('decorating-tasks');
+        this.route('observables');
         this.route('task-groups');
         this.route('completion-state');
         this.route('encapsulated-task');
@@ -12390,12 +13001,7 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
     });
     this.route('experimental-prediction');
     this.route('helpers-test');
-    this.route('testing-ergo', function () {
-      this.route('foo');
-      this.route('foo-settimeout');
-      this.route('slow');
-      this.route('timer-loop');
-    });
+    this.route('deprecation-test');
     this.route('data-test');
     this.route('task-injection-test');
   });
@@ -12457,6 +13063,8 @@ define("dummy/snippets", ["exports"], function (exports) {
     "loading-ui-controller.js": "export default Ember.Controller.extend({\n  askQuestion: task(function * () {\n    yield timeout(1000);\n    this.set('result', Math.random());\n  }).drop(),\n\n  result: null,\n});",
     "modal-fun-controller.js": "import { task, timeout, taskGroup } from 'ember-concurrency';\n\nlet PAUSE_FOREVER = Ember.RSVP.defer().promise;\n\nexport default Ember.Controller.extend({\n  openWizard: task({\n    perform: function * () {\n      this.get('stepOne').perform();\n      yield PAUSE_FOREVER;\n    },\n\n    states: taskGroup().restartable(),\n    currentState: alias('states.last'),\n\n    next: taskByName('next'),\n    prev: taskByName('prev'),\n\n    stepOne: state({\n      title: \"Step 1\",\n      next: 'stepTwo',\n      index: 0,\n    }),\n\n    stepTwo: state({\n      perform: function * () {\n        while (true) {\n          yield timeout(500);\n          this.set('title', reverse(this.title));\n        }\n      },\n\n      title: \"Step 2\",\n      prev: 'stepOne',\n      next: 'stepThree',\n      index: 1,\n    }),\n\n    stepThree: state({\n      title: \"Step 3\",\n      prev: 'stepTwo',\n      index: 2,\n    }),\n  }),\n});\n\nfunction state(attrs) {\n  let defaultAttrs = {\n    perform: function * () {\n      yield PAUSE_FOREVER;\n    }\n  };\n  objectAssign(defaultAttrs, attrs);\n  return task(defaultAttrs).group('states');\n}\n\nfunction taskByName(key) {\n  let currentKey = `currentState.${key}`;\n  return computed(currentKey, function() {\n    let name = this.get(currentKey);\n    if (!name) { return null; }\n    return this.get(name);\n  });\n}\n",
     "modal-fun-template.hbs": "<p>\n  <button onclick={{perform openWizard}}\n          class={{if openWizard.isIdle 'clickable'}}>\n    Open Wizard\n  </button>\n</p>\n\n{{#with openWizard.lastRunning as |modal|}}\n  {{#modal-dialog}}\n    <div class=\"fun-modal-container\">\n      <div class=\"row\">\n        <div class=\"u-pull-right\">\n          <button onclick={{cancel-all modal.task}}>Close</button>\n        </div>\n      </div>\n\n      <h1>{{modal.currentState.title}}</h1>\n      <p>Wat wat wat</p>\n\n      <div class=\"row\">\n        {{#if modal.prev}}\n          <div class=\"u-pull-left\">\n            <button onclick={{perform modal.prev}}>Prev</button>\n          </div>\n        {{/if}}\n\n        {{#if modal.next}}\n          <div class=\"u-pull-right\">\n            <button onclick={{perform modal.next}}>Next</button>\n          </div>\n        {{/if}}\n      </div>\n    </div>\n  {{/modal-dialog}}\n{{/with}}\n",
+    "observables-evented.js": "  fooStatus: null,\n  listenForFooInternally: task(function * () {\n    this.set('fooStatus', `Waiting for values...`);\n\n    yield subscribe(events(this, 'foo'), function * (x) {\n      this.set('fooStatus', `Got value ${x}, thinking...`);\n      yield timeout(1500);\n      this.set('fooStatus', `${this.fooStatus} Done`);\n      yield timeout(200);\n    }).enqueue();\n  }).on('init'),\n\n  actions: {\n    triggerFoo() {\n      this.trigger('foo', Math.floor(100*Math.random()));\n    },\n  }",
+    "observables-timetable.js": "  computeStuff: task(function * () {\n    let values = Ember.A();\n    this.set('values', values);\n    yield subscribe(range(5,5), function * (x) {\n      yield subscribe(range(10,3), function * (y) {\n        values.pushObject({ message: `What is ${x} x ${y} ? ` });\n        yield timeout(200);\n        values.pushObject({ message: `${x*y}. `});\n      }).enqueue();\n      values.pushObject({ message: \"\\n\" });\n    }).enqueue();\n  }).restartable(),",
     "poll-loop-break-1.js": "  pollForChanges: task(function * () {\n    while(true) {\n      yield pollServerForChanges();\n      if (Ember.testing) { return; }\n      yield timeout(5000);\n    }\n  })\n",
     "poll-loop-classic.js": "  pollForChanges() {\n    if (this.isDestroyed) { return; }\n    pollServerForChanges().then(() => {\n      Ember.run.later(this, 'pollForChanges', 5000);\n    });\n  }\n",
     "poll-loop.js": "  pollForChanges: task(function * () {\n    while(true) {\n      yield pollServerForChanges();\n      yield timeout(5000);\n    }\n  })\n",
@@ -12524,7 +13132,7 @@ define("dummy/task-injection-test/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -12583,7 +13191,7 @@ define("dummy/templates/components/code-snippet", ["exports"], function (exports
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
       meta: {
-        "revision": "Ember@2.7.3",
+        "revision": "Ember@2.9.0",
         "loc": {
           "source": null,
           "start": {
@@ -12637,464 +13245,6 @@ define('dummy/templates/components/tether-dialog', ['exports', 'ember-modal-dial
     }
   });
 });
-define('dummy/testing-ergo/foo-settimeout/controller', ['exports', 'ember', 'ember-concurrency', 'ember-concurrency/utils'], function (exports, _ember, _emberConcurrency, _emberConcurrencyUtils) {
-  exports['default'] = _ember['default'].Controller.extend({
-    isShowingButton: false,
-    showButtonSoon: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
-      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
-        while (1) switch (context$1$0.prev = context$1$0.next) {
-          case 0:
-            this.set('isShowingButton', false);
-            context$1$0.next = 3;
-            return (0, _emberConcurrencyUtils.rawTimeout)(500);
-
-          case 3:
-            this.set('isShowingButton', true);
-
-          case 4:
-          case 'end':
-            return context$1$0.stop();
-        }
-      }, callee$0$0, this);
-    }))
-  });
-});
-define('dummy/testing-ergo/foo-settimeout/route', ['exports', 'ember'], function (exports, _ember) {
-  exports['default'] = _ember['default'].Route.extend({
-    setupController: function setupController(controller) {
-      controller.get('showButtonSoon').perform();
-    }
-  });
-});
-define("dummy/testing-ergo/foo-settimeout/template", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template((function () {
-    var child0 = (function () {
-      return {
-        meta: {
-          "revision": "Ember@2.7.3",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 1,
-              "column": 0
-            },
-            "end": {
-              "line": 3,
-              "column": 0
-            }
-          },
-          "moduleName": "dummy/testing-ergo/foo-settimeout/template.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          dom.setAttribute(el1, "class", "eventual-button");
-          var el2 = dom.createTextNode("Eventual Button");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes() {
-          return [];
-        },
-        statements: [],
-        locals: [],
-        templates: []
-      };
-    })();
-    return {
-      meta: {
-        "revision": "Ember@2.7.3",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 4,
-            "column": 0
-          }
-        },
-        "moduleName": "dummy/testing-ergo/foo-settimeout/template.hbs"
-      },
-      isEmpty: false,
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(1);
-        morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
-        dom.insertBoundary(fragment, 0);
-        dom.insertBoundary(fragment, null);
-        return morphs;
-      },
-      statements: [["block", "if", [["get", "isShowingButton", ["loc", [null, [1, 6], [1, 21]]], 0, 0, 0, 0]], [], 0, null, ["loc", [null, [1, 0], [3, 7]]]]],
-      locals: [],
-      templates: [child0]
-    };
-  })());
-});
-define('dummy/testing-ergo/foo/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
-  exports['default'] = _ember['default'].Controller.extend({
-    isShowingButton: false,
-    showButtonSoon: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
-      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
-        while (1) switch (context$1$0.prev = context$1$0.next) {
-          case 0:
-            this.set('isShowingButton', false);
-            context$1$0.next = 3;
-            return (0, _emberConcurrency.timeout)(200);
-
-          case 3:
-            this.set('isShowingButton', true);
-
-          case 4:
-          case 'end':
-            return context$1$0.stop();
-        }
-      }, callee$0$0, this);
-    })),
-
-    value: 0,
-    actions: {
-      setValue: function setValue() {
-        this.set('value', 123);
-      }
-    }
-  });
-});
-define('dummy/testing-ergo/foo/route', ['exports', 'ember'], function (exports, _ember) {
-  exports['default'] = _ember['default'].Route.extend({
-    setupController: function setupController(controller) {
-      controller.get('showButtonSoon').perform();
-    }
-  });
-});
-define("dummy/testing-ergo/foo/template", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template((function () {
-    var child0 = (function () {
-      return {
-        meta: {
-          "revision": "Ember@2.7.3",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 1,
-              "column": 0
-            },
-            "end": {
-              "line": 4,
-              "column": 0
-            }
-          },
-          "moduleName": "dummy/testing-ergo/foo/template.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          dom.setAttribute(el1, "class", "eventual-button");
-          var el2 = dom.createTextNode("Eventual Button");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          dom.setAttribute(el1, "class", "value");
-          var el2 = dom.createTextNode("value=");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element0 = dom.childAt(fragment, [1]);
-          var morphs = new Array(2);
-          morphs[0] = dom.createAttrMorph(element0, 'onclick');
-          morphs[1] = dom.createMorphAt(dom.childAt(fragment, [3]), 1, 1);
-          return morphs;
-        },
-        statements: [["attribute", "onclick", ["subexpr", "action", ["setValue"], [], ["loc", [null, [null, null], [2, 60]]], 0, 0], 0, 0, 0, 0], ["content", "value", ["loc", [null, [3, 27], [3, 36]]], 0, 0, 0, 0]],
-        locals: [],
-        templates: []
-      };
-    })();
-    var child1 = (function () {
-      return {
-        meta: {
-          "revision": "Ember@2.7.3",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 4,
-              "column": 0
-            },
-            "end": {
-              "line": 6,
-              "column": 0
-            }
-          },
-          "moduleName": "dummy/testing-ergo/foo/template.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("div");
-          dom.setAttribute(el1, "class", "disappearing-content");
-          var el2 = dom.createTextNode("Disappearing Content");
-          dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes() {
-          return [];
-        },
-        statements: [],
-        locals: [],
-        templates: []
-      };
-    })();
-    return {
-      meta: {
-        "revision": "Ember@2.7.3",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 7,
-            "column": 0
-          }
-        },
-        "moduleName": "dummy/testing-ergo/foo/template.hbs"
-      },
-      isEmpty: false,
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(1);
-        morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
-        dom.insertBoundary(fragment, 0);
-        dom.insertBoundary(fragment, null);
-        return morphs;
-      },
-      statements: [["block", "if", [["get", "isShowingButton", ["loc", [null, [1, 6], [1, 21]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [1, 0], [6, 7]]]]],
-      locals: [],
-      templates: [child0, child1]
-    };
-  })());
-});
-define("dummy/testing-ergo/loading/template", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template((function () {
-    return {
-      meta: {
-        "revision": "Ember@2.7.3",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 2,
-            "column": 0
-          }
-        },
-        "moduleName": "dummy/testing-ergo/loading/template.hbs"
-      },
-      isEmpty: false,
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1, "class", "loading-message");
-        var el2 = dom.createTextNode("I am a loading route.");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes() {
-        return [];
-      },
-      statements: [],
-      locals: [],
-      templates: []
-    };
-  })());
-});
-define('dummy/testing-ergo/slow/route', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
-  exports['default'] = _ember['default'].Route.extend({
-    model: function model() {
-      return (0, _emberConcurrency.timeout)(200).then(function () {});
-    }
-  });
-});
-define("dummy/testing-ergo/slow/template", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template((function () {
-    return {
-      meta: {
-        "revision": "Ember@2.7.3",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 2,
-            "column": 0
-          }
-        },
-        "moduleName": "dummy/testing-ergo/slow/template.hbs"
-      },
-      isEmpty: false,
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("div");
-        dom.setAttribute(el1, "class", "slow-banner");
-        var el2 = dom.createTextNode("Welcome to slow route.");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes() {
-        return [];
-      },
-      statements: [],
-      locals: [],
-      templates: []
-    };
-  })());
-});
-define('dummy/testing-ergo/timer-loop/controller', ['exports', 'ember'], function (exports, _ember) {
-  exports['default'] = _ember['default'].Controller.extend({
-    foo: 0
-  });
-});
-define('dummy/testing-ergo/timer-loop/route', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
-  exports['default'] = _ember['default'].Route.extend({
-    setupController: function setupController() {
-      this.get('loopingTask').perform();
-    },
-    loopingTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function callee$0$0() {
-      return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
-        while (1) switch (context$1$0.prev = context$1$0.next) {
-          case 0:
-            if (!true) {
-              context$1$0.next = 6;
-              break;
-            }
-
-            this.controller.incrementProperty('foo');
-            context$1$0.next = 4;
-            return (0, _emberConcurrency.timeout)(200);
-
-          case 4:
-            context$1$0.next = 0;
-            break;
-
-          case 6:
-          case 'end':
-            return context$1$0.stop();
-        }
-      }, callee$0$0, this);
-    }))
-  });
-});
-define("dummy/testing-ergo/timer-loop/template", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template((function () {
-    return {
-      meta: {
-        "revision": "Ember@2.7.3",
-        "loc": {
-          "source": null,
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 2,
-            "column": 0
-          }
-        },
-        "moduleName": "dummy/testing-ergo/timer-loop/template.hbs"
-      },
-      isEmpty: false,
-      arity: 0,
-      cachedFragment: null,
-      hasRendered: false,
-      buildFragment: function buildFragment(dom) {
-        var el0 = dom.createDocumentFragment();
-        var el1 = dom.createElement("h1");
-        dom.setAttribute(el1, "class", "timer-loop-message");
-        var el2 = dom.createTextNode("foo=");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        return el0;
-      },
-      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(1);
-        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0]), 1, 1);
-        return morphs;
-      },
-      statements: [["content", "foo", ["loc", [null, [1, 35], [1, 42]]], 0, 0, 0, 0]],
-      locals: [],
-      templates: []
-    };
-  })());
-});
 define('dummy/utils', ['exports'], function (exports) {
   exports.randomWord = randomWord;
   var WORDS = ['ember', 'tomster', 'swag', 'yolo', 'turbo', 'ajax'];
@@ -13135,7 +13285,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.0.0-next2+884eae33"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.7.17+1a0baa27"});
 }
 
 /* jshint ignore:end */
