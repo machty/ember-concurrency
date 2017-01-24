@@ -1,4 +1,5 @@
 import Ember from 'ember';
+const { computed } = Ember;
 import { objectAssign, _ComputedProperty } from './utils';
 import TaskStateMixin from './-task-state-mixin';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
@@ -9,9 +10,9 @@ export const TaskGroup = Ember.Object.extend(TaskStateMixin, {
     return `<TaskGroup:${this._propertyName}>`;
   },
 
-  // FIXME: this is hacky and perhaps wrong
-  isRunning: Ember.computed.or('numRunning', 'numQueued'),
-  isQueued:  false,
+  _numRunningOrNumQueued: computed.or('numRunning', 'numQueued'),
+  isRunning: computed.bool('_numRunningOrNumQueued'),
+  isQueued:  false
 });
 
 export function TaskGroupProperty(...decorators) {
@@ -34,4 +35,3 @@ TaskGroupProperty.prototype = Object.create(_ComputedProperty.prototype);
 objectAssign(TaskGroupProperty.prototype, propertyModifiers, {
   constructor: TaskGroupProperty,
 });
-
