@@ -1,4 +1,8 @@
 # Changelog
+### 0.7.18
+  - TaskGroup.isRunning always returns a Boolean (#112)
+  - Fix Ember.K deprecation warnings (#110)
+
 ### 0.7.17
   - The (perform) helper won't throw an error when passed a non-Task
     until the helper is actually invoked (e.g. a button is clicked).
