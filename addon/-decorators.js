@@ -1,7 +1,7 @@
 let modifierNames = ['restartable', 'drop', 'enqueue', 'maxConcurrency', 'cancelOn'];
 let decorators = {};
 
-function makeDecorator(modifierName, methodName) {
+export function makeDecorator(modifierName, methodName) {
   let fn = (...args) => {
     return (taskProperty) => taskProperty[methodName](...args);
   };
