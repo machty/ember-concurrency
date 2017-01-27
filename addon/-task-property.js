@@ -365,13 +365,12 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
   @class TaskProperty
 */
 export function TaskProperty(...decorators) {
-  let taskFn = decorators.pop();
   let _performsPath;
 
   let tp = this;
   _ComputedProperty.call(this, function(_propertyName) {
     return Task.create({
-      fn: taskFn,
+      fn: tp.taskFn,
       context: this,
       _origin: this,
       _taskGroupPath: tp._taskGroupPath,
@@ -382,6 +381,7 @@ export function TaskProperty(...decorators) {
     });
   });
 
+  this.taskFn = decorators.pop();
   this.eventNames = null;
   this.cancelEventNames = null;
   this._debugCallback = null;
