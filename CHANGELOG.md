@@ -1,4 +1,14 @@
 # Changelog
+### 0.7.19
+  - Added the ability to extend/wrap/decorate `TaskProperty`s (the
+    value returned from `task()`, so that things like task test
+    waiter APIs can be built without having to merge such
+    functionality into the main EC repo. TL;DR,
+    the `.taskFn` property is exposed, so it can be swapped out
+    with another generator fn with wrapping code around
+    `yield * originalTaskFn.call(this, arg)`
+    (#116 + #117)
+
 ### 0.7.18
   - TaskGroup.isRunning always returns a Boolean (#112)
   - Fix Ember.K deprecation warnings (#110)
