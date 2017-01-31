@@ -5,7 +5,7 @@
   the object they live on, so if that object is destroyed, all of the
   tasks attached to it are canceled.  This is very convenient when
   writing tasks on object with finite lifetimes, like Components, but certain Ember objects, like
-  Routes (and Controllers), are never actually destroyed, but even
+  Routes (and Controllers), are never actually destroyed. Even
   if you can't rely on object destruction to cancel a task,
   <strong>ember-concurrency</strong> makes it easy to run
   tasks between lifecycle events other than <code>init</code>
