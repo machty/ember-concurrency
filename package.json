@@ -47,7 +47,6 @@
     "ember-notify": "5.0.1",
     "ember-resolver": "^2.0.3",
     "ember-try": "^0.2.2",
-    "ember-cli-jsdoc": "git://github.com/billybonks/ember-cli-jsdoc.git#master",
     "loader.js": "^4.0.0"
   },
   "keywords": [
