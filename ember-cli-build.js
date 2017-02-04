@@ -19,10 +19,7 @@ module.exports = function(defaults) {
     minifyJS: {
       enabled: false
     },
-    jsdoc:{
-      configFile:".jsdoc",
-      generateOnBuild: true
-    },
+
     snippetPaths: ['tests/dummy/snippets'],
     snippetSearchPaths: ['app', 'tests/dummy/app', 'addon'],
 
