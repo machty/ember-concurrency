@@ -47,7 +47,7 @@ function expectCancelation(assert, promise) {
 }
 
 test("cancelation", function(assert) {
-  assert.expect(10);
+  assert.expect(16);
 
   let defer0, defer1, defer2;
   let taskInstance = Ember.run(() => {
@@ -81,14 +81,20 @@ test("cancelation", function(assert) {
     taskInstance.cancel();
     assert.ok(taskInstance.get('isFinished'));
     assert.ok(taskInstance.get('isCanceled'));
+    assert.ok(!taskInstance.get('isSuccessful'));
+    assert.ok(!taskInstance.get('isError'));
   });
 
   Ember.run(null, defer1.resolve, 123);
-  assert.ok(taskInstance.get('isCanceled'));
   assert.ok(taskInstance.get('isFinished'));
+  assert.ok(taskInstance.get('isCanceled'));
+  assert.ok(!taskInstance.get('isSuccessful'));
+  assert.ok(!taskInstance.get('isError'));
   Ember.run(null, defer2.resolve, 456);
-  assert.ok(taskInstance.get('isCanceled'));
   assert.ok(taskInstance.get('isFinished'));
+  assert.ok(taskInstance.get('isCanceled'));
+  assert.ok(!taskInstance.get('isSuccessful'));
+  assert.ok(!taskInstance.get('isError'));
 });
 
 test("deferred start", function(assert) {
@@ -448,6 +454,45 @@ test("taskInstance.error is set when task is dropped", function(assert) {
 
   Ember.run(taskInstance, 'cancel');
   assert.equal(taskInstance.get('error.name'), "TaskCancelation");
+});
+
+test("taskInstance.isSuccessful is set when task fulfills", function(assert) {
+  assert.expect(4);
+
+  let taskInstance = Ember.run(() => {
+    return TaskInstance.create({
+      fn: function * () {},
+      args: [],
+    });
+  });
+
+  Ember.run(taskInstance, '_start');
+  assert.equal(taskInstance.get('isFinished'), true);
+  assert.equal(taskInstance.get('isSuccessful'), true);
+  assert.equal(taskInstance.get('isCanceled'), false);
+  assert.equal(taskInstance.get('isError'), false);
+});
+
+test("taskInstance.isError is set when task throws an error", function(assert) {
+  assert.expect(4);
+
+  let taskInstance = Ember.run(() => {
+    return TaskInstance.create({
+      fn: function * () {
+        throw "wat";
+      },
+      args: [],
+    });
+  });
+
+  try {
+    Ember.run(taskInstance, '_start');
+  } catch (e) {
+    assert.equal(taskInstance.get('isFinished'), true);
+    assert.equal(taskInstance.get('isSuccessful'), false);
+    assert.equal(taskInstance.get('isCanceled'), false);
+    assert.equal(taskInstance.get('isError'), true);
+  }
 });
 
 test("if a parent task catches a child tasks, it prevents the error from bubbling", function(assert) {

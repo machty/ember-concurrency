@@ -1,4 +1,8 @@
 # Changelog
+### master
+  - More derived state: Task Instances now have an additional
+    `isSuccessful` and `isError` property
+
 ### 0.7.19
   - Added the ability to extend/wrap/decorate `TaskProperty`s (the
     value returned from `task()`, so that things like task test
