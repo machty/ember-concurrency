@@ -109,6 +109,24 @@ let taskInstanceAttrs = {
   error: null,
 
   /**
+   * True if the task instance is fulfilled.
+   *
+   * @memberof TaskInstance
+   * @instance
+   * @readOnly
+   */
+  isSuccessful: false,
+
+  /**
+   * True if the task instance resolves to a rejection.
+   *
+   * @memberof TaskInstance
+   * @instance
+   * @readOnly
+   */
+  isError: false,
+
+  /**
    * True if the task instance was canceled before it could run to completion.
    *
    * @memberof TaskInstance
@@ -133,7 +151,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  isFinished: false,
+  isFinished: Ember.computed.or('isSuccessful', 'isError', 'isCanceled'),
 
   /**
    * True if the task is still running.
@@ -235,7 +253,7 @@ let taskInstanceAttrs = {
    * @instance
    */
   cancel() {
-    if (this.isCanceled || this.isFinished) { return; }
+    if (this.get('isFinished')) { return; }
 
     if (this._debugCallback) {
       this._debugCallback({
@@ -304,15 +322,15 @@ let taskInstanceAttrs = {
       completion = CANCELATION;
     }
 
-    this.set('isFinished', true);
-
     switch (completion) {
       case SUCCESS:
-        this._defer.resolve(value);
         this.set('value', value);
+        this.set('isSuccessful', true);
+        this._defer.resolve(value);
         break;
       case ERROR:
         this.set('error', value);
+        this.set('isError', true);
         this._defer.reject(value);
         break;
       case CANCELATION:
@@ -365,7 +383,6 @@ let taskInstanceAttrs = {
       return;
     } else {
       if (done && value === undefined) {
-        this.set('isFinished', true);
         this._finalize(value, SUCCESS);
         return;
       }
