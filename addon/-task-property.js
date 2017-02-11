@@ -138,6 +138,7 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
   context: null,
   _observes: null,
   _curryArgs: null,
+  _testWaiter: null,
 
   init() {
     this._super(...arguments);
@@ -157,6 +158,11 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
     }
 
     _cleanupOnDestroy(this.context, this, 'cancelAll');
+
+    if (this._testWaiter) {
+      this._registerTestWaiter();
+      _cleanupOnDestroy(this.context, this, '_unregisterTestWaiter');
+    }
   },
 
   _curry(...args) {
@@ -174,6 +180,7 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       _scheduler: this._scheduler,
       _propertyName: this._propertyName,
       _debugCallback: this._debugCallback,
+      _testWaiter: this._testWaiter,
     });
   },
 
@@ -346,6 +353,14 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
   [INVOKE](...args) {
     return this.perform(...args);
   },
+
+  _registerTestWaiter() {
+    Ember.Test.registerWaiter(this, this._testWaiter);
+  },
+
+  _unregisterTestWaiter() {
+    Ember.Test.unregisterWaiter(this, this._testWaiter);
+  },
 });
 
 /**
@@ -378,6 +393,7 @@ export function TaskProperty(...decorators) {
       //_performsPath,
       _propertyName,
       _debugCallback: tp._debugCallback,
+      _testWaiter: tp._testWaiter,
     });
   });
 
@@ -386,6 +402,7 @@ export function TaskProperty(...decorators) {
   this.cancelEventNames = null;
   this._debugCallback = null;
   this._observes = null;
+  this._testWaiter = null;
 
   for (let i = 0; i < decorators.length; ++i) {
     let decorator = decorators[i];
@@ -470,6 +487,27 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
   cancelOn() {
     this.cancelEventNames = this.cancelEventNames || [];
     this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
+    return this;
+  },
+
+  /**
+   * When Ember.testing is true, this will cause the task to register a
+   * [test waiter](http://emberjs.com/api/classes/Ember.Test.html#method_registerWaiter)
+   * that waits if the task isn't idle. This allows asynchronous test helpers
+   * to wait for this task to complete, the same as they wait for route
+   * transitions, timers, etc.
+   *
+   * This is useful when your task performs asynchronous operations that aren't
+   * already tracked by Ember.
+   *
+   * @method withTestWaiter
+   * @memberof TaskProperty
+   * @instance
+   */
+  withTestWaiter() {
+    if (Ember.testing) {
+      this._testWaiter = testWaiter;
+    }
     return this;
   },
 
@@ -582,4 +620,8 @@ function makeTaskCallback(taskName, method, once) {
       task[method].apply(task, arguments);
     }
   };
+}
+
+function testWaiter() {
+  return this.get('isIdle');
 }

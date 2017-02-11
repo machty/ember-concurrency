@@ -28,6 +28,7 @@ under the [Task Property API docs](TaskProperty.html).
 - [drop](TaskProperty.html#drop)
 - [keepLatest](TaskProperty.html#keepLatest)
 - [maxConcurrency](TaskProperty.html#maxConcurrency)
+- [withTestWaiter](TaskProperty.html#withTestWaiter)
 
 
 ## The full API

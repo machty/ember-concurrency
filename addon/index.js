@@ -6,7 +6,7 @@ import { TaskGroupProperty } from './-task-group';
 import EventedObservable from './-evented-observable';
 import { subscribe } from './-subscribe';
 import { all, allSettled, race } from './-yieldables';
-import { drop, restartable, enqueue, maxConcurrency, cancelOn, performOn } from './-decorators';
+import { drop, restartable, enqueue, maxConcurrency, cancelOn, performOn, withTestWaiter } from './-decorators';
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -134,6 +134,7 @@ export {
   maxConcurrency,
   cancelOn,
   performOn,
+  withTestWaiter,
   didCancel
 };
 

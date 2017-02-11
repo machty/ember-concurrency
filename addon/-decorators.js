@@ -1,4 +1,4 @@
-let modifierNames = ['restartable', 'drop', 'enqueue', 'maxConcurrency', 'cancelOn'];
+let modifierNames = ['restartable', 'drop', 'enqueue', 'maxConcurrency', 'cancelOn', 'withTestWaiter'];
 let decorators = {};
 
 function makeDecorator(modifierName, methodName) {
@@ -21,4 +21,5 @@ export let enqueue        = decorators.enqueue;
 export let maxConcurrency = decorators.maxConcurrency;
 export let cancelOn       = decorators.cancelOn;
 export let performOn      = decorators.performOn;
+export let withTestWaiter = decorators.withTestWaiter;
 
