@@ -4,9 +4,7 @@
 @import "ember-modal-dialog/ember-modal-structure";
 @import "ember-modal-dialog/ember-modal-appearance";
 
-$ember-power-select-border-color: #64A5ED;
-$ember-power-select-border-radius: 0;
-@import 'ember-power-select';
+@import "./fontello";
 
 .centered {
   text-align: center;
@@ -145,5 +143,15 @@ th, td {
 
 .clickable {
   @extend .button-primary;
+}
+
+.github-edit {
+  float: right;
+  position: relative;
+  top: 1rem;
+  opacity: 0.7;
+  &:hover {
+    opacity: 1;
+  }
 }
 

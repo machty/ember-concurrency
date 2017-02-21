@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import { task } from 'ember-concurrency';
+import { module, test } from 'qunit';
 
 module('Unit: task error handling');
 

@@ -24,6 +24,20 @@ const RSVP = Ember.RSVP;
 export let all = taskAwareVariantOf(RSVP.Promise, 'all');
 
 /**
+ * A cancelation-aware variant of [RSVP.allSettled](http://emberjs.com/api/classes/RSVP.html#method_allSettled).
+ * The normal version of a `RSVP.allSettled` just returns a regular, uncancelable
+ * Promise. The `ember-concurrency` variant of `allSettled()` has the following
+ * additional behavior:
+ *
+ * - if the task that `yield`ed `allSettled()` is canceled, any of the
+ *   {@linkcode TaskInstance}s passed in to `allSettled` will be canceled
+ *
+ * @param {function} generatorFunction the generator function backing the task.
+ * @returns {TaskProperty}
+ */
+export let allSettled = taskAwareVariantOf(RSVP, 'allSettled');
+
+/**
  * A cancelation-aware variant of [Promise.race](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race).
  * The normal version of a `Promise.race` just returns a regular, uncancelable
  * Promise. The `ember-concurrency` variant of `race()` has the following

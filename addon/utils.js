@@ -66,7 +66,7 @@ export function createObservable(fn) {
       // TODO: publish.complete?
 
       let maybeDisposer = fn(publish);
-      let disposer = typeof maybeDisposer === 'function' ? maybeDisposer : Ember.K;
+      let disposer = typeof maybeDisposer === 'function' ? maybeDisposer : function() {};
 
       return {
         dispose() {
@@ -87,6 +87,13 @@ function joinAndSchedule(...args) {
 
 export function _cleanupOnDestroy(owner, object, cleanupMethodName) {
   // TODO: find a non-mutate-y, hacky way of doing this.
+
+  if (!owner.willDestroy)
+  {
+    // we're running in non Ember object (possibly in a test mock)
+    return;
+  }
+
   if (!owner.willDestroy.__ember_processes_destroyers__) {
     let oldWillDestroy = owner.willDestroy;
     let disposers = [];
@@ -123,4 +130,4 @@ for (let i = 0; i < locations.length; i++) {
 // TODO: Symbol polyfill?
 export const yieldableSymbol = "__ec_yieldable__";
 
-export const _ComputedProperty = Ember.__loader.require("ember-metal/computed").ComputedProperty;
+export const _ComputedProperty = Ember.ComputedProperty;

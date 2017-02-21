@@ -11,7 +11,7 @@ test('encapsulated tasks support injections', function(assert) {
 
   let buttonSel = `[data-test-selector="perform-task-w-injection-button"]`;
 
-  andThen(() => {
+  return wait().then(() => {
     click(buttonSel);
   }).then(() => {
     assert.equal(Ember.$(`[data-test-selector="perform-task-result"]`).text(), "123-246");

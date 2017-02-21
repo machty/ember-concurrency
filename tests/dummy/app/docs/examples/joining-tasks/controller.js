@@ -41,7 +41,7 @@ export default Ember.Controller.extend({
     let word = randomWord();
     tracker.set('word', word);
     return word;
-  }).maxConcurrency(3),
+  }).enqueue().maxConcurrency(3),
 
   colors: [ '#ff8888', '#88ff88', '#8888ff' ],
 });

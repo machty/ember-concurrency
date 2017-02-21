@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import { task, interval } from 'ember-concurrency';
+import { module, test } from 'qunit';
 
 module('Unit: task');
 
@@ -65,7 +66,7 @@ test("task Evented event discontinues after destruction", function(assert) {
 });
 
 test("task discontinues after destruction when blocked on async values", function(assert) {
-  QUnit.stop();
+  let start = assert.async();
   assert.expect(1);
 
   let Obj = Ember.Object.extend(Ember.Evented, {
@@ -84,7 +85,7 @@ test("task discontinues after destruction when blocked on async values", functio
 
   Ember.run.later(() => {
     obj.destroy();
-    QUnit.start();
+    start();
   });
 });
 
@@ -254,6 +255,18 @@ test("performing a task on a destroyed object returns an immediately-canceled ta
   });
 });
 
+test("handles prototype-less object args", function(assert) {
+  assert.expect(0);
+
+  let arr = [];
+  let Obj = Ember.Object.extend({
+    doStuff: task(function * () {})
+  });
+
+  Ember.run(() => {
+    let obj = Obj.create().get('doStuff').perform(Object.create(null));
+  });
+});
 
 
 /*

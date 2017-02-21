@@ -5,7 +5,8 @@ import { TaskGroup } from './-task-group';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
 import { objectAssign, INVOKE, _cleanupOnDestroy, _ComputedProperty } from './utils';
 import EncapsulatedTask from './-encapsulated-task';
-import getOwner from 'ember-getowner-polyfill';
+
+const { getOwner } = Ember;
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -364,13 +365,12 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
   @class TaskProperty
 */
 export function TaskProperty(...decorators) {
-  let taskFn = decorators.pop();
   let _performsPath;
 
   let tp = this;
   _ComputedProperty.call(this, function(_propertyName) {
     return Task.create({
-      fn: taskFn,
+      fn: tp.taskFn,
       context: this,
       _origin: this,
       _taskGroupPath: tp._taskGroupPath,
@@ -381,6 +381,7 @@ export function TaskProperty(...decorators) {
     });
   });
 
+  this.taskFn = decorators.pop();
   this.eventNames = null;
   this.cancelEventNames = null;
   this._debugCallback = null;
@@ -408,6 +409,10 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
   constructor: TaskProperty,
 
   setup(proto, taskName) {
+    if (this._maxConcurrency !== Infinity && !this._hasSetBufferPolicy) {
+      Ember.Logger.warn(`The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${this._maxConcurrency})\``);
+    }
+
     registerOnPrototype(Ember.addListener, proto, this.eventNames, taskName, '_perform', false);
     registerOnPrototype(Ember.addListener, proto, this.cancelEventNames, taskName, 'cancelAll', false);
     registerOnPrototype(Ember.addObserver, proto, this._observes, taskName, '_perform', true);
@@ -578,4 +583,3 @@ function makeTaskCallback(taskName, method, once) {
     }
   };
 }
-

@@ -3,12 +3,12 @@
 <h4>Step 1: Deciding where the Task will live</h4>
 
 <p>
-  Should you define a task on Component? Or perhaps a Service?
+  Should you define a task on a Component? Or perhaps a Service?
 </p>
 
 <p>
   This choice is important because <strong>Tasks get automatically canceled
-  when they object they live on is destroyed</strong>.
+  when the object they live on is destroyed</strong>.
   So if you want the task to cancel when a component is unrendered, define
   it on a Component class, but if you need it to outlive a component's lifespan,
   it probably belongs on a Service or Controller.

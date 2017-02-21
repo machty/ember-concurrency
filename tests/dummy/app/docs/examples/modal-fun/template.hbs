@@ -10,13 +10,6 @@
 </p>
 
 <p>
-  The example below shows a modal, displayed with
-  <a href="https://github.com/yapplabs/ember-modal-dialog">ember-modal-dialog</a>
-  with <a href="https://github.com/ember-animation/liquid-fire">Liquid Fire</a>
-  transitions.
-</p>
-
-<p>
   State machines generally operate on the principle that you can
   only be in a single (possible nested) state at a time.
   Given that <strong>ember-concurrency</strong> makes it possible/easy
@@ -57,10 +50,8 @@
         </div>
       </div>
 
-      {{#liquid-bind modal.currentState as |state|}}
-        <h1>{{state.title}}</h1>
-        <p>Wat wat wat</p>
-      {{/liquid-bind}}
+      <h1>{{modal.currentState.title}}</h1>
+      <p>Wat wat wat</p>
 
       <div class="row">
         {{#if modal.prev}}

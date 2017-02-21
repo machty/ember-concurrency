@@ -13,11 +13,25 @@ export default Ember.Controller.extend({
   }),
 
   valueTask: task(function * (value) {
-    QUnit.equal(value, "Set value option");
+    let expected = "Set value option";
+    if (value !== expected) {
+      throw new Error(`value !== ${expected}`);
+    }
   }),
 
   returnValue: task(function * () {
     return 10;
   }),
+
+  maybeNullTask: null,
+  someTask: task(function * () {
+    this.set('status', 'someTask');
+  }),
+
+  actions: {
+    setupTask() {
+      this.set('maybeNullTask', this.get('someTask'));
+    }
+  }
 });
 

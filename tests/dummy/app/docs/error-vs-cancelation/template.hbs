@@ -15,20 +15,13 @@
   The {{link-to 'Task Function Syntax docs' 'docs.task-function-syntax'}}
   demonstrates how you can use standard JavaScript <code>try/catch</code> blocks
   to catch exceptions thrown when you yield a rejecting promise, but
-  what about cancelation?
+  what about cancelation? Are cancelations considered exceptions/errors, or something else?
 </p>
 
 <p>
-  Prior to version 0.7.0 of ember-concurrency, cancelations were treated as
-  exceptions that you could catch within <code>catch(e) {}</code> blocks,
-  but since 0.7.0, cancelation is treated as a
-  <a href="https://github.com/domenic/cancelable-promise/blob/master/Third%20State.md">Third State</a>
-  &mdash; in other words, instead of treating cancelation like a <em>kind</em> of exception,
-  we treat it like a third and separate way to resume/terminate execution of a task
-  from a <code>yield</code>, alongside fulfillment and rejection.
-</p>
-
-<p>
+  In ember-concurrency, cancelation is considered a third kind of "completion"
+  (the other two being a successful return from a function, and throwing an exception
+  from a function).
   Specifically, this means that if a task is canceled while it is paused on a
   yield, the task will essentially return from that point,
   it will skip any <code>catch(e) {}</code> blocks it is in, but it <em>will</em>

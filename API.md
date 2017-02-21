@@ -39,6 +39,7 @@ import {
 
   // Task/cancelation-aware variants of Promise.all/race
   all,
+  allSettled,
   race,
 } from 'ember-concurrency';
 ```

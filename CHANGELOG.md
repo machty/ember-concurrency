@@ -1,4 +1,70 @@
 # Changelog
+### master
+  - More derived state: Task Instances now have an additional
+    `isSuccessful` and `isError` property
+
+### 0.7.19
+  - Added the ability to extend/wrap/decorate `TaskProperty`s (the
+    value returned from `task()`, so that things like task test
+    waiter APIs can be built without having to merge such
+    functionality into the main EC repo. TL;DR,
+    the `.taskFn` property is exposed, so it can be swapped out
+    with another generator fn with wrapping code around
+    `yield * originalTaskFn.call(this, arg)`
+    (#116 + #117)
+
+### 0.7.18
+  - TaskGroup.isRunning always returns a Boolean (#112)
+  - Fix Ember.K deprecation warnings (#110)
+
+### 0.7.17
+  - The (perform) helper won't throw an error when passed a non-Task
+    until the helper is actually invoked (e.g. a button is clicked).
+    Previously it would error more eagerly, right at first render,
+    which was often a poor dev experience and at odds with the
+    (action) helper's behavior.
+
+### 0.7.16
+  - Fixed Ember 2.10 error when passing (hash) helper values
+    as an arg to a task (#99)
+  - Using ember-owner-polyfill to cut down on bloat
+
+### 0.7.15
+  - BREAKING: revert the feature introduced in 0.7.11 for being
+    able to do `this.myTask.perform()` instead of
+    `this.get('myTask').perform()`. The internal semantics
+    of ember-metal are too different between versions of Ember
+    to be able to support this with any confidence; we'll just
+    have to wait for ES5 getter syntax to come to Computed Properties
+    in general in order to support this. Apologies for too eagerly
+    introducing this broken feature.
+
+### 0.7.14
+  - no functional changes; just removed unneeded files from NPM package
+    to decrease package size
+
+### 0.7.13
+  - fix not being able to mock tasks in tests (#84) and
+    other related bugs
+
+### 0.7.12
+  - fix tasks not being overridable in subclass (#81)
+
+### 0.7.11
+  - support for `this.myTask.perform()`, i.e. you can get a
+    reference to a Task using simple JavaScript accessors
+    rather than having to write `this.get('myTask').perform()`
+
+### 0.7.10
+  - tasks can be tested in component integration tests (#66)
+  - deprecation: using `.maxConcurrency()` without any other
+    task modifier will produce a deprecation warning because
+    it is unclear/ambiguous as to _how_ to constrain concurrency
+    in such a case (#79)
+
+### 0.7.9
+  - Add task-aware `allSettled` promise equivalent (#75)
+
 ### 0.7.8
   - Adds Object.assign polyfill so that tests pass on
     on non-supporting browsers for apps that don't

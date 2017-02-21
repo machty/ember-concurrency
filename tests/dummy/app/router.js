@@ -17,6 +17,8 @@ Router.map(function() {
     this.route('child-tasks');
     this.route('task-groups');
     this.route('derived-state');
+    this.route('testing-debugging');
+    this.route('faq');
     this.route('examples', function() {
       this.route('increment-buttons');
       this.route('loading-ui');
@@ -41,7 +43,6 @@ Router.map(function() {
   this.route('experimental-prediction');
   this.route('helpers-test');
   this.route('deprecation-test');
-  this.route('data-test');
   this.route('task-injection-test');
 });
 
