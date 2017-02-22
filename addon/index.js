@@ -18,8 +18,11 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
     }
   });`, isGeneratorIterator(testIter));
 
-let cancelationToken = Ember.run.schedule('afterRender', () => {});
-let canCancelScheduler = !!cancelationToken;
+let canCancelScheduler = false;
+Ember.run(() => {
+  let cancelationToken = Ember.run.schedule('sync', () => {});
+  canCancelScheduler = !!cancelationToken;
+});
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -147,7 +150,7 @@ export function waitForEvent(obj, event) {
 
   let promise = new Ember.RSVP.Promise(r => {
     fn = r;
-    obj.one(event, r);
+    obj.one(event, fn);
   });
   promise.__ec_cancel__ = () => {
     obj.off(event, fn);
