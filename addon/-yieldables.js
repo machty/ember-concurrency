@@ -67,6 +67,8 @@ function taskAwareVariantOf(obj, method) {
       items.forEach(it => {
         if (it instanceof TaskInstance) {
           it.cancel();
+        } else if (typeof it.__ec_cancel__ === 'function') {
+          it.__ec_cancel__();
         }
       });
     };
