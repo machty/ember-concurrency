@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task, all, allSettled } from 'ember-concurrency';
+import { task, all, allSettled, timeout, race } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: yieldables');
@@ -227,4 +227,44 @@ test("allSettled cancels all joined tasks if parent task is canceled", function(
   assert.equal(childTask.get('concurrency'), 3);
   Ember.run(() => obj.get('parent').cancelAll());
   assert.equal(childTask.get('concurrency'), 0);
+});
+
+test("yieldable helpers support to cancel promises with __ec_cancel__", function(assert) {
+  assert.expect(1);
+  let done = assert.async();
+
+  function waitUntilValueChanged(context, path) {
+    let intervalId;
+    let originalValue = context.get(path);
+    let promise = new Ember.RSVP.Promise((resolve) => {
+      intervalId = setInterval(() => {
+        let newValue = context.get(path);
+        if (newValue !== originalValue) {
+          clearInterval(intervalId);
+          resolve(newValue);
+        }
+      }, 100);
+    });
+    promise.__ec_cancel__ = () => {
+      assert.ok(true);
+      clearInterval(intervalId);
+      done();
+    };
+    return promise;
+  }
+
+  let Obj = Ember.Object.extend({
+    value: 5,
+    _checkValueOrTimeOutAfterOneSec: task(function * () {
+      Ember.run.later(() => {
+        assert.ok(false);
+        done();
+      }, 1100);
+      yield race([waitUntilValueChanged(this, 'value'), timeout(1000)])
+    }).on('init')
+  });
+
+  Ember.run(() => {
+    Obj.create();
+  });
 });
