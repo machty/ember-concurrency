@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { timeout } from 'ember-concurrency';
-import { test } from 'ember-concurrency/qunit';
+import { test } from '../../tests/helpers/generator-tests';
 import { module } from 'qunit';
 import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
 

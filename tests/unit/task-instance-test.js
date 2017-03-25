@@ -133,7 +133,7 @@ function expectCancelation(assert, promise) {
 }
 
 test("cancelation: yields in finally block", function(assert) {
-  assert.expect(16);
+  assert.expect(19);
 
   let defer0, defer1, defer2;
   let taskInstance = Ember.run(() => {

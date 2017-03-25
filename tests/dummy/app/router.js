@@ -35,7 +35,6 @@ Router.map(function() {
       this.route('completion-state');
       this.route('encapsulated-task');
       this.route('encapsulated-task-fun');
-      this.route('modal-fun');
     });
     this.route('404', { path: '*path' });
   });

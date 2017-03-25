@@ -1,5 +1,5 @@
 import { timeout } from 'ember-concurrency';
-import { test } from 'ember-concurrency/qunit';
+import { test } from '../../tests/helpers/generator-tests';
 import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
 
 import DocsController from 'dummy/docs/controller';

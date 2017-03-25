@@ -43,6 +43,7 @@ const Scheduler = Ember.Object.extend({
 
   schedule(taskInstance) {
     set(this, 'lastPerformed', taskInstance);
+    taskInstance.task.incrementProperty('numQueued');
     this.queuedTaskInstances.push(taskInstance);
     this._flushQueues();
   },
@@ -65,13 +66,7 @@ const Scheduler = Ember.Object.extend({
         this._startTaskInstance(taskInstance);
         lastStarted = taskInstance;
       }
-      let task = taskInstance.task;
-      seen.push(task);
-
-      if (!get(taskInstance, 'isFinished')) {
-        // don't increment is taskInstance synchronously finished
-        task._numRunning++;
-      }
+      seen.push(taskInstance.task);
     }
 
     if (lastStarted) {
@@ -80,9 +75,7 @@ const Scheduler = Ember.Object.extend({
     set(this, 'lastRunning', lastStarted);
 
     for (let i = 0; i < this.queuedTaskInstances.length; ++i) {
-      let task = this.queuedTaskInstances[i].task;
-      seen.push(task);
-      task._numQueued++;
+      seen.push(this.queuedTaskInstances[i].task);
     }
 
     flushTaskCounts(seen);
@@ -90,7 +83,12 @@ const Scheduler = Ember.Object.extend({
   },
 
   _startTaskInstance(taskInstance) {
+    let task = taskInstance.task;
+    task.decrementProperty('numQueued');
+    task.incrementProperty('numRunning');
+
     taskInstance._start()._onFinalize(() => {
+      task.decrementProperty('numRunning');
       var state = taskInstance._completionState;
       set(this, 'lastComplete', taskInstance);
       if (state === 1) {
@@ -109,6 +107,7 @@ const Scheduler = Ember.Object.extend({
 });
 
 function flushTaskCounts(tasks) {
+  if(window.billy) { debugger; }
   SEEN_INDEX++;
   for (let i = 0, l = tasks.length; i < l; ++i) {
     let task = tasks[i];
@@ -119,15 +118,17 @@ function flushTaskCounts(tasks) {
   }
 }
 
-function updateTaskChainCounts(_task) {
-  let task = _task;
-  let numRunning = task._numRunning;
-  let numQueued  = task._numQueued;
-  while (task) {
-    set(task, 'numRunning', numRunning);
-    set(task, 'numQueued', numQueued);
-    task._numRunning = task._numQueued = 0;
-    task = task.get('group');
+function updateTaskChainCounts(task) {
+  let numRunning = task.numRunning;
+  let numQueued  = task.numQueued;
+  let taskGroup = task.get('group');
+
+  if(window.billy) { debugger; }
+
+  while (taskGroup) {
+    set(taskGroup, 'numRunning', numRunning);
+    set(taskGroup, 'numQueued', numQueued);
+    taskGroup = taskGroup.get('group');
   }
 }
 

@@ -183,7 +183,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  isFinished: Ember.computed.or('isSuccessful', 'isError', 'isCanceled'),
+  isFinished: false,
 
   /**
    * True if the task is still running.
@@ -272,7 +272,13 @@ let taskInstanceAttrs = {
   cancel() {
     if (this.isCanceling || get(this, 'isFinished')) { return; }
     set(this, 'isCanceling', true);
-    this.proceed(this._index, YIELDABLE_CANCEL, null);
+
+    if (this.hasStarted) {
+      this.proceed(this._index, YIELDABLE_CANCEL, null);
+    } else {
+      debugger;
+      this._finalize(null, COMPLETION_CANCEL);
+    }
   },
 
   _defer: null,
@@ -337,6 +343,7 @@ let taskInstanceAttrs = {
     set(this, '_result', value);
 
     if (completionState === COMPLETION_SUCCESS) {
+      set(this, 'isSuccessful', true);
       set(this, 'value', value);
     } else if (completionState === COMPLETION_ERROR) {
       set(this, 'isError', true);
@@ -344,6 +351,8 @@ let taskInstanceAttrs = {
     } else if (completionState === COMPLETION_CANCEL) {
       set(this, 'error', value);
     }
+
+    set(this, 'isFinished', true);
 
     this._dispose();
     this._runFinalizeCallbacks();

@@ -1,8 +1,6 @@
 @import "./normalize";
 @import "./skeleton";
 @import "bower_components/font-awesome/scss/font-awesome";
-@import "ember-modal-dialog/ember-modal-structure";
-@import "ember-modal-dialog/ember-modal-appearance";
 
 @import "./fontello";
 
@@ -135,10 +133,6 @@ th, td {
     }
     background-color: #F33F3F;
   }
-}
-
-.fun-modal-container {
-  width: 500px;
 }
 
 .clickable {

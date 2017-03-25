@@ -120,6 +120,7 @@ test("task groups can be cancelled", function(assert) {
   assertStates(assert, taskA, true, false, false, suffix);
   assertStates(assert, taskB, false, true, false, suffix);
 
+  window.billy = true;
   Ember.run(tg, 'cancelAll');
 
   suffix = "after tg.cancelAll()";
@@ -131,8 +132,7 @@ test("task groups can be cancelled", function(assert) {
 test("task groups return a boolean for isRunning", function(assert) {
   assert.expect(3);
 
-  let contextResolve;
-  let defer = Ember.RSVP.defer()
+  let defer = Ember.RSVP.defer();
 
   let Obj = Ember.Object.extend({
     tg: taskGroup().enqueue(),
@@ -146,7 +146,7 @@ test("task groups return a boolean for isRunning", function(assert) {
   let tg = obj.get('tg');
   let myTask = obj.get('myTask');
   assert.strictEqual(tg.get('isRunning'), false);
-  Em.run(() => myTask.perform());
+  Ember.run(() => myTask.perform());
   assert.strictEqual(tg.get('isRunning'), true);
   Ember.run(defer, defer.resolve);
   assert.strictEqual(tg.get('isRunning'), false);

@@ -1,4 +1,3 @@
-import QUnit from 'qunit';
 import resolver from './helpers/resolver';
 import {
   setResolver,
@@ -14,7 +13,7 @@ QUnitAdapter.reopen({
   },
 
   asyncStart: function asyncStart() {
-    if (QUnit.config.current._isTaskTest) {
+    if (window.QUnit.config.current._isTaskTest) {
       this.doneCallbacks.push(noop);
     } else {
       this._super();

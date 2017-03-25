@@ -1,6 +1,5 @@
 import Ember from 'ember';
-import { test as qunitTest } from 'qunit';
-import QUnit from 'qunit';
+import { test as qunitTest } from 'ember-qunit';
 import { wrap, go } from 'ember-concurrency/-task-instance';
 import {
   raw,
@@ -57,7 +56,7 @@ const HELPER_METHODS = {
 function test(description, fn) {
   qunitTest(description, function(assert) {
     Object.assign(this, HELPER_METHODS);
-    QUnit.config.current._isTaskTest = true;
+    window.QUnit.config.current._isTaskTest = true;
     let done = assert.async();
     if (fn.constructor.name === 'GeneratorFunction') {
 
