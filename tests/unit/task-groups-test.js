@@ -86,7 +86,7 @@ test("task groups enforce that only one member runs at a time", function(assert)
   });
 });
 
-test("task groups can be cancelled", function(assert) {
+test("task groups can be canceled", function(assert) {
   assert.expect(18);
 
   let deferA, deferB;
@@ -120,7 +120,6 @@ test("task groups can be cancelled", function(assert) {
   assertStates(assert, taskA, true, false, false, suffix);
   assertStates(assert, taskB, false, true, false, suffix);
 
-  window.billy = true;
   Ember.run(tg, 'cancelAll');
 
   suffix = "after tg.cancelAll()";

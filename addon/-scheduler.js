@@ -33,6 +33,14 @@ const Scheduler = Ember.Object.extend({
   spliceTaskInstances(taskInstances, index, count, seen) {
     for (let i = index; i < index + count; ++i) {
       let taskInstance = taskInstances[i];
+
+      if (!taskInstance.hasStarted) {
+        // This tracking logic is kinda spread all over the place...
+        // maybe TaskInstances themselves could notify
+        // some delegate of queued state changes upon cancelation?
+        taskInstance.task.decrementProperty('numQueued');
+      }
+
       taskInstance.cancel();
       if (seen) {
         seen.push(taskInstance.task);
@@ -107,7 +115,6 @@ const Scheduler = Ember.Object.extend({
 });
 
 function flushTaskCounts(tasks) {
-  if(window.billy) { debugger; }
   SEEN_INDEX++;
   for (let i = 0, l = tasks.length; i < l; ++i) {
     let task = tasks[i];
@@ -122,8 +129,6 @@ function updateTaskChainCounts(task) {
   let numRunning = task.numRunning;
   let numQueued  = task.numQueued;
   let taskGroup = task.get('group');
-
-  if(window.billy) { debugger; }
 
   while (taskGroup) {
     set(taskGroup, 'numRunning', numRunning);
