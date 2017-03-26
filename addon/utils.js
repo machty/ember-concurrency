@@ -7,6 +7,12 @@ export function isGeneratorIterator(iter) {
           typeof iter['throw']  === 'function');
 }
 
+export function isEventedObject(c) {
+  return (c &&
+          typeof c.one === 'function' &&
+          typeof c.off === 'function');
+}
+
 export function Arguments(args, defer) {
   this.args = args;
   this.defer = defer;

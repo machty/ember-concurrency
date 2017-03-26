@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { isGeneratorIterator, timeout } from './utils';
+import { isGeneratorIterator, timeout, isEventedObject } from './utils';
 import { TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
 import { TaskGroupProperty } from './-task-group';
@@ -15,6 +15,12 @@ Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to t
       includePolyfill: true,
     }
   });`, isGeneratorIterator(testIter));
+
+let canCancelScheduler = false;
+Ember.run(() => {
+  let cancelationToken = Ember.run.schedule('sync', () => {});
+  canCancelScheduler = !!cancelationToken;
+});
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -68,6 +74,36 @@ export function events(obj, eventName) {
   return EventedObservable.create({ obj, eventName });
 }
 
+export function waitForQueue(queue) {
+  let timerId;
+
+  // TODO: Polyfill Ember.run.schedule (https://github.com/rwjblue/ember-lifeline/pull/14#issuecomment-279725876)
+  Ember.assert(`waitForQueue requires Ember >= 2.8`, canCancelScheduler);
+
+  let promise = new Ember.RSVP.Promise(r => {
+    timerId = Ember.run.schedule(queue, r);
+  });
+  promise.__ec_cancel__ = () => {
+    Ember.run.cancel(timerId);
+  };
+  return promise;
+}
+
+export function waitForEvent(obj, event) {
+  let fn;
+
+  Ember.assert(`${obj} must include Ember.Evented to be able to use \`waitForEvent\``, isEventedObject(obj));
+
+  let promise = new Ember.RSVP.Promise(r => {
+    fn = r;
+    obj.one(event, fn);
+  });
+  promise.__ec_cancel__ = () => {
+    obj.off(event, fn);
+  };
+  return promise;
+}
+
 export {
   all,
   allSettled,
@@ -76,4 +112,3 @@ export {
   didCancel,
   timeout
 };
-
