@@ -282,3 +282,23 @@ test("updates derived state synchronously", function(assert) {
     Obj.create().get('doStuff').perform();
   });
 });
+
+test(".performCount exposes the number of times a task has been performed", function(assert) {
+  assert.expect(3);
+
+  let Obj = Ember.Object.extend({
+    doStuff: task(function * () { })
+  });
+
+  Ember.run(() => {
+    let obj = Obj.create();
+    let doStuff = obj.get('doStuff');
+    assert.equal(doStuff.get('performCount'), 0);
+    doStuff.perform();
+    assert.equal(doStuff.get('performCount'), 1);
+    doStuff.perform();
+    doStuff.perform();
+    assert.equal(doStuff.get('performCount'), 3);
+  });
+});
+

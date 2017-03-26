@@ -13,6 +13,7 @@ const Scheduler = Ember.Object.extend({
   lastErrored:    null,
   lastCanceled:   null,
   lastIncomplete: null,
+  performCount: 0,
 
   boundHandleFulfill: null,
   boundHandleReject: null,
@@ -51,6 +52,7 @@ const Scheduler = Ember.Object.extend({
 
   schedule(taskInstance) {
     set(this, 'lastPerformed', taskInstance);
+    this.incrementProperty('performCount');
     taskInstance.task.incrementProperty('numQueued');
     this.queuedTaskInstances.push(taskInstance);
     this._flushQueues();

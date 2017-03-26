@@ -30,17 +30,14 @@ under the [Task Property API docs](TaskProperty.html).
 - [maxConcurrency](TaskProperty.html#maxConcurrency)
 
 
-## The full API
+## Task/cancelation-aware variants of Promise helpers
 
-```js
-import {
-  task,    // task macro
-  timeout, // pause execution
+These helpers are just like their Promise/RSVP equivalents, but with
+the added behavior that they support cancelation and cna hence be
+used in conjunction with Tasks / TaskInstances.
 
-  // Task/cancelation-aware variants of Promise.all/race
-  all,
-  allSettled,
-  race,
-} from 'ember-concurrency';
-```
+- [all](global.html#all)
+- [allSettled](global.html#allSettled)
+- [hash](global.html#hash)
+- [race](global.html#race)
 

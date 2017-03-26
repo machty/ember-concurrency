@@ -134,6 +134,15 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
    * @readOnly
    */
 
+  /**
+   * The number of times this task has been performed.
+   *
+   * @memberof Task
+   * @member {number} performCount
+   * @instance
+   * @readOnly
+   */
+
   fn: null,
   context: null,
   _observes: null,

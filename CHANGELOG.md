@@ -1,7 +1,9 @@
 # Changelog
 ### master
-  - More derived state: Task Instances now have an additional
+  - Derived state: Task Instances now have an additional
     `isSuccessful` and `isError` property
+  - Derived state: Tasks expose `performCount` that tracks
+    how many times a task has been performed.
 
 ### 0.7.19
   - Added the ability to extend/wrap/decorate `TaskProperty`s (the
