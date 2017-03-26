@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { task, all, allSettled, hash } from 'ember-concurrency';
+import { task, all, allSettled, hash, race } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: cancelable promises test helpers');
@@ -307,4 +307,21 @@ test("hash cancels children if parent is canceled", function(assert) {
   assert.equal(obj.get('child.concurrency'), 0);
 });
 
+test("yieldable helpers support to cancel promises with __ec_cancel__", function(assert) {
+  assert.expect(1);
 
+  let promise = new Ember.RSVP.defer().promise;
+  promise.__ec_cancel__ = () => {
+    assert.ok(true);
+  };
+
+  let Obj = Ember.Object.extend({
+    _checkValueOrTimeOutAfterOneSec: task(function * () {
+      yield race([promise, Ember.RSVP.resolve()]);
+    }).on('init')
+  });
+
+  Ember.run(() => {
+    Obj.create();
+  });
+});
