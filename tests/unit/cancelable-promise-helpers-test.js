@@ -2,7 +2,7 @@ import Ember from 'ember';
 import { task, all, allSettled, hash } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
-module('Unit: yieldables');
+module('Unit: cancelable promises test helpers');
 
 test("all behaves like Promise.all", function(assert) {
   assert.expect(6);
