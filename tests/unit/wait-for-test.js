@@ -52,14 +52,15 @@ test('cancelling waitForQueue works', function(assert) {
 });
 
 test('waitForEvent works', function(assert) {
-  assert.expect(3);
+  assert.expect(4);
 
   let taskCompleted = false;
   let obj;
 
   const Obj = EventedObject.extend({
     task: task(function*() {
-      yield waitForEvent(this, 'foo');
+      let value = yield waitForEvent(this, 'foo');
+      assert.equal(value, 123);
       taskCompleted = true;
     })
   });
@@ -72,7 +73,7 @@ test('waitForEvent works', function(assert) {
   run(() => {
     assert.notOk(taskCompleted, 'Task should not have completed');
     assert.ok(obj.has('foo'), 'Object has the event listener');
-    obj.trigger('foo');
+    obj.trigger('foo', 123);
   });
 
   assert.ok(taskCompleted, 'Task should have completed');

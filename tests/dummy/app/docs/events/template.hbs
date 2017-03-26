@@ -1,0 +1,58 @@
+<h3>Waiting for Ember / jQuery Events</h3>
+
+<p>
+  You can use <code>waitForEvent</code> to pause your task until
+  an Ember.Evented or jQuery Event fires.
+</p>
+
+<p>
+  This is useful for when you want to dynamically wait for an event to fire
+  within a task, but you don't want to have to set up a Promise that
+  resolves when the event fires.
+</p>
+
+<h3>Example</h3>
+
+<p>
+  Try clicking around the page; <code>waitForEvent</code> will install
+  handlers and wait for the specified Ember or jQuery event to fire;
+  the value returned from <code>yield</code> is the event that was fired.
+</p>
+
+{{!BEGIN-SNIPPET waitForEvent}}
+<h4>
+  jqueryEvent: (x={{jQueryEvent.offsetX}}, y={{jQueryEvent.offsetX}})
+</h4>
+
+<h4>
+  emberEvent: (v={{emberEvent.v}})
+</h4>
+{{!END-SNIPPET}}
+
+{{code-snippet name="waitForEvent.js"}}
+{{code-snippet name="waitForEvent.hbs"}}
+
+<h3>Example with Derived State</h3>
+
+<p>
+  Sometimes, it's desirable to know whether a certain part of a task
+  is executing, rather than the whole task. For instance, in the example
+  below, the <code>waiterLoop</code> task has an infinite loop, so
+  <code>waiterLoop.isRunning</code> will always be true. If you want
+  to know whether a specific part of that loop is running, then you
+  can just extract some of that logic into another task and check
+  if that subtask's <code>isRunning</code> property in the template.
+</p>
+
+{{!BEGIN-SNIPPET waitForEvent-derived-state}}
+<h4>
+  {{#if waiter.isRunning}}
+    Please click somewhere...
+  {{else}}
+    Thanks!
+  {{/if}}
+</h4>
+{{!END-SNIPPET}}
+
+{{code-snippet name="waitForEvent-derived-state.js"}}
+

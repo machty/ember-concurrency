@@ -26,8 +26,8 @@ class WaitForEventYieldable {
   }
 
   [yieldableSymbol](taskInstance, resumeIndex) {
-    let fn = () => {
-      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, null);
+    let fn = (event) => {
+      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, event);
     };
     this.object.one(this.eventName, fn);
     return () => {

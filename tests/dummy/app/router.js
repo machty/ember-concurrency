@@ -17,6 +17,7 @@ Router.map(function() {
     this.route('child-tasks');
     this.route('task-groups');
     this.route('derived-state');
+    this.route('events');
     this.route('testing-debugging');
     this.route('faq');
     this.route('examples', function() {
