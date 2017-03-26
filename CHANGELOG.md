@@ -18,6 +18,9 @@
     `isSuccessful` and `isError` property (#119)
   - Derived state: Tasks expose `performCount` that tracks
     how many times a task has been performed.
+  - waitForEvent and waitForQueue for pausing the task until
+    a jQuery / Ember event occurs, or until a particular
+    run loop queue has been reached.
 
 ### 0.7.19
   - Added the ability to extend/wrap/decorate `TaskProperty`s (the

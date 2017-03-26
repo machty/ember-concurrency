@@ -41,3 +41,8 @@ used in conjunction with Tasks / TaskInstances.
 - [hash](global.html#hash)
 - [race](global.html#race)
 
+## Misc
+
+- [waitForEvent](global.html#waitForEvent)
+- [waitForQueue](global.html#waitForQueue)
+
