@@ -13,9 +13,9 @@
     break anyone's apps, but it's possible some apps out there
     have subtle timing dependencies on tasks running within
     run loop queues, so it's better to announce this as a possible
-    breaking change.
+    breaking change. (#107)
   - Derived state: Task Instances now have an additional
-    `isSuccessful` and `isError` property
+    `isSuccessful` and `isError` property (#119)
   - Derived state: Tasks expose `performCount` that tracks
     how many times a task has been performed.
 
