@@ -96,7 +96,7 @@
 
         
             
-<h4 class="name" id="all"><span class="type-signature"></span>all<span class="type-signature"></span></h4>
+<h4 class="name" id="all"><span class="type-signature">(constant) </span>all<span class="type-signature"></span></h4>
 
 
 
@@ -151,7 +151,7 @@ be automatically canceled.</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="yieldables.js.html">-yieldables.js</a>, <a href="yieldables.js.html#line24">line 24</a>
+        <a href="cancelable-promise-helpers.js.html">-cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line27">line 27</a>
     </li></ul></dd>
     
 
@@ -169,7 +169,7 @@ be automatically canceled.</li>
 
         
             
-<h4 class="name" id="allSettled"><span class="type-signature"></span>allSettled<span class="type-signature"></span></h4>
+<h4 class="name" id="allSettled"><span class="type-signature">(constant) </span>allSettled<span class="type-signature"></span></h4>
 
 
 
@@ -220,7 +220,7 @@ additional behavior:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="yieldables.js.html">-yieldables.js</a>, <a href="yieldables.js.html#line38">line 38</a>
+        <a href="cancelable-promise-helpers.js.html">-cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line69">line 69</a>
     </li></ul></dd>
     
 
@@ -238,7 +238,78 @@ additional behavior:</p>
 
         
             
-<h4 class="name" id="race"><span class="type-signature"></span>race<span class="type-signature"></span></h4>
+<h4 class="name" id="hash"><span class="type-signature">(constant) </span>hash<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>A cancelation-aware variant of <a href="http://emberjs.com/api/classes/RSVP.html#hash">RSVP.hash</a>.
+The normal version of a <code>RSVP.hash</code> just returns a regular, uncancelable
+Promise. The <code>ember-concurrency</code> variant of <code>hash()</code> has the following
+additional behavior:</p>
+<ul>
+<li>if the task that <code>yield</code>ed <code>hash()</code> is canceled, any of the
+<a href="TaskInstance.html"><code>TaskInstance</code></a>s passed in to <code>allSettled</code> will be canceled</li>
+<li>if any of the items rejects/cancels, all other cancelable items
+(e.g. <a href="TaskInstance.html"><code>TaskInstance</code></a>s) will be canceled</li>
+</ul>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="cancelable-promise-helpers.js.html">-cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line97">line 97</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="race"><span class="type-signature">(constant) </span>race<span class="type-signature"></span></h4>
 
 
 
@@ -292,7 +363,7 @@ or cancelation), any of the <a href="TaskInstance.html"><code>TaskInstance</code
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="yieldables.js.html">-yieldables.js</a>, <a href="yieldables.js.html#line56">line 56</a>
+        <a href="cancelable-promise-helpers.js.html">-cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line84">line 84</a>
     </li></ul></dd>
     
 
@@ -333,7 +404,7 @@ handle the cancelation of a TaskInstance differently from
 other kinds of errors it might throw, and you can use this
 convenience function to distinguish cancelation from errors.</p>
 <pre class="prettyprint source lang-js"><code>click() {
-  this.myTask.perform().catch(e => {
+  this.get('myTask').perform().catch(e => {
     if (!didCancel(e)) { throw e; }
   });
 }</code></pre>
@@ -429,7 +500,7 @@ convenience function to distinguish cancelation from errors.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-instance.js.html">-task-instance.js</a>, <a href="task-instance.js.html#line25">line 25</a>
+        <a href="task-instance.js.html">-task-instance.js</a>, <a href="task-instance.js.html#line76">line 76</a>
     </li></ul></dd>
     
 
@@ -601,7 +672,7 @@ that you can apply to a task.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line61">line 61</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line60">line 60</a>
     </li></ul></dd>
     
 
@@ -762,7 +833,315 @@ console every second.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line110">line 110</a>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line121">line 121</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="waitForEvent"><span class="type-signature"></span>waitForEvent<span class="signature">(object, eventName)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Use <code>waitForEvent</code> to pause the task until an event is fired. The event
+can either be a jQuery event or an Ember.Evented event (or any event system
+where the object supports <code>.on()</code> <code>.one()</code> and <code>.off()</code>).</p>
+<pre class="prettyprint source lang-js"><code>import { task, timeout, waitForEvent } from 'ember-concurrency';
+export default Component.extend({
+  myTask: task(function * () {
+    console.log(&quot;Please click anywhere..&quot;);
+    let clickEvent = yield waitForEvent($('body'), 'click');
+    console.log(&quot;Got event&quot;, clickEvent);
+
+    let emberEvent = yield waitForEvent(this, 'foo');
+    console.log(&quot;Got foo event&quot;, emberEvent);
+
+    // somewhere else: component.trigger('foo', { value: 123 });
+  })
+});</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the Ember Object or jQuery selector (with ,on(), .one(), and .off())
+                that the event fires from</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>eventName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the name of the event to wait for</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="wait-for.js.html">-wait-for.js</a>, <a href="wait-for.js.html#line83">line 83</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="waitForQueue"><span class="type-signature"></span>waitForQueue<span class="signature">(queueName)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Use <code>waitForQueue</code> to pause the task until a certain run loop queue is reached.</p>
+<pre class="prettyprint source lang-js"><code>import { task, timeout, waitForQueue } from 'ember-concurrency';
+export default Component.extend({
+  myTask: task(function * () {
+    yield waitForQueue('afterRender');
+    console.log(&quot;now we're in the afterRender queue&quot;);
+  })
+});</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>queueName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the name of the Ember run loop queue</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="wait-for.js.html">-wait-for.js</a>, <a href="wait-for.js.html#line54">line 54</a>
     </li></ul></dd>
     
 
@@ -804,13 +1183,13 @@ console every second.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#timeout">timeout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Oct 13 2016 13:33:28 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Mar 26 2017 11:12:11 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>

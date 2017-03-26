@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: utils.js</title>
+
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js"> </script>
+    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow-3559834dc32d2cad6adeb2d2fed40e18.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default-ae260dbf3da9b55f508cf5f0e0692c75.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: utils.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import Ember from 'ember';
+
+export function isGeneratorIterator(iter) {
+  return (iter &amp;&amp;
+          typeof iter.next      === 'function' &amp;&amp;
+          typeof iter['return'] === 'function' &amp;&amp;
+          typeof iter['throw']  === 'function');
+}
+
+export function isEventedObject(c) {
+  return (c &amp;&amp;
+          typeof c.one === 'function' &amp;&amp;
+          typeof c.off === 'function');
+}
+
+export function Arguments(args, defer) {
+  this.args = args;
+  this.defer = defer;
+}
+
+Arguments.prototype.resolve = function(value) {
+  if (this.defer) {
+    this.defer.resolve(value);
+  }
+};
+
+
+export let objectAssign = Object.assign || function objectAssign(target) {
+  'use strict';
+  if (target == null) {
+    throw new TypeError('Cannot convert undefined or null to object');
+  }
+
+  target = Object(target);
+  for (var index = 1; index &lt; arguments.length; index++) {
+    var source = arguments[index];
+    if (source != null) {
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+  }
+  return target;
+};
+
+export function _cleanupOnDestroy(owner, object, cleanupMethodName) {
+  // TODO: find a non-mutate-y, hacky way of doing this.
+
+  if (!owner.willDestroy)
+  {
+    // we're running in non Ember object (possibly in a test mock)
+    return;
+  }
+
+  if (!owner.willDestroy.__ember_processes_destroyers__) {
+    let oldWillDestroy = owner.willDestroy;
+    let disposers = [];
+
+    owner.willDestroy = function() {
+      for (let i = 0, l = disposers.length; i &lt; l; i ++) {
+        disposers[i]();
+      }
+      oldWillDestroy.apply(owner, arguments);
+    };
+    owner.willDestroy.__ember_processes_destroyers__ = disposers;
+  }
+
+  owner.willDestroy.__ember_processes_destroyers__.push(() => {
+    object[cleanupMethodName]();
+  });
+}
+
+export let INVOKE = "__invoke_symbol__";
+
+let locations = [
+  'ember-glimmer/helpers/action',
+  'ember-routing-htmlbars/keywords/closure-action',
+  'ember-routing/keywords/closure-action'
+];
+
+for (let i = 0; i &lt; locations.length; i++) {
+  if (locations[i] in Ember.__loader.registry) {
+    INVOKE = Ember.__loader.require(locations[i])['INVOKE'];
+    break;
+  }
+}
+
+// TODO: Symbol polyfill?
+export const yieldableSymbol = "__ec_yieldable__";
+export const YIELDABLE_CONTINUE = "next";
+export const YIELDABLE_THROW = "throw";
+export const YIELDABLE_RETURN = "return";
+export const YIELDABLE_CANCEL = "cancel";
+
+export const _ComputedProperty = Ember.ComputedProperty;
+
+/**
+ *
+ * Yielding `timeout(ms)` will pause a task for the duration
+ * of time passed in, in milliseconds.
+ *
+ * The task below, when performed, will print a message to the
+ * console every second.
+ *
+ * ```js
+ * export default Component.extend({
+ *   myTask: task(function * () {
+ *     while (true) {
+ *       console.log("Hello!");
+ *       yield timeout(1000);
+ *     }
+ *   })
+ * });
+ * ```
+ *
+ * @param {number} ms - the amount of time to sleep before resuming
+ *   the task, in milliseconds
+ */
+export function timeout(ms) {
+  let timerId;
+  let promise = new Ember.RSVP.Promise(r => {
+    timerId = Ember.run.later(r, ms);
+  });
+  promise.__ec_cancel__ = () => {
+    Ember.run.cancel(timerId);
+  };
+  return promise;
+}
+
+export function RawValue(value) {
+  this.value = value;
+}
+
+export function raw(value) {
+  return new RawValue(value);
+}
+
+export function rawTimeout(ms) {
+  return {
+    [yieldableSymbol](taskInstance, resumeIndex) {
+      let timerId = setTimeout(() => {
+        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, this._result);
+      }, ms);
+      return () => {
+        window.clearInterval(timerId);
+      };
+    }
+  };
+}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Mar 26 2017 11:12:11 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber-8520038fe7381ba8119956a342d21580.js"> </script>
+</body>
+</html>

@@ -33,7 +33,8 @@ import { TaskGroup } from './-task-group';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
 import { objectAssign, INVOKE, _cleanupOnDestroy, _ComputedProperty } from './utils';
 import EncapsulatedTask from './-encapsulated-task';
-import getOwner from 'ember-getowner-polyfill';
+
+const { getOwner } = Ember;
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -161,6 +162,15 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
    * @readOnly
    */
 
+  /**
+   * The number of times this task has been performed.
+   *
+   * @memberof Task
+   * @member {number} performCount
+   * @instance
+   * @readOnly
+   */
+
   fn: null,
   context: null,
   _observes: null,
@@ -168,14 +178,6 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
 
   init() {
     this._super(...arguments);
-
-    let self = this;
-    this.perform = function(...args) {
-      if (this !== self) {
-        console.warn(`The use of ${self._propertyName}.perform within a template is deprecated and won't be supported in future versions of ember-concurrency. Please use the \`perform\` helper instead, e.g. {{perform ${self._propertyName}}}`);
-      }
-      return self._perform(...args);
-    };
 
     if (typeof this.fn === 'object') {
       let owner = getOwner(this.context);
@@ -303,20 +305,6 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
    */
 
   /**
-   * Creates a new {@linkcode TaskInstance} and attempts to run it right away.
-   * If running this task instance would increase the task's concurrency
-   * to a number greater than the task's maxConcurrency, this task
-   * instance might be immediately canceled (dropped), or enqueued
-   * to run at later time, after the currently running task(s) have finished.
-   *
-   * @method perform
-   * @memberof Task
-   * @param {*} arg* - args to pass to the task function
-   * @instance
-   */
-  perform: null,
-
-  /**
    * Cancels all running or queued `TaskInstance`s for this Task.
    * If you're trying to cancel a specific TaskInstance (rather
    * than all of the instances running under this task) call
@@ -333,12 +321,19 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
 
   _taskInstanceFactory: TaskInstance,
 
-  _perform(...args) {
-    //let performsTask = this.get('_performs');
-    //if (performsTask) {
-      //args.unshift(performsTask);
-    //}
-
+  /**
+   * Creates a new {@linkcode TaskInstance} and attempts to run it right away.
+   * If running this task instance would increase the task's concurrency
+   * to a number greater than the task's maxConcurrency, this task
+   * instance might be immediately canceled (dropped), or enqueued
+   * to run at later time, after the currently running task(s) have finished.
+   *
+   * @method perform
+   * @memberof Task
+   * @param {*} arg* - args to pass to the task function
+   * @instance
+   */
+  perform(...args) {
     let fullArgs = this._curryArgs ? [...this._curryArgs, ...args] : args;
     let taskInstance = this._taskInstanceFactory.create({
       fn: this.fn,
@@ -354,20 +349,8 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       taskInstance.cancel();
     }
 
-    //if (this._debugCallback) {
-      //this._debugCallback({
-        //type: 'perform',
-        //taskInstance,
-        //task: this,
-      //});
-    //}
-
     this._scheduler.schedule(taskInstance);
     return taskInstance;
-  },
-
-  _getCompletionPromise() {
-    return this._scheduler.getCompletionPromise();
   },
 
   [INVOKE](...args) {
@@ -391,44 +374,25 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
 
   @class TaskProperty
 */
-export function TaskProperty(...decorators) {
-  let taskFn = decorators.pop();
-  let _performsPath;
-
+export function TaskProperty(taskFn) {
   let tp = this;
   _ComputedProperty.call(this, function(_propertyName) {
     return Task.create({
-      fn: taskFn,
+      fn: tp.taskFn,
       context: this,
       _origin: this,
       _taskGroupPath: tp._taskGroupPath,
       _scheduler: resolveScheduler(tp, this, TaskGroup),
-      //_performsPath,
       _propertyName,
       _debugCallback: tp._debugCallback,
     });
   });
 
+  this.taskFn = taskFn;
   this.eventNames = null;
   this.cancelEventNames = null;
   this._debugCallback = null;
   this._observes = null;
-
-  for (let i = 0; i &lt; decorators.length; ++i) {
-    let decorator = decorators[i];
-    if (typeof decorator === 'function') {
-      applyDecorator(this, decorator);
-    } else {
-      _performsPath = decorator;
-    }
-  }
-}
-
-function applyDecorator(taskProperty, decorator) {
-  let value = decorator(taskProperty);
-  if (typeof value === 'function') {
-    value(taskProperty);
-  }
 }
 
 TaskProperty.prototype = Object.create(_ComputedProperty.prototype);
@@ -440,16 +404,9 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
       Ember.Logger.warn(`The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${this._maxConcurrency})\``);
     }
 
-    registerOnPrototype(Ember.addListener, proto, this.eventNames, taskName, '_perform', false);
+    registerOnPrototype(Ember.addListener, proto, this.eventNames, taskName, 'perform', false);
     registerOnPrototype(Ember.addListener, proto, this.cancelEventNames, taskName, 'cancelAll', false);
-    registerOnPrototype(Ember.addObserver, proto, this._observes, taskName, '_perform', true);
-
-    let cp = this;
-    Object.defineProperty(proto, taskName, {
-      get() {
-        return cp.get(this, taskName);
-      }
-    });
+    registerOnPrototype(Ember.addObserver, proto, this._observes, taskName, 'perform', true);
   },
 
   /**
@@ -577,7 +534,7 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
    * }).maxConcurrency(3),
    *
    * elsewhere() {
-   *   this.doSomeAjax.perform("http://www.example.com/json");
+   *   this.get('doSomeAjax').perform("http://www.example.com/json");
    * },
    * ```
    *
@@ -617,7 +574,6 @@ function makeTaskCallback(taskName, method, once) {
     }
   };
 }
-
 </code></pre>
         </article>
     </section>
@@ -628,13 +584,13 @@ function makeTaskCallback(taskName, method, once) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#timeout">timeout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Oct 13 2016 13:33:28 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Mar 26 2017 11:12:11 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>
