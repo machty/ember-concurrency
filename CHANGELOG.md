@@ -1,5 +1,19 @@
 # Changelog
-### master
+### 0.8.0
+  - POSSIBLE BREAKING CHANGE: the internal task scheduler
+    has been rewritten to be more performant, but to also
+    more immediately start executing task functions. Prior
+    to this version, `perform()`ing a task wouldn't actually
+    start executing the task function until the `actions` queue
+    on the run loop; this behavior was inconsistent with the timing
+    of async functions, and meant that certain lifecycle hooks
+    that depended on logic being run synchronously couldn't be
+    used with ember-concurrency Tasks (because they already
+    missed their window of execution). This is unlikely to
+    break anyone's apps, but it's possible some apps out there
+    have subtle timing dependencies on tasks running within
+    run loop queues, so it's better to announce this as a possible
+    breaking change.
   - Derived state: Task Instances now have an additional
     `isSuccessful` and `isError` property
   - Derived state: Tasks expose `performCount` that tracks
