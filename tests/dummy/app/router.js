@@ -32,7 +32,6 @@ Router.map(function() {
       this.route('joining-tasks-2');
       this.route('decorating-tasks');
       this.route('task-groups');
-      this.route('completion-state');
       this.route('encapsulated-task');
       this.route('encapsulated-task-fun');
     });

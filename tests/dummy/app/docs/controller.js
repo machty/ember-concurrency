@@ -22,7 +22,7 @@ export default Ember.Controller.extend({
     },
     { route: "docs.child-tasks", title: "Child Tasks"},
     { route: "docs.task-groups", title: "Task Groups"},
-    { route: "docs.derived-state", title: "Derived State"},
+    { route: "docs.derived-state", title: "Derived State" },
     { route: "docs.testing-debugging", title: "Testing & Debugging"},
     { route: "docs.faq", title: "FAQ & Fact Sheet"},
     { title: "Examples", route: "docs.examples",
