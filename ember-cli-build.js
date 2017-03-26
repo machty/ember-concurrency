@@ -3,14 +3,23 @@
 var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function(defaults) {
+  var includePolyfill = process.env.EMBER_ENV === 'production' || process.env.CI;
+
+  var babelOptions = {
+    optional: ['es7.decorators']
+  };
+
+  if (includePolyfill) {
+    babelOptions.includePolyfill = true;
+  } else {
+    babelOptions.blacklist = ['regenerator'];
+  }
+
   var app = new EmberAddon(defaults, {
     minifyJS: {
       enabled: false
     },
-    jsdoc:{
-      configFile:".jsdoc",
-      generateOnBuild: true
-    },
+
     snippetPaths: ['tests/dummy/snippets'],
     snippetSearchPaths: ['app', 'tests/dummy/app', 'addon'],
 
@@ -18,9 +27,7 @@ module.exports = function(defaults) {
       useScss: true
     },
 
-    babel: {
-      includePolyfill: true
-    }
+    babel: babelOptions,
   });
 
   /*

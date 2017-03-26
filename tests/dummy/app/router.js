@@ -31,18 +31,22 @@ Router.map(function() {
       this.route('joining-tasks');
       this.route('joining-tasks-2');
       this.route('decorating-tasks');
-      this.route('observables');
       this.route('task-groups');
       this.route('completion-state');
       this.route('encapsulated-task');
       this.route('encapsulated-task-fun');
-      this.route('modal-fun');
     });
     this.route('404', { path: '*path' });
   });
   this.route('experimental-prediction');
   this.route('helpers-test');
   this.route('deprecation-test');
+  this.route('testing-ergo', function() {
+    this.route('foo');
+    this.route('foo-settimeout');
+    this.route('slow');
+    this.route('timer-loop');
+  });
   this.route('task-injection-test');
 });
 

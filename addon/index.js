@@ -1,12 +1,10 @@
 import Ember from 'ember';
-import { isGeneratorIterator, createObservable } from './utils';
+import { isGeneratorIterator, timeout } from './utils';
 import { TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
 import { TaskGroupProperty } from './-task-group';
 import EventedObservable from './-evented-observable';
-import { subscribe } from './-subscribe';
-import { all, allSettled, race } from './-yieldables';
-import { drop, restartable, enqueue, maxConcurrency, cancelOn, performOn } from './-decorators';
+import { all, allSettled, hash, race } from './-yieldables';
 
 let testGenFn = function * () {};
 let testIter = testGenFn();
@@ -66,74 +64,16 @@ export function taskGroup(...args) {
   return new TaskGroupProperty(...args);
 }
 
-/**
- * @private
- */
-export let _numIntervals = 0;
-
-/**
- * @private
- */
-export function interval(ms) {
-  return createObservable(publish => {
-    let intervalId = setInterval(publish, ms);
-    _numIntervals++;
-    return () => {
-      clearInterval(intervalId);
-      _numIntervals--;
-    };
-  });
-}
-
-/**
- *
- * Yielding `timeout(ms)` will pause a task for the duration
- * of time passed in, in milliseconds.
- *
- * The task below, when performed, will print a message to the
- * console every second.
- *
- * ```js
- * export default Component.extend({
- *   myTask: task(function * () {
- *     while (true) {
- *       console.log("Hello!");
- *       yield timeout(1000);
- *     }
- *   })
- * });
- * ```
- *
- * @param {number} ms - the amount of time to sleep before resuming
- *   the task, in milliseconds
- */
-export function timeout(ms) {
-  let timerId;
-  let promise = new Ember.RSVP.Promise(r => {
-    timerId = Ember.run.later(r, ms);
-  });
-  promise.__ec_cancel__ = () => {
-    Ember.run.cancel(timerId);
-  };
-  return promise;
-}
-
 export function events(obj, eventName) {
   return EventedObservable.create({ obj, eventName });
 }
 
 export {
-  createObservable,
   all,
   allSettled,
+  hash,
   race,
-  subscribe,
-  drop,
-  restartable,
-  enqueue,
-  maxConcurrency,
-  cancelOn,
-  performOn,
-  didCancel
+  didCancel,
+  timeout
 };
 

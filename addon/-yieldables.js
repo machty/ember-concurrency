@@ -1,8 +1,14 @@
 import Ember from 'ember';
 import TaskInstance from './-task-instance';
+import { yieldableSymbol } from './utils';
 
 const RSVP = Ember.RSVP;
 
+const asyncAll = taskAwareVariantOf(RSVP.Promise, 'all', identity);
+
+function * resolver(value) {
+  return value;
+}
 
 /**
  * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
@@ -17,11 +23,39 @@ const RSVP = Ember.RSVP;
  *   be automatically canceled.
  *
  * [Check out the "Awaiting Multiple Child Tasks example"](/#/docs/examples/joining-tasks)
- *
- * @param {function} generatorFunction the generator function backing the task.
- * @returns {TaskProperty}
  */
-export let all = taskAwareVariantOf(RSVP.Promise, 'all');
+export const all = (things) => {
+  if (things.length === 0) {
+    return things;
+  }
+
+  for (let i = 0; i < things.length; ++i) {
+    let t = things[i];
+    if(!(t && t[yieldableSymbol])) {
+      return asyncAll(things);
+    }
+  }
+
+  let isAsync = false;
+  let taskInstances = things.map(thing => {
+    let ti = TaskInstance.create({
+      // TODO: consider simpler iterator than full on generator fn?
+      fn: resolver,
+      args: [thing],
+    })._start();
+
+    if (ti._completionState !== 1) {
+      isAsync = true;
+    }
+    return ti;
+  });
+
+  if (isAsync) {
+    return asyncAll(taskInstances);
+  } else {
+    return taskInstances.map(ti => ti.value);
+  }
+};
 
 /**
  * A cancelation-aware variant of [RSVP.allSettled](http://emberjs.com/api/classes/RSVP.html#method_allSettled).
@@ -31,11 +65,8 @@ export let all = taskAwareVariantOf(RSVP.Promise, 'all');
  *
  * - if the task that `yield`ed `allSettled()` is canceled, any of the
  *   {@linkcode TaskInstance}s passed in to `allSettled` will be canceled
- *
- * @param {function} generatorFunction the generator function backing the task.
- * @returns {TaskProperty}
  */
-export let allSettled = taskAwareVariantOf(RSVP, 'allSettled');
+export const allSettled = taskAwareVariantOf(RSVP, 'allSettled', identity);
 
 /**
  * A cancelation-aware variant of [Promise.race](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race).
@@ -49,16 +80,36 @@ export let allSettled = taskAwareVariantOf(RSVP, 'allSettled');
  *   or cancelation), any of the {@linkcode TaskInstance}s passed in will be canceled
  *
  * [Check out the "Awaiting Multiple Child Tasks example"](/#/docs/examples/joining-tasks)
- *
- * @param {function} generatorFunction the generator function backing the task.
- * @returns {TaskProperty}
  */
-export let race = taskAwareVariantOf(RSVP.Promise, 'race');
+export const race = taskAwareVariantOf(RSVP.Promise, 'race', identity);
 
-function taskAwareVariantOf(obj, method) {
-  return function(items) {
+/**
+ * A cancelation-aware variant of [RSVP.hash](http://emberjs.com/api/classes/RSVP.html#hash).
+ * The normal version of a `RSVP.hash` just returns a regular, uncancelable
+ * Promise. The `ember-concurrency` variant of `hash()` has the following
+ * additional behavior:
+ *
+ * - if the task that `yield`ed `hash()` is canceled, any of the
+ *   {@linkcode TaskInstance}s passed in to `allSettled` will be canceled
+ * - if any of the items rejects/cancels, all other cancelable items
+ *   (e.g. {@linkcode TaskInstance}s) will be canceled
+ */
+export const hash = taskAwareVariantOf(RSVP, 'hash', getValues);
+
+function identity(obj) {
+  return obj;
+}
+
+function getValues(obj) {
+  return Object.keys(obj).map(k => obj[k]);
+}
+
+function taskAwareVariantOf(obj, method, getItems) {
+  return function(thing) {
+    let items = getItems(thing);
     let defer = Ember.RSVP.defer();
-    obj[method](items).then(defer.resolve, defer.reject);
+
+    obj[method](thing).then(defer.resolve, defer.reject);
 
     let hasCancelled = false;
     let cancelAll = () => {

@@ -6,6 +6,8 @@ import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin
 
 
 export const TaskGroup = Ember.Object.extend(TaskStateMixin, {
+  isTaskGroup: true,
+
   toString() {
     return `<TaskGroup:${this._propertyName}>`;
   },

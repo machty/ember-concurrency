@@ -86,8 +86,8 @@ test("task groups enforce that only one member runs at a time", function(assert)
   });
 });
 
-test("task groups can be cancelled", function(assert) {
-  assert.expect(9);
+test("task groups can be canceled", function(assert) {
+  assert.expect(18);
 
   let deferA, deferB;
   let Obj = Ember.Object.extend({
@@ -114,6 +114,12 @@ test("task groups can be cancelled", function(assert) {
     taskB.perform();
   });
 
+  suffix = "after first run loop";
+
+  assertStates(assert, tg,    true, false, false, suffix);
+  assertStates(assert, taskA, true, false, false, suffix);
+  assertStates(assert, taskB, false, true, false, suffix);
+
   Ember.run(tg, 'cancelAll');
 
   suffix = "after tg.cancelAll()";
@@ -125,8 +131,7 @@ test("task groups can be cancelled", function(assert) {
 test("task groups return a boolean for isRunning", function(assert) {
   assert.expect(3);
 
-  let contextResolve;
-  let defer = Ember.RSVP.defer()
+  let defer = Ember.RSVP.defer();
 
   let Obj = Ember.Object.extend({
     tg: taskGroup().enqueue(),
@@ -140,7 +145,7 @@ test("task groups return a boolean for isRunning", function(assert) {
   let tg = obj.get('tg');
   let myTask = obj.get('myTask');
   assert.strictEqual(tg.get('isRunning'), false);
-  Em.run(() => myTask.perform());
+  Ember.run(() => myTask.perform());
   assert.strictEqual(tg.get('isRunning'), true);
   Ember.run(defer, defer.resolve);
   assert.strictEqual(tg.get('isRunning'), false);

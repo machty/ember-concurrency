@@ -39,52 +39,6 @@ export let objectAssign = Object.assign || function objectAssign(target) {
   return target;
 };
 
-export function createObservable(fn) {
-  return {
-    subscribe(onNext, onError, onCompleted) {
-      let isDisposed = false;
-      let isComplete = false;
-      let publish = (v) => {
-        if (isDisposed || isComplete) { return; }
-        joinAndSchedule(null, onNext, v);
-      };
-      publish.error = (e) => {
-        if (isDisposed || isComplete) { return; }
-        joinAndSchedule(() => {
-          if (onError) { onError(e); }
-          if (onCompleted) { onCompleted(); }
-        });
-      };
-      publish.complete = () => {
-        if (isDisposed || isComplete) { return; }
-        isComplete = true;
-        joinAndSchedule(() => {
-          if (onCompleted) { onCompleted(); }
-        });
-      };
-
-      // TODO: publish.complete?
-
-      let maybeDisposer = fn(publish);
-      let disposer = typeof maybeDisposer === 'function' ? maybeDisposer : function() {};
-
-      return {
-        dispose() {
-          if (isDisposed) { return; }
-          isDisposed = true;
-          disposer();
-        },
-      };
-    },
-  };
-}
-
-function joinAndSchedule(...args) {
-  Ember.run.join(() => {
-    Ember.run.schedule('actions', ...args);
-  });
-}
-
 export function _cleanupOnDestroy(owner, object, cleanupMethodName) {
   // TODO: find a non-mutate-y, hacky way of doing this.
 
@@ -129,5 +83,64 @@ for (let i = 0; i < locations.length; i++) {
 
 // TODO: Symbol polyfill?
 export const yieldableSymbol = "__ec_yieldable__";
+export const YIELDABLE_CONTINUE = "next";
+export const YIELDABLE_THROW = "throw";
+export const YIELDABLE_RETURN = "return";
+export const YIELDABLE_CANCEL = "cancel";
 
 export const _ComputedProperty = Ember.ComputedProperty;
+
+/**
+ *
+ * Yielding `timeout(ms)` will pause a task for the duration
+ * of time passed in, in milliseconds.
+ *
+ * The task below, when performed, will print a message to the
+ * console every second.
+ *
+ * ```js
+ * export default Component.extend({
+ *   myTask: task(function * () {
+ *     while (true) {
+ *       console.log("Hello!");
+ *       yield timeout(1000);
+ *     }
+ *   })
+ * });
+ * ```
+ *
+ * @param {number} ms - the amount of time to sleep before resuming
+ *   the task, in milliseconds
+ */
+export function timeout(ms) {
+  let timerId;
+  let promise = new Ember.RSVP.Promise(r => {
+    timerId = Ember.run.later(r, ms);
+  });
+  promise.__ec_cancel__ = () => {
+    Ember.run.cancel(timerId);
+  };
+  return promise;
+}
+
+export function RawValue(value) {
+  this.value = value;
+}
+
+export function raw(value) {
+  return new RawValue(value);
+}
+
+export function rawTimeout(ms) {
+  return {
+    [yieldableSymbol](taskInstance, resumeIndex) {
+      let timerId = setTimeout(() => {
+        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, this._result);
+      }, ms);
+      return () => {
+        window.clearInterval(timerId);
+      };
+    }
+  };
+}
+
