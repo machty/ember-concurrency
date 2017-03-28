@@ -276,7 +276,6 @@ let taskInstanceAttrs = {
     if (this.hasStarted) {
       this.proceed(this._index, YIELDABLE_CANCEL, null);
     } else {
-      debugger;
       this._finalize(null, COMPLETION_CANCEL);
     }
   },
