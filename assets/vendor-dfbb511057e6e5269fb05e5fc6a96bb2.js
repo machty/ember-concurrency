@@ -105573,7 +105573,6 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       if (this.hasStarted) {
         this.proceed(this._index, _utils.YIELDABLE_CANCEL, null);
       } else {
-        debugger;
         this._finalize(null, COMPLETION_CANCEL);
       }
     },
