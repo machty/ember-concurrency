@@ -1,12 +1,5 @@
 import Ember from 'ember';
 
-export function isGeneratorIterator(iter) {
-  return (iter &&
-          typeof iter.next      === 'function' &&
-          typeof iter['return'] === 'function' &&
-          typeof iter['throw']  === 'function');
-}
-
 export function isEventedObject(c) {
   return (c &&
           typeof c.one === 'function' &&
