@@ -42,6 +42,7 @@
     "ember-disable-proxy-controllers": "^1.0.1",
     "ember-export-application-global": "^1.0.4",
     "ember-font-awesome": "^3.0.5",
+    "ember-get-helper": "^1.1.0",
     "ember-load-initializers": "~1.0.0",
     "ember-notify": "~5.2.1",
     "ember-resolver": "^2.0.3",
