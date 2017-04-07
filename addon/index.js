@@ -1,21 +1,11 @@
 import Ember from 'ember';
-import { isGeneratorIterator, timeout } from './utils';
+import { timeout } from './utils';
 import { TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
 import { TaskGroupProperty } from './-task-group';
 import EventedObservable from './-evented-observable';
 import { all, allSettled, hash, race } from './-cancelable-promise-helpers';
 import { waitForQueue, waitForEvent } from './-wait-for';
-
-let testGenFn = function * () {};
-let testIter = testGenFn();
-Ember.assert(`ember-concurrency requires that you set babel.includePolyfill to true in your ember-cli-build.js (or Brocfile.js) to ensure that the generator function* syntax is properly transpiled, e.g.:
-
-  var app = new EmberApp({
-    babel: {
-      includePolyfill: true,
-    }
-  });`, isGeneratorIterator(testIter));
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
