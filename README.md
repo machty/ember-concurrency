@@ -33,12 +33,16 @@ approach).
   - Try to replicate the issue within an [ember-twiddle][twiddle-starter]
 - Ask a question in the `#e-concurrency` channel at the [Ember.js Community Slack](https://embercommunity.slack.com)
 
+## Contributing
+
+This project uses `yarn` as a package manager. If you're adding a new dependency, ensure that the `yarn.lock` lockfile is updated and committed into your pull request.
+
 ## Addon Maintenance
 
 ### Installation
 
 * `git clone` this repository
-* `npm install`
+* `yarn install`
 * `bower install`
 
 ### Running
@@ -48,7 +52,7 @@ approach).
 
 ### Running Tests
 
-* `npm test` (Runs `ember try:testall` to test your addon against multiple Ember versions)
+* `yarn test` (Runs `ember try:testall` to test your addon against multiple Ember versions)
 * `ember test`
 * `ember test --server`
 
