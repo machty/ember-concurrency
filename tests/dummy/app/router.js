@@ -21,6 +21,7 @@ Router.map(function() {
     this.route('testing-debugging');
     this.route('faq');
     this.route('examples', function() {
+      this.route('wait-hover');
       this.route('increment-buttons');
       this.route('loading-ui');
       this.route('autocomplete');

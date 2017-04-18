@@ -1,0 +1,42 @@
+<h3>Timed Hover Dropdown</h3>
+
+<p>
+  This example demonstrates a few different concepts:
+</p>
+
+<ul>
+  <li>Waiting for a hover time of a certain amount of time</li>
+  <li>
+    Canceling hover timers after <code>mouseLeave</code> events
+  </li>
+</ul>
+
+<h5>Live Example</h5>
+
+<h1>State: {{if active "Active" "Not Active"}}{{count}}</h1>
+
+<p>(Hold down the buttons to accelerate.)</p>
+
+{{! BEGIN-SNIPPET wait-hover }}
+<p>
+  {{#hover-button
+    hover=(perform activate)
+    release=(cancel-all activate)}}
+      Hover To Activate
+  {{/hover-button}}
+
+  <button onclick={{action 'reset'}}>Click to Reset</button>
+</p>
+{{! END-SNIPPET }}
+
+<h5>JavaScript (task)</h5>
+
+{{code-snippet name="wait-hover-task.js"}}
+
+<h5>JavaScript (button component)</h5>
+
+{{code-snippet name="hover-button.js"}}
+
+<h5>Template</h5>
+
+{{code-snippet name="wait-hover.hbs"}}
