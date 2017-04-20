@@ -9,6 +9,21 @@
   it'll work on all browsers supported by Ember.
 </p>
 
+<h3>Why am I seeing `TaskCancelation: TaskCancelation` in my console?</h3>
+
+<p>
+  You are probably calling `.then()` on a `TaskInstance`, like `this.get('myTask').perform().then(() => {`.
+  You should move any Promise chaining to the task.
+
+  ```
+  myTask: task(function * () {
+    yield timeout(500);
+
+    // here is where you put your `.then()` code
+  })
+  ```
+</p>
+
 <h3>How do ember-concurrency Tasks compare to...</h3>
 
 <h4>Promises?</h4>
