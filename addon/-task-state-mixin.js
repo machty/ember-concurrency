@@ -48,6 +48,10 @@ export default Ember.Mixin.create({
     return this._taskGroupPath && this.context.get(this._taskGroupPath);
   }),
 
+  resetPerformCount() {
+    this.set('performCount', 0);
+  },
+
   _scheduler: null,
 
 });
