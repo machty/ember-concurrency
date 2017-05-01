@@ -6,7 +6,7 @@ export default Ember.Controller.extend({
   appController: Ember.inject.controller('application'),
 
   tableOfContents: [
-    { route: "docs",   title: "Introduction"},
+    { route: "docs.introduction", title: "Introduction"},
     { route: "docs.installation", title: "Installation"},
     { route: "docs.writing-tasks", title: "Your First Task"},
     { route: "docs.task-function-syntax", title: "Task Function Syntax"},
@@ -83,5 +83,3 @@ export default Ember.Controller.extend({
     }
   }),
 });
-
-
