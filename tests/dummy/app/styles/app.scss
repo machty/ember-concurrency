@@ -11,9 +11,12 @@ section {
   margin-top: 10rem;
 }
 
+a {
+  text-decoration: none;
+}
+
 .navbar {
   a {
-    text-decoration: none;
     color: black;
     line-height: 6rem;
     padding: 2rem 2rem;
@@ -30,6 +33,11 @@ section {
 
 .side-menu {
   padding-left: 2rem;
+
+  .active {
+    font-weight: bold;
+    text-decoration: underline;
+  }
 }
 
 .progress-outer {
@@ -147,4 +155,3 @@ th, td {
     opacity: 1;
   }
 }
-
