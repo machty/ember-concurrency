@@ -7,6 +7,7 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
   this.route('docs', function() {
+    this.route('introduction');
     this.route('installation');
     this.route('writing-tasks');
     this.route('task-function-syntax');
