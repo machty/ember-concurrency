@@ -224,7 +224,7 @@ let taskInstanceAttrs = {
   _start() {
     if (this.hasStarted || this.isCanceling) { return this; }
     set(this, 'hasStarted', true);
-    this.proceed(this._index, YIELDABLE_CONTINUE, undefined);
+    this._scheduleProceed(YIELDABLE_CONTINUE, undefined);
     return this;
   },
 
@@ -246,7 +246,7 @@ let taskInstanceAttrs = {
     set(this, 'isCanceling', true);
 
     if (this.hasStarted) {
-      this._proceedSoon(this._index, YIELDABLE_CANCEL, null);
+      this._proceedSoon(YIELDABLE_CANCEL, null);
     } else {
       this._finalize(null, COMPLETION_CANCEL);
     }
@@ -262,7 +262,7 @@ let taskInstanceAttrs = {
   _maybeResolveDefer() {
     if (!this._defer || !this._completionState) { return; }
 
-    if (this._completionState === 1) {
+    if (this._completionState === COMPLETION_SUCCESS) {
       this._defer.resolve(this.value);
     } else {
       this._defer.reject(this.error);
@@ -427,33 +427,61 @@ let taskInstanceAttrs = {
    * the args passed to `perform(...args)` through to the generator
    * function.
    *
+   * `_makeIterator` is overridden in EncapsulatedTask to produce
+   * an iterator based on the `*perform()` function on the
+   * EncapsulatedTask definition.
+   *
    * @private
    */
   _makeIterator() {
     return this.fn.apply(this.context, this.args);
   },
 
-  _validateIndex(index) {
-    if (this._index === index && !this._completionState) {
-      this._index++;
-      return true;
-    } else {
-      return false;
+  /**
+   * The TaskInstance internally tracks an index/sequence number
+   * (the `_index` property) which gets incremented every time the
+   * task generator function iterator takes a step. When a task
+   * function is paused at a `yield`, there are two events that
+   * cause the TaskInstance to take a step: 1) the yielded value
+   * "resolves", thus resuming the TaskInstance's execution, or
+   * 2) the TaskInstance is canceled. We need some mechanism to prevent
+   * stale yielded value resolutions from resuming the TaskFunction
+   * after the TaskInstance has already moved on (either because
+   * the TaskInstance has since been canceled or because an
+   * implementation of the Yieldable API tried to resume the
+   * TaskInstance more than once). The `_index` serves as
+   * that simple mechanism: anyone resuming a TaskInstance
+   * needs to pass in the `index` they were provided that acts
+   * as a ticket to resume the TaskInstance that expires once
+   * the TaskInstance has moved on.
+   *
+   * @private
+   */
+  _advanceIndex(index) {
+    if (this._index === index) {
+      return ++this._index;
     }
   },
 
-  _proceedSoon(index, yieldResumeType, value) {
-    if (!this._validateIndex(index)) {
-      return;
+  _proceedSoon(yieldResumeType, value) {
+    this._advanceIndex(this._index);
+    if (this._runLoop) {
+      joinAndSchedule('actions', this, this._proceed, yieldResumeType, value);
+    } else {
+      setTimeout(() => this._proceed(yieldResumeType, value), 1);
     }
-
-    Ember.run.schedule('actions', this, this._proceed, yieldResumeType, value);
   },
 
   proceed(index, yieldResumeType, value) {
-    if (!this._validateIndex(index)) {
+    if (this._completionState) { return; }
+    if (!this._advanceIndex(index)) {
       return;
     }
+    this._proceedSoon(yieldResumeType, value);
+  },
+
+  _scheduleProceed(yieldResumeType, value) {
+    if (this._completionState) { return; }
 
     if (this._runLoop && !Ember.run.currentRunLoop) {
       Ember.run(this, this._proceed, yieldResumeType, value);
@@ -467,6 +495,8 @@ let taskInstanceAttrs = {
   },
 
   _proceed(yieldResumeType, value) {
+    if (this._completionState) { return; }
+
     if (this._generatorState === GENERATOR_STATE_DONE) {
       this._handleResolvedReturnedValue(yieldResumeType, value);
     } else {
@@ -510,7 +540,7 @@ let taskInstanceAttrs = {
     let beforeIndex = this._index;
     this._resumeGenerator(resumeValue, iteratorMethod);
 
-    if (!this._validateIndex(beforeIndex)) {
+    if (!this._advanceIndex(beforeIndex)) {
       return;
     }
 
@@ -598,6 +628,12 @@ taskInstanceAttrs[yieldableSymbol] = function handleYieldedTaskInstance(parentTa
 };
 
 let TaskInstance = Ember.Object.extend(taskInstanceAttrs);
+
+function joinAndSchedule(...args) {
+  Ember.run.join(() => {
+    Ember.run.schedule(...args);
+  });
+}
 
 export function go(args, fn, attrs = {}) {
   return TaskInstance.create(

@@ -4,8 +4,8 @@ import { module, test } from 'qunit';
 
 module('Unit: task states');
 
-test("isIdle is true if the task fn never yields", function(assert) {
-  assert.expect(2);
+test("isIdle basic", function(assert) {
+  assert.expect(3);
 
   let Obj = Ember.Object.extend({
     myTask: task(function * () { })
@@ -16,8 +16,9 @@ test("isIdle is true if the task fn never yields", function(assert) {
     obj = Obj.create();
     assert.equal(obj.get('myTask.isIdle'), true);
     obj.get('myTask').perform();
-    assert.equal(obj.get('myTask.isIdle'), true);
+    assert.equal(obj.get('myTask.isIdle'), false);
   });
+  assert.equal(obj.get('myTask.isIdle'), true);
 });
 
 test("isIdle is false when task is blocked on a yield", function(assert) {

@@ -21,22 +21,36 @@ test("basics", function(assert) {
 });
 
 test("task instances run synchronously", function(assert) {
-  assert.expect(1);
+  assert.expect(3);
+  let ti;
   Ember.run(() => {
-    let ti = wrap(function * (v) { return v; })(123);
-    assert.equal(ti.value, 123);
+    let isSync = true;
+    ti = wrap(function * (v) {
+      assert.ok(isSync);
+      return v;
+    })(123);
+    isSync = false;
+    assert.equal(ti.value, null);
   });
+  assert.equal(ti.value, 123);
 });
 
 test("task instance hierarchies run synchronously", function(assert) {
-  assert.expect(1);
+  assert.expect(3);
 
+  let ti;
   Ember.run(() => {
-    let ti = wrap(function * (v) {
-      return wrap(function * (a) { return a*2; })(v);
+    let isSync = true;
+    ti = wrap(function * (v) {
+      return wrap(function * (a) {
+        assert.ok(isSync);
+        return a*2;
+      })(v);
     })(123);
-    assert.equal(ti.value, 246);
+    isSync = false;
+    assert.equal(ti.value, null);
   });
+  assert.equal(ti.value, 246);
 });
 
 if (window.Promise) {
