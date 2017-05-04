@@ -321,3 +321,16 @@ test(".performCount exposes the number of times a task has been performed", func
   });
 });
 
+test('.performCount can be reset with .resetPerformCount()', function(assert) {
+  let Obj = Ember.Object.extend({
+    doStuff: task(function* () {})
+  });
+
+  Ember.run(() => {
+    let obj = Obj.create();
+    let doStuff = obj.get('doStuff');
+    doStuff.perform();
+    doStuff.resetPerformCount();
+    assert.equal(doStuff.get('performCount'), 0);
+  });
+});
