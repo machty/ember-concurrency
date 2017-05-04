@@ -349,6 +349,7 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
 export function TaskProperty(taskFn) {
   let tp = this;
   _ComputedProperty.call(this, function(_propertyName) {
+    taskFn.displayName = `${_propertyName} (task)`;
     return Task.create({
       fn: tp.taskFn,
       context: this,
