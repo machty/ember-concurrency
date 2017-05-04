@@ -22,17 +22,6 @@ const GENERATOR_STATE_HAS_MORE_VALUES = "HAS_MORE_VALUES";
 const GENERATOR_STATE_DONE = "DONE";
 const GENERATOR_STATE_ERRORED = "ERRORED";
 
-function markRsvpPromiseAsCaught(promise) {
-  if (promise._onError) {
-    // >= 2.0.0
-    promise._onError = null;
-  }
-  if (promise._onerror) {
-    // < 2.0.0
-    promise._onerror = null;
-  }
-}
-
 function handleYieldedUnknownThenable(thenable, taskInstance, resumeIndex) {
   thenable.then(value => {
     taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, value);
@@ -232,10 +221,6 @@ let taskInstanceAttrs = {
 
   _index: 1,
 
-  _makeIterator() {
-    return this.fn.apply(this.context, this.args);
-  },
-
   _start() {
     if (this.hasStarted || this.isCanceling) { return this; }
     set(this, 'hasStarted', true);
@@ -379,6 +364,14 @@ let taskInstanceAttrs = {
     }
   },
 
+  /**
+   * Runs any disposers attached to the task's most recent `yield`.
+   * For instance, when a task yields a TaskInstance, it registers that
+   * child TaskInstance's disposer, so that if the parent task is canceled,
+   * _dispose() will run that disposer and cancel the child TaskInstance.
+   *
+   * @private
+   */
   _dispose() {
     if (this._disposer) {
       let disposer = this._disposer;
@@ -394,10 +387,14 @@ let taskInstanceAttrs = {
     return state === GENERATOR_STATE_DONE || state === GENERATOR_STATE_ERRORED;
   },
 
+  /**
+   * Calls .next()/.throw()/.return() on the task's generator function iterator,
+   * essentially taking a single step of execution on the task function.
+   *
+   * @private
+   */
   _resumeGenerator(nextValue, iteratorMethod) {
-    if (this._isGeneratorDone()) {
-      throw new Error("tried to advance finished generator");
-    }
+    Ember.assert("The task generator function has already run to completion. This is probably an ember-concurrency bug.", !this._isGeneratorDone());
 
     try {
       let iterator = this._getIterator();
@@ -420,6 +417,20 @@ let taskInstanceAttrs = {
       this.iterator = this._makeIterator();
     }
     return this.iterator;
+  },
+
+  /**
+   * Returns a generator function iterator (the object with
+   * .next()/.throw()/.return() methods) using the task function
+   * supplied to `task(...)`. It uses `apply` so that the `this`
+   * context is the host object the task lives on, and passes
+   * the args passed to `perform(...args)` through to the generator
+   * function.
+   *
+   * @private
+   */
+  _makeIterator() {
+    return this.fn.apply(this.context, this.args);
   },
 
   _validateIndex(index) {
@@ -485,19 +496,15 @@ let taskInstanceAttrs = {
     }
   },
 
-  _handleResolvedContinueValue(_yieldResumeType, value) {
+  _generatorState: GENERATOR_STATE_BEFORE_CREATE,
+  _generatorValue: null,
+  _handleResolvedContinueValue(_yieldResumeType, resumeValue) {
     let iteratorMethod = _yieldResumeType;
     if (iteratorMethod === YIELDABLE_CANCEL) {
       set(this, 'isCanceling', true);
       iteratorMethod = YIELDABLE_RETURN;
     }
-    this._syncResume(iteratorMethod, value);
-  },
 
-  _isExecuting: false,
-  _generatorState: GENERATOR_STATE_BEFORE_CREATE,
-  _generatorValue: null,
-  _syncResume(iteratorMethod, resumeValue) {
     this._dispose();
 
     let beforeIndex = this._index;
@@ -566,7 +573,6 @@ let taskInstanceAttrs = {
   },
 };
 
-// TODO: how to handle parent task cancelation canceling child task calling parent again.
 taskInstanceAttrs[yieldableSymbol] = function handleYieldedTaskInstance(parentTaskInstance, resumeIndex) {
   let yieldedTaskInstance = this;
   yieldedTaskInstance._hasSubscribed = true;
