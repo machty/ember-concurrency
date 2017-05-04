@@ -321,3 +321,34 @@ test(".performCount exposes the number of times a task has been performed", func
   });
 });
 
+test("call stack stays within reasonable bounds", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    a: task(function * () {
+      yield this.get('b').perform();
+
+      // Not sure how to test this in an automated fashion;
+      // when we tweak scheduler logic, we can check that stack
+      // traces are within reasonable bounds by uncommenting
+      // the line below.
+      // debugger;
+    }),
+    b: task(function * () {
+      yield this.get('c').perform();
+    }),
+    c: task(function * () {
+      yield this.get('d').perform();
+    }),
+    d: task(function * () {
+    }),
+  });
+
+  Ember.run(() => {
+    let obj = Obj.create();
+    obj.get('a').perform();
+  });
+  assert.ok(true);
+});
+
+

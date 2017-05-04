@@ -295,7 +295,7 @@ let taskInstanceAttrs = {
    * @instance
    * @return {Promise}
    */
-  then:    forwardToInternalPromise('then'),
+  then: forwardToInternalPromise('then'),
 
   /**
    * @method catch
@@ -303,7 +303,7 @@ let taskInstanceAttrs = {
    * @instance
    * @return {Promise}
    */
-  catch:   forwardToInternalPromise('catch'),
+  catch: forwardToInternalPromise('catch'),
 
   /**
    * @method finally
@@ -394,7 +394,7 @@ let taskInstanceAttrs = {
     return state === GENERATOR_STATE_DONE || state === GENERATOR_STATE_ERRORED;
   },
 
-  _takeSafeStep(nextValue, iteratorMethod) {
+  _resumeGenerator(nextValue, iteratorMethod) {
     if (this._isGeneratorDone()) {
       throw new Error("tried to advance finished generator");
     }
@@ -422,7 +422,7 @@ let taskInstanceAttrs = {
     return this.iterator;
   },
 
-  _validateResume(index) {
+  _validateIndex(index) {
     if (this._index === index && !this._completionState) {
       this._index++;
       return true;
@@ -432,7 +432,7 @@ let taskInstanceAttrs = {
   },
 
   _proceedSoon(index, yieldResumeType, value) {
-    if (!this._validateResume(index)) {
+    if (!this._validateIndex(index)) {
       return;
     }
 
@@ -440,7 +440,7 @@ let taskInstanceAttrs = {
   },
 
   proceed(index, yieldResumeType, value) {
-    if (!this._validateResume(index)) {
+    if (!this._validateIndex(index)) {
       return;
     }
 
@@ -456,12 +456,7 @@ let taskInstanceAttrs = {
   },
 
   _proceed(yieldResumeType, value) {
-    let state = this._generatorState;
-    if (state === GENERATOR_STATE_ERRORED) {
-      // If we got here, then `value` isn't resolved; it was
-      // never yielded in the first place.
-      this._finalize(this._generatorValue, COMPLETION_ERROR);
-    } else if (state === GENERATOR_STATE_DONE) {
+    if (this._generatorState === GENERATOR_STATE_DONE) {
       this._handleResolvedReturnedValue(yieldResumeType, value);
     } else {
       this._handleResolvedContinueValue(yieldResumeType, value);
@@ -496,36 +491,28 @@ let taskInstanceAttrs = {
       set(this, 'isCanceling', true);
       iteratorMethod = YIELDABLE_RETURN;
     }
-    this._syncResumeArgs = [iteratorMethod, value];
-    if (!this._isExecuting) {
-      this._syncResume();
-    }
+    this._syncResume(iteratorMethod, value);
   },
 
   _isExecuting: false,
-  _syncResumeArgs: null,
   _generatorState: GENERATOR_STATE_BEFORE_CREATE,
   _generatorValue: null,
-  _syncResume() {
-    this._isExecuting = true;
-    while(this._syncResumeArgs) {
-      let iteratorMethod = this._syncResumeArgs[0];
-      let resumeValue = this._syncResumeArgs[1];
-      this._syncResumeArgs = null;
-      this._dispose();
+  _syncResume(iteratorMethod, resumeValue) {
+    this._dispose();
 
-      let beforeIndex = this._index;
-      this._takeSafeStep(resumeValue, iteratorMethod);
+    let beforeIndex = this._index;
+    this._resumeGenerator(resumeValue, iteratorMethod);
 
-      if (this._index === beforeIndex) {
-        if (this._generatorState === GENERATOR_STATE_ERRORED) {
-          this.proceed(this._index, "DISREGARDED", null);
-        } else {
-          this._handleYieldedValue();
-        }
-      }
+    if (!this._validateIndex(beforeIndex)) {
+      return;
     }
-    this._isExecuting = false;
+
+    if (this._generatorState === GENERATOR_STATE_ERRORED) {
+      this._finalize(this._generatorValue, COMPLETION_ERROR);
+      return;
+    }
+
+    this._handleYieldedValue();
   },
 
   _handleYieldedValue() {

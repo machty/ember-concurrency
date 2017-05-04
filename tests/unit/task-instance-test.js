@@ -10,7 +10,7 @@ test("basics", function(assert) {
   let context = {};
   Ember.run(() => {
     TaskInstance.create({
-      fn: function * (...args) {
+      *fn(...args) {
         assert.equal(this, context, "generator functions' `this` is the context passed in");
         assert.deepEqual(args, [1,2,3]);
       },
@@ -188,7 +188,7 @@ test("deferred start", function(assert) {
   let shouldBeRunning = false;
   let taskInstance = Ember.run(() => {
     return TaskInstance.create({
-      fn: function * (...args) {
+      *fn(...args) {
         assert.ok(shouldBeRunning);
         assert.deepEqual(args, [1,2,3]);
       },
@@ -209,7 +209,7 @@ test("deferred start: .cancel() before ._start()", function(assert) {
 
   let taskInstance = Ember.run(() => {
     return TaskInstance.create({
-      fn: function * () {
+      *fn() {
         assert.ok(false, "should not get here");
       },
       args: [],
@@ -433,7 +433,7 @@ test("taskInstance.value is null until task instance completes successfully", fu
 
   let taskInstance = Ember.run(() => {
     return TaskInstance.create({
-      fn: function * () {
+      *fn() {
         return 123;
       },
       args: [],
@@ -450,7 +450,7 @@ test("taskInstance.error is null until task instance errors", function(assert) {
 
   let taskInstance = Ember.run(() => {
     return TaskInstance.create({
-      fn: function * () {
+      *fn() {
         throw "justin bailey";
       },
       args: [],
@@ -498,7 +498,7 @@ test("taskInstance.isSuccessful is set when task fulfills", function(assert) {
 
   let taskInstance = Ember.run(() => {
     return TaskInstance.create({
-      fn: function * () {},
+      *fn() {},
       args: [],
     });
   });
@@ -515,7 +515,7 @@ test("taskInstance.isError is set when task throws an error", function(assert) {
 
   let taskInstance = Ember.run(() => {
     return TaskInstance.create({
-      fn: function * () {
+      *fn() {
         throw "wat";
       },
       args: [],
