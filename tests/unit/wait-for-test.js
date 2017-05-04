@@ -79,7 +79,7 @@ test('waitForEvent works', function(assert) {
   assert.ok(taskCompleted, 'Task should have completed');
 });
 
-test('cancelling waitForEvent works', function(assert) {
+test('canceling waitForEvent works', function(assert) {
   assert.expect(4);
 
   let taskCompleted = false;
@@ -101,10 +101,9 @@ test('cancelling waitForEvent works', function(assert) {
     assert.notOk(taskCompleted, 'Task should not have completed');
     assert.ok(obj.has('foo'), 'Object has the event listener');
     obj.get('task').cancelAll();
-    assert.notOk(obj.has('foo'), 'Object does not have the event listener');
     obj.trigger('foo');
   });
 
-
+  assert.notOk(obj.has('foo'), 'Object does not have the event listener');
   assert.notOk(taskCompleted, 'Task should not have completed');
 });

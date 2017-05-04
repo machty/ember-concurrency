@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { default as TaskInstance, wrap } from 'ember-concurrency/-task-instance';
+import { default as TaskInstance, wrap, didCancel } from 'ember-concurrency/-task-instance';
 import { module, test } from 'qunit';
 
 module('Unit: task instance');
@@ -653,4 +653,30 @@ test("task cancelation should skip over catch blocks within task functions", fun
   Ember.run(taskInstance0, 'cancel');
 });
 
+test("canceling a task instance should be async", function(assert) {
+  assert.expect(4);
+
+  let defer;
+  let taskInstance = Ember.run(() => {
+    return TaskInstance.create({
+      *fn() {
+        defer = Ember.RSVP.defer();
+        yield defer.promise;
+        taskInstance.cancel();
+        return 123;
+      },
+    })._start();
+  });
+
+  taskInstance.then(() => {
+    assert.ok(false);
+  }, (e) => {
+    assert.ok(didCancel(e), "canceling a task instance right before it returns is still considered a cancelation");
+  });
+
+  assert.ok(!taskInstance.get('isCanceling'));
+  Ember.run(null, defer.resolve);
+  assert.ok(taskInstance.get('isCanceling'));
+  assert.ok(taskInstance.get('isCanceled'));
+});
 

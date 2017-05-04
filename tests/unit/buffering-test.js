@@ -100,7 +100,7 @@ doBufferingTest("keepLatest(3): sporadic", sporadicObservable, (t) => t.keepLate
 doBufferingTest("keepLatest(2): ranges",   rangeObservable,    (t) => t.keepLatest().maxConcurrency(2), [1,2,5,101,102,105], 2);
 doBufferingTest("keepLatest(2): sporadic", sporadicObservable, (t) => t.keepLatest().maxConcurrency(2), [1,2,3,4,5,6], 2);
 
-doBufferingTest("restartable: ranges",   rangeObservable,     (t) => t.restartable(), [5, 105], 1);
-doBufferingTest("restartable: sporadic", sporadicObservable,  (t) => t.restartable(), [3, 6], 1);
-doBufferingTest("restartable: ranges",   rangeObservable,     (t) => t.restartable().maxConcurrency(3), [3,4,5,103,104,105], 3);
-doBufferingTest("restartable: sporadic", sporadicObservable,  (t) => t.restartable().maxConcurrency(3), [1,2,3,4,5,6], 3);
+doBufferingTest("restartable: ranges",      rangeObservable,     (t) => t.restartable(), [5, 105], 5);
+doBufferingTest("restartable: sporadic",    sporadicObservable,  (t) => t.restartable(), [3, 6], 2);
+doBufferingTest("restartable(3): ranges",   rangeObservable,     (t) => t.restartable().maxConcurrency(3), [3,4,5,103,104,105], 5);
+doBufferingTest("restartable(3): sporadic", sporadicObservable,  (t) => t.restartable().maxConcurrency(3), [1,2,3,4,5,6], 3);

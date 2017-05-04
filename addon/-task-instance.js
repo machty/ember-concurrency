@@ -261,7 +261,7 @@ let taskInstanceAttrs = {
     set(this, 'isCanceling', true);
 
     if (this.hasStarted) {
-      this.proceed(this._index, YIELDABLE_CANCEL, null);
+      this._proceedSoon(this._index, YIELDABLE_CANCEL, null);
     } else {
       this._finalize(null, COMPLETION_CANCEL);
     }
@@ -422,12 +422,27 @@ let taskInstanceAttrs = {
     return this.iterator;
   },
 
-  proceed(index, yieldResumeType, value) {
-    if (this._index !== index || this._completionState) {
+  _validateResume(index) {
+    if (this._index === index && !this._completionState) {
+      this._index++;
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  _proceedSoon(index, yieldResumeType, value) {
+    if (!this._validateResume(index)) {
       return;
     }
 
-    this._index++;
+    Ember.run.schedule('actions', this, this._proceed, yieldResumeType, value);
+  },
+
+  proceed(index, yieldResumeType, value) {
+    if (!this._validateResume(index)) {
+      return;
+    }
 
     if (this._runLoop && !Ember.run.currentRunLoop) {
       Ember.run(this, this._proceed, yieldResumeType, value);
@@ -499,12 +514,15 @@ let taskInstanceAttrs = {
       this._syncResumeArgs = null;
       this._dispose();
 
+      let beforeIndex = this._index;
       this._takeSafeStep(resumeValue, iteratorMethod);
 
-      if (this._generatorState === GENERATOR_STATE_ERRORED) {
-        this.proceed(this._index, "DISREGARDED", null);
-      } else {
-        this._handleYieldedValue();
+      if (this._index === beforeIndex) {
+        if (this._generatorState === GENERATOR_STATE_ERRORED) {
+          this.proceed(this._index, "DISREGARDED", null);
+        } else {
+          this._handleYieldedValue();
+        }
       }
     }
     this._isExecuting = false;

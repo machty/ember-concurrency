@@ -110,6 +110,25 @@ test("task.cancelAll cancels all running task instances", function(assert) {
   assert.deepEqual(instances.mapBy('isCanceled'), [true, true, true]);
 });
 
+test("tasks can call cancelAll() on themselves", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend(Ember.Evented, {
+    doStuff: task(function * () {
+      this.get('doStuff').cancelAll();
+      return 123;
+    }),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+    obj.get('doStuff').perform();
+  });
+
+  assert.ok(obj.get('doStuff.last.isCanceled'));
+});
+
 test("task().cancelOn", function(assert) {
   assert.expect(0);
 
