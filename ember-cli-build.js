@@ -5,10 +5,7 @@ var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 module.exports = function(defaults) {
   var includePolyfill = process.env.EMBER_ENV === 'production' || process.env.CI;
 
-  var babelOptions = {
-    optional: ['es7.decorators']
-  };
-
+  var babelOptions = {};
   if (includePolyfill) {
     babelOptions.includePolyfill = true;
   } else {
