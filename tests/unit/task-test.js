@@ -331,7 +331,8 @@ test("call stack stays within reasonable bounds", function(assert) {
       // Not sure how to test this in an automated fashion;
       // when we tweak scheduler logic, we can check that stack
       // traces are within reasonable bounds by uncommenting
-      // the line below.
+      // the line below. (I'd use Error.stack but Chrome truncates
+      // the stack to only a few frames).
       // debugger;
     }),
     b: task(function * () {
@@ -340,8 +341,7 @@ test("call stack stays within reasonable bounds", function(assert) {
     c: task(function * () {
       yield this.get('d').perform();
     }),
-    d: task(function * () {
-    }),
+    d: task(function * () { }),
   });
 
   Ember.run(() => {
