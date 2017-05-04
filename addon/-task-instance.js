@@ -33,19 +33,6 @@ function markRsvpPromiseAsCaught(promise) {
   }
 }
 
-Ember.RSVP.Promise.prototype[yieldableSymbol] = function handleYieldedRsvpPromise(taskInstance, resumeIndex) {
-  markRsvpPromiseAsCaught(this);
-
-  if (this._state === 1) {
-    taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, this._result);
-  } else if (this._state === 2) {
-    taskInstance.proceed(resumeIndex, YIELDABLE_THROW, this._result);
-  } else {
-    let cb = () => { this[yieldableSymbol](taskInstance, resumeIndex); };
-    this.then(cb, cb);
-  }
-};
-
 function handleYieldedUnknownThenable(thenable, taskInstance, resumeIndex) {
   thenable.then(value => {
     taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, value);
