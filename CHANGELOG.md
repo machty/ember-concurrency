@@ -1,4 +1,15 @@
 # Changelog
+### 0.8.2
+  - Reverted some of the changes introduced in 0.8.0; in particular,
+    while the first "slice" of a task function executes synchronously
+    when performed, advancing the task is deferred to a run loop queue.
+    This fixes some regressions caused by the overzealous
+    as-sync-as-possible scheduling introduced in 0.8.0
+    (#148, #138)
+
+### 0.8.1
+  - Removed a left-over `debugger` statement. :(
+
 ### 0.8.0
   - POSSIBLE BREAKING CHANGE: the internal task scheduler
     has been rewritten to be more performant, but to also
