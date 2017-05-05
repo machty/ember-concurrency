@@ -104940,7 +104940,7 @@ define('ember-concurrency/-encapsulated-task', ['exports', 'ember', 'ember-concu
   exports.default = _taskInstance.default.extend({
     _makeIterator: function _makeIterator() {
       var perform = this.get('perform');
-      _ember.default.assert("The object passed to `task()` must define a `perform` generator function, e.g. `perform: function * () {...}`", typeof perform === 'function');
+      _ember.default.assert("The object passed to `task()` must define a `perform` generator function, e.g. `perform: function * (a,b,c) {...}`, or better yet `*perform(a,b,c) {...}`", typeof perform === 'function');
       return perform.apply(this, this.args);
     },
 
@@ -105320,34 +105320,6 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
   var GENERATOR_STATE_DONE = "DONE";
   var GENERATOR_STATE_ERRORED = "ERRORED";
 
-  function markRsvpPromiseAsCaught(promise) {
-    if (promise._onError) {
-      // >= 2.0.0
-      promise._onError = null;
-    }
-    if (promise._onerror) {
-      // < 2.0.0
-      promise._onerror = null;
-    }
-  }
-
-  _ember.default.RSVP.Promise.prototype[_utils.yieldableSymbol] = function handleYieldedRsvpPromise(taskInstance, resumeIndex) {
-    var _this = this;
-
-    markRsvpPromiseAsCaught(this);
-
-    if (this._state === 1) {
-      taskInstance.proceed(resumeIndex, _utils.YIELDABLE_CONTINUE, this._result);
-    } else if (this._state === 2) {
-      taskInstance.proceed(resumeIndex, _utils.YIELDABLE_THROW, this._result);
-    } else {
-      var cb = function cb() {
-        _this[_utils.yieldableSymbol](taskInstance, resumeIndex);
-      };
-      this.then(cb, cb);
-    }
-  };
-
   function handleYieldedUnknownThenable(thenable, taskInstance, resumeIndex) {
     thenable.then(function (value) {
       taskInstance.proceed(resumeIndex, _utils.YIELDABLE_CONTINUE, value);
@@ -105549,15 +105521,12 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
     _index: 1,
 
-    _makeIterator: function _makeIterator() {
-      return this.fn.apply(this.context, this.args);
-    },
     _start: function _start() {
       if (this.hasStarted || this.isCanceling) {
         return this;
       }
       set(this, 'hasStarted', true);
-      this.proceed(this._index, _utils.YIELDABLE_CONTINUE, undefined);
+      this._scheduleProceed(_utils.YIELDABLE_CONTINUE, undefined);
       return this;
     },
     toString: function toString() {
@@ -105571,7 +105540,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       set(this, 'isCanceling', true);
 
       if (this.hasStarted) {
-        this.proceed(this._index, _utils.YIELDABLE_CANCEL, null);
+        this._proceedSoon(_utils.YIELDABLE_CANCEL, null);
       } else {
         this._finalize(null, COMPLETION_CANCEL);
       }
@@ -105590,7 +105559,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
         return;
       }
 
-      if (this._completionState === 1) {
+      if (this._completionState === COMPLETION_SUCCESS) {
         this._defer.resolve(this.value);
       } else {
         this._defer.reject(this.error);
@@ -105682,13 +105651,13 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       this._maybeThrowUnhandledTaskErrorLater();
     },
     _maybeThrowUnhandledTaskErrorLater: function _maybeThrowUnhandledTaskErrorLater() {
-      var _this2 = this;
+      var _this = this;
 
       // this backports the Ember 2.0+ RSVP _onError 'after' microtask behavior to Ember < 2.0
       if (!this._hasSubscribed && this._completionState === COMPLETION_ERROR) {
         run.schedule(run.queues[run.queues.length - 1], function () {
-          if (!_this2._hasSubscribed && !didCancel(_this2.error)) {
-            _ember.default.RSVP.reject(_this2.error);
+          if (!_this._hasSubscribed && !didCancel(_this.error)) {
+            _ember.default.RSVP.reject(_this.error);
           }
         });
       }
@@ -105706,10 +105675,8 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       var state = this._generatorState;
       return state === GENERATOR_STATE_DONE || state === GENERATOR_STATE_ERRORED;
     },
-    _takeSafeStep: function _takeSafeStep(nextValue, iteratorMethod) {
-      if (this._isGeneratorDone()) {
-        throw new Error("tried to advance finished generator");
-      }
+    _resumeGenerator: function _resumeGenerator(nextValue, iteratorMethod) {
+      _ember.default.assert("The task generator function has already run to completion. This is probably an ember-concurrency bug.", !this._isGeneratorDone());
 
       try {
         var iterator = this._getIterator();
@@ -105732,14 +105699,41 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       }
       return this.iterator;
     },
-    proceed: function proceed(index, yieldResumeType, value) {
-      var _this3 = this;
+    _makeIterator: function _makeIterator() {
+      return this.fn.apply(this.context, this.args);
+    },
+    _advanceIndex: function _advanceIndex(index) {
+      if (this._index === index) {
+        return ++this._index;
+      }
+    },
+    _proceedSoon: function _proceedSoon(yieldResumeType, value) {
+      var _this2 = this;
 
-      if (this._index !== index || this._completionState) {
+      this._advanceIndex(this._index);
+      if (this._runLoop) {
+        joinAndSchedule('actions', this, this._proceed, yieldResumeType, value);
+      } else {
+        setTimeout(function () {
+          return _this2._proceed(yieldResumeType, value);
+        }, 1);
+      }
+    },
+    proceed: function proceed(index, yieldResumeType, value) {
+      if (this._completionState) {
         return;
       }
+      if (!this._advanceIndex(index)) {
+        return;
+      }
+      this._proceedSoon(yieldResumeType, value);
+    },
+    _scheduleProceed: function _scheduleProceed(yieldResumeType, value) {
+      var _this3 = this;
 
-      this._index++;
+      if (this._completionState) {
+        return;
+      }
 
       if (this._runLoop && !_ember.default.run.currentRunLoop) {
         _ember.default.run(this, this._proceed, yieldResumeType, value);
@@ -105754,12 +105748,11 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       }
     },
     _proceed: function _proceed(yieldResumeType, value) {
-      var state = this._generatorState;
-      if (state === GENERATOR_STATE_ERRORED) {
-        // If we got here, then `value` isn't resolved; it was
-        // never yielded in the first place.
-        this._finalize(this._generatorValue, COMPLETION_ERROR);
-      } else if (state === GENERATOR_STATE_DONE) {
+      if (this._completionState) {
+        return;
+      }
+
+      if (this._generatorState === GENERATOR_STATE_DONE) {
         this._handleResolvedReturnedValue(yieldResumeType, value);
       } else {
         this._handleResolvedContinueValue(yieldResumeType, value);
@@ -105786,40 +105779,32 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
           break;
       }
     },
-    _handleResolvedContinueValue: function _handleResolvedContinueValue(_yieldResumeType, value) {
+
+
+    _generatorState: GENERATOR_STATE_BEFORE_CREATE,
+    _generatorValue: null,
+    _handleResolvedContinueValue: function _handleResolvedContinueValue(_yieldResumeType, resumeValue) {
       var iteratorMethod = _yieldResumeType;
       if (iteratorMethod === _utils.YIELDABLE_CANCEL) {
         set(this, 'isCanceling', true);
         iteratorMethod = _utils.YIELDABLE_RETURN;
       }
-      this._syncResumeArgs = [iteratorMethod, value];
-      if (!this._isExecuting) {
-        this._syncResume();
+
+      this._dispose();
+
+      var beforeIndex = this._index;
+      this._resumeGenerator(resumeValue, iteratorMethod);
+
+      if (!this._advanceIndex(beforeIndex)) {
+        return;
       }
-    },
 
-
-    _isExecuting: false,
-    _syncResumeArgs: null,
-    _generatorState: GENERATOR_STATE_BEFORE_CREATE,
-    _generatorValue: null,
-    _syncResume: function _syncResume() {
-      this._isExecuting = true;
-      while (this._syncResumeArgs) {
-        var iteratorMethod = this._syncResumeArgs[0];
-        var resumeValue = this._syncResumeArgs[1];
-        this._syncResumeArgs = null;
-        this._dispose();
-
-        this._takeSafeStep(resumeValue, iteratorMethod);
-
-        if (this._generatorState === GENERATOR_STATE_ERRORED) {
-          this.proceed(this._index, "DISREGARDED", null);
-        } else {
-          this._handleYieldedValue();
-        }
+      if (this._generatorState === GENERATOR_STATE_ERRORED) {
+        this._finalize(this._generatorValue, COMPLETION_ERROR);
+        return;
       }
-      this._isExecuting = false;
+
+      this._handleYieldedValue();
     },
     _handleYieldedValue: function _handleYieldedValue() {
       var yieldedValue = this._generatorValue;
@@ -105869,7 +105854,6 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     }
   };
 
-  // TODO: how to handle parent task cancelation canceling child task calling parent again.
   taskInstanceAttrs[_utils.yieldableSymbol] = function handleYieldedTaskInstance(parentTaskInstance, resumeIndex) {
     var yieldedTaskInstance = this;
     yieldedTaskInstance._hasSubscribed = true;
@@ -105896,6 +105880,18 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
   var TaskInstance = _ember.default.Object.extend(taskInstanceAttrs);
 
+  function joinAndSchedule() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _ember.default.run.join(function () {
+      var _Ember$run;
+
+      (_Ember$run = _ember.default.run).schedule.apply(_Ember$run, args);
+    });
+  }
+
   function go(args, fn) {
     var attrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
@@ -105906,8 +105902,8 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     return function wrappedRunnerFunction() {
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
       }
 
       return go.call(this, args, fn, attrs);
@@ -106308,6 +106304,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
   function TaskProperty(taskFn) {
     var tp = this;
     _utils._ComputedProperty.call(this, function (_propertyName) {
+      taskFn.displayName = _propertyName + ' (task)';
       return Task.create({
         fn: tp.taskFn,
         context: this,
@@ -106586,20 +106583,6 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   exports.events = events;
 
 
-  var testGenFn = regeneratorRuntime.mark(function testGenFn() {
-    return regeneratorRuntime.wrap(function testGenFn$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-          case 'end':
-            return _context.stop();
-        }
-      }
-    }, testGenFn, this);
-  });
-  var testIter = testGenFn();
-  _ember.default.assert('ember-concurrency requires that you set babel.includePolyfill to true in your ember-cli-build.js (or Brocfile.js) to ensure that the generator function* syntax is properly transpiled, e.g.:\n\n  var app = new EmberApp({\n    babel: {\n      includePolyfill: true,\n    }\n  });', (0, _utils.isGeneratorIterator)(testIter));
-
   /**
    * A Task is a cancelable, restartable, asynchronous operation that
    * is driven by a generator function. Tasks are automatically canceled
@@ -106676,7 +106659,6 @@ define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _embe
     value: true
   });
   exports._ComputedProperty = exports.YIELDABLE_CANCEL = exports.YIELDABLE_RETURN = exports.YIELDABLE_THROW = exports.YIELDABLE_CONTINUE = exports.yieldableSymbol = exports.INVOKE = exports.objectAssign = undefined;
-  exports.isGeneratorIterator = isGeneratorIterator;
   exports.isEventedObject = isEventedObject;
   exports.Arguments = Arguments;
   exports._cleanupOnDestroy = _cleanupOnDestroy;
@@ -106698,10 +106680,6 @@ define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _embe
     }
 
     return obj;
-  }
-
-  function isGeneratorIterator(iter) {
-    return iter && typeof iter.next === 'function' && typeof iter['return'] === 'function' && typeof iter['throw'] === 'function';
   }
 
   function isEventedObject(c) {
