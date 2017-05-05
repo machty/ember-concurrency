@@ -3,6 +3,7 @@ import {
   setResolver,
   QUnitAdapter
 } from 'ember-qunit';
+import { start } from 'ember-cli-qunit';
 
 function noop() {}
 
@@ -20,5 +21,7 @@ QUnitAdapter.reopen({
     }
   },
 });
+
+start();
 
 setResolver(resolver);
