@@ -233,7 +233,7 @@ test("deferred start: .cancel() before ._start()", function(assert) {
     });
   });
 
-  expectCancelation(assert, taskInstance, "TaskCancelation: TaskInstance 'undefined' was canceled because .cancel() was explicitly called");
+  expectCancelation(assert, taskInstance, "TaskInstance 'undefined' was canceled because .cancel() was explicitly called");
 
   Ember.run(() => {
     taskInstance.cancel();

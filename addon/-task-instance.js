@@ -309,7 +309,7 @@ let taskInstanceAttrs = {
 
     if (this.isCanceling) {
       completionState = COMPLETION_CANCEL;
-      value = new Error(`${TASK_CANCELATION_NAME}: ${this.cancelReason}`);
+      value = new Error(this.cancelReason);
       value.name = TASK_CANCELATION_NAME;
       value.taskInstance = this;
     }
