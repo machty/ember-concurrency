@@ -312,6 +312,45 @@ define("dummy/components/code-snippet", ["exports", "ember", "dummy/snippets"], 
     })
   });
 });
+define("dummy/components/code-template-toggle/component", ["exports", "ember"], function (exports, _ember) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _ember.default.Component.extend({
+    classNames: ["code-template-toggle"],
+    toggleDescription: "Toggle JS / Template",
+
+    showCode: true,
+
+    didInsertElement: function didInsertElement() {
+      var _this = this;
+
+      _ember.default.run.schedule('afterRender', null, function () {
+        var maxHeight = Math.max.apply(null, _this.$('.code-template-toggle-section').map(function () {
+          return $(this).height();
+        }).get());
+        _this.$().css({ height: maxHeight + "px" });
+      });
+    },
+
+
+    actions: {
+      toggle: function toggle() {
+        this.toggleProperty('showCode');
+      }
+    }
+  });
+});
+define("dummy/components/code-template-toggle/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "titJCCtb", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"code-template-toggle-section \",[\"helper\",[\"if\"],[[\"get\",[\"showCode\"]],\"hidden\"],null]]]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"append\",[\"helper\",[\"code-snippet\"],null,[[\"name\"],[[\"get\",[\"templateSnippet\"]]]]],false],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"],[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"code-template-toggle-section \",[\"helper\",[\"if\"],[[\"get\",[\"showCode\"]],\"\",\"hidden\"],null]]]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"append\",[\"helper\",[\"code-snippet\"],null,[[\"name\"],[[\"get\",[\"codeSnippet\"]]]]],false],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"button code-template-toggle-button\"],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"action\"],[[\"get\",[null]],\"toggle\"],null],null],[\"flush-element\"],[\"text\",\"\\n  \"],[\"append\",[\"unknown\",[\"toggleDescription\"]],false],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/code-template-toggle/template.hbs" } });
+});
 define('dummy/components/concurrency-graph/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
   'use strict';
 
@@ -585,104 +624,6 @@ define("dummy/components/github-edit/template", ["exports"], function (exports) 
   });
   exports.default = Ember.HTMLBars.template({ "id": "PaFQsiL2", "block": "{\"statements\":[[\"open-element\",\"i\",[]],[\"static-attr\",\"class\",\"icon-pencil\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/github-edit/template.hbs" } });
 });
-define('dummy/components/intro-task-oldschool/component', ['exports', 'ember'], function (exports, _ember) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = _ember.default.Component.extend({
-    count: 0,
-
-    startCounting: function startCounting() {
-      this.cancelTimer();
-      this.set('count', 0);
-      this.step();
-    },
-    step: function step() {
-      if (this.count < 5) {
-        this.incrementProperty('count');
-        this.timerId = _ember.default.run.later(this, this.step, 300);
-      } else {
-        this.set('count', "DONE!");
-      }
-    },
-    willDestroy: function willDestroy() {
-      this.cancelTimer();
-    },
-    cancelTimer: function cancelTimer() {
-      if (this.timerId) {
-        _ember.default.run.cancel(this.timerId);
-        this.timerId = null;
-      }
-    },
-
-
-    actions: {
-      startCounting: function startCounting() {
-        this.startCounting();
-      }
-    }
-  });
-});
-define("dummy/components/intro-task-oldschool/template", ["exports"], function (exports) {
-  "use strict";
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = Ember.HTMLBars.template({ "id": "vyFqV/ac", "block": "{\"statements\":[[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Count: \"],[\"append\",[\"unknown\",[\"count\"]],false],[\"close-element\"],[\"text\",\"\\n\"],[\"open-element\",\"button\",[]],[\"modifier\",[\"action\"],[[\"get\",[null]],\"startCounting\"]],[\"flush-element\"],[\"text\",\"Start Over\"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/intro-task-oldschool/template.hbs" } });
-});
-define('dummy/components/intro-task/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = _ember.default.Component.extend({
-    count: 0,
-
-    countingTask: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function _callee() {
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              this.set('count', 0);
-
-            case 1:
-              if (!(this.count < 5)) {
-                _context.next = 7;
-                break;
-              }
-
-              this.incrementProperty('count');
-              _context.next = 5;
-              return (0, _emberConcurrency.timeout)(300);
-
-            case 5:
-              _context.next = 1;
-              break;
-
-            case 7:
-              this.set('count', "DONE!");
-
-            case 8:
-            case 'end':
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    })).restartable()
-  });
-});
-define("dummy/components/intro-task/template", ["exports"], function (exports) {
-  "use strict";
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = Ember.HTMLBars.template({ "id": "SR0Oi/u6", "block": "{\"statements\":[[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Count: \"],[\"append\",[\"unknown\",[\"count\"]],false],[\"close-element\"],[\"text\",\"\\n\"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"perform\"],[[\"get\",[\"countingTask\"]]],null],null],[\"flush-element\"],[\"text\",\"Start Over\"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/intro-task/template.hbs" } });
-});
 define('dummy/components/my-button/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
   'use strict';
 
@@ -835,6 +776,78 @@ define("dummy/components/scrambled-text/template", ["exports"], function (export
     value: true
   });
   exports.default = Ember.HTMLBars.template({ "id": "PbMeteAB", "block": "{\"statements\":[[\"append\",[\"unknown\",[\"scrambledText\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/scrambled-text/template.hbs" } });
+});
+define('dummy/components/shared-tutorial/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+
+  var PREFIXES = ["Tomster", "Glimmer", "Transclusion", "Zoey", "Flux", "Reducer"];
+
+  var SUFFIXES = ["Mart", " Central", "s ᴙ Us", "beds n stuff", "potle", " Donuts"];
+
+  function randomFrom(array) {
+    return array[Math.floor(Math.random() * array.length)];
+  }
+
+  var store = {
+    getNearbyStores: function getNearbyStores(coords) {
+      var num = 3; //Math.floor(Math.random() * 2) + 5;
+      var stores = [];
+      for (var i = 0; i < num; ++i) {
+        var name = randomFrom(PREFIXES) + randomFrom(SUFFIXES);
+        stores.push({
+          lat: Math.random * 60,
+          long: Math.random * 60,
+          name: name,
+          distance: Math.random().toFixed(2)
+        });
+      }
+
+      return (0, _emberConcurrency.timeout)(800).then(function () {
+        return { stores: stores };
+      });
+    }
+  };
+
+  var geolocation = {
+    getCoords: function getCoords() {
+      return (0, _emberConcurrency.timeout)(800).then(function () {
+        return {
+          lat: Math.random * 60,
+          long: Math.random * 60
+        };
+      });
+    }
+  };
+
+  exports.default = _ember.default.Component.extend({
+    init: function init() {
+      this._super();
+      this.set('logs', _ember.default.A());
+      this.set('formData', {
+        user: "machty",
+        amount: "9.99"
+      });
+    },
+
+    logs: null,
+    formData: null,
+
+    showTemplate: false,
+
+    geolocation: geolocation,
+    store: store,
+
+    actions: {
+      toggleTemplate: function toggleTemplate() {
+        this.toggleProperty('showTemplate');
+      }
+    }
+  });
 });
 define('dummy/components/start-task-example/component', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
   'use strict';
@@ -1124,6 +1137,433 @@ define("dummy/components/task-group-example/template", ["exports"], function (ex
   });
   exports.default = Ember.HTMLBars.template({ "id": "OeKDDZjt", "block": "{\"statements\":[[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"taskGroup\",\"name\"]],false],[\"text\",\": \"],[\"append\",[\"unknown\",[\"taskGroup\",\"state\"]],false],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"cancel-all\"],[[\"get\",[\"taskGroup\"]]],null],null],[\"dynamic-attr\",\"class\",[\"helper\",[\"if\"],[[\"get\",[\"taskGroup\",\"isRunning\"]],\"button-primary\"],null],null],[\"flush-element\"],[\"text\",\"\\n  Cancel \"],[\"append\",[\"unknown\",[\"taskGroup\",\"name\"]],false],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"table\",[]],[\"static-attr\",\"class\",\"u-full-width\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"thead\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Perform\"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"State\"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Group\"],[\"close-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Group State\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"tbody\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"tasks\"]]],null,0],[\"text\",\"  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n          \"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"perform\"],[[\"get\",[\"task\"]]],null],null],[\"dynamic-attr\",\"class\",[\"helper\",[\"if\"],[[\"get\",[\"task\",\"isIdle\"]],\"button-primary\"],null],null],[\"flush-element\"],[\"text\",\"\\n            \"],[\"append\",[\"unknown\",[\"task\",\"name\"]],false],[\"text\",\"\\n          \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"task\",\"state\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"task\",\"group\",\"name\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"task\",\"group\",\"state\"]],false],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"task\"]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/task-group-example/template.hbs" } });
 });
+define('dummy/components/tutorial-0/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _component.default.extend({
+    result: null,
+    actions: {
+      findStores: function findStores() {
+        var _this = this;
+
+        var geolocation = this.get('geolocation');
+        var store = this.get('store');
+
+        geolocation.getCoords().then(function (coords) {
+          return store.getNearbyStores(coords);
+        }).then(function (result) {
+          _this.set('result', result);
+        });
+      }
+    }
+  });
+});
+define("dummy/components/tutorial-0/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "U4TtkkFQ", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"tutorial-example\"],[\"flush-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"  \"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"action\"],[[\"get\",[null]],\"findStores\"],null],null],[\"flush-element\"],[\"text\",\"\\n    Find Nearby Stores\\n  \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"result\"]]],null,1],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"tutorial-example-label\"],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"s\",\"name\"]],false],[\"close-element\"],[\"text\",\":\\n        \"],[\"append\",[\"unknown\",[\"s\",\"distance\"]],false],[\"text\",\" miles away\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"s\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"result\",\"stores\"]]],null,0]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-0/template.hbs" } });
+});
+define('dummy/components/tutorial-1/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _component.default.extend({
+    result: null,
+    isFindingStores: false, // ++
+    actions: {
+      findStores: function findStores() {
+        var _this = this;
+
+        var geolocation = this.get('geolocation');
+        var store = this.get('store');
+
+        this.set('isFindingStores', true); // ++
+        geolocation.getCoords().then(function (coords) {
+          return store.getNearbyStores(coords);
+        }).then(function (result) {
+          _this.set('result', result);
+          _this.set('isFindingStores', false); // ++
+        });
+      }
+    }
+  });
+});
+define("dummy/components/tutorial-1/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "Qp/FdF7p", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"tutorial-example\"],[\"flush-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"  \"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"action\"],[[\"get\",[null]],\"findStores\"],null],null],[\"flush-element\"],[\"text\",\"\\n    Find Nearby Stores\\n\"],[\"block\",[\"if\"],[[\"get\",[\"isFindingStores\"]]],null,2],[\"text\",\"  \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"result\"]]],null,1],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"tutorial-example-label\"],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"s\",\"name\"]],false],[\"close-element\"],[\"text\",\":\\n        \"],[\"append\",[\"unknown\",[\"s\",\"distance\"]],false],[\"text\",\" miles away\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"s\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"result\",\"stores\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"      \"],[\"append\",[\"helper\",[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-1/template.hbs" } });
+});
+define('dummy/components/tutorial-2/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _component.default.extend({
+    result: null,
+    isFindingStores: false,
+    actions: {
+      findStores: function findStores() {
+        var _this = this;
+
+        if (this.isFindingStores) {
+          return;
+        } // ++
+
+        var geolocation = this.get('geolocation');
+        var store = this.get('store');
+
+        this.set('isFindingStores', true);
+        geolocation.getCoords().then(function (coords) {
+          return store.getNearbyStores(coords);
+        }).then(function (result) {
+          _this.set('result', result);
+          _this.set('isFindingStores', false);
+        });
+      }
+    }
+  });
+});
+define("dummy/components/tutorial-2/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "O2UFmmcu", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"tutorial-example\"],[\"flush-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"  \"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"action\"],[[\"get\",[null]],\"findStores\"],null],null],[\"flush-element\"],[\"text\",\"\\n    Find Nearby Stores\\n\"],[\"block\",[\"if\"],[[\"get\",[\"isFindingStores\"]]],null,2],[\"text\",\"  \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"result\"]]],null,1],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"tutorial-example-label\"],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"s\",\"name\"]],false],[\"close-element\"],[\"text\",\":\\n        \"],[\"append\",[\"unknown\",[\"s\",\"distance\"]],false],[\"text\",\" miles away\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"s\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"result\",\"stores\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"      \"],[\"append\",[\"helper\",[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-2/template.hbs" } });
+});
+define('dummy/components/tutorial-3/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _component.default.extend({
+    result: null,
+    isFindingStores: false,
+    actions: {
+      findStores: function findStores() {
+        var _this = this;
+
+        if (this.isFindingStores) {
+          return;
+        }
+
+        var geolocation = this.get('geolocation');
+        var store = this.get('store');
+
+        this.set('isFindingStores', true);
+        geolocation.getCoords().then(function (coords) {
+          return store.getNearbyStores(coords);
+        }).then(function (result) {
+          if (_this.isDestroyed) {
+            return;
+          } // ++
+          _this.set('result', result);
+          _this.set('isFindingStores', false);
+        });
+      }
+    }
+  });
+});
+define("dummy/components/tutorial-3/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "Z3KQSWjN", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"tutorial-example\"],[\"flush-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"  \"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"action\"],[[\"get\",[null]],\"findStores\"],null],null],[\"flush-element\"],[\"text\",\"\\n    Find Nearby Stores\\n\"],[\"block\",[\"if\"],[[\"get\",[\"isFindingStores\"]]],null,2],[\"text\",\"  \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"result\"]]],null,1],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"tutorial-example-label\"],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"s\",\"name\"]],false],[\"close-element\"],[\"text\",\":\\n        \"],[\"append\",[\"unknown\",[\"s\",\"distance\"]],false],[\"text\",\" miles away\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"s\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"result\",\"stores\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"      \"],[\"append\",[\"helper\",[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-3/template.hbs" } });
+});
+define('dummy/components/tutorial-4/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _component.default.extend({
+    result: null,
+    isFindingStores: false,
+    actions: {
+      findStores: function findStores() {
+        var _this = this;
+
+        if (this.isFindingStores) {
+          return;
+        }
+
+        var geolocation = this.get('geolocation');
+        var store = this.get('store');
+
+        this.set('isFindingStores', true);
+        geolocation.getCoords().then(function (coords) {
+          return store.getNearbyStores(coords);
+        }).then(function (result) {
+          if (_this.isDestroyed) {
+            return;
+          }
+          _this.set('result', result);
+        }).finally(function () {
+          // ++
+          if (_this.isDestroyed) {
+            return;
+          } // ++
+          _this.set('isFindingStores', false); // ++
+        });
+      }
+    }
+  });
+});
+define("dummy/components/tutorial-4/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "LyPmjrMY", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"tutorial-example\"],[\"flush-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"  \"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"action\"],[[\"get\",[null]],\"findStores\"],null],null],[\"flush-element\"],[\"text\",\"\\n    Find Nearby Stores\\n\"],[\"block\",[\"if\"],[[\"get\",[\"isFindingStores\"]]],null,2],[\"text\",\"  \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"result\"]]],null,1],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"tutorial-example-label\"],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"s\",\"name\"]],false],[\"close-element\"],[\"text\",\":\\n        \"],[\"append\",[\"unknown\",[\"s\",\"distance\"]],false],[\"text\",\" miles away\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"s\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"result\",\"stores\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"      \"],[\"append\",[\"helper\",[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-4/template.hbs" } });
+});
+define('dummy/components/tutorial-5/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _component.default.extend({
+    result: null,
+    isFindingStores: false,
+    actions: {
+      findStores: function findStores() {
+        var _this = this;
+
+        if (this.isFindingStores) {
+          return;
+        }
+
+        var geolocation = this.get('geolocation');
+        var store = this.get('store');
+
+        this.set('isFindingStores', true);
+        geolocation.getCoords().then(function (coords) {
+          return store.getNearbyStores(coords);
+        }).then(function (result) {
+          if (_this.isDestroyed) {
+            return;
+          }
+          _this.set('result', result);
+        }).finally(function () {
+          if (_this.isDestroyed) {
+            return;
+          }
+          _this.set('isFindingStores', false);
+        });
+      }
+    }
+  });
+});
+define("dummy/components/tutorial-5/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "dr25n1u9", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"tutorial-example\"],[\"flush-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"  \"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"action\"],[[\"get\",[null]],\"findStores\"],null],null],[\"flush-element\"],[\"text\",\"\\n    Find Nearby Stores\\n\"],[\"block\",[\"if\"],[[\"get\",[\"isFindingStores\"]]],null,2],[\"text\",\"  \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"result\"]]],null,1],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"tutorial-example-label\"],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"s\",\"name\"]],false],[\"close-element\"],[\"text\",\":\\n        \"],[\"append\",[\"unknown\",[\"s\",\"distance\"]],false],[\"text\",\" miles away\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"s\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"result\",\"stores\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"      \"],[\"append\",[\"helper\",[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-5/template.hbs" } });
+});
+define('dummy/components/tutorial-6/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _ember, _component, _emberConcurrency) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _component.default.extend({
+    result: null,
+
+    findStores: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function _callee() {
+      var geolocation, store, coords, result;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              geolocation = this.get('geolocation');
+              store = this.get('store');
+              _context.next = 4;
+              return geolocation.getCoords();
+
+            case 4:
+              coords = _context.sent;
+              _context.next = 7;
+              return store.getNearbyStores(coords);
+
+            case 7:
+              result = _context.sent;
+
+              this.set('result', result);
+
+            case 9:
+            case 'end':
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }))
+  });
+});
+define("dummy/components/tutorial-6/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "BlAwBpNO", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"tutorial-example\"],[\"flush-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"  \"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"perform\"],[[\"get\",[\"findStores\"]]],null],null],[\"flush-element\"],[\"text\",\" \"],[\"text\",\"\\n    Find Nearby Stores\\n  \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"result\"]]],null,1],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"tutorial-example-label\"],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"s\",\"name\"]],false],[\"close-element\"],[\"text\",\":\\n        \"],[\"append\",[\"unknown\",[\"s\",\"distance\"]],false],[\"text\",\" miles away\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"s\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"result\",\"stores\"]]],null,0]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-6/template.hbs" } });
+});
+define('dummy/components/tutorial-7/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _ember, _component, _emberConcurrency) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _component.default.extend({
+    result: null,
+
+    findStores: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function _callee() {
+      var geolocation, store, coords, result;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              geolocation = this.get('geolocation');
+              store = this.get('store');
+              _context.next = 4;
+              return geolocation.getCoords();
+
+            case 4:
+              coords = _context.sent;
+              _context.next = 7;
+              return store.getNearbyStores(coords);
+
+            case 7:
+              result = _context.sent;
+
+              this.set('result', result);
+
+            case 9:
+            case 'end':
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }))
+  });
+});
+define("dummy/components/tutorial-7/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "Zkzy6053", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"tutorial-example\"],[\"flush-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"  \"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"perform\"],[[\"get\",[\"findStores\"]]],null],null],[\"flush-element\"],[\"text\",\"\\n    Find Nearby Stores\\n\"],[\"block\",[\"if\"],[[\"get\",[\"findStores\",\"isRunning\"]]],null,2],[\"text\",\"  \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"result\"]]],null,1],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"tutorial-example-label\"],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"s\",\"name\"]],false],[\"close-element\"],[\"text\",\":\\n        \"],[\"append\",[\"unknown\",[\"s\",\"distance\"]],false],[\"text\",\" miles away\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"s\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"result\",\"stores\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"      \"],[\"append\",[\"helper\",[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-7/template.hbs" } });
+});
+define('dummy/components/tutorial-8/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _ember, _component, _emberConcurrency) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _component.default.extend({
+    result: null,
+
+    findStores: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function _callee() {
+      var geolocation, store, coords, result;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              geolocation = this.get('geolocation');
+              store = this.get('store');
+              _context.next = 4;
+              return geolocation.getCoords();
+
+            case 4:
+              coords = _context.sent;
+              _context.next = 7;
+              return store.getNearbyStores(coords);
+
+            case 7:
+              result = _context.sent;
+
+              this.set('result', result);
+
+            case 9:
+            case 'end':
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    })).drop() });
+});
+define("dummy/components/tutorial-8/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "p/dO5TLE", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"tutorial-example\"],[\"flush-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"  \"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"perform\"],[[\"get\",[\"findStores\"]]],null],null],[\"flush-element\"],[\"text\",\"\\n    Find Nearby Stores\\n\"],[\"block\",[\"if\"],[[\"get\",[\"findStores\",\"isRunning\"]]],null,2],[\"text\",\"  \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"result\"]]],null,1],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"tutorial-example-label\"],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"s\",\"name\"]],false],[\"close-element\"],[\"text\",\":\\n        \"],[\"append\",[\"unknown\",[\"s\",\"distance\"]],false],[\"text\",\" miles away\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"s\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"result\",\"stores\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"      \"],[\"append\",[\"helper\",[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-8/template.hbs" } });
+});
+define('dummy/components/tutorial-9/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _ember, _component, _emberConcurrency) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _component.default.extend({
+    result: null,
+    findStores: (0, _emberConcurrency.task)(regeneratorRuntime.mark(function _callee() {
+      var geolocation, store, coords, result;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              geolocation = this.get('geolocation');
+              store = this.get('store');
+              _context.next = 4;
+              return geolocation.getCoords();
+
+            case 4:
+              coords = _context.sent;
+              _context.next = 7;
+              return store.getNearbyStores(coords);
+
+            case 7:
+              result = _context.sent;
+
+              this.set('result', result);
+
+            case 9:
+            case 'end':
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    })).drop()
+  });
+});
+define("dummy/components/tutorial-9/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "v3aVQHgn", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"tutorial-example\"],[\"flush-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"  \"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"perform\"],[[\"get\",[\"findStores\"]]],null],null],[\"flush-element\"],[\"text\",\"\\n    Find Nearby Stores\\n\"],[\"block\",[\"if\"],[[\"get\",[\"findStores\",\"isRunning\"]]],null,2],[\"text\",\"  \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"result\"]]],null,1],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"tutorial-example-label\"],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"      \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"s\",\"name\"]],false],[\"close-element\"],[\"text\",\":\\n        \"],[\"append\",[\"unknown\",[\"s\",\"distance\"]],false],[\"text\",\" miles away\\n      \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"s\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"result\",\"stores\"]]],null,0]],\"locals\":[]},{\"statements\":[[\"text\",\"      \"],[\"append\",[\"helper\",[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-9/template.hbs" } });
+});
 define('dummy/controllers/array', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
@@ -1328,13 +1768,9 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
   exports.default = _ember.default.Controller.extend({
     appController: _ember.default.inject.controller('application'),
 
-    tableOfContents: [{ route: "docs.introduction", title: "Introduction" }, { route: "docs.installation", title: "Installation" }, { route: "docs.writing-tasks", title: "Your First Task" }, { route: "docs.task-function-syntax", title: "Task Function Syntax" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency",
-      children: [{ route: "docs.task-concurrency-advanced", title: "Using maxConcurrency" }]
-    }, { route: "docs.cancelation", title: "Cancelation",
-      children: [{ route: "docs.error-vs-cancelation", title: "Errors vs. Cancelation (try/catch/finally)" }]
-    }, { route: "docs.child-tasks", title: "Child Tasks" }, { route: "docs.task-groups", title: "Task Groups" }, { route: "docs.derived-state", title: "Derived State" }, { route: "docs.events", title: "Ember / jQuery Events" }, { route: "docs.testing-debugging", title: "Testing & Debugging" }, { route: "docs.faq", title: "FAQ & Fact Sheet" }, { title: "Examples", route: "docs.examples",
-      children: [{ route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Type-Ahead Search" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" }, { route: "docs.examples.route-tasks", title: "Route Tasks" }, { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" }]
-    }],
+    tableOfContents: [{ route: "docs.introduction", title: "Home" }, { route: "docs.installation", title: "Installation" }, { section: "Introduction" }, { route: "docs.tutorial.index", title: "Writing Code Without Tasks" }, { route: "docs.tutorial.discussion", title: "Post-Mortem" }, { route: "docs.tutorial.refactor", title: "Refactoring With Tasks" }, { section: "Reference" }, { route: "docs.task-function-syntax", title: "Task Function Syntax" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency",
+      children: [{ route: "docs.task-concurrency-advanced", title: "Advanced" }]
+    }, { route: "docs.cancelation", title: "Cancelation" }, { route: "docs.error-vs-cancelation", title: "Handling Errors" }, { route: "docs.child-tasks", title: "Child Tasks" }, { route: "docs.task-groups", title: "Task Groups" }, { route: "docs.derived-state", title: "Derived State" }, { route: "docs.events", title: "Ember / jQuery Events" }, { route: "docs.testing-debugging", title: "Testing & Debugging" }, { route: "docs.faq", title: "FAQ & Fact Sheet" }, { section: "Examples" }, { route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Type-Ahead Search" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" }, { route: "docs.examples.route-tasks", title: "Route Tasks" }, { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" }],
 
     flatContents: computed(function () {
       var flattened = [];
@@ -1365,20 +1801,27 @@ define("dummy/docs/controller", ["exports", "ember"], function (exports, _ember)
     }),
 
     nextTopic: computed('currentIndex', 'flatContents', function () {
-      var contents = this.get('flatContents'),
-          index = this.get('currentIndex');
-      if (typeof index !== "undefined") {
-        return contents[index + 1];
-      }
+      return this.findNext(+1);
     }),
 
     prevTopic: computed('currentIndex', 'flatContents', function () {
-      var contents = this.get('flatContents'),
-          index = this.get('currentIndex');
-      if (typeof index !== "undefined") {
-        return contents[index - 1];
+      return this.findNext(-1);
+    }),
+
+    findNext: function findNext(inc) {
+      var currentIndex = this.get('currentIndex');
+      if (typeof currentIndex === "undefined") {
+        return;
       }
-    })
+
+      var contents = this.get('flatContents');
+      for (var i = currentIndex + inc; i >= 0 && i < contents.length; i += inc) {
+        var value = contents[i];
+        if (value.route) {
+          return value;
+        }
+      }
+    }
   });
 });
 define('dummy/docs/derived-state/controller', ['exports', 'ember', 'ember-concurrency', 'dummy/utils'], function (exports, _ember, _emberConcurrency, _utils) {
@@ -1530,7 +1973,7 @@ define("dummy/docs/error-vs-cancelation/template", ["exports"], function (export
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "AwfH5E7+", "block": "{\"statements\":[[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Errors vs Cancelation (try/catch/finally)\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  When you \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"yield aPromise\"],[\"close-element\"],[\"text\",\",\\n  your task function will pause execution until one of three things happens:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ol\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"The promise fulfills, and your task will continue executing from that point.\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"The promise rejects, and your task will automatically `throw` an error from that point.\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Something causes the task to be canceled, which has the behavior described below.\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  The \"],[\"block\",[\"link-to\"],[\"docs.task-function-syntax\"],null,1],[\"text\",\"\\n  demonstrates how you can use standard JavaScript \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"try/catch\"],[\"close-element\"],[\"text\",\" blocks\\n  to catch exceptions thrown when you yield a rejecting promise, but\\n  what about cancelation? Are cancelations considered exceptions/errors, or something else?\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  In ember-concurrency, cancelation is considered a third kind of \\\"completion\\\"\\n  (the other two being a successful return from a function, and throwing an exception\\n  from a function).\\n  Specifically, this means that if a task is canceled while it is paused on a\\n  yield, the task will essentially return from that point,\\n  it will skip any \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"catch(e) {}\"],[\"close-element\"],[\"text\",\" blocks it is in, but it \"],[\"open-element\",\"em\",[]],[\"flush-element\"],[\"text\",\"will\"],[\"close-element\"],[\"text\",\"\\n  execute any \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"finally {}\"],[\"close-element\"],[\"text\",\" blocks. The benefit of this behavior is that:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ol\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"finally\"],[\"close-element\"],[\"text\",\" blocks will always run and can be used for cleanup logic *\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    You don't have to distinguish between cancelation and thrown exceptions\\n    in your \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"catch\"],[\"close-element\"],[\"text\",\" blocks (which you'd annoyingly have to do\\n    if cancelation were considered just another type of error).\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"em\",[]],[\"flush-element\"],[\"text\",\"\\n    * While \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"finally\"],[\"close-element\"],[\"text\",\" blocks are nice for cleanup logic, make\\n    sure you're leveraging the power of\\n    \"],[\"block\",[\"link-to\"],[\"docs.task-concurrency\"],null,0],[\"text\",\" and \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\".isRunning / .isIdle\"],[\"close-element\"],[\"text\",\"\\n    task properties as much as possible so that you're not manually re-implementing\\n    a lot of the implicit state that ember-concurrency provides you for free, e.g.\\n    you should should avoid manually toggling the visibility of a loading spinner within\\n    a task if you could accomplish the same thing using the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\".isRunning\"],[\"close-element\"],[\"text\",\"\\n    property on a task.\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  Both of the buttons below will (re)start \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"myTask\"],[\"close-element\"],[\"text\",\" when clicked.\\n  If you click the buttons quickly, it will cause the currently running task\\n  to cancel from the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"yield\"],[\"close-element\"],[\"text\",\" where it is paused. Notice how\\n  cancelations don't increment the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"numErrors\"],[\"close-element\"],[\"text\",\" property because\\n  cancelations skip the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"catch\"],[\"close-element\"],[\"text\",\" block.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"perform\"],[[\"get\",[\"myTask\"]],false],null],null],[\"flush-element\"],[\"text\",\"\\n  Run to Completion\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"perform\"],[[\"get\",[\"myTask\"]],true],null],null],[\"flush-element\"],[\"text\",\"\\n  Throw an Error\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Task State: \"],[\"append\",[\"unknown\",[\"myTask\",\"state\"]],false],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Completions: \"],[\"append\",[\"unknown\",[\"numCompletions\"]],false],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Errors: \"],[\"append\",[\"unknown\",[\"numErrors\"]],false],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Finally block runs: \"],[\"append\",[\"unknown\",[\"numFinallys\"]],false],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"\\n\"],[\"append\",[\"helper\",[\"code-snippet\"],null,[[\"name\"],[\"error-vs-cancelation-template.hbs\"]]],false],[\"text\",\"\\n\"],[\"append\",[\"helper\",[\"code-snippet\"],null,[[\"name\"],[\"error-vs-cancelation.js\"]]],false],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"Task Modifiers\"]],\"locals\":[]},{\"statements\":[[\"text\",\"Task Function Syntax docs\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/error-vs-cancelation/template.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "rra9n1iI", "block": "{\"statements\":[[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Errors vs Cancelation\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  When you \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"yield aPromise\"],[\"close-element\"],[\"text\",\",\\n  your task function will pause execution until one of three things happens:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ol\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"The promise fulfills, and your task will continue executing from that point.\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"The promise rejects, and your task will automatically `throw` an error from that point.\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Something causes the task to be canceled, which has the behavior described below.\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  The \"],[\"block\",[\"link-to\"],[\"docs.task-function-syntax\"],null,1],[\"text\",\"\\n  demonstrates how you can use standard JavaScript \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"try/catch\"],[\"close-element\"],[\"text\",\" blocks\\n  to catch exceptions thrown when you yield a rejecting promise, but\\n  what about cancelation? Are cancelations considered exceptions/errors, or something else?\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  In ember-concurrency, cancelation is considered a third kind of \\\"completion\\\"\\n  (the other two being a successful return from a function, and throwing an exception\\n  from a function).\\n  Specifically, this means that if a task is canceled while it is paused on a\\n  yield, the task will essentially return from that point,\\n  it will skip any \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"catch(e) {}\"],[\"close-element\"],[\"text\",\" blocks it is in, but it \"],[\"open-element\",\"em\",[]],[\"flush-element\"],[\"text\",\"will\"],[\"close-element\"],[\"text\",\"\\n  execute any \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"finally {}\"],[\"close-element\"],[\"text\",\" blocks. The benefit of this behavior is that:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ol\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"finally\"],[\"close-element\"],[\"text\",\" blocks will always run and can be used for cleanup logic *\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    You don't have to distinguish between cancelation and thrown exceptions\\n    in your \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"catch\"],[\"close-element\"],[\"text\",\" blocks (which you'd annoyingly have to do\\n    if cancelation were considered just another type of error).\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"em\",[]],[\"flush-element\"],[\"text\",\"\\n    * While \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"finally\"],[\"close-element\"],[\"text\",\" blocks are nice for cleanup logic, make\\n    sure you're leveraging the power of\\n    \"],[\"block\",[\"link-to\"],[\"docs.task-concurrency\"],null,0],[\"text\",\" and \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\".isRunning / .isIdle\"],[\"close-element\"],[\"text\",\"\\n    task properties as much as possible so that you're not manually re-implementing\\n    a lot of the implicit state that ember-concurrency provides you for free, e.g.\\n    you should should avoid manually toggling the visibility of a loading spinner within\\n    a task if you could accomplish the same thing using the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\".isRunning\"],[\"close-element\"],[\"text\",\"\\n    property on a task.\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Example\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  Both of the buttons below will (re)start \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"myTask\"],[\"close-element\"],[\"text\",\" when clicked.\\n  If you click the buttons quickly, it will cause the currently running task\\n  to cancel from the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"yield\"],[\"close-element\"],[\"text\",\" where it is paused. Notice how\\n  cancelations don't increment the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"numErrors\"],[\"close-element\"],[\"text\",\" property because\\n  cancelations skip the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"catch\"],[\"close-element\"],[\"text\",\" block.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"perform\"],[[\"get\",[\"myTask\"]],false],null],null],[\"flush-element\"],[\"text\",\"\\n  Run to Completion\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"button\",[]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"perform\"],[[\"get\",[\"myTask\"]],true],null],null],[\"flush-element\"],[\"text\",\"\\n  Throw an Error\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Task State: \"],[\"append\",[\"unknown\",[\"myTask\",\"state\"]],false],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Completions: \"],[\"append\",[\"unknown\",[\"numCompletions\"]],false],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Errors: \"],[\"append\",[\"unknown\",[\"numErrors\"]],false],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Finally block runs: \"],[\"append\",[\"unknown\",[\"numFinallys\"]],false],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"text\",\"\\n\"],[\"append\",[\"helper\",[\"code-snippet\"],null,[[\"name\"],[\"error-vs-cancelation-template.hbs\"]]],false],[\"text\",\"\\n\"],[\"append\",[\"helper\",[\"code-snippet\"],null,[[\"name\"],[\"error-vs-cancelation.js\"]]],false],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"Task Modifiers\"]],\"locals\":[]},{\"statements\":[[\"text\",\"Task Function Syntax docs\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/error-vs-cancelation/template.hbs" } });
 });
 define('dummy/docs/events/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
   'use strict';
@@ -2418,7 +2861,7 @@ define("dummy/docs/introduction/template", ["exports"], function (exports) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "VzY4UTBJ", "block": "{\"statements\":[[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Introduction\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"text\",\"ember-concurrency\"],[\"close-element\"],[\"text\",\" is a small but powerful library that supplements\\n  Ember's existing tools and conventions for handling concurrency and\\n  asynchrony.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  For a high-level view of what ember-concurrency can do for your app,\\n  check out this article:\\n  \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://medium.com/@machty/ember-concurrency-the-solution-to-so-many-problems-you-never-knew-you-had-cce6d7731ba9#.e6r0iv44u\"],[\"flush-element\"],[\"text\",\"\\n    ember-concurrency: the solution to so many problems you never knew you had\"],[\"close-element\"],[\"text\",\".\\n  If you'd prefer a video introduction to the ideas and concepts behind ember-concurrency,\\n  check out the video below from the\\n  \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://twitter.com/EmberMeetup\"],[\"flush-element\"],[\"text\",\"Ember Global Meetup\"],[\"close-element\"],[\"text\",\"\\n  (\"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"http://alexmatchneer.com/ember-concurrency-global-meetup-slides/\"],[\"flush-element\"],[\"text\",\"slides available here\"],[\"close-element\"],[\"text\",\"):\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"static-attr\",\"style\",\"text-align: center\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"iframe\",[]],[\"static-attr\",\"src\",\"https://player.vimeo.com/video/162329769\"],[\"static-attr\",\"width\",\"500\"],[\"static-attr\",\"height\",\"281\"],[\"static-attr\",\"frameborder\",\"0\"],[\"static-attr\",\"webkitallowfullscreen\",\"\"],[\"static-attr\",\"mozallowfullscreen\",\"\"],[\"static-attr\",\"allowfullscreen\",\"\"],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  EmberMap also has a paid course teaching the library\\n  \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://embermap.com/topics/ember-concurrency\"],[\"flush-element\"],[\"text\",\"here\"],[\"close-element\"],[\"text\",\".\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Key Ideas / Goals\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"It should be easy to write \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"text\",\"cancelable\"],[\"close-element\"],[\"text\",\" asynchronous operations (this is hard to do with Promises).\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"It should be easy to prevent two or more async operations from happening at the same time (this is hard to do with Promises and Observables).\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"text\",\"Minimize boilerplate\"],[\"close-element\"],[\"text\",\" and \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"text\",\"maximize implicit state\"],[\"close-element\"],[\"text\",\" so that common UI tasks like\\n      displaying loading spinners or styling inactive buttons require as little code as possible.\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"The API should feel familiar and \\\"at home\\\" for Ember developers.\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Tasks\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"text\",\"ember-concurrency\"],[\"close-element\"],[\"text\",\" enables you to write \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"text\",\"Tasks\"],[\"close-element\"],[\"text\",\", which are asynchronous,\\n  cancelable operations that are bound to the lifetime of the object they live on,\\n  which means when the host object is destroyed (e.g. a component is unrendered),\\n  the task is automatically canceled. Here is an example of a task:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"unknown\",[\"intro-task\"]],false],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-snippet\"],null,[[\"name\"],[\"intro-task.js\"]]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  The example above demonstrates a few things:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    Tasks are implemented using\\n    \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*\"],[\"flush-element\"],[\"text\",\"ES6 Generator Function syntax\"],[\"close-element\"],[\"text\",\"\\n    and the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"yield\"],[\"close-element\"],[\"text\",\" keyword\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    This syntax enables writing async code in a synchronous looking manner\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    It is trivial to restart a task without having to manually cancel the previous task.\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Without Tasks\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  If you were to rewrite the above example without using tasks,\\n  it would look something like this:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"unknown\",[\"intro-task-oldschool\"]],false],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-snippet\"],null,[[\"name\"],[\"intro-task-oldschool.js\"]]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  As you can see, it takes a surprising amount of code to handle\\n  all of the corner cases when dealing with async code:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    You have to stop the currently running operation before starting a new\\n    operation in its place; in other words, you need to constrain concurrency\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    You have to stop the operation when the parent object is destroyed\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    You have to break down each step of the asynchronous operation into\\n    individually cancelable units\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/introduction/template.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "rLau/Nkg", "block": "{\"statements\":[[\"open-element\",\"p\",[]],[\"static-attr\",\"style\",\"font-size: 20px;\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"text\",\"ember-concurrency\"],[\"close-element\"],[\"text\",\" is an Ember Addon that\\n  makes it easy to write concise, robust, and beautiful\\n  asynchronous code.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  It provides you with a powerful \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"text\",\"Task\"],[\"close-element\"],[\"text\",\" primitive,\\n  which offers the following benefits:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    Tasks, unlike Promises, support cancelation.\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    Tasks expose their underlying state (whether they're running or idle)\\n    which makes it trivial to build loading indicators without\\n    having to manually track / mutate state yourself.\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"block\",[\"link-to\"],[\"docs.task-concurrency\"],null,0],[\"text\",\" make it trivial\\n    to prevent two executions of the same task from running at the same time, e.g.\\n    you can prevent double form submissions using the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\".drop()\"],[\"close-element\"],[\"text\",\" modifier,\\n    or you can configure a task to be \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\".restartable()\"],[\"close-element\"],[\"text\",\" so that it starts over\\n    when you click a \\\"Restart\\\" button. Implementing this logic without tasks requires\\n    a lot of boilerplate code and defensive programming.\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    Tasks that live on Components are automatically canceled when that\\n    Component is unrendered; no more \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"if(this.isDestroyed)\"],[\"close-element\"],[\"text\",\"\\n    checks to prevent timers or ajax responses causing\\n    \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"\\\"set on destroyed object\\\"\"],[\"close-element\"],[\"text\",\" errors.\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    ...and much more\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Additional Learning Resources\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  In addition to the comprehesive documentation on this site,\\n  you might find the following links useful for learning about\\n  ember-concurrency.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://www.youtube.com/watch?v=VEzVDOmY-dc\"],[\"flush-element\"],[\"text\",\"\\n      EmberConf 2017 presentation on ember-concurrency\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://embermap.com/topics/ember-concurrency\"],[\"flush-element\"],[\"text\",\"\\n      EmberMap's paid course on ember-concurrency\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://medium.com/@machty/ember-concurrency-the-solution-to-so-many-problems-you-never-knew-you-had-cce6d7731ba9#.e6r0iv44u\"],[\"flush-element\"],[\"text\",\"\\n      Article: ember-concurrency, the solution to so many problems you never knew you had\\n    \"],[\"close-element\"],[\"text\",\".\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://player.vimeo.com/video/162329769\"],[\"flush-element\"],[\"text\",\"\\n      Global Ember Meetup presentation\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"Task Modifiers\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/introduction/template.hbs" } });
 });
 define('dummy/docs/task-concurrency-advanced/controller', ['exports', 'ember', 'ember-concurrency'], function (exports, _ember, _emberConcurrency) {
   'use strict';
@@ -2579,7 +3022,7 @@ define("dummy/docs/template", ["exports"], function (exports) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "r/nzzJCH", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"docs row\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"three columns\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"side-menu\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"tableOfContents\"]]],[[\"key\"],[\"route\"]],6],[\"text\",\"        \"],[\"close-element\"],[\"text\",\"\\n      \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"nine columns\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"nav-header\"],null,[[\"nextTopic\",\"prevTopic\"],[[\"get\",[\"nextTopic\"]],[\"get\",[\"prevTopic\"]]]]],false],[\"text\",\"\\n      \"],[\"append\",[\"unknown\",[\"github-edit\"]],false],[\"text\",\"\\n\\n      \"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\\n      \"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\" \\n\\n      \"],[\"append\",[\"helper\",[\"nav-header\"],null,[[\"nextTopic\",\"prevTopic\"],[[\"get\",[\"nextTopic\"]],[\"get\",[\"prevTopic\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"append\",[\"unknown\",[\"child\",\"title\"]],false]],\"locals\":[]},{\"statements\":[[\"text\",\"              \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"block\",[\"link-to\"],[[\"get\",[\"child\",\"route\"]]],null,0],[\"text\",\"\\n              \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"child\"]},{\"statements\":[[\"text\",\"            \"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"entry\",\"children\"]]],[[\"key\"],[\"route\"]],1],[\"text\",\"            \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"              \"],[\"append\",[\"unknown\",[\"entry\",\"title\"]],false],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"append\",[\"unknown\",[\"entry\",\"title\"]],false]],\"locals\":[]},{\"statements\":[[\"text\",\"              \"],[\"block\",[\"link-to\"],[[\"get\",[\"entry\",\"route\"]]],null,4],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"          \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"if\"],[[\"get\",[\"entry\",\"route\"]]],null,5,3],[\"text\",\"\\n\"],[\"block\",[\"if\"],[[\"get\",[\"entry\",\"children\"]]],null,2],[\"text\",\"          \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"entry\"]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/template.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "Ue/5Px2G", "block": "{\"statements\":[[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"docs row\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"three columns\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"side-menu\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"tableOfContents\"]]],[[\"key\"],[\"route\"]],8],[\"text\",\"      \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"nine columns\"],[\"flush-element\"],[\"text\",\"\\n      \"],[\"append\",[\"helper\",[\"nav-header\"],null,[[\"nextTopic\",\"prevTopic\"],[[\"get\",[\"nextTopic\"]],[\"get\",[\"prevTopic\"]]]]],false],[\"text\",\"\\n      \"],[\"append\",[\"unknown\",[\"github-edit\"]],false],[\"text\",\"\\n\\n      \"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\\n      \"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\" \"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\" \\n\\n      \"],[\"append\",[\"helper\",[\"nav-header\"],null,[[\"nextTopic\",\"prevTopic\"],[[\"get\",[\"nextTopic\"]],[\"get\",[\"prevTopic\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"append\",[\"unknown\",[\"child\",\"title\"]],false]],\"locals\":[]},{\"statements\":[[\"text\",\"                \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"toc-entry toc-subentry\"],[\"flush-element\"],[\"text\",\"\\n                  \"],[\"block\",[\"link-to\"],[[\"get\",[\"child\",\"route\"]]],null,0],[\"text\",\"\\n                  \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"child\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"entry\",\"children\"]]],[[\"key\"],[\"route\"]],1]],\"locals\":[]},{\"statements\":[[\"text\",\"                \"],[\"append\",[\"unknown\",[\"entry\",\"title\"]],false],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"append\",[\"unknown\",[\"entry\",\"title\"]],false]],\"locals\":[]},{\"statements\":[[\"text\",\"                \"],[\"block\",[\"link-to\"],[[\"get\",[\"entry\",\"route\"]]],null,4],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"            \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"toc-entry\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"if\"],[[\"get\",[\"entry\",\"route\"]]],null,5,3],[\"text\",\"            \"],[\"close-element\"],[\"text\",\"\\n\\n\\n\"],[\"block\",[\"if\"],[[\"get\",[\"entry\",\"children\"]]],null,2]],\"locals\":[]},{\"statements\":[[\"text\",\"            \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"toc-section-title\"],[\"flush-element\"],[\"text\",\"\\n              \"],[\"append\",[\"unknown\",[\"entry\",\"section\"]],false],[\"text\",\"\\n            \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"if\"],[[\"get\",[\"entry\",\"section\"]]],null,7,6]],\"locals\":[\"entry\"]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/template.hbs" } });
 });
 define("dummy/docs/testing-debugging/template", ["exports"], function (exports) {
   "use strict";
@@ -2588,6 +3031,30 @@ define("dummy/docs/testing-debugging/template", ["exports"], function (exports) 
     value: true
   });
   exports.default = Ember.HTMLBars.template({ "id": "bN+UNJ1p", "block": "{\"statements\":[[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Testing\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  Ember doesn't yet have strong conventions for testing\\n  long-term timers and polling loops, and since many of the use cases\\n  that ember-concurrency addresses involves heavy use of \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"timeout()\"],[\"close-element\"],[\"text\",\",\\n  and often times within a (possibly infinite) loop, it can be difficult\\n  to figure out how to test code that makes heavy use of such things\\n  within ember-concurrency tasks.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"em\",[]],[\"flush-element\"],[\"text\",\"\\n    NOTE: this is an area of active development within the Ember community,\\n    particularly amongst ember-concurrency users; in due time we will probably\\n    have more official API (possibly in the form of another addon) to help\\n    make testing time more manageable, but in the meantime, this page documents\\n    some common approaches to testing time with present-day tooling.\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"The Problem\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  Consider the following (common) pattern for polling a server for changes:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-snippet\"],null,[[\"name\"],[\"poll-loop.js\"]]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  The above example uses ember-concurrency tasks; to demonstrate that these\\n  issues aren't limited to ember-concurrency tasks, here is how the same\\n  logic might be written without ember-concurrency:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-snippet\"],null,[[\"name\"],[\"poll-loop-classic.js\"]]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  Both of these cases involve a \\\"poll loop\\\": on every iteration, do something asynchronous,\\n  then pause for some period of time, then repeat.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  If, within an acceptance test, you \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"visit()\"],[\"close-element\"],[\"text\",\"ed the page that\\n  causes this loop to start, your acceptance test case would \\\"hang\\\" and eventually\\n  fail with a QUnit test timeout. The reason this happens is that the Ember testing\\n  tools are aware of all timers created via \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"Ember.run.later\"],[\"close-element\"],[\"text\",\" (and\\n  ember-concurrency's \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"timeout()\"],[\"close-element\"],[\"text\",\" helper internally uses \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"Ember.run.later\"],[\"close-element\"],[\"text\",\"),\\n  and will wait for all timers to \\\"settle\\\" before allowing the test to proceed.\\n  But if you have a timer within a loop, the timers will never settle, and hence\\n  your test will hang.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  The solution, one way or another, is to \\\"break\\\" the timer loop when in a testing environment.\\n  Here are all the ways to do that, each with their own problems / tradeoffs:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"text\",\"Insert \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"Ember.testing\"],[\"close-element\"],[\"text\",\" checks in your code\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-snippet\"],null,[[\"name\"],[\"poll-loop-break-1.js\"]]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  This is sufficient when it's satisfactory to just test a single\\n  iteration of a loop, but a) it won't test that the task continues\\n  to loop, and b) it's unfortunate to have to riddle your actual\\n  code with testing logic.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"text\",\"Use \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"Ember.run.cancelTimers\"],[\"close-element\"],[\"text\",\" in your test case\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  This is the approach used by the ember-concurrency\\n  \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://github.com/machty/ember-concurrency/blob/72f70b6c327f5242ca623d61ea0595b5f9093896/tests/helpers/start-app.js#L17-L19\"],[\"flush-element\"],[\"text\",\"documentation site tests\"],[\"close-element\"],[\"text\",\";\\n  since any of the pages on this docs site might demonstrate a live\\n  ember-concurrency task with a timer loop, all of the acceptance tests\\n  automatically cancel all outstanding timers after 500ms to effectively\\n  stop all tasks wherever they're paused.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"No loops, but long timers\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  If you're testing code that just uses long timers, but not necessarily loops,\\n  you might still run into the problem of test cases that take too long to complete,\\n  or might hit the QUnit timeout. A common solution to this problem is to use much\\n  smaller millisecond timer values in a testing environment. You can either do this\\n  by checking \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"Ember.testing\"],[\"close-element\"],[\"text\",\" wherever you set a timer, or, more elegantly, you can\\n  define common timer values in a config file, import the timer values\\n  wherever you need to set a timer, and in test environments, the config\\n  file specifies much smaller values so that the timers elapse more quickly.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"The Future\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  The above solutions leave much to be desired. Hopefully a definitive solution\\n  that produces clear, deterministic, consistent results will emerge from the\\n  community. There are some \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://gist.github.com/machty/574457b1f2d993cc5959a1d6d6c74e5b\"],[\"flush-element\"],[\"text\",\"ideas\"],[\"close-element\"],[\"text\",\"\\n  floating around, and if you're interested in contributing to the discussion\\n  please join the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"#e-concurrency\"],[\"close-element\"],[\"text\",\" channel on the Ember Community Slack.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  Also, if you're finding success with a testing approach that wasn't mentioned here,\\n  please open a GitHub issue with your ideas or open a Pull Request to add\\n  additional docs to \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://github.com/machty/ember-concurrency/blob/master/tests/dummy/app/docs/testing-debugging/template.hbs\"],[\"flush-element\"],[\"text\",\"this page\"],[\"close-element\"],[\"text\",\".\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\\n\"],[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Debugging\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"http://vanderwijk.info/blog/how-disable-es6-transpilation-emberjs-in-order-have-better-debugging-experience/\"],[\"flush-element\"],[\"text\",\"This article\"],[\"close-element\"],[\"text\",\"\\n  provides some nice ideas as to how to improve the debugging experience within ember-concurrency:\\n  in particular, by blacklisting \\\"regenerator\\\" in your app's Babel configuration,\\n  you can avoid Ember transpiling your task generator functions into a somewhat\\n  unrecognizable format. Just keep in mind that you should probably only enable\\n  this configuration in a development environment, and that whatever browser\\n  you're testing on needs to have a spec-compliant implementation of generator\\n  functions (Chrome's implementation only became spec-compliant around June, 2016).\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/testing-debugging/template.hbs" } });
+});
+define("dummy/docs/tutorial/discussion/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "XTpkyCPm", "block": "{\"statements\":[[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"A Quick Post-Mortem\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nIn the previous part of the tutorial, we built a component that\\nfetches and displays nearby retail stores. As you can see, it takes\\nquite a bit of code to cover all of the corner cases and build\\nsomething that is actually production-ready:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\"],[\"better-syntax-6.js\",\"better-syntax-6.hbs\"]]],false],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"tutorial-5\"]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nThis is not the beautiful Ember code we all thought we'd be writing,\\nand unfortunately this kind of code is extremely commonplace.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"text\",\"Alternative: Move tricky code to an object with a long lifespan\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nComponents have limited lifespans: they're rendered, and then\\neventually they're unrendered and destroyed. Controllers, Services, Ember-Data\\nStores, and Routes, on the other hand, live forever (or at least until\\nthe app is torn down in a testing environment).\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nAs such, one approach\\nto avoiding \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"\\\"set on destroyed object\\\"\"],[\"close-element\"],[\"text\",\" errors is to move\\ntricky async logic into a method/action on a Controller or Service that\\nis invoked by a Component. Sometimes this works, but it's often the case\\nthat even though you no longer see exceptions in the console, you still need to\\nclean up / stop / cancel some operation on a long lived object in response\\nto a Component being destroyed. There are Component lifecycle hooks\\nlike \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"willDestroyElement\"],[\"close-element\"],[\"text\",\" that you can use for these kinds of things,\\nbut then you still end up with the same amount of code, but now it's smeared\\nbetween Component and Controller.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/tutorial/discussion/template.hbs" } });
+});
+define("dummy/docs/tutorial/index/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "MNk8d+3R", "block": "{\"statements\":[[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Introduction to ember-concurrency\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nTo demonstrate the kinds of problems ember-concurrency\\nis designed to solve, we'll first implement a basic example of\\nloading data in a Component using only core Ember APIs. Then\\nwe'll introduce ember-concurrency tasks as part of a refactor.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nThis tutorial (and ember-concurrency itself) assumes that you have\\nreasonable familiarity with Ember's core APIs, particularly surrounding\\nComponents, templates, actions, and Promises.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nFor our use case, we're going to implement a Component that\\nfetches and displays nearby retail stores. This involves\\na two-step asynchronous process:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ol\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    It uses geolocation to find the user's latitude/longitude coordinates, and then:\\n  \"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n    It forwards those coordinates to the server to fetch a list of nearby restaurants.\\n  \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"open-element\",\"em\",[]],[\"flush-element\"],[\"text\",\"\\nThis is basically the same example demonstrated in the\\n\"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://youtu.be/VEzVDOmY-dc?t=123\"],[\"flush-element\"],[\"text\",\"EmberConf 2017 ember-concurrency talk\"],[\"close-element\"],[\"text\",\";\\ntake a look if you prefer a video alternative to this tutorial.\\n\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Version 1: Bare Minimum Implementation\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nWe'll start off a bare-bones implementation of the feature: within\\nan action called \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"findStores\"],[\"close-element\"],[\"text\",\", we'll create a Promise\\nchain that fetches the coordinates from a geolocation service\\nand passes those coordinates to a store's \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"getNearbyStores\"],[\"close-element\"],[\"text\",\"\\nmethod, which eventually gives us an array of stores that we stash\\non the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"result\"],[\"close-element\"],[\"text\",\" property so that the stores can be displayed\\nin the template.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\"],[\"better-syntax-1.js\",\"better-syntax-1.hbs\"]]],false],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"tutorial-0\"]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nThis first implementation \"],[\"open-element\",\"em\",[]],[\"flush-element\"],[\"text\",\"works\"],[\"close-element\"],[\"text\",\", but it's not really production-ready.\\nThe most immediate problem is that there's no loading UI; the user clicks\\nthe button and it seems like nothing is happening until the results come back.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Version 2: Add a Loading Spinner\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nWe'd like to display a loading spinner while the code is fetching nearby stores.\\nIn order to do this, we'll add an \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"isFindingStores\"],[\"close-element\"],[\"text\",\" property to the\\ncomponent that the template can use to display a spinner.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"open-element\",\"em\",[]],[\"flush-element\"],[\"text\",\"\\n  We'll use \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"++\"],[\"close-element\"],[\"text\",\" comments to highlight newly added code.\\n\"],[\"close-element\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\"],[\"better-syntax-2.js\",\"better-syntax-2.hbs\"]]],false],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"tutorial-1\"]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nThis is certainly an improvement, but strange things start to happen if you\\nclick the \\\"Find Nearby Stores\\\" button many times in a row.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nThe problem is that we're kicking off multiple concurrent attempts to fetch\\nnearby locations, when really we just want only one fetch to be running\\nat any given time.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Version 3: Preventing Concurrency\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nWe'd like to prevent another fetch from happening if one is already in\\nprogress. To do this, just need to add a check to see if\\n\"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"isFindingStores\"],[\"close-element\"],[\"text\",\" is true, and return early if so.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\"],[\"better-syntax-3.js\",\"better-syntax-3.hbs\"]]],false],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"tutorial-2\"]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nNow it is safe to tap the \\\"Find Nearby Stores\\\" button. Are we done?\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nUnfortunately, no. There's an important corner case we haven't addressed yet:\\nif the component is destroyed (because the user navigated\\nto a different page) while the fetch is running, our code\\nwill throw an Error with the message\\n\"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"\\\"calling set on destroyed object\\\"\"],[\"close-element\"],[\"text\",\".\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nYou can\\nactually verify that this happening by opening your browser's\\nweb inspector, clicking \\\"Find Nearby Stores\\\" from the example\\nabove, and then quickly clicking \"],[\"block\",[\"link-to\"],[\"docs.introduction\"],null,1],[\"text\",\"\\nbefore the store results have come back.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Version 4: Handling \\\"set on destroyed object\\\" errors\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nThe problem is that it's possible for our promise callback (the\\none that sets \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"result\"],[\"close-element\"],[\"text\",\" and \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"isFindingStores\"],[\"close-element\"],[\"text\",\")\\nto run after the component has been destroyed, and Ember (and React\\nand many others) will complain if you try and, well, call \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"set()\"],[\"close-element\"],[\"text\",\"\\non a destroyed object.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nFortunately, Ember let's us check if an object has been destroyed\\nvia the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"isDestroyed\"],[\"close-element\"],[\"text\",\" flag, so we can just add a bit of\\ndefensive programming to our promise callback as follows:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\"],[\"better-syntax-4.js\",\"better-syntax-4.hbs\"]]],false],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"tutorial-3\"]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nNow if you click \\\"Find Nearby Stores\\\" and\\n\"],[\"block\",[\"link-to\"],[\"docs.introduction\"],null,0],[\"text\",\", you won't see\\nthat pesky error.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nNow, are we done?\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Version 5: Handle Errors\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nYou might have noticed that we don't have any error handling if\\neither the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"getCoords\"],[\"close-element\"],[\"text\",\" or \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"getNearbyStores\"],[\"close-element\"],[\"text\",\"\\npromises reject with an error.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nEven if we were too lazy to build\\nan error banner or popup to indicate that something went wrong (and we are),\\nthe least we could do is make sure that our code gracefully\\nrecovers from such an error and doesn't wind up in a bad state.\\nAs it stands, if one of those promises rejected,\\n\"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"isFindingStores\"],[\"close-element\"],[\"text\",\" would be stuck to \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"true\"],[\"close-element\"],[\"text\",\", and\\nthere'd be no way to try fetching again.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nLet's use a \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"finally()\"],[\"close-element\"],[\"text\",\" handler to make sure that\\n\"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"isFindingStores\"],[\"close-element\"],[\"text\",\" always gets set to \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"false\"],[\"close-element\"],[\"text\",\",\\nregardless of success or failure. Unfortunately, this also\\nmeans we have to duplicate our \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"isDestroyed\"],[\"close-element\"],[\"text\",\" check.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\"],[\"better-syntax-5.js\",\"better-syntax-5.hbs\"]]],false],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"tutorial-4\"]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nAnd there you have it: a reasonably-production ready implementation\\nof finding nearby stores.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"navigate elsewhere\"]],\"locals\":[]},{\"statements\":[[\"text\",\"this link\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/tutorial/index/template.hbs" } });
+});
+define("dummy/docs/tutorial/refactor/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "cmgif1su", "block": "{\"statements\":[[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Refactoring With Tasks\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nNow we're going to build the same functionality using\\nember-concurrency tasks, starting with the same bare minimum\\nimplementation as before, and making incremental improvements.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nFor reference, here is the bare minimum implementation that we\\nstarted with before (which only uses core Ember APIs):\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\"],[\"better-syntax-1.js\",\"better-syntax-1.hbs\"]]],false],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"tutorial-0\"]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Version 1: Bare Minimum Implementation (with Tasks)\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nNow let's build the same thing with ember-concurrency tasks:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\"],[\"better-syntax-7.js\",\"better-syntax-7.hbs\"]]],false],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"tutorial-6\"]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nLet's take a moment to point out everything that has changed:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  First, instead of using a \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"findStores\"],[\"close-element\"],[\"text\",\" \"],[\"open-element\",\"em\",[]],[\"flush-element\"],[\"text\",\"action\"],[\"close-element\"],[\"text\",\",\\n  we define a \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"findStores\"],[\"close-element\"],[\"text\",\" \"],[\"open-element\",\"em\",[]],[\"flush-element\"],[\"text\",\"task\"],[\"close-element\"],[\"text\",\".\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  Second, in the template, instead of using \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"onclick=\"],[\"text\",\"{{action 'findStores'}}\"],[\"close-element\"],[\"text\",\",\\n  we use \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"onclick=\"],[\"text\",\"{{perform findStores}}\"],[\"close-element\"],[\"text\",\".\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  Lastly, instead of using a Promise chain of \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\".then()\"],[\"close-element\"],[\"text\",\" callbacks,\\n  we use the\\n  \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"href\",\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*\"],[\"flush-element\"],[\"text\",\"Generator Function Syntax\"],[\"close-element\"],[\"text\",\"\\n  and the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"yield\"],[\"close-element\"],[\"text\",\" keyword.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n  \"],[\"block\",[\"link-to\"],[\"docs.task-function-syntax\"],null,1],[\"text\",\"\\n  about how this syntax is used, but for now, the most important thing to understand\\n  is that when you \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"yield\"],[\"close-element\"],[\"text\",\" a promise, the task will pause until that promise fulfills,\\n  and then continue executing with the resolved value of that promise.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"Let's press onward with the refactor:\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h5\",[]],[\"flush-element\"],[\"text\",\"Version 2: Add a Loading Spinner (with Tasks)\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nRather than defining a separate boolean flag and manually tracking\\nthe state of the task, we can use the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"isRunning\"],[\"close-element\"],[\"text\",\" property\\nexposed by the task to drive our loading spinner, which means we only\\nneed to make a change to the template code; the JavaScript can stay the same:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\",\"showCode\"],[\"better-syntax-8.js\",\"better-syntax-8.hbs\",false]]],false],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"tutorial-7\"]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Version 3: Preventing Concurrency (with Tasks)\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nSo far so good, but we still haven't addressed the issue that clicking\\nthe button multiple times causes weird behavior due to multiple\\nfetch operations running at the same time.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nRather than putting an \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"if\"],[\"close-element\"],[\"text\",\" guard at the start of the task,\\nthe ember-concurrency way to prevent concurrency is to apply a\\n\"],[\"block\",[\"link-to\"],[\"docs.task-concurrency\"],null,0],[\"text\",\" to the task.\\nThe one we want to use is the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\".drop()\"],[\"close-element\"],[\"text\",\" modifier, which prevents\\nconcurrency by \\\"dropping\\\" any attempt to perform the task while it is\\nalready running.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\"],[\"better-syntax-9.js\",\"better-syntax-9.hbs\"]]],false],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"tutorial-8\"]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nNow when you button mash \\\"Find Nearby Stores\\\", you no longer get the weird\\nbehavior due to concurrent fetches.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Version 4: Handling \\\"set on destroyed object\\\" errors\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nWhat about those pesky \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"\\\"set on destroyed object\\\"\"],[\"close-element\"],[\"text\",\" errors?\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nGood news! Our code is already safe because ember-concurrency automatically\\ncancels tasks when their host object (e.g. a Component) is destroyed.\\nIn our example, if the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"findStores\"],[\"close-element\"],[\"text\",\" task is paused\\nat the unresolved \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"getNearbyStores\"],[\"close-element\"],[\"text\",\" promise right when the user navigates\\naway, the component will be destroyed and the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"findStores\"],[\"close-element\"],[\"text\",\" task will\\nstop right where it is and will never hit the line of code with the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"this.set()\"],[\"close-element\"],[\"text\",\",\\nthus avoiding the \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"\\\"set on destroyed object\\\"\"],[\"close-element\"],[\"text\",\" error.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nThe ability to cancel a task in mid-execution is one of ember-concurrency's\\nmost powerful features, and it is the generator function syntax that\\nmakes cancelation possible.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Version 5: Handle Errors\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nWhat about errors? Will a promise rejection put our task into an unrecoverable state?\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nIt turns out that, again, we don't need to change any code; if either\\n\"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"getCoords\"],[\"close-element\"],[\"text\",\" or \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"getNearbyStores\"],[\"close-element\"],[\"text\",\" returned a rejecting promise,\\nthe \"],[\"open-element\",\"code\",[]],[\"flush-element\"],[\"text\",\"findStores\"],[\"close-element\"],[\"text\",\" task would stop execution where the error occurred, bubble\\nthe exception to the console (so that error reporters can catch it), but from there on\\nthe task can be immediately performed / retried again. So, we don't need to change any code.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Final Diff\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nJavaScript:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\",\"toggleDescription\"],[\"better-syntax-10.js\",\"better-syntax-6.js\",\"diff\"]]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\nTemplate:\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"code-template-toggle\"],null,[[\"codeSnippet\",\"templateSnippet\",\"toggleDescription\"],[\"better-syntax-10.hbs\",\"better-syntax-6.hbs\",\"diff\"]]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n\"],[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Conclusion\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\nThis was a very successful refactor. We were able to remove a lot\\nof ugly boilerplate and defensive programming code, and what we're left\\nwith is very clean, concise, safe, and stress-free code.\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"Task Modifier\"]],\"locals\":[]},{\"statements\":[[\"text\",\"We'll into much greater detail\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/tutorial/refactor/template.hbs" } });
 });
 define("dummy/docs/writing-tasks/template", ["exports"], function (exports) {
   "use strict";
@@ -3431,6 +3898,12 @@ define('dummy/router', ['exports', 'ember', 'dummy/config/environment'], functio
       this.route('introduction');
       this.route('installation');
       this.route('writing-tasks');
+
+      this.route('tutorial', function () {
+        this.route('discussion');
+        this.route('refactor');
+      });
+
       this.route('task-function-syntax');
       this.route('task-concurrency');
       this.route('task-concurrency-advanced');
@@ -3514,6 +3987,26 @@ define("dummy/snippets", ["exports"], function (exports) {
   exports.default = {
     "ajax-throttling.js": "function loopingAjaxTask(id, color) {\n  return task(function * () {\n    while (true) {\n      this.log(color, `Task ${id}: making AJAX request`);\n      yield this.get('ajaxTask').perform();\n      this.log(color, `Task ${id}: Done, sleeping.`);\n      yield timeout(2000);\n    }\n  }).on('init');\n}\n\nexport default Ember.Component.extend({\n  ajaxTask: task(function * () {\n    // simulate slow AJAX\n    yield timeout(2000 + 2000 * Math.random());\n    return {};\n  }).enqueue().maxConcurrency(3),\n\n  task0: loopingAjaxTask(0, '#0000FF'),\n  task1: loopingAjaxTask(1, '#8A2BE2'),\n  task2: loopingAjaxTask(2, '#A52A2A'),\n  task3: loopingAjaxTask(3, '#DC143C'),\n  task4: loopingAjaxTask(4, '#20B2AA'),\n  task5: loopingAjaxTask(5, '#FF1493'),\n  task6: loopingAjaxTask(6, '#228B22'),\n  task7: loopingAjaxTask(7, '#DAA520'),\n\n  log(color, message) {\n    let logs = this.logs || [];\n    logs.push({ color, message });\n    this.set('logs', logs.slice(-7));\n  },\n\n  logs: null,\n});",
     "ask-button.hbs": "  <button class={{if askQuestion.isIdle 'button-primary'}}\n    onclick={{perform askQuestion}}>\n        {{#if askQuestion.isIdle}}\n          Ask\n        {{else}}\n          Thinking...\n          {{fa-icon \"spinner\" spin=true}}\n        {{/if}}\n  </button>",
+    "better-syntax-1.hbs": "  <button onclick={{action 'findStores'}}>\n    Find Nearby Stores\n  </button>\n\n  {{#if result}}\n    {{#each result.stores as |s|}}\n      <li>\n        <strong>{{s.name}}</strong>:\n        {{s.distance}} miles away\n      </li>\n    {{/each}}\n  {{/if}}",
+    "better-syntax-1.js": "export default TutorialComponent.extend({\n  result: null,\n  actions: {\n    findStores() {\n      let geolocation = this.get('geolocation');\n      let store = this.get('store');\n\n      geolocation.getCoords()\n        .then(coords => store.getNearbyStores(coords))\n        .then(result => {\n          this.set('result', result);\n        });\n    }\n  },\n});",
+    "better-syntax-10.hbs": "  <button onclick={{perform findStores}}>\n    Find Nearby Stores\n    {{#if findStores.isRunning}}\n      {{fa-icon \"spinner\" spin=true}}\n    {{/if}}\n  </button>\n\n  {{#if result}}\n    {{#each result.stores as |s|}}\n      <li>\n        <strong>{{s.name}}</strong>:\n        {{s.distance}} miles away\n      </li>\n    {{/each}}\n  {{/if}}",
+    "better-syntax-10.js": "export default TutorialComponent.extend({\n  result: null,\n  findStores: task(function * () {\n    let geolocation = this.get('geolocation');\n    let store = this.get('store');\n\n    let coords = yield geolocation.getCoords();\n    let result = yield store.getNearbyStores(coords);\n    this.set('result', result);\n  }).drop(),\n});",
+    "better-syntax-2.hbs": "  <button onclick={{action 'findStores'}}>\n    Find Nearby Stores\n    {{#if isFindingStores}}\n      {{! ++ }}\n      {{fa-icon \"spinner\" spin=true}}\n    {{/if}}\n  </button>\n\n  {{#if result}}\n    {{#each result.stores as |s|}}\n      <li>\n        <strong>{{s.name}}</strong>:\n        {{s.distance}} miles away\n      </li>\n    {{/each}}\n  {{/if}}",
+    "better-syntax-2.js": "export default TutorialComponent.extend({\n  result: null,\n  isFindingStores: false, // ++\n  actions: {\n    findStores() {\n      let geolocation = this.get('geolocation');\n      let store = this.get('store');\n\n      this.set('isFindingStores', true); // ++\n      geolocation.getCoords()\n        .then(coords => store.getNearbyStores(coords))\n        .then(result => {\n          this.set('result', result);\n          this.set('isFindingStores', false); // ++\n        });\n    }\n  },\n});",
+    "better-syntax-3.hbs": "  <button onclick={{action 'findStores'}}>\n    Find Nearby Stores\n    {{#if isFindingStores}}\n      {{fa-icon \"spinner\" spin=true}}\n    {{/if}}\n  </button>\n\n  {{#if result}}\n    {{#each result.stores as |s|}}\n      <li>\n        <strong>{{s.name}}</strong>:\n        {{s.distance}} miles away\n      </li>\n    {{/each}}\n  {{/if}}",
+    "better-syntax-3.js": "export default TutorialComponent.extend({\n  result: null,\n  isFindingStores: false,\n  actions: {\n    findStores() {\n      if (this.isFindingStores) { return; } // ++\n\n      let geolocation = this.get('geolocation');\n      let store = this.get('store');\n\n      this.set('isFindingStores', true);\n      geolocation.getCoords()\n        .then(coords => store.getNearbyStores(coords))\n        .then(result => {\n          this.set('result', result);\n          this.set('isFindingStores', false);\n        });\n    }\n  },\n});",
+    "better-syntax-4.hbs": "  <button onclick={{action 'findStores'}}>\n    Find Nearby Stores\n    {{#if isFindingStores}}\n      {{fa-icon \"spinner\" spin=true}}\n    {{/if}}\n  </button>\n\n  {{#if result}}\n    {{#each result.stores as |s|}}\n      <li>\n        <strong>{{s.name}}</strong>:\n        {{s.distance}} miles away\n      </li>\n    {{/each}}\n  {{/if}}",
+    "better-syntax-4.js": "export default TutorialComponent.extend({\n  result: null,\n  isFindingStores: false,\n  actions: {\n    findStores() {\n      if (this.isFindingStores) { return; }\n\n      let geolocation = this.get('geolocation');\n      let store = this.get('store');\n\n      this.set('isFindingStores', true);\n      geolocation.getCoords()\n        .then(coords => store.getNearbyStores(coords))\n        .then(result => {\n          if (this.isDestroyed) { return; } // ++\n          this.set('result', result);\n          this.set('isFindingStores', false);\n        });\n    }\n  },\n});",
+    "better-syntax-5.hbs": "  <button onclick={{action 'findStores'}}>\n    Find Nearby Stores\n    {{#if isFindingStores}}\n      {{fa-icon \"spinner\" spin=true}}\n    {{/if}}\n  </button>\n\n  {{#if result}}\n    {{#each result.stores as |s|}}\n      <li>\n        <strong>{{s.name}}</strong>:\n        {{s.distance}} miles away\n      </li>\n    {{/each}}\n  {{/if}}",
+    "better-syntax-5.js": "export default TutorialComponent.extend({\n  result: null,\n  isFindingStores: false,\n  actions: {\n    findStores() {\n      if (this.isFindingStores) { return; }\n\n      let geolocation = this.get('geolocation');\n      let store = this.get('store');\n\n      this.set('isFindingStores', true);\n      geolocation.getCoords()\n        .then(coords => store.getNearbyStores(coords))\n        .then(result => {\n          if (this.isDestroyed) { return; }\n          this.set('result', result);\n        })\n        .finally(() => {                      // ++\n          if (this.isDestroyed) { return; }   // ++\n          this.set('isFindingStores', false); // ++\n        });\n    }\n  },\n});",
+    "better-syntax-6.hbs": "  <button onclick={{action 'findStores'}}>\n    Find Nearby Stores\n    {{#if isFindingStores}}\n      {{fa-icon \"spinner\" spin=true}}\n    {{/if}}\n  </button>\n\n  {{#if result}}\n    {{#each result.stores as |s|}}\n      <li>\n        <strong>{{s.name}}</strong>:\n        {{s.distance}} miles away\n      </li>\n    {{/each}}\n  {{/if}}",
+    "better-syntax-6.js": "export default TutorialComponent.extend({\n  result: null,\n  isFindingStores: false,\n  actions: {\n    findStores() {\n      if (this.isFindingStores) { return; }\n\n      let geolocation = this.get('geolocation');\n      let store = this.get('store');\n\n      this.set('isFindingStores', true);\n      geolocation.getCoords()\n        .then(coords => store.getNearbyStores(coords))\n        .then(result => {\n          if (this.isDestroyed) { return; }\n          this.set('result', result);\n        })\n        .finally(() => {\n          if (this.isDestroyed) { return; }\n          this.set('isFindingStores', false);\n        });\n    }\n  },\n});",
+    "better-syntax-7.hbs": "  <button onclick={{perform findStores}}> {{! ++ }}\n    Find Nearby Stores\n  </button>\n\n  {{#if result}}\n    {{#each result.stores as |s|}}\n      <li>\n        <strong>{{s.name}}</strong>:\n        {{s.distance}} miles away\n      </li>\n    {{/each}}\n  {{/if}}",
+    "better-syntax-7.js": "import { task } from 'ember-concurrency';\n\nexport default TutorialComponent.extend({\n  result: null,\n\n  findStores: task(function * () {\n    let geolocation = this.get('geolocation');\n    let store = this.get('store');\n\n    let coords = yield geolocation.getCoords();\n    let result = yield store.getNearbyStores(coords);\n    this.set('result', result);\n  }),\n});",
+    "better-syntax-8.hbs": "  <button onclick={{perform findStores}}>\n    Find Nearby Stores\n    {{#if findStores.isRunning}}\n      {{! ++ }}\n      {{fa-icon \"spinner\" spin=true}}\n    {{/if}}\n  </button>\n\n  {{#if result}}\n    {{#each result.stores as |s|}}\n      <li>\n        <strong>{{s.name}}</strong>:\n        {{s.distance}} miles away\n      </li>\n    {{/each}}\n  {{/if}}",
+    "better-syntax-8.js": "import { task } from 'ember-concurrency';\n\nexport default TutorialComponent.extend({\n  result: null,\n\n  findStores: task(function * () {\n    let geolocation = this.get('geolocation');\n    let store = this.get('store');\n\n    let coords = yield geolocation.getCoords();\n    let result = yield store.getNearbyStores(coords);\n    this.set('result', result);\n  }),\n});",
+    "better-syntax-9.hbs": "  <button onclick={{perform findStores}}>\n    Find Nearby Stores\n    {{#if findStores.isRunning}}\n      {{fa-icon \"spinner\" spin=true}}\n    {{/if}}\n  </button>\n\n  {{#if result}}\n    {{#each result.stores as |s|}}\n      <li>\n        <strong>{{s.name}}</strong>:\n        {{s.distance}} miles away\n      </li>\n    {{/each}}\n  {{/if}}",
+    "better-syntax-9.js": "import { task } from 'ember-concurrency';\n\nexport default TutorialComponent.extend({\n  result: null,\n\n  findStores: task(function * () {\n    let geolocation = this.get('geolocation');\n    let store = this.get('store');\n\n    let coords = yield geolocation.getCoords();\n    let result = yield store.getNearbyStores(coords);\n    this.set('result', result);\n  }).drop(), // ++\n});",
     "cancelation-template.hbs": "<h5>Running tasks: {{count}}</h5>\n\n<button {{action 'performTask'}}>Perform Task</button>\n{{#if count}}\n  <button {{action 'cancelAll'}}>Cancel All</button>\n{{/if}}\n{{#if mostRecent.isRunning}}\n  <button {{action 'cancelMostRecent'}}>Cancel Most Recent</button>\n{{/if}}",
     "cancelation.js": "const WAIT_HERE_FOREVER = Ember.RSVP.defer().promise;\nexport default Ember.Controller.extend({\n  count: 0,\n  mostRecent: null,\n\n  myTask: task(function * () {\n    try {\n      this.incrementProperty('count');\n      yield WAIT_HERE_FOREVER;\n    } finally {\n      // finally blocks always get called,\n      // even when the task is being canceled\n      this.decrementProperty('count');\n    }\n  }),\n\n  actions: {\n    performTask() {\n      let task = this.get('myTask');\n      let taskInstance = task.perform();\n      this.set('mostRecent', taskInstance);\n    },\n\n    cancelAll() {\n      this.get('myTask').cancelAll();\n    },\n\n    cancelMostRecent() {\n      this.get('mostRecent').cancel();\n    },\n  }\n});",
     "caps-marquee.js": "  marqueeLoop: task(function * () {\n    let text = this.get('text');\n    while (true) {\n      this.set('formattedText', text);\n      yield timeout(1500);\n      for (let i = 0; i < text.length; ++i) {\n        this.set('formattedText', capitalizeAt(text, i));\n        yield timeout(50);\n      }\n    }\n  }).on('init'),",
@@ -3537,8 +4030,6 @@ define("dummy/snippets", ["exports"], function (exports) {
     "error-vs-cancelation.js": "export default Ember.Controller.extend({\n  numCompletions: 0,\n  numErrors: 0,\n  numFinallys: 0,\n\n  myTask: task(function * (doError) {\n    try {\n      yield timeout(1000);\n      if (doError) {\n        throw new Error(\"Boom\");\n      }\n    } catch(e) {\n      this.incrementProperty('numErrors');\n    } finally {\n      this.incrementProperty('numFinallys');\n    }\n    this.incrementProperty('numCompletions');\n  }).restartable(),\n});",
     "increment-button-task.js": "export default Ember.Controller.extend({\n  count: 0,\n  incrementBy: task(function * (inc) {\n    let speed = 400;\n    while (true) {\n      this.incrementProperty('count', inc);\n      yield timeout(speed);\n      speed = Math.max(50, speed * 0.8);\n    }\n  })\n});",
     "increment-button.js": "function sendPress() {\n  this.sendAction('press');\n}\n\nfunction sendRelease() {\n  this.sendAction('release');\n}\n\nexport default Ember.Component.extend({\n  tagName: 'button',\n\n  touchStart: sendPress,\n  mouseDown:  sendPress,\n  touchEnd:   sendRelease,\n  mouseLeave: sendRelease,\n  mouseUp:    sendRelease,\n});",
-    "intro-task-oldschool.js": "import Ember from 'ember';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  startCounting() {\n    this.cancelTimer();\n    this.set('count', 0);\n    this.step();\n  },\n\n  step() {\n    if (this.count < 5) {\n      this.incrementProperty('count');\n      this.timerId = Ember.run.later(this, this.step, 300);\n    } else {\n      this.set('count', \"DONE!\");\n    }\n  },\n\n  willDestroy() {\n    this.cancelTimer();\n  },\n\n  cancelTimer() {\n    if (this.timerId) {\n      Ember.run.cancel(this.timerId);\n      this.timerId = null;\n    }\n  },\n\n  actions: {\n    startCounting() {\n      this.startCounting();\n    }\n  }\n});",
-    "intro-task.js": "import Ember from 'ember';\nimport { task, timeout } from 'ember-concurrency';\n\nexport default Ember.Component.extend({\n  count: 0,\n\n  countingTask: task(function * () {\n    this.set('count', 0);\n    while (this.count < 5) {\n      this.incrementProperty('count');\n      yield timeout(300);\n    }\n    this.set('count', \"DONE!\");\n  }).restartable()\n});",
     "joining-tasks-2-template.hbs": "<p>\n  <button onclick={{perform parent 'all'}}>all()</button>\n  <button onclick={{perform parent 'race'}}>race()</button>\n</p>",
     "joining-tasks-2.js": "import { task, timeout, all, race } from 'ember-concurrency';\nconst methods = { all, race };\n\nexport default Ember.Controller.extend({\n  status: \"Waiting...\",\n  childTasks: null,\n\n  parent: task(function * (methodName) {\n    let allOrRace = methods[methodName];\n    let childTasks = [];\n\n    for (let id = 0; id < 5; ++id) {\n      childTasks.push(this.get('child').perform(id));\n    }\n\n    this.set('childTasks', childTasks);\n    this.set('status', \"Waiting for child tasks to complete...\");\n    let words = yield allOrRace(childTasks);\n    this.set('status', `Done: ${Ember.makeArray(words).join(', ')}`);\n  }).restartable(),\n\n  child: task({\n    percent: 0,\n    id: null,\n\n    perform: function * (id) {\n      this.set('id', id);\n      while (this.percent < 100) {\n        yield timeout(Math.random() * 100 + 100);\n        let newPercent = Math.min(100, Math.floor(this.percent + Math.random() * 20));\n        this.set('percent', newPercent);\n      }\n      return randomWord();\n    },\n  }).enqueue().maxConcurrency(3),\n\n  colors: [ '#ff8888', '#88ff88', '#8888ff' ],\n});",
     "joining-tasks-template.hbs": "<p>\n  <button onclick={{perform parent 'all'}}>all()</button>\n  <button onclick={{perform parent 'race'}}>race()</button>\n</p>",
@@ -3859,5 +4350,5 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.8.3+383b10fd"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.8.3+fac03035"});
 }
