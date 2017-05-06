@@ -11,6 +11,9 @@ export default Ember.Controller.extend({
     { route: "docs.installation", title: "Installation"},
     { route: "docs.writing-tasks", title: "Your First Task"},
 
+    { section: "Tutorial" },
+    { route: "docs.tutorial", title: "Use Case: Loading Data"},
+
     { section: "Reference" },
     { route: "docs.task-function-syntax", title: "Task Function Syntax"},
     { route: "docs.task-concurrency", title: "Managing Task Concurrency",
@@ -65,18 +68,23 @@ export default Ember.Controller.extend({
   }),
 
   nextTopic: computed('currentIndex', 'flatContents', function(){
-    var contents = this.get('flatContents'),
-        index = this.get('currentIndex');
-    if (typeof(index) !== "undefined") {
-      return contents[index+1];
-    }
+    return this.findNext(+1);
   }),
 
   prevTopic: computed('currentIndex', 'flatContents', function(){
-    var contents = this.get('flatContents'),
-        index = this.get('currentIndex');
-    if (typeof(index) !== "undefined") {
-      return contents[index-1];
-    }
+    return this.findNext(-1);
   }),
+
+  findNext(inc) {
+    let currentIndex = this.get('currentIndex');
+    if (typeof(currentIndex) === "undefined") { return; }
+
+    let contents = this.get('flatContents');
+    for (let i = currentIndex + inc; i >= 0 && i < contents.length; i += inc) {
+      let value = contents[i];
+      if (value.route) {
+        return value;
+      }
+    }
+  },
 });

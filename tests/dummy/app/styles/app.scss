@@ -173,3 +173,46 @@ th, td {
   padding-left: 1.5rem;
 }
 
+.tutorial-example {
+  border: 1px solid #eee;
+  padding: 2rem;
+  height: 150px;
+  position: relative;
+  button {
+    margin-bottom: 1.7rem;
+  }
+}
+
+.tutorial-example-label {
+  position: absolute;
+  right: 5px;
+  bottom: 0;
+  color: #bbb;
+}
+
+.code-template-toggle {
+  position: relative;
+  background-color: #f8f8f8;
+  pre {
+    margin: 0 !important;
+  }
+  //margin: 1.5rem 0;
+}
+
+.code-template-toggle-button {
+  position: absolute;
+  z-index: 5;
+  right: 1rem;
+  top: 1rem;
+}
+
+.code-template-toggle-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  &.hidden {
+    visibility: hidden;
+  }
+}
+

@@ -1,0 +1,56 @@
+<h3>Tutorial: Loading Data in a Component</h3>
+
+<p>
+To demonstrate the kinds of problems ember-concurrency
+is designed to solve, we'll first implement a basic example of
+loading data in a Component using only core Ember APIs. Then
+we'll introduce ember-concurrency tasks as part of a refactor.
+</p>
+
+<p>
+This tutorial (and ember-concurrency itself) assumes that you have
+reasonable familiarity with Ember's core APIs, particularly surrounding
+Components, templates, actions, and Promises.
+</p>
+
+<p>
+For our use case, we're going to implement a Component that
+fetches and displays nearby retail stores. This involves
+a two-step asynchronous process:
+</p>
+
+<ol>
+  <li>
+    It uses geolocation to find the user's latitude/longitude coordinates, and then:
+  </li>
+  <li>
+    It forwards those coordinates to the server to fetch a list of nearby restaurants.
+  </li>
+</ol>
+
+<p>
+<em>
+This is basically the same example demonstrated in the
+<a href="https://youtu.be/VEzVDOmY-dc?t=123">EmberConf 2017 ember-concurrency talk</a>;
+take a look if you prefer a video alternative to this tutorial.
+</em>
+</p>
+
+<h4>Version 1: Bare Minimum Implementation</h4>
+
+<p>
+We'll start off a bare-bones implementation of the feature: within
+an action called <code>findStores</code>, we'll create a Promise
+chain that fetches the coordinates from a geolocation service
+and passes those coordinates to a store's <code>getNearbyStores</code>
+method, which eventually gives us an array of stores that we stash
+on the <code>result</code> property so that the stores can be displayed
+in the template.
+</p>
+
+{{code-template-toggle
+    codeSnippet="better-syntax-1.js"
+    templateSnippet="better-syntax-1.hbs"}}
+{{tutorial-0}}
+
+

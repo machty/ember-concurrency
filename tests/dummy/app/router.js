@@ -10,6 +10,10 @@ Router.map(function() {
     this.route('introduction');
     this.route('installation');
     this.route('writing-tasks');
+
+    this.route('tutorial', function() {
+    });
+
     this.route('task-function-syntax');
     this.route('task-concurrency');
     this.route('task-concurrency-advanced');
