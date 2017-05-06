@@ -246,7 +246,7 @@ let taskInstanceAttrs = {
     if (this.isCanceling || get(this, 'isFinished')) { return; }
     set(this, 'isCanceling', true);
 
-    let name = get(this, 'task._propertyName');
+    let name = get(this, 'task._propertyName') || "<unknown>";
     set(this, 'cancelReason', `TaskInstance '${name}' was canceled because ${cancelReason}`);
 
     if (this.hasStarted) {
