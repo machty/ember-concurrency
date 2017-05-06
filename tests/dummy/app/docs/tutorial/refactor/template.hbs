@@ -1,0 +1,169 @@
+<h3>Refactoring With Tasks</h3>
+
+<p>
+Now we're going to build the same functionality using
+ember-concurrency tasks, starting with the same bare minimum
+implementation as before, and making incremental improvements.
+</p>
+
+<p>
+For reference, here is the bare minimum implementation that we
+started with before (which only uses core Ember APIs):
+</p>
+
+{{code-template-toggle
+    codeSnippet="better-syntax-1.js"
+    templateSnippet="better-syntax-1.hbs"}}
+{{tutorial-0}}
+
+<h4>Version 1: Bare Minimum Implementation (with Tasks)</h4>
+
+<p>
+Now let's build the same thing with ember-concurrency tasks:
+</p>
+
+{{code-template-toggle
+    codeSnippet="better-syntax-7.js"
+    templateSnippet="better-syntax-7.hbs"}}
+{{tutorial-6}}
+
+<p>
+Let's take a moment to point out everything that has changed:
+</p>
+
+<p>
+  First, instead of using a <code>findStores</code> <em>action</em>,
+  we define a <code>findStores</code> <em>task</em>.
+</p>
+
+<p>
+  Second, in the template, instead of using <code>onclick=\{{action 'findStores'}}</code>,
+  we use <code>onclick=\{{perform findStores}}</code>.
+</p>
+
+<p>
+  Lastly, instead of using a Promise chain of <code>.then()</code> callbacks,
+  we use the
+  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">Generator Function Syntax</a>
+  and the <code>yield</code> keyword.
+</p>
+
+<p>
+  {{link-to "We'll into much greater detail" 'docs.task-function-syntax'}}
+  about how this syntax is used, but for now, the most important thing to understand
+  is that when you <code>yield</code> a promise, the task will pause until that promise fulfills,
+  and then continue executing with the resolved value of that promise.
+</p>
+
+<p>Let's press onward with the refactor:</p>
+
+<h5>Version 2: Add a Loading Spinner (with Tasks)</h5>
+
+<p>
+Rather than defining a separate boolean flag and manually tracking
+the state of the task, we can use the <code>isRunning</code> property
+exposed by the task to drive our loading spinner, which means we only
+need to make a change to the template code; the JavaScript can stay the same:
+</p>
+
+{{code-template-toggle
+    codeSnippet="better-syntax-8.js"
+    templateSnippet="better-syntax-8.hbs"
+    showCode=false}}
+{{tutorial-7}}
+
+<h4>Version 3: Preventing Concurrency (with Tasks)</h4>
+
+<p>
+So far so good, but we still haven't addressed the issue that clicking
+the button multiple times causes weird behavior due to multiple
+fetch operations running at the same time.
+</p>
+
+<p>
+Rather than putting an <code>if</code> guard at the start of the task,
+the ember-concurrency way to prevent concurrency is to apply a
+{{link-to 'Task Modifier' 'docs.task-concurrency'}} to the task.
+The one we want to use is the <code>.drop()</code> modifier, which prevents
+concurrency by "dropping" any attempt to perform the task while it is
+already running.
+</p>
+
+{{code-template-toggle
+    codeSnippet="better-syntax-9.js"
+    templateSnippet="better-syntax-9.hbs"}}
+{{tutorial-8}}
+
+<p>
+Now when you button mash "Find Nearby Stores", you no longer get the weird
+behavior due to concurrent fetches.
+</p>
+
+<h4>Version 4: Handling "set on destroyed object" errors</h4>
+
+<p>
+What about those pesky <code>"set on destroyed object"</code> errors?
+</p>
+
+<p>
+Good news! Our code is already safe because ember-concurrency automatically
+cancels tasks when their host object (e.g. a Component) is destroyed.
+In our example, if the <code>findStores</code> task is paused
+at the unresolved <code>getNearbyStores</code> promise right when the user navigates
+away, the component will be destroyed and the <code>findStores</code> task will
+stop right where it is and will never hit the line of code with the <code>this.set()</code>,
+thus avoiding the <code>"set on destroyed object"</code> error.
+</p>
+
+<p>
+The ability to cancel a task in mid-execution is one of ember-concurrency's
+most powerful features, and it is the generator function syntax that
+makes cancelation possible.
+</p>
+
+<h4>Version 5: Handle Errors</h4>
+
+<p>
+What about errors? Will a promise rejection put our task into an unrecoverable state?
+</p>
+
+<p>
+It turns out that, again, we don't need to change any code; if either
+<code>getCoords</code> or <code>getNearbyStores</code> returned a rejecting promise,
+the <code>findStores</code> task would stop execution where the error occurred, bubble
+the exception to the console (so that error reporters can catch it), but from there on
+the task can be immediately performed / retried again. So, we don't need to change any code.
+</p>
+
+<h3>Final Diff</h3>
+
+<p>
+JavaScript:
+</p>
+
+{{code-template-toggle
+    codeSnippet="better-syntax-10.js"
+    templateSnippet="better-syntax-6.js"
+    toggleDescription="diff"
+    }}
+
+<p>
+<br>
+Template:
+</p>
+
+{{code-template-toggle
+    codeSnippet="better-syntax-10.hbs"
+    templateSnippet="better-syntax-6.hbs"
+    toggleDescription="diff"
+    }}
+
+<br>
+<h3>Conclusion</h3>
+
+<p>
+This was a very successful refactor. We were able to remove a lot
+of ugly boilerplate and defensive programming code, and what we're left
+with is very clean, concise, safe, and stress-free code.
+</p>
+

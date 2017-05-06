@@ -12,6 +12,8 @@ Router.map(function() {
     this.route('writing-tasks');
 
     this.route('tutorial', function() {
+      this.route('discussion');
+      this.route('refactor');
     });
 
     this.route('task-function-syntax');

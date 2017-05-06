@@ -6,29 +6,29 @@ export default Ember.Controller.extend({
   appController: Ember.inject.controller('application'),
 
   tableOfContents: [
-    { section: "Getting Started" },
-    { route: "docs.introduction", title: "Introduction"},
-    { route: "docs.installation", title: "Installation"},
-    { route: "docs.writing-tasks", title: "Your First Task"},
+    { route: "docs.introduction", title: "Home" },
+    { route: "docs.installation", title: "Installation" },
 
-    { section: "Tutorial" },
-    { route: "docs.tutorial", title: "Use Case: Loading Data"},
+    { section: "Introduction" },
+    { route: "docs.tutorial.index", title: "Writing Code Without Tasks" },
+    { route: "docs.tutorial.discussion", title: "Post-Mortem" },
+    { route: "docs.tutorial.refactor", title: "Refactoring With Tasks" },
 
     { section: "Reference" },
-    { route: "docs.task-function-syntax", title: "Task Function Syntax"},
+    { route: "docs.task-function-syntax", title: "Task Function Syntax" },
     { route: "docs.task-concurrency", title: "Managing Task Concurrency",
       children: [
-        { route: "docs.task-concurrency-advanced", title: "Advanced"},
+        { route: "docs.task-concurrency-advanced", title: "Advanced" },
       ]
     },
     { route: "docs.cancelation", title: "Cancelation", },
-    { route: "docs.error-vs-cancelation", title: "Handling Errors"},
-    { route: "docs.child-tasks", title: "Child Tasks"},
-    { route: "docs.task-groups", title: "Task Groups"},
+    { route: "docs.error-vs-cancelation", title: "Handling Errors" },
+    { route: "docs.child-tasks", title: "Child Tasks" },
+    { route: "docs.task-groups", title: "Task Groups" },
     { route: "docs.derived-state", title: "Derived State" },
     { route: "docs.events", title: "Ember / jQuery Events" },
-    { route: "docs.testing-debugging", title: "Testing & Debugging"},
-    { route: "docs.faq", title: "FAQ & Fact Sheet"},
+    { route: "docs.testing-debugging", title: "Testing & Debugging" },
+    { route: "docs.faq", title: "FAQ & Fact Sheet" },
 
     { section: "Examples" },
     { route: "docs.examples.loading-ui", title: "Loading UI" },

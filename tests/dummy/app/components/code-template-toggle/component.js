@@ -2,6 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   classNames: ["code-template-toggle"],
+  toggleDescription: "Toggle JS / Template",
 
   showCode: true,
 
