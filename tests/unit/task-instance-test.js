@@ -138,11 +138,14 @@ test("blocks on async yields", function(assert) {
   Ember.run(null, defer.resolve, 123);
 });
 
-function expectCancelation(assert, promise) {
+function expectCancelation(assert, promise, message) {
   promise.then(() => {
     assert.ok(false, "promise should have rejected");
   }, e => {
     assert.equal(e.name, 'TaskCancelation', "promise rejection is a cancelation");
+    if (message) {
+      assert.equal(e.message, message);
+    }
   });
 }
 
@@ -219,7 +222,7 @@ test("deferred start", function(assert) {
 });
 
 test("deferred start: .cancel() before ._start()", function(assert) {
-  assert.expect(3);
+  assert.expect(4);
 
   let taskInstance = Ember.run(() => {
     return TaskInstance.create({
@@ -230,7 +233,7 @@ test("deferred start: .cancel() before ._start()", function(assert) {
     });
   });
 
-  expectCancelation(assert, taskInstance);
+  expectCancelation(assert, taskInstance, "TaskCancelation: TaskInstance 'undefined' was canceled because .cancel() was explicitly called");
 
   Ember.run(() => {
     taskInstance.cancel();

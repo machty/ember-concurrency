@@ -90,7 +90,7 @@ test("task discontinues after destruction when blocked on async values", functio
 });
 
 test("task.cancelAll cancels all running task instances", function(assert) {
-  assert.expect(1);
+  assert.expect(2);
 
   let Obj = Ember.Object.extend(Ember.Evented, {
     doStuff: task(function * () {
@@ -108,6 +108,27 @@ test("task.cancelAll cancels all running task instances", function(assert) {
   });
 
   assert.deepEqual(instances.mapBy('isCanceled'), [true, true, true]);
+  assert.equal(instances[0].get('cancelReason'), "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task");
+});
+
+test("cancelation due to task modifier supplies useful message", function(assert) {
+  assert.expect(2);
+
+  let Obj = Ember.Object.extend(Ember.Evented, {
+    doStuff: task(function * () {
+      yield timeout(1);
+    }).restartable(),
+  });
+
+  let instances;
+  Ember.run(() => {
+    let obj = Obj.create();
+    let task = obj.get('doStuff');
+    instances = Ember.A([ task.perform(), task.perform(), task.perform() ]);
+  });
+
+  assert.deepEqual(instances.mapBy('isCanceled'), [true, true, false]);
+  assert.equal(instances[0].get('cancelReason'), "TaskInstance 'doStuff' was canceled because it belongs to a 'restartable' Task that was .perform()ed again");
 });
 
 test("tasks can call cancelAll() on themselves", function(assert) {

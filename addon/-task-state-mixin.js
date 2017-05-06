@@ -40,8 +40,8 @@ export default Ember.Mixin.create({
   numQueued: 0,
   _seenIndex: 0,
 
-  cancelAll() {
-    this._scheduler.cancelAll();
+  cancelAll(reason = ".cancelAll() was explicitly called on the Task") {
+    this._scheduler.cancelAll(reason);
   },
 
   group: computed(function() {

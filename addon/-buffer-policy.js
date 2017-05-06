@@ -25,11 +25,12 @@ export const enqueueTasksPolicy = {
 };
 
 export const dropQueuedTasksPolicy = {
+  cancelReason: `it belongs to a 'drop' Task that was already running`,
   schedule(scheduler) {
     // [a,b,_] [c,d,e,f] becomes
     // [a,b,c] []
     saturateActiveQueue(scheduler);
-    scheduler.spliceTaskInstances(scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length);
+    scheduler.spliceTaskInstances(this.cancelReason, scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length);
   },
   getNextPerformStatus(scheduler) {
     return numPerformSlots(scheduler) > 0 ? 'succeed' : 'drop';
@@ -37,6 +38,7 @@ export const dropQueuedTasksPolicy = {
 };
 
 export const cancelOngoingTasksPolicy = {
+  cancelReason: `it belongs to a 'restartable' Task that was .perform()ed again`,
   schedule(scheduler) {
     // [a,b,_] [c,d,e,f] becomes
     // [d,e,f] []
@@ -46,7 +48,7 @@ export const cancelOngoingTasksPolicy = {
     queuedTaskInstances.length = 0;
 
     let numToShift = Math.max(0, activeTaskInstances.length - scheduler.maxConcurrency);
-    scheduler.spliceTaskInstances(activeTaskInstances, 0, numToShift);
+    scheduler.spliceTaskInstances(this.cancelReason, activeTaskInstances, 0, numToShift);
   },
   getNextPerformStatus(scheduler) {
     return numPerformSlots(scheduler) > 0 ? 'succeed' : 'cancel_previous';
@@ -54,11 +56,12 @@ export const cancelOngoingTasksPolicy = {
 };
 
 export const dropButKeepLatestPolicy = {
+  cancelReason: `it belongs to a 'keepLatest' Task that was already running`,
   schedule(scheduler) {
     // [a,b,_] [c,d,e,f] becomes
     // [d,e,f] []
     saturateActiveQueue(scheduler);
-    scheduler.spliceTaskInstances(scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length - 1);
+    scheduler.spliceTaskInstances(this.cancelReason, scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length - 1);
   }
 };
 

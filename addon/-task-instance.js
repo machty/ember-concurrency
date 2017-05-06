@@ -92,6 +92,7 @@ let taskInstanceAttrs = {
   args: [],
   _hasSubscribed: false,
   _runLoop: true,
+  cancelReason: null,
 
   /**
    * If this TaskInstance runs to completion by returning a property
@@ -241,9 +242,12 @@ let taskInstanceAttrs = {
    * @memberof TaskInstance
    * @instance
    */
-  cancel() {
+  cancel(cancelReason = ".cancel() was explicitly called") {
     if (this.isCanceling || get(this, 'isFinished')) { return; }
     set(this, 'isCanceling', true);
+
+    let name = get(this, 'task._propertyName');
+    set(this, 'cancelReason', `TaskInstance '${name}' was canceled because ${cancelReason}`);
 
     if (this.hasStarted) {
       this._proceedSoon(YIELDABLE_CANCEL, null);
@@ -305,7 +309,7 @@ let taskInstanceAttrs = {
 
     if (this.isCanceling) {
       completionState = COMPLETION_CANCEL;
-      value = new Error(TASK_CANCELATION_NAME);
+      value = new Error(`${TASK_CANCELATION_NAME}: ${this.cancelReason}`);
       value.name = TASK_CANCELATION_NAME;
       value.taskInstance = this;
     }
