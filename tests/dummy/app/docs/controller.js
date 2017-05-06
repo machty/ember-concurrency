@@ -6,36 +6,34 @@ export default Ember.Controller.extend({
   appController: Ember.inject.controller('application'),
 
   tableOfContents: [
+    { section: "Getting Started" },
     { route: "docs.introduction", title: "Introduction"},
     { route: "docs.installation", title: "Installation"},
     { route: "docs.writing-tasks", title: "Your First Task"},
+
+    { section: "Reference" },
     { route: "docs.task-function-syntax", title: "Task Function Syntax"},
     { route: "docs.task-concurrency", title: "Managing Task Concurrency",
       children: [
-        { route: "docs.task-concurrency-advanced", title: "Using maxConcurrency"},
+        { route: "docs.task-concurrency-advanced", title: "Advanced"},
       ]
     },
-    { route: "docs.cancelation", title: "Cancelation",
-      children: [
-        { route: "docs.error-vs-cancelation", title: "Errors vs. Cancelation (try/catch/finally)"},
-      ]
-    },
+    { route: "docs.cancelation", title: "Cancelation", },
+    { route: "docs.error-vs-cancelation", title: "Handling Errors"},
     { route: "docs.child-tasks", title: "Child Tasks"},
     { route: "docs.task-groups", title: "Task Groups"},
     { route: "docs.derived-state", title: "Derived State" },
     { route: "docs.events", title: "Ember / jQuery Events" },
     { route: "docs.testing-debugging", title: "Testing & Debugging"},
     { route: "docs.faq", title: "FAQ & Fact Sheet"},
-    { title: "Examples", route: "docs.examples",
-      children: [
-        {route: "docs.examples.loading-ui", title: "Loading UI"},
-        {route: "docs.examples.autocomplete", title: "Type-Ahead Search"},
-        {route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons"},
-        {route: "docs.examples.ajax-throttling", title: "AJAX Throttling"},
-        {route: "docs.examples.route-tasks", title: "Route Tasks"},
-        {route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks"},
-      ]
-    },
+
+    { section: "Examples" },
+    { route: "docs.examples.loading-ui", title: "Loading UI" },
+    { route: "docs.examples.autocomplete", title: "Type-Ahead Search" },
+    { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" },
+    { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" },
+    { route: "docs.examples.route-tasks", title: "Route Tasks" },
+    { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" },
   ],
 
   flatContents: computed(function(){
@@ -48,7 +46,6 @@ export default Ember.Controller.extend({
     });
     return flattened;
   }),
-
 
   currentIndex: computed('appController.currentRouteName', 'flatContents', function(){
     var contents = this.get('flatContents'),

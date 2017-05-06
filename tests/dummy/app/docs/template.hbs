@@ -2,29 +2,31 @@
   <div class="docs row">
     <div class="three columns">
       <div class="side-menu">
-        <ul>
-          {{#each tableOfContents key="route" as |entry|}}
-          <li>
-            {{#if entry.route}}
-              {{#link-to entry.route}}{{entry.title}}{{/link-to}}
-            {{else}}
-              {{entry.title}}
-            {{/if}}
+        {{#each tableOfContents key="route" as |entry|}}
+          {{#if entry.section}}
+            <div class="toc-section-title">
+              {{entry.section}}
+            </div>
+          {{else}}
+            <div class="toc-entry">
+              {{#if entry.route}}
+                {{#link-to entry.route}}{{entry.title}}{{/link-to}}
+              {{else}}
+                {{entry.title}}
+              {{/if}}
+            </div>
+
 
             {{#if entry.children}}
-            <ul>
               {{#each entry.children key="route" as |child|}}
-              <li>
-                {{#link-to child.route}}{{child.title}}{{/link-to}}
-              </li>
+                <div class="toc-entry toc-subentry">
+                  {{#link-to child.route}}{{child.title}}{{/link-to}}
+                  </div>
               {{/each}}
-            </ul>
             {{/if}}
-          </li>
-          {{/each}}
-        </ul>
+          {{/if}}
+        {{/each}}
       </div>
-
     </div>
     <div class="nine columns">
       {{nav-header nextTopic=nextTopic prevTopic=prevTopic}}
