@@ -1,5 +1,5 @@
 # Changelog
-### master
+### 0.8.3
   - Added informative messages as to the root cause of a
     TaskCancelation, e.g.
     "TaskCancelation: TaskInstance 'doStuff' was canceled because .cancel() was explicitly called"
