@@ -1,4 +1,11 @@
 # Changelog
+### master
+  - Added informative messages as to the root cause of a
+    TaskCancelation, e.g.
+    "TaskCancelation: TaskInstance 'doStuff' was canceled because .cancel() was explicitly called"
+    "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task"
+    "TaskInstance 'doStuff' was canceled because it belongs to a 'restartable' Task that was .perform()ed again"
+
 ### 0.8.2
   - Reverted some of the changes introduced in 0.8.0; in particular,
     while the first "slice" of a task function executes synchronously
