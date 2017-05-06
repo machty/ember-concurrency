@@ -2770,13 +2770,17 @@ define('dummy/helpers/cancel-all', ['exports', 'ember', 'ember-concurrency/-help
     value: true
   });
   exports.cancelHelper = cancelHelper;
+
+
+  var CANCEL_REASON = "the 'cancel-all' template helper was invoked";
+
   function cancelHelper(args) {
     var cancelable = args[0];
     if (!cancelable || typeof cancelable.cancelAll !== 'function') {
       _ember.default.assert('The first argument passed to the `cancel-all` helper should be a Task or TaskGroup (without quotes); you passed ' + cancelable, false);
     }
 
-    return (0, _helpers.taskHelperClosure)('cancelAll', args);
+    return (0, _helpers.taskHelperClosure)('cancelAll', [cancelable, CANCEL_REASON]);
   }
 
   exports.default = _ember.default.Helper.helper(cancelHelper);
@@ -3855,5 +3859,5 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.8.1+810efe46"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.8.3+383b10fd"});
 }

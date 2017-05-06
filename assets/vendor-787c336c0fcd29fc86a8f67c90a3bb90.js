@@ -104205,7 +104205,7 @@ var ReactiveTest = Rx.ReactiveTest = {
 
   ForbiddenError.prototype = Object.create(AjaxError.prototype);
 });
-define('ember-ajax/index', ['exports', 'ember-ajax/request'], function (exports, _emberAjaxRequest) {
+;define('ember-ajax/index', ['exports', 'ember-ajax/request'], function (exports, _emberAjaxRequest) {
   Object.defineProperty(exports, 'default', {
     enumerable: true,
     get: function get() {
@@ -104213,7 +104213,7 @@ define('ember-ajax/index', ['exports', 'ember-ajax/request'], function (exports,
     }
   });
 });
-define('ember-ajax/make-promise', ['exports', 'ember'], function (exports, _ember) {
+;define('ember-ajax/make-promise', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = makePromise;
   var run = _ember['default'].run;
   var RSVP = _ember['default'].RSVP;
@@ -104247,7 +104247,7 @@ define('ember-ajax/make-promise', ['exports', 'ember'], function (exports, _embe
     };
   }
 });
-define('ember-ajax/raw', ['exports', 'ember-ajax/make-promise', 'ember-ajax/utils/parse-args', 'ember'], function (exports, _emberAjaxMakePromise, _emberAjaxUtilsParseArgs, _ember) {
+;define('ember-ajax/raw', ['exports', 'ember-ajax/make-promise', 'ember-ajax/utils/parse-args', 'ember'], function (exports, _emberAjaxMakePromise, _emberAjaxUtilsParseArgs, _ember) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
   exports['default'] = raw;
@@ -104277,7 +104277,7 @@ define('ember-ajax/raw', ['exports', 'ember-ajax/make-promise', 'ember-ajax/util
     return (0, _emberAjaxMakePromise['default'])(settings);
   }
 });
-define('ember-ajax/request', ['exports', 'ember-ajax/raw', 'ember'], function (exports, _emberAjaxRaw, _ember) {
+;define('ember-ajax/request', ['exports', 'ember-ajax/raw', 'ember'], function (exports, _emberAjaxRaw, _ember) {
   exports['default'] = request;
   var deprecate = _ember['default'].deprecate;
 
@@ -104294,7 +104294,7 @@ define('ember-ajax/request', ['exports', 'ember-ajax/raw', 'ember'], function (e
     }, null, 'ember-ajax: unwrap raw ajax response');
   }
 });
-define('ember-ajax/services/ajax', ['exports', 'ember', 'ember-ajax/errors', 'ember-ajax/utils/parse-response-headers'], function (exports, _ember, _emberAjaxErrors, _emberAjaxUtilsParseResponseHeaders) {
+;define('ember-ajax/services/ajax', ['exports', 'ember', 'ember-ajax/errors', 'ember-ajax/utils/parse-response-headers'], function (exports, _ember, _emberAjaxErrors, _emberAjaxUtilsParseResponseHeaders) {
   var deprecate = _ember['default'].deprecate;
   var get = _ember['default'].get;
   var isBlank = _ember['default'].isBlank;
@@ -104597,7 +104597,7 @@ define('ember-ajax/services/ajax', ['exports', 'ember', 'ember-ajax/errors', 'em
     }
   });
 });
-define("ember-ajax/utils/parse-args", ["exports"], function (exports) {
+;define("ember-ajax/utils/parse-args", ["exports"], function (exports) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
 
   exports["default"] = parseArgs;
@@ -104643,7 +104643,7 @@ define("ember-ajax/utils/parse-args", ["exports"], function (exports) {
     return args;
   }
 });
-define('ember-ajax/utils/parse-response-headers', ['exports'], function (exports) {
+;define('ember-ajax/utils/parse-response-headers', ['exports'], function (exports) {
   exports['default'] = parseResponseHeaders;
 
   function parseResponseHeaders(headerStr) {
@@ -104668,13 +104668,13 @@ define('ember-ajax/utils/parse-response-headers', ['exports'], function (exports
     return headers;
   }
 });
-define('ember-cli-app-version/components/app-version', ['exports', 'ember', 'ember-cli-app-version/templates/app-version'], function (exports, _ember, _emberCliAppVersionTemplatesAppVersion) {
+;define('ember-cli-app-version/components/app-version', ['exports', 'ember', 'ember-cli-app-version/templates/app-version'], function (exports, _ember, _emberCliAppVersionTemplatesAppVersion) {
   exports['default'] = _ember['default'].Component.extend({
     tagName: 'span',
     layout: _emberCliAppVersionTemplatesAppVersion['default']
   });
 });
-define('ember-cli-app-version/initializer-factory', ['exports', 'ember'], function (exports, _ember) {
+;define('ember-cli-app-version/initializer-factory', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = initializerFactory;
   var classify = _ember['default'].String.classify;
 
@@ -104690,10 +104690,13 @@ define('ember-cli-app-version/initializer-factory', ['exports', 'ember'], functi
     };
   }
 });
-define("ember-cli-app-version/templates/app-version", ["exports"], function (exports) {
+;define("ember-cli-app-version/templates/app-version", ["exports"], function (exports) {
+  "use strict";
+
+  exports.__esModule = true;
   exports.default = Ember.HTMLBars.template({ "id": "Jt4YZXfv", "block": "{\"statements\":[[\"append\",[\"unknown\",[\"version\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "ember-cli-app-version/templates/app-version.hbs" } });
 });
-define('ember-concurrency/-buffer-policy', ['exports'], function (exports) {
+;define('ember-concurrency/-buffer-policy', ['exports'], function (exports) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -104739,11 +104742,12 @@ define('ember-concurrency/-buffer-policy', ['exports'], function (exports) {
   };
 
   var dropQueuedTasksPolicy = exports.dropQueuedTasksPolicy = {
+    cancelReason: 'it belongs to a \'drop\' Task that was already running',
     schedule: function schedule(scheduler) {
       // [a,b,_] [c,d,e,f] becomes
       // [a,b,c] []
       saturateActiveQueue(scheduler);
-      scheduler.spliceTaskInstances(scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length);
+      scheduler.spliceTaskInstances(this.cancelReason, scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length);
     },
     getNextPerformStatus: function getNextPerformStatus(scheduler) {
       return numPerformSlots(scheduler) > 0 ? 'succeed' : 'drop';
@@ -104751,6 +104755,7 @@ define('ember-concurrency/-buffer-policy', ['exports'], function (exports) {
   };
 
   var cancelOngoingTasksPolicy = exports.cancelOngoingTasksPolicy = {
+    cancelReason: 'it belongs to a \'restartable\' Task that was .perform()ed again',
     schedule: function schedule(scheduler) {
       // [a,b,_] [c,d,e,f] becomes
       // [d,e,f] []
@@ -104760,7 +104765,7 @@ define('ember-concurrency/-buffer-policy', ['exports'], function (exports) {
       queuedTaskInstances.length = 0;
 
       var numToShift = Math.max(0, activeTaskInstances.length - scheduler.maxConcurrency);
-      scheduler.spliceTaskInstances(activeTaskInstances, 0, numToShift);
+      scheduler.spliceTaskInstances(this.cancelReason, activeTaskInstances, 0, numToShift);
     },
     getNextPerformStatus: function getNextPerformStatus(scheduler) {
       return numPerformSlots(scheduler) > 0 ? 'succeed' : 'cancel_previous';
@@ -104768,15 +104773,16 @@ define('ember-concurrency/-buffer-policy', ['exports'], function (exports) {
   };
 
   var dropButKeepLatestPolicy = exports.dropButKeepLatestPolicy = {
+    cancelReason: 'it belongs to a \'keepLatest\' Task that was already running',
     schedule: function schedule(scheduler) {
       // [a,b,_] [c,d,e,f] becomes
       // [d,e,f] []
       saturateActiveQueue(scheduler);
-      scheduler.spliceTaskInstances(scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length - 1);
+      scheduler.spliceTaskInstances(this.cancelReason, scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length - 1);
     }
   };
 });
-define('ember-concurrency/-cancelable-promise-helpers', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/utils'], function (exports, _ember, _taskInstance, _utils) {
+;define('ember-concurrency/-cancelable-promise-helpers', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/utils'], function (exports, _ember, _taskInstance, _utils) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -104931,7 +104937,7 @@ define('ember-concurrency/-cancelable-promise-helpers', ['exports', 'ember', 'em
     };
   }
 });
-define('ember-concurrency/-encapsulated-task', ['exports', 'ember', 'ember-concurrency/-task-instance'], function (exports, _ember, _taskInstance) {
+;define('ember-concurrency/-encapsulated-task', ['exports', 'ember', 'ember-concurrency/-task-instance'], function (exports, _ember, _taskInstance) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -104948,7 +104954,7 @@ define('ember-concurrency/-encapsulated-task', ['exports', 'ember', 'ember-concu
     perform: null
   });
 });
-define('ember-concurrency/-evented-observable', ['exports', 'ember'], function (exports, _ember) {
+;define('ember-concurrency/-evented-observable', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -104976,7 +104982,7 @@ define('ember-concurrency/-evented-observable', ['exports', 'ember'], function (
     }
   });
 });
-define('ember-concurrency/-helpers', ['exports', 'ember', 'ember-concurrency/-task-property'], function (exports, _ember, _taskProperty) {
+;define('ember-concurrency/-helpers', ['exports', 'ember', 'ember-concurrency/-task-property'], function (exports, _ember, _taskProperty) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -105019,7 +105025,7 @@ define('ember-concurrency/-helpers', ['exports', 'ember', 'ember-concurrency/-ta
     });
   }
 });
-define('ember-concurrency/-property-modifiers-mixin', ['exports', 'ember', 'ember-concurrency/-scheduler', 'ember-concurrency/-buffer-policy'], function (exports, _ember, _scheduler, _bufferPolicy) {
+;define('ember-concurrency/-property-modifiers-mixin', ['exports', 'ember', 'ember-concurrency/-scheduler', 'ember-concurrency/-buffer-policy'], function (exports, _ember, _scheduler, _bufferPolicy) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -105090,7 +105096,7 @@ define('ember-concurrency/-property-modifiers-mixin', ['exports', 'ember', 'embe
     }
   }
 });
-define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, _ember) {
+;define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -105121,13 +105127,13 @@ define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, 
       this.activeTaskInstances = [];
       this.queuedTaskInstances = [];
     },
-    cancelAll: function cancelAll() {
+    cancelAll: function cancelAll(reason) {
       var seen = [];
-      this.spliceTaskInstances(this.activeTaskInstances, 0, this.activeTaskInstances.length, seen);
-      this.spliceTaskInstances(this.queuedTaskInstances, 0, this.queuedTaskInstances.length, seen);
+      this.spliceTaskInstances(reason, this.activeTaskInstances, 0, this.activeTaskInstances.length, seen);
+      this.spliceTaskInstances(reason, this.queuedTaskInstances, 0, this.queuedTaskInstances.length, seen);
       flushTaskCounts(seen);
     },
-    spliceTaskInstances: function spliceTaskInstances(taskInstances, index, count, seen) {
+    spliceTaskInstances: function spliceTaskInstances(cancelReason, taskInstances, index, count, seen) {
       for (var i = index; i < index + count; ++i) {
         var taskInstance = taskInstances[i];
 
@@ -105138,7 +105144,7 @@ define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, 
           taskInstance.task.decrementProperty('numQueued');
         }
 
-        taskInstance.cancel();
+        taskInstance.cancel(cancelReason);
         if (seen) {
           seen.push(taskInstance.task);
         }
@@ -105247,7 +105253,7 @@ define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, 
 
   exports.default = Scheduler;
 });
-define('ember-concurrency/-task-group', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-property-modifiers-mixin'], function (exports, _ember, _utils, _taskStateMixin, _propertyModifiersMixin) {
+;define('ember-concurrency/-task-group', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-property-modifiers-mixin'], function (exports, _ember, _utils, _taskStateMixin, _propertyModifiersMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -105294,7 +105300,7 @@ define('ember-concurrency/-task-group', ['exports', 'ember', 'ember-concurrency/
     constructor: TaskGroupProperty
   });
 });
-define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _utils) {
+;define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _utils) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -105392,6 +105398,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
     args: [],
     _hasSubscribed: false,
     _runLoop: true,
+    cancelReason: null,
 
     /**
      * If this TaskInstance runs to completion by returning a property
@@ -105534,10 +105541,15 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
       return spliceSlice(taskString, -1, 0, '.perform()');
     },
     cancel: function cancel() {
+      var cancelReason = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ".cancel() was explicitly called";
+
       if (this.isCanceling || get(this, 'isFinished')) {
         return;
       }
       set(this, 'isCanceling', true);
+
+      var name = get(this, 'task._propertyName') || "<unknown>";
+      set(this, 'cancelReason', 'TaskInstance \'' + name + '\' was canceled because ' + cancelReason);
 
       if (this.hasStarted) {
         this._proceedSoon(_utils.YIELDABLE_CANCEL, null);
@@ -105603,7 +105615,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
       if (this.isCanceling) {
         completionState = COMPLETION_CANCEL;
-        value = new Error(TASK_CANCELATION_NAME);
+        value = new Error(this.cancelReason);
         value.name = TASK_CANCELATION_NAME;
         value.taskInstance = this;
       }
@@ -105912,7 +105924,7 @@ define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurren
 
   exports.default = TaskInstance;
 });
-define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-task-group', 'ember-concurrency/-property-modifiers-mixin', 'ember-concurrency/utils', 'ember-concurrency/-encapsulated-task'], function (exports, _ember, _taskInstance, _taskStateMixin, _taskGroup, _propertyModifiersMixin, _utils, _encapsulatedTask) {
+;define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-task-group', 'ember-concurrency/-property-modifiers-mixin', 'ember-concurrency/utils', 'ember-concurrency/-encapsulated-task'], function (exports, _ember, _taskInstance, _taskStateMixin, _taskGroup, _propertyModifiersMixin, _utils, _encapsulatedTask) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -106387,7 +106399,7 @@ define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurren
     };
   }
 });
-define('ember-concurrency/-task-state-mixin', ['exports', 'ember'], function (exports, _ember) {
+;define('ember-concurrency/-task-state-mixin', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -106432,7 +106444,9 @@ define('ember-concurrency/-task-state-mixin', ['exports', 'ember'], function (ex
     _seenIndex: 0,
 
     cancelAll: function cancelAll() {
-      this._scheduler.cancelAll();
+      var reason = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ".cancelAll() was explicitly called on the Task";
+
+      this._scheduler.cancelAll(reason);
     },
 
 
@@ -106444,7 +106458,7 @@ define('ember-concurrency/-task-state-mixin', ['exports', 'ember'], function (ex
 
   });
 });
-define('ember-concurrency/-wait-for', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _utils) {
+;define('ember-concurrency/-wait-for', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _utils) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -106571,7 +106585,7 @@ define('ember-concurrency/-wait-for', ['exports', 'ember', 'ember-concurrency/ut
     return new WaitForEventYieldable(object, eventName);
   }
 });
-define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-task-instance', 'ember-concurrency/-task-group', 'ember-concurrency/-evented-observable', 'ember-concurrency/-cancelable-promise-helpers', 'ember-concurrency/-wait-for'], function (exports, _ember, _utils, _taskProperty, _taskInstance, _taskGroup, _eventedObservable, _cancelablePromiseHelpers, _waitFor) {
+;define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-task-instance', 'ember-concurrency/-task-group', 'ember-concurrency/-evented-observable', 'ember-concurrency/-cancelable-promise-helpers', 'ember-concurrency/-wait-for'], function (exports, _ember, _utils, _taskProperty, _taskInstance, _taskGroup, _eventedObservable, _cancelablePromiseHelpers, _waitFor) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -106652,7 +106666,7 @@ define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils'
   exports.waitForQueue = _waitFor.waitForQueue;
   exports.waitForEvent = _waitFor.waitForEvent;
 });
-define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _ember) {
+;define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -106818,7 +106832,7 @@ define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _embe
     });
   }
 });
-define('ember-font-awesome/components/fa-icon', ['exports', 'ember', 'ember-font-awesome/utils/try-match'], function (exports, _ember, _emberFontAwesomeUtilsTryMatch) {
+;define('ember-font-awesome/components/fa-icon', ['exports', 'ember', 'ember-font-awesome/utils/try-match'], function (exports, _ember, _emberFontAwesomeUtilsTryMatch) {
   var computed = _ember['default'].computed;
   var get = _ember['default'].get;
   var isArray = _ember['default'].isArray;
@@ -106922,14 +106936,14 @@ define('ember-font-awesome/components/fa-icon', ['exports', 'ember', 'ember-font
 
   exports['default'] = FaIconComponent;
 });
-define('ember-font-awesome/components/fa-list', ['exports', 'ember', 'ember-font-awesome/templates/components/fa-list'], function (exports, _ember, _emberFontAwesomeTemplatesComponentsFaList) {
+;define('ember-font-awesome/components/fa-list', ['exports', 'ember', 'ember-font-awesome/templates/components/fa-list'], function (exports, _ember, _emberFontAwesomeTemplatesComponentsFaList) {
   exports['default'] = _ember['default'].Component.extend({
     layout: _emberFontAwesomeTemplatesComponentsFaList['default'],
     tagName: 'ul',
     classNames: 'fa-ul'
   });
 });
-define('ember-font-awesome/components/fa-stack', ['exports', 'ember', 'ember-font-awesome/utils/try-match', 'ember-font-awesome/templates/components/fa-stack'], function (exports, _ember, _emberFontAwesomeUtilsTryMatch, _emberFontAwesomeTemplatesComponentsFaStack) {
+;define('ember-font-awesome/components/fa-stack', ['exports', 'ember', 'ember-font-awesome/utils/try-match', 'ember-font-awesome/templates/components/fa-stack'], function (exports, _ember, _emberFontAwesomeUtilsTryMatch, _emberFontAwesomeTemplatesComponentsFaStack) {
   var computed = _ember['default'].computed;
   var get = _ember['default'].get;
   exports['default'] = _ember['default'].Component.extend({
@@ -106955,18 +106969,24 @@ define('ember-font-awesome/components/fa-stack', ['exports', 'ember', 'ember-fon
     })
   });
 });
-define("ember-font-awesome/templates/components/fa-list", ["exports"], function (exports) {
+;define("ember-font-awesome/templates/components/fa-list", ["exports"], function (exports) {
+  "use strict";
+
+  exports.__esModule = true;
   exports.default = Ember.HTMLBars.template({ "id": "dOjKxzhD", "block": "{\"statements\":[[\"yield\",\"default\",[[\"helper\",[\"hash\"],null,[[\"fa-icon\"],[[\"helper\",[\"component\"],[\"fa-icon\"],[[\"listItem\"],[true]]]]]]]],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "ember-font-awesome/templates/components/fa-list.hbs" } });
 });
-define("ember-font-awesome/templates/components/fa-stack", ["exports"], function (exports) {
+;define("ember-font-awesome/templates/components/fa-stack", ["exports"], function (exports) {
+  "use strict";
+
+  exports.__esModule = true;
   exports.default = Ember.HTMLBars.template({ "id": "c1rjXQwL", "block": "{\"statements\":[[\"yield\",\"default\",[[\"helper\",[\"hash\"],null,[[\"stack-1x\",\"stack-2x\"],[[\"helper\",[\"component\"],[\"fa-icon\"],[[\"stack\"],[\"1\"]]],[\"helper\",[\"component\"],[\"fa-icon\"],[[\"stack\"],[\"2\"]]]]]]]],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "ember-font-awesome/templates/components/fa-stack.hbs" } });
 });
-define('ember-font-awesome/utils/try-match', ['exports'], function (exports) {
+;define('ember-font-awesome/utils/try-match', ['exports'], function (exports) {
   exports['default'] = function (object, regex) {
     return typeof object === 'string' && object.match(regex);
   };
 });
-define("ember-getowner-polyfill/index", ["exports", "ember"], function (exports, _ember) {
+;define("ember-getowner-polyfill/index", ["exports", "ember"], function (exports, _ember) {
 
   _ember["default"].deprecate("ember-getowner-polyfill is now a true polyfill. Use Ember.getOwner directly instead of importing from ember-getowner-polyfill", false, {
     id: "ember-getowner-polyfill.import",
@@ -106975,7 +106995,7 @@ define("ember-getowner-polyfill/index", ["exports", "ember"], function (exports,
 
   exports["default"] = _ember["default"].getOwner;
 });
-define('ember-load-initializers/index', ['exports'], function (exports) {
+;define('ember-load-initializers/index', ['exports'], function (exports) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -107026,7 +107046,7 @@ define('ember-load-initializers/index', ['exports'], function (exports) {
     }
   }
 });
-define('ember-notify/components/ember-notify', ['exports', 'ember', 'ember-notify/templates/components/ember-notify', 'ember-notify/message'], function (exports, _ember, _emberNotifyTemplatesComponentsEmberNotify, _emberNotifyMessage) {
+;define('ember-notify/components/ember-notify', ['exports', 'ember', 'ember-notify/templates/components/ember-notify', 'ember-notify/message'], function (exports, _ember, _emberNotifyTemplatesComponentsEmberNotify, _emberNotifyMessage) {
   exports['default'] = _ember['default'].Component.extend({
     layout: _emberNotifyTemplatesComponentsEmberNotify['default'],
 
@@ -107167,7 +107187,7 @@ define('ember-notify/components/ember-notify', ['exports', 'ember', 'ember-notif
   });
   exports.UIkitTheme = UIkitTheme;
 });
-define('ember-notify/components/ember-notify/message', ['exports', 'ember', 'ember-notify/templates/components/ember-notify/message', 'ember-notify'], function (exports, _ember, _emberNotifyTemplatesComponentsEmberNotifyMessage, _emberNotify) {
+;define('ember-notify/components/ember-notify/message', ['exports', 'ember', 'ember-notify/templates/components/ember-notify/message', 'ember-notify'], function (exports, _ember, _emberNotifyTemplatesComponentsEmberNotifyMessage, _emberNotify) {
   exports['default'] = _ember['default'].Component.extend({
     layout: _emberNotifyTemplatesComponentsEmberNotifyMessage['default'],
     message: {},
@@ -107279,7 +107299,7 @@ define('ember-notify/components/ember-notify/message', ['exports', 'ember', 'emb
     }
   });
 });
-define('ember-notify/index', ['exports', 'ember', 'ember-notify/message'], function (exports, _ember, _emberNotifyMessage) {
+;define('ember-notify/index', ['exports', 'ember', 'ember-notify/message'], function (exports, _ember, _emberNotifyMessage) {
 
   function aliasToShow(type) {
     return function (message, options) {
@@ -107346,7 +107366,7 @@ define('ember-notify/index', ['exports', 'ember', 'ember-notify/message'], funct
     }
   });
 });
-define('ember-notify/initializer', ['exports'], function (exports) {
+;define('ember-notify/initializer', ['exports'], function (exports) {
   exports.initialize = initialize;
 
   function initialize() {
@@ -107360,7 +107380,7 @@ define('ember-notify/initializer', ['exports'], function (exports) {
     initialize: initialize
   };
 });
-define('ember-notify/message', ['exports', 'ember'], function (exports, _ember) {
+;define('ember-notify/message', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Object.extend({
     text: null,
     html: '',
@@ -107370,13 +107390,19 @@ define('ember-notify/message', ['exports', 'ember'], function (exports, _ember) 
     classNames: []
   });
 });
-define("ember-notify/templates/components/ember-notify", ["exports"], function (exports) {
+;define("ember-notify/templates/components/ember-notify", ["exports"], function (exports) {
+  "use strict";
+
+  exports.__esModule = true;
   exports.default = Ember.HTMLBars.template({ "id": "Sz43VfhO", "block": "{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"messages\"]]],null,3]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"    \"],[\"append\",[\"helper\",[\"ember-notify/message\"],null,[[\"message\",\"theme\",\"closeAfter\",\"class\"],[[\"get\",[\"message\"]],[\"get\",[\"theme\"]],[\"get\",[\"closeAfter\"]],\"ember-notify clearfix\"]]],false],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"      \"],[\"yield\",\"default\",[[\"get\",[\"message\"]],[\"get\",[\"close\"]]]],[\"text\",\"\\n\"]],\"locals\":[\"message\",\"close\"]},{\"statements\":[[\"block\",[\"ember-notify/message\"],null,[[\"message\",\"theme\",\"closeAfter\",\"class\"],[[\"get\",[\"message\"]],[\"get\",[\"theme\"]],[\"get\",[\"closeAfter\"]],\"ember-notify clearfix\"]],1]],\"locals\":[]},{\"statements\":[[\"block\",[\"if\"],[[\"has-block\",\"default\"]],null,2,0]],\"locals\":[\"message\"]}],\"hasPartials\":false}", "meta": { "moduleName": "ember-notify/templates/components/ember-notify.hbs" } });
 });
-define("ember-notify/templates/components/ember-notify/message", ["exports"], function (exports) {
+;define("ember-notify/templates/components/ember-notify/message", ["exports"], function (exports) {
+  "use strict";
+
+  exports.__esModule = true;
   exports.default = Ember.HTMLBars.template({ "id": "bExgmZot", "block": "{\"statements\":[[\"block\",[\"if\"],[[\"has-block\",\"default\"]],null,1,0]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"  \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"class\",\"close\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"close\"]],[\"flush-element\"],[\"text\",\"×\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"message\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"message\",\"text\"]],false],[\"append\",[\"unknown\",[\"message\",\"html\"]],true],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"  \"],[\"yield\",\"default\",[[\"get\",[\"message\"]],[\"helper\",[\"action\"],[[\"get\",[null]],\"close\"],null]]],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "ember-notify/templates/components/ember-notify/message.hbs" } });
 });
-define('ember-resolver/container-debug-adapter', ['exports', 'ember', 'ember-resolver/utils/module-registry'], function (exports, _ember, _emberResolverUtilsModuleRegistry) {
+;define('ember-resolver/container-debug-adapter', ['exports', 'ember', 'ember-resolver/utils/module-registry'], function (exports, _ember, _emberResolverUtilsModuleRegistry) {
   var ContainerDebugAdapter = _ember['default'].ContainerDebugAdapter;
 
   var ModulesContainerDebugAdapter = null;
@@ -107480,7 +107506,7 @@ define('ember-resolver/container-debug-adapter', ['exports', 'ember', 'ember-res
 
   exports['default'] = ModulesContainerDebugAdapter;
 });
-define('ember-resolver/index', ['exports', 'ember-resolver/resolver'], function (exports, _emberResolverResolver) {
+;define('ember-resolver/index', ['exports', 'ember-resolver/resolver'], function (exports, _emberResolverResolver) {
   Object.defineProperty(exports, 'default', {
     enumerable: true,
     get: function get() {
@@ -107488,7 +107514,7 @@ define('ember-resolver/index', ['exports', 'ember-resolver/resolver'], function 
     }
   });
 });
-define('ember-resolver/resolver', ['exports', 'ember', 'ember-resolver/utils/module-registry', 'ember-resolver/utils/class-factory', 'ember-resolver/utils/make-dictionary'], function (exports, _ember, _emberResolverUtilsModuleRegistry, _emberResolverUtilsClassFactory, _emberResolverUtilsMakeDictionary) {
+;define('ember-resolver/resolver', ['exports', 'ember', 'ember-resolver/utils/module-registry', 'ember-resolver/utils/class-factory', 'ember-resolver/utils/make-dictionary'], function (exports, _ember, _emberResolverUtilsModuleRegistry, _emberResolverUtilsClassFactory, _emberResolverUtilsMakeDictionary) {
 
   /*
    * This module defines a subclass of Ember.DefaultResolver that adds two
@@ -107886,7 +107912,7 @@ define('ember-resolver/resolver', ['exports', 'ember', 'ember-resolver/utils/mod
   exports['default'] = Resolver;
 });
 /*globals require */
-define('ember-resolver/utils/class-factory', ['exports'], function (exports) {
+;define('ember-resolver/utils/class-factory', ['exports'], function (exports) {
   exports['default'] = classFactory;
 
   function classFactory(klass) {
@@ -107901,7 +107927,7 @@ define('ember-resolver/utils/class-factory', ['exports'], function (exports) {
     };
   }
 });
-define("ember-resolver/utils/create", ["exports", "ember"], function (exports, _ember) {
+;define("ember-resolver/utils/create", ["exports", "ember"], function (exports, _ember) {
 
   var create = Object.create || _ember["default"].create;
   if (!(create && !create(null).hasOwnProperty)) {
@@ -107910,7 +107936,7 @@ define("ember-resolver/utils/create", ["exports", "ember"], function (exports, _
 
   exports["default"] = create;
 });
-define('ember-resolver/utils/make-dictionary', ['exports', 'ember-resolver/utils/create'], function (exports, _emberResolverUtilsCreate) {
+;define('ember-resolver/utils/make-dictionary', ['exports', 'ember-resolver/utils/create'], function (exports, _emberResolverUtilsCreate) {
   exports['default'] = makeDictionary;
 
   function makeDictionary() {
@@ -107920,7 +107946,7 @@ define('ember-resolver/utils/make-dictionary', ['exports', 'ember-resolver/utils
     return cache;
   }
 });
-define('ember-resolver/utils/module-registry', ['exports', 'ember'], function (exports, _ember) {
+;define('ember-resolver/utils/module-registry', ['exports', 'ember'], function (exports, _ember) {
 
   if (typeof requirejs.entries === 'undefined') {
     requirejs.entries = requirejs._eak_seen;
@@ -107948,7 +107974,7 @@ define('ember-resolver/utils/module-registry', ['exports', 'ember'], function (e
   exports['default'] = ModuleRegistry;
 });
 /*globals requirejs, require */
-define("ember-string-ishtmlsafe-polyfill/index", ["exports", "ember"], function (exports, _ember) {
+;define("ember-string-ishtmlsafe-polyfill/index", ["exports", "ember"], function (exports, _ember) {
 
   _ember["default"].deprecate("ember-string-ishtmlsafe-polyfill is now a true polyfill. Use Ember.String.isHTMLSafe directly instead of importing from ember-string-ishtmlsafe-polyfill", false, {
     id: "ember-string-ishtmlsafe-polyfill.import",
