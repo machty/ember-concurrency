@@ -1,8 +1,11 @@
 <div class="tutorial-example">
 
-{{! BEGIN-SNIPPET better-syntax-1 }}
+{{! BEGIN-SNIPPET better-syntax-4 }}
   <button onclick={{action 'findStores'}}>
     Find Nearby Stores
+    {{#if isFindingStores}}
+      {{fa-icon "spinner" spin=true}}
+    {{/if}}
   </button>
 
   {{#if result}}

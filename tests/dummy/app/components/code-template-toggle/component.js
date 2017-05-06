@@ -7,7 +7,7 @@ export default Ember.Component.extend({
 
   didInsertElement() {
     Ember.run.schedule('afterRender', null, () => {
-      let maxHeight = Math.max.apply(null, Ember.$('.code-template-toggle-section').map(function ()
+      let maxHeight = Math.max.apply(null, this.$('.code-template-toggle-section').map(function ()
         {
           return $(this).height();
         }).get());
