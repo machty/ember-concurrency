@@ -197,15 +197,21 @@ th, td {
   pre {
     margin: 0 !important;
   }
-  //margin: 1.5rem 0;
 }
 
 .code-template-toggle-button {
   position: absolute;
   z-index: 5;
-  right: 1rem;
-  bottom: 1rem;
   margin-bottom: 0;
+  right: 1rem;
+  top: 1rem;
+}
+
+@media (max-width: 900px) {
+  .code-template-toggle-button {
+    bottom: 1rem;
+    top: auto;
+  }
 }
 
 .code-template-toggle-section {
