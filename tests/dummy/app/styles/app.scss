@@ -204,7 +204,8 @@ th, td {
   position: absolute;
   z-index: 5;
   right: 1rem;
-  top: 1rem;
+  bottom: 1rem;
+  margin-bottom: 0;
 }
 
 .code-template-toggle-section {
