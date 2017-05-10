@@ -5,6 +5,7 @@
 /dist
 /tests
 /tmp
+/vendor/dummy-deps
 **/.gitkeep
 .bowerrc
 .editorconfig
