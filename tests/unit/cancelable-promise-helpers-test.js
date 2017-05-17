@@ -307,6 +307,31 @@ test("hash cancels children if parent is canceled", function(assert) {
   assert.equal(obj.get('child.concurrency'), 0);
 });
 
+test("yieldable helpers work with null/undefined values", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    parent: task(function * () {
+      let task = this.get('child');
+      let obj = Ember.Object.create();
+      let v = yield hash({
+        a: task.perform(1),
+        b: null,
+        c: undefined
+      });
+      assert.deepEqual(v, { a: 1, b: null, c: undefined });
+    }),
+
+    child: task(function * (v) { return v; }),
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+    obj.get('parent').perform();
+  });
+});
+
 test("yieldable helpers support to cancel promises with __ec_cancel__", function(assert) {
   assert.expect(1);
 

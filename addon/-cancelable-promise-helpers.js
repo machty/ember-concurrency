@@ -116,10 +116,12 @@ function taskAwareVariantOf(obj, method, getItems) {
       if (hasCancelled) { return; }
       hasCancelled = true;
       items.forEach(it => {
-        if (it instanceof TaskInstance) {
-          it.cancel();
-        } else if (typeof it.__ec_cancel__ === 'function') {
-          it.__ec_cancel__();
+        if (it) {
+          if (it instanceof TaskInstance) {
+            it.cancel();
+          } else if (typeof it.__ec_cancel__ === 'function') {
+            it.__ec_cancel__();
+          }
         }
       });
     };
@@ -129,4 +131,3 @@ function taskAwareVariantOf(obj, method, getItems) {
     return promise;
   };
 }
-
