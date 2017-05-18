@@ -17,6 +17,9 @@ export default Ember.Controller.extend({
   enqueuedTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueue(),
   droppingTask3:    task(SHARED_TASK_FN).maxConcurrency(3).drop(),
   keepLatestTask3:  task(SHARED_TASK_FN).maxConcurrency(3).keepLatest(),
+  priorityTask:    task(SHARED_TASK_FN).enqueuePriority((a, b) => {
+    return b.args[0].performTime - a.args[0].performTime;
+  }),
 });
 // END-SNIPPET
 
