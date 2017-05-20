@@ -463,6 +463,19 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
    */
 
   /**
+   * Like {@linkcode TaskProperty#enqueue .enqueue()} but allows you
+   * to pass a `sortFunc` which can control the order of execution of
+   * the items in the queue.
+   *
+   * [See the advanced concurrency example](/#/docs/task-concurrency-advanced)
+   *
+   * @method enqueuePriority
+   * @memberof TaskProperty
+   * @param {Function} sortFunc The maximum number of concurrently running tasks
+   * @instance
+   */
+
+  /**
    * Configures the task to immediately cancel (i.e. drop) any
    * task instances performed when the task is already running
    * at maxConcurrency. Sets default maxConcurrency to 1.
