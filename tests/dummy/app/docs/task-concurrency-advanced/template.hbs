@@ -52,7 +52,7 @@
 
 {{concurrency-graph task=keepLatestTask3}}
 
-<h4>.enqueuePriority()</h4>
+<h3>Using <code>.enqueuePriority(sortFunc)</code></h3>
 
 <p>
   The <code>enqueuePriority</code> modifier acts like `enqueue` but
@@ -61,12 +61,20 @@
   next task to start running is chosen by the `sortFunc` passed to
   <code>enqueuePriority</code>
 </p>
+
 <p>
-  In this example we simply sort by the perform time descending so that
+  In these examples we simply sort by the perform time descending so that
   the most recently performed task is chosen to run next.
 </p>
 
+<h4>.enqueuePriority() with default maxConcurrency(1)</h4>
+
 {{concurrency-graph task=priorityTask}}
+
+<h4>.enqueuePriority() with maxConcurrency(3)</h4>
+
+{{concurrency-graph task=priorityTask3}}
+
 <p>
   <em>
     Thanks to <a href="https://github.com/ef4">Edward Faulkner</a> for providing
