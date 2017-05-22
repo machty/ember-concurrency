@@ -52,14 +52,14 @@
 
 {{concurrency-graph task=keepLatestTask3}}
 
-<h3>Using <code>.enqueuePriority(sortFunc)</code></h3>
+<h3>Using <code>.enqueueWithPriority(sortFunc)</code></h3>
 
 <p>
-  The <code>enqueuePriority</code> modifier acts like `enqueue` but
-  allows you to provide a sort function which sorts the enqueued tasks
+  The <code>enqueueWithPriority</code> modifier acts like <code>enqueue</code>
+  but allows you to provide a sort function which sorts the enqueued tasks
   so that they are run in priority order. Whenever a task finishes the
-  next task to start running is chosen by the `sortFunc` passed to
-  <code>enqueuePriority</code>
+  next task to start running is chosen by the <code>sortFunc</code> passed to
+  <code>enqueueWithPriority</code>
 </p>
 
 <p>
@@ -67,11 +67,11 @@
   the most recently performed task is chosen to run next.
 </p>
 
-<h4>.enqueuePriority() with default maxConcurrency(1)</h4>
+<h4>.enqueueWithPriority() with default maxConcurrency(1)</h4>
 
 {{concurrency-graph task=priorityTask}}
 
-<h4>.enqueuePriority() with maxConcurrency(3)</h4>
+<h4>.enqueueWithPriority() with maxConcurrency(3)</h4>
 
 {{concurrency-graph task=priorityTask3}}
 

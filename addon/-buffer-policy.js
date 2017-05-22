@@ -24,7 +24,7 @@ export const enqueueTasksPolicy = {
   }
 };
 
-export const enqueuePriorityPolicy = {
+export const enqueueWithPriorityPolicy = {
   requiresUnboundedConcurrency: true,
   schedule(scheduler) {
     scheduler.queuedTaskInstances.sort(this.sortFunc);

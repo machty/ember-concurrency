@@ -17,8 +17,8 @@ export default Ember.Controller.extend({
   enqueuedTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueue(),
   droppingTask3:    task(SHARED_TASK_FN).maxConcurrency(3).drop(),
   keepLatestTask3:  task(SHARED_TASK_FN).maxConcurrency(3).keepLatest(),
-  priorityTask:     task(SHARED_TASK_FN).enqueuePriority(prioritySortFn),
-  priorityTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueuePriority(prioritySortFn),
+  priorityTask:     task(SHARED_TASK_FN).enqueueWithPriority(prioritySortFn),
+  priorityTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueueWithPriority(prioritySortFn),
 });
 
 // An example sort function which sorts tasks based on the perform time descending
