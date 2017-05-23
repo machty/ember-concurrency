@@ -105549,7 +105549,7 @@ var ReactiveTest = Rx.ReactiveTest = {
       set(this, 'isCanceling', true);
 
       var name = get(this, 'task._propertyName') || "<unknown>";
-      set(this, 'cancelReason', 'TaskInstance \'' + name + '\' was canceled because ' + cancelReason);
+      set(this, 'cancelReason', 'TaskInstance \'' + name + '\' was canceled because ' + cancelReason + '. If you\'re seeing this in your logs, it\'s probably because somewhere this task is being cast to an (uncancelable) Promise, e.g. something is `await`ing it or calling `.then()` on it.');
 
       if (this.hasStarted) {
         this._proceedSoon(_utils.YIELDABLE_CANCEL, null);
