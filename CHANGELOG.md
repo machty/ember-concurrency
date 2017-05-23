@@ -1,4 +1,8 @@
 # Changelog
+
+### 0.8.5
+  - Support null/undefined values in cancelable promise helpers (#153)
+
 ### 0.8.4
   - Added helpful link to TaskCancelation errors
 
