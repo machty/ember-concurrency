@@ -43,6 +43,7 @@ Router.map(function() {
       this.route('encapsulated-task');
       this.route('encapsulated-task-fun');
     });
+    this.route('task-cancelation-help');
     this.route('404', { path: '*path' });
   });
   this.route('experimental-prediction');

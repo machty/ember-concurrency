@@ -1,0 +1,12 @@
+export default Ember.Component.extend({
+  queryServer: task(function * () {
+    yield timeout(10000);
+    return 123;
+  }),
+
+  fetchResults: task(function * () {
+    let results = this.get('doStuff').perform();
+    this.set('results', results);
+  }),
+});
+

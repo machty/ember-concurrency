@@ -247,7 +247,7 @@ let taskInstanceAttrs = {
     set(this, 'isCanceling', true);
 
     let name = get(this, 'task._propertyName') || "<unknown>";
-    set(this, 'cancelReason', `TaskInstance '${name}' was canceled because ${cancelReason}`);
+    set(this, 'cancelReason', `TaskInstance '${name}' was canceled because ${cancelReason}. For more information, see: http://ember-concurrency.com/#/docs/task-cancelation-help`);
 
     if (this.hasStarted) {
       this._proceedSoon(YIELDABLE_CANCEL, null);
