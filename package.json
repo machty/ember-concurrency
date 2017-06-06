@@ -46,6 +46,7 @@
     "ember-get-helper": "^1.1.0",
     "ember-load-initializers": "~1.0.0",
     "ember-native-dom-event-dispatcher": "^0.6.1",
+    "ember-native-dom-helpers": "^0.4.1",
     "ember-notify": "~5.2.1",
     "ember-resolver": "^2.0.3",
     "loader.js": "^4.0.0"
