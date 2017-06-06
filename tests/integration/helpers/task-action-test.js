@@ -2,12 +2,13 @@ import Ember from 'ember';
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import { task } from 'ember-concurrency';
+import { click } from 'ember-native-dom-helpers';
 
 moduleForComponent('task-action', 'Integration | Helper | task action', {
   integration: true
 });
 
-test('task produces a curried version of the task passed into it', function(assert) {
+test('task produces a curried version of the task passed into it', async function(assert) {
   assert.expect(2);
 
   this.register('component:my-component', Ember.Component.extend({
@@ -30,6 +31,6 @@ test('task produces a curried version of the task passed into it', function(asse
 
   this.render(hbs`{{my-component}}`);
 
-  Ember.run(this.$('#my-component'), 'click');
+  await click('#my-component');
 });
 
