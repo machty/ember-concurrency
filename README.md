@@ -75,4 +75,5 @@ TODO: use build pipeline.
 [ember-observer-badge]: http://emberobserver.com/badges/ember-concurrency.svg
 [ember-observer-url]: http://emberobserver.com/addons/ember-concurrency
 [ember-version]: https://embadge.io/v1/badge.svg?start=1.13.0
-[twiddle-starter]: https://ember-twiddle.com/db930bdb658035626a9be9268bc39845?openFiles=templates.application.hbs%2C
+[twiddle-starter]: https://ember-twiddle.com/b2b0c016f4df24261381487b60c707f3?numColumns=2&openFiles=templates.application.hbs%2Ctemplates.application.hbs
+
