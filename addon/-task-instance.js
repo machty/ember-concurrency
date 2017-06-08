@@ -361,8 +361,8 @@ let taskInstanceAttrs = {
     // this backports the Ember 2.0+ RSVP _onError 'after' microtask behavior to Ember < 2.0
     if (!this._hasSubscribed && this._completionState === COMPLETION_ERROR) {
       run.schedule(run.queues[run.queues.length - 1], () => {
-        if (!this._hasSubscribed && !didCancel(this.error)) {
-          Ember.RSVP.reject(this.error);
+        if (!this._hasSubscribed && !didCancel(this.error) && !this.error.handled) {
+          Ember.RSVP.reject(this.error, 'TaskInstance unhandled error');
         }
       });
     }
