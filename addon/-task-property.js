@@ -315,6 +315,7 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       task: this,
       _origin: this,
       _debugCallback: this._debugCallback,
+      _hasSubscribed: this._managedErrors,
     });
 
     if (this.context.isDestroying) {
