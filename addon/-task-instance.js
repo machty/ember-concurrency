@@ -362,7 +362,7 @@ let taskInstanceAttrs = {
     if (!this._hasSubscribed && this._completionState === COMPLETION_ERROR) {
       run.schedule(run.queues[run.queues.length - 1], () => {
         if (!this._hasSubscribed && !didCancel(this.error) && !this.error.handled) {
-          Ember.RSVP.reject(this.error);
+          Ember.RSVP.reject(this.error, 'TaskInstance unhandled error');
         }
       });
     }
