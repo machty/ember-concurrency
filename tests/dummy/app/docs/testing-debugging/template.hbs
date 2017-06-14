@@ -121,3 +121,19 @@
   functions (Chrome's implementation only became spec-compliant around June, 2016).
 </p>
 
+<h4>Unexpected Cancelation</h4>
+
+<p>
+  Sometimes it's not obvious why a Task was canceled; in these cases you
+  can use the <code>.debug()</code> Task Modifier on a specific task e.g.
+  <code>nameOfTask: task(...).debug()</code>,
+  which will provide some logging about the task's lifecycle, e.g.
+  <code>TaskInstance 'nameOfTask' was canceled because the object it lives on was destroyed or unrendered </code>.
+</p>
+
+<p>
+  To enable lifecycle logging on ALL ember-concurrency tasks, you can enable the <code>DEBUG_TASKS</code>
+  flag on <code>EmberENV</code> in your project's <code>config/environment.js</code> file.
+</p>
+
+

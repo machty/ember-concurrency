@@ -514,6 +514,28 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
    * @param {Number} n The maximum number of concurrently running tasks
    * @instance
    */
+
+  /**
+   * Adds this task to a TaskGroup so that concurrency constraints
+   * can be shared between multiple tasks.
+   *
+   * [See the Task Group docs for more information](/#/docs/task-groups)
+   *
+   * @method group
+   * @memberof TaskProperty
+   * @param {String} groupPath A path to the TaskGroup property
+   * @instance
+   */
+
+  /**
+   * Logs lifecycle events to aid in debugging unexpected Task behavior.
+   * Presently only logs cancelation events and the reason for the cancelation,
+   * e.g. "TaskInstance 'doStuff' was canceled because the object it lives on was destroyed or unrendered"
+   *
+   * @method debug
+   * @memberof TaskProperty
+   * @instance
+   */
 });
 
 function defaultDebugCallback(payload) {
