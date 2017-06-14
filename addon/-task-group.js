@@ -28,7 +28,6 @@ export function TaskGroupProperty(...decorators) {
       _taskGroupPath: tp._taskGroupPath,
       _scheduler: resolveScheduler(tp, this, TaskGroup),
       _propertyName,
-      _debugCallback: tp._debugCallback,
     });
   });
 }

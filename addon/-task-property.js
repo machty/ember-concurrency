@@ -174,7 +174,6 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       _taskGroupPath: this._taskGroupPath,
       _scheduler: this._scheduler,
       _propertyName: this._propertyName,
-      _debugCallback: this._debugCallback,
     });
   },
 
@@ -315,7 +314,6 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       task: this,
       _debug: this._debug,
       _origin: this,
-      _debugCallback: this._debugCallback,
     });
 
     if (this.context.isDestroying) {
@@ -359,14 +357,12 @@ export function TaskProperty(taskFn) {
       _scheduler: resolveScheduler(tp, this, TaskGroup),
       _propertyName,
       _debug: tp._debug,
-      _debugCallback: tp._debugCallback,
     });
   });
 
   this.taskFn = taskFn;
   this.eventNames = null;
   this.cancelEventNames = null;
-  this._debugCallback = null;
   this._observes = null;
 }
 
@@ -518,11 +514,6 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
    * @param {Number} n The maximum number of concurrently running tasks
    * @instance
    */
-
-  _debug(cb) {
-    this._debugCallback = cb || defaultDebugCallback;
-    return this;
-  },
 });
 
 function defaultDebugCallback(payload) {

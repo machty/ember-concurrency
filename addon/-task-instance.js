@@ -312,7 +312,7 @@ let taskInstanceAttrs = {
       completionState = COMPLETION_CANCEL;
       value = new Error(this.cancelReason);
 
-      if (this._debug) {
+      if (this._debug || Ember.ENV.DEBUG_TASKS) {
         Ember.Logger.log(this.cancelReason);
       }
 
