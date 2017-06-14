@@ -92,6 +92,7 @@ let taskInstanceAttrs = {
   args: [],
   _hasSubscribed: false,
   _runLoop: true,
+  _debug: false,
   cancelReason: null,
 
   /**
@@ -310,6 +311,11 @@ let taskInstanceAttrs = {
     if (this.isCanceling) {
       completionState = COMPLETION_CANCEL;
       value = new Error(this.cancelReason);
+
+      if (this._debug) {
+        Ember.Logger.log(this.cancelReason);
+      }
+
       value.name = TASK_CANCELATION_NAME;
       value.taskInstance = this;
     }

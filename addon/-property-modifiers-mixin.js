@@ -43,6 +43,11 @@ export const propertyModifiers = {
     assertModifiersNotMixedWithGroup(this);
     return this;
   },
+
+  debug() {
+    this._debug = true;
+    return this;
+  }
 };
 
 function setBufferPolicy(obj, policy) {

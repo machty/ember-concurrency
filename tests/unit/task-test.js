@@ -2,7 +2,13 @@ import Ember from 'ember';
 import { task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
-module('Unit: task');
+const originalLog = Ember.Logger.log;
+module('Unit: task', {
+  afterEach() {
+    Ember.Logger.log = originalLog;
+    Ember.ENV.DEBUG_TASKS = false;
+  }
+});
 
 test("task init", function(assert) {
   assert.expect(3);
@@ -370,6 +376,62 @@ test("call stack stays within reasonable bounds", function(assert) {
     obj.get('a').perform();
   });
   assert.ok(true);
+});
+
+test(".debug() enables basic debugging", function(assert) {
+  assert.expect(1);
+
+  let logs = [];
+  Ember.Logger.log = (...args) => {
+    logs.push(args);
+  };
+
+  let Obj = Ember.Object.extend({
+    a: task(function * () {
+      yield Ember.RSVP.defer().promise;
+    }).debug()
+  });
+
+  Ember.run(() => {
+    let obj = Obj.create();
+    obj.get('a').perform();
+    obj.destroy();
+  });
+
+  assert.deepEqual(logs, [
+    [
+      "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/#/docs/task-cancelation-help"
+    ]
+  ]);
+});
+
+test("Ember.ENV.DEBUG_TASKS=true enables basic debugging", function(assert) {
+  assert.expect(1);
+
+  Ember.ENV.DEBUG_TASKS = true;
+
+  let logs = [];
+  Ember.Logger.log = (...args) => {
+    logs.push(args);
+  };
+
+  let Obj = Ember.Object.extend({
+    a: task(function * () {
+      yield Ember.RSVP.defer().promise;
+    }),
+  });
+
+  Ember.run(() => {
+    let obj = Obj.create();
+    obj.get('a').perform();
+    obj.destroy();
+  });
+
+  assert.deepEqual(logs, [
+    [
+      "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/#/docs/task-cancelation-help"
+    ]
+  ]);
 });
 
 

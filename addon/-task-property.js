@@ -157,7 +157,7 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       this._taskInstanceFactory = EncapsulatedTask.extend(ownerInjection, this.fn);
     }
 
-    _cleanupOnDestroy(this.context, this, 'cancelAll');
+    _cleanupOnDestroy(this.context, this, 'cancelAll', 'the object it lives on was destroyed or unrendered');
   },
 
   _curry(...args) {
@@ -313,6 +313,7 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       context: this.context,
       owner: this.context,
       task: this,
+      _debug: this._debug,
       _origin: this,
       _debugCallback: this._debugCallback,
     });
@@ -357,6 +358,7 @@ export function TaskProperty(taskFn) {
       _taskGroupPath: tp._taskGroupPath,
       _scheduler: resolveScheduler(tp, this, TaskGroup),
       _propertyName,
+      _debug: tp._debug,
       _debugCallback: tp._debugCallback,
     });
   });

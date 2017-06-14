@@ -38,8 +38,8 @@ export let objectAssign = Object.assign || function objectAssign(target) {
   return target;
 };
 
-export function _cleanupOnDestroy(owner, object, cleanupMethodName) {
-  // TODO: find a non-mutate-y, hacky way of doing this.
+export function _cleanupOnDestroy(owner, object, cleanupMethodName, ...args) {
+  // TODO: find a non-mutate-y, non-hacky way of doing this.
 
   if (!owner.willDestroy)
   {
@@ -61,7 +61,7 @@ export function _cleanupOnDestroy(owner, object, cleanupMethodName) {
   }
 
   owner.willDestroy.__ember_processes_destroyers__.push(() => {
-    object[cleanupMethodName]();
+    object[cleanupMethodName](...args);
   });
 }
 
