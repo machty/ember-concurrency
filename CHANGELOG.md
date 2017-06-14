@@ -1,4 +1,8 @@
 # Changelog
+### 0.8.6
+  - Add `.debug()` Task Modifier and EmberENV.DEBUG_TASKS to log
+    the reason a task is canceled, e.g. "TaskInstance 'doStuff' was
+    canceled because the object it lives on was destroyed or unrendered"
 
 ### 0.8.5
   - Support null/undefined values in cancelable promise helpers (#153)
