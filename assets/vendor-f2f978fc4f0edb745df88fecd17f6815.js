@@ -74645,274 +74645,6 @@ requireModule("ember");
 
 }());
 
-;(function() {
-/* globals define, Ember, DS, jQuery */
-
-  function processEmberShims() {
-    var shims = {
-      'ember': {
-        'default': Ember
-      },
-      'ember-application': {
-        'default': Ember.Application
-      },
-      'ember-array': {
-        'default': Ember.Array
-      },
-      'ember-array/mutable': {
-        'default': Ember.MutableArray
-      },
-      'ember-array/utils': {
-        'A':            Ember.A,
-        'isEmberArray': Ember.isArray,
-        'wrap':         Ember.makeArray
-      },
-      'ember-component': {
-        'default': Ember.Component
-      },
-      'ember-components/checkbox': {
-        'default': Ember.Checkbox
-      },
-      'ember-components/text-area': {
-        'default': Ember.TextArea
-      },
-      'ember-components/text-field': {
-        'default': Ember.TextField
-      },
-      'ember-controller': {
-        'default': Ember.Controller
-      },
-      'ember-controller/inject': {
-        'default': Ember.inject.controller
-      },
-      'ember-controller/proxy': {
-        'default': Ember.ArrayProxy
-      },
-      'ember-controllers/sortable': {
-        'default': Ember.SortableMixin
-      },
-      'ember-debug': {
-        'log':      Ember.debug,
-        'inspect':  Ember.inspect,
-        'run':      Ember.runInDebug,
-        'warn':     Ember.warn
-      },
-      'ember-debug/container-debug-adapter': {
-        'default': Ember.ContainerDebugAdapter
-      },
-      'ember-debug/data-adapter': {
-        'default': Ember.DataAdapter
-      },
-      'ember-deprecations': {
-        'deprecate':      Ember.deprecate,
-        'deprecateFunc':  Ember.deprecateFunc
-      },
-      'ember-enumerable': {
-        'default': Ember.Enumerable
-      },
-      'ember-evented': {
-        'default': Ember.Evented
-      },
-      'ember-evented/on': {
-        'default': Ember.on
-      },
-      'ember-globals-resolver': {
-        'default': Ember.DefaultResolver
-      },
-      'ember-helper': {
-        'default':  Ember.Helper,
-        'helper':   Ember.Helper && Ember.Helper.helper
-      },
-      'ember-instrumentation': {
-        'instrument':   Ember.Instrumentation.instrument,
-        'reset':        Ember.Instrumentation.reset,
-        'subscribe':    Ember.Instrumentation.subscribe,
-        'unsubscribe':  Ember.Instrumentation.unsubscribe
-      },
-      'ember-locations/hash': {
-        'default': Ember.HashLocation
-      },
-      'ember-locations/history': {
-        'default': Ember.HistoryLocation
-      },
-      'ember-locations/none': {
-        'default': Ember.NoneLocation
-      },
-      'ember-map': {
-        'default':      Ember.Map,
-        'withDefault':  Ember.MapWithDefault
-      },
-      'ember-metal/destroy': {
-        'default': Ember.destroy
-      },
-      'ember-metal/events': {
-        'addListener':    Ember.addListener,
-        'removeListener': Ember.removeListener,
-        'send':           Ember.sendEvent
-      },
-      'ember-metal/get': {
-        'default': Ember.get
-      },
-      'ember-metal/mixin': {
-        'default': Ember.Mixin
-      },
-      'ember-metal/observer': {
-        'default':        Ember.observer,
-        'addObserver':    Ember.addObserver,
-        'removeObserver': Ember.removeObserver
-      },
-      'ember-metal/on-load': {
-        'default':  Ember.onLoad,
-        'run':      Ember.runLoadHooks
-      },
-      'ember-metal/set': {
-        'default':        Ember.set,
-        'setProperties':  Ember.setProperties,
-        'trySet':         Ember.trySet
-      },
-      'ember-metal/utils': {
-        'aliasMethod':  Ember.aliasMethod,
-        'assert':       Ember.assert,
-        'cacheFor':     Ember.cacheFor,
-        'copy':         Ember.copy,
-      },
-      'ember-object': {
-        'default': Ember.Object
-      },
-      'ember-platform': {
-        'assign':         Ember.merge,
-        'create':         Ember.create,
-        'defineProperty': Ember.platform.defineProperty,
-        'hasAccessors':   Ember.platform.hasPropertyAccessors,
-        'keys':           Ember.keys
-      },
-      'ember-route': {
-        'default': Ember.Route
-      },
-      'ember-router': {
-        'default': Ember.Router
-      },
-      'ember-runloop': {
-        'default':      Ember.run,
-        'begin':        Ember.run.begin,
-        'bind':         Ember.run.bind,
-        'cancel':       Ember.run.cancel,
-        'debounce':     Ember.run.debounce,
-        'end':          Ember.run.end,
-        'join':         Ember.run.join,
-        'later':        Ember.run.later,
-        'next':         Ember.run.next,
-        'once':         Ember.run.once,
-        'schedule':     Ember.run.schedule,
-        'scheduleOnce': Ember.run.scheduleOnce,
-        'throttle':     Ember.run.throttle
-      },
-      'ember-service': {
-        'default': Ember.Service
-      },
-      'ember-service/inject': {
-        'default': Ember.inject.service
-      },
-      'ember-set/ordered': {
-        'default': Ember.OrderedSet
-      },
-      'ember-string': {
-        'camelize':     Ember.String.camelize,
-        'capitalize':   Ember.String.capitalize,
-        'classify':     Ember.String.classify,
-        'dasherize':    Ember.String.dasherize,
-        'decamelize':   Ember.String.decamelize,
-        'fmt':          Ember.String.fmt,
-        'htmlSafe':     Ember.String.htmlSafe,
-        'loc':          Ember.String.loc,
-        'underscore':   Ember.String.underscore,
-        'w':            Ember.String.w
-      },
-      'ember-utils': {
-        'isBlank':    Ember.isBlank,
-        'isEmpty':    Ember.isEmpty,
-        'isNone':     Ember.isNone,
-        'isPresent':  Ember.isPresent,
-        'tryInvoke':  Ember.tryInvoke,
-        'typeOf':     Ember.typeOf
-      }
-    };
-
-    // populate `ember/computed` named exports
-    shims['ember-computed'] = {
-      'default': Ember.computed
-    };
-    var computedMacros = [
-      "empty","notEmpty", "none", "not", "bool", "match",
-      "equal", "gt", "gte", "lt", "lte", "alias", "oneWay",
-      "reads", "readOnly", "deprecatingAlias",
-      "and", "or", "collect", "sum", "min", "max",
-      "map", "sort", "setDiff", "mapBy", "mapProperty",
-      "filter", "filterBy", "filterProperty", "uniq",
-      "union", "intersect"
-    ];
-    for (var i = 0, l = computedMacros.length; i < l; i++) {
-      var key = computedMacros[i];
-      shims['ember-computed'][key] = Ember.computed[key];
-    }
-
-    for (var moduleName in shims) {
-      generateModule(moduleName, shims[moduleName]);
-    }
-  }
-
-  function processTestShims() {
-    if (Ember.Test) {
-      var testShims = {
-        'ember-test': {
-          'default': Ember.Test
-        },
-        'ember-test/adapter': {
-          'default': Ember.Test.Adapter
-        },
-        'ember-test/qunit-adapter': {
-          'default': Ember.Test.QUnitAdapter
-        }
-      };
-
-      for (var moduleName in testShims) {
-        generateModule(moduleName, testShims[moduleName]);
-      }
-    }
-  }
-
-  function generateModule(name, values) {
-    define(name, [], function() {
-      'use strict';
-
-      return values;
-    });
-  }
-
-  function generateLazyModule(namespace, name, globalName) {
-    define(name, [], function() {
-      'use strict';
-
-      var exportObject = {};
-
-      if (typeof globalName === 'object') {
-        for (var i = 0, l = globalName.length; i < l; i++) {
-          exportObject[globalName[i]] = window[namespace][globalName[i]];
-        }
-      } else {
-        exportObject['default'] = (globalName !== '') ? window[namespace][globalName] : window[namespace];
-      }
-
-      return exportObject;
-    });
-  }
-
-  processEmberShims();
-  processTestShims();
-  generateModule('jquery', { 'default': self.jQuery });
-  generateModule('rsvp', { 'default': Ember.RSVP });
-})();
-
 ;/* globals Ember, Proxy, define */
 (function() {
   'use strict';
@@ -75855,6 +75587,268 @@ requireModule("ember");
 		window.FastClick = FastClick;
 	}
 }());
+
+;(function() {
+/* globals define, Ember, jQuery */
+
+  function processEmberShims() {
+    var shims = {
+      'ember': {
+        'default': Ember
+      },
+      'ember-application': {
+        'default': Ember.Application
+      },
+      'ember-array': {
+        'default': Ember.Array
+      },
+      'ember-array/mutable': {
+        'default': Ember.MutableArray
+      },
+      'ember-array/utils': {
+        'A':            Ember.A,
+        'isEmberArray': Ember.isArray,
+        'wrap':         Ember.makeArray
+      },
+      'ember-component': {
+        'default': Ember.Component
+      },
+      'ember-components/checkbox': {
+        'default': Ember.Checkbox
+      },
+      'ember-components/text-area': {
+        'default': Ember.TextArea
+      },
+      'ember-components/text-field': {
+        'default': Ember.TextField
+      },
+      'ember-controller': {
+        'default': Ember.Controller
+      },
+      'ember-controller/inject': {
+        'default': Ember.inject.controller
+      },
+      'ember-controller/proxy': {
+        'default': Ember.ArrayProxy
+      },
+      'ember-controllers/sortable': {
+        'default': Ember.SortableMixin
+      },
+      'ember-debug': {
+        'log':      Ember.debug,
+        'inspect':  Ember.inspect,
+        'run':      Ember.runInDebug,
+        'warn':     Ember.warn
+      },
+      'ember-debug/container-debug-adapter': {
+        'default': Ember.ContainerDebugAdapter
+      },
+      'ember-debug/data-adapter': {
+        'default': Ember.DataAdapter
+      },
+      'ember-deprecations': {
+        'deprecate':      Ember.deprecate,
+        'deprecateFunc':  Ember.deprecateFunc
+      },
+      'ember-enumerable': {
+        'default': Ember.Enumerable
+      },
+      'ember-evented': {
+        'default': Ember.Evented
+      },
+      'ember-evented/on': {
+        'default': Ember.on
+      },
+      'ember-globals-resolver': {
+        'default': Ember.DefaultResolver
+      },
+      'ember-helper': {
+        'default':  Ember.Helper,
+        'helper':   Ember.Helper && Ember.Helper.helper
+      },
+      'ember-instrumentation': {
+        'instrument':   Ember.Instrumentation.instrument,
+        'reset':        Ember.Instrumentation.reset,
+        'subscribe':    Ember.Instrumentation.subscribe,
+        'unsubscribe':  Ember.Instrumentation.unsubscribe
+      },
+      'ember-locations/hash': {
+        'default': Ember.HashLocation
+      },
+      'ember-locations/history': {
+        'default': Ember.HistoryLocation
+      },
+      'ember-locations/none': {
+        'default': Ember.NoneLocation
+      },
+      'ember-map': {
+        'default':      Ember.Map,
+        'withDefault':  Ember.MapWithDefault
+      },
+      'ember-metal/destroy': {
+        'default': Ember.destroy
+      },
+      'ember-metal/events': {
+        'addListener':    Ember.addListener,
+        'removeListener': Ember.removeListener,
+        'send':           Ember.sendEvent
+      },
+      'ember-metal/get': {
+        'default': Ember.get,
+        'getProperties': Ember.getProperties
+      },
+      'ember-metal/mixin': {
+        'default': Ember.Mixin
+      },
+      'ember-metal/observer': {
+        'default':        Ember.observer,
+        'addObserver':    Ember.addObserver,
+        'removeObserver': Ember.removeObserver
+      },
+      'ember-metal/on-load': {
+        'default':  Ember.onLoad,
+        'run':      Ember.runLoadHooks
+      },
+      'ember-metal/set': {
+        'default':        Ember.set,
+        'setProperties':  Ember.setProperties,
+        'trySet':         Ember.trySet
+      },
+      'ember-metal/utils': {
+        'aliasMethod':  Ember.aliasMethod,
+        'assert':       Ember.assert,
+        'cacheFor':     Ember.cacheFor,
+        'copy':         Ember.copy,
+        'guidFor':      Ember.guidFor
+      },
+      'ember-object': {
+        'default': Ember.Object
+      },
+      'ember-owner/get': {
+        'default': Ember.getOwner
+      },
+      'ember-owner/set': {
+        'default': Ember.setOwner
+      },
+      'ember-platform': {
+        'assign':         Ember.assign || Ember.merge,
+        'create':         Ember.create,
+        'defineProperty': Ember.platform.defineProperty,
+        'hasAccessors':   Ember.platform.hasPropertyAccessors,
+        'keys':           Ember.keys
+      },
+      'ember-route': {
+        'default': Ember.Route
+      },
+      'ember-router': {
+        'default': Ember.Router
+      },
+      'ember-runloop': {
+        'default':      Ember.run,
+        'begin':        Ember.run.begin,
+        'bind':         Ember.run.bind,
+        'cancel':       Ember.run.cancel,
+        'debounce':     Ember.run.debounce,
+        'end':          Ember.run.end,
+        'join':         Ember.run.join,
+        'later':        Ember.run.later,
+        'next':         Ember.run.next,
+        'once':         Ember.run.once,
+        'schedule':     Ember.run.schedule,
+        'scheduleOnce': Ember.run.scheduleOnce,
+        'throttle':     Ember.run.throttle
+      },
+      'ember-service': {
+        'default': Ember.Service
+      },
+      'ember-service/inject': {
+        'default': Ember.inject.service
+      },
+      'ember-set/ordered': {
+        'default': Ember.OrderedSet
+      },
+      'ember-string': {
+        'camelize':     Ember.String.camelize,
+        'capitalize':   Ember.String.capitalize,
+        'classify':     Ember.String.classify,
+        'dasherize':    Ember.String.dasherize,
+        'decamelize':   Ember.String.decamelize,
+        'fmt':          Ember.String.fmt,
+        'htmlSafe':     Ember.String.htmlSafe,
+        'loc':          Ember.String.loc,
+        'underscore':   Ember.String.underscore,
+        'w':            Ember.String.w
+      },
+      'ember-utils': {
+        'isBlank':    Ember.isBlank,
+        'isEmpty':    Ember.isEmpty,
+        'isNone':     Ember.isNone,
+        'isPresent':  Ember.isPresent,
+        'tryInvoke':  Ember.tryInvoke,
+        'typeOf':     Ember.typeOf
+      }
+    };
+
+    // populate `ember/computed` named exports
+    shims['ember-computed'] = {
+      'default': Ember.computed
+    };
+    var computedMacros = [
+      "empty","notEmpty", "none", "not", "bool", "match",
+      "equal", "gt", "gte", "lt", "lte", "alias", "oneWay",
+      "reads", "readOnly", "deprecatingAlias",
+      "and", "or", "collect", "sum", "min", "max",
+      "map", "sort", "setDiff", "mapBy", "mapProperty",
+      "filter", "filterBy", "filterProperty", "uniq",
+      "union", "intersect"
+    ];
+    for (var i = 0, l = computedMacros.length; i < l; i++) {
+      var key = computedMacros[i];
+      shims['ember-computed'][key] = Ember.computed[key];
+    }
+
+    for (var moduleName in shims) {
+      generateModule(moduleName, shims[moduleName]);
+    }
+  }
+
+  function processTestShims() {
+    if (Ember.Test) {
+      var testShims = {
+        'ember-test': {
+          'default': Ember.Test
+        },
+        'ember-test/adapter': {
+          'default': Ember.Test.Adapter
+        },
+        'ember-test/qunit-adapter': {
+          'default': Ember.Test.QUnitAdapter
+        }
+      };
+
+      for (var moduleName in testShims) {
+        generateModule(moduleName, testShims[moduleName]);
+      }
+    }
+  }
+
+  function generateModule(name, values) {
+    define(name, [], function() {
+      'use strict';
+
+      Object.defineProperty(values, '__esModule', {
+        value: true
+      });
+
+      return values;
+    });
+  }
+
+  processEmberShims();
+  processTestShims();
+  generateModule('jquery', { 'default': self.jQuery });
+  generateModule('rsvp', { 'default': Ember.RSVP });
+})();
 
 ;require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*
@@ -104205,7 +104199,7 @@ var ReactiveTest = Rx.ReactiveTest = {
 
   ForbiddenError.prototype = Object.create(AjaxError.prototype);
 });
-;define('ember-ajax/index', ['exports', 'ember-ajax/request'], function (exports, _emberAjaxRequest) {
+define('ember-ajax/index', ['exports', 'ember-ajax/request'], function (exports, _emberAjaxRequest) {
   Object.defineProperty(exports, 'default', {
     enumerable: true,
     get: function get() {
@@ -104213,7 +104207,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     }
   });
 });
-;define('ember-ajax/make-promise', ['exports', 'ember'], function (exports, _ember) {
+define('ember-ajax/make-promise', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = makePromise;
   var run = _ember['default'].run;
   var RSVP = _ember['default'].RSVP;
@@ -104247,7 +104241,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     };
   }
 });
-;define('ember-ajax/raw', ['exports', 'ember-ajax/make-promise', 'ember-ajax/utils/parse-args', 'ember'], function (exports, _emberAjaxMakePromise, _emberAjaxUtilsParseArgs, _ember) {
+define('ember-ajax/raw', ['exports', 'ember-ajax/make-promise', 'ember-ajax/utils/parse-args', 'ember'], function (exports, _emberAjaxMakePromise, _emberAjaxUtilsParseArgs, _ember) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
   exports['default'] = raw;
@@ -104277,7 +104271,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     return (0, _emberAjaxMakePromise['default'])(settings);
   }
 });
-;define('ember-ajax/request', ['exports', 'ember-ajax/raw', 'ember'], function (exports, _emberAjaxRaw, _ember) {
+define('ember-ajax/request', ['exports', 'ember-ajax/raw', 'ember'], function (exports, _emberAjaxRaw, _ember) {
   exports['default'] = request;
   var deprecate = _ember['default'].deprecate;
 
@@ -104294,7 +104288,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     }, null, 'ember-ajax: unwrap raw ajax response');
   }
 });
-;define('ember-ajax/services/ajax', ['exports', 'ember', 'ember-ajax/errors', 'ember-ajax/utils/parse-response-headers'], function (exports, _ember, _emberAjaxErrors, _emberAjaxUtilsParseResponseHeaders) {
+define('ember-ajax/services/ajax', ['exports', 'ember', 'ember-ajax/errors', 'ember-ajax/utils/parse-response-headers'], function (exports, _ember, _emberAjaxErrors, _emberAjaxUtilsParseResponseHeaders) {
   var deprecate = _ember['default'].deprecate;
   var get = _ember['default'].get;
   var isBlank = _ember['default'].isBlank;
@@ -104597,7 +104591,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     }
   });
 });
-;define("ember-ajax/utils/parse-args", ["exports"], function (exports) {
+define("ember-ajax/utils/parse-args", ["exports"], function (exports) {
   var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
 
   exports["default"] = parseArgs;
@@ -104643,7 +104637,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     return args;
   }
 });
-;define('ember-ajax/utils/parse-response-headers', ['exports'], function (exports) {
+define('ember-ajax/utils/parse-response-headers', ['exports'], function (exports) {
   exports['default'] = parseResponseHeaders;
 
   function parseResponseHeaders(headerStr) {
@@ -104668,13 +104662,13 @@ var ReactiveTest = Rx.ReactiveTest = {
     return headers;
   }
 });
-;define('ember-cli-app-version/components/app-version', ['exports', 'ember', 'ember-cli-app-version/templates/app-version'], function (exports, _ember, _emberCliAppVersionTemplatesAppVersion) {
+define('ember-cli-app-version/components/app-version', ['exports', 'ember', 'ember-cli-app-version/templates/app-version'], function (exports, _ember, _emberCliAppVersionTemplatesAppVersion) {
   exports['default'] = _ember['default'].Component.extend({
     tagName: 'span',
     layout: _emberCliAppVersionTemplatesAppVersion['default']
   });
 });
-;define('ember-cli-app-version/initializer-factory', ['exports', 'ember'], function (exports, _ember) {
+define('ember-cli-app-version/initializer-factory', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = initializerFactory;
   var classify = _ember['default'].String.classify;
 
@@ -104690,13 +104684,10 @@ var ReactiveTest = Rx.ReactiveTest = {
     };
   }
 });
-;define("ember-cli-app-version/templates/app-version", ["exports"], function (exports) {
-  "use strict";
-
-  exports.__esModule = true;
+define("ember-cli-app-version/templates/app-version", ["exports"], function (exports) {
   exports.default = Ember.HTMLBars.template({ "id": "Jt4YZXfv", "block": "{\"statements\":[[\"append\",[\"unknown\",[\"version\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "ember-cli-app-version/templates/app-version.hbs" } });
 });
-;define('ember-concurrency/-buffer-policy', ['exports'], function (exports) {
+define('ember-concurrency/-buffer-policy', ['exports'], function (exports) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -104782,7 +104773,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     }
   };
 });
-;define('ember-concurrency/-cancelable-promise-helpers', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/utils'], function (exports, _ember, _taskInstance, _utils) {
+define('ember-concurrency/-cancelable-promise-helpers', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/utils'], function (exports, _ember, _taskInstance, _utils) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -104923,10 +104914,12 @@ var ReactiveTest = Rx.ReactiveTest = {
         }
         hasCancelled = true;
         items.forEach(function (it) {
-          if (it instanceof _taskInstance.default) {
-            it.cancel();
-          } else if (typeof it.__ec_cancel__ === 'function') {
-            it.__ec_cancel__();
+          if (it) {
+            if (it instanceof _taskInstance.default) {
+              it.cancel();
+            } else if (typeof it.__ec_cancel__ === 'function') {
+              it.__ec_cancel__();
+            }
           }
         });
       };
@@ -104937,7 +104930,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     };
   }
 });
-;define('ember-concurrency/-encapsulated-task', ['exports', 'ember', 'ember-concurrency/-task-instance'], function (exports, _ember, _taskInstance) {
+define('ember-concurrency/-encapsulated-task', ['exports', 'ember', 'ember-concurrency/-task-instance'], function (exports, _ember, _taskInstance) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -104954,7 +104947,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     perform: null
   });
 });
-;define('ember-concurrency/-evented-observable', ['exports', 'ember'], function (exports, _ember) {
+define('ember-concurrency/-evented-observable', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -104982,7 +104975,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     }
   });
 });
-;define('ember-concurrency/-helpers', ['exports', 'ember', 'ember-concurrency/-task-property'], function (exports, _ember, _taskProperty) {
+define('ember-concurrency/-helpers', ['exports', 'ember', 'ember-concurrency/-task-property'], function (exports, _ember, _taskProperty) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -105025,7 +105018,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     });
   }
 });
-;define('ember-concurrency/-property-modifiers-mixin', ['exports', 'ember', 'ember-concurrency/-scheduler', 'ember-concurrency/-buffer-policy'], function (exports, _ember, _scheduler, _bufferPolicy) {
+define('ember-concurrency/-property-modifiers-mixin', ['exports', 'ember', 'ember-concurrency/-scheduler', 'ember-concurrency/-buffer-policy'], function (exports, _ember, _scheduler, _bufferPolicy) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -105063,6 +105056,10 @@ var ReactiveTest = Rx.ReactiveTest = {
       this._taskGroupPath = taskGroupPath;
       assertModifiersNotMixedWithGroup(this);
       return this;
+    },
+    debug: function debug() {
+      this._debug = true;
+      return this;
     }
   };
 
@@ -105096,7 +105093,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     }
   }
 });
-;define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, _ember) {
+define('ember-concurrency/-scheduler', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -105253,7 +105250,7 @@ var ReactiveTest = Rx.ReactiveTest = {
 
   exports.default = Scheduler;
 });
-;define('ember-concurrency/-task-group', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-property-modifiers-mixin'], function (exports, _ember, _utils, _taskStateMixin, _propertyModifiersMixin) {
+define('ember-concurrency/-task-group', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-property-modifiers-mixin'], function (exports, _ember, _utils, _taskStateMixin, _propertyModifiersMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -105289,8 +105286,7 @@ var ReactiveTest = Rx.ReactiveTest = {
         _origin: this,
         _taskGroupPath: tp._taskGroupPath,
         _scheduler: (0, _propertyModifiersMixin.resolveScheduler)(tp, this, TaskGroup),
-        _propertyName: _propertyName,
-        _debugCallback: tp._debugCallback
+        _propertyName: _propertyName
       });
     });
   }
@@ -105300,7 +105296,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     constructor: TaskGroupProperty
   });
 });
-;define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _utils) {
+define('ember-concurrency/-task-instance', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _utils) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -105398,6 +105394,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     args: [],
     _hasSubscribed: false,
     _runLoop: true,
+    _debug: false,
     cancelReason: null,
 
     /**
@@ -105549,7 +105546,7 @@ var ReactiveTest = Rx.ReactiveTest = {
       set(this, 'isCanceling', true);
 
       var name = get(this, 'task._propertyName') || "<unknown>";
-      set(this, 'cancelReason', 'TaskInstance \'' + name + '\' was canceled because ' + cancelReason + '. If you\'re seeing this in your logs, it\'s probably because somewhere this task is being cast to an (uncancelable) Promise, e.g. something is `await`ing it or calling `.then()` on it.');
+      set(this, 'cancelReason', 'TaskInstance \'' + name + '\' was canceled because ' + cancelReason + '. For more information, see: http://ember-concurrency.com/#/docs/task-cancelation-help');
 
       if (this.hasStarted) {
         this._proceedSoon(_utils.YIELDABLE_CANCEL, null);
@@ -105616,6 +105613,11 @@ var ReactiveTest = Rx.ReactiveTest = {
       if (this.isCanceling) {
         completionState = COMPLETION_CANCEL;
         value = new Error(this.cancelReason);
+
+        if (this._debug || _ember.default.ENV.DEBUG_TASKS) {
+          _ember.default.Logger.log(this.cancelReason);
+        }
+
         value.name = TASK_CANCELATION_NAME;
         value.taskInstance = this;
       }
@@ -105924,7 +105926,7 @@ var ReactiveTest = Rx.ReactiveTest = {
 
   exports.default = TaskInstance;
 });
-;define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-task-group', 'ember-concurrency/-property-modifiers-mixin', 'ember-concurrency/utils', 'ember-concurrency/-encapsulated-task'], function (exports, _ember, _taskInstance, _taskStateMixin, _taskGroup, _propertyModifiersMixin, _utils, _encapsulatedTask) {
+define('ember-concurrency/-task-property', ['exports', 'ember', 'ember-concurrency/-task-instance', 'ember-concurrency/-task-state-mixin', 'ember-concurrency/-task-group', 'ember-concurrency/-property-modifiers-mixin', 'ember-concurrency/utils', 'ember-concurrency/-encapsulated-task'], function (exports, _ember, _taskInstance, _taskStateMixin, _taskGroup, _propertyModifiersMixin, _utils, _encapsulatedTask) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -106118,7 +106120,7 @@ var ReactiveTest = Rx.ReactiveTest = {
         this._taskInstanceFactory = _encapsulatedTask.default.extend(ownerInjection, this.fn);
       }
 
-      (0, _utils._cleanupOnDestroy)(this.context, this, 'cancelAll');
+      (0, _utils._cleanupOnDestroy)(this.context, this, 'cancelAll', 'the object it lives on was destroyed or unrendered');
     },
     _curry: function _curry() {
       var task = this._clone();
@@ -106137,8 +106139,7 @@ var ReactiveTest = Rx.ReactiveTest = {
         _origin: this._origin,
         _taskGroupPath: this._taskGroupPath,
         _scheduler: this._scheduler,
-        _propertyName: this._propertyName,
-        _debugCallback: this._debugCallback
+        _propertyName: this._propertyName
       });
     },
 
@@ -106282,8 +106283,8 @@ var ReactiveTest = Rx.ReactiveTest = {
         context: this.context,
         owner: this.context,
         task: this,
-        _origin: this,
-        _debugCallback: this._debugCallback
+        _debug: this._debug,
+        _origin: this
       });
 
       if (this.context.isDestroying) {
@@ -106324,14 +106325,13 @@ var ReactiveTest = Rx.ReactiveTest = {
         _taskGroupPath: tp._taskGroupPath,
         _scheduler: (0, _propertyModifiersMixin.resolveScheduler)(tp, this, _taskGroup.TaskGroup),
         _propertyName: _propertyName,
-        _debugCallback: tp._debugCallback
+        _debug: tp._debug
       });
     });
 
     this.taskFn = taskFn;
     this.eventNames = null;
     this.cancelEventNames = null;
-    this._debugCallback = null;
     this._observes = null;
   }
 
@@ -106365,10 +106365,6 @@ var ReactiveTest = Rx.ReactiveTest = {
 
       this._observes = properties;
       return this;
-    },
-    _debug: function _debug(cb) {
-      this._debugCallback = cb || defaultDebugCallback;
-      return this;
     }
   });
 
@@ -106399,7 +106395,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     };
   }
 });
-;define('ember-concurrency/-task-state-mixin', ['exports', 'ember'], function (exports, _ember) {
+define('ember-concurrency/-task-state-mixin', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -106458,7 +106454,7 @@ var ReactiveTest = Rx.ReactiveTest = {
 
   });
 });
-;define('ember-concurrency/-wait-for', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _utils) {
+define('ember-concurrency/-wait-for', ['exports', 'ember', 'ember-concurrency/utils'], function (exports, _ember, _utils) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -106585,7 +106581,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     return new WaitForEventYieldable(object, eventName);
   }
 });
-;define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-task-instance', 'ember-concurrency/-task-group', 'ember-concurrency/-evented-observable', 'ember-concurrency/-cancelable-promise-helpers', 'ember-concurrency/-wait-for'], function (exports, _ember, _utils, _taskProperty, _taskInstance, _taskGroup, _eventedObservable, _cancelablePromiseHelpers, _waitFor) {
+define('ember-concurrency/index', ['exports', 'ember', 'ember-concurrency/utils', 'ember-concurrency/-task-property', 'ember-concurrency/-task-instance', 'ember-concurrency/-task-group', 'ember-concurrency/-evented-observable', 'ember-concurrency/-cancelable-promise-helpers', 'ember-concurrency/-wait-for'], function (exports, _ember, _utils, _taskProperty, _taskInstance, _taskGroup, _eventedObservable, _cancelablePromiseHelpers, _waitFor) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -106666,7 +106662,7 @@ var ReactiveTest = Rx.ReactiveTest = {
   exports.waitForQueue = _waitFor.waitForQueue;
   exports.waitForEvent = _waitFor.waitForEvent;
 });
-;define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _ember) {
+define('ember-concurrency/utils', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -106733,7 +106729,11 @@ var ReactiveTest = Rx.ReactiveTest = {
   };
 
   function _cleanupOnDestroy(owner, object, cleanupMethodName) {
-    // TODO: find a non-mutate-y, hacky way of doing this.
+    for (var _len = arguments.length, args = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
+      args[_key - 3] = arguments[_key];
+    }
+
+    // TODO: find a non-mutate-y, non-hacky way of doing this.
 
     if (!owner.willDestroy) {
       // we're running in non Ember object (possibly in a test mock)
@@ -106754,7 +106754,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     }
 
     owner.willDestroy.__ember_processes_destroyers__.push(function () {
-      object[cleanupMethodName]();
+      object[cleanupMethodName].apply(object, args);
     });
   }
 
@@ -106832,7 +106832,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     });
   }
 });
-;define('ember-font-awesome/components/fa-icon', ['exports', 'ember', 'ember-font-awesome/utils/try-match'], function (exports, _ember, _emberFontAwesomeUtilsTryMatch) {
+define('ember-font-awesome/components/fa-icon', ['exports', 'ember', 'ember-font-awesome/utils/try-match'], function (exports, _ember, _emberFontAwesomeUtilsTryMatch) {
   var computed = _ember['default'].computed;
   var get = _ember['default'].get;
   var isArray = _ember['default'].isArray;
@@ -106936,14 +106936,14 @@ var ReactiveTest = Rx.ReactiveTest = {
 
   exports['default'] = FaIconComponent;
 });
-;define('ember-font-awesome/components/fa-list', ['exports', 'ember', 'ember-font-awesome/templates/components/fa-list'], function (exports, _ember, _emberFontAwesomeTemplatesComponentsFaList) {
+define('ember-font-awesome/components/fa-list', ['exports', 'ember', 'ember-font-awesome/templates/components/fa-list'], function (exports, _ember, _emberFontAwesomeTemplatesComponentsFaList) {
   exports['default'] = _ember['default'].Component.extend({
     layout: _emberFontAwesomeTemplatesComponentsFaList['default'],
     tagName: 'ul',
     classNames: 'fa-ul'
   });
 });
-;define('ember-font-awesome/components/fa-stack', ['exports', 'ember', 'ember-font-awesome/utils/try-match', 'ember-font-awesome/templates/components/fa-stack'], function (exports, _ember, _emberFontAwesomeUtilsTryMatch, _emberFontAwesomeTemplatesComponentsFaStack) {
+define('ember-font-awesome/components/fa-stack', ['exports', 'ember', 'ember-font-awesome/utils/try-match', 'ember-font-awesome/templates/components/fa-stack'], function (exports, _ember, _emberFontAwesomeUtilsTryMatch, _emberFontAwesomeTemplatesComponentsFaStack) {
   var computed = _ember['default'].computed;
   var get = _ember['default'].get;
   exports['default'] = _ember['default'].Component.extend({
@@ -106969,24 +106969,18 @@ var ReactiveTest = Rx.ReactiveTest = {
     })
   });
 });
-;define("ember-font-awesome/templates/components/fa-list", ["exports"], function (exports) {
-  "use strict";
-
-  exports.__esModule = true;
+define("ember-font-awesome/templates/components/fa-list", ["exports"], function (exports) {
   exports.default = Ember.HTMLBars.template({ "id": "dOjKxzhD", "block": "{\"statements\":[[\"yield\",\"default\",[[\"helper\",[\"hash\"],null,[[\"fa-icon\"],[[\"helper\",[\"component\"],[\"fa-icon\"],[[\"listItem\"],[true]]]]]]]],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "ember-font-awesome/templates/components/fa-list.hbs" } });
 });
-;define("ember-font-awesome/templates/components/fa-stack", ["exports"], function (exports) {
-  "use strict";
-
-  exports.__esModule = true;
+define("ember-font-awesome/templates/components/fa-stack", ["exports"], function (exports) {
   exports.default = Ember.HTMLBars.template({ "id": "c1rjXQwL", "block": "{\"statements\":[[\"yield\",\"default\",[[\"helper\",[\"hash\"],null,[[\"stack-1x\",\"stack-2x\"],[[\"helper\",[\"component\"],[\"fa-icon\"],[[\"stack\"],[\"1\"]]],[\"helper\",[\"component\"],[\"fa-icon\"],[[\"stack\"],[\"2\"]]]]]]]],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "ember-font-awesome/templates/components/fa-stack.hbs" } });
 });
-;define('ember-font-awesome/utils/try-match', ['exports'], function (exports) {
+define('ember-font-awesome/utils/try-match', ['exports'], function (exports) {
   exports['default'] = function (object, regex) {
     return typeof object === 'string' && object.match(regex);
   };
 });
-;define("ember-getowner-polyfill/index", ["exports", "ember"], function (exports, _ember) {
+define("ember-getowner-polyfill/index", ["exports", "ember"], function (exports, _ember) {
 
   _ember["default"].deprecate("ember-getowner-polyfill is now a true polyfill. Use Ember.getOwner directly instead of importing from ember-getowner-polyfill", false, {
     id: "ember-getowner-polyfill.import",
@@ -106995,7 +106989,7 @@ var ReactiveTest = Rx.ReactiveTest = {
 
   exports["default"] = _ember["default"].getOwner;
 });
-;define('ember-load-initializers/index', ['exports'], function (exports) {
+define('ember-load-initializers/index', ['exports'], function (exports) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -107046,7 +107040,173 @@ var ReactiveTest = Rx.ReactiveTest = {
     }
   }
 });
-;define('ember-notify/components/ember-notify', ['exports', 'ember', 'ember-notify/templates/components/ember-notify', 'ember-notify/message'], function (exports, _ember, _emberNotifyTemplatesComponentsEmberNotify, _emberNotifyMessage) {
+define('ember-native-dom-event-dispatcher/index', ['exports', 'ember'], function (exports, _ember) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+
+  var ActionManager = _ember.default.__loader.require('ember-views/system/action_manager').default;
+
+  var merge = _ember.default.merge,
+      get = _ember.default.get,
+      set = _ember.default.set,
+      isNone = _ember.default.isNone,
+      getOwner = _ember.default.getOwner;
+
+
+  var ROOT_ELEMENT_CLASS = 'ember-application';
+  var ROOT_ELEMENT_SELECTOR = '.' + ROOT_ELEMENT_CLASS;
+
+  exports.default = _ember.default.EventDispatcher.extend({
+    init: function init() {
+      this._super.apply(this, arguments);
+
+      this._eventHandlers = Object.create(null);
+      this.canDispatchToEventManager = false;
+    },
+
+
+    /*
+     Override the implementation in Ember itself
+     */
+    setup: function setup(addedEvents, rootElement) {
+      var event = void 0;
+      var events = {};
+
+      merge(events, get(this, 'events'));
+      merge(events, addedEvents);
+
+      this._finalEvents = events;
+
+      if (isNone(rootElement)) {
+        rootElement = get(this, 'rootElement');
+      } else {
+        set(this, 'rootElement', rootElement);
+      }
+
+      var viewRegistry = this._getViewRegistry && this._getViewRegistry();
+      // present in ember-source@2.12+
+      if (!viewRegistry) {
+        var owner = getOwner ? getOwner(this) : this.container;
+        viewRegistry = owner && owner.lookup('-view-registry:main');
+      }
+
+      var rootElementSelector = get(this, 'rootElement');
+      rootElement = document.querySelector(rootElementSelector);
+
+      //assert(`You cannot use the same root element (${rootElement.selector || rootElement[0].tagName}) multiple times in an Ember.Application`, !rootElement.is(ROOT_ELEMENT_SELECTOR));
+      //assert('You cannot make a new Ember.Application using a root element that is a descendent of an existing Ember.Application', !rootElement.closest(ROOT_ELEMENT_SELECTOR).length);
+      //assert('You cannot make a new Ember.Application using a root element that is an ancestor of an existing Ember.Application', !rootElement.find(ROOT_ELEMENT_SELECTOR).length);
+
+      rootElement.className += ' ' + ROOT_ELEMENT_SELECTOR;
+
+      //if (!rootElement.is(ROOT_ELEMENT_SELECTOR)) {
+      //  throw new TypeError(`Unable to add '${ROOT_ELEMENT_CLASS}' class to root element (${rootElement.selector || rootElement[0].tagName}). Make sure you set rootElement to the body or an element in the body.`);
+      //}
+
+      for (event in events) {
+        if (events.hasOwnProperty(event)) {
+          this.setupHandler(rootElement, event, events[event], viewRegistry);
+        }
+      }
+    },
+    setupHandler: function setupHandler(rootElement, event, eventName, viewRegistry) {
+      var _this = this;
+
+      if (eventName === null) {
+        return;
+      }
+
+      var viewHandler = function viewHandler(target, event) {
+        var view = viewRegistry[target.id];
+        var result = true;
+
+        if (view) {
+          result = _this._bubbleEvent(view, event, eventName);
+        }
+
+        return result;
+      };
+
+      var actionHandler = function actionHandler(target, event) {
+        var actionId = target.getAttribute('data-ember-action');
+        var actions = ActionManager.registeredActions[actionId];
+
+        // In Glimmer2 this attribute is set to an empty string and an additional
+        // attribute it set for each action on a given element. In this case, the
+        // attributes need to be read so that a proper set of action handlers can
+        // be coalesced.
+        if (actionId === '') {
+          var attributes = target.attributes;
+          var attributeCount = attributes.length;
+
+          actions = [];
+
+          for (var i = 0; i < attributeCount; i++) {
+            var attr = attributes.item(i);
+            var attrName = attr.name;
+
+            if (attrName.indexOf('data-ember-action-') === 0) {
+              actions = actions.concat(ActionManager.registeredActions[attr.value]);
+            }
+          }
+        }
+
+        // We have to check for actions here since in some cases, jQuery will trigger
+        // an event on `removeChild` (i.e. focusout) after we've already torn down the
+        // action handlers for the view.
+        if (!actions) {
+          return;
+        }
+
+        for (var index = 0; index < actions.length; index++) {
+          var action = actions[index];
+
+          if (action && action.eventName === eventName) {
+            return action.handler(event);
+          }
+        }
+      };
+
+      var handleEvent = this._eventHandlers[event] = function (event) {
+        var target = event.target;
+
+        do {
+          if (viewRegistry[target.id]) {
+            if (viewHandler(target, event) === false) {
+              break;
+            }
+          } else if (target.hasAttribute('data-ember-action')) {
+            actionHandler(target, event);
+            break;
+          }
+
+          target = target.parentNode;
+        } while (target && target.nodeType === 1);
+      };
+
+      rootElement.addEventListener(event, handleEvent);
+    },
+    destroy: function destroy() {
+      var rootElement = get(this, 'rootElement');
+      rootElement = document.querySelector(rootElement);
+
+      for (var event in this._eventHandlers) {
+        rootElement.removeEventListener(event, this._eventHandlers[event]);
+      }
+
+      if (rootElement.classList) {
+        rootElement.classList.remove(ROOT_ELEMENT_CLASS);
+      } else {
+        rootElement.className = rootElement.className.replace(new RegExp('(^|\\b)' + ROOT_ELEMENT_CLASS.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+      }
+    }
+  });
+});
+define('ember-notify/components/ember-notify', ['exports', 'ember', 'ember-notify/templates/components/ember-notify', 'ember-notify/message'], function (exports, _ember, _emberNotifyTemplatesComponentsEmberNotify, _emberNotifyMessage) {
   exports['default'] = _ember['default'].Component.extend({
     layout: _emberNotifyTemplatesComponentsEmberNotify['default'],
 
@@ -107187,7 +107347,7 @@ var ReactiveTest = Rx.ReactiveTest = {
   });
   exports.UIkitTheme = UIkitTheme;
 });
-;define('ember-notify/components/ember-notify/message', ['exports', 'ember', 'ember-notify/templates/components/ember-notify/message', 'ember-notify'], function (exports, _ember, _emberNotifyTemplatesComponentsEmberNotifyMessage, _emberNotify) {
+define('ember-notify/components/ember-notify/message', ['exports', 'ember', 'ember-notify/templates/components/ember-notify/message', 'ember-notify'], function (exports, _ember, _emberNotifyTemplatesComponentsEmberNotifyMessage, _emberNotify) {
   exports['default'] = _ember['default'].Component.extend({
     layout: _emberNotifyTemplatesComponentsEmberNotifyMessage['default'],
     message: {},
@@ -107299,7 +107459,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     }
   });
 });
-;define('ember-notify/index', ['exports', 'ember', 'ember-notify/message'], function (exports, _ember, _emberNotifyMessage) {
+define('ember-notify/index', ['exports', 'ember', 'ember-notify/message'], function (exports, _ember, _emberNotifyMessage) {
 
   function aliasToShow(type) {
     return function (message, options) {
@@ -107366,7 +107526,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     }
   });
 });
-;define('ember-notify/initializer', ['exports'], function (exports) {
+define('ember-notify/initializer', ['exports'], function (exports) {
   exports.initialize = initialize;
 
   function initialize() {
@@ -107380,7 +107540,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     initialize: initialize
   };
 });
-;define('ember-notify/message', ['exports', 'ember'], function (exports, _ember) {
+define('ember-notify/message', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Object.extend({
     text: null,
     html: '',
@@ -107390,19 +107550,13 @@ var ReactiveTest = Rx.ReactiveTest = {
     classNames: []
   });
 });
-;define("ember-notify/templates/components/ember-notify", ["exports"], function (exports) {
-  "use strict";
-
-  exports.__esModule = true;
+define("ember-notify/templates/components/ember-notify", ["exports"], function (exports) {
   exports.default = Ember.HTMLBars.template({ "id": "Sz43VfhO", "block": "{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"messages\"]]],null,3]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"    \"],[\"append\",[\"helper\",[\"ember-notify/message\"],null,[[\"message\",\"theme\",\"closeAfter\",\"class\"],[[\"get\",[\"message\"]],[\"get\",[\"theme\"]],[\"get\",[\"closeAfter\"]],\"ember-notify clearfix\"]]],false],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"      \"],[\"yield\",\"default\",[[\"get\",[\"message\"]],[\"get\",[\"close\"]]]],[\"text\",\"\\n\"]],\"locals\":[\"message\",\"close\"]},{\"statements\":[[\"block\",[\"ember-notify/message\"],null,[[\"message\",\"theme\",\"closeAfter\",\"class\"],[[\"get\",[\"message\"]],[\"get\",[\"theme\"]],[\"get\",[\"closeAfter\"]],\"ember-notify clearfix\"]],1]],\"locals\":[]},{\"statements\":[[\"block\",[\"if\"],[[\"has-block\",\"default\"]],null,2,0]],\"locals\":[\"message\"]}],\"hasPartials\":false}", "meta": { "moduleName": "ember-notify/templates/components/ember-notify.hbs" } });
 });
-;define("ember-notify/templates/components/ember-notify/message", ["exports"], function (exports) {
-  "use strict";
-
-  exports.__esModule = true;
+define("ember-notify/templates/components/ember-notify/message", ["exports"], function (exports) {
   exports.default = Ember.HTMLBars.template({ "id": "bExgmZot", "block": "{\"statements\":[[\"block\",[\"if\"],[[\"has-block\",\"default\"]],null,1,0]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"  \"],[\"open-element\",\"a\",[]],[\"static-attr\",\"class\",\"close\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"close\"]],[\"flush-element\"],[\"text\",\"×\"],[\"close-element\"],[\"text\",\"\\n  \"],[\"open-element\",\"span\",[]],[\"static-attr\",\"class\",\"message\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"message\",\"text\"]],false],[\"append\",[\"unknown\",[\"message\",\"html\"]],true],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"  \"],[\"yield\",\"default\",[[\"get\",[\"message\"]],[\"helper\",[\"action\"],[[\"get\",[null]],\"close\"],null]]],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "ember-notify/templates/components/ember-notify/message.hbs" } });
 });
-;define('ember-resolver/container-debug-adapter', ['exports', 'ember', 'ember-resolver/utils/module-registry'], function (exports, _ember, _emberResolverUtilsModuleRegistry) {
+define('ember-resolver/container-debug-adapter', ['exports', 'ember', 'ember-resolver/utils/module-registry'], function (exports, _ember, _emberResolverUtilsModuleRegistry) {
   var ContainerDebugAdapter = _ember['default'].ContainerDebugAdapter;
 
   var ModulesContainerDebugAdapter = null;
@@ -107506,7 +107660,7 @@ var ReactiveTest = Rx.ReactiveTest = {
 
   exports['default'] = ModulesContainerDebugAdapter;
 });
-;define('ember-resolver/index', ['exports', 'ember-resolver/resolver'], function (exports, _emberResolverResolver) {
+define('ember-resolver/index', ['exports', 'ember-resolver/resolver'], function (exports, _emberResolverResolver) {
   Object.defineProperty(exports, 'default', {
     enumerable: true,
     get: function get() {
@@ -107514,7 +107668,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     }
   });
 });
-;define('ember-resolver/resolver', ['exports', 'ember', 'ember-resolver/utils/module-registry', 'ember-resolver/utils/class-factory', 'ember-resolver/utils/make-dictionary'], function (exports, _ember, _emberResolverUtilsModuleRegistry, _emberResolverUtilsClassFactory, _emberResolverUtilsMakeDictionary) {
+define('ember-resolver/resolver', ['exports', 'ember', 'ember-resolver/utils/module-registry', 'ember-resolver/utils/class-factory', 'ember-resolver/utils/make-dictionary'], function (exports, _ember, _emberResolverUtilsModuleRegistry, _emberResolverUtilsClassFactory, _emberResolverUtilsMakeDictionary) {
 
   /*
    * This module defines a subclass of Ember.DefaultResolver that adds two
@@ -107912,7 +108066,7 @@ var ReactiveTest = Rx.ReactiveTest = {
   exports['default'] = Resolver;
 });
 /*globals require */
-;define('ember-resolver/utils/class-factory', ['exports'], function (exports) {
+define('ember-resolver/utils/class-factory', ['exports'], function (exports) {
   exports['default'] = classFactory;
 
   function classFactory(klass) {
@@ -107927,7 +108081,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     };
   }
 });
-;define("ember-resolver/utils/create", ["exports", "ember"], function (exports, _ember) {
+define("ember-resolver/utils/create", ["exports", "ember"], function (exports, _ember) {
 
   var create = Object.create || _ember["default"].create;
   if (!(create && !create(null).hasOwnProperty)) {
@@ -107936,7 +108090,7 @@ var ReactiveTest = Rx.ReactiveTest = {
 
   exports["default"] = create;
 });
-;define('ember-resolver/utils/make-dictionary', ['exports', 'ember-resolver/utils/create'], function (exports, _emberResolverUtilsCreate) {
+define('ember-resolver/utils/make-dictionary', ['exports', 'ember-resolver/utils/create'], function (exports, _emberResolverUtilsCreate) {
   exports['default'] = makeDictionary;
 
   function makeDictionary() {
@@ -107946,7 +108100,7 @@ var ReactiveTest = Rx.ReactiveTest = {
     return cache;
   }
 });
-;define('ember-resolver/utils/module-registry', ['exports', 'ember'], function (exports, _ember) {
+define('ember-resolver/utils/module-registry', ['exports', 'ember'], function (exports, _ember) {
 
   if (typeof requirejs.entries === 'undefined') {
     requirejs.entries = requirejs._eak_seen;
@@ -107974,7 +108128,7 @@ var ReactiveTest = Rx.ReactiveTest = {
   exports['default'] = ModuleRegistry;
 });
 /*globals requirejs, require */
-;define("ember-string-ishtmlsafe-polyfill/index", ["exports", "ember"], function (exports, _ember) {
+define("ember-string-ishtmlsafe-polyfill/index", ["exports", "ember"], function (exports, _ember) {
 
   _ember["default"].deprecate("ember-string-ishtmlsafe-polyfill is now a true polyfill. Use Ember.String.isHTMLSafe directly instead of importing from ember-string-ishtmlsafe-polyfill", false, {
     id: "ember-string-ishtmlsafe-polyfill.import",
