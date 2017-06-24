@@ -536,11 +536,11 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
    * @memberof TaskProperty
    * @instance
    */
-});
 
-function defaultDebugCallback(payload) {
-  console.log(payload);
-}
+  perform() {
+    throw new Error("It looks like you tried to perform a task via `this.nameOfTask.perform()`, which isn't supported. Use `this.get('nameOfTask').perform()` instead.");
+  },
+});
 
 function registerOnPrototype(addListenerOrObserver, proto, names, taskName, taskMethod, once) {
   if (names) {

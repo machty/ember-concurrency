@@ -434,4 +434,20 @@ test("Ember.ENV.DEBUG_TASKS=true enables basic debugging", function(assert) {
   ]);
 });
 
+test("helpful errors when calling this.taskName.perform()", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    a: task(function * () { })
+  });
+
+  Ember.run(() => {
+    let obj = Obj.create();
+    try {
+      obj.a.perform();
+    } catch(e) {
+      assert.equal(e.message, "It looks like you tried to perform a task via `this.nameOfTask.perform()`, which isn't supported. Use `this.get('nameOfTask').perform()` instead.");
+    }
+  });
+});
 
