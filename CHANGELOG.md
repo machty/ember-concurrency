@@ -1,4 +1,8 @@
 # Changelog
+### 0.8.7
+  - Added helpful error when improperly trying to perform a
+    task via `this.taskName.perform()`
+
 ### 0.8.6
   - Add `.debug()` Task Modifier and EmberENV.DEBUG_TASKS to log
     the reason a task is canceled, e.g. "TaskInstance 'doStuff' was
