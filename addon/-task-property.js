@@ -320,7 +320,7 @@ export const Task = Ember.Object.extend(TaskStateMixin, {
       taskInstance.cancel();
     }
 
-    this._scheduler.schedule(taskInstance);
+    this._scheduler.schedule(taskInstance, args);
     return taskInstance;
   },
 

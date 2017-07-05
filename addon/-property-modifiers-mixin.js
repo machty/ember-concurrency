@@ -15,6 +15,13 @@ export const propertyModifiers = {
   _hasUsedModifier: false,
   _hasSetBufferPolicy: false,
 
+  _channelFunc: () => '',
+
+  channel(func){
+    this._channelFunc = func;
+    return this;
+  },
+
   restartable() {
     return setBufferPolicy(this, cancelOngoingTasksPolicy);
   },
@@ -74,6 +81,7 @@ export function resolveScheduler(propertyObj, obj, TaskGroup) {
     return taskGroup._scheduler;
   } else {
     return Scheduler.create({
+      channelFunc: propertyObj._channelFunc,
       bufferPolicy: propertyObj._bufferPolicy,
       maxConcurrency: propertyObj._maxConcurrency
     });

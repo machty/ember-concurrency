@@ -4,6 +4,29 @@ const { get, set } = Ember;
 
 let SEEN_INDEX = 0;
 
+const groupBy = (xs, key) => {
+
+};
+
+export const spliceTaskInstances = (cancelReason, taskInstances, index, count, seen) => {
+  for (let i = index; i < index + count; ++i) {
+    let taskInstance = taskInstances[i];
+
+    if (!taskInstance.hasStarted) {
+      // This tracking logic is kinda spread all over the place...
+      // maybe TaskInstances themselves could notify
+      // some delegate of queued state changes upon cancelation?
+      taskInstance.task.decrementProperty('numQueued');
+    }
+
+    taskInstance.cancel(cancelReason);
+    if (seen) {
+      seen.push(taskInstance.task);
+    }
+  }
+  taskInstances.splice(index, count);
+};
+
 const Scheduler = Ember.Object.extend({
   lastPerformed:  null,
   lastStarted:    null,
@@ -26,36 +49,38 @@ const Scheduler = Ember.Object.extend({
 
   cancelAll(reason) {
     let seen = [];
-    this.spliceTaskInstances(reason, this.activeTaskInstances, 0, this.activeTaskInstances.length, seen);
-    this.spliceTaskInstances(reason, this.queuedTaskInstances, 0, this.queuedTaskInstances.length, seen);
+    spliceTaskInstances(reason, this.activeTaskInstances, 0, this.activeTaskInstances.length, seen);
+    spliceTaskInstances(reason, this.queuedTaskInstances, 0, this.queuedTaskInstances.length, seen);
     flushTaskCounts(seen);
   },
 
-  spliceTaskInstances(cancelReason, taskInstances, index, count, seen) {
-    for (let i = index; i < index + count; ++i) {
-      let taskInstance = taskInstances[i];
-
-      if (!taskInstance.hasStarted) {
-        // This tracking logic is kinda spread all over the place...
-        // maybe TaskInstances themselves could notify
-        // some delegate of queued state changes upon cancelation?
-        taskInstance.task.decrementProperty('numQueued');
-      }
-
-      taskInstance.cancel(cancelReason);
-      if (seen) {
-        seen.push(taskInstance.task);
-      }
-    }
-    taskInstances.splice(index, count);
-  },
-
-  schedule(taskInstance) {
+  schedule(taskInstance, args) {
     set(this, 'lastPerformed', taskInstance);
     this.incrementProperty('performCount');
     taskInstance.task.incrementProperty('numQueued');
     this.queuedTaskInstances.push(taskInstance);
+    set(taskInstance, 'channel', this.channelFunc(...args));
     this._flushQueues();
+  },
+
+  taskInstancesByChannel(){
+    const prop = 'channel';
+
+    let active_group = this.activeTaskInstances.reduce((groups, item) => {
+      const val = item[prop],
+        result = groups[val] || {active: [], queued: []};
+      result.active.push(item);
+      groups[val] = result;
+      return groups;
+    }, {});
+
+    return this.queuedTaskInstances.reduce((groups, item) => {
+      const val = item[prop],
+        result = groups[val] || {active: [], queued: []};
+      result.queued.push(item);
+      groups[val] = result;
+      return groups;
+    }, active_group)
   },
 
   _flushQueues() {
@@ -67,9 +92,21 @@ const Scheduler = Ember.Object.extend({
 
     this.activeTaskInstances = filterFinished(this.activeTaskInstances);
 
-    this.bufferPolicy.schedule(this);
+    const groupedInstances = this.taskInstancesByChannel();
+    const result = {active: [], queued: []};
 
-    var lastStarted = null;
+    Object.keys(groupedInstances).reduce((res, key)=>{
+      const {queued, active} = groupedInstances[key];
+      this.bufferPolicy.schedule(this.maxConcurrency, queued, active);
+      res.queued = res.queued.concat(queued);
+      res.active = res.active.concat(active);
+      return res;
+    }, result);
+
+    this.activeTaskInstances = result.active;
+    this.queuedTaskInstances = result.queued;
+
+    let lastStarted = null;
     for (let i = 0; i < this.activeTaskInstances.length; ++i) {
       let taskInstance = this.activeTaskInstances[i];
       if (!taskInstance.hasStarted) {
@@ -99,7 +136,7 @@ const Scheduler = Ember.Object.extend({
 
     taskInstance._start()._onFinalize(() => {
       task.decrementProperty('numRunning');
-      var state = taskInstance._completionState;
+      let state = taskInstance._completionState;
       set(this, 'lastComplete', taskInstance);
       if (state === 1) {
         set(this, 'lastSuccessful', taskInstance);
@@ -140,14 +177,7 @@ function updateTaskChainCounts(task) {
 }
 
 function filterFinished(taskInstances) {
-  let ret = [];
-  for (let i = 0, l = taskInstances.length; i < l; ++i) {
-    let taskInstance = taskInstances[i];
-    if (get(taskInstance, 'isFinished') === false) {
-      ret.push(taskInstance);
-    }
-  }
-  return ret;
+  return Ember.A(taskInstances).rejectBy('isFinished');
 }
 
 export default Scheduler;

@@ -1,23 +1,25 @@
-const saturateActiveQueue = (scheduler) => {
-  while (scheduler.activeTaskInstances.length < scheduler.maxConcurrency) {
-    let taskInstance = scheduler.queuedTaskInstances.shift();
+import {spliceTaskInstances} from './-scheduler';
+
+const saturateActiveQueue = (maxConcurrency, queuedTaskInstances, activeTaskInstances) => {
+  while (activeTaskInstances.length < maxConcurrency) {
+    let taskInstance = queuedTaskInstances.shift();
     if (!taskInstance) { break; }
-    scheduler.activeTaskInstances.push(taskInstance);
+    activeTaskInstances.push(taskInstance);
   }
 };
 
-function numPerformSlots(scheduler) {
-  return scheduler.maxConcurrency -
-    scheduler.queuedTaskInstances.length -
-    scheduler.activeTaskInstances.length;
+function numPerformSlots(maxConcurrency, queuedTaskInstances, activeTaskInstances) {
+  return maxConcurrency -
+    queuedTaskInstances.length -
+    activeTaskInstances.length;
 }
 
 export const enqueueTasksPolicy = {
   requiresUnboundedConcurrency: true,
-  schedule(scheduler) {
+  schedule(maxConcurrency, queuedTaskInstances, activeTaskInstances) {
     // [a,b,_] [c,d,e,f] becomes
     // [a,b,c] [d,e,f]
-    saturateActiveQueue(scheduler);
+    saturateActiveQueue(maxConcurrency, queuedTaskInstances, activeTaskInstances);
   },
   getNextPerformStatus(scheduler) {
     return numPerformSlots(scheduler) > 0 ? 'succeed' : 'enqueue';
@@ -26,11 +28,11 @@ export const enqueueTasksPolicy = {
 
 export const dropQueuedTasksPolicy = {
   cancelReason: `it belongs to a 'drop' Task that was already running`,
-  schedule(scheduler) {
+  schedule(maxConcurrency, queuedTaskInstances, activeTaskInstances) {
     // [a,b,_] [c,d,e,f] becomes
     // [a,b,c] []
-    saturateActiveQueue(scheduler);
-    scheduler.spliceTaskInstances(this.cancelReason, scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length);
+    saturateActiveQueue(maxConcurrency, queuedTaskInstances, activeTaskInstances);
+    spliceTaskInstances(this.cancelReason, queuedTaskInstances, 0, queuedTaskInstances.length);
   },
   getNextPerformStatus(scheduler) {
     return numPerformSlots(scheduler) > 0 ? 'succeed' : 'drop';
@@ -39,16 +41,14 @@ export const dropQueuedTasksPolicy = {
 
 export const cancelOngoingTasksPolicy = {
   cancelReason: `it belongs to a 'restartable' Task that was .perform()ed again`,
-  schedule(scheduler) {
+  schedule(maxConcurrency, queuedTaskInstances, activeTaskInstances) {
     // [a,b,_] [c,d,e,f] becomes
     // [d,e,f] []
-    let activeTaskInstances = scheduler.activeTaskInstances;
-    let queuedTaskInstances = scheduler.queuedTaskInstances;
     activeTaskInstances.push(...queuedTaskInstances);
     queuedTaskInstances.length = 0;
 
-    let numToShift = Math.max(0, activeTaskInstances.length - scheduler.maxConcurrency);
-    scheduler.spliceTaskInstances(this.cancelReason, activeTaskInstances, 0, numToShift);
+    let numToShift = Math.max(0, activeTaskInstances.length - maxConcurrency);
+    spliceTaskInstances(this.cancelReason, activeTaskInstances, 0, numToShift);
   },
   getNextPerformStatus(scheduler) {
     return numPerformSlots(scheduler) > 0 ? 'succeed' : 'cancel_previous';
@@ -57,11 +57,11 @@ export const cancelOngoingTasksPolicy = {
 
 export const dropButKeepLatestPolicy = {
   cancelReason: `it belongs to a 'keepLatest' Task that was already running`,
-  schedule(scheduler) {
+  schedule(maxConcurrency, queuedTaskInstances, activeTaskInstances) {
     // [a,b,_] [c,d,e,f] becomes
     // [d,e,f] []
-    saturateActiveQueue(scheduler);
-    scheduler.spliceTaskInstances(this.cancelReason, scheduler.queuedTaskInstances, 0, scheduler.queuedTaskInstances.length - 1);
+    saturateActiveQueue(maxConcurrency, queuedTaskInstances, activeTaskInstances);
+    spliceTaskInstances(this.cancelReason, queuedTaskInstances, 0, queuedTaskInstances.length - 1);
   }
 };
 

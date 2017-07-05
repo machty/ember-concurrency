@@ -8,6 +8,8 @@ dist: trusty
 
 cache:
   yarn: true
+  directories:
+      - $HOME/.cache/bower
 
 addons:
   apt:

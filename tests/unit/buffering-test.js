@@ -28,21 +28,22 @@ let sporadicObservable = Observable.concat(
 module('Unit: buffering');
 
 function doBufferingTest(description, observable, bufferPolicyFn, expectations, maxConcurrency) {
-  test(description, function(assert) {
+  test(description, function (assert) {
     let start = assert.async();
     assert.expect(2);
 
-    let last = expectations[expectations.length-1];
+    let last = expectations[expectations.length - 1];
 
     let sem = 0;
     let maxSem = 0;
+
     function bumpSemaphore(inc) {
       sem = sem + inc;
       maxSem = Math.max(maxSem, sem);
     }
 
     let arr = [];
-    let taskCP = task(function * (v) {
+    let taskCP = task(function *(v) {
       try {
         bumpSemaphore(+1);
         yield timeout(10);
@@ -75,6 +76,9 @@ function doBufferingTest(description, observable, bufferPolicyFn, expectations, 
     });
   });
 }
+
+//doBufferingTest("channel: two", range(1, 10), (t) => t.channel(arg=>arg > 2 ? '1' : '2').maxConcurrency(1),
+//  [1,2,3,4,5,101,102,103,104,105], 1);
 
 doBufferingTest("default buffering: ranges",   rangeObservable,    (t) => t, [1,2,3,4,5,101,102,103,104,105], 5);
 doBufferingTest("default buffering: sporadic", sporadicObservable, (t) => t, [1,2,3,4,5,6], 3);
