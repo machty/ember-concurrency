@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import Controller from '@ember/controller';
 import config from '../config/environment';
 
 const versionRegExp = /\d[.]\d[.]\d/;
@@ -6,6 +6,6 @@ const {
   APP: { version }
 } = config;
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   addonVersion: version.match(versionRegExp)[0]
 });

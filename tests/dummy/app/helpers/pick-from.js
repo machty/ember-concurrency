@@ -1,8 +1,8 @@
-import Ember from 'ember';
+import { helper } from '@ember/component/helper';
 
 export function pickFrom([list, index]/*, hash*/) {
   return list[index % list.length];
 }
 
-export default Ember.Helper.helper(pickFrom);
+export default helper(pickFrom);
 

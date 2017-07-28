@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import Controller from '@ember/controller';
 import { randomWord } from 'dummy/utils';
 
 // BEGIN-SNIPPET encapsulated-task-fun-controller
@@ -9,7 +9,7 @@ function * sharedFn() {
   return randomWord();
 }
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   doStuff: task({
     perform: function * () {
       return all([

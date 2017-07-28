@@ -1,6 +1,7 @@
+import Route from '@ember/routing/route';
 import Ember from 'ember';
 
-export default Ember.Route.extend({
+export default Route.extend({
   beforeModel() {
     if (!Ember.testing) {
       this.router.on('didTransition', () => {

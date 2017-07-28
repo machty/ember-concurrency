@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import Controller from '@ember/controller';
 import { task, timeout } from 'ember-concurrency';
 
 function * SHARED_TASK_FN(tracker) {
@@ -12,7 +12,7 @@ function * SHARED_TASK_FN(tracker) {
 }
 
 // BEGIN-SNIPPET shared-tasks
-export default Ember.Controller.extend({
+export default Controller.extend({
   defaultTask:     task(SHARED_TASK_FN),
   restartableTask: task(SHARED_TASK_FN).restartable(),
   enqueuedTask:    task(SHARED_TASK_FN).enqueue(),

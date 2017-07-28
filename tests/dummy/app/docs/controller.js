@@ -1,9 +1,8 @@
-import Ember from "ember";
+import Controller, { inject as controller } from '@ember/controller';
+import { computed } from '@ember/object';
 
-const { computed } = Ember;
-
-export default Ember.Controller.extend({
-  appController: Ember.inject.controller('application'),
+export default Controller.extend({
+  appController: controller('application'),
 
   tableOfContents: [
     { route: "docs.introduction", title: "Home" },

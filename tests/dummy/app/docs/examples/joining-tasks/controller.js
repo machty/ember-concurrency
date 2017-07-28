@@ -1,17 +1,19 @@
-import Ember from 'ember';
+import { makeArray } from '@ember/array';
+import Controller from '@ember/controller';
+import EmberObject from '@ember/object';
 import { randomWord } from 'dummy/utils';
 
 // BEGIN-SNIPPET joining-tasks
 import { task, timeout, all, race } from 'ember-concurrency';
 const methods = { all, race };
 
-const ProgressTracker = Ember.Object.extend({
+const ProgressTracker = EmberObject.extend({
   id: null,
   percent: 0,
   word: null,
 });
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   status: "Waiting...",
   trackers: null,
 
@@ -28,7 +30,7 @@ export default Ember.Controller.extend({
     this.set('trackers', trackers);
     this.set('status', "Waiting for child tasks to complete...");
     let words = yield allOrRace(childTasks);
-    this.set('status', `Done: ${Ember.makeArray(words).join(', ')}`);
+    this.set('status', `Done: ${makeArray(words).join(', ')}`);
   }).restartable(),
 
   child: task(function * (tracker) {

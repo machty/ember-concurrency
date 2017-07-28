@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET ajax-throttling
@@ -13,7 +13,7 @@ function loopingAjaxTask(id, color) {
   }).on('init');
 }
 
-export default Ember.Component.extend({
+export default Component.extend({
   ajaxTask: task(function * () {
     // simulate slow AJAX
     yield timeout(2000 + 2000 * Math.random());

@@ -1,4 +1,6 @@
-import Ember from 'ember';
+import { run } from '@ember/runloop';
+import RSVP, { resolve } from 'rsvp';
+import EmberObject from '@ember/object';
 import { task, all, allSettled, hash, race } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
@@ -8,7 +10,7 @@ test("all behaves like Promise.all", function(assert) {
   assert.expect(6);
 
   let defers = [];
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     parent: task(function * () {
       let task = this.get('child');
       let allPromise = all([
@@ -22,7 +24,7 @@ test("all behaves like Promise.all", function(assert) {
     }),
 
     child: task(function * () {
-      let defer = Ember.RSVP.defer();
+      let defer = RSVP.defer();
       defers.push(defer);
       let value = yield defer.promise;
       return value;
@@ -30,18 +32,18 @@ test("all behaves like Promise.all", function(assert) {
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('parent').perform();
   });
 
   let childTask = obj.get('child');
   assert.equal(childTask.get('concurrency'), 3);
-  Ember.run(() => defers.shift().resolve('a'));
+  run(() => defers.shift().resolve('a'));
   assert.equal(childTask.get('concurrency'), 2);
-  Ember.run(() => defers.shift().resolve('b'));
+  run(() => defers.shift().resolve('b'));
   assert.equal(childTask.get('concurrency'), 1);
-  Ember.run(() => defers.shift().resolve('c'));
+  run(() => defers.shift().resolve('c'));
   assert.equal(childTask.get('concurrency'), 0);
 });
 
@@ -49,7 +51,7 @@ test("all cancels all other joined tasks if one of them fails", function(assert)
   assert.expect(3);
 
   let defers = [];
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     parent: task(function * () {
       let task = this.get('child');
       try {
@@ -64,28 +66,28 @@ test("all cancels all other joined tasks if one of them fails", function(assert)
     }),
 
     child: task(function * () {
-      let defer = Ember.RSVP.defer();
+      let defer = RSVP.defer();
       defers.push(defer);
       yield defer.promise;
     }),
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('parent').perform();
   });
 
   let childTask = obj.get('child');
   assert.equal(childTask.get('concurrency'), 3);
-  Ember.run(() => defers.shift().reject({ wat: 'lol' }));
+  run(() => defers.shift().reject({ wat: 'lol' }));
   assert.equal(childTask.get('concurrency'), 0);
 });
 
 test("all cancels all joined tasks if parent task is canceled", function(assert) {
   assert.expect(2);
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     parent: task(function * () {
       let task = this.get('child');
       yield all([
@@ -96,19 +98,19 @@ test("all cancels all joined tasks if parent task is canceled", function(assert)
     }),
 
     child: task(function * () {
-      yield Ember.RSVP.defer().promise;
+      yield RSVP.defer().promise;
     }),
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('parent').perform();
   });
 
   let childTask = obj.get('child');
   assert.equal(childTask.get('concurrency'), 3);
-  Ember.run(() => obj.get('parent').cancelAll());
+  run(() => obj.get('parent').cancelAll());
   assert.equal(childTask.get('concurrency'), 0);
 });
 
@@ -116,7 +118,7 @@ test("allSettled behaves like Promise.allSettled", function(assert) {
   assert.expect(6);
 
   let defers = [];
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     parent: task(function * () {
       let task = this.get('child');
       let allPromise = allSettled([
@@ -130,7 +132,7 @@ test("allSettled behaves like Promise.allSettled", function(assert) {
     }),
 
     child: task(function * () {
-      let defer = Ember.RSVP.defer();
+      let defer = RSVP.defer();
       defers.push(defer);
       let value = yield defer.promise;
       return value;
@@ -138,18 +140,18 @@ test("allSettled behaves like Promise.allSettled", function(assert) {
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('parent').perform();
   });
 
   let childTask = obj.get('child');
   assert.equal(childTask.get('concurrency'), 3);
-  Ember.run(() => defers.shift().resolve('a'));
+  run(() => defers.shift().resolve('a'));
   assert.equal(childTask.get('concurrency'), 2);
-  Ember.run(() => defers.shift().resolve('b'));
+  run(() => defers.shift().resolve('b'));
   assert.equal(childTask.get('concurrency'), 1);
-  Ember.run(() => defers.shift().resolve('c'));
+  run(() => defers.shift().resolve('c'));
   assert.equal(childTask.get('concurrency'), 0);
 });
 
@@ -157,7 +159,7 @@ test("allSettled does not cancel all other joined tasks if one of them fails", f
   assert.expect(9);
 
   let defers = [];
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     parent: task(function * () {
       let task = this.get('child');
       let allPromise = allSettled([
@@ -176,7 +178,7 @@ test("allSettled does not cancel all other joined tasks if one of them fails", f
     }),
 
     child: task(function * () {
-      let defer = Ember.RSVP.defer();
+      let defer = RSVP.defer();
       defers.push(defer);
       let value = yield defer.promise;
       return value;
@@ -184,25 +186,25 @@ test("allSettled does not cancel all other joined tasks if one of them fails", f
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('parent').perform();
   });
 
   let childTask = obj.get('child');
   assert.equal(childTask.get('concurrency'), 3);
-  Ember.run(() => defers.shift().resolve('a'));
+  run(() => defers.shift().resolve('a'));
   assert.equal(childTask.get('concurrency'), 2);
-  Ember.run(() => defers.shift().reject(new Error('wat')));
+  run(() => defers.shift().reject(new Error('wat')));
   assert.equal(childTask.get('concurrency'), 1);
-  Ember.run(() => defers.shift().resolve('c'));
+  run(() => defers.shift().resolve('c'));
   assert.equal(childTask.get('concurrency'), 0);
 });
 
 test("allSettled cancels all joined tasks if parent task is canceled", function(assert) {
   assert.expect(2);
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     parent: task(function * () {
       let task = this.get('child');
       yield allSettled([
@@ -213,26 +215,26 @@ test("allSettled cancels all joined tasks if parent task is canceled", function(
     }),
 
     child: task(function * () {
-      yield Ember.RSVP.defer().promise;
+      yield RSVP.defer().promise;
     }),
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('parent').perform();
   });
 
   let childTask = obj.get('child');
   assert.equal(childTask.get('concurrency'), 3);
-  Ember.run(() => obj.get('parent').cancelAll());
+  run(() => obj.get('parent').cancelAll());
   assert.equal(childTask.get('concurrency'), 0);
 });
 
 test("hash", function(assert) {
   assert.expect(1);
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     parent: task(function * () {
       let task = this.get('child');
       let v = yield hash({
@@ -247,7 +249,7 @@ test("hash", function(assert) {
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('parent').perform();
   });
@@ -256,7 +258,7 @@ test("hash", function(assert) {
 test("hash cancels the others if one fails", function(assert) {
   assert.expect(2);
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     parent: task(function * () {
       let task = this.get('child');
       yield hash({
@@ -267,23 +269,23 @@ test("hash cancels the others if one fails", function(assert) {
       assert.ok(false, "should not get here");
     }),
 
-    child: task(function * () { return Ember.RSVP.defer().promise; }),
+    child: task(function * () { return RSVP.defer().promise; }),
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('parent').perform();
   });
   assert.equal(obj.get('child.concurrency'), 3);
-  Ember.run(obj.get('child.last'), 'cancel');
+  run(obj.get('child.last'), 'cancel');
   assert.equal(obj.get('child.concurrency'), 0);
 });
 
 test("hash cancels children if parent is canceled", function(assert) {
   assert.expect(2);
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     parent: task(function * () {
       let task = this.get('child');
       yield hash({
@@ -294,26 +296,26 @@ test("hash cancels children if parent is canceled", function(assert) {
       assert.ok(false, "should not get here");
     }),
 
-    child: task(function * () { return Ember.RSVP.defer().promise; }),
+    child: task(function * () { return RSVP.defer().promise; }),
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('parent').perform();
   });
   assert.equal(obj.get('child.concurrency'), 3);
-  Ember.run(obj.get('parent'), 'cancelAll');
+  run(obj.get('parent'), 'cancelAll');
   assert.equal(obj.get('child.concurrency'), 0);
 });
 
 test("yieldable helpers work with null/undefined values", function(assert) {
   assert.expect(1);
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     parent: task(function * () {
       let task = this.get('child');
-      let obj = Ember.Object.create();
+      let obj = EmberObject.create();
       let v = yield hash({
         a: task.perform(1),
         b: null,
@@ -326,7 +328,7 @@ test("yieldable helpers work with null/undefined values", function(assert) {
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('parent').perform();
   });
@@ -335,18 +337,18 @@ test("yieldable helpers work with null/undefined values", function(assert) {
 test("yieldable helpers support to cancel promises with __ec_cancel__", function(assert) {
   assert.expect(1);
 
-  let promise = new Ember.RSVP.defer().promise;
+  let promise = new RSVP.defer().promise;
   promise.__ec_cancel__ = () => {
     assert.ok(true);
   };
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     _checkValueOrTimeOutAfterOneSec: task(function * () {
-      yield race([promise, Ember.RSVP.resolve()]);
+      yield race([promise, resolve()]);
     }).on('init')
   });
 
-  Ember.run(() => {
+  run(() => {
     Obj.create();
   });
 });

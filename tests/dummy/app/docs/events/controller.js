@@ -1,9 +1,9 @@
-import Ember from 'ember';
+import Evented from '@ember/object/evented';
+import Controller from '@ember/controller';
+import $ from 'jquery';
 import { task, waitForEvent, timeout } from 'ember-concurrency';
 
-const { $ } = Ember;
-
-export default Ember.Controller.extend(Ember.Evented, {
+export default Controller.extend(Evented, {
 // BEGIN-SNIPPET waitForEvent
   jQueryEvent: null,
   jQueryEventLoop: task(function * () {

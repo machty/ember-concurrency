@@ -1,8 +1,8 @@
-import Ember from 'ember';
+import { helper } from '@ember/component/helper';
 
 export function sum([a,b]/*, hash*/) {
   return a+b;
 }
 
-export default Ember.Helper.helper(sum);
+export default helper(sum);
 

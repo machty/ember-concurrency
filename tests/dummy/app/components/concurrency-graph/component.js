@@ -1,8 +1,12 @@
-import Ember from 'ember';
+import { A } from '@ember/array';
+import { on } from '@ember/object/evented';
+import RSVP from 'rsvp';
+import Component from '@ember/component';
+import { capitalize } from '@ember/string';
+import EmberObject, { computed } from '@ember/object';
 import { task } from 'ember-concurrency';
-const { computed } = Ember;
 
-let Tracker = Ember.Object.extend({
+let Tracker = EmberObject.extend({
   id: null,
   performTime: null,
   startTime: null,
@@ -11,26 +15,26 @@ let Tracker = Ember.Object.extend({
   taskInstance: null,
   isCanceled: computed.oneWay('taskInstance.isCanceled'),
   state: computed('taskInstance.state', function() {
-    return Ember.String.capitalize(this.get('taskInstance.state'));
+    return capitalize(this.get('taskInstance.state'));
   }),
   hasStarted: false,
 });
 
-export default Ember.Component.extend({
+export default Component.extend({
   task: null,
   trackers: null,
   timeElapsed: 0,
   startTime: null,
   nextId: 0,
 
-  lowerLimit: Ember.computed('trackers.[]', function() {
+  lowerLimit: computed('trackers.[]', function() {
     let trackers = this.get('trackers');
     if (!trackers) { return 0; }
     let v = Math.min(...trackers.mapBy('performTime'));
     return v;
   }),
 
-  upperLimit: Ember.computed('timeElapsed', function() {
+  upperLimit: computed('timeElapsed', function() {
     let timeElapsed = this.get('timeElapsed');
     return Math.max(10000, timeElapsed);
   }),
@@ -44,15 +48,15 @@ export default Ember.Component.extend({
       let now = +new Date();
       this.set('timeElapsed', now - this.startTime);
 
-      let defer = Ember.RSVP.defer();
+      let defer = RSVP.defer();
       window.requestAnimationFrame(defer.resolve);
       yield defer.promise;
     }
   }).drop(),
 
-  restart: Ember.on('init', function () {
+  restart: on('init', function () {
     this.nextId = 0;
-    this.set('trackers', Ember.A());
+    this.set('trackers', A());
     this.get('ticker').cancelAll();
     this.set('timeElapsed', 0);
     this.startTime = 0;

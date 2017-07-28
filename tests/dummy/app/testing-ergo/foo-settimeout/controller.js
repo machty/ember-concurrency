@@ -1,8 +1,8 @@
-import Ember from 'ember';
+import Controller from '@ember/controller';
 import { task } from 'ember-concurrency';
 import { rawTimeout } from 'ember-concurrency/utils';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   isShowingButton: false,
   showButtonSoon: task(function * () {
     this.set('isShowingButton', false);

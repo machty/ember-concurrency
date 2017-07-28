@@ -1,6 +1,7 @@
-import { task, timeout, didCancel} from 'ember-concurrency';
+import Component from '@ember/component';
+import { task, timeout, didCancel } from 'ember-concurrency';
 
-export default Ember.Component.extend({
+export default Component.extend({
   queryServer: task(function * () {
     yield timeout(10000);
     return 123;

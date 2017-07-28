@@ -1,4 +1,6 @@
-import Ember from 'ember';
+import { run } from '@ember/runloop';
+import RSVP from 'rsvp';
+import EmberObject from '@ember/object';
 import { task, taskGroup } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
@@ -14,22 +16,22 @@ test("task groups allow tasks to share concurrency constraints", function(assert
   assert.expect(48);
 
   let deferA, deferB;
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     tg: taskGroup().enqueue(),
 
     taskA: task(function * () {
-      deferA = Ember.RSVP.defer();
+      deferA = RSVP.defer();
       yield deferA.promise;
     }).group('tg'),
 
     taskB: task(function * () {
-      deferB = Ember.RSVP.defer();
+      deferB = RSVP.defer();
       yield deferB.promise;
     }).group('tg'),
   });
 
   let obj, taskA, taskB, suffix, tg;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     tg = obj.get('tg');
     taskA = obj.get('taskA');
@@ -48,7 +50,7 @@ test("task groups allow tasks to share concurrency constraints", function(assert
   assertStates(assert, taskA, true, false, false, suffix);
   assertStates(assert, taskB, false, false, true, suffix);
 
-  Ember.run(taskB, 'perform');
+  run(taskB, 'perform');
 
   suffix = "after taskB is performed, but before taskA is finished";
   assertStates(assert, tg,    true, false, false, suffix);
@@ -57,7 +59,7 @@ test("task groups allow tasks to share concurrency constraints", function(assert
   assert.ok(deferA);
   assert.ok(!deferB);
 
-  Ember.run(deferA, deferA.resolve);
+  run(deferA, deferA.resolve);
 
   suffix = "after taskA has finished";
   assertStates(assert, tg,    true, false, false, suffix);
@@ -65,7 +67,7 @@ test("task groups allow tasks to share concurrency constraints", function(assert
   assertStates(assert, taskB, true, false, false, suffix);
   assert.ok(deferB);
 
-  Ember.run(deferB, deferB.resolve);
+  run(deferB, deferB.resolve);
 
   suffix = "after taskB has finished";
   assertStates(assert, tg,    false, false, true, suffix);
@@ -76,12 +78,12 @@ test("task groups allow tasks to share concurrency constraints", function(assert
 test("task groups enforce that only one member runs at a time", function(assert) {
   assert.expect(1);
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     tg: taskGroup(),
     taskA: task(function * () {}).group('tg')
   });
 
-  Ember.run(() => {
+  run(() => {
     assert.equal(Obj.create().get('taskA.group.name'), 'tg');
   });
 });
@@ -90,22 +92,22 @@ test("task groups can be canceled", function(assert) {
   assert.expect(18);
 
   let deferA, deferB;
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     tg: taskGroup().enqueue(),
 
     taskA: task(function * () {
-      deferA = Ember.RSVP.defer();
+      deferA = RSVP.defer();
       yield deferA.promise;
     }).group('tg'),
 
     taskB: task(function * () {
-      deferB = Ember.RSVP.defer();
+      deferB = RSVP.defer();
       yield deferB.promise;
     }).group('tg'),
   });
 
   let obj, taskA, taskB, suffix, tg;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     tg = obj.get('tg');
     taskA = obj.get('taskA');
@@ -120,7 +122,7 @@ test("task groups can be canceled", function(assert) {
   assertStates(assert, taskA, true, false, false, suffix);
   assertStates(assert, taskB, false, true, false, suffix);
 
-  Ember.run(tg, 'cancelAll');
+  run(tg, 'cancelAll');
 
   suffix = "after tg.cancelAll()";
   assertStates(assert, tg,    false, false, true, suffix);
@@ -131,9 +133,9 @@ test("task groups can be canceled", function(assert) {
 test("task groups return a boolean for isRunning", function(assert) {
   assert.expect(3);
 
-  let defer = Ember.RSVP.defer();
+  let defer = RSVP.defer();
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     tg: taskGroup().enqueue(),
 
     myTask: task(function * () {
@@ -145,8 +147,8 @@ test("task groups return a boolean for isRunning", function(assert) {
   let tg = obj.get('tg');
   let myTask = obj.get('myTask');
   assert.strictEqual(tg.get('isRunning'), false);
-  Ember.run(() => myTask.perform());
+  run(() => myTask.perform());
   assert.strictEqual(tg.get('isRunning'), true);
-  Ember.run(defer, defer.resolve);
+  run(defer, defer.resolve);
   assert.strictEqual(tg.get('isRunning'), false);
 });

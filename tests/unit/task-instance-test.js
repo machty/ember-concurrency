@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import RSVP, { resolve, reject } from 'rsvp';
+import { run } from '@ember/runloop';
 import { default as TaskInstance, wrap, didCancel } from 'ember-concurrency/-task-instance';
 import { module, test } from 'qunit';
 
@@ -8,7 +9,7 @@ test("basics", function(assert) {
   assert.expect(2);
 
   let context = {};
-  Ember.run(() => {
+  run(() => {
     TaskInstance.create({
       *fn(...args) {
         assert.equal(this, context, "generator functions' `this` is the context passed in");
@@ -23,7 +24,7 @@ test("basics", function(assert) {
 test("task instances run synchronously", function(assert) {
   assert.expect(3);
   let ti;
-  Ember.run(() => {
+  run(() => {
     let isSync = true;
     ti = wrap(function * (v) {
       assert.ok(isSync);
@@ -39,7 +40,7 @@ test("task instance hierarchies run synchronously", function(assert) {
   assert.expect(3);
 
   let ti;
-  Ember.run(() => {
+  run(() => {
     let isSync = true;
     ti = wrap(function * (v) {
       return wrap(function * (a) {
@@ -59,7 +60,7 @@ if (window.Promise) {
 
     let done = assert.async();
     let ti;
-    Ember.run(() => {
+    run(() => {
       ti = wrap(function * (v) {
         return window.Promise.resolve(v*2);
       })(123);
@@ -79,13 +80,13 @@ if (window.Promise) {
 
     let done = assert.async();
     let ti;
-    Ember.run(() => {
+    run(() => {
       ti = wrap(function * (v) {
-        assert.ok(Ember.run.currentRunLoop);
+        assert.ok(run.currentRunLoop);
         v = yield window.Promise.resolve(v*2);
-        assert.ok(Ember.run.currentRunLoop);
+        assert.ok(run.currentRunLoop);
         v = yield window.Promise.resolve(v*2);
-        assert.ok(Ember.run.currentRunLoop);
+        assert.ok(run.currentRunLoop);
         return v;
       })(123);
     });
@@ -104,7 +105,7 @@ if (window.Promise) {
 
     let done = assert.async();
     let ti;
-    Ember.run(() => {
+    run(() => {
       ti = wrap(function * (v) {
         v = yield window.Promise.resolve(v*2);
         v = yield window.Promise.resolve(v*2);
@@ -127,15 +128,15 @@ test("blocks on async yields", function(assert) {
   assert.expect(1);
 
   let defer;
-  Ember.run(() => {
+  run(() => {
     wrap(function * () {
-      defer = Ember.RSVP.defer();
+      defer = RSVP.defer();
       let value = yield defer.promise;
       assert.equal(value, 123);
     })();
   });
 
-  Ember.run(null, defer.resolve, 123);
+  run(null, defer.resolve, 123);
 });
 
 function expectCancelation(assert, promise, message) {
@@ -153,17 +154,17 @@ test("cancelation: yields in finally block", function(assert) {
   assert.expect(19);
 
   let defer0, defer1, defer2;
-  let taskInstance = Ember.run(() => {
+  let taskInstance = run(() => {
     return wrap(function * () {
       try {
-        defer0 = Ember.RSVP.defer();
+        defer0 = RSVP.defer();
         yield defer0.promise;
         assert.ok(false, "should not get here");
       } finally {
-        defer1 = Ember.RSVP.defer();
+        defer1 = RSVP.defer();
         let result = yield defer1.promise;
         assert.equal(result, 123);
-        defer2 = Ember.RSVP.defer();
+        defer2 = RSVP.defer();
         result = yield defer2.promise;
         assert.equal(result, 456);
       }
@@ -172,7 +173,7 @@ test("cancelation: yields in finally block", function(assert) {
 
   expectCancelation(assert, taskInstance);
 
-  Ember.run(() => {
+  run(() => {
     assert.ok(!taskInstance.get('isCanceled'));
 
     defer0.resolve();
@@ -183,15 +184,15 @@ test("cancelation: yields in finally block", function(assert) {
     assert.ok(!taskInstance.get('isError'));
   });
 
-  Ember.run(null, defer1.resolve, 123);
+  run(null, defer1.resolve, 123);
   assert.ok(!taskInstance.get('isFinished'), "task is not yet finished");
   assert.ok(!taskInstance.get('isCanceled'), "task is not yet canceled");
   assert.ok(taskInstance.get('isCanceling'), "task is canceling");
-  Ember.run(null, defer2.resolve, 456);
+  run(null, defer2.resolve, 456);
   assert.ok(taskInstance.get('isCanceled'));
   assert.ok(!taskInstance.get('isSuccessful'));
   assert.ok(!taskInstance.get('isError'));
-  Ember.run(null, defer2.resolve, 456);
+  run(null, defer2.resolve, 456);
   assert.ok(taskInstance.get('isFinished'));
   assert.ok(taskInstance.get('isCanceled'));
   assert.ok(!taskInstance.get('isSuccessful'));
@@ -203,7 +204,7 @@ test("deferred start", function(assert) {
   assert.expect(4);
 
   let shouldBeRunning = false;
-  let taskInstance = Ember.run(() => {
+  let taskInstance = run(() => {
     return TaskInstance.create({
       *fn(...args) {
         assert.ok(shouldBeRunning);
@@ -214,7 +215,7 @@ test("deferred start", function(assert) {
   });
 
   assert.ok(!taskInstance.get('hasStarted'));
-  Ember.run(() => {
+  run(() => {
     shouldBeRunning = true;
     taskInstance._start();
   });
@@ -224,7 +225,7 @@ test("deferred start", function(assert) {
 test("deferred start: .cancel() before ._start()", function(assert) {
   assert.expect(4);
 
-  let taskInstance = Ember.run(() => {
+  let taskInstance = run(() => {
     return TaskInstance.create({
       *fn() {
         assert.ok(false, "should not get here");
@@ -235,7 +236,7 @@ test("deferred start: .cancel() before ._start()", function(assert) {
 
   expectCancelation(assert, taskInstance, "TaskInstance '<unknown>' was canceled because .cancel() was explicitly called. For more information, see: http://ember-concurrency.com/#/docs/task-cancelation-help");
 
-  Ember.run(() => {
+  run(() => {
     taskInstance.cancel();
     taskInstance._start();
   });
@@ -246,7 +247,7 @@ test("deferred start: .cancel() before ._start()", function(assert) {
 test(".then() resolves with the returned value", function(assert) {
   assert.expect(1);
 
-  Ember.run(() => {
+  run(() => {
     wrap(function * () {
       return 123;
     })().then(v => {
@@ -258,9 +259,9 @@ test(".then() resolves with the returned value", function(assert) {
 test("returning promises resolves the promise", function(assert) {
   assert.expect(1);
 
-  Ember.run(() => {
+  run(() => {
     wrap(function * () {
-      return Ember.RSVP.resolve(123);
+      return resolve(123);
     })().then(v => {
       assert.equal(v, 123);
     });
@@ -270,9 +271,9 @@ test("returning promises resolves the promise", function(assert) {
 test("returning rejecting promise rejects TaskInstance's promise", function(assert) {
   assert.expect(1);
 
-  Ember.run(() => {
+  run(() => {
     wrap(function * () {
-      return Ember.RSVP.reject(123);
+      return reject(123);
     })().then(null, v => {
       assert.equal(v, 123);
     });
@@ -281,7 +282,7 @@ test("returning rejecting promise rejects TaskInstance's promise", function(asse
 
 test("don't use the most recent yield as a return value if there's no explicit return", function(assert) {
   assert.expect(1);
-  Ember.run(() => {
+  run(() => {
     wrap(function * () {
       yield 5;
     })().then(v => {
@@ -296,15 +297,15 @@ test("exception handling", function(assert) {
   let defer0, defer1;
   let taskInstance;
   let caughtError;
-  Ember.run(() => {
+  run(() => {
     taskInstance = wrap(function * () {
       try {
         throw new Error("wat");
       } finally {
-        defer0 = Ember.RSVP.defer();
+        defer0 = RSVP.defer();
         let val = yield defer0.promise;
         assert.equal(val, 123);
-        defer1 = Ember.RSVP.defer();
+        defer1 = RSVP.defer();
         val = yield defer1.promise;
         assert.equal(val, 456);
       }
@@ -314,9 +315,9 @@ test("exception handling", function(assert) {
 
   assert.ok(!caughtError);
   assert.ok(!taskInstance.get('isFinished'));
-  Ember.run(null, defer0.resolve, 123);
+  run(null, defer0.resolve, 123);
   assert.ok(!taskInstance.get('isFinished'));
-  Ember.run(null, defer1.resolve, 456);
+  run(null, defer1.resolve, 456);
   assert.equal(caughtError.message, "wat");
   assert.ok(taskInstance.get('isFinished'));
 });
@@ -324,9 +325,9 @@ test("exception handling", function(assert) {
 test("unhandled yielded rejections bubble", function(assert) {
   assert.expect(1);
   try {
-    Ember.run(() => {
+    run(() => {
       wrap(function * () {
-        yield Ember.RSVP.reject("wat");
+        yield reject("wat");
       })();
     });
   } catch(e) {
@@ -337,7 +338,7 @@ test("unhandled yielded rejections bubble", function(assert) {
 test("unhandled thrown exceptions bubble", function(assert) {
   assert.expect(1);
   try {
-    Ember.run(() => {
+    run(() => {
       wrap(function * () {
         throw "wat";
       })();
@@ -351,10 +352,10 @@ test("yielding to other tasks", function(assert) {
   assert.expect(3);
 
   let taskInstance0, taskInstance1, defer;
-  Ember.run(() => {
+  run(() => {
     taskInstance0 = wrap(function * () {
       taskInstance1 = wrap(function * () {
-        defer = Ember.RSVP.defer();
+        defer = RSVP.defer();
         let value = yield defer.promise;
         return value;
       })();
@@ -366,17 +367,17 @@ test("yielding to other tasks", function(assert) {
   assert.equal(taskInstance0.get('state'), 'running');
   assert.equal(taskInstance1.get('state'), 'running');
 
-  Ember.run(null, defer.resolve, 123);
+  run(null, defer.resolve, 123);
 });
 
 test("yielding to other tasks: parent task gets canceled", function(assert) {
   assert.expect(2);
 
   let taskInstance0, taskInstance1, defer;
-  Ember.run(() => {
+  run(() => {
     taskInstance0 = wrap(function * () {
       taskInstance1 = wrap(function * () {
-        defer = Ember.RSVP.defer();
+        defer = RSVP.defer();
         let value = yield defer.promise;
         return value;
       })();
@@ -385,12 +386,12 @@ test("yielding to other tasks: parent task gets canceled", function(assert) {
     })();
   });
 
-  Ember.run(taskInstance0, 'cancel');
+  run(taskInstance0, 'cancel');
 
   assert.equal(taskInstance0.get('state'), 'canceled');
   assert.equal(taskInstance1.get('state'), 'canceled');
 
-  Ember.run(null, defer.resolve, "naw");
+  run(null, defer.resolve, "naw");
 });
 
 function shouldNotGetCalled() {
@@ -401,10 +402,10 @@ test("yielding to other tasks: child task gets canceled", function(assert) {
   assert.expect(4);
 
   let taskInstance0, taskInstance1, defer;
-  Ember.run(() => {
+  run(() => {
     taskInstance0 = wrap(function * () {
       taskInstance1 = wrap(function * () {
-        defer = Ember.RSVP.defer();
+        defer = RSVP.defer();
         let value = yield defer.promise;
         return value;
       })();
@@ -415,7 +416,7 @@ test("yielding to other tasks: child task gets canceled", function(assert) {
   });
 
   try {
-    Ember.run(taskInstance1, 'cancel');
+    run(taskInstance1, 'cancel');
   } catch(e) {
     assert.equal(e.name, 'TaskCancelation');
     assert.equal(e.taskInstance, taskInstance1);
@@ -424,14 +425,14 @@ test("yielding to other tasks: child task gets canceled", function(assert) {
   assert.equal(taskInstance0.get('state'), 'canceled');
   assert.equal(taskInstance1.get('state'), 'canceled');
 
-  Ember.run(null, defer.resolve, "naw");
+  run(null, defer.resolve, "naw");
 });
 
 test("canceling a finished task shouldn't mark it as canceled", function(assert) {
   assert.expect(5);
 
   let taskInstance, didRun = false;
-  Ember.run(() => {
+  run(() => {
     taskInstance = wrap(function * () {
       didRun = true;
     })();
@@ -440,7 +441,7 @@ test("canceling a finished task shouldn't mark it as canceled", function(assert)
   assert.ok(didRun);
   assert.equal(taskInstance.get('isFinished'), true);
   assert.equal(taskInstance.get('isCanceled'), false);
-  Ember.run(taskInstance, 'cancel');
+  run(taskInstance, 'cancel');
   assert.equal(taskInstance.get('isFinished'), true);
   assert.equal(taskInstance.get('isCanceled'), false);
 });
@@ -448,7 +449,7 @@ test("canceling a finished task shouldn't mark it as canceled", function(assert)
 test("taskInstance.value is null until task instance completes successfully", function(assert) {
   assert.expect(2);
 
-  let taskInstance = Ember.run(() => {
+  let taskInstance = run(() => {
     return TaskInstance.create({
       *fn() {
         return 123;
@@ -458,14 +459,14 @@ test("taskInstance.value is null until task instance completes successfully", fu
   });
 
   assert.equal(taskInstance.get('value'), null);
-  Ember.run(taskInstance, '_start');
+  run(taskInstance, '_start');
   assert.equal(taskInstance.get('value'), 123);
 });
 
 test("taskInstance.error is null until task instance errors", function(assert) {
   assert.expect(3);
 
-  let taskInstance = Ember.run(() => {
+  let taskInstance = run(() => {
     return TaskInstance.create({
       *fn() {
         throw "justin bailey";
@@ -476,7 +477,7 @@ test("taskInstance.error is null until task instance errors", function(assert) {
 
   assert.equal(taskInstance.get('error'), null);
   try {
-    Ember.run(taskInstance, '_start');
+    run(taskInstance, '_start');
   } catch(e) {
     assert.equal(e, "justin bailey");
     assert.equal(taskInstance.get('error'), "justin bailey");
@@ -486,41 +487,41 @@ test("taskInstance.error is null until task instance errors", function(assert) {
 test("taskInstance.error is set when task cancels", function(assert) {
   assert.expect(1);
 
-  let taskInstance = Ember.run(() => {
+  let taskInstance = run(() => {
     return wrap(function * () {
-      yield Ember.RSVP.defer().promise;
+      yield RSVP.defer().promise;
     })();
   });
 
-  Ember.run(taskInstance, '_start');
-  Ember.run(taskInstance, 'cancel');
+  run(taskInstance, '_start');
+  run(taskInstance, 'cancel');
   assert.equal(taskInstance.get('error.name'), "TaskCancelation");
 });
 
 test("taskInstance.error is set when task is dropped", function(assert) {
   assert.expect(1);
 
-  let taskInstance = Ember.run(() => {
+  let taskInstance = run(() => {
     return wrap(function * () {
-      yield Ember.RSVP.defer().promise;
+      yield RSVP.defer().promise;
     })();
   });
 
-  Ember.run(taskInstance, 'cancel');
+  run(taskInstance, 'cancel');
   assert.equal(taskInstance.get('error.name'), "TaskCancelation");
 });
 
 test("taskInstance.isSuccessful is set when task fulfills", function(assert) {
   assert.expect(4);
 
-  let taskInstance = Ember.run(() => {
+  let taskInstance = run(() => {
     return TaskInstance.create({
       *fn() {},
       args: [],
     });
   });
 
-  Ember.run(taskInstance, '_start');
+  run(taskInstance, '_start');
   assert.equal(taskInstance.get('isFinished'), true);
   assert.equal(taskInstance.get('isSuccessful'), true);
   assert.equal(taskInstance.get('isCanceled'), false);
@@ -530,7 +531,7 @@ test("taskInstance.isSuccessful is set when task fulfills", function(assert) {
 test("taskInstance.isError is set when task throws an error", function(assert) {
   assert.expect(4);
 
-  let taskInstance = Ember.run(() => {
+  let taskInstance = run(() => {
     return TaskInstance.create({
       *fn() {
         throw "wat";
@@ -540,7 +541,7 @@ test("taskInstance.isError is set when task throws an error", function(assert) {
   });
 
   try {
-    Ember.run(taskInstance, '_start');
+    run(taskInstance, '_start');
   } catch (e) {
     assert.equal(taskInstance.get('isFinished'), true);
     assert.equal(taskInstance.get('isSuccessful'), false);
@@ -553,10 +554,10 @@ test("tasks can catch rejecting promises, preventing their errors from bubbling"
   assert.expect(1);
 
   let taskInstance0;
-  Ember.run(() => {
+  run(() => {
     taskInstance0 = wrap(function * () {
       try {
-        yield Ember.RSVP.reject("wat");
+        yield reject("wat");
       } catch(e) {
         assert.equal(e, "wat");
       }
@@ -567,7 +568,7 @@ test("tasks can catch rejecting promises, preventing their errors from bubbling"
 test("if a parent task catches a child task that throws, it prevents the error from bubbling", function(assert) {
   assert.expect(1);
 
-  Ember.run(() => {
+  run(() => {
     wrap(function * () {
       let taskInstance1 = wrap(function * () { throw "wat"; })();
       try {
@@ -582,10 +583,10 @@ test("if a parent task catches a child task that throws, it prevents the error f
 test("if a parent task catches a child task that returns a rejecting promise, it prevents the error from bubbling", function(assert) {
   assert.expect(1);
 
-  Ember.run(() => {
+  run(() => {
     wrap(function * () {
       let taskInstance1 = wrap(function * () {
-        return Ember.RSVP.reject("wat");
+        return reject("wat");
       })();
 
       try {
@@ -601,11 +602,11 @@ test("in a hierarchy of child task performs, a bubbling exception should only pr
   assert.expect(1);
 
   try {
-    Ember.run(() => {
+    run(() => {
       wrap(function * () {
         yield wrap(function * () {
           yield wrap(function * () {
-            return Ember.RSVP.reject("wat");
+            return reject("wat");
           })();
         })();
       })();
@@ -620,11 +621,11 @@ test("in a hierarchy of child task performs, a bubbling cancel should not be con
   assert.expect(1);
 
   let taskInstance0;
-  Ember.run(() => {
+  run(() => {
     wrap(function * () {
       yield wrap(function * () {
         taskInstance0 = wrap(function * () {
-          return Ember.RSVP.defer().promise;
+          return RSVP.defer().promise;
         })();
         yield taskInstance0;
       })();
@@ -632,21 +633,21 @@ test("in a hierarchy of child task performs, a bubbling cancel should not be con
   });
 
   assert.ok(taskInstance0.get('isRunning'));
-  Ember.run(taskInstance0, 'cancel');
+  run(taskInstance0, 'cancel');
 });
 
 test("task cancelation should skip over catch blocks within task functions", function(assert) {
   assert.expect(1);
 
   let taskInstance0;
-  Ember.run(() => {
+  run(() => {
     wrap(function * () {
       try {
         yield wrap(function * () {
           try {
             taskInstance0 = wrap(function * () {
               try {
-                yield Ember.RSVP.defer().promise;
+                yield RSVP.defer().promise;
                 assert.ok(false, "one");
               } catch(e) {
                 assert.ok(false, "one catch");
@@ -667,17 +668,17 @@ test("task cancelation should skip over catch blocks within task functions", fun
     });
   });
 
-  Ember.run(taskInstance0, 'cancel');
+  run(taskInstance0, 'cancel');
 });
 
 test("canceling a task instance should be async", function(assert) {
   assert.expect(4);
 
   let defer;
-  let taskInstance = Ember.run(() => {
+  let taskInstance = run(() => {
     return TaskInstance.create({
       *fn() {
-        defer = Ember.RSVP.defer();
+        defer = RSVP.defer();
         yield defer.promise;
         taskInstance.cancel();
         return 123;
@@ -692,7 +693,7 @@ test("canceling a task instance should be async", function(assert) {
   });
 
   assert.ok(!taskInstance.get('isCanceling'));
-  Ember.run(null, defer.resolve);
+  run(null, defer.resolve);
   assert.ok(taskInstance.get('isCanceling'));
   assert.ok(taskInstance.get('isCanceled'));
 });

@@ -1,8 +1,8 @@
-import Ember from 'ember';
+import Controller from '@ember/controller';
 import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET increment-button-task
-export default Ember.Controller.extend({
+export default Controller.extend({
   count: 0,
   incrementBy: task(function * (inc) {
     let speed = 400;

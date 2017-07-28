@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import { computed } from '@ember/object';
+import Controller from '@ember/controller';
 import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET decorating-tasks
@@ -12,7 +13,7 @@ function taskWithCooldown(taskPath, ms) {
   }).drop();
 }
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   sharedTask: task(function * () {
     yield timeout(1000);
   }).drop(),
@@ -21,7 +22,7 @@ export default Ember.Controller.extend({
   oneSecond:  taskWithCooldown('sharedTask', 1000),
   twoSeconds: taskWithCooldown('sharedTask', 2000),
 
-  tasks: Ember.computed(function() {
+  tasks: computed(function() {
     return [
       this.get('halfSecond'),
       this.get('oneSecond'),

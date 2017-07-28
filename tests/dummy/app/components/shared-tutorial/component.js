@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import { A } from '@ember/array';
+import Component from '@ember/component';
 import { task, timeout } from 'ember-concurrency';
 
 const PREFIXES = [
@@ -50,10 +51,10 @@ let geolocation = {
   }
 };
 
-export default Ember.Component.extend({
+export default Component.extend({
   init() {
     this._super();
-    this.set('logs', Ember.A());
+    this.set('logs', A());
     this.set('formData', {
       user: "machty",
       amount: "9.99",

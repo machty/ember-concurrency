@@ -1,7 +1,7 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 import { task, timeout } from 'ember-concurrency';
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: '',
   count: 0,
 // BEGIN-SNIPPET count-up

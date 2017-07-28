@@ -1,4 +1,6 @@
-import Ember from 'ember';
+import { run } from '@ember/runloop';
+import { defer } from 'rsvp';
+import EmberObject from '@ember/object';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
@@ -21,9 +23,9 @@ function taskCounterWrapper(taskProperty) {
 module('Unit: task property');
 
 test("`TaskProperty`s can be extended with custom functionality / decoration", function(assert) {
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     doStuff: taskCounterWrapper(task(function * () {
-      yield Ember.RSVP.defer().promise;
+      yield defer().promise;
     }))
   });
 
@@ -31,20 +33,20 @@ test("`TaskProperty`s can be extended with custom functionality / decoration", f
 
   assert.equal(taskRunCounter, 0);
 
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('doStuff').perform();
   });
 
   assert.equal(taskRunCounter, 1);
 
-  Ember.run(() => {
+  run(() => {
     obj.get('doStuff').perform();
   });
 
   assert.equal(taskRunCounter, 2);
 
-  Ember.run(() => {
+  run(() => {
     obj.get('doStuff').cancelAll();
   });
 

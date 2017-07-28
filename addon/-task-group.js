@@ -1,11 +1,10 @@
-import Ember from 'ember';
-const { computed } = Ember;
+import EmberObject, { computed } from '@ember/object';
 import { objectAssign, _ComputedProperty } from './utils';
 import TaskStateMixin from './-task-state-mixin';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
 
 
-export const TaskGroup = Ember.Object.extend(TaskStateMixin, {
+export const TaskGroup = EmberObject.extend(TaskStateMixin, {
   isTaskGroup: true,
 
   toString() {

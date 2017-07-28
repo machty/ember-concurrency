@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import { computed } from '@ember/object';
+import Controller from '@ember/controller';
 import { timeout } from 'ember-concurrency';
 
 function * taskFn() {
@@ -8,14 +9,14 @@ function * taskFn() {
 // BEGIN-SNIPPET task-groups
 import { task, taskGroup } from 'ember-concurrency';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   chores: taskGroup().drop(),
 
   mowLawn:       task(taskFn).group('chores'),
   doDishes:      task(taskFn).group('chores'),
   changeDiapers: task(taskFn).group('chores'),
 
-  tasks: Ember.computed(function() {
+  tasks: computed(function() {
     return [
       this.get('mowLawn'),
       this.get('doDishes'),

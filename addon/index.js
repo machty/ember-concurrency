@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import { timeout } from './utils';
 import { TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';

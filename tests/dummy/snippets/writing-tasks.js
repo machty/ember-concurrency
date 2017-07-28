@@ -1,7 +1,7 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 import { task } from 'ember-concurrency';
 
-export default Ember.Component.extend({
+export default Component.extend({
   myTask: task(function * () {
     alert("hello!");
   })
