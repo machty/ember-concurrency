@@ -1,10 +1,9 @@
-import Ember from 'ember';
+import { run } from '@ember/runloop';
+import $ from 'jquery';
 import { timeout } from 'ember-concurrency';
 import { test } from '../../tests/helpers/generator-tests';
 import { module } from 'qunit';
 import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
-
-const { $ } = Ember;
 
 //window.Promise = Ember.RSVP.Promise;
 
@@ -23,9 +22,9 @@ test('async tests work', function * (assert) {
 
 test('tests run outside of run loops', function * (assert) {
   assert.expect(2);
-  assert.ok(!Ember.run.currentRunLoop);
+  assert.ok(!run.currentRunLoop);
   yield timeout(100);
-  assert.ok(!Ember.run.currentRunLoop);
+  assert.ok(!run.currentRunLoop);
 });
 
 moduleForAcceptance('ember-concurrency testing utilities (acceptance)');
@@ -114,9 +113,9 @@ test('async tests work', async function(assert) {
 
 test('tests run outside of run loops', async function(assert) {
   assert.expect(2);
-  assert.ok(!Ember.run.currentRunLoop);
+  assert.ok(!run.currentRunLoop);
   await timeout(100);
-  assert.ok(!Ember.run.currentRunLoop);
+  assert.ok(!run.currentRunLoop);
 });
 
 test('find() waits for element to exist', async function(assert) {

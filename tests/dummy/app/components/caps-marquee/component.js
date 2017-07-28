@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 import { task, timeout } from 'ember-concurrency';
 
 function capitalizeAt(text, i) {
@@ -8,7 +8,7 @@ function capitalizeAt(text, i) {
   return before + capsLetter + after;
 }
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: '',
   text: null,
   scrambledText: null,

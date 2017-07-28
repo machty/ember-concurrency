@@ -1,8 +1,8 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 
 import { didCancel } from 'ember-concurrency';
 
-export default Ember.Component.extend({
+export default Component.extend({
   click() {
     let val = this.attrs.action(3, 4);
     if (!val) { return; }

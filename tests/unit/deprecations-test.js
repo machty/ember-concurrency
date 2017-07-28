@@ -1,3 +1,5 @@
+import { run } from '@ember/runloop';
+import EmberObject from '@ember/object';
 import Ember from 'ember';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
@@ -19,7 +21,7 @@ module('Deprecations', {
 test("warn if using maxConcurrency without specifying other task modifier", function(assert) {
   assert.expect(3);
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     a: task(function * () { }).maxConcurrency(3),
     b: task(function * () { }).enqueue().maxConcurrency(10000),
     c: task(function * () { }).restartable().maxConcurrency(10000),
@@ -30,7 +32,7 @@ test("warn if using maxConcurrency without specifying other task modifier", func
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
   });
   warnings.sort();

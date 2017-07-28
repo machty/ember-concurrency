@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import { get } from '@ember/object';
+import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import { task } from 'ember-concurrency';
 
@@ -15,8 +16,8 @@ test(`mock task can be created in a test`, function(assert) {
 	  })
   };
 
-  Ember.run(() => {
-    return Ember.get(myMock, 'doAsync').perform()
+  run(() => {
+    return get(myMock, 'doAsync').perform()
     .then(() => {
     	assert.ok(taskRan);
     });

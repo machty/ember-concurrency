@@ -1,8 +1,8 @@
-import Ember from 'ember';
+import Controller from '@ember/controller';
 import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET child-tasks
-export default Ember.Controller.extend({
+export default Controller.extend({
   status: "Waiting to start",
 
   parentTask: task(function * () {

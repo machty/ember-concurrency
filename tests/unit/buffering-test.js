@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import EmberObject from '@ember/object';
+import { later, run, join } from '@ember/runloop';
 import { task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
@@ -48,7 +49,7 @@ function doBufferingTest(description, observable, bufferPolicyFn, expectations, 
         yield timeout(10);
         arr.push(v);
         if (v === last) {
-          Ember.run.later(() => {
+          later(() => {
             assert.equal(maxSem, maxConcurrency, "assert expected maxConcurrency");
             assert.deepEqual(arr, expectations);
             start();
@@ -61,14 +62,14 @@ function doBufferingTest(description, observable, bufferPolicyFn, expectations, 
 
     taskCP = bufferPolicyFn(taskCP);
 
-    let Obj = Ember.Object.extend({
+    let Obj = EmberObject.extend({
       myTask: taskCP
     });
 
-    Ember.run(() => {
+    run(() => {
       let obj = Obj.create();
       observable.subscribe(v => {
-        Ember.run.join(() => {
+        join(() => {
           obj.get('myTask').perform(v);
         });
       });

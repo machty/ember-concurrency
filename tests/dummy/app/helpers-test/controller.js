@@ -1,12 +1,13 @@
-import Ember from 'ember';
+import { defer } from 'rsvp';
+import Controller from '@ember/controller';
 import { task } from 'ember-concurrency';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   status: null,
   myTask: task(function * (...args) {
     try {
       this.set('status', args.join('-'));
-      yield Ember.RSVP.defer().promise;
+      yield defer().promise;
     } finally {
       this.set('status', 'canceled');
     }

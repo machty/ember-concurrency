@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 
 // BEGIN-SNIPPET increment-button
 function sendPress() {
@@ -9,7 +9,7 @@ function sendRelease() {
   this.sendAction('release');
 }
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'button',
 
   touchStart: sendPress,

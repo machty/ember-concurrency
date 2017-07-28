@@ -1,8 +1,9 @@
-import Ember from 'ember';
+import { computed } from '@ember/object';
+import Controller from '@ember/controller';
 import { taskGroup } from 'ember-concurrency';
 
 // BEGIN-SNIPPET task-groups
-export default Ember.Controller.extend({
+export default Controller.extend({
   everything:         taskGroup(),
   everythingDropped:  taskGroup().drop(),
   everythingEnqueue:  taskGroup().enqueue(),
@@ -11,7 +12,7 @@ export default Ember.Controller.extend({
   everythingEnqueue3: taskGroup().maxConcurrency(3).enqueue(),
   everythingRestart3: taskGroup().maxConcurrency(3).restartable(),
 
-  taskGroups: Ember.computed(function () {
+  taskGroups: computed(function () {
     return [
       this.get('everything'),
       this.get('everythingDropped'),

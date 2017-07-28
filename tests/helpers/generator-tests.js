@@ -1,12 +1,11 @@
-import Ember from 'ember';
+import { resolve } from 'rsvp';
+import $ from 'jquery';
 import { test as qunitTest } from 'ember-qunit';
 import { wrap, go } from 'ember-concurrency/-task-instance';
 import {
   raw,
   rawTimeout
 } from 'ember-concurrency/utils';
-
-const { $ } = Ember;
 
 const find = wrap(function * (app, selector, options = {}) {
   let startedAt = + new Date();
@@ -65,7 +64,7 @@ function test(description, fn) {
         context: this,
       }).finally(done);
     } else {
-      Ember.RSVP.resolve(fn.call(this, assert)).finally(done);
+      resolve(fn.call(this, assert)).finally(done);
     }
   });
 }

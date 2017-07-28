@@ -1,10 +1,10 @@
-import Ember from 'ember';
+import Controller from '@ember/controller';
 import { randomWord } from 'dummy/utils';
 
 // BEGIN-SNIPPET encapsulated-task-controller
 import { task, timeout } from 'ember-concurrency';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   uploadFile: task({
     progress: 0,
     url: null,

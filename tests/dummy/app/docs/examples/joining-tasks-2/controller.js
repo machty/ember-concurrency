@@ -1,11 +1,12 @@
-import Ember from 'ember';
+import { makeArray } from '@ember/array';
+import Controller from '@ember/controller';
 import { randomWord } from 'dummy/utils';
 
 // BEGIN-SNIPPET joining-tasks-2
 import { task, timeout, all, race } from 'ember-concurrency';
 const methods = { all, race };
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   status: "Waiting...",
   childTasks: null,
 
@@ -20,7 +21,7 @@ export default Ember.Controller.extend({
     this.set('childTasks', childTasks);
     this.set('status', "Waiting for child tasks to complete...");
     let words = yield allOrRace(childTasks);
-    this.set('status', `Done: ${Ember.makeArray(words).join(', ')}`);
+    this.set('status', `Done: ${makeArray(words).join(', ')}`);
   }).restartable(),
 
   child: task({

@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import { assert } from '@ember/debug';
+import { schedule } from '@ember/runloop';
 
 import { isEventedObject } from './utils';
 
@@ -13,7 +14,7 @@ class WaitForQueueYieldable {
   }
 
   [yieldableSymbol](taskInstance, resumeIndex) {
-    Ember.run.schedule(this.queueName, () => {
+    schedule(this.queueName, () => {
       taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, null);
     });
   }
@@ -81,7 +82,7 @@ export function waitForQueue(queueName) {
  * @param {function} eventName the name of the event to wait for
  */
 export function waitForEvent(object, eventName) {
-  Ember.assert(`${object} must include Ember.Evented (or support \`.on()\`, \`.one()\`, and \`.off()\`) to be able to use \`waitForEvent\``, isEventedObject(object));
+  assert(`${object} must include Ember.Evented (or support \`.on()\`, \`.one()\`, and \`.off()\`) to be able to use \`waitForEvent\``, isEventedObject(object));
   return new WaitForEventYieldable(object, eventName);
 }
 

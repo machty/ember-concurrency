@@ -1,8 +1,8 @@
-import Ember from 'ember';
+import Controller from '@ember/controller';
 import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET error-vs-cancelation
-export default Ember.Controller.extend({
+export default Controller.extend({
   numCompletions: 0,
   numErrors: 0,
   numFinallys: 0,

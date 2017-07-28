@@ -1,12 +1,10 @@
-import Ember from 'ember';
+import Evented from '@ember/object/evented';
+import EmberObject from '@ember/object';
+import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import { task, waitForQueue, waitForEvent } from 'ember-concurrency';
 
-const EventedObject = Ember.Object.extend(Ember.Evented);
-
-const {
-  run
-} = Ember;
+const EventedObject = EmberObject.extend(Evented);
 
 module('Unit: test waitForQueue and waitForEvent');
 
@@ -14,7 +12,7 @@ test('waitForQueue works', function(assert) {
   assert.expect(2);
 
   let taskCompleted = false;
-  const Obj = Ember.Object.extend({
+  const Obj = EmberObject.extend({
     task: task(function*() {
       yield waitForQueue('afterRender');
       taskCompleted = true;
@@ -34,7 +32,7 @@ test('cancelling waitForQueue works', function(assert) {
   assert.expect(2);
 
   let taskCompleted = false;
-  const Obj = Ember.Object.extend({
+  const Obj = EmberObject.extend({
     task: task(function*() {
       yield waitForQueue('afterRender');
       taskCompleted = true;

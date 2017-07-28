@@ -1,3 +1,8 @@
+import { scheduleOnce } from '@ember/runloop';
+import { addObserver } from '@ember/object/observers';
+import { addListener } from '@ember/object/events';
+import EmberObject from '@ember/object';
+import { getOwner } from '@ember/application';
 import Ember from 'ember';
 import TaskInstance from './-task-instance';
 import TaskStateMixin from './-task-state-mixin';
@@ -5,8 +10,6 @@ import { TaskGroup } from './-task-group';
 import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
 import { objectAssign, INVOKE, _cleanupOnDestroy, _ComputedProperty } from './utils';
 import EncapsulatedTask from './-encapsulated-task';
-
-const { getOwner } = Ember;
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -25,7 +28,7 @@ const { getOwner } = Ember;
 
   @class Task
 */
-export const Task = Ember.Object.extend(TaskStateMixin, {
+export const Task = EmberObject.extend(TaskStateMixin, {
   /**
    * `true` if any current task instances are running.
    *
@@ -375,9 +378,9 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
       Ember.Logger.warn(`The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${this._maxConcurrency})\``);
     }
 
-    registerOnPrototype(Ember.addListener, proto, this.eventNames, taskName, 'perform', false);
-    registerOnPrototype(Ember.addListener, proto, this.cancelEventNames, taskName, 'cancelAll', false);
-    registerOnPrototype(Ember.addObserver, proto, this._observes, taskName, 'perform', true);
+    registerOnPrototype(addListener, proto, this.eventNames, taskName, 'perform', false);
+    registerOnPrototype(addListener, proto, this.cancelEventNames, taskName, 'cancelAll', false);
+    registerOnPrototype(addObserver, proto, this._observes, taskName, 'perform', true);
   },
 
   /**
@@ -556,7 +559,7 @@ function makeTaskCallback(taskName, method, once) {
     let task = this.get(taskName);
 
     if (once) {
-      Ember.run.scheduleOnce('actions', task, method, ...arguments);
+      scheduleOnce('actions', task, method, ...arguments);
     } else {
       task[method].apply(task, arguments);
     }

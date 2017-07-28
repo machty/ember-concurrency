@@ -1,8 +1,8 @@
-import Ember from 'ember';
+import { helper } from '@ember/component/helper';
 
 export function capsBool([bool]/*, hash*/) {
   return bool ? "YES" : "no";
 }
 
-export default Ember.Helper.helper(capsBool);
+export default helper(capsBool);
 

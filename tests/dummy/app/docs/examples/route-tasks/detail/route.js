@@ -1,9 +1,10 @@
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
+import Route from '@ember/routing/route';
 import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET detail-route
-export default Ember.Route.extend({
-  notify: Ember.inject.service('notify'),
+export default Route.extend({
+  notify: service('notify'),
 
   setupController(controller, model) {
     this._super(...arguments);

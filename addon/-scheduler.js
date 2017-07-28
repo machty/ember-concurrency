@@ -1,10 +1,9 @@
-import Ember from 'ember';
-
-const { get, set } = Ember;
+import { once } from '@ember/runloop';
+import EmberObject, { set, get } from '@ember/object';
 
 let SEEN_INDEX = 0;
 
-const Scheduler = Ember.Object.extend({
+const Scheduler = EmberObject.extend({
   lastPerformed:  null,
   lastStarted:    null,
   lastRunning:    null,
@@ -111,7 +110,7 @@ const Scheduler = Ember.Object.extend({
         }
         set(this, 'lastIncomplete', taskInstance);
       }
-      Ember.run.once(this, this._flushQueues);
+      once(this, this._flushQueues);
     });
   }
 });

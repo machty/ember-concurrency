@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import { computed } from '@ember/object';
+import Component from '@ember/component';
 import { task, timeout, taskGroup } from 'ember-concurrency';
 
 function * shortPause() {
@@ -6,7 +7,7 @@ function * shortPause() {
 }
 
 // BEGIN-SNIPPET task-group-component
-export default Ember.Component.extend({
+export default Component.extend({
   taskGroup: null, // passed-in
 
   chores:        taskGroup().group('taskGroup'),
@@ -19,7 +20,7 @@ export default Ember.Component.extend({
   dance:         task(shortPause).group('fun'),
   sing:          task(shortPause).group('fun'),
 
-  tasks: Ember.computed(function() {
+  tasks: computed(function() {
     return [
       this.get('changeDiapers'),
       this.get('doDishes'),

@@ -1,10 +1,9 @@
-import Ember from 'ember';
-
-const { computed } = Ember;
+import Mixin from '@ember/object/mixin';
+import { computed } from '@ember/object';
 const { alias } = computed;
 
 // this is a mixin of properties/methods shared between Tasks and TaskGroups
-export default Ember.Mixin.create({
+export default Mixin.create({
   isRunning: computed.gt('numRunning', 0),
   isQueued:  computed.gt('numQueued',  0),
   isIdle:    computed('isRunning', 'isQueued', function() {

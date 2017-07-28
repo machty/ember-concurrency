@@ -1,11 +1,13 @@
-import Ember from 'ember';
+import $ from 'jquery';
+import { isBlank } from '@ember/utils';
+import Controller from '@ember/controller';
 import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET debounced-search-with-cancelation
 const DEBOUNCE_MS = 250;
-export default Ember.Controller.extend({
+export default Controller.extend({
   searchRepo: task(function * (term) {
-    if (Ember.isBlank(term)) { return []; }
+    if (isBlank(term)) { return []; }
 
     // Pause here for DEBOUNCE_MS milliseconds. Because this
     // task is `restartable`, if the user starts typing again,
@@ -26,7 +28,7 @@ export default Ember.Controller.extend({
   getJSON: task(function * (url) {
     let xhr;
     try {
-      xhr = Ember.$.getJSON(url);
+      xhr = $.getJSON(url);
       let result = yield xhr.promise();
       return result;
 

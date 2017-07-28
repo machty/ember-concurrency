@@ -1,9 +1,10 @@
-import Ember from 'ember';
+import Controller from '@ember/controller';
+import { defer } from 'rsvp';
 import { task } from 'ember-concurrency';
 
 // BEGIN-SNIPPET cancelation
-const WAIT_HERE_FOREVER = Ember.RSVP.defer().promise;
-export default Ember.Controller.extend({
+const WAIT_HERE_FOREVER = defer().promise;
+export default Controller.extend({
   count: 0,
   mostRecent: null,
 

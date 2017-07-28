@@ -1,7 +1,7 @@
-import Ember from 'ember';
+import Route from '@ember/routing/route';
 import { task, timeout } from 'ember-concurrency';
 
-export default Ember.Route.extend({
+export default Route.extend({
   setupController() {
     this.get('loopingTask').perform();
   },

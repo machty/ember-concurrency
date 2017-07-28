@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import { computed } from '@ember/object';
+import Controller from '@ember/controller';
 import { task, timeout } from 'ember-concurrency';
 import { randomWord } from 'dummy/utils';
 
@@ -20,7 +21,7 @@ function * sharedFn(shouldError) {
 
 
 // BEGIN-SNIPPET completion-state-controller
-export default Ember.Controller.extend({
+export default Controller.extend({
   doStuff:            task(sharedFn),
   doStuffDrop:        task(sharedFn).drop(),
   doStuffEnqueue:     task(sharedFn).enqueue(),
@@ -35,7 +36,7 @@ export default Ember.Controller.extend({
     "doStuffRestartable",
   ],
 
-  taskProperties: Ember.computed('showLessCommon', function() {
+  taskProperties: computed('showLessCommon', function() {
     return [
       ...this.get('commonTaskProperties'),
       ...(this.get('showLessCommon') ? this.get('lessCommonTaskProperties') : [])

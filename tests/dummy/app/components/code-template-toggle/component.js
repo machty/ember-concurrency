@@ -1,13 +1,14 @@
-import Ember from 'ember';
+import { schedule } from '@ember/runloop';
+import Component from '@ember/component';
 
-export default Ember.Component.extend({
+export default Component.extend({
   classNames: ["code-template-toggle"],
   toggleDescription: "Toggle JS / Template",
 
   showCode: true,
 
   didInsertElement() {
-    Ember.run.schedule('afterRender', null, () => {
+    schedule('afterRender', null, () => {
       let maxHeight = Math.max.apply(null, this.$('.code-template-toggle-section').map(function ()
         {
           return $(this).height();

@@ -1,10 +1,8 @@
-import Ember from 'ember';
+import RSVP, { Promise } from 'rsvp';
 import TaskInstance from './-task-instance';
 import { yieldableSymbol } from './utils';
 
-const RSVP = Ember.RSVP;
-
-const asyncAll = taskAwareVariantOf(RSVP.Promise, 'all', identity);
+const asyncAll = taskAwareVariantOf(Promise, 'all', identity);
 
 function * resolver(value) {
   return value;
@@ -81,7 +79,7 @@ export const allSettled = taskAwareVariantOf(RSVP, 'allSettled', identity);
  *
  * [Check out the "Awaiting Multiple Child Tasks example"](/#/docs/examples/joining-tasks)
  */
-export const race = taskAwareVariantOf(RSVP.Promise, 'race', identity);
+export const race = taskAwareVariantOf(Promise, 'race', identity);
 
 /**
  * A cancelation-aware variant of [RSVP.hash](http://emberjs.com/api/classes/RSVP.html#hash).
@@ -107,7 +105,7 @@ function getValues(obj) {
 function taskAwareVariantOf(obj, method, getItems) {
   return function(thing) {
     let items = getItems(thing);
-    let defer = Ember.RSVP.defer();
+    let defer = RSVP.defer();
 
     obj[method](thing).then(defer.resolve, defer.reject);
 

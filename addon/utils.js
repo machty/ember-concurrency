@@ -1,3 +1,6 @@
+import { later, cancel } from '@ember/runloop';
+import { Promise } from 'rsvp';
+import ComputedProperty from '@ember/object/computed';
 import Ember from 'ember';
 
 export function isEventedObject(c) {
@@ -87,7 +90,7 @@ export const YIELDABLE_THROW = "throw";
 export const YIELDABLE_RETURN = "return";
 export const YIELDABLE_CANCEL = "cancel";
 
-export const _ComputedProperty = Ember.ComputedProperty;
+export const _ComputedProperty = ComputedProperty;
 
 /**
  *
@@ -113,11 +116,11 @@ export const _ComputedProperty = Ember.ComputedProperty;
  */
 export function timeout(ms) {
   let timerId;
-  let promise = new Ember.RSVP.Promise(r => {
-    timerId = Ember.run.later(r, ms);
+  let promise = new Promise(r => {
+    timerId = later(r, ms);
   });
   promise.__ec_cancel__ = () => {
-    Ember.run.cancel(timerId);
+    cancel(timerId);
   };
   return promise;
 }

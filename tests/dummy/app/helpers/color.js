@@ -1,8 +1,9 @@
-import Ember from 'ember';
+import { helper } from '@ember/component/helper';
+import { htmlSafe } from '@ember/string';
 
 export function colorString([color]/*, hash*/) {
-  return new Ember.String.htmlSafe(`color: ${color};`);
+  return new htmlSafe(`color: ${color};`);
 }
 
-export default Ember.Helper.helper(colorString);
+export default helper(colorString);
 

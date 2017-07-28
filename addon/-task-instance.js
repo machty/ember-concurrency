@@ -1,3 +1,8 @@
+import { assert } from '@ember/debug';
+import { defer, reject } from 'rsvp';
+import { not } from '@ember/object/computed';
+import { run, join, schedule } from '@ember/runloop';
+import EmberObject, { computed, get, set } from '@ember/object';
 import Ember from 'ember';
 import {
   yieldableSymbol,
@@ -7,8 +12,6 @@ import {
   YIELDABLE_CANCEL,
   RawValue
 } from './utils';
-
-const { set, get, computed } = Ember;
 
 const TASK_CANCELATION_NAME = 'TaskCancelation';
 
@@ -63,8 +66,6 @@ function forwardToInternalPromise(method) {
 function spliceSlice(str, index, count, add) {
   return str.slice(0, index) + (add || "") + str.slice(index + count);
 }
-
-let run = Ember.run;
 
 /**
   A `TaskInstance` represent a single execution of a
@@ -170,7 +171,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  isRunning: Ember.computed.not('isFinished'),
+  isRunning: not('isFinished'),
 
   /**
    * Describes the state that the task instance is in. Can be used for debugging,
@@ -192,7 +193,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  state: Ember.computed('isDropped', 'isCanceling', 'hasStarted', 'isFinished', function() {
+  state: computed('isDropped', 'isCanceling', 'hasStarted', 'isFinished', function() {
     if (get(this, 'isDropped')) {
       return 'dropped';
     } else if (get(this, 'isCanceling')) {
@@ -217,7 +218,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  isDropped: Ember.computed('isCanceling', 'hasStarted', function() {
+  isDropped: computed('isCanceling', 'hasStarted', function() {
     return get(this, 'isCanceling') && !get(this, 'hasStarted');
   }),
 
@@ -259,7 +260,7 @@ let taskInstanceAttrs = {
 
   _defer: null,
   _promise: computed(function() {
-    this._defer = Ember.RSVP.defer();
+    this._defer = defer();
     this._maybeResolveDefer();
     return this._defer.promise;
   }),
@@ -368,7 +369,7 @@ let taskInstanceAttrs = {
     if (!this._hasSubscribed && this._completionState === COMPLETION_ERROR) {
       run.schedule(run.queues[run.queues.length - 1], () => {
         if (!this._hasSubscribed && !didCancel(this.error)) {
-          Ember.RSVP.reject(this.error);
+          reject(this.error);
         }
       });
     }
@@ -404,7 +405,7 @@ let taskInstanceAttrs = {
    * @private
    */
   _resumeGenerator(nextValue, iteratorMethod) {
-    Ember.assert("The task generator function has already run to completion. This is probably an ember-concurrency bug.", !this._isGeneratorDone());
+    assert("The task generator function has already run to completion. This is probably an ember-concurrency bug.", !this._isGeneratorDone());
 
     try {
       let iterator = this._getIterator();
@@ -493,10 +494,10 @@ let taskInstanceAttrs = {
   _scheduleProceed(yieldResumeType, value) {
     if (this._completionState) { return; }
 
-    if (this._runLoop && !Ember.run.currentRunLoop) {
-      Ember.run(this, this._proceed, yieldResumeType, value);
+    if (this._runLoop && !run.currentRunLoop) {
+      run(this, this._proceed, yieldResumeType, value);
       return;
-    } else if (!this._runLoop && Ember.run.currentRunLoop) {
+    } else if (!this._runLoop && run.currentRunLoop) {
       setTimeout(() => this._proceed(yieldResumeType, value), 1);
       return;
     } else {
@@ -518,8 +519,8 @@ let taskInstanceAttrs = {
     // decide what to do in the case of `return maybeYieldable`;
     // value is the resolved value of the yieldable. We just
     // need to decide how to finalize.
-    Ember.assert("expected completion state to be pending", this._completionState === COMPLETION_PENDING);
-    Ember.assert("expected generator to be done", this._generatorState === GENERATOR_STATE_DONE);
+    assert("expected completion state to be pending", this._completionState === COMPLETION_PENDING);
+    assert("expected generator to be done", this._generatorState === GENERATOR_STATE_DONE);
 
     switch(yieldResumeType) {
       case YIELDABLE_CONTINUE:
@@ -637,11 +638,11 @@ taskInstanceAttrs[yieldableSymbol] = function handleYieldedTaskInstance(parentTa
   }
 };
 
-let TaskInstance = Ember.Object.extend(taskInstanceAttrs);
+let TaskInstance = EmberObject.extend(taskInstanceAttrs);
 
 function joinAndSchedule(...args) {
-  Ember.run.join(() => {
-    Ember.run.schedule(...args);
+  join(() => {
+    schedule(...args);
   });
 }
 

@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import { task } from 'ember-concurrency';
@@ -11,14 +11,14 @@ moduleForComponent('task-action', 'Integration | Helper | task action', {
 test('task produces a curried version of the task passed into it', async function(assert) {
   assert.expect(2);
 
-  this.register('component:my-component', Ember.Component.extend({
+  this.register('component:my-component', Component.extend({
     myTask: task(function * (...args) {
       assert.deepEqual(args, [1,2,3,4,5,6]);
       return 999;
     }),
   }));
 
-  this.register('component:inner-component', Ember.Component.extend({
+  this.register('component:inner-component', Component.extend({
     click() {
       return this.get('curriedTask').perform(4,5,6).then(v => {
         assert.equal(v, 999);

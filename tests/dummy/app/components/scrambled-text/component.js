@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 import { task, timeout } from 'ember-concurrency';
 
 // from http://stackoverflow.com/a/3943985/914123
@@ -15,7 +15,7 @@ function scramble(word) {
   return a.join("");
 }
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: '',
   text: null,
   scrambledText: null,
