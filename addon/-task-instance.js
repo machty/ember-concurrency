@@ -477,7 +477,9 @@ let taskInstanceAttrs = {
   _proceedSoon(yieldResumeType, value) {
     this._advanceIndex(this._index);
     if (this._runLoop) {
-      joinAndSchedule('actions', this, this._proceed, yieldResumeType, value);
+      join(() => {
+        schedule('actions', this, this._proceed, yieldResumeType, value);
+      });
     } else {
       setTimeout(() => this._proceed(yieldResumeType, value), 1);
     }
@@ -639,12 +641,6 @@ taskInstanceAttrs[yieldableSymbol] = function handleYieldedTaskInstance(parentTa
 };
 
 let TaskInstance = EmberObject.extend(taskInstanceAttrs);
-
-function joinAndSchedule(...args) {
-  join(() => {
-    schedule(...args);
-  });
-}
 
 export function go(args, fn, attrs = {}) {
   return TaskInstance.create(
