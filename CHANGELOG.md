@@ -1,4 +1,16 @@
 # Changelog
+### 0.8.11
+  - Added Task.linked()/unlinked() as a means to avoid circular
+    cancelation errors. There is no change to behavior here,
+    but in the case that ember-concurrency detects a circular
+    self-cancel-on-destroy scenario, it'll warn you about the
+    issue and require you to annotate the desired behavior
+    with linked()/unlinked(). A "circular self-cancel-on-destroy"
+    usually occurs when a component task performs a task on a
+    service, which causes a state change that causes the
+    component to be destroyed, canceling the original task,
+    thus canceling the service task.
+
 ### 0.8.7
   - Added helpful error when improperly trying to perform a
     task via `this.taskName.perform()`
