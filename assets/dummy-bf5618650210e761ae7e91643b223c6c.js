@@ -36,16 +36,16 @@ define('dummy/application/controller', ['exports', 'dummy/config/environment'], 
     addonVersion: version.match(versionRegExp)[0]
   });
 });
-define('dummy/application/route', ['exports', 'ember'], function (exports, _ember) {
+define('dummy/application/route', ['exports'], function (exports) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  var Route = _ember.default.Route;
+  var Route = Ember.Route;
   exports.default = Route.extend({
     beforeModel: function beforeModel() {
-      if (!_ember.default.testing) {
+      if (!Ember.testing) {
         this.router.on('didTransition', function () {
           window.scrollTo(0, 0);
         });
@@ -235,6 +235,7 @@ define('dummy/components/caps-marquee/component', ['exports', 'ember-concurrency
         }
       }, _callee, this);
     })).on('init')
+    // END-SNIPPET
   });
 });
 define("dummy/components/caps-marquee/template", ["exports"], function (exports) {
@@ -245,7 +246,7 @@ define("dummy/components/caps-marquee/template", ["exports"], function (exports)
   });
   exports.default = Ember.HTMLBars.template({ "id": "nzWOMTEm", "block": "{\"statements\":[[1,[26,[\"formattedText\"]],false],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/caps-marquee/template.hbs" } });
 });
-define("dummy/components/code-snippet", ["exports", "ember", "dummy/snippets"], function (exports, _ember, _snippets) {
+define("dummy/components/code-snippet", ["exports", "dummy/snippets"], function (exports, _snippets) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -256,7 +257,7 @@ define("dummy/components/code-snippet", ["exports", "ember", "dummy/snippets"], 
   /* global require */
   var Highlight = self.require('highlight.js');
 
-  exports.default = _ember.default.Component.extend({
+  exports.default = Ember.Component.extend({
     tagName: 'pre',
     classNameBindings: ['language'],
     unindent: true,
@@ -282,7 +283,7 @@ define("dummy/components/code-snippet", ["exports", "ember", "dummy/snippets"], 
       return src;
     },
 
-    source: _ember.default.computed('name', function () {
+    source: Ember.computed('name', function () {
       return this._unindent((_snippets.default[this.get('name')] || "").replace(/^(\s*\n)*/, '').replace(/\s*$/, ''));
     }),
 
@@ -290,7 +291,7 @@ define("dummy/components/code-snippet", ["exports", "ember", "dummy/snippets"], 
       Highlight.highlightBlock(this.get('element'));
     },
 
-    language: _ember.default.computed('name', function () {
+    language: Ember.computed('name', function () {
       var m = /\.(\w+)$/i.exec(this.get('name'));
       if (m) {
         switch (m[1].toLowerCase()) {
@@ -539,6 +540,7 @@ define('dummy/components/count-up/component', ['exports', 'ember-concurrency'], 
         }
       }, _callee, this);
     })).on('init')
+    // END-SNIPPET
   });
 });
 define("dummy/components/count-up/template", ["exports"], function (exports) {
@@ -786,6 +788,7 @@ define('dummy/components/scrambled-text/component', ['exports', 'ember-concurren
         }
       }, _callee, this);
     })).on('init')
+    // END-SNIPPET
   });
 });
 define("dummy/components/scrambled-text/template", ["exports"], function (exports) {
@@ -962,6 +965,7 @@ define('dummy/components/task-function-syntax-1/component', ['exports', 'ember-c
         }
       }, _callee, this);
     }))
+    // END-SNIPPET
   });
 });
 define("dummy/components/task-function-syntax-1/template", ["exports"], function (exports) {
@@ -1004,6 +1008,7 @@ define('dummy/components/task-function-syntax-2/component', ['exports', 'ember-c
         }
       }, _callee, this);
     }))
+    // END-SNIPPET
   });
 });
 define("dummy/components/task-function-syntax-2/template", ["exports"], function (exports) {
@@ -1050,6 +1055,7 @@ define('dummy/components/task-function-syntax-3/component', ['exports', 'ember-c
         }
       }, _callee, this);
     }))
+    // END-SNIPPET
   });
 });
 define("dummy/components/task-function-syntax-3/template", ["exports"], function (exports) {
@@ -1101,6 +1107,7 @@ define('dummy/components/task-function-syntax-4/component', ['exports', 'ember-c
         }
       }, _callee, this, [[1, 7]]);
     }))
+    // END-SNIPPET
   });
 });
 define("dummy/components/task-function-syntax-4/template", ["exports"], function (exports) {
@@ -1167,7 +1174,7 @@ define("dummy/components/task-group-example/template", ["exports"], function (ex
   });
   exports.default = Ember.HTMLBars.template({ "id": "pTwrYzso", "block": "{\"statements\":[[11,\"h4\",[]],[13],[1,[28,[\"taskGroup\",\"name\"]],false],[0,\": \"],[1,[28,[\"taskGroup\",\"state\"]],false],[14],[0,\"\\n\\n\"],[11,\"button\",[]],[16,\"onclick\",[33,[\"cancel-all\"],[[28,[\"taskGroup\"]]],null],null],[16,\"class\",[33,[\"if\"],[[28,[\"taskGroup\",\"isRunning\"]],\"button-primary\"],null],null],[13],[0,\"\\n  Cancel \"],[1,[28,[\"taskGroup\",\"name\"]],false],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"table\",[]],[15,\"class\",\"u-full-width\"],[13],[0,\"\\n  \"],[11,\"thead\",[]],[13],[0,\"\\n    \"],[11,\"tr\",[]],[13],[0,\"\\n      \"],[11,\"th\",[]],[13],[0,\"Perform\"],[14],[0,\"\\n      \"],[11,\"th\",[]],[13],[0,\"State\"],[14],[0,\"\\n      \"],[11,\"th\",[]],[13],[0,\"Group\"],[14],[0,\"\\n      \"],[11,\"th\",[]],[13],[0,\"Group State\"],[14],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n  \"],[11,\"tbody\",[]],[13],[0,\"\\n\"],[6,[\"each\"],[[28,[\"tasks\"]]],null,{\"statements\":[[0,\"      \"],[11,\"tr\",[]],[13],[0,\"\\n        \"],[11,\"td\",[]],[13],[0,\"\\n          \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"task\"]]],null],null],[16,\"class\",[33,[\"if\"],[[28,[\"task\",\"isIdle\"]],\"button-primary\"],null],null],[13],[0,\"\\n            \"],[1,[28,[\"task\",\"name\"]],false],[0,\"\\n          \"],[14],[0,\"\\n        \"],[14],[0,\"\\n        \"],[11,\"td\",[]],[13],[1,[28,[\"task\",\"state\"]],false],[14],[0,\"\\n        \"],[11,\"td\",[]],[13],[1,[28,[\"task\",\"group\",\"name\"]],false],[14],[0,\"\\n        \"],[11,\"td\",[]],[13],[1,[28,[\"task\",\"group\",\"state\"]],false],[14],[0,\"\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"task\"]},null],[0,\"  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/task-group-example/template.hbs" } });
 });
-define('dummy/components/tutorial-0/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+define('dummy/components/tutorial-0/component', ['exports', 'dummy/components/shared-tutorial/component'], function (exports, _component) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -1199,7 +1206,7 @@ define("dummy/components/tutorial-0/template", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "orXZn8JP", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"tutorial-example\"],[13],[0,\"\\n\\n\"],[0,\"  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"action\"],[[28,[null]],\"findStores\"],null],null],[13],[0,\"\\n    Find Nearby Stores\\n  \"],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"result\"]]],null,{\"statements\":[[6,[\"each\"],[[28,[\"result\",\"stores\"]]],null,{\"statements\":[[0,\"      \"],[11,\"li\",[]],[13],[0,\"\\n        \"],[11,\"strong\",[]],[13],[1,[28,[\"s\",\"name\"]],false],[14],[0,\":\\n        \"],[1,[28,[\"s\",\"distance\"]],false],[0,\" miles away\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"s\"]},null]],\"locals\":[]},null],[0,\"\\n  \"],[11,\"span\",[]],[15,\"class\",\"tutorial-example-label\"],[13],[0,\"Example\"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-0/template.hbs" } });
 });
-define('dummy/components/tutorial-1/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+define('dummy/components/tutorial-1/component', ['exports', 'dummy/components/shared-tutorial/component'], function (exports, _component) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -1234,7 +1241,7 @@ define("dummy/components/tutorial-1/template", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "mnJ6JGcm", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"tutorial-example\"],[13],[0,\"\\n\\n\"],[0,\"  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"action\"],[[28,[null]],\"findStores\"],null],null],[13],[0,\"\\n    Find Nearby Stores\\n\"],[6,[\"if\"],[[28,[\"isFindingStores\"]]],null,{\"statements\":[[0,\"      \"],[1,[33,[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[0,\"\\n\"]],\"locals\":[]},null],[0,\"  \"],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"result\"]]],null,{\"statements\":[[6,[\"each\"],[[28,[\"result\",\"stores\"]]],null,{\"statements\":[[0,\"      \"],[11,\"li\",[]],[13],[0,\"\\n        \"],[11,\"strong\",[]],[13],[1,[28,[\"s\",\"name\"]],false],[14],[0,\":\\n        \"],[1,[28,[\"s\",\"distance\"]],false],[0,\" miles away\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"s\"]},null]],\"locals\":[]},null],[0,\"\\n  \"],[11,\"span\",[]],[15,\"class\",\"tutorial-example-label\"],[13],[0,\"Example\"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-1/template.hbs" } });
 });
-define('dummy/components/tutorial-2/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+define('dummy/components/tutorial-2/component', ['exports', 'dummy/components/shared-tutorial/component'], function (exports, _component) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -1273,7 +1280,7 @@ define("dummy/components/tutorial-2/template", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "YFEj0mwV", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"tutorial-example\"],[13],[0,\"\\n\\n\"],[0,\"  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"action\"],[[28,[null]],\"findStores\"],null],null],[13],[0,\"\\n    Find Nearby Stores\\n\"],[6,[\"if\"],[[28,[\"isFindingStores\"]]],null,{\"statements\":[[0,\"      \"],[1,[33,[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[0,\"\\n\"]],\"locals\":[]},null],[0,\"  \"],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"result\"]]],null,{\"statements\":[[6,[\"each\"],[[28,[\"result\",\"stores\"]]],null,{\"statements\":[[0,\"      \"],[11,\"li\",[]],[13],[0,\"\\n        \"],[11,\"strong\",[]],[13],[1,[28,[\"s\",\"name\"]],false],[14],[0,\":\\n        \"],[1,[28,[\"s\",\"distance\"]],false],[0,\" miles away\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"s\"]},null]],\"locals\":[]},null],[0,\"\\n  \"],[11,\"span\",[]],[15,\"class\",\"tutorial-example-label\"],[13],[0,\"Example\"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-2/template.hbs" } });
 });
-define('dummy/components/tutorial-3/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+define('dummy/components/tutorial-3/component', ['exports', 'dummy/components/shared-tutorial/component'], function (exports, _component) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -1315,7 +1322,7 @@ define("dummy/components/tutorial-3/template", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "khhjitll", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"tutorial-example\"],[13],[0,\"\\n\\n\"],[0,\"  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"action\"],[[28,[null]],\"findStores\"],null],null],[13],[0,\"\\n    Find Nearby Stores\\n\"],[6,[\"if\"],[[28,[\"isFindingStores\"]]],null,{\"statements\":[[0,\"      \"],[1,[33,[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[0,\"\\n\"]],\"locals\":[]},null],[0,\"  \"],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"result\"]]],null,{\"statements\":[[6,[\"each\"],[[28,[\"result\",\"stores\"]]],null,{\"statements\":[[0,\"      \"],[11,\"li\",[]],[13],[0,\"\\n        \"],[11,\"strong\",[]],[13],[1,[28,[\"s\",\"name\"]],false],[14],[0,\":\\n        \"],[1,[28,[\"s\",\"distance\"]],false],[0,\" miles away\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"s\"]},null]],\"locals\":[]},null],[0,\"\\n  \"],[11,\"span\",[]],[15,\"class\",\"tutorial-example-label\"],[13],[0,\"Example\"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-3/template.hbs" } });
 });
-define('dummy/components/tutorial-4/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+define('dummy/components/tutorial-4/component', ['exports', 'dummy/components/shared-tutorial/component'], function (exports, _component) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -1362,7 +1369,7 @@ define("dummy/components/tutorial-4/template", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "WM0UWcxU", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"tutorial-example\"],[13],[0,\"\\n\\n\"],[0,\"  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"action\"],[[28,[null]],\"findStores\"],null],null],[13],[0,\"\\n    Find Nearby Stores\\n\"],[6,[\"if\"],[[28,[\"isFindingStores\"]]],null,{\"statements\":[[0,\"      \"],[1,[33,[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[0,\"\\n\"]],\"locals\":[]},null],[0,\"  \"],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"result\"]]],null,{\"statements\":[[6,[\"each\"],[[28,[\"result\",\"stores\"]]],null,{\"statements\":[[0,\"      \"],[11,\"li\",[]],[13],[0,\"\\n        \"],[11,\"strong\",[]],[13],[1,[28,[\"s\",\"name\"]],false],[14],[0,\":\\n        \"],[1,[28,[\"s\",\"distance\"]],false],[0,\" miles away\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"s\"]},null]],\"locals\":[]},null],[0,\"\\n  \"],[11,\"span\",[]],[15,\"class\",\"tutorial-example-label\"],[13],[0,\"Example\"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-4/template.hbs" } });
 });
-define('dummy/components/tutorial-5/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component'], function (exports, _ember, _component) {
+define('dummy/components/tutorial-5/component', ['exports', 'dummy/components/shared-tutorial/component'], function (exports, _component) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -1408,7 +1415,7 @@ define("dummy/components/tutorial-5/template", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "MCp/qI11", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"tutorial-example\"],[13],[0,\"\\n\\n\"],[0,\"  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"action\"],[[28,[null]],\"findStores\"],null],null],[13],[0,\"\\n    Find Nearby Stores\\n\"],[6,[\"if\"],[[28,[\"isFindingStores\"]]],null,{\"statements\":[[0,\"      \"],[1,[33,[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[0,\"\\n\"]],\"locals\":[]},null],[0,\"  \"],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"result\"]]],null,{\"statements\":[[6,[\"each\"],[[28,[\"result\",\"stores\"]]],null,{\"statements\":[[0,\"      \"],[11,\"li\",[]],[13],[0,\"\\n        \"],[11,\"strong\",[]],[13],[1,[28,[\"s\",\"name\"]],false],[14],[0,\":\\n        \"],[1,[28,[\"s\",\"distance\"]],false],[0,\" miles away\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"s\"]},null]],\"locals\":[]},null],[0,\"\\n  \"],[11,\"span\",[]],[15,\"class\",\"tutorial-example-label\"],[13],[0,\"Example\"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-5/template.hbs" } });
 });
-define('dummy/components/tutorial-6/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _ember, _component, _emberConcurrency) {
+define('dummy/components/tutorial-6/component', ['exports', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _component, _emberConcurrency) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -1455,7 +1462,7 @@ define("dummy/components/tutorial-6/template", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "/3gytAxj", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"tutorial-example\"],[13],[0,\"\\n\\n\"],[0,\"  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"findStores\"]]],null],null],[13],[0,\" \"],[0,\"\\n    Find Nearby Stores\\n  \"],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"result\"]]],null,{\"statements\":[[6,[\"each\"],[[28,[\"result\",\"stores\"]]],null,{\"statements\":[[0,\"      \"],[11,\"li\",[]],[13],[0,\"\\n        \"],[11,\"strong\",[]],[13],[1,[28,[\"s\",\"name\"]],false],[14],[0,\":\\n        \"],[1,[28,[\"s\",\"distance\"]],false],[0,\" miles away\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"s\"]},null]],\"locals\":[]},null],[0,\"\\n  \"],[11,\"span\",[]],[15,\"class\",\"tutorial-example-label\"],[13],[0,\"Example\"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-6/template.hbs" } });
 });
-define('dummy/components/tutorial-7/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _ember, _component, _emberConcurrency) {
+define('dummy/components/tutorial-7/component', ['exports', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _component, _emberConcurrency) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -1502,7 +1509,7 @@ define("dummy/components/tutorial-7/template", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "4zbhUaIe", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"tutorial-example\"],[13],[0,\"\\n\\n\"],[0,\"  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"findStores\"]]],null],null],[13],[0,\"\\n    Find Nearby Stores\\n\"],[6,[\"if\"],[[28,[\"findStores\",\"isRunning\"]]],null,{\"statements\":[[0,\"      \"],[1,[33,[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[0,\"\\n\"]],\"locals\":[]},null],[0,\"  \"],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"result\"]]],null,{\"statements\":[[6,[\"each\"],[[28,[\"result\",\"stores\"]]],null,{\"statements\":[[0,\"      \"],[11,\"li\",[]],[13],[0,\"\\n        \"],[11,\"strong\",[]],[13],[1,[28,[\"s\",\"name\"]],false],[14],[0,\":\\n        \"],[1,[28,[\"s\",\"distance\"]],false],[0,\" miles away\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"s\"]},null]],\"locals\":[]},null],[0,\"\\n  \"],[11,\"span\",[]],[15,\"class\",\"tutorial-example-label\"],[13],[0,\"Example\"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-7/template.hbs" } });
 });
-define('dummy/components/tutorial-8/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _ember, _component, _emberConcurrency) {
+define('dummy/components/tutorial-8/component', ['exports', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _component, _emberConcurrency) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -1538,7 +1545,8 @@ define('dummy/components/tutorial-8/component', ['exports', 'ember', 'dummy/comp
           }
         }
       }, _callee, this);
-    })).drop() });
+    })).drop() // ++
+  });
 });
 define("dummy/components/tutorial-8/template", ["exports"], function (exports) {
   "use strict";
@@ -1548,7 +1556,7 @@ define("dummy/components/tutorial-8/template", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "O+DiOiz2", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"tutorial-example\"],[13],[0,\"\\n\\n\"],[0,\"  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"findStores\"]]],null],null],[13],[0,\"\\n    Find Nearby Stores\\n\"],[6,[\"if\"],[[28,[\"findStores\",\"isRunning\"]]],null,{\"statements\":[[0,\"      \"],[1,[33,[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[0,\"\\n\"]],\"locals\":[]},null],[0,\"  \"],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"result\"]]],null,{\"statements\":[[6,[\"each\"],[[28,[\"result\",\"stores\"]]],null,{\"statements\":[[0,\"      \"],[11,\"li\",[]],[13],[0,\"\\n        \"],[11,\"strong\",[]],[13],[1,[28,[\"s\",\"name\"]],false],[14],[0,\":\\n        \"],[1,[28,[\"s\",\"distance\"]],false],[0,\" miles away\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"s\"]},null]],\"locals\":[]},null],[0,\"\\n  \"],[11,\"span\",[]],[15,\"class\",\"tutorial-example-label\"],[13],[0,\"Example\"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-8/template.hbs" } });
 });
-define('dummy/components/tutorial-9/component', ['exports', 'ember', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _ember, _component, _emberConcurrency) {
+define('dummy/components/tutorial-9/component', ['exports', 'dummy/components/shared-tutorial/component', 'ember-concurrency'], function (exports, _component, _emberConcurrency) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -1594,21 +1602,21 @@ define("dummy/components/tutorial-9/template", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "MhPWkdGN", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"tutorial-example\"],[13],[0,\"\\n\\n\"],[0,\"  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"findStores\"]]],null],null],[13],[0,\"\\n    Find Nearby Stores\\n\"],[6,[\"if\"],[[28,[\"findStores\",\"isRunning\"]]],null,{\"statements\":[[0,\"      \"],[1,[33,[\"fa-icon\"],[\"spinner\"],[[\"spin\"],[true]]],false],[0,\"\\n\"]],\"locals\":[]},null],[0,\"  \"],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"result\"]]],null,{\"statements\":[[6,[\"each\"],[[28,[\"result\",\"stores\"]]],null,{\"statements\":[[0,\"      \"],[11,\"li\",[]],[13],[0,\"\\n        \"],[11,\"strong\",[]],[13],[1,[28,[\"s\",\"name\"]],false],[14],[0,\":\\n        \"],[1,[28,[\"s\",\"distance\"]],false],[0,\" miles away\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"s\"]},null]],\"locals\":[]},null],[0,\"\\n  \"],[11,\"span\",[]],[15,\"class\",\"tutorial-example-label\"],[13],[0,\"Example\"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/components/tutorial-9/template.hbs" } });
 });
-define('dummy/controllers/array', ['exports', 'ember'], function (exports, _ember) {
+define('dummy/controllers/array', ['exports'], function (exports) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = _ember.default.Controller;
+  exports.default = Ember.Controller;
 });
-define('dummy/controllers/object', ['exports', 'ember'], function (exports, _ember) {
+define('dummy/controllers/object', ['exports'], function (exports) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = _ember.default.Controller;
+  exports.default = Ember.Controller;
 });
 define('dummy/docs/404/route', ['exports'], function (exports) {
   'use strict';
@@ -1806,7 +1814,7 @@ define('dummy/docs/controller', ['exports'], function (exports) {
 
     tableOfContents: [{ route: "docs.introduction", title: "Home" }, { route: "docs.installation", title: "Installation" }, { section: "Introduction" }, { route: "docs.tutorial.index", title: "Writing Code Without Tasks" }, { route: "docs.tutorial.discussion", title: "Post-Mortem" }, { route: "docs.tutorial.refactor", title: "Refactoring With Tasks" }, { section: "Reference" }, { route: "docs.task-function-syntax", title: "Task Function Syntax" }, { route: "docs.task-concurrency", title: "Managing Task Concurrency",
       children: [{ route: "docs.task-concurrency-advanced", title: "Advanced" }]
-    }, { route: "docs.cancelation", title: "Cancelation" }, { route: "docs.error-vs-cancelation", title: "Handling Errors" }, { route: "docs.child-tasks", title: "Child Tasks" }, { route: "docs.task-groups", title: "Task Groups" }, { route: "docs.derived-state", title: "Derived State" }, { route: "docs.events", title: "Ember / jQuery Events" }, { route: "docs.testing-debugging", title: "Testing & Debugging" }, { route: "docs.faq", title: "FAQ & Fact Sheet" }, { section: "Examples" }, { route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Type-Ahead Search" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" }, { route: "docs.examples.route-tasks", title: "Route Tasks" }, { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" }],
+    }, { route: "docs.cancelation", title: "Cancelation" }, { route: "docs.error-vs-cancelation", title: "Handling Errors" }, { route: "docs.child-tasks", title: "Child Tasks" }, { route: "docs.task-groups", title: "Task Groups" }, { route: "docs.derived-state", title: "Derived State" }, { route: "docs.encapsulated-task", title: "Encapsulated Tasks" }, { route: "docs.events", title: "Ember / jQuery Events" }, { route: "docs.testing-debugging", title: "Testing & Debugging" }, { route: "docs.faq", title: "FAQ & Fact Sheet" }, { section: "Examples" }, { route: "docs.examples.loading-ui", title: "Loading UI" }, { route: "docs.examples.autocomplete", title: "Type-Ahead Search" }, { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" }, { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" }, { route: "docs.examples.route-tasks", title: "Route Tasks" }, { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" }],
 
     flatContents: computed(function () {
       var flattened = [];
@@ -1950,6 +1958,79 @@ define("dummy/docs/derived-state/template", ["exports"], function (exports) {
     value: true
   });
   exports.default = Ember.HTMLBars.template({ "id": "IHZg5/B9", "block": "{\"statements\":[[11,\"h3\",[]],[13],[0,\"Derived State\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  One of the core goals of ember-concurrency is to provide as much\\n  \"],[11,\"strong\",[]],[13],[0,\"Derived State\"],[14],[0,\" as possible; for example, instead\\n  of requiring you to set and then later unset your own \"],[11,\"code\",[]],[13],[0,\"isRunning\"],[14],[0,\"\\n  flag at the beginning and end of a task, ember-concurrency gives you\\n  an \"],[11,\"code\",[]],[13],[0,\".isRunning\"],[14],[0,\" (and \"],[11,\"code\",[]],[13],[0,\".isIdle\"],[14],[0,\") property for free so that\\n  you don't have to manage your own state (which is a common source of bugs\\n  and boilerplate).\\n\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  ember-concurrency gives you the concept of \"],[11,\"strong\",[]],[13],[0,\"Tasks\"],[14],[0,\", and\\n  when you \"],[11,\"code\",[]],[13],[0,\"perform\"],[14],[0,\" a Task, it produces a\\n  \"],[11,\"strong\",[]],[13],[0,\"Task Instance\"],[14],[0,\", which represents a single execution\\n  of that task. Both of these objects expose a lot of derived state,\\n  which is described below.\\n\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  Less commonly-used properties are \"],[11,\"em\",[]],[13],[0,\"italicized\"],[14],[0,\". Also, keep in\\n  mind that there are \"],[11,\"a\",[]],[15,\"href\",\"/api\"],[13],[0,\"API docs\"],[14],[0,\" for everything described below.\\n\"],[14],[0,\"\\n\\n\"],[11,\"h4\",[]],[13],[0,\"Properties on \"],[11,\"a\",[]],[15,\"href\",\"/api/Task.html\"],[13],[0,\"Task\"],[14],[0,\" objects\"],[14],[0,\"\\n\\n\"],[11,\"ul\",[]],[13],[0,\"\\n  \"],[11,\"li\",[]],[13],[0,\"\\n    \"],[11,\"code\",[]],[13],[0,\"isRunning\"],[14],[0,\":\\n    true when there is at least one instance of the task running, false otherwise.\\n  \"],[14],[0,\"\\n  \"],[11,\"li\",[]],[13],[0,\"\\n    \"],[11,\"code\",[]],[13],[0,\"isIdle\"],[14],[0,\": the opposite of \"],[11,\"code\",[]],[13],[0,\"isRunning\"],[14],[0,\"\\n  \"],[14],[0,\"\\n  \"],[11,\"li\",[]],[13],[0,\"\\n    \"],[11,\"em\",[]],[13],[11,\"code\",[]],[13],[0,\"performCount\"],[14],[14],[0,\": The number of times the task has been performed\\n  \"],[14],[0,\"\\n  \"],[11,\"li\",[]],[13],[0,\"\\n    \"],[11,\"em\",[]],[13],[11,\"code\",[]],[13],[0,\"concurrency\"],[14],[14],[0,\": an integer representing the number of currently\\n    running task instances. If you're using a task modifier like\\n    \"],[11,\"code\",[]],[13],[0,\"drop/enqueue/restartable\"],[14],[0,\" (without specifying \"],[11,\"code\",[]],[13],[0,\"maxConcurrency\"],[14],[0,\")\\n    this number will never be greater than 1. This property is mostly useful for\\n    debugging.\\n  \"],[14],[0,\"\\n  \"],[11,\"li\",[]],[13],[0,\"\\n    \"],[11,\"em\",[]],[13],[11,\"code\",[]],[13],[0,\"state\"],[14],[14],[0,\": a string description of the task's state; can\\n    either by \\\"running\\\" or \\\"idle\\\". Useful for debugging.\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"h5\",[]],[13],[0,\"Accessing Task Instances from the Task object\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  Tasks also expose properties for accessing specific\\n  Task Instances (which are created every time you call \"],[11,\"code\",[]],[13],[0,\".perform()\"],[14],[0,\"\\n  on a task).\\n\"],[14],[0,\"\\n\\n\"],[11,\"ul\",[]],[13],[0,\"\\n  \"],[11,\"li\",[]],[13],[0,\"\\n    \"],[11,\"code\",[]],[13],[0,\"last\"],[14],[0,\": the last Task Instance that started executing.\\n    This property will never point to a \"],[11,\"code\",[]],[13],[0,\"drop\"],[14],[0,\"ped Task Instance,\\n  \"],[14],[0,\"\\n  \"],[11,\"li\",[]],[13],[0,\"\\n    \"],[11,\"code\",[]],[13],[0,\"lastSuccessful\"],[14],[0,\": the last Task Instance that ran to completion\\n    (it returned a value that wasn't a rejecting promise).\\n  \"],[14],[0,\"\\n  \"],[11,\"li\",[]],[13],[0,\"\\n    \"],[11,\"code\",[]],[13],[0,\"isSuccessful\"],[14],[0,\": true if the Task Instance ran to completion\\n  \"],[14],[0,\"\\n  \"],[11,\"li\",[]],[13],[0,\"\\n    \"],[11,\"code\",[]],[13],[0,\"isError\"],[14],[0,\": true if Task Instance failed to run to completion due to an exception\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  In addition to these properties, keep in mind that at any point you can\\n  also just save the TaskInstance returned from \"],[11,\"code\",[]],[13],[0,\".perform()\"],[14],[0,\"\\n  to some property for later access in case the above properties don't\\n  hit your use cases (but please open a GitHub issue if you find yourself\\n  doing this often because this might suggest room for improvement in\\n  ember-concurrency's API).\\n\"],[14],[0,\"\\n\\n\"],[11,\"h4\",[]],[13],[0,\"Properties on \"],[11,\"a\",[]],[15,\"href\",\"/api/TaskInstance.html\"],[13],[0,\"Task Instances\"],[14],[14],[0,\"\\n\\n\"],[11,\"ul\",[]],[13],[0,\"\\n  \"],[11,\"li\",[]],[13],[0,\"\\n    \"],[11,\"code\",[]],[13],[0,\"value\"],[14],[0,\": the value returned from the task function. Is\\n    \"],[11,\"code\",[]],[13],[0,\"null\"],[14],[0,\" before a value is returned, and remains null\\n    if the task never completes (throws an error or is canceled).\\n  \"],[14],[0,\"\\n\\n  \"],[11,\"li\",[]],[13],[0,\"\\n    \"],[11,\"code\",[]],[13],[0,\"error\"],[14],[0,\": the error/exception thrown from the task function\\n    (might also be the value of a rejected promise that was yielded).\\n    \"],[11,\"em\",[]],[13],[0,\"Note: until \"],[11,\"a\",[]],[15,\"href\",\"https://github.com/machty/ember-concurrency/issues/40\"],[13],[0,\"this issue\"],[14],[0,\"\\n      is resolved, unless you write code to explicitly \"],[11,\"code\",[]],[13],[0,\".catch()\"],[14],[0,\"\\n      an error thrown from a performed task, this error will bubble\\n      to the browser (so error reporters like Bugsnag will see it).\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"h4\",[]],[13],[0,\"Put the two together...\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  Given a task named \"],[11,\"code\",[]],[13],[0,\"myTask\"],[14],[0,\", if you need to display a success banner\\n  with the value returned from the most recent execution of \"],[11,\"code\",[]],[13],[0,\"myTask\"],[14],[0,\",\\n  you can simply reference \"],[11,\"code\",[]],[13],[0,\"{{myTask.last.value}}\"],[14],[0,\". If want this banner\\n  to persist until the next time the task runs to completion, you can\\n  just change it to \"],[11,\"code\",[]],[13],[0,\"{{myTask.lastSuccessful.value}}\"],[14],[0,\". There are other\\n  combinations as well that might better suit your UI needs.\\n\"],[14],[0,\"\\n\\n\"],[11,\"h3\",[]],[13],[0,\"Live Example\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  \"],[1,[33,[\"input\"],null,[[\"type\",\"checked\"],[\"checkbox\",[28,[\"showLessCommon\"]]]]],false],[0,\" Show less common properties\\n\"],[14],[0,\"\\n\\n\"],[6,[\"each\"],[[28,[\"tasks\"]]],null,{\"statements\":[[6,[\"with\"],[[33,[\"get\"],[[28,[null]],[28,[\"taskName\"]]],null]],null,{\"statements\":[[0,\"    \"],[11,\"h5\",[]],[13],[1,[28,[\"task\",\"name\"]],false],[0,\" (performCount=\"],[1,[28,[\"task\",\"performCount\"]],false],[0,\" concurrency=\"],[1,[28,[\"task\",\"concurrency\"]],false],[0,\")\"],[14],[0,\"\\n\\n    \"],[11,\"p\",[]],[13],[0,\"\\n      \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"task\"]],false],null],null],[16,\"class\",[33,[\"if\"],[[28,[\"task\",\"isIdle\"]],\"button-primary\"],null],null],[13],[0,\"\\n        Run to Completion\\n      \"],[14],[0,\"\\n      \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"task\"]],true],null],null],[16,\"class\",[33,[\"if\"],[[28,[\"task\",\"isIdle\"]],\"button-primary\"],null],null],[13],[0,\"\\n        Run until Error\\n      \"],[14],[0,\"\\n      \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"cancel-all\"],[[28,[\"task\"]]],null],null],[16,\"class\",[33,[\"if\"],[[28,[\"task\",\"isRunning\"]],\"button-primary\"],null],null],[13],[0,\"\\n        Cancel\\n      \"],[14],[0,\"\\n    \"],[14],[0,\"\\n\\n    \"],[11,\"table\",[]],[15,\"class\",\"u-full-width completion-state-table\"],[13],[0,\"\\n      \"],[11,\"thead\",[]],[13],[0,\"\\n        \"],[11,\"tr\",[]],[13],[0,\"\\n          \"],[11,\"th\",[]],[13],[0,\"Completion Property\"],[14],[0,\"\\n          \"],[11,\"th\",[]],[13],[0,\".value\"],[14],[0,\"\\n          \"],[11,\"th\",[]],[13],[0,\".error\"],[14],[0,\"\\n          \"],[11,\"th\",[]],[13],[0,\".isSuccessful\"],[14],[0,\"\\n          \"],[11,\"th\",[]],[13],[0,\".isError\"],[14],[0,\"\\n        \"],[14],[0,\"\\n      \"],[14],[0,\"\\n      \"],[11,\"tbody\",[]],[13],[0,\"\\n\"],[6,[\"each\"],[[28,[\"taskProperties\"]]],null,{\"statements\":[[0,\"        \"],[11,\"tr\",[]],[13],[0,\"\\n          \"],[11,\"td\",[]],[13],[0,\"\\n            \"],[11,\"strong\",[]],[13],[0,\"myTask.\"],[1,[28,[\"tp\"]],false],[14],[0,\"\\n          \"],[14],[0,\"\\n          \"],[11,\"td\",[]],[13],[0,\"\\n\"],[6,[\"with\"],[[33,[\"get\"],[[28,[\"task\"]],[33,[\"concat\"],[[28,[\"tp\"]],\".value\"],null]],null]],null,{\"statements\":[[0,\"              \"],[11,\"div\",[]],[15,\"class\",\"completion-status completion-success\"],[13],[1,[28,[\"v\"]],false],[14],[0,\"\\n\"]],\"locals\":[\"v\"]},null],[0,\"          \"],[14],[0,\"\\n          \"],[11,\"td\",[]],[13],[0,\"\\n\"],[6,[\"with\"],[[33,[\"get\"],[[28,[\"task\"]],[33,[\"concat\"],[[28,[\"tp\"]],\".error\"],null]],null]],null,{\"statements\":[[0,\"              \"],[11,\"div\",[]],[15,\"class\",\"completion-status completion-error\"],[13],[1,[28,[\"v\"]],false],[14],[0,\"\\n\"]],\"locals\":[\"v\"]},null],[0,\"          \"],[14],[0,\"\\n          \"],[11,\"td\",[]],[13],[0,\"\\n\"],[6,[\"with\"],[[33,[\"get\"],[[28,[\"task\"]],[33,[\"concat\"],[[28,[\"tp\"]],\".isSuccessful\"],null]],null]],null,{\"statements\":[[0,\"              \"],[1,[28,[\"v\"]],false],[0,\"\\n\"]],\"locals\":[\"v\"]},null],[0,\"          \"],[14],[0,\"\\n          \"],[11,\"td\",[]],[13],[0,\"\\n\"],[6,[\"with\"],[[33,[\"get\"],[[28,[\"task\"]],[33,[\"concat\"],[[28,[\"tp\"]],\".isError\"],null]],null]],null,{\"statements\":[[0,\"              \"],[1,[28,[\"v\"]],false],[0,\"\\n\"]],\"locals\":[\"v\"]},null],[0,\"          \"],[14],[0,\"\\n        \"],[14],[0,\"\\n\"]],\"locals\":[\"tp\"]},null],[0,\"      \"],[14],[0,\"\\n    \"],[14],[0,\"\\n    \"],[11,\"br\",[]],[13],[14],[0,\"\\n\"]],\"locals\":[\"task\"]},null]],\"locals\":[\"taskName\"]},null],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/derived-state/template.hbs" } });
+});
+define('dummy/docs/encapsulated-task/controller', ['exports', 'dummy/utils', 'ember-concurrency'], function (exports, _utils, _emberConcurrency) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  var Controller = Ember.Controller;
+  var computed = Ember.computed;
+  exports.default = Controller.extend({
+    uploadFile: (0, _emberConcurrency.task)({
+      progress: 0,
+      url: null,
+
+      stateText: computed('progress', function () {
+        var progress = this.get('progress');
+        if (progress < 49) {
+          return "Just started...";
+        } else if (progress < 100) {
+          return "Halfway there...";
+        } else {
+          return "Done!";
+        }
+      }),
+
+      perform: regeneratorRuntime.mark(function perform(makeUrl) {
+        var newProgress;
+        return regeneratorRuntime.wrap(function perform$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                this.set('url', makeUrl());
+
+              case 1:
+                if (!(this.progress < 100)) {
+                  _context.next = 8;
+                  break;
+                }
+
+                _context.next = 4;
+                return (0, _emberConcurrency.timeout)(200);
+
+              case 4:
+                newProgress = this.progress + Math.floor(Math.random() * 6) + 5;
+
+                this.set('progress', Math.min(100, newProgress));
+                _context.next = 1;
+                break;
+
+              case 8:
+                return _context.abrupt('return', "(upload result data)");
+
+              case 9:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, perform, this);
+      })
+    }).enqueue(),
+
+    makeRandomUrl: function makeRandomUrl() {
+      return 'https://www.' + (0, _utils.randomWord)() + '.edu';
+    }
+  });
+});
+define("dummy/docs/encapsulated-task/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "N02KDucs", "block": "{\"statements\":[[11,\"h3\",[]],[13],[0,\"Encapsulated Tasks\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  Normally, you define tasks by passing a generator function to \"],[11,\"code\",[]],[13],[0,\"task(...)\"],[14],[0,\".\\n  Often though, you want to be able to expose additional state of the task,\\n  e.g. you might want to show the percentage progress of an \"],[11,\"code\",[]],[13],[0,\"uploadFile\"],[14],[0,\" task,\\n  but unless you're using the techniques describes below there's no good\\n  place to expose that data to the template other than to set some properties\\n  on the host object, but then you lose a lot of the benefits of encapsulation\\n  in the process.\\n\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  In cases like these, you can use Encapsulated Tasks, which behave just\\n  like regular tasks, but with one crucial difference: the value\\n  of \"],[11,\"code\",[]],[13],[0,\"this\"],[14],[0,\" within the task function points to the currently\\n  running TaskInstance, rather than the host object that the task lives on\\n  (e.g. a Component, Controller, etc). This allows for some nice patterns\\n  where all of the state produced/mutated by a task can be contained (encapsulated)\\n  \"],[11,\"em\",[]],[13],[0,\"within\"],[14],[0,\" the Task itself, rather than having to live on the host\\n  object.\\n\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  To create an encapsulated task, pass an object (instead of a generator function)\\n  to the \"],[11,\"code\",[]],[13],[0,\"task()\"],[14],[0,\"\\n  constructor that defines a \"],[11,\"code\",[]],[13],[0,\"perform\"],[14],[0,\" generator function. The\\n  object can also contain initial values for task state, as well as computed\\n  properties and anything else supported by classic Ember objects.\\n\"],[14],[0,\"\\n\\n\"],[1,[33,[\"code-snippet\"],null,[[\"name\"],[\"encapsulated-task.js\"]]],false],[0,\"\\n\\n\"],[11,\"h3\",[]],[13],[0,\"Live Example\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  This example demonstrates how to use encapsulated tasks to\\n  model file uploads. It keeps all of the upload state \"],[11,\"em\",[]],[13],[0,\"within\"],[14],[0,\"\\n  each TaskInstance, and uses \"],[6,[\"link-to\"],[\"docs.derived-state\"],null,{\"statements\":[[0,\"Derived State\"]],\"locals\":[]},null],[0,\"\\n  to expose the values set within the encapsulated tasks.\\n\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"uploadFile\"]],[28,[\"makeRandomUrl\"]]],null],null],[13],[0,\"\\n    Start Upload\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"h5\",[]],[13],[0,\"Queued Uploads: \"],[1,[28,[\"uploadFile\",\"numQueued\"]],false],[14],[0,\"\\n\\n\"],[6,[\"with\"],[[28,[\"uploadFile\",\"last\"]]],null,{\"statements\":[[0,\"  \"],[11,\"h5\",[]],[13],[0,\"\\n    Uploading to \"],[1,[28,[\"encapsTask\",\"url\"]],false],[0,\" (\"],[1,[28,[\"encapsTask\",\"stateText\"]],false],[0,\"):\\n    \"],[1,[28,[\"encapsTask\",\"progress\"]],false],[0,\"%\\n  \"],[14],[0,\"\\n\"]],\"locals\":[\"encapsTask\"]},null],[0,\"\\n\"],[6,[\"if\"],[[28,[\"uploadFile\",\"lastSuccessful\"]]],null,{\"statements\":[[0,\"  \"],[11,\"h5\",[]],[15,\"style\",\"color: green;\"],[13],[0,\"\\n    \"],[11,\"strong\",[]],[13],[0,\"\\n    Upload to \"],[1,[28,[\"uploadFile\",\"lastSuccessful\",\"url\"]],false],[0,\":\\n    \"],[1,[28,[\"uploadFile\",\"lastSuccessful\",\"value\"]],false],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n\"]],\"locals\":[]},null],[0,\"\\n\"],[0,\"\\n\"],[1,[33,[\"code-snippet\"],null,[[\"name\"],[\"encapsulated-task-controller.js\"]]],false],[0,\"\\n\"],[1,[33,[\"code-snippet\"],null,[[\"name\"],[\"encapsulated-task-template.hbs\"]]],false],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/encapsulated-task/template.hbs" } });
 });
 define('dummy/docs/error-vs-cancelation/controller', ['exports', 'ember-concurrency'], function (exports, _emberConcurrency) {
   'use strict';
@@ -2143,6 +2224,7 @@ define('dummy/docs/events/controller', ['exports', 'ember-concurrency'], functio
         }
       }, _callee4, this);
     }))
+    // END-SNIPPET
   });
 });
 define("dummy/docs/events/template", ["exports"], function (exports) {
@@ -2386,66 +2468,6 @@ define("dummy/docs/examples/encapsulated-task-fun/template", ["exports"], functi
     value: true
   });
   exports.default = Ember.HTMLBars.template({ "id": "GggKbjgC", "block": "{\"statements\":[[11,\"h3\",[]],[13],[0,\"Experimental: EncapsulatedTasks\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  Normally, you define tasks by passing a generator function to \"],[11,\"code\",[]],[13],[0,\"task(...)\"],[14],[0,\".\\n  Sometimes though, blah blah blah here is an example.\\n\"],[14],[0,\"\\n\\n\"],[11,\"h3\",[]],[13],[0,\"Live Example\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"doStuff\"]]],null],null],[13],[0,\"\\n    Do Stuff\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[6,[\"with\"],[[28,[\"doStuff\",\"last\"]]],null,{\"statements\":[[0,\"  \"],[11,\"h5\",[]],[13],[0,\"value: \"],[1,[28,[\"t\",\"value\"]],false],[14],[0,\"\\n  \"],[11,\"h5\",[]],[13],[0,\"foo:   \"],[1,[28,[\"t\",\"foo\",\"last\",\"value\"]],false],[14],[0,\"\\n  \"],[11,\"h5\",[]],[13],[0,\"bar:   \"],[1,[28,[\"t\",\"bar\",\"last\",\"value\"]],false],[14],[0,\"\\n  \"],[11,\"h5\",[]],[13],[0,\"baz:   \"],[1,[28,[\"t\",\"baz\",\"last\",\"value\"]],false],[14],[0,\"\\n\"]],\"locals\":[\"t\"]},null],[0,\"\\n\"],[1,[33,[\"code-snippet\"],null,[[\"name\"],[\"encapsulated-task-fun-controller.js\"]]],false],[0,\"\\n\"],[1,[33,[\"code-snippet\"],null,[[\"name\"],[\"encapsulated-task-fun-template.hbs\"]]],false],[0,\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/examples/encapsulated-task-fun/template.hbs" } });
-});
-define('dummy/docs/examples/encapsulated-task/controller', ['exports', 'dummy/utils', 'ember-concurrency'], function (exports, _utils, _emberConcurrency) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  var Controller = Ember.Controller;
-  exports.default = Controller.extend({
-    uploadFile: (0, _emberConcurrency.task)({
-      progress: 0,
-      url: null,
-      perform: regeneratorRuntime.mark(function perform(makeUrl) {
-        var newProgress;
-        return regeneratorRuntime.wrap(function perform$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                this.set('url', makeUrl());
-
-              case 1:
-                if (!(this.progress < 100)) {
-                  _context.next = 8;
-                  break;
-                }
-
-                _context.next = 4;
-                return (0, _emberConcurrency.timeout)(100);
-
-              case 4:
-                newProgress = this.progress + Math.floor(Math.random() * 6) + 5;
-
-                this.set('progress', Math.min(100, newProgress));
-                _context.next = 1;
-                break;
-
-              case 8:
-                return _context.abrupt('return', "Success!");
-
-              case 9:
-              case 'end':
-                return _context.stop();
-            }
-          }
-        }, perform, this);
-      })
-    }).enqueue(),
-
-    makeRandomUrl: function makeRandomUrl() {
-      return 'https://www.' + (0, _utils.randomWord)() + '.edu';
-    }
-  });
-});
-define("dummy/docs/examples/encapsulated-task/template", ["exports"], function (exports) {
-  "use strict";
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = Ember.HTMLBars.template({ "id": "vIPzcAPa", "block": "{\"statements\":[[11,\"h3\",[]],[13],[0,\"Experimental: Encapsulated Tasks\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  Normally, you define tasks by passing a generator function to \"],[11,\"code\",[]],[13],[0,\"task(...)\"],[14],[0,\".\\n  Often though, you want to be able to expose additional state of the task,\\n  e.g. you might want to show the percentage progress of an \"],[11,\"code\",[]],[13],[0,\"uploadFile\"],[14],[0,\" task,\\n  but unless you're using the techniques describes below there's no good\\n  place to expose that data to the template other than to set some properties\\n  on the host object, but then you lose a lot of the benefits of encapsulation\\n  in the process.\\n\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  In cases like these, you can use Encapsulated Tasks, which behave just\\n  like regular tasks, except that they don't have access to the object\\n  they're attached to, but rather can only set properties (or emit events)\\n  on themselves. Defining Encapsulated Tasks is easy: instead of passing\\n  a generator function directly to \"],[11,\"code\",[]],[13],[0,\"task(...)\"],[14],[0,\", you pass an\\n  object with a \"],[11,\"code\",[]],[13],[0,\"perform\"],[14],[0,\" method.\\n\"],[14],[0,\"\\n\\n\"],[1,[33,[\"code-snippet\"],null,[[\"name\"],[\"encapsulated-task.js\"]]],false],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n\\n\\n\\n\\n  pass an object with a\\n  \"],[11,\"code\",[]],[13],[0,\"perform\"],[14],[0,\" method to the \"],[11,\"code\",[]],[13],[0,\"task(...)\"],[14],[0,\" function\\n\\n\\n  instead of passing\\n  a generator function to \"],[11,\"code\",[]],[13],[0,\"task(...)\"],[14],[0,\", you pass an object\\n  with a \"],[11,\"code\",[]],[13],[0,\"perform\"],[14],[0,\" method.\\n\\n  , which are objects with\\n  a \"],[11,\"code\",[]],[13],[0,\"perform\"],[14],[0,\" method and other state that you can use in the\\n  place of the generator function you normally supply to \"],[11,\"code\",[]],[13],[0,\"task()\"],[14],[0,\".\\n  When you use a EncapsulatedTask, the value of \"],[11,\"code\",[]],[13],[0,\"this\"],[14],[0,\" in the \"],[11,\"code\",[]],[13],[0,\"perform\"],[14],[0,\"\\n  generator function is the EncapsulatedTask object, which means it's a good place to\\n  set encapsulated values specific to that running task instance.\\n\"],[14],[0,\"\\n\\n\"],[11,\"h3\",[]],[13],[0,\"Live Example\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[13],[0,\"\\n  \"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"uploadFile\"]],[28,[\"makeRandomUrl\"]]],null],null],[13],[0,\"\\n    Start Upload\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"h5\",[]],[13],[0,\"Queued Uploads: \"],[1,[28,[\"uploadFile\",\"numQueued\"]],false],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"uploadFile\",\"last\"]]],null,{\"statements\":[[0,\"  \"],[11,\"h5\",[]],[13],[0,\"\\n    Uploading to \"],[1,[28,[\"uploadFile\",\"last\",\"url\"]],false],[0,\":\\n    \"],[1,[28,[\"uploadFile\",\"last\",\"progress\"]],false],[0,\"%\\n  \"],[14],[0,\"\\n\"]],\"locals\":[]},null],[0,\"\\n\"],[6,[\"if\"],[[28,[\"uploadFile\",\"lastSuccessful\"]]],null,{\"statements\":[[0,\"  \"],[11,\"h5\",[]],[15,\"style\",\"color: green;\"],[13],[0,\"\\n    \"],[11,\"strong\",[]],[13],[0,\"\\n    Upload to \"],[1,[28,[\"uploadFile\",\"lastSuccessful\",\"url\"]],false],[0,\":\\n    \"],[1,[28,[\"uploadFile\",\"lastSuccessful\",\"value\"]],false],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n\"]],\"locals\":[]},null],[0,\"\\n\"],[0,\"\\n\"],[1,[33,[\"code-snippet\"],null,[[\"name\"],[\"encapsulated-task-controller.js\"]]],false],[0,\"\\n\"],[1,[33,[\"code-snippet\"],null,[[\"name\"],[\"encapsulated-task-template.hbs\"]]],false],[0,\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/docs/examples/encapsulated-task/template.hbs" } });
 });
 define('dummy/docs/examples/increment-buttons/controller', ['exports', 'ember-concurrency'], function (exports, _emberConcurrency) {
   'use strict';
@@ -3330,7 +3352,7 @@ define("dummy/helpers-test/template", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "1pvgPtAE", "block": "{\"statements\":[[11,\"h1\",[]],[13],[0,\"Helpers Test\"],[14],[0,\"\\n\\n\"],[11,\"p\",[]],[15,\"class\",\"task-status\"],[13],[1,[26,[\"status\"]],false],[14],[0,\"\\n\\n\"],[6,[\"my-button\"],null,[[\"action\",\"class\"],[[33,[\"perform\"],[[28,[\"myTask\"]],1,2],null],\"perform-task\"]],{\"statements\":[[0,\"Perform\"]],\"locals\":[]},null],[0,\"\\n\"],[6,[\"my-button\"],null,[[\"action\",\"class\"],[[33,[\"cancel-all\"],[[28,[\"myTask\"]],1,2],null],\"cancel-task\"]],{\"statements\":[[0,\"Cancel\"]],\"locals\":[]},null],[0,\"\\n\"],[6,[\"my-button\"],null,[[\"action\",\"class\"],[[33,[\"perform\"],[[28,[\"returnValue\"]]],null],\"value-task\"]],{\"statements\":[[0,\"Return a Value\"]],\"locals\":[]},null],[0,\"\\n\\n\"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"maybeNullTask\"]]],null],null],[15,\"class\",\"maybe-null-task\"],[13],[0,\"Maybe Null Task\"],[14],[0,\"\\n\"],[11,\"button\",[]],[16,\"onclick\",[33,[\"action\"],[[28,[null]],\"setupTask\"],null],null],[15,\"class\",\"setup-task\"],[13],[0,\"Setup Task\"],[14],[0,\"\\n\"],[11,\"button\",[]],[16,\"onclick\",[33,[\"perform\"],[[28,[\"valueTask\"]]],[[\"value\"],[\"target.innerHTML\"]]],null],[15,\"class\",\"set-value-option-task\"],[13],[0,\"Set value option\"],[14],[0,\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "dummy/helpers-test/template.hbs" } });
 });
-define('dummy/helpers/cancel-all', ['exports', 'ember', 'ember-concurrency/-helpers'], function (exports, _ember, _helpers) {
+define('dummy/helpers/cancel-all', ['exports', 'ember-concurrency/-helpers'], function (exports, _helpers) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -3344,13 +3366,13 @@ define('dummy/helpers/cancel-all', ['exports', 'ember', 'ember-concurrency/-help
   function cancelHelper(args) {
     var cancelable = args[0];
     if (!cancelable || typeof cancelable.cancelAll !== 'function') {
-      _ember.default.assert('The first argument passed to the `cancel-all` helper should be a Task or TaskGroup (without quotes); you passed ' + cancelable, false);
+      Ember.assert('The first argument passed to the `cancel-all` helper should be a Task or TaskGroup (without quotes); you passed ' + cancelable, false);
     }
 
-    return (0, _helpers.taskHelperClosure)('cancelAll', [cancelable, CANCEL_REASON]);
+    return (0, _helpers.taskHelperClosure)('cancel-all', 'cancelAll', [cancelable, CANCEL_REASON]);
   }
 
-  exports.default = _ember.default.Helper.helper(cancelHelper);
+  exports.default = Ember.Helper.helper(cancelHelper);
 });
 define("dummy/helpers/caps-bool", ["exports"], function (exports) {
   "use strict";
@@ -3465,7 +3487,7 @@ define('dummy/helpers/color', ['exports'], function (exports) {
 
   exports.default = helper(colorString);
 });
-define('dummy/helpers/perform', ['exports', 'ember', 'ember-concurrency/-helpers'], function (exports, _ember, _helpers) {
+define('dummy/helpers/perform', ['exports', 'ember-concurrency/-helpers'], function (exports, _helpers) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -3473,10 +3495,10 @@ define('dummy/helpers/perform', ['exports', 'ember', 'ember-concurrency/-helpers
   });
   exports.performHelper = performHelper;
   function performHelper(args, hash) {
-    return (0, _helpers.taskHelperClosure)('perform', args, hash);
+    return (0, _helpers.taskHelperClosure)('perform', 'perform', args, hash);
   }
 
-  exports.default = _ember.default.Helper.helper(performHelper);
+  exports.default = Ember.Helper.helper(performHelper);
 });
 define('dummy/helpers/pick-from', ['exports'], function (exports) {
   'use strict';
@@ -3771,7 +3793,7 @@ define('dummy/helpers/sum', ['exports'], function (exports) {
 
   exports.default = helper(sum);
 });
-define('dummy/helpers/task', ['exports', 'ember'], function (exports, _ember) {
+define('dummy/helpers/task', ['exports'], function (exports) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -3802,7 +3824,7 @@ define('dummy/helpers/task', ['exports', 'ember'], function (exports, _ember) {
     return task._curry.apply(task, _toConsumableArray(args));
   }
 
-  exports.default = _ember.default.Helper.helper(taskHelper);
+  exports.default = Ember.Helper.helper(taskHelper);
 });
 define('dummy/helpers/width', ['exports'], function (exports) {
   'use strict';
@@ -3903,13 +3925,13 @@ define('dummy/initializers/container-debug-adapter', ['exports', 'ember-resolver
     }
   };
 });
-define('dummy/initializers/ember-cli-fastclick', ['exports', 'ember'], function (exports, _ember) {
+define('dummy/initializers/ember-cli-fastclick', ['exports'], function (exports) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  var schedule = _ember.default.run.schedule;
+  var schedule = Ember.run.schedule;
 
 
   var EmberCliFastclickInitializer = {
@@ -3935,7 +3957,7 @@ define('dummy/initializers/ember-concurrency', ['exports', 'ember-concurrency'],
     initialize: function initialize() {}
   };
 });
-define('dummy/initializers/export-application-global', ['exports', 'ember', 'dummy/config/environment'], function (exports, _ember, _environment) {
+define('dummy/initializers/export-application-global', ['exports', 'dummy/config/environment'], function (exports, _environment) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -3963,7 +3985,7 @@ define('dummy/initializers/export-application-global', ['exports', 'ember', 'dum
       if (typeof value === 'string') {
         globalName = value;
       } else {
-        globalName = _ember.default.String.classify(_environment.default.modulePrefix);
+        globalName = Ember.String.classify(_environment.default.modulePrefix);
       }
 
       if (!theGlobal[globalName]) {
@@ -4028,6 +4050,7 @@ define('dummy/router', ['exports', 'dummy/config/environment'], function (export
       this.route('events');
       this.route('testing-debugging');
       this.route('faq');
+      this.route('encapsulated-task');
       this.route('examples', function () {
         this.route('increment-buttons');
         this.route('loading-ui');
@@ -4041,7 +4064,6 @@ define('dummy/router', ['exports', 'dummy/config/environment'], function (export
         this.route('joining-tasks-2');
         this.route('decorating-tasks');
         this.route('task-groups');
-        this.route('encapsulated-task');
         this.route('encapsulated-task-fun');
       });
       this.route('task-cancelation-help');
@@ -4136,11 +4158,11 @@ define("dummy/snippets", ["exports"], function (exports) {
     "decorating-tasks.js": "function taskWithCooldown(taskPath, ms) {\n  return task(taskPath, function * (otherTask, ...args) {\n    // perform the task...\n    yield otherTask.perform(...args);\n\n    // ...and wait for cooldown timer.\n    yield timeout(ms);\n  }).drop();\n}\n\nexport default Controller.extend({\n  sharedTask: task(function * () {\n    yield timeout(1000);\n  }).drop(),\n\n  halfSecond: taskWithCooldown('sharedTask', 500),\n  oneSecond:  taskWithCooldown('sharedTask', 1000),\n  twoSeconds: taskWithCooldown('sharedTask', 2000),\n\n  tasks: computed(function() {\n    return [\n      this.get('halfSecond'),\n      this.get('oneSecond'),\n      this.get('twoSeconds')\n    ];\n  }),\n});",
     "detail-route.js": "export default Route.extend({\n  notify: service('notify'),\n\n  setupController(controller, model) {\n    this._super(...arguments);\n    this.get('pollServerForChanges').perform(model.id);\n  },\n\n  pollServerForChanges: task(function * (id) {\n    let notify = this.get('notify');\n    yield timeout(500);\n    try {\n      notify.info(`Thing ${id}: Starting to poll for changes`);\n      while (true) {\n        yield timeout(5000);\n        notify.info(`Thing ${id}: Polling now...`);\n      }\n    } finally {\n      notify.warning(`Thing ${id}: No longer polling for changes`);\n    }\n  }).cancelOn('deactivate').restartable(),\n});",
     "ember-install.sh": "ember install ember-concurrency\n",
-    "encapsulated-task-controller.js": "import { task, timeout } from 'ember-concurrency';\n\nexport default Controller.extend({\n  uploadFile: task({\n    progress: 0,\n    url: null,\n    perform: function * (makeUrl) {\n      this.set('url', makeUrl());\n\n      while (this.progress < 100) {\n        yield timeout(100);\n        let newProgress = this.progress + Math.floor(Math.random() * 6) + 5;\n        this.set('progress', Math.min(100, newProgress));\n      }\n\n      return \"Success!\";\n    },\n  }).enqueue(),\n\n  makeRandomUrl() {\n    return `https://www.${randomWord()}.edu`;\n  }\n});",
+    "encapsulated-task-controller.js": "import { task, timeout } from 'ember-concurrency';\n\nexport default Controller.extend({\n  uploadFile: task({\n    progress: 0,\n    url: null,\n\n    stateText: computed('progress', function() {\n      let progress = this.get('progress');\n      if (progress < 49) {\n        return \"Just started...\"\n      } else if (progress < 100) {\n        return \"Halfway there...\"\n      } else {\n        return \"Done!\"\n      }\n    }),\n\n    *perform(makeUrl) {\n      this.set('url', makeUrl());\n\n      while (this.progress < 100) {\n        yield timeout(200);\n        let newProgress = this.progress + Math.floor(Math.random() * 6) + 5;\n        this.set('progress', Math.min(100, newProgress));\n      }\n\n      return \"(upload result data)\";\n    },\n  }).enqueue(),\n\n  makeRandomUrl() {\n    return `https://www.${randomWord()}.edu`;\n  }\n});",
     "encapsulated-task-fun-controller.js": "import { task, timeout, all } from 'ember-concurrency';\n\nfunction * sharedFn() {\n  yield timeout(Math.random() * 2000);\n  return randomWord();\n}\n\nexport default Controller.extend({\n  doStuff: task({\n    perform: function * () {\n      return all([\n        this.get('foo').perform(),\n        this.get('bar').perform(),\n        this.get('baz').perform(),\n      ]);\n    },\n\n    foo: task(sharedFn),\n    bar: task(sharedFn),\n    baz: task(sharedFn),\n  }).restartable(),\n});",
     "encapsulated-task-fun-template.hbs": "<p>\n  <button onclick={{perform doStuff}}>\n    Do Stuff\n  </button>\n</p>\n\n{{#with doStuff.last as |t|}}\n  <h5>value: {{t.value}}</h5>\n  <h5>foo:   {{t.foo.last.value}}</h5>\n  <h5>bar:   {{t.bar.last.value}}</h5>\n  <h5>baz:   {{t.baz.last.value}}</h5>\n{{/with}}",
-    "encapsulated-task-template.hbs": "<p>\n  <button onclick={{perform uploadFile makeRandomUrl}}>\n    Start Upload\n  </button>\n</p>\n\n<h5>Queued Uploads: {{uploadFile.numQueued}}</h5>\n\n{{#if uploadFile.last}}\n  <h5>\n    Uploading to {{uploadFile.last.url}}:\n    {{uploadFile.last.progress}}%\n  </h5>\n{{/if}}\n\n{{#if uploadFile.lastSuccessful}}\n  <h5 style=\"color: green;\">\n    <strong>\n    Upload to {{uploadFile.lastSuccessful.url}}:\n    {{uploadFile.lastSuccessful.value}}\n    </strong>\n  </h5>\n{{/if}}\n",
-    "encapsulated-task.js": "import { task } from 'ember-concurrency';\n\nexport default Component.extend({\n  outerFoo: 123,\n  regularTask: task(function * () {\n    console.log(this.outerFoo); // => 123\n\n    yield doSomeAsync();\n\n    // This prints undefined if encapsulatedTask hasn't yet\n    // been performed, otherwise it prints \"BAR\".\n    //\n    // This demonstrates how it's possible to reach in and read\n    // properties of encapsulated tasks from the outside, but\n    // encapsulated tasks don't have access to anything from\n    // the \"outside world\"\n    //\n    // `encapsulatedTask.last` refers to the most recently\n    // perform()ed instance of encapsulatedTask\n    console.log(this.get('encapsulatedTask.last.innerBar'));\n  }),\n\n  encapsulatedTask: task({\n    // `perform` must use generator function syntax\n    perform: function * (value) {\n      console.log(this.innerFoo); // => 456\n\n      yield doSomeAsync();\n\n      // there is no way to access `outerFoo` without\n      // it being explicitly passed in in some way\n\n      // set innerFoo to whatever was\n      this.set('innerFoo', value);\n    },\n\n    innerFoo: 456,\n    innerBar: \"BAR\",\n  })\n});\n\n",
+    "encapsulated-task-template.hbs": "<p>\n  <button onclick={{perform uploadFile makeRandomUrl}}>\n    Start Upload\n  </button>\n</p>\n\n<h5>Queued Uploads: {{uploadFile.numQueued}}</h5>\n\n{{#with uploadFile.last as |encapsTask|}}\n  <h5>\n    Uploading to {{encapsTask.url}} ({{encapsTask.stateText}}):\n    {{encapsTask.progress}}%\n  </h5>\n{{/with}}\n\n{{#if uploadFile.lastSuccessful}}\n  <h5 style=\"color: green;\">\n    <strong>\n    Upload to {{uploadFile.lastSuccessful.url}}:\n    {{uploadFile.lastSuccessful.value}}\n    </strong>\n  </h5>\n{{/if}}\n",
+    "encapsulated-task.js": "import { task } from 'ember-concurrency';\n\nexport default Component.extend({\n  outerFoo: 123,\n  regularTask: task(function * (value) {\n    // this is a classic/regular ember-concurrency task,\n    // which has direct access to the host object that it\n    // lives on via `this`\n    console.log(this.outerFoo); // => 123\n    yield doSomeAsync();\n    this.set('outerFoo', value);\n  }),\n\n  encapsulatedTask: task({\n    innerFoo: 456,\n\n    // this `*perform() {}` syntax is valid JavaScript shorthand\n    // syntax for `perform: function * () {}`\n\n    *perform(value) {\n      // this is an encapulated task. It does NOT have\n      // direct access to the host object it lives on, but rather\n      // only the properties defined within the POJO passed\n      // to the `task()` constructor.\n      console.log(this.innerFoo); // => 456\n\n      // `this` is the currently executing TaskInstance, so\n      // you can also get classic TaskInstance properties\n      // provided by ember-concurrency.\n      console.log(this.get('isRunning')); // => true\n\n      yield doSomeAsync();\n      this.set('innerFoo', value);\n    },\n  })\n});\n\n",
     "error-vs-cancelation-template.hbs": "<button onclick={{perform myTask false}}>\n  Run to Completion\n</button>\n\n<button onclick={{perform myTask true}}>\n  Throw an Error\n</button>\n\n<ul>\n  <li>Task State: {{myTask.state}}</li>\n  <li>Completions: {{numCompletions}}</li>\n  <li>Errors: {{numErrors}}</li>\n  <li>Finally block runs: {{numFinallys}}</li>\n</ul>\n",
     "error-vs-cancelation.js": "export default Controller.extend({\n  numCompletions: 0,\n  numErrors: 0,\n  numFinallys: 0,\n\n  myTask: task(function * (doError) {\n    try {\n      yield timeout(1000);\n      if (doError) {\n        throw new Error(\"Boom\");\n      }\n    } catch(e) {\n      this.incrementProperty('numErrors');\n    } finally {\n      this.incrementProperty('numFinallys');\n    }\n    this.incrementProperty('numCompletions');\n  }).restartable(),\n});",
     "increment-button-task.js": "export default Controller.extend({\n  count: 0,\n  incrementBy: task(function * (inc) {\n    let speed = 400;\n    while (true) {\n      this.incrementProperty('count', inc);\n      yield timeout(speed);\n      speed = Math.max(50, speed * 0.8);\n    }\n  })\n});",
@@ -4477,5 +4499,5 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.8.10"});
+  require("dummy/app")["default"].create({"name":"ember-concurrency","version":"0.8.12"});
 }
