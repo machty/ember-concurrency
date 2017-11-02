@@ -1,4 +1,5 @@
 import Controller from '@ember/controller';
+import { computed } from '@ember/object';
 import { randomWord } from 'dummy/utils';
 
 // BEGIN-SNIPPET encapsulated-task-controller
@@ -8,16 +9,28 @@ export default Controller.extend({
   uploadFile: task({
     progress: 0,
     url: null,
-    perform: function * (makeUrl) {
+
+    stateText: computed('progress', function() {
+      let progress = this.get('progress');
+      if (progress < 49) {
+        return "Just started..."
+      } else if (progress < 100) {
+        return "Halfway there..."
+      } else {
+        return "Done!"
+      }
+    }),
+
+    *perform(makeUrl) {
       this.set('url', makeUrl());
 
       while (this.progress < 100) {
-        yield timeout(100);
+        yield timeout(200);
         let newProgress = this.progress + Math.floor(Math.random() * 6) + 5;
         this.set('progress', Math.min(100, newProgress));
       }
 
-      return "Success!";
+      return "(upload result data)";
     },
   }).enqueue(),
 

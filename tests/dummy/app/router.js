@@ -27,6 +27,7 @@ Router.map(function() {
     this.route('events');
     this.route('testing-debugging');
     this.route('faq');
+    this.route('encapsulated-task');
     this.route('examples', function() {
       this.route('increment-buttons');
       this.route('loading-ui');
@@ -40,7 +41,6 @@ Router.map(function() {
       this.route('joining-tasks-2');
       this.route('decorating-tasks');
       this.route('task-groups');
-      this.route('encapsulated-task');
       this.route('encapsulated-task-fun');
     });
     this.route('task-cancelation-help');

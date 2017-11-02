@@ -25,6 +25,7 @@ export default Controller.extend({
     { route: "docs.child-tasks", title: "Child Tasks" },
     { route: "docs.task-groups", title: "Task Groups" },
     { route: "docs.derived-state", title: "Derived State" },
+    { route: "docs.encapsulated-task", title: "Encapsulated Tasks" },
     { route: "docs.events", title: "Ember / jQuery Events" },
     { route: "docs.testing-debugging", title: "Testing & Debugging" },
     { route: "docs.faq", title: "FAQ & Fact Sheet" },
