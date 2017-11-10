@@ -1,8 +1,8 @@
-import { helper } from '@ember/component/helper';
+import Ember from 'ember';
 
 function taskHelper([task, ...args]) {
   return task._curry(...args);
 }
 
-export default helper(taskHelper);
+export default Ember.Helper.helper(taskHelper);
 

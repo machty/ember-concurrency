@@ -1,6 +1,6 @@
 {
   "name": "ember-concurrency",
-  "version": "0.8.7",
+  "version": "0.8.12",
   "description": "Improved concurrency/async primitives for Ember.js",
   "directories": {
     "doc": "doc",
@@ -62,8 +62,8 @@
   ],
   "dependencies": {
     "babel-core": "^6.24.1",
-    "ember-cli-babel": "^6.6.0",
-    "ember-getowner-polyfill": "^1.1.0",
+    "ember-cli-babel": "^6.8.2",
+    "ember-getowner-polyfill": "^2.0.0",
     "ember-maybe-import-regenerator": "^0.1.5"
   },
   "ember-addon": {

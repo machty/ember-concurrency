@@ -8,9 +8,11 @@ import { task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 const originalLog = Ember.Logger.log;
+const originalWarn = Ember.Logger.warn;
 module('Unit: task', {
   afterEach() {
     Ember.Logger.log = originalLog;
+    Ember.Logger.warn = originalWarn;
     Ember.ENV.DEBUG_TASKS = false;
   }
 });
@@ -454,5 +456,129 @@ test("helpful errors when calling this.taskName.perform()", function(assert) {
       assert.equal(e.message, "It looks like you tried to perform a task via `this.nameOfTask.perform()`, which isn't supported. Use `this.get('nameOfTask').perform()` instead.");
     }
   });
+});
+
+test(".unlinked().perform() detaches a child task from its parent to avoid parent->child cancelation", function(assert) {
+  assert.expect(4);
+
+  let Obj = Ember.Object.extend({
+    a: task(function * () {
+      yield this.get('b').unlinked().perform();
+    }),
+    b: task(function * () {
+      yield Ember.RSVP.defer().promise;
+    })
+  });
+
+  let obj;
+  Ember.run(() => {
+    obj = Obj.create();
+    obj.get('a').perform();
+
+    assert.ok(obj.get('a.isRunning'));
+    assert.ok(obj.get('b.isRunning'));
+
+    obj.get('a').cancelAll();
+  });
+
+  assert.ok(!obj.get('a.isRunning'));
+  assert.ok(obj.get('b.isRunning'));
+});
+
+test("a warning is logged when a non-link-specified cross object parent->child cancelation occurs due to parent object's destruction", function(assert) {
+  assert.expect(2);
+
+  let warnings = [];
+  Ember.Logger.warn = (...args) => {
+    warnings.push(args);
+  };
+
+  let Obj = Ember.Object.extend({
+    a: task(function * () {
+      yield this.get('child.b').perform();
+    }),
+
+    b: task(function * () {
+      yield Ember.RSVP.defer().promise;
+    }),
+
+    c: task(function * () {
+      yield this.get('child.b').linked().perform();
+    }),
+
+    child: null,
+  });
+
+  let child, canceledParent, destroyedParent;
+  Ember.run(() => {
+    child = Obj.create();
+    canceledParent = Obj.create({ child });
+    destroyedParent = Obj.create({ child });
+    canceledParent.get('a').perform();
+    destroyedParent.get('a').perform();
+  });
+
+  Ember.run(() => {
+    destroyedParent.destroy();
+    canceledParent.get('a').cancelAll();
+  });
+
+  assert.deepEqual(warnings, [
+    [
+      "ember-concurrency detected a potentially hazardous \"self-cancel loop\" between parent task `a` and child task `b`. If you want child task `b` to be canceled when parent task `a` is canceled, please change `.perform()` to `.linked().perform()`. If you want child task `b` to keep running after parent task `a` is canceled, change it to `.unlinked().perform()`"
+    ]
+  ]);
+  warnings.length = 0;
+
+  Ember.run(() => {
+    child = Obj.create();
+    destroyedParent = Obj.create({ child });
+    destroyedParent.get('c').perform();
+  });
+
+  Ember.run(() => { destroyedParent.destroy(); });
+  assert.equal(warnings.length, 0);
+});
+
+test(".linked() throws an error if called outside of a task", function(assert) {
+  assert.expect(1);
+
+  let Obj = Ember.Object.extend({
+    a: task(function * () { }),
+  });
+
+  Ember.run(() => {
+    try {
+      Obj.create().get('a').linked();
+    } catch(e) {
+      assert.equal(e.message, "You can only call .linked() from within a task.");
+    }
+  });
+});
+
+test(".linked() warns when not immediately yielded", function(assert) {
+  assert.expect(1);
+
+  let warnings = [];
+  Ember.Logger.warn = (...args) => {
+    warnings.push(args);
+  };
+
+  let Obj = Ember.Object.extend({
+    a: task(function * () {
+      this.get('b').linked().perform();
+    }),
+    b: task(function * () { }),
+  });
+
+  Ember.run(() => {
+    Obj.create().get('a').perform();
+  });
+
+  assert.deepEqual(warnings, [
+    [
+      "You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency)."
+    ]
+  ]);
 });
 

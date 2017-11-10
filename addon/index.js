@@ -19,6 +19,11 @@ import { waitForQueue, waitForEvent } from './-wait-for';
  * be used to elegantly express asynchronous, cancelable
  * operations.
  *
+ * You can also define an
+ * <a href="/#/docs/encapsulated-task">Encapsulated Task</a>
+ * by passing in an object that defined a `perform` generator
+ * function property.
+ *
  * The following Component defines a task called `myTask` that,
  * when performed, prints a message to the console, sleeps for 1 second,
  * prints a final message to the console, and then completes.
