@@ -1,4 +1,4 @@
-import { once } from '@ember/runloop';
+import { once, run } from '@ember/runloop';
 import EmberObject, { set, get } from '@ember/object';
 
 let SEEN_INDEX = 0;
@@ -27,7 +27,7 @@ const Scheduler = EmberObject.extend({
     let seen = [];
     this.spliceTaskInstances(reason, this.activeTaskInstances, 0, this.activeTaskInstances.length, seen);
     this.spliceTaskInstances(reason, this.queuedTaskInstances, 0, this.queuedTaskInstances.length, seen);
-    flushTaskCounts(seen);
+    run.next(null, flushTaskCounts, seen);
   },
 
   spliceTaskInstances(cancelReason, taskInstances, index, count, seen) {
