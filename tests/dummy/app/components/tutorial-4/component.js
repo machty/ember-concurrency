@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import TutorialComponent from '../shared-tutorial/component';
 
 // BEGIN-SNIPPET better-syntax-5

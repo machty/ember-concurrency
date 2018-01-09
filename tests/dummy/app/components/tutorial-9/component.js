@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import TutorialComponent from '../shared-tutorial/component';
 
 import { task } from 'ember-concurrency';

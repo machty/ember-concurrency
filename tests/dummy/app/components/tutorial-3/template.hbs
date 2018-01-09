@@ -4,7 +4,7 @@
   <button onclick={{action 'findStores'}}>
     Find Nearby Stores
     {{#if isFindingStores}}
-      {{fa-icon "spinner" spin=true}}
+      {{loading-spinner}}
     {{/if}}
   </button>
 

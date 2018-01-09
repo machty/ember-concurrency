@@ -1,7 +1,5 @@
 /bower_components
 /config/ember-try.js
-/config/deploy.js
-/config/release.js
 /dist
 /tests
 /tmp
@@ -9,16 +7,15 @@
 .bowerrc
 .editorconfig
 .ember-cli
+.eslintrc.js
 .gitignore
-.jshintrc
 .watchmanconfig
 .travis.yml
 bower.json
 ember-cli-build.js
-testem.json
-TODO.md
-vendor/dummy-deps
-builddocs.sh
-API.md
-CNAME
+testem.js
 
+# ember-try
+.node_modules.ember-try/
+bower.json.ember-try
+package.json.ember-try
