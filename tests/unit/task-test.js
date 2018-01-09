@@ -441,22 +441,22 @@ test("Ember.ENV.DEBUG_TASKS=true enables basic debugging", function(assert) {
   ]);
 });
 
-test("helpful errors when calling this.taskName.perform()", function(assert) {
-  assert.expect(1);
+// test("helpful errors when calling this.taskName.perform()", function(assert) {
+//   assert.expect(1);
 
-  let Obj = EmberObject.extend({
-    a: task(function * () { })
-  });
+//   let Obj = EmberObject.extend({
+//     a: task(function * () { })
+//   });
 
-  run(() => {
-    let obj = Obj.create();
-    try {
-      obj.a.perform();
-    } catch(e) {
-      assert.equal(e.message, "It looks like you tried to perform a task via `this.nameOfTask.perform()`, which isn't supported. Use `this.get('nameOfTask').perform()` instead.");
-    }
-  });
-});
+//   run(() => {
+//     let obj = Obj.create();
+//     try {
+//       obj.a.perform();
+//     } catch(e) {
+//       assert.equal(e.message, "It looks like you tried to perform a task via `this.nameOfTask.perform()`, which isn't supported. Use `this.get('nameOfTask').perform()` instead.");
+//     }
+//   });
+// });
 
 test(".unlinked().perform() detaches a child task from its parent to avoid parent->child cancelation", function(assert) {
   assert.expect(4);
