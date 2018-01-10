@@ -1,6 +1,10 @@
 import RSVP, { resolve, reject } from 'rsvp';
 import { run } from '@ember/runloop';
-import { default as TaskInstance, wrap, didCancel } from 'ember-concurrency/-task-instance';
+import {
+  default as TaskInstance,
+  wrap,
+  didCancel
+} from 'ember-concurrency/-task-instance';
 import { module, test } from 'qunit';
 
 module('Unit: task instance');
@@ -553,9 +557,8 @@ test("taskInstance.isError is set when task throws an error", function(assert) {
 test("tasks can catch rejecting promises, preventing their errors from bubbling", function(assert) {
   assert.expect(1);
 
-  let taskInstance0;
   run(() => {
-    taskInstance0 = wrap(function * () {
+    wrap(function * () {
       try {
         yield reject("wat");
       } catch(e) {

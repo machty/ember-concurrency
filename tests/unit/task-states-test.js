@@ -79,11 +79,11 @@ test("a dropped .lastPerformed shows up as canceled", function(assert) {
     myTask: task(function * () { yield timeout(10); }).drop(),
   });
 
-  let myTask, taskInstance0, taskInstance1;
+  let myTask, taskInstance1;
   run(() => {
     let obj = Obj.create();
     myTask = obj.get('myTask');
-    taskInstance0 = myTask.perform();
+    myTask.perform();
     taskInstance1 = myTask.perform();
     assert.equal(myTask.get('lastPerformed'), taskInstance1);
   });
@@ -121,7 +121,7 @@ test(".last is set when a task starts", function(assert) {
 test(".lastSuccessful is set when a task instance returns a value", function(assert) {
   assert.expect(5);
 
-  let defer, taskInstance0, taskInstance1, taskInstance2;
+  let defer, taskInstance0, taskInstance1;
   let Obj = EmberObject.extend({
     myTask: task(function * () {
       defer = RSVP.defer();
@@ -136,7 +136,7 @@ test(".lastSuccessful is set when a task instance returns a value", function(ass
     assert.equal(myTask.get('lastSuccessful'), null);
     taskInstance0 = myTask.perform();
     taskInstance1 = myTask.perform();
-    taskInstance2 = myTask.perform();
+    myTask.perform();
   });
 
   assert.equal(myTask.get('lastSuccessful'), null);
@@ -189,7 +189,7 @@ test(".lastComplete is set when a task instance returns/cancels/errors", functio
 test(".lastErrored is set when a task instance errors (but not cancels)", function(assert) {
   assert.expect(5);
 
-  let defer, taskInstance0, taskInstance1, taskInstance2;
+  let defer, taskInstance1, taskInstance2;
   let Obj = EmberObject.extend({
     myTask: task(function * () {
       defer = RSVP.defer();
@@ -202,7 +202,7 @@ test(".lastErrored is set when a task instance errors (but not cancels)", functi
     obj = Obj.create();
     myTask = obj.get('myTask');
     assert.equal(myTask.get('lastErrored'), null);
-    taskInstance0 = myTask.perform();
+    myTask.perform();
     taskInstance1 = myTask.perform();
     taskInstance2 = myTask.perform();
   });
@@ -223,7 +223,7 @@ test(".lastErrored is set when a task instance errors (but not cancels)", functi
 test(".lastCanceled is set when a task instance cancels (but not errors)", function(assert) {
   assert.expect(5);
 
-  let defer, taskInstance0, taskInstance1, taskInstance2;
+  let defer, taskInstance1;
   let Obj = EmberObject.extend({
     myTask: task(function * () {
       defer = RSVP.defer();
@@ -236,9 +236,9 @@ test(".lastCanceled is set when a task instance cancels (but not errors)", funct
     obj = Obj.create();
     myTask = obj.get('myTask');
     assert.equal(myTask.get('lastCanceled'), null);
-    taskInstance0 = myTask.perform();
+    myTask.perform();
     taskInstance1 = myTask.perform();
-    taskInstance2 = myTask.perform();
+    myTask.perform();
   });
 
   assert.equal(myTask.get('lastCanceled'), null);
@@ -257,7 +257,7 @@ test(".lastCanceled is set when a task instance cancels (but not errors)", funct
 test(".lastIncomplete is set when a task instance errors or cancels", function(assert) {
   assert.expect(5);
 
-  let defer, taskInstance0, taskInstance1, taskInstance2;
+  let defer, taskInstance1, taskInstance2;
   let Obj = EmberObject.extend({
     myTask: task(function * () {
       defer = RSVP.defer();
@@ -270,7 +270,7 @@ test(".lastIncomplete is set when a task instance errors or cancels", function(a
     obj = Obj.create();
     myTask = obj.get('myTask');
     assert.equal(myTask.get('lastIncomplete'), null);
-    taskInstance0 = myTask.perform();
+    myTask.perform();
     taskInstance1 = myTask.perform();
     taskInstance2 = myTask.perform();
   });

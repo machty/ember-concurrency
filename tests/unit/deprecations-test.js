@@ -31,9 +31,8 @@ test("warn if using maxConcurrency without specifying other task modifier", func
     g: task(function * () { }).maxConcurrency(1),
   });
 
-  let obj;
   run(() => {
-    obj = Obj.create();
+    Obj.create();
   });
   warnings.sort();
   assert.equal(warnings.length, 2);

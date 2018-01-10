@@ -315,7 +315,6 @@ test("yieldable helpers work with null/undefined values", function(assert) {
   let Obj = EmberObject.extend({
     parent: task(function * () {
       let task = this.get('child');
-      let obj = EmberObject.create();
       let v = yield hash({
         a: task.perform(1),
         b: null,

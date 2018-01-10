@@ -461,17 +461,17 @@ test("Ember.ENV.DEBUG_TASKS=true enables basic debugging", function(assert) {
 test(".unlinked().perform() detaches a child task from its parent to avoid parent->child cancelation", function(assert) {
   assert.expect(4);
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     a: task(function * () {
       yield this.get('b').unlinked().perform();
     }),
     b: task(function * () {
-      yield Ember.RSVP.defer().promise;
+      yield defer().promise;
     })
   });
 
   let obj;
-  Ember.run(() => {
+  run(() => {
     obj = Obj.create();
     obj.get('a').perform();
 
@@ -493,13 +493,13 @@ test("a warning is logged when a non-link-specified cross object parent->child c
     warnings.push(args);
   };
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     a: task(function * () {
       yield this.get('child.b').perform();
     }),
 
     b: task(function * () {
-      yield Ember.RSVP.defer().promise;
+      yield defer().promise;
     }),
 
     c: task(function * () {
@@ -510,7 +510,7 @@ test("a warning is logged when a non-link-specified cross object parent->child c
   });
 
   let child, canceledParent, destroyedParent;
-  Ember.run(() => {
+  run(() => {
     child = Obj.create();
     canceledParent = Obj.create({ child });
     destroyedParent = Obj.create({ child });
@@ -518,7 +518,7 @@ test("a warning is logged when a non-link-specified cross object parent->child c
     destroyedParent.get('a').perform();
   });
 
-  Ember.run(() => {
+  run(() => {
     destroyedParent.destroy();
     canceledParent.get('a').cancelAll();
   });
@@ -530,24 +530,24 @@ test("a warning is logged when a non-link-specified cross object parent->child c
   ]);
   warnings.length = 0;
 
-  Ember.run(() => {
+  run(() => {
     child = Obj.create();
     destroyedParent = Obj.create({ child });
     destroyedParent.get('c').perform();
   });
 
-  Ember.run(() => { destroyedParent.destroy(); });
+  run(() => { destroyedParent.destroy(); });
   assert.equal(warnings.length, 0);
 });
 
 test(".linked() throws an error if called outside of a task", function(assert) {
   assert.expect(1);
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     a: task(function * () { }),
   });
 
-  Ember.run(() => {
+  run(() => {
     try {
       Obj.create().get('a').linked();
     } catch(e) {
@@ -564,14 +564,14 @@ test(".linked() warns when not immediately yielded", function(assert) {
     warnings.push(args);
   };
 
-  let Obj = Ember.Object.extend({
+  let Obj = EmberObject.extend({
     a: task(function * () {
       this.get('b').linked().perform();
     }),
     b: task(function * () { }),
   });
 
-  Ember.run(() => {
+  run(() => {
     Obj.create().get('a').perform();
   });
 

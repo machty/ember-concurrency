@@ -3,9 +3,9 @@ language: node_js
 node_js:
   # we recommend testing addons with the same minimum supported node version as Ember CLI
   # so that your addon works for all apps
-  - "4"
+  - "6"
 
-sudo: false
+sudo: required
 dist: trusty
 
 addons:
@@ -24,7 +24,6 @@ env:
     - EMBER_TRY_SCENARIO=ember-lts-2.4
     - EMBER_TRY_SCENARIO=ember-lts-2.8
     - EMBER_TRY_SCENARIO=ember-lts-2.12
-    - EMBER_TRY_SCENARIO=ember-lts-2.16
     - EMBER_TRY_SCENARIO=ember-release
     - EMBER_TRY_SCENARIO=ember-beta
     - EMBER_TRY_SCENARIO=ember-canary
@@ -44,7 +43,6 @@ install:
   - yarn install --no-lockfile --non-interactive
 
 script:
-  - yarn lint:js
   # Usually, it's ok to finish the test scenario without reverting
   #  to the addon's original dependency state, skipping "cleanup".
   - node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO --skip-cleanup

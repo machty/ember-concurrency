@@ -1,7 +1,9 @@
-import Application from '../app';
-import config from '../config/environment';
-import { setApplication } from '@ember/test-helpers';
-import { start, QUnitAdapter } from 'ember-qunit';
+import resolver from './helpers/resolver';
+import {
+  setResolver,
+  QUnitAdapter
+} from 'ember-qunit';
+import { start } from 'ember-cli-qunit';
 
 function noop() {}
 
@@ -20,6 +22,5 @@ QUnitAdapter.reopen({
   },
 });
 
-setApplication(Application.create(config.APP));
-
+setResolver(resolver);
 start();

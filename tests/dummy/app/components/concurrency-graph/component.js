@@ -1,3 +1,4 @@
+import { oneWay } from '@ember/object/computed';
 import { A } from '@ember/array';
 import { on } from '@ember/object/evented';
 import RSVP from 'rsvp';
@@ -10,10 +11,10 @@ let Tracker = EmberObject.extend({
   id: null,
   performTime: null,
   startTime: null,
-  endTime: computed.oneWay('comp.timeElapsed'),
+  endTime: oneWay('comp.timeElapsed'),
   comp: null,
   taskInstance: null,
-  isCanceled: computed.oneWay('taskInstance.isCanceled'),
+  isCanceled: oneWay('taskInstance.isCanceled'),
   state: computed('taskInstance.state', function() {
     return capitalize(this.get('taskInstance.state'));
   }),
