@@ -5,13 +5,21 @@ import { task, waitForEvent, timeout } from 'ember-concurrency';
 
 export default Controller.extend(Evented, {
 // BEGIN-SNIPPET waitForEvent
+  domEvent: null,
+  domEventLoop: task(function * () {
+    while(true) {
+      let event = yield waitForEvent(document.body, 'click');
+      this.set('domEvent', event);
+      this.trigger('fooEvent', { v: Math.random() });
+    }
+  }).on('init'),
+
   jQueryEvent: null,
   jQueryEventLoop: task(function * () {
     let $body = $('body');
     while(true) {
       let event = yield waitForEvent($body, 'click');
       this.set('jQueryEvent', event);
-      this.trigger('fooEvent', { v: Math.random() });
     }
   }).on('init'),
 
@@ -34,9 +42,8 @@ export default Controller.extend(Evented, {
   }).on('init'),
 
   waiter: task(function * () {
-    let event = yield waitForEvent($('body'), 'click');
+    let event = yield waitForEvent(document.body, 'click');
     return event;
   }),
 // END-SNIPPET
 });
-
