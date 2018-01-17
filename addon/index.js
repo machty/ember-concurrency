@@ -56,9 +56,9 @@ export function task(...args) {
 }
 
 /**
- * The `TaskGroup` object provides a means for applying
+ * "Task Groups" provide a means for applying
  * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
- * part of a group task modifiers like `drop()` or `restartable()`
+ * as part of a group task, modifiers like `drop()` or `restartable()`
  * will no longer affect the individual `Task`. Instead those
  * modifiers can be applied to the entire group.
  *
