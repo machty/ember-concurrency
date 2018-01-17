@@ -131,7 +131,7 @@ test("task groups can be canceled", function(assert) {
 });
 
 test("task groups return false for isRunning when task is cancelled", function (assert) {
-  assert.expect(3);
+  assert.expect(6);
 
   let deferA, deferB;
   let Obj = EmberObject.extend({
