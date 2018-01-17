@@ -55,6 +55,27 @@ export function task(...args) {
   return new TaskProperty(...args);
 }
 
+/**
+ * The `TaskGroup` object provides a means for applying
+ * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
+ * part of a group task modifiers like `drop()` or `restartable()`
+ * will no longer affect the individual `Task`. Instead those
+ * modifiers can be applied to the entire group.
+ *
+ * ```js
+ * import { task, taskGroup } from 'ember-concurrency';
+ *
+ * export default Controller.extend({
+ *   chores: taskGroup().drop(),
+ *
+ *   mowLawn:       task(taskFn).group('chores'),
+ *   doDishes:      task(taskFn).group('chores'),
+ *   changeDiapers: task(taskFn).group('chores')
+ * });
+ * ```
+ *
+ * @returns {TaskGroup}
+*/
 export function taskGroup(...args) {
   return new TaskGroupProperty(...args);
 }
@@ -66,9 +87,9 @@ export function events(obj, eventName) {
 export {
   all,
   allSettled,
+  didCancel,
   hash,
   race,
-  didCancel,
   timeout,
   waitForQueue,
   waitForEvent
