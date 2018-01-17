@@ -33,7 +33,7 @@ under the [Task Property API docs](TaskProperty.html).
 ## Task/cancelation-aware variants of Promise helpers
 
 These helpers are just like their Promise/RSVP equivalents, but with
-the added behavior that they support cancelation and cna hence be
+the added behavior that they support cancelation and can hence be
 used in conjunction with Tasks / TaskInstances.
 
 - [all](global.html#all)
