@@ -2,7 +2,7 @@ import { resolve } from 'rsvp';
 import $ from 'jquery';
 import { test as qunitTest } from 'ember-qunit';
 import { wrap, go } from 'ember-concurrency/-task-instance';
-import { settled } from '@ember/test-helpers';
+import { visit, click, settled } from '@ember/test-helpers';
 import {
   raw,
   rawTimeout
@@ -45,11 +45,11 @@ const HELPER_METHODS = {
     return find(this.application, ...args);
   },
   visit(...args) {
-    this.application.testHelpers.visit(...args);
+    visit(...args);
   },
   click: wrap(function * (selector) {
     yield find(this.application, selector);
-    this.application.testHelpers.click(selector);
+    click(selector);
   }),
 };
 
