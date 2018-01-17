@@ -130,6 +130,47 @@ test("task groups can be canceled", function(assert) {
   assertStates(assert, taskB, false, false, true, suffix);
 });
 
+test("task groups return false for isRunning when task is cancelled", function (assert) {
+  assert.expect(3);
+
+  let deferA, deferB;
+  let Obj = EmberObject.extend({
+    tg: taskGroup().drop(),
+
+    taskA: task(function* () {
+      deferA = RSVP.defer();
+      yield deferA.promise;
+    }).group('tg'),
+
+    taskB: task(function* () {
+      deferB = RSVP.defer();
+      yield deferB.promise;
+    }).group('tg'),
+  });
+
+  let obj, taskA, taskB, suffix, tg;
+  run(() => {
+    obj = Obj.create();
+    tg = obj.get('tg');
+    taskA = obj.get('taskA');
+    taskB = obj.get('taskB');
+    taskA.perform();
+  });
+
+  suffix = "after first run loop";
+
+  assertStates(assert, tg, true, false, false, suffix);
+  assertStates(assert, taskA, true, false, false, suffix);
+  assertStates(assert, taskB, false, false, true, suffix);
+
+  run(taskA, 'cancelAll');
+
+  suffix = "after taskA.cancelAll()";
+  assertStates(assert, tg, false, false, true, suffix);
+  assertStates(assert, taskA, false, false, true, suffix);
+  assertStates(assert, taskB, false, false, true, suffix);
+});
+
 test("task groups return a boolean for isRunning", function(assert) {
   assert.expect(3);
 
