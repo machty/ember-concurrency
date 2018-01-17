@@ -45,11 +45,11 @@ const HELPER_METHODS = {
     return find(this.application, ...args);
   },
   visit(...args) {
-    visit(...args);
+    return visit(...args);
   },
   click: wrap(function * (selector) {
     yield find(this.application, selector);
-    click(selector);
+    return click(selector);
   }),
 };
 
