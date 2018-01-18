@@ -34,8 +34,8 @@ export default Controller.extend({
     { route: "docs.examples.loading-ui", title: "Loading UI" },
     { route: "docs.examples.autocomplete", title: "Type-Ahead Search" },
     { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" },
-    // { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" },
-    // { route: "docs.examples.route-tasks", title: "Route Tasks" },
+    { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" },
+    { route: "docs.examples.route-tasks", title: "Route Tasks" },
     { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" },
   ],
 
