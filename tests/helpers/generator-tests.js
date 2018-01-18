@@ -2,6 +2,7 @@ import { resolve } from 'rsvp';
 import $ from 'jquery';
 import { test as qunitTest } from 'ember-qunit';
 import { wrap, go } from 'ember-concurrency/-task-instance';
+import { visit, click, settled } from '@ember/test-helpers';
 import {
   raw,
   rawTimeout
@@ -12,9 +13,9 @@ const find = wrap(function * (app, selector, options = {}) {
   let timeoutMs = options.timeout;
   let count = typeof options.count === 'undefined' ? 1 : options.count;
 
-  let settled = false;
-  app.testHelpers.wait().then(() => {
-    settled = true;
+  let isSettled = false;
+  settled().then(() => {
+    isSettled = true;
   });
 
   while(true) {
@@ -29,7 +30,7 @@ const find = wrap(function * (app, selector, options = {}) {
           throw new Error(`Tried to find ${count} occurrence(s) of "${selector}" within ${timeoutMs}ms, instead found ${$el.length}`);
         }
       } else {
-        if (settled) {
+        if (isSettled) {
           throw new Error(`Tried to find ${count} occurrence(s) of "${selector}" before test waiters settled, instead found ${$el.length}`);
         }
       }
@@ -44,11 +45,11 @@ const HELPER_METHODS = {
     return find(this.application, ...args);
   },
   visit(...args) {
-    this.application.testHelpers.visit(...args);
+    return visit(...args);
   },
   click: wrap(function * (selector) {
     yield find(this.application, selector);
-    this.application.testHelpers.click(selector);
+    return click(selector);
   }),
 };
 
@@ -72,4 +73,3 @@ function test(description, fn) {
 export {
   test
 };
-

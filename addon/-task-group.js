@@ -1,7 +1,11 @@
-import EmberObject, { computed } from '@ember/object';
+import { or, bool } from '@ember/object/computed';
+import EmberObject from '@ember/object';
 import { objectAssign, _ComputedProperty } from './utils';
 import TaskStateMixin from './-task-state-mixin';
-import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
+import {
+  propertyModifiers,
+  resolveScheduler
+} from './-property-modifiers-mixin';
 
 
 export const TaskGroup = EmberObject.extend(TaskStateMixin, {
@@ -11,8 +15,8 @@ export const TaskGroup = EmberObject.extend(TaskStateMixin, {
     return `<TaskGroup:${this._propertyName}>`;
   },
 
-  _numRunningOrNumQueued: computed.or('numRunning', 'numQueued'),
-  isRunning: computed.bool('_numRunningOrNumQueued'),
+  _numRunningOrNumQueued: or('numRunning', 'numQueued'),
+  isRunning: bool('_numRunningOrNumQueued'),
   isQueued:  false
 });
 

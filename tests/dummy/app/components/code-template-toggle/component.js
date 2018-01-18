@@ -1,5 +1,6 @@
 import { schedule } from '@ember/runloop';
 import Component from '@ember/component';
+import $ from 'jquery';
 
 export default Component.extend({
   classNames: ["code-template-toggle"],

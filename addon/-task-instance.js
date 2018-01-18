@@ -1,6 +1,6 @@
 import { assert } from '@ember/debug';
 import { defer, reject } from 'rsvp';
-import { not } from '@ember/object/computed';
+import { not, and } from '@ember/object/computed';
 import { run, join, schedule } from '@ember/runloop';
 import EmberObject, { computed, get, set } from '@ember/object';
 import Ember from 'ember';
@@ -155,7 +155,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  isCanceled: computed.and('isCanceling', 'isFinished'),
+  isCanceled: and('isCanceling', 'isFinished'),
   isCanceling: false,
 
   /**

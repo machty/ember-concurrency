@@ -1,6 +1,6 @@
 import { A } from '@ember/array';
 import Component from '@ember/component';
-import { task, timeout } from 'ember-concurrency';
+import { timeout } from 'ember-concurrency';
 
 const PREFIXES = [
   "Tomster",
@@ -25,7 +25,7 @@ function randomFrom(array) {
 }
 
 let store = {
-  getNearbyStores(coords) {
+  getNearbyStores() {
     let num = 3; //Math.floor(Math.random() * 2) + 5;
     let stores = [];
     for (let i = 0; i < num; ++i) {
