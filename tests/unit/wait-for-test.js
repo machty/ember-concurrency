@@ -49,7 +49,7 @@ test('cancelling waitForQueue works', function(assert) {
   assert.notOk(taskCompleted, 'Task should not have completed');
 });
 
-test('waitForEvent works', function(assert) {
+test('waitForEvent works (`Ember.Evented` interface)', function(assert) {
   assert.expect(4);
 
   let taskCompleted = false;
@@ -77,7 +77,7 @@ test('waitForEvent works', function(assert) {
   assert.ok(taskCompleted, 'Task should have completed');
 });
 
-test('canceling waitForEvent works', function(assert) {
+test('canceling waitForEvent works (`Ember.Evented` interface)', function(assert) {
   assert.expect(4);
 
   let taskCompleted = false;
@@ -103,5 +103,67 @@ test('canceling waitForEvent works', function(assert) {
   });
 
   assert.notOk(obj.has('foo'), 'Object does not have the event listener');
+  assert.notOk(taskCompleted, 'Task should not have completed');
+});
+
+test('waitForEvent works (DOM `EventTarget` interface)', function(assert) {
+  assert.expect(3);
+
+  const element = document.createElement('button');
+  let taskCompleted = false;
+  let obj;
+
+  const Obj = EventedObject.extend({
+    task: task(function*() {
+      let { detail } = yield waitForEvent(element, 'foo');
+      assert.equal(detail, 123);
+      taskCompleted = true;
+    })
+  });
+
+  run(() => {
+    obj = Obj.create();
+    obj.get('task').perform();
+  });
+
+  run(() => {
+    assert.notOk(taskCompleted, 'Task should not have completed');
+    element.dispatchEvent(new CustomEvent('foo', { detail: 123 }));
+  });
+
+  assert.ok(taskCompleted, 'Task should have completed');
+});
+
+test('canceling waitForEvent works (DOM `EventTarget` interface)', function(assert) {
+  assert.expect(3);
+
+  const element = document.createElement('button');
+  element.removeEventListener = (...args) => {
+    removeEventListenerCalled = true;
+    return HTMLElement.prototype.removeEventListener.apply(element, args);
+  };
+  let taskCompleted = false;
+  let removeEventListenerCalled = false;
+  let obj;
+
+  const Obj = EventedObject.extend({
+    task: task(function*() {
+      yield waitForEvent(element, 'foo');
+      taskCompleted = true;
+    })
+  });
+
+  run(() => {
+    obj = Obj.create();
+    obj.get('task').perform();
+  });
+
+  run(() => {
+    assert.notOk(taskCompleted, 'Task should not have completed');
+    obj.get('task').cancelAll();
+    element.dispatchEvent(new CustomEvent('foo'));
+  });
+
+  assert.ok(removeEventListenerCalled, '`removeEventListener` was called');
   assert.notOk(taskCompleted, 'Task should not have completed');
 });

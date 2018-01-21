@@ -4,9 +4,10 @@ import ComputedProperty from '@ember/object/computed';
 import Ember from 'ember';
 
 export function isEventedObject(c) {
-  return (c &&
-          typeof c.one === 'function' &&
-          typeof c.off === 'function');
+  return (c && (
+    (typeof c.one === 'function' && typeof c.off === 'function') ||
+    (typeof c.addEventListener === 'function' && typeof c.removeEventListener === 'function')
+  ));
 }
 
 export function Arguments(args, defer) {
@@ -145,4 +146,3 @@ export function rawTimeout(ms) {
     }
   };
 }
-
