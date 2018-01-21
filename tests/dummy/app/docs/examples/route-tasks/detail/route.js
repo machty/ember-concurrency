@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import { inject as service } from '@ember/service';
 import Route from '@ember/routing/route';
 import { task, timeout } from 'ember-concurrency';
@@ -9,9 +8,7 @@ export default Route.extend({
 
   setupController(controller, model) {
     this._super(...arguments);
-    if (!Ember.testing) {
-      this.get('pollServerForChanges').perform(model.id);
-    }
+    this.get('pollServerForChanges').perform(model.id);
   },
 
   pollServerForChanges: task(function * (id) {

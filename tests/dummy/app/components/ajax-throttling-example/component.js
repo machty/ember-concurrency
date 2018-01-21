@@ -1,19 +1,16 @@
-import Ember from 'ember';
 import Component from '@ember/component';
 import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET ajax-throttling
 function loopingAjaxTask(id, color) {
-  if (!Ember.testing) {
-    return task(function * () {
-      while (true) {
-        this.log(color, `Task ${id}: making AJAX request`);
-        yield this.get('ajaxTask').perform();
-        this.log(color, `Task ${id}: Done, sleeping.`);
-        yield timeout(2000);
-      }
-    }).on('init');
-  }
+  return task(function * () {
+    while (true) {
+      this.log(color, `Task ${id}: making AJAX request`);
+      yield this.get('ajaxTask').perform();
+      this.log(color, `Task ${id}: Done, sleeping.`);
+      yield timeout(2000);
+    }
+  }).on('init');
 }
 
 export default Component.extend({
