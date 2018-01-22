@@ -1,4 +1,8 @@
 # Changelog
+### 0.8.13
+  - waitForEvent() support for native DOM EventTargets
+    (instead of just Ember / jQuery objects) (#187)
+
 ### 0.8.12
   - Officially release and document "Encapsulated Tasks", which
     are tasks that can maintain/mutate their own state without
