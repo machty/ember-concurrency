@@ -4,15 +4,30 @@ import { addListener } from '@ember/object/events';
 import EmberObject from '@ember/object';
 import { getOwner } from '@ember/application';
 import Ember from 'ember';
-import { default as TaskInstance, getRunningInstance } from './-task-instance';
-import { PERFORM_TYPE_DEFAULT, PERFORM_TYPE_UNLINKED, PERFORM_TYPE_LINKED } from './-task-instance';
+import {
+  default as TaskInstance,
+  getRunningInstance
+} from './-task-instance';
+import {
+  PERFORM_TYPE_DEFAULT,
+  PERFORM_TYPE_UNLINKED,
+  PERFORM_TYPE_LINKED
+} from './-task-instance';
 import TaskStateMixin from './-task-state-mixin';
 import { TaskGroup } from './-task-group';
-import { propertyModifiers, resolveScheduler } from './-property-modifiers-mixin';
-import { objectAssign, INVOKE, _cleanupOnDestroy, _ComputedProperty } from './utils';
+import {
+  propertyModifiers,
+  resolveScheduler
+} from './-property-modifiers-mixin';
+import {
+  objectAssign,
+  INVOKE,
+  _cleanupOnDestroy,
+  _ComputedProperty
+} from './utils';
 import EncapsulatedTask from './-encapsulated-task';
 
-const PerformProxy = Ember.Object.extend({
+const PerformProxy = EmberObject.extend({
   _task: null,
   _performType: null,
   _linkedObject: null,

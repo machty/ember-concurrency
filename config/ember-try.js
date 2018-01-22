@@ -1,22 +1,6 @@
-/*jshint node:true*/
 module.exports = {
+  useYarn: true,
   scenarios: [
-    {
-      name: 'ember-1.13',
-      bower: {
-        dependencies: {
-          'ember': '~1.13.0'
-        },
-        resolutions: {
-          'ember': '~1.13.0'
-        }
-      },
-      npm: {
-        devDependencies: {
-          'ember-source': null
-        }
-      }
-    },
     {
       name: 'ember-lts-2.4',
       bower: {
@@ -50,6 +34,14 @@ module.exports = {
       }
     },
     {
+      name: 'ember-lts-2.12',
+      npm: {
+        devDependencies: {
+          'ember-source': '~2.12.0'
+        }
+      }
+    },
+    {
       name: 'ember-release',
       bower: {
         dependencies: {
@@ -79,6 +71,28 @@ module.exports = {
         devDependencies: {
           'ember-source': null
         }
+      }
+    },
+    {
+      name: 'ember-canary',
+      bower: {
+        dependencies: {
+          'ember': 'components/ember#canary'
+        },
+        resolutions: {
+          'ember': 'canary'
+        }
+      },
+      npm: {
+        devDependencies: {
+          'ember-source': null
+        }
+      }
+    },
+    {
+      name: 'ember-default',
+      npm: {
+        devDependencies: {}
       }
     }
   ]
