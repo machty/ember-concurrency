@@ -1,4 +1,7 @@
 # Changelog
+### 0.8.14
+  - Revert to "old style" Ember imports in `app/` tree
+
 ### 0.8.13
   - waitForEvent() support for native DOM EventTargets
     (instead of just Ember / jQuery objects) (#187)
