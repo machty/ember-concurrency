@@ -1,9 +1,9 @@
 import Evented from '@ember/object/evented';
-import Controller from '@ember/controller';
+import Component from '@ember/component';
 import $ from 'jquery';
 import { task, waitForEvent, timeout } from 'ember-concurrency';
 
-export default Controller.extend(Evented, {
+export default Component.extend(Evented, {
 // BEGIN-SNIPPET waitForEvent
   domEvent: null,
   domEventLoop: task(function * () {
@@ -12,7 +12,7 @@ export default Controller.extend(Evented, {
       this.set('domEvent', event);
       this.trigger('fooEvent', { v: Math.random() });
     }
-  }).on('init'),
+  }).on('didInsertElement'),
 
   jQueryEvent: null,
   jQueryEventLoop: task(function * () {
@@ -21,7 +21,7 @@ export default Controller.extend(Evented, {
       let event = yield waitForEvent($body, 'click');
       this.set('jQueryEvent', event);
     }
-  }).on('init'),
+  }).on('didInsertElement'),
 
   emberEvent: null,
   emberEventedLoop: task(function * () {
@@ -29,7 +29,7 @@ export default Controller.extend(Evented, {
       let event = yield waitForEvent(this, 'fooEvent');
       this.set('emberEvent', event);
     }
-  }).on('init'),
+  }).on('didInsertElement'),
 // END-SNIPPET
 
 
@@ -39,7 +39,7 @@ export default Controller.extend(Evented, {
       yield this.get('waiter').perform();
       yield timeout(1500);
     }
-  }).on('init'),
+  }).on('didInsertElement'),
 
   waiter: task(function * () {
     let event = yield waitForEvent(document.body, 'click');

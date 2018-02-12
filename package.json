@@ -18,7 +18,7 @@
   "author": "Alex Matchneer <machty@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "broccoli-asset-rev": "^2.4.5",
+    "broccoli-asset-rev": "https://github.com/ef4/broccoli-asset-rev#838f1b7186fde566d3e8010196c1f974423a4946",
     "broccoli-clean-css": "^1.1.0",
     "documentation": "^3.0.4",
     "ember-ajax": "3.0.0",
@@ -29,6 +29,7 @@
     "ember-cli-deploy-build": "^0.1.1",
     "ember-cli-deploy-git": "^0.1.0",
     "ember-cli-eslint": "^4.2.1",
+    "ember-cli-fastboot": "https://github.com/ef4/ember-cli-fastboot#5fae5bded7ecb16243e456e1f3611ebaf71562d9",
     "ember-cli-fastclick": "1.4.1",
     "ember-cli-github-pages": "0.0.6",
     "ember-cli-htmlbars": "^2.0.1",
@@ -49,7 +50,9 @@
     "ember-notify": "~5.2.1",
     "ember-resolver": "^4.0.0",
     "ember-source": "~2.18.0",
-    "loader.js": "^4.2.3"
+    "jsdom": "^11.6.2",
+    "loader.js": "^4.2.3",
+    "prember": "0.3.0-alpha.3"
   },
   "keywords": [
     "ember-addon",
