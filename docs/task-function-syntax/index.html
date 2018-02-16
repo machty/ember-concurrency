@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>ember-concurrency</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22/%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%220.8.14+025313ed%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
+<!-- EMBER_CLI_FASTBOOT_TITLE -->
+
+    <link integrity="" rel="stylesheet" href="/assets/vendor-e754b247f0b14ad5fde0f302404dd7cb.css">
+    <link integrity="" rel="stylesheet" href="/assets/dummy-7f48877695f90667ea4c9e336bd96024.css">
+    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+    
+  </head>
+  <body>
+    <script type="x/boundary" id="fastboot-body-start"></script><div id="ember1301" class="ember-view"><div class="container navbar">
+  <div class="row">
+    <div class="ten columns">
+      <h3 style="float:left;">
+        ember-concurrency
+
+        <span style="font-size: 0.5em;">
+          (v 0.8.14)
+        </span>
+      </h3>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="/api">API</a>
+      </div>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="https://github.com/machty/ember-concurrency" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="docs row">
+    <div class="three columns">
+      <div class="side-menu">
+            <div class="toc-entry">
+                <a href="/docs/introduction" id="ember1304" class="ember-view">Home</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/installation" id="ember1308" class="ember-view">Installation</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Introduction
+            </div>
+            <div class="toc-entry">
+                <a href="/docs/tutorial" id="ember1312" class="ember-view">Writing Code Without Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/tutorial/discussion" id="ember1319" class="ember-view">Post-Mortem</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/tutorial/refactor" id="ember1323" class="ember-view">Refactoring With Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Reference
+            </div>
+            <div class="toc-entry">
+                <a href="/docs/task-function-syntax" id="ember1327" class="active ember-view">Task Function Syntax</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/task-concurrency" id="ember1328" class="ember-view">Managing Task Concurrency</a>
+            </div>
+
+
+                <div class="toc-entry toc-subentry">
+                  <a href="/docs/task-concurrency-advanced" id="ember1332" class="ember-view">Advanced</a>
+                  </div>
+            <div class="toc-entry">
+                <a href="/docs/cancelation" id="ember1336" class="ember-view">Cancelation</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/error-vs-cancelation" id="ember1340" class="ember-view">Handling Errors</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/child-tasks" id="ember1344" class="ember-view">Child Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/task-groups" id="ember1348" class="ember-view">Task Groups</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/derived-state" id="ember1352" class="ember-view">Derived State</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/encapsulated-task" id="ember1356" class="ember-view">Encapsulated Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/events" id="ember1360" class="ember-view">Ember &amp; DOM / jQuery Events</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/testing-debugging" id="ember1364" class="ember-view">Testing &amp; Debugging</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/faq" id="ember1368" class="ember-view">FAQ &amp; Fact Sheet</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Examples
+            </div>
+            <div class="toc-entry">
+                <a href="/docs/examples/loading-ui" id="ember1372" class="ember-view">Loading UI</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/autocomplete" id="ember1379" class="ember-view">Type-Ahead Search</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/increment-buttons" id="ember1383" class="ember-view">Accelerating Increment Buttons</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/ajax-throttling" id="ember1387" class="ember-view">AJAX Throttling</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/route-tasks" id="ember1391" class="ember-view">Route Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/joining-tasks" id="ember1395" class="ember-view">Awaiting Multiple Child Tasks</a>
+            </div>
+
+
+<!---->      </div>
+    </div>
+    <div class="nine columns">
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a href="/docs/tutorial/refactor" id="ember1399" class="ember-view">Refactoring With Tasks</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a href="/docs/task-concurrency" id="ember1400" class="ember-view">Managing Task Concurrency</a>
+    </p>
+</div>
+
+
+      <a title="Edit on Github" href="https://github.com/machty/ember-concurrency/edit/master/tests/dummy/app/docs/task-function-syntax/template.hbs" id="ember1401" class="github-edit ember-view"><i class="icon-pencil"></i>
+</a>
+
+      <h3>Task Function Syntax</h3>
+
+<p>
+  When a task is performed, it runs the code in the task function
+  you passed into <code>task()</code>. This function must
+  be a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">generator function</a>
+  — it must use the <code>function *</code> syntax, and cannot
+  be just a regular JavaScript function.
+</p>
+
+<p>
+  This example demonstrates how, in ember-concurrency, generator
+  functions behave <em>just like regular functions</em>. Anything you can
+  do in a regular function, you can do in a generator function.
+</p>
+
+<div id="ember1413" class="ember-view"><p>
+  <button>Pick Random Number</button>
+  
+</p>
+
+</div>
+
+<pre id="ember1414" class="javascript ember-view">pickRandomNumbers: task(function * () {
+  let nums = [];
+  for (let i = 0; i &lt; 3; i++) {
+    nums.push(Math.floor(Math.random() * 10));
+  }
+
+  this.set('status', `My favorite numbers: ${nums.join(', ')}`);
+}),
+</pre>
+
+<h4>Using the <code>yield</code> keyword</h4>
+
+<p>
+  Much of the power of Tasks is unleashed once you start making
+  use of the <code>yield</code> keyword within generator functions.
+  The <code>yield</code> keyword, when used with a promise, lets you
+  pause execution of your task function until that promise resolves, at
+  which point the task function will continue running from where it
+  had paused.
+</p>
+
+<p>
+  This example demonstrates how you can <code>yield timeout(1000)</code>
+  to pause execution for 1000 ms (one second). The <code>timeout()</code>
+  helper function, which <strong>ember-concurrency</strong> provides,
+  simply returns a promise that resolves after the specified number of milliseconds.
+</p>
+
+<div id="ember1417" class="ember-view"><p>
+  <button>Wait A Few Seconds</button>
+  
+</p>
+</div>
+
+<pre id="ember1418" class="javascript ember-view">waitAFewSeconds: task(function * () {
+  this.set('status', "Gimme one second...");
+  yield timeout(1000);
+  this.set('status', "Gimme one more second...");
+  yield timeout(1000);
+  this.set('status', "OK, I'm done.");
+}),
+</pre>
+
+<p>
+  When you <code>yield</code> a promise, the <code>yield</code> expression
+  evaluates to the resolved value of the promise. In other words, you can
+  set a variable equal to a yielded promise, and when the promise resolves,
+  the task function will resume and the value stored into that variable will
+  be the resolved value of the promise.
+</p>
+
+<div id="ember1421" class="ember-view"><p>
+  <button>Perform myTask</button>
+  
+</p>
+
+</div>
+
+<pre id="ember1422" class="javascript ember-view">myTask: task(function * () {
+  this.set('status', `Thinking...`);
+  let promise = timeout(1000).then(() =&gt; 123);
+  let resolvedValue = yield promise;
+  this.set('status', `The value is ${resolvedValue}`);
+}),
+</pre>
+
+<p>
+  If you <code>yield</code> a promise that rejects, the task function will
+  throw the rejected value (likely an exception object) from the point in
+  task function where the rejecting promise was yielded. This means you can
+  use <code>try {} catch(e) {} finally {}</code> blocks, just as you would
+  for code that runs synchronously.
+</p>
+
+<div id="ember1425" class="ember-view"><p>
+  <button>Perform myTask</button>
+  
+</p>
+
+</div>
+
+<pre id="ember1426" class="javascript ember-view">myTask: task(function * () {
+  this.set('status', `Thinking...`);
+  try {
+    yield timeout(1000).then(() =&gt; {
+      throw "Ahhhhh!!!!";
+    });
+    this.set('status', `This does not get used!`);
+  } catch(e) {
+    this.set('status', `Caught value: ${e}`);
+  }
+}),
+</pre>
+
+<p>
+  The behavior of yielding promises within task generator functions
+  is designed to closely follow the behavior of the proposed
+  <a href="https://github.com/tc39/ecmascript-asyncawait">async/await</a>
+  syntax, but instead of <code>async function</code>, you use
+  <code>function *</code>, and instead of <code>await</code>, you
+  use <code>yield</code>.
+</p>
+
+
+
+      <br> <br> <br> <br> 
+
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a href="/docs/tutorial/refactor" id="ember1427" class="ember-view">Refactoring With Tasks</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a href="/docs/task-concurrency" id="ember1428" class="ember-view">Managing Task Concurrency</a>
+    </p>
+</div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<div id="ember1429" class="ember-notify-cn ember-notify-default ember-view"><!----></div>
+</div><script type="x/boundary" id="fastboot-body-end"></script>
+
+    <script src="/assets/vendor-5f94e20cd7ff4ec97d6a6a3b5639223f.js"></script>
+    <script src="/assets/dummy-f249dc7be3ba0a585d9dbb545903f509.js"></script>
+
+    
+  </body>
+</html>

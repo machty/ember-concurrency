@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>ember-concurrency</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22/%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%220.8.14+025313ed%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
+<!-- EMBER_CLI_FASTBOOT_TITLE -->
+
+    <link integrity="" rel="stylesheet" href="/assets/vendor-e754b247f0b14ad5fde0f302404dd7cb.css">
+    <link integrity="" rel="stylesheet" href="/assets/dummy-7f48877695f90667ea4c9e336bd96024.css">
+    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+    
+  </head>
+  <body>
+    <script type="x/boundary" id="fastboot-body-start"></script><div id="ember2546" class="ember-view"><div class="container navbar">
+  <div class="row">
+    <div class="ten columns">
+      <h3 style="float:left;">
+        ember-concurrency
+
+        <span style="font-size: 0.5em;">
+          (v 0.8.14)
+        </span>
+      </h3>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="/api">API</a>
+      </div>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="https://github.com/machty/ember-concurrency" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="docs row">
+    <div class="three columns">
+      <div class="side-menu">
+            <div class="toc-entry">
+                <a href="/docs/introduction" id="ember2549" class="ember-view">Home</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/installation" id="ember2553" class="ember-view">Installation</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Introduction
+            </div>
+            <div class="toc-entry">
+                <a href="/docs/tutorial" id="ember2557" class="ember-view">Writing Code Without Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/tutorial/discussion" id="ember2564" class="ember-view">Post-Mortem</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/tutorial/refactor" id="ember2568" class="ember-view">Refactoring With Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Reference
+            </div>
+            <div class="toc-entry">
+                <a href="/docs/task-function-syntax" id="ember2572" class="ember-view">Task Function Syntax</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/task-concurrency" id="ember2576" class="ember-view">Managing Task Concurrency</a>
+            </div>
+
+
+                <div class="toc-entry toc-subentry">
+                  <a href="/docs/task-concurrency-advanced" id="ember2580" class="ember-view">Advanced</a>
+                  </div>
+            <div class="toc-entry">
+                <a href="/docs/cancelation" id="ember2584" class="ember-view">Cancelation</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/error-vs-cancelation" id="ember2588" class="ember-view">Handling Errors</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/child-tasks" id="ember2592" class="ember-view">Child Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/task-groups" id="ember2596" class="ember-view">Task Groups</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/derived-state" id="ember2600" class="ember-view">Derived State</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/encapsulated-task" id="ember2604" class="ember-view">Encapsulated Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/events" id="ember2608" class="ember-view">Ember &amp; DOM / jQuery Events</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/testing-debugging" id="ember2612" class="active ember-view">Testing &amp; Debugging</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/faq" id="ember2613" class="ember-view">FAQ &amp; Fact Sheet</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Examples
+            </div>
+            <div class="toc-entry">
+                <a href="/docs/examples/loading-ui" id="ember2617" class="ember-view">Loading UI</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/autocomplete" id="ember2624" class="ember-view">Type-Ahead Search</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/increment-buttons" id="ember2628" class="ember-view">Accelerating Increment Buttons</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/ajax-throttling" id="ember2632" class="ember-view">AJAX Throttling</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/route-tasks" id="ember2636" class="ember-view">Route Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/joining-tasks" id="ember2640" class="ember-view">Awaiting Multiple Child Tasks</a>
+            </div>
+
+
+<!---->      </div>
+    </div>
+    <div class="nine columns">
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a href="/docs/events" id="ember2644" class="ember-view">Ember &amp; DOM / jQuery Events</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a href="/docs/faq" id="ember2645" class="ember-view">FAQ &amp; Fact Sheet</a>
+    </p>
+</div>
+
+
+      <a title="Edit on Github" href="https://github.com/machty/ember-concurrency/edit/master/tests/dummy/app/docs/testing-debugging/template.hbs" id="ember2646" class="github-edit ember-view"><i class="icon-pencil"></i>
+</a>
+
+      <h3>Testing</h3>
+
+<p>
+  Ember doesn't yet have strong conventions for testing
+  long-term timers and polling loops, and since many of the use cases
+  that ember-concurrency addresses involves heavy use of <code>timeout()</code>,
+  and often times within a (possibly infinite) loop, it can be difficult
+  to figure out how to test code that makes heavy use of such things
+  within ember-concurrency tasks.
+</p>
+
+<p>
+  <em>
+    NOTE: this is an area of active development within the Ember community,
+    particularly amongst ember-concurrency users; in due time we will probably
+    have more official API (possibly in the form of another addon) to help
+    make testing time more manageable, but in the meantime, this page documents
+    some common approaches to testing time with present-day tooling.
+  </em>
+</p>
+
+<h4>The Problem</h4>
+
+<p>
+  Consider the following (common) pattern for polling a server for changes:
+</p>
+
+<pre id="ember2648" class="javascript ember-view">pollForChanges: task(function * () {
+  while(true) {
+    yield pollServerForChanges();
+    yield timeout(5000);
+  }
+})
+</pre>
+
+<p>
+  The above example uses ember-concurrency tasks; to demonstrate that these
+  issues aren't limited to ember-concurrency tasks, here is how the same
+  logic might be written without ember-concurrency:
+</p>
+
+<pre id="ember2649" class="javascript ember-view">pollForChanges() {
+  if (this.isDestroyed) { return; }
+  pollServerForChanges().then(() =&gt; {
+    Ember.run.later(this, 'pollForChanges', 5000);
+  });
+}
+</pre>
+
+<p>
+  Both of these cases involve a "poll loop": on every iteration, do something asynchronous,
+  then pause for some period of time, then repeat.
+</p>
+
+<p>
+  If, within an acceptance test, you <code>visit()</code>ed the page that
+  causes this loop to start, your acceptance test case would "hang" and eventually
+  fail with a QUnit test timeout. The reason this happens is that the Ember testing
+  tools are aware of all timers created via <code>Ember.run.later</code> (and
+  ember-concurrency's <code>timeout()</code> helper internally uses <code>Ember.run.later</code>),
+  and will wait for all timers to "settle" before allowing the test to proceed.
+  But if you have a timer within a loop, the timers will never settle, and hence
+  your test will hang.
+</p>
+
+<p>
+  The solution, one way or another, is to "break" the timer loop when in a testing environment.
+  Here are all the ways to do that, each with their own problems / tradeoffs:
+</p>
+
+<h5>Insert <code>Ember.testing</code> checks in your code</h5>
+
+<pre id="ember2650" class="javascript ember-view">pollForChanges: task(function * () {
+  while(true) {
+    yield pollServerForChanges();
+    if (Ember.testing) { return; }
+    yield timeout(5000);
+  }
+})
+</pre>
+
+<p>
+  This is sufficient when it's satisfactory to just test a single
+  iteration of a loop, but a) it won't test that the task continues
+  to loop, and b) it's unfortunate to have to riddle your actual
+  code with testing logic.
+</p>
+
+<h5>Use <code>Ember.run.cancelTimers</code> in your test case</h5>
+
+<p>
+  This is the approach used by the ember-concurrency
+  <a href="https://github.com/machty/ember-concurrency/blob/72f70b6c327f5242ca623d61ea0595b5f9093896/tests/helpers/start-app.js#L17-L19">documentation site tests</a>;
+  since any of the pages on this docs site might demonstrate a live
+  ember-concurrency task with a timer loop, all of the acceptance tests
+  automatically cancel all outstanding timers after 500ms to effectively
+  stop all tasks wherever they're paused.
+</p>
+
+<h4>No loops, but long timers</h4>
+
+<p>
+  If you're testing code that just uses long timers, but not necessarily loops,
+  you might still run into the problem of test cases that take too long to complete,
+  or might hit the QUnit timeout. A common solution to this problem is to use much
+  smaller millisecond timer values in a testing environment. You can either do this
+  by checking <code>Ember.testing</code> wherever you set a timer, or, more elegantly, you can
+  define common timer values in a config file, import the timer values
+  wherever you need to set a timer, and in test environments, the config
+  file specifies much smaller values so that the timers elapse more quickly.
+</p>
+
+<h4>The Future</h4>
+
+<p>
+  The above solutions leave much to be desired. Hopefully a definitive solution
+  that produces clear, deterministic, consistent results will emerge from the
+  community. There are some <a href="https://gist.github.com/machty/574457b1f2d993cc5959a1d6d6c74e5b">ideas</a>
+  floating around, and if you're interested in contributing to the discussion
+  please join the <code>#e-concurrency</code> channel on the Ember Community Slack.
+</p>
+
+<p>
+  Also, if you're finding success with a testing approach that wasn't mentioned here,
+  please open a GitHub issue with your ideas or open a Pull Request to add
+  additional docs to <a href="https://github.com/machty/ember-concurrency/blob/master/tests/dummy/app/docs/testing-debugging/template.hbs">this page</a>.
+</p>
+
+
+<h3>Debugging</h3>
+
+<p>
+  <a href="http://vanderwijk.info/blog/how-disable-es6-transpilation-emberjs-in-order-have-better-debugging-experience/">This article</a>
+  provides some nice ideas as to how to improve the debugging experience within ember-concurrency:
+  in particular, by blacklisting "regenerator" in your app's Babel configuration,
+  you can avoid Ember transpiling your task generator functions into a somewhat
+  unrecognizable format. Just keep in mind that you should probably only enable
+  this configuration in a development environment, and that whatever browser
+  you're testing on needs to have a spec-compliant implementation of generator
+  functions (Chrome's implementation only became spec-compliant around June, 2016).
+</p>
+
+<h4>Unexpected Cancelation</h4>
+
+<p>
+  Sometimes it's not obvious why a Task was canceled; in these cases you
+  can use the <code>.debug()</code> Task Modifier on a specific task e.g.
+  <code>nameOfTask: task(...).debug()</code>,
+  which will provide some logging about the task's lifecycle, e.g.
+  <code>TaskInstance 'nameOfTask' was canceled because the object it lives on was destroyed or unrendered </code>.
+</p>
+
+<p>
+  To enable lifecycle logging on ALL ember-concurrency tasks, you can enable the <code>DEBUG_TASKS</code>
+  flag on <code>EmberENV</code> in your project's <code>config/environment.js</code> file.
+</p>
+
+
+
+
+      <br> <br> <br> <br> 
+
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a href="/docs/events" id="ember2651" class="ember-view">Ember &amp; DOM / jQuery Events</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a href="/docs/faq" id="ember2652" class="ember-view">FAQ &amp; Fact Sheet</a>
+    </p>
+</div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<div id="ember2653" class="ember-notify-cn ember-notify-default ember-view"><!----></div>
+</div><script type="x/boundary" id="fastboot-body-end"></script>
+
+    <script src="/assets/vendor-5f94e20cd7ff4ec97d6a6a3b5639223f.js"></script>
+    <script src="/assets/dummy-f249dc7be3ba0a585d9dbb545903f509.js"></script>
+
+    
+  </body>
+</html>
