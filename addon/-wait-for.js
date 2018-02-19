@@ -87,7 +87,7 @@ class WaitForPropertyYieldable {
  * Use `waitForQueue` to pause the task until a certain run loop queue is reached.
  *
  * ```js
- * import { task, timeout, waitForQueue } from 'ember-concurrency';
+ * import { task, waitForQueue } from 'ember-concurrency';
  * export default Component.extend({
  *   myTask: task(function * () {
  *     yield waitForQueue('afterRender');
@@ -108,7 +108,7 @@ export function waitForQueue(queueName) {
  * where the object supports `.on()` `.one()` and `.off()`).
  *
  * ```js
- * import { task, timeout, waitForEvent } from 'ember-concurrency';
+ * import { task, waitForEvent } from 'ember-concurrency';
  * export default Component.extend({
  *   myTask: task(function * () {
  *     console.log("Please click anywhere..");
@@ -144,7 +144,7 @@ export function waitForEvent(object, eventName) {
  * a truthy value from the callback, or the current task is canceled.
  *
  * ```js
- * import { task, timeout, waitForProperty } from 'ember-concurrency';
+ * import { task, waitForProperty } from 'ember-concurrency';
  * export default Component.extend({
  *   foo: 0,
  *
