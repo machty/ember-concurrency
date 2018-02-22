@@ -2,11 +2,12 @@ import Evented from '@ember/object/evented';
 import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
-import { task, waitForQueue, waitForEvent } from 'ember-concurrency';
+import { task, waitForQueue, waitForEvent, waitForProperty } from 'ember-concurrency';
+import { alias } from '@ember/object/computed';
 
 const EventedObject = EmberObject.extend(Evented);
 
-module('Unit: test waitForQueue and waitForEvent', function() {
+module('Unit: test waitForQueue and waitForEvent and waitForProperty', function() {
   test('waitForQueue works', function(assert) {
     assert.expect(2);
 
@@ -161,5 +162,77 @@ module('Unit: test waitForQueue and waitForEvent', function() {
 
     assert.ok(removeEventListenerCalled, '`removeEventListener` was called');
     assert.notOk(taskCompleted, 'Task should not have completed');
+  });
+
+  test('waitForProperty works', function(assert) {
+    assert.expect(1);
+
+    let values = [];
+    const Obj = EmberObject.extend({
+      a: 1,
+      b: alias('a'),
+
+      task: task(function*() {
+        let result = yield waitForProperty(this, 'b', v => {
+          values.push(v);
+          return v == 3 ? 'done' : false;
+        });
+        values.push(result);
+      })
+    });
+
+    let obj;
+    run(() => {
+      obj = Obj.create();
+      obj.get('task').perform();
+    });
+
+    run(obj, 'set', 'a', 2);
+    run(obj, 'set', 'a', 3);
+    run(obj, 'set', 'a', 4);
+
+    assert.deepEqual(values, [1, 2, 3, 'done']);
+  });
+
+  test('waitForProperty works with immediately truthy predicates', function(assert) {
+    assert.expect(1);
+
+    const Obj = EmberObject.extend({
+      a: 1,
+
+      task: task(function*() {
+        yield waitForProperty(this, 'a', v => v === 1);
+        assert.ok(true);
+      })
+    });
+
+    run(() => {
+      let obj = Obj.create();
+      obj.get('task').perform();
+    });
+  });
+
+  test("waitForProperty's default predicate checks for truthiness", function(assert) {
+    assert.expect(2);
+
+    const Obj = EmberObject.extend({
+      a: 0,
+
+      task: task(function*() {
+        yield waitForProperty(this, 'a');
+      })
+    });
+
+    let obj;
+    run(() => {
+      obj = Obj.create();
+      obj.get('task').perform();
+    });
+
+    run(obj, 'set', 'a', false);
+    run(obj, 'set', 'a', null);
+    assert.ok(obj.get('task.isRunning'));
+    run(obj, 'set', 'a', 'hey');
+    assert.ok(!obj.get('task.isRunning'));
   });
 });
