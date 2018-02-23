@@ -1,4 +1,8 @@
 # Changelog
+### 0.8.15
+  - Added waitForProperty() to pause execution until a property
+    on an Ember Object becomes a certain value.
+
 ### 0.8.14
   - Revert to "old style" Ember imports in `app/` tree
 
