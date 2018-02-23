@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     
-<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22/%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%220.8.14+025313ed%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
+<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22/%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%220.8.15%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
 <!-- EMBER_CLI_FASTBOOT_TITLE -->
 
     <link integrity="" rel="stylesheet" href="/assets/vendor-e754b247f0b14ad5fde0f302404dd7cb.css">
@@ -25,7 +25,7 @@
         ember-concurrency
 
         <span style="font-size: 0.5em;">
-          (v 0.8.14)
+          (v 0.8.15)
         </span>
       </h3>
     </div>
@@ -121,7 +121,7 @@
 
 
 <!---->            <div class="toc-entry">
-                <a href="/docs/events" id="ember2481" class="active ember-view">Ember &amp; DOM / jQuery Events</a>
+                <a href="/docs/events" id="ember2481" class="active ember-view">Awaiting Events / Conditions</a>
             </div>
 
 
@@ -185,7 +185,33 @@
       <a title="Edit on Github" href="https://github.com/machty/ember-concurrency/edit/master/tests/dummy/app/docs/events/template.hbs" id="ember2519" class="github-edit ember-view"><i class="icon-pencil"></i>
 </a>
 
-      <div id="ember2525" class="ember-view"><h3>Waiting for Ember &amp; DOM / jQuery Events</h3>
+      <div id="ember2525" class="ember-view"><h2>Awaiting Events / Conditions</h2>
+
+<p>
+  In addition to pausing the execution of a task until a yielded promise
+  resolves, it's also possible to pause the execution of a task until
+  an event fires (e.g. an Ember.Evented event like <code>didInsertElement</code>,
+  or a `click` event from a DOM element or jQuery selection), or some other
+  condition has been met.
+</p>
+
+<p>
+  The patterns described below can be seen as alternatives to using observers
+  and other patterns that are often prone to abuse; proper use of observers or
+  Ember.Evented hooks often requires conditionals and defensive programming to
+  ensure that the app is in some expected state before running the logic in that
+  hook, which is the kind of error-prone busywork that ember-concurrency
+  intends to prevent.
+</p>
+
+<p>
+  By expressing event-driven code within tasks using the patterns below, you are
+  already heavily constraining the conditions in which that event or observer can fire,
+  which means you don't have to write nearly as much guard/cleanup logic to ensure that
+  an event doesn't fire at an unexpected time/state.
+</p>
+
+<h3>Waiting for Ember &amp; DOM / jQuery Events</h3>
 
 <p>
   You can use <code>waitForEvent(object, eventName)</code> to pause your task until
@@ -296,17 +322,70 @@ waiter: task(function * () {
   {{/if}}
 &lt;/h4&gt;
 </pre>
+
+<h3>Waiting for a condition / property</h3>
+
+<p>
+  You can use <code>waitForProperty(object, property, callback)</code>
+  to pause your task until a property on an Ember Object becomes a certain value.
+  This can be used in a variety of use cases, including coordination execution
+  between concurrent tasks.
+</p>
+
+<button>
+  Start
+</button>
+
+<h4>
+  State: 
+</h4>
+
+<pre id="ember2530" class="javascript ember-view">startAll: task(function * () {
+  this.set('bazValue', 1);
+  this.set('state', "Start.");
+  this.get('foo').perform();
+  this.get('bar').perform();
+  this.get('baz').perform();
+}),
+
+foo: task(function * () {
+  yield timeout(500);
+  this.set('state', `${this.state} Foo.`);
+}),
+
+bar: task(function * () {
+  yield waitForProperty(this, 'foo.isIdle');
+  yield timeout(500);
+  this.set('bazValue', 42);
+  this.set('state', `${this.state} Bar.`);
+}),
+
+bazValue: 1,
+baz: task(function * () {
+  let val = yield waitForProperty(this, 'bazValue', (v) =&gt; v % 2 === 0);
+  yield timeout(500);
+  this.set('state', `${this.state} Baz got even value ${val}.`);
+}),
+</pre>
+<pre id="ember2531" class="htmlbars ember-view">&lt;button onclick={{perform startAll}}&gt;
+  Start
+&lt;/button&gt;
+
+&lt;h4&gt;
+  State: {{state}}
+&lt;/h4&gt;
+</pre>
 </div>
 
       <br> <br> <br> <br> 
 
       <div class="row">
     <p class="u-pull-left">
-      Previous: <a href="/docs/encapsulated-task" id="ember2530" class="ember-view">Encapsulated Tasks</a>
+      Previous: <a href="/docs/encapsulated-task" id="ember2532" class="ember-view">Encapsulated Tasks</a>
     </p>
 
     <p class="u-pull-right">
-      Next: <a href="/docs/testing-debugging" id="ember2531" class="ember-view">Testing &amp; Debugging</a>
+      Next: <a href="/docs/testing-debugging" id="ember2533" class="ember-view">Testing &amp; Debugging</a>
     </p>
 </div>
 
@@ -316,11 +395,11 @@ waiter: task(function * () {
 </div>
 
 
-<div id="ember2532" class="ember-notify-cn ember-notify-default ember-view"><!----></div>
+<div id="ember2534" class="ember-notify-cn ember-notify-default ember-view"><!----></div>
 </div><script type="x/boundary" id="fastboot-body-end"></script>
 
-    <script src="/assets/vendor-5f94e20cd7ff4ec97d6a6a3b5639223f.js"></script>
-    <script src="/assets/dummy-f249dc7be3ba0a585d9dbb545903f509.js"></script>
+    <script src="/assets/vendor-51bf54c128dbb8328432f50f47410bdc.js"></script>
+    <script src="/assets/dummy-dc07182120383465098ed39c8ac3b64d.js"></script>
 
     
   </body>
