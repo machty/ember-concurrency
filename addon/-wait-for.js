@@ -160,9 +160,9 @@ export function waitForEvent(object, eventName) {
  * });
  * ```
  *
- * @param {object} an object (most likely an Ember Object)
- * @param {string} the property name that is observed for changes
- * @param {function} the callback that should return when the task should continue
+ * @param {object} object an object (most likely an Ember Object)
+ * @param {string} key the property name that is observed for changes
+ * @param {function} callback the callback that should return when the task should continue
  *                   executing
  */
 export function waitForProperty(object, key, predicateCallback) {
