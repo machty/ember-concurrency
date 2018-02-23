@@ -177,7 +177,7 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
           values.push(v);
           return v == 3 ? 'done' : false;
         });
-        values.push(result);
+        values.push(`val=${result}`);
       })
     });
 
@@ -191,7 +191,7 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
     run(obj, 'set', 'a', 3);
     run(obj, 'set', 'a', 4);
 
-    assert.deepEqual(values, [1, 2, 3, 'done']);
+    assert.deepEqual(values, [1, 2, 3, 'val=3']);
   });
 
   test('waitForProperty works with immediately truthy predicates', function(assert) {

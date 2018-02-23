@@ -69,7 +69,7 @@ class WaitForPropertyYieldable {
       let value = get(this.object, this.key);
       let predicateValue = this.predicateCallback(value);
       if (predicateValue) {
-        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, predicateValue);
+        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, value);
         return true;
       }
     };

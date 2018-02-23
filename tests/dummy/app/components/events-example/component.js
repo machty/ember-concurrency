@@ -1,7 +1,7 @@
 import Evented from '@ember/object/evented';
 import Component from '@ember/component';
 import $ from 'jquery';
-import { task, waitForEvent, timeout } from 'ember-concurrency';
+import { task, waitForEvent, waitForProperty, timeout } from 'ember-concurrency';
 
 export default Component.extend(Evented, {
 // BEGIN-SNIPPET waitForEvent
@@ -44,6 +44,35 @@ export default Component.extend(Evented, {
   waiter: task(function * () {
     let event = yield waitForEvent(document.body, 'click');
     return event;
+  }),
+// END-SNIPPET
+
+// BEGIN-SNIPPET waitForProperty
+  startAll: task(function * () {
+    this.set('bazValue', 1);
+    this.set('state', "Start.");
+    this.get('foo').perform();
+    this.get('bar').perform();
+    this.get('baz').perform();
+  }),
+
+  foo: task(function * () {
+    yield timeout(500);
+    this.set('state', `${this.state} Foo.`);
+  }),
+
+  bar: task(function * () {
+    yield waitForProperty(this, 'foo.isIdle');
+    yield timeout(500);
+    this.set('bazValue', 42);
+    this.set('state', `${this.state} Bar.`);
+  }),
+
+  bazValue: 1,
+  baz: task(function * () {
+    let val = yield waitForProperty(this, 'bazValue', (v) => v % 2 === 0);
+    yield timeout(500);
+    this.set('state', `${this.state} Baz got even value ${val}.`);
   }),
 // END-SNIPPET
 });
