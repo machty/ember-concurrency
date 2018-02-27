@@ -6,6 +6,8 @@
     "doc": "doc",
     "test": "tests"
   },
+  "types": "types/index.d.ts",
+  "typings": "types/index.d.ts",
   "scripts": {
     "build": "ember build",
     "start": "ember serve",
