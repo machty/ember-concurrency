@@ -58,10 +58,15 @@ class WaitForEventYieldable {
 }
 
 class WaitForPropertyYieldable {
-  constructor(object, key, predicateCallback) {
+  constructor(object, key, predicateCallback = Boolean) {
     this.object = object;
     this.key = key;
-    this.predicateCallback = predicateCallback || Boolean;
+
+    if (typeof predicateCallback === 'function') {
+      this.predicateCallback = predicateCallback;
+    } else {
+      this.predicateCallback = (v) => v === predicateCallback;
+    }
   }
 
   [yieldableSymbol](taskInstance, resumeIndex) {

@@ -235,4 +235,37 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
     run(obj, 'set', 'a', 'hey');
     assert.ok(!obj.get('task.isRunning'));
   });
+
+  test("passing a non-function value to waitForProperty will cause it to wait until the property equals that value", function(assert) {
+    assert.expect(4);
+
+    let state = 'null';
+    const Obj = EmberObject.extend({
+      a: 1,
+
+      task: task(function*() {
+        state = 'waiting for a===3';
+        yield waitForProperty(this, 'a', 3);
+        state = 'waiting for a===null';
+        yield waitForProperty(this, 'a', null);
+      })
+    });
+
+    let obj;
+    run(() => {
+      obj = Obj.create();
+      obj.get('task').perform();
+    });
+
+    run(obj, 'set', 'a', 1);
+    run(obj, 'set', 'a', 2);
+    assert.equal(state, 'waiting for a===3');
+    run(obj, 'set', 'a', 3);
+    assert.equal(state, 'waiting for a===null');
+    run(obj, 'set', 'a', 0);
+    run(obj, 'set', 'a', false);
+    assert.equal(state, 'waiting for a===null');
+    run(obj, 'set', 'a', null);
+    assert.ok(obj.get('task.isIdle'));
+  });
 });
