@@ -58,11 +58,11 @@ export default Component.extend(Evented, {
 
   foo: task(function * () {
     yield timeout(500);
-    this.set('state', `${this.state} Foo.`);
   }),
 
   bar: task(function * () {
     yield waitForProperty(this, 'foo.isIdle');
+    this.set('state', `${this.state} Foo is idle.`);
     yield timeout(500);
     this.set('bazValue', 42);
     this.set('state', `${this.state} Bar.`);

@@ -147,6 +147,9 @@ export function waitForEvent(object, eventName) {
  * immediately with the observed property's current value, and multiple
  * times thereafter whenever the property changes, until you return
  * a truthy value from the callback, or the current task is canceled.
+ * You can also pass in a non-Function value in place of the callback,
+ * in which case the task will continue executing when the property's
+ * value becomes the value that you passed in.
  *
  * ```js
  * import { task, waitForProperty } from 'ember-concurrency';
@@ -157,18 +160,25 @@ export function waitForEvent(object, eventName) {
  *     console.log("Waiting for `foo` to become 5");
  *
  *     yield waitForProperty(this, 'foo', v => v === 5);
+ *     // alternatively: yield waitForProperty(this, 'foo', 5);
  *
  *     // somewhere else: this.set('foo', 5)
  *
  *     console.log("`foo` is 5!");
+ *
+ *     // wait for another task to be idle before running:
+ *     yield waitForProperty(this, 'otherTask.isIdle');
+ *     console.log("otherTask is idle!");
  *   })
  * });
  * ```
  *
  * @param {object} object an object (most likely an Ember Object)
  * @param {string} key the property name that is observed for changes
- * @param {function} callback the callback that should return when the task should continue
- *                   executing
+ * @param {function} callbackOrValue a Function that should return a truthy value
+ *                                   when the task should continue executing, or
+ *                                   a non-Function value that the watched property
+ *                                   needs to equal before the task will continue running
  */
 export function waitForProperty(object, key, predicateCallback) {
   return new WaitForPropertyYieldable(object, key, predicateCallback);

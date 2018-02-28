@@ -3,10 +3,25 @@
 <p>
   In addition to pausing the execution of a task until a yielded promise
   resolves, it's also possible to pause the execution of a task until
-  an event fires (e.g. an Ember.Evented event like <code>didInsertElement</code>,
-  or a `click` event from a DOM element or jQuery selection), or some other
-  condition has been met.
+  some other event or condition occurs by using the following helpers:
 </p>
+
+<ul>
+  <li>
+    <a href="/api/global.html#waitForEvent">waitForEvent</a>
+    Pause the task until an Ember/DOM/jQuery event fires.
+  </li>
+  <li>
+    <a href="/api/global.html#waitForProperty">waitForProperty</a>
+    Pause the task until a property on an Ember object becomes
+    some expected value.
+  </li>
+  <li>
+    <a href="/api/global.html#waitForQueue">waitForQueue</a>
+    Pause the task and resume execution within a specific
+    Ember Run Loop queue.
+  </li>
+</ul>
 
 <p>
   The patterns described below can be seen as alternatives to using observers
@@ -27,7 +42,8 @@
 <h3>Waiting for Ember & DOM / jQuery Events</h3>
 
 <p>
-  You can use <code>waitForEvent(object, eventName)</code> to pause your task until
+  You can use <code>
+  <a href="/api/global.html#waitForEvent">waitForEvent(object, eventName)</a></code> to pause your task until
   an Ember.Evented or DOM / jQuery Event fires.
   <code>object</code> must include Ember.Evented (or support <code>.one()</code>
   and <code>.off()</code>) or be a valid DOM EventTarget (or support
@@ -93,7 +109,9 @@
 <h3>Waiting for a condition / property</h3>
 
 <p>
-  You can use <code>waitForProperty(object, property, callback)</code>
+  You can use <code>
+    <a href="/api/global.html#waitForProperty">waitForProperty(object, property, callbackOrValue)</a>
+  </code>
   to pause your task until a property on an Ember Object becomes a certain value.
   This can be used in a variety of use cases, including coordination execution
   between concurrent tasks.
@@ -104,9 +122,9 @@
   Start
 </button>
 
-<h4>
+<h5>
   State: {{state}}
-</h4>
+</h5>
 {{!END-SNIPPET}}
 
 {{code-snippet name="waitForProperty.js"}}
