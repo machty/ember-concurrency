@@ -1,4 +1,9 @@
 # Changelog
+### 0.8.16
+  - Allow passing a non-Function value to waitForProperty() as
+    a shortcut for waiting for the observed property to `===`
+    that value.
+
 ### 0.8.15
   - Added waitForProperty() to pause execution until a property
     on an Ember Object becomes a certain value.
