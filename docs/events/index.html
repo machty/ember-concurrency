@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     
-<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22/%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%220.8.15+1c34b2ee%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
+<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22/%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%220.8.16%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
 <!-- EMBER_CLI_FASTBOOT_TITLE -->
 
     <link integrity="" rel="stylesheet" href="/assets/vendor-e754b247f0b14ad5fde0f302404dd7cb.css">
@@ -25,7 +25,7 @@
         ember-concurrency
 
         <span style="font-size: 0.5em;">
-          (v 0.8.15)
+          (v 0.8.16)
         </span>
       </h3>
     </div>
@@ -190,10 +190,25 @@
 <p>
   In addition to pausing the execution of a task until a yielded promise
   resolves, it's also possible to pause the execution of a task until
-  an event fires (e.g. an Ember.Evented event like <code>didInsertElement</code>,
-  or a `click` event from a DOM element or jQuery selection), or some other
-  condition has been met.
+  some other event or condition occurs by using the following helpers:
 </p>
+
+<ul>
+  <li>
+    <a href="/api/global.html#waitForEvent">waitForEvent</a>
+    Pause the task until an Ember/DOM/jQuery event fires.
+  </li>
+  <li>
+    <a href="/api/global.html#waitForProperty">waitForProperty</a>
+    Pause the task until a property on an Ember object becomes
+    some expected value.
+  </li>
+  <li>
+    <a href="/api/global.html#waitForQueue">waitForQueue</a>
+    Pause the task and resume execution within a specific
+    Ember Run Loop queue.
+  </li>
+</ul>
 
 <p>
   The patterns described below can be seen as alternatives to using observers
@@ -214,7 +229,8 @@
 <h3>Waiting for Ember &amp; DOM / jQuery Events</h3>
 
 <p>
-  You can use <code>waitForEvent(object, eventName)</code> to pause your task until
+  You can use <code>
+  <a href="/api/global.html#waitForEvent">waitForEvent(object, eventName)</a></code> to pause your task until
   an Ember.Evented or DOM / jQuery Event fires.
   <code>object</code> must include Ember.Evented (or support <code>.one()</code>
   and <code>.off()</code>) or be a valid DOM EventTarget (or support
@@ -326,7 +342,9 @@ waiter: task(function * () {
 <h3>Waiting for a condition / property</h3>
 
 <p>
-  You can use <code>waitForProperty(object, property, callback)</code>
+  You can use <code>
+    <a href="/api/global.html#waitForProperty">waitForProperty(object, property, callbackOrValue)</a>
+  </code>
   to pause your task until a property on an Ember Object becomes a certain value.
   This can be used in a variety of use cases, including coordination execution
   between concurrent tasks.
@@ -336,9 +354,9 @@ waiter: task(function * () {
   Start
 </button>
 
-<h4>
+<h5>
   State: 
-</h4>
+</h5>
 
 <pre id="ember2530" class="javascript ember-view">startAll: task(function * () {
   this.set('bazValue', 1);
@@ -350,11 +368,11 @@ waiter: task(function * () {
 
 foo: task(function * () {
   yield timeout(500);
-  this.set('state', `${this.state} Foo.`);
 }),
 
 bar: task(function * () {
   yield waitForProperty(this, 'foo.isIdle');
+  this.set('state', `${this.state} Foo is idle.`);
   yield timeout(500);
   this.set('bazValue', 42);
   this.set('state', `${this.state} Bar.`);
@@ -371,9 +389,9 @@ baz: task(function * () {
   Start
 &lt;/button&gt;
 
-&lt;h4&gt;
+&lt;h5&gt;
   State: {{state}}
-&lt;/h4&gt;
+&lt;/h5&gt;
 </pre>
 </div>
 
@@ -398,8 +416,8 @@ baz: task(function * () {
 <div id="ember2534" class="ember-notify-cn ember-notify-default ember-view"><!----></div>
 </div><script type="x/boundary" id="fastboot-body-end"></script>
 
-    <script src="/assets/vendor-51bf54c128dbb8328432f50f47410bdc.js"></script>
-    <script src="/assets/dummy-c45b83086bc2da3d17e659bc5e1c4e8c.js"></script>
+    <script src="/assets/vendor-bd52f3bf729a89b010f624f76c54024c.js"></script>
+    <script src="/assets/dummy-b69ca75acc7022ff3f5d1b3fe778efeb.js"></script>
 
     
   </body>
