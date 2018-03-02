@@ -20,6 +20,8 @@
   "author": "Alex Matchneer <machty@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/ember": "^2.8.15",
+    "@types/rsvp": "^4.0.1",
     "broccoli-asset-rev": "https://github.com/ef4/broccoli-asset-rev#838f1b7186fde566d3e8010196c1f974423a4946",
     "broccoli-clean-css": "^1.1.0",
     "documentation": "^3.0.4",
