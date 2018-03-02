@@ -4,7 +4,7 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.4
 
-import Evented from '@ember/object/evented';
+import Ember from 'ember';
 import RSVP from 'rsvp';
 import { Task, TaskProperty, TaskInstance } from './Task';
 
@@ -26,9 +26,9 @@ export const race: typeof RSVP.race;
  * @returns {boolean}
  */
 export function didCancel(error?: Error): boolean;
-export function task(generatorFunction: (...args: any[]) => Generator): TaskProperty;
+export function task<T> (generatorFunction: (...args: any[]) => Generator): TaskProperty<T>;
 export function taskGroup(...args: any[]): any;
 export function timeout(ms: number): any;
-export function waitForEvent(object: Evented | RSVP.EventTarget | EventTarget, eventName: string): any;
+export function waitForEvent(object: Ember.Evented | RSVP.EventTarget | EventTarget, eventName: string): any;
 export function waitForProperty(object: any, key: string, callback: (...args: any[]) => any): any;
 export function waitForQueue(queueName: string): any;
