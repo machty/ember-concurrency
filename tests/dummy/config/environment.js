@@ -20,6 +20,8 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+      testimonialEndpoint: 'https://sukima.github.io/ember-concurrency-testimonials-api',
+      createTestimonialUrl: 'https://github.com/sukima/ember-concurrency-testimonials-api/tree/master#how-to-contribute'
     },
 
     fastboot: {

@@ -1,0 +1,19 @@
+<h2>{{testimonial.title}}</h2>
+
+<div class="byline">
+  <span class="author">
+    By
+    {{#if testimonial.link}}
+      <a href={{testimonial.link}}>{{testimonial.author}}</a>
+    {{else}}
+      {{testimonial.author}}
+    {{/if}}
+  </span>
+  <time class="date" datetime={{testimonial.date}}>
+    {{testimonial.relativeDate}}
+  </time>
+</div>
+
+<div class="content">
+  {{testimonial.rendered}}
+</div>

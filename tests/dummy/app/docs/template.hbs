@@ -2,6 +2,9 @@
   <div class="docs row">
     <div class="three columns">
       <div class="side-menu">
+        <div class="toc-entry">
+          {{#link-to "docs.testimonials"}}Testimonials{{/link-to}}
+        </div>
         {{#each tableOfContents as |entry|}}
           {{#if entry.section}}
             <div class="toc-section-title">
@@ -34,7 +37,7 @@
 
       {{outlet}}
 
-      <br> <br> <br> <br> 
+      <br> <br> <br> <br>
 
       {{nav-header nextTopic=nextTopic prevTopic=prevTopic}}
     </div>
