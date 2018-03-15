@@ -1,9 +1,9 @@
-import { run } from '@ember/runloop';
 import $ from 'jquery';
 import { timeout } from 'ember-concurrency';
 import { test } from '../../tests/helpers/generator-tests';
 import { module } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
+import { resumeTimers } from 'ember-concurrency/testing';
 
 module('ember-concurrency testing utilities', function() {
   test('sync tests work', function * (assert) {
@@ -15,13 +15,6 @@ module('ember-concurrency testing utilities', function() {
     assert.expect(1);
     yield timeout(100);
     assert.ok(true);
-  });
-
-  test('tests run outside of run loops', function * (assert) {
-    assert.expect(2);
-    assert.ok(!run.currentRunLoop);
-    yield timeout(100);
-    assert.ok(!run.currentRunLoop);
   });
 });
 
@@ -89,12 +82,6 @@ module('Acceptance | testing utilities', function(hooks) {
     let $slowBanner = yield this.find('.slow-banner');
     assert.equal($slowBanner.text(), "Welcome to slow route.");
   });
-
-  // test('it is easy to test timer loops', function * (assert) {
-  //   assert.expect(0);
-  //   this.visit('/testing-ergo/timer-loop');
-  //   yield this.find(`.timer-loop-message:contains('foo=5')`);
-  // });
 });
 
 
@@ -104,19 +91,6 @@ module('ember-concurrency testing utilities (async await)', function(hooks) {
   test('sync tests work', async function(assert) {
     assert.expect(1);
     assert.ok(true);
-  });
-
-  test('async tests work', async function(assert) {
-    assert.expect(1);
-    await timeout(100);
-    assert.ok(true);
-  });
-
-  test('tests run outside of run loops', async function(assert) {
-    assert.expect(2);
-    assert.ok(!run.currentRunLoop);
-    await timeout(100);
-    assert.ok(!run.currentRunLoop);
   });
 
   test('find() waits for element to exist', async function(assert) {
@@ -181,9 +155,18 @@ module('ember-concurrency testing utilities (async await)', function(hooks) {
     assert.equal($slowBanner.text(), "Welcome to slow route.");
   });
 
-  // test('it is easy to test timer loops', async function(assert) {
-  //   assert.expect(0);
-  //   this.visit('/testing-ergo/timer-loop');
-  //   await this.find(`.timer-loop-message:contains('foo=5')`);
-  // });
+  test('it is easy to test timer loops with tagged timers', async function(assert) {
+    assert.expect(6);
+
+    await this.visit('/testing-ergo/timer-loop');
+
+    assert.equal(resumeTimers('nonexistent'), 0);
+    assert.equal($('.timer-loop-message').text(), 'foo=1');
+
+    assert.equal(resumeTimers('test-tag'), 1);
+    assert.equal($('.timer-loop-message').text(), 'foo=2');
+
+    assert.equal(resumeTimers('test-tag'), 1);
+    assert.equal($('.timer-loop-message').text(), 'foo=3');
+  });
 });
