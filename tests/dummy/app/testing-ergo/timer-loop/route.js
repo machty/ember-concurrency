@@ -8,7 +8,7 @@ export default Route.extend({
   loopingTask: task(function * () {
     while(true) {
       this.controller.incrementProperty('foo');
-      yield timeout(200);
+      yield timeout(200, 'test-tag');
     }
   }),
 });

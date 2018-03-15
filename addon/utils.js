@@ -1,13 +1,22 @@
-import { later, cancel } from '@ember/runloop';
-import { Promise } from 'rsvp';
 import ComputedProperty from '@ember/object/computed';
 import Ember from 'ember';
+import {TimeoutPromise} from './-timeout';
+import {TestTimeoutPromise} from './testing';
+import {
+  yieldableSymbol,
+  YIELDABLE_CONTINUE,
+  YIELDABLE_THROW,
+  YIELDABLE_RETURN,
+  YIELDABLE_CANCEL,
+} from './yieldables';
 
 export function isEventedObject(c) {
-  return (c && (
-    (typeof c.one === 'function' && typeof c.off === 'function') ||
-    (typeof c.addEventListener === 'function' && typeof c.removeEventListener === 'function')
-  ));
+  return (
+    c &&
+    ((typeof c.one === 'function' && typeof c.off === 'function') ||
+      (typeof c.addEventListener === 'function' &&
+        typeof c.removeEventListener === 'function'))
+  );
 }
 
 export function Arguments(args, defer) {
@@ -21,32 +30,32 @@ Arguments.prototype.resolve = function(value) {
   }
 };
 
+export let objectAssign =
+  Object.assign ||
+  function objectAssign(target) {
+    'use strict';
+    if (target == null) {
+      throw new TypeError('Cannot convert undefined or null to object');
+    }
 
-export let objectAssign = Object.assign || function objectAssign(target) {
-  'use strict';
-  if (target == null) {
-    throw new TypeError('Cannot convert undefined or null to object');
-  }
-
-  target = Object(target);
-  for (var index = 1; index < arguments.length; index++) {
-    var source = arguments[index];
-    if (source != null) {
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
+    target = Object(target);
+    for (var index = 1; index < arguments.length; index++) {
+      var source = arguments[index];
+      if (source != null) {
+        for (var key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
         }
       }
     }
-  }
-  return target;
-};
+    return target;
+  };
 
 export function _cleanupOnDestroy(owner, object, cleanupMethodName, ...args) {
   // TODO: find a non-mutate-y, non-hacky way of doing this.
 
-  if (!owner.willDestroy)
-  {
+  if (!owner.willDestroy) {
     // we're running in non Ember object (possibly in a test mock)
     return;
   }
@@ -56,7 +65,7 @@ export function _cleanupOnDestroy(owner, object, cleanupMethodName, ...args) {
     let disposers = [];
 
     owner.willDestroy = function() {
-      for (let i = 0, l = disposers.length; i < l; i ++) {
+      for (let i = 0, l = disposers.length; i < l; i++) {
         disposers[i]();
       }
       oldWillDestroy.apply(owner, arguments);
@@ -69,12 +78,12 @@ export function _cleanupOnDestroy(owner, object, cleanupMethodName, ...args) {
   });
 }
 
-export let INVOKE = "__invoke_symbol__";
+export let INVOKE = '__invoke_symbol__';
 
 let locations = [
   'ember-glimmer/helpers/action',
   'ember-routing-htmlbars/keywords/closure-action',
-  'ember-routing/keywords/closure-action'
+  'ember-routing/keywords/closure-action',
 ];
 
 for (let i = 0; i < locations.length; i++) {
@@ -83,13 +92,6 @@ for (let i = 0; i < locations.length; i++) {
     break;
   }
 }
-
-// TODO: Symbol polyfill?
-export const yieldableSymbol = "__ec_yieldable__";
-export const YIELDABLE_CONTINUE = "next";
-export const YIELDABLE_THROW = "throw";
-export const YIELDABLE_RETURN = "return";
-export const YIELDABLE_CANCEL = "cancel";
 
 export const _ComputedProperty = ComputedProperty;
 
@@ -115,15 +117,12 @@ export const _ComputedProperty = ComputedProperty;
  * @param {number} ms - the amount of time to sleep before resuming
  *   the task, in milliseconds
  */
-export function timeout(ms) {
-  let timerId;
-  let promise = new Promise(r => {
-    timerId = later(r, ms);
-  });
-  promise.__ec_cancel__ = () => {
-    cancel(timerId);
-  };
-  return promise;
+export function timeout(ms, label) {
+  if (Ember.testing && label) {
+    return new TestTimeoutPromise(ms, label);
+  } else {
+    return new TimeoutPromise(ms);
+  }
 }
 
 export function RawValue(value) {
@@ -143,6 +142,14 @@ export function rawTimeout(ms) {
       return () => {
         window.clearInterval(timerId);
       };
-    }
+    },
   };
 }
+
+export {
+  yieldableSymbol,
+  YIELDABLE_CONTINUE,
+  YIELDABLE_THROW,
+  YIELDABLE_RETURN,
+  YIELDABLE_CANCEL,
+};
