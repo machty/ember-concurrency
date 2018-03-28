@@ -1,4 +1,8 @@
 # Changelog
+### 0.8.17
+  - waitForEvent/Queue/Property helpers now work with the various
+    promise helpers (e.g. `all` and `race`)
+
 ### 0.8.16
   - Allow passing a non-Function value to waitForProperty() as
     a shortcut for waiting for the observed property to `===`
