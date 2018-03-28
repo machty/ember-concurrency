@@ -2,15 +2,22 @@ import { assert } from '@ember/debug';
 import { schedule } from '@ember/runloop';
 import { get } from '@ember/object';
 
-import { isEventedObject } from './utils';
+import { isEventedObject, yieldableToPromise } from './utils';
 
 import {
   yieldableSymbol,
   YIELDABLE_CONTINUE
 } from './utils';
 
-class WaitForQueueYieldable {
+class WaitFor {
+  then(...args) {
+    return yieldableToPromise(this).then(...args);
+  }
+}
+
+class WaitForQueueYieldable extends WaitFor {
   constructor(queueName) {
+    super();
     this.queueName = queueName;
   }
 
@@ -21,8 +28,9 @@ class WaitForQueueYieldable {
   }
 }
 
-class WaitForEventYieldable {
+class WaitForEventYieldable extends WaitFor {
   constructor(object, eventName) {
+    super();
     this.object = object;
     this.eventName = eventName;
   }
@@ -57,8 +65,9 @@ class WaitForEventYieldable {
   }
 }
 
-class WaitForPropertyYieldable {
+class WaitForPropertyYieldable extends WaitFor {
   constructor(object, key, predicateCallback = Boolean) {
+    super();
     this.object = object;
     this.key = key;
 
