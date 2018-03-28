@@ -2,7 +2,6 @@ import { timeout } from './utils';
 import { TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
 import { TaskGroupProperty } from './-task-group';
-import EventedObservable from './-evented-observable';
 import { all, allSettled, hash, race } from './-cancelable-promise-helpers';
 import { waitForQueue, waitForEvent, waitForProperty } from './-wait-for';
 
@@ -78,10 +77,6 @@ export function task(...args) {
 */
 export function taskGroup(...args) {
   return new TaskGroupProperty(...args);
-}
-
-export function events(obj, eventName) {
-  return EventedObservable.create({ obj, eventName });
 }
 
 export {
