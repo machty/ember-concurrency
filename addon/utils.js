@@ -1,5 +1,5 @@
 import { later, cancel } from '@ember/runloop';
-import { Promise } from 'rsvp';
+import { Promise, defer } from 'rsvp';
 import ComputedProperty from '@ember/object/computed';
 import Ember from 'ember';
 
@@ -145,4 +145,20 @@ export function rawTimeout(ms) {
       };
     }
   };
+}
+
+export function yieldableToPromise(yieldable) {
+  let def = defer();
+
+  def.promise.__ec_cancel__ = yieldable[yieldableSymbol]({
+    proceed(_index, resumeType, value) {
+      if (resumeType == YIELDABLE_CONTINUE || resumeType == YIELDABLE_RETURN) {
+        def.resolve(value);
+      } else {
+        def.reject(value);
+      }
+    }
+  }, 0);
+
+  return def.promise;
 }

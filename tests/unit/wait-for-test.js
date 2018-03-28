@@ -2,7 +2,7 @@ import Evented from '@ember/object/evented';
 import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
-import { task, waitForQueue, waitForEvent, waitForProperty } from 'ember-concurrency';
+import { task, waitForQueue, waitForEvent, waitForProperty, race } from 'ember-concurrency';
 import { alias } from '@ember/object/computed';
 
 const EventedObject = EmberObject.extend(Evented);
@@ -267,5 +267,27 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
     assert.equal(state, 'waiting for a===null');
     run(obj, 'set', 'a', null);
     assert.ok(obj.get('task.isIdle'));
+  });
+
+  test("exposes a Promise interface that works with promise helpers", function(assert) {
+    assert.expect(4);
+
+    let obj = EventedObject.create();
+    let ev = null;
+    run(() => waitForEvent(obj, 'foo').then(v => { ev = v; }));
+    assert.equal(ev, null);
+    run(obj, 'trigger', 'foo', 123);
+    assert.equal(ev, 123);
+
+    ev = null;
+    run(() =>
+      race([
+        waitForEvent(obj, 'foo'),
+        waitForEvent(obj, 'bar'),
+      ]).then(v => { ev = v; })
+    )
+    assert.equal(ev, null);
+    run(obj, 'trigger', 'bar', 456);
+    assert.equal(ev, 456);
   });
 });
