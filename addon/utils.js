@@ -44,7 +44,7 @@ export let objectAssign = Object.assign || function objectAssign(target) {
 export function _cleanupOnDestroy(owner, object, cleanupMethodName, ...args) {
   // TODO: find a non-mutate-y, non-hacky way of doing this.
 
-  if (!owner.willDestroy)
+  if (!(owner && owner.willDestroy))
   {
     // we're running in non Ember object (possibly in a test mock)
     return;

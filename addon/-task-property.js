@@ -25,7 +25,6 @@ import Ember from 'ember';
 
 const { WeakMap } = Ember;
 const NULL_OBJECT = {};
-const FUNCTION_REGISTRY = new WeakMap();
 
 const PerformProxy = EmberObject.extend({
   _task: null,
@@ -182,7 +181,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
     this._super(...arguments);
 
     if (typeof this.fn === 'object') {
-      let owner = getOwner(this.context);
+      let owner = this.context && getOwner(this.context);
       let ownerInjection = owner ? owner.ownerInjection() : {};
       this._taskInstanceFactory = EncapsulatedTask.extend(ownerInjection, this.fn);
     }
@@ -382,9 +381,10 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       linkedObject._expectsLinkedYield = true;
     }
 
-    if (this.context.isDestroying) {
+    if (this.context && this.context.isDestroying) {
       // TODO: express this in terms of lifetimes; a task linked to
       // a dead lifetime should immediately cancel.
+      // TODO: maybe only ember-metal initialized tasks should pass in this destroy logic?
       taskInstance.cancel();
     }
 
@@ -633,18 +633,17 @@ objectAssign(TaskProperty.prototype, taskModifiers, {
     let tp = this;
 
     let fn = function(...args) {
-      let context = this || NULL_OBJECT;
-      let task = taskWeakMap.get(context);
+      let context = this;
+      let concurrencyContext = context || NULL_OBJECT;
+      let task = taskWeakMap.get(concurrencyContext);
 
       if (!task) {
         task = tp._createTask(context, "(anonymous task)");
-        taskWeakMap.set(context, task);
+        taskWeakMap.set(concurrencyContext, task);
       }
 
       return task.perform(...args);
     };
-
-    FUNCTION_REGISTRY.set(fn, taskWeakMap);
 
     return fn;
   },
