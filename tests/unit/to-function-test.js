@@ -22,7 +22,7 @@ test("basic", function(assert) {
 });
 
 test("falsy contexts share concurrency context", function(assert) {
-  assert.expect(3);
+  assert.expect(4);
 
   let t0, t1;
   run(() => {
@@ -42,7 +42,7 @@ test("falsy contexts share concurrency context", function(assert) {
 });
 
 test("invocations with different contexts have different concurrency contexts", function(assert) {
-  assert.expect(5);
+  assert.expect(6);
 
   function Klass() {}
 
@@ -78,7 +78,7 @@ test("toFunction works with encapsulated tasks", function(assert) {
     },
   }).restartable().toFunction();
 
-  Ember.run(() => {
+  run(() => {
     fn();
   });
 });
