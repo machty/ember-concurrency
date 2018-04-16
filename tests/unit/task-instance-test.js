@@ -237,7 +237,7 @@ module('Unit: task instance', function() {
       });
     });
 
-    expectCancelation(assert, taskInstance, "TaskInstance '<unknown>' was canceled because .cancel() was explicitly called. For more information, see: http://ember-concurrency.com/#/docs/task-cancelation-help");
+    expectCancelation(assert, taskInstance, "TaskInstance '<unknown>' was canceled because .cancel() was explicitly called. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help");
 
     run(() => {
       taskInstance.cancel();
