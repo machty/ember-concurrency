@@ -121,7 +121,7 @@ module('Unit: task', function(hooks) {
     });
 
     assert.deepEqual(instances.mapBy('isCanceled'), [true, true, true]);
-    assert.equal(instances[0].get('cancelReason'), "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task. For more information, see: http://ember-concurrency.com/#/docs/task-cancelation-help");
+    assert.equal(instances[0].get('cancelReason'), "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help");
   });
 
   test("cancelation due to task modifier supplies useful message", function(assert) {
@@ -141,7 +141,7 @@ module('Unit: task', function(hooks) {
     });
 
     assert.deepEqual(instances.mapBy('isCanceled'), [true, true, false]);
-    assert.equal(instances[0].get('cancelReason'), "TaskInstance 'doStuff' was canceled because it belongs to a 'restartable' Task that was .perform()ed again. For more information, see: http://ember-concurrency.com/#/docs/task-cancelation-help");
+    assert.equal(instances[0].get('cancelReason'), "TaskInstance 'doStuff' was canceled because it belongs to a 'restartable' Task that was .perform()ed again. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help");
   });
 
   test("tasks can call cancelAll() on themselves", function(assert) {
@@ -407,7 +407,7 @@ module('Unit: task', function(hooks) {
 
     assert.deepEqual(logs, [
       [
-        "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/#/docs/task-cancelation-help"
+        "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
       ]
     ]);
   });
@@ -436,7 +436,7 @@ module('Unit: task', function(hooks) {
 
     assert.deepEqual(logs, [
       [
-        "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/#/docs/task-cancelation-help"
+        "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
       ]
     ]);
   });
