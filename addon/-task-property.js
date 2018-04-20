@@ -353,6 +353,12 @@ export const Task = EmberObject.extend(TaskStateMixin, {
    * @memberof Task
    * @param {*} arg* - args to pass to the task function
    * @instance
+   *
+   * @fires TaskInstance#TASK_NAME:started
+   * @fires TaskInstance#TASK_NAME:succeeded
+   * @fires TaskInstance#TASK_NAME:errored
+   * @fires TaskInstance#TASK_NAME:canceled
+   *
    */
   perform(...args) {
     return this._performShared(args, PERFORM_TYPE_DEFAULT, null);

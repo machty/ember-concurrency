@@ -234,12 +234,100 @@ let taskInstanceAttrs = {
     return get(this, 'isCanceling') && !get(this, 'hasStarted');
   }),
 
+  /**
+   * Event emitted when a new {@linkcode TaskInstance} starts executing.
+   *
+   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
+   *
+   * ```js
+   * export default Ember.Component.extend({
+   *   doSomething: task(function * () {
+   *     // ... does something
+   *   }),
+   *
+   *   onDoSomethingStarted: on('doSomething:started', function (taskInstance) {
+   *     // ...
+   *   })
+   * });
+   * ```
+   *
+   * @event TaskInstance#TASK_NAME:started
+   * @param {TaskInstance} taskInstance - Task instance that was started
+   */
+
+  /**
+   * Event emitted when a {@linkcode TaskInstance} succeeds.
+   *
+   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
+   *
+   * ```js
+   * export default Ember.Component.extend({
+   *   doSomething: task(function * () {
+   *     // ... does something
+   *   }),
+   *
+   *   onDoSomethingSucceeded: on('doSomething:succeeded', function (taskInstance) {
+   *     // ...
+   *   })
+   * });
+   * ```
+   *
+   * @event TaskInstance#TASK_NAME:succeeded
+   * @param {TaskInstance} taskInstance - Task instance that was succeeded
+   */
+
+  /**
+   * Event emitted when a {@linkcode TaskInstance} throws an an error that is
+   * not handled within the task itself.
+   *
+   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
+   *
+   * ```js
+   * export default Ember.Component.extend({
+   *   doSomething: task(function * () {
+   *     // ... does something
+   *   }),
+   *
+   *   onDoSomethingErrored: on('doSomething:errored', function (taskInstance, error) {
+   *     // ...
+   *   })
+   * });
+   * ```
+   *
+   * @event TaskInstance#TASK_NAME:errored
+   * @param {TaskInstance} taskInstance - Task instance that was started
+   * @param {Error} error - Error that was thrown by the task instance
+   */
+
+  /**
+   * Event emitted when a {@linkcode TaskInstance} is canceled.
+   *
+   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
+   *
+   * ```js
+   * export default Ember.Component.extend({
+   *   doSomething: task(function * () {
+   *     // ... does something
+   *   }),
+   *
+   *   onDoSomethingCanceled: on('doSomething:canceled', function (taskInstance, cancelationReason) {
+   *     // ...
+   *   })
+   * });
+   * ```
+   *
+   * @event TaskInstance#TASK_NAME:canceled
+   * @param {TaskInstance} taskInstance - Task instance that was started
+   * @param {string} cancelationReason - Cancelation reason that was was provided to {@linkcode TaskInstance#cancel}
+   */
+
   _index: 1,
 
   _start() {
     if (this.hasStarted || this.isCanceling) { return this; }
     set(this, 'hasStarted', true);
     this._scheduleProceed(YIELDABLE_CONTINUE, undefined);
+    this._triggerEvent('started', this);
     return this;
   },
 
@@ -350,6 +438,7 @@ let taskInstanceAttrs = {
 
     this._dispose();
     this._runFinalizeCallbacks();
+    this._dispatchFinalizeEvents();
   },
 
   _finalizeCallbacks: null,
@@ -384,6 +473,20 @@ let taskInstanceAttrs = {
           reject(this.error);
         }
       });
+    }
+  },
+
+  _dispatchFinalizeEvents() {
+    switch(this._completionState) {
+      case COMPLETION_SUCCESS:
+        this._triggerEvent('succeeded', this);
+        break;
+      case COMPLETION_ERROR:
+        this._triggerEvent('errored', this, get(this, 'error'));
+        break;
+      case COMPLETION_CANCEL:
+        this._triggerEvent('canceled', this, get(this, 'cancelReason'));
+        break;
     }
   },
 
@@ -637,6 +740,15 @@ let taskInstanceAttrs = {
       // TODO: handle erroneous yieldable implementation
     }
   },
+
+  _triggerEvent(eventType, ...args) {
+    let host = get(this, 'task.context');
+    let eventNamespace = get(this, 'task._propertyName');
+
+    if (host && host.trigger && eventNamespace) {
+      host.trigger(`${eventNamespace}:${eventType}`, ...args);
+    }
+  }
 };
 
 taskInstanceAttrs[yieldableSymbol] = function handleYieldedTaskInstance(parentTaskInstance, resumeIndex) {
