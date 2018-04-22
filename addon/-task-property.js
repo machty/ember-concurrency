@@ -373,6 +373,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       owner: this.context,
       task: this,
       _debug: this._debug,
+      _hasEnabledEvents: this._hasEnabledEvents,
       _origin: this,
       _performType: performType,
     });
@@ -424,6 +425,7 @@ export function TaskProperty(taskFn) {
       _scheduler: resolveScheduler(tp, this, TaskGroup),
       _propertyName,
       _debug: tp._debug,
+      _hasEnabledEvents: tp._hasEnabledEvents
     });
   });
 

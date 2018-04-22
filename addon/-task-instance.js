@@ -104,6 +104,7 @@ let taskInstanceAttrs = {
   _hasSubscribed: false,
   _runLoop: true,
   _debug: false,
+  _hasEnabledEvents: false,
   cancelReason: null,
   _performType: PERFORM_TYPE_DEFAULT,
   _expectsLinkedYield: false,
@@ -742,6 +743,8 @@ let taskInstanceAttrs = {
   },
 
   _triggerEvent(eventType, ...args) {
+    if (!this._hasEnabledEvents) { return; }
+
     let host = get(this, 'task.context');
     let eventNamespace = get(this, 'task._propertyName');
 

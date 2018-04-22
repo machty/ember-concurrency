@@ -14,6 +14,7 @@ export const propertyModifiers = {
   _taskGroupPath: null,
   _hasUsedModifier: false,
   _hasSetBufferPolicy: false,
+  _hasEnabledEvents: false,
 
   restartable() {
     return setBufferPolicy(this, cancelOngoingTasksPolicy);
@@ -41,6 +42,11 @@ export const propertyModifiers = {
   group(taskGroupPath) {
     this._taskGroupPath = taskGroupPath;
     assertModifiersNotMixedWithGroup(this);
+    return this;
+  },
+
+  evented() {
+    this._hasEnabledEvents = true;
     return this;
   },
 

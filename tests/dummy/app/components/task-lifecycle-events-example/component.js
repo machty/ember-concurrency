@@ -37,7 +37,7 @@ export default Component.extend({
       throw new Error("Unexpected matrix glitch");
     }
     return {};
-  }).enqueue().maxConcurrency(3),
+  }).enqueue().maxConcurrency(3).evented(),
 
   ajaxTaskStarted: on('ajaxTask:started', function(taskInstance) {
     const [id] = taskInstance.args;

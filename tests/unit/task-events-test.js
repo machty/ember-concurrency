@@ -32,7 +32,7 @@ module('Unit: task events', function() {
     let Obj = EmberObject.extend(Evented, {
       doThings: task(function* (deferred) {
         yield deferred.promise;
-      }),
+      }).evented(),
 
       startedListener: on('doThings:started', startedStub),
       succeededListener: on('doThings:succeeded', succeededStub),
@@ -71,7 +71,7 @@ module('Unit: task events', function() {
     let Obj = EmberObject.extend(Evented, {
       doThings: task(function* (deferred) {
         yield deferred.promise;
-      }),
+      }).evented(),
 
       startedListener: on('doThings:started', startedStub),
       succeededListener: on('doThings:succeeded', succeededStub),
@@ -115,7 +115,7 @@ module('Unit: task events', function() {
     let Obj = EmberObject.extend(Evented, {
       doThings: task(function* (deferred) {
         yield deferred.promise;
-      }),
+      }).evented(),
 
       startedListener: on('doThings:started', startedStub),
       succeededListener: on('doThings:succeeded', succeededStub),
