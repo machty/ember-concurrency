@@ -1,4 +1,7 @@
 # Changelog
+### 0.8.18
+  - Adds `.evented()` task modifier and task lifecycle events.
+
 ### 0.8.17
   - waitForEvent/Queue/Property helpers now work with the various
     promise helpers (e.g. `all` and `race`)
