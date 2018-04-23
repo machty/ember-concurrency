@@ -353,6 +353,12 @@ export const Task = EmberObject.extend(TaskStateMixin, {
    * @memberof Task
    * @param {*} arg* - args to pass to the task function
    * @instance
+   *
+   * @fires TaskInstance#TASK_NAME:started
+   * @fires TaskInstance#TASK_NAME:succeeded
+   * @fires TaskInstance#TASK_NAME:errored
+   * @fires TaskInstance#TASK_NAME:canceled
+   *
    */
   perform(...args) {
     return this._performShared(args, PERFORM_TYPE_DEFAULT, null);
@@ -367,6 +373,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       owner: this.context,
       task: this,
       _debug: this._debug,
+      _hasEnabledEvents: this._hasEnabledEvents,
       _origin: this,
       _performType: performType,
     });
@@ -418,6 +425,7 @@ export function TaskProperty(taskFn) {
       _scheduler: resolveScheduler(tp, this, TaskGroup),
       _propertyName,
       _debug: tp._debug,
+      _hasEnabledEvents: tp._hasEnabledEvents
     });
   });
 

@@ -27,6 +27,7 @@ export default Controller.extend({
     { route: "docs.derived-state", title: "Derived State" },
     { route: "docs.encapsulated-task", title: "Encapsulated Tasks" },
     { route: "docs.events", title: "Awaiting Events / Conditions" },
+    { route: "docs.task-lifecycle-events", title: "Lifecycle Events" },
     { route: "docs.testing-debugging", title: "Testing & Debugging" },
     { route: "docs.faq", title: "FAQ & Fact Sheet" },
 

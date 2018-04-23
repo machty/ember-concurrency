@@ -26,6 +26,7 @@ Router.map(function() {
     this.route('task-groups');
     this.route('derived-state');
     this.route('events');
+    this.route('task-lifecycle-events');
     this.route('testing-debugging');
     this.route('faq');
     this.route('encapsulated-task');
