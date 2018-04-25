@@ -114,12 +114,13 @@ export const _ComputedProperty = ComputedProperty;
  *
  * @param {number} ms - the amount of time to sleep before resuming
  *   the task, in milliseconds
+ * @param {string} label - Label for the created promise
  */
-export function timeout(ms) {
+export function timeout(ms, label) {
   let timerId;
   let promise = new Promise(r => {
     timerId = later(r, ms);
-  });
+  }, label);
   promise.__ec_cancel__ = () => {
     cancel(timerId);
   };
