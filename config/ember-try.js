@@ -49,6 +49,7 @@ module.exports = function() {
           name: 'ember-lts-2.16',
           npm: {
             devDependencies: {
+              'ember-native-dom-event-dispatcher': '^0.6.4',
               'ember-source': '~2.16.0'
             }
           }
@@ -57,6 +58,7 @@ module.exports = function() {
           name: 'ember-lts-2.18',
           npm: {
             devDependencies: {
+              'ember-native-dom-event-dispatcher': '^0.6.4',
               'ember-source': '~2.18.0'
             }
           }
