@@ -2,7 +2,7 @@ import { resolve } from 'rsvp';
 import $ from 'jquery';
 import { test as qunitTest } from 'ember-qunit';
 import { wrap, go } from 'ember-concurrency/-task-instance';
-import { run } from '@ember/runloop';
+import { run } from "@ember/runloop";
 import { visit, click, settled } from '@ember/test-helpers';
 import {
   raw,
@@ -60,7 +60,7 @@ function test(description, fn) {
     window.QUnit.config.current._isTaskTest = true;
     let qunitDone = assert.async();
     let done = () => {
-      run.cancelTimers();
+      run.backburner.cancelTimers();
       qunitDone();
     };
     if (fn.constructor.name === 'GeneratorFunction') {
