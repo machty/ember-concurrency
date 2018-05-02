@@ -28,6 +28,7 @@ export default Controller.extend({
     { route: "docs.encapsulated-task", title: "Encapsulated Tasks" },
     { route: "docs.events", title: "Awaiting Events / Conditions" },
     { route: "docs.task-lifecycle-events", title: "Lifecycle Events" },
+    { route: "docs.task-to-function", title: "Casting Tasks to Functions" },
     { route: "docs.testing-debugging", title: "Testing & Debugging" },
     { route: "docs.faq", title: "FAQ & Fact Sheet" },
 

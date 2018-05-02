@@ -30,6 +30,7 @@ Router.map(function() {
     this.route('testing-debugging');
     this.route('faq');
     this.route('encapsulated-task');
+    this.route('task-to-function');
     this.route('examples', function() {
       this.route('increment-buttons');
       this.route('loading-ui');

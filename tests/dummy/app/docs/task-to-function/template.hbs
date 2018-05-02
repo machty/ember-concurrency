@@ -1,0 +1,22 @@
+<h3>Casting a task to a function with <code>toFunction</code></h3>
+
+<p>
+  The <code>toFunction</code> modifier casts the <code>TaskProperty</code> to a
+  function, which performs the task when invoked. This essentially makes it
+  possible to use ember-concurrency tasks on non-Ember objects, even when task
+  modifiers are being used.
+</p>
+
+{{code-snippet name="task-to-function-example.js"}}
+
+<h4>Caveats</h4>
+
+<ul>
+  <li>
+    Once casted to a function, the task no longer uses the computed
+    property name and is now considered anonymous. As a result, the
+    <code>evented()</code> modifier, which relies on knowing the property name
+    on the host object, will be ignored and its behavior will not be included on
+    tasks created by the casted function.
+  </li>
+</ul>
