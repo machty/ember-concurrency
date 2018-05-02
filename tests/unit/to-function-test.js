@@ -83,3 +83,29 @@ test("toFunction works with encapsulated tasks", function(assert) {
   });
 });
 
+test("toFunction with evented() disables the evented() behavior", function(assert) {
+  assert.expect(2);
+
+  let triggerCalled = false;
+
+  class EventedDuckPOJO {
+    constructor() {}
+    trigger() {
+      triggerCalled = true;
+    }
+  }
+
+  let fn = task(function* () {
+    assert.ok(true, 'task was called');
+  }).restartable().evented().toFunction();
+  EventedDuckPOJO.prototype.myTask = fn;
+
+  let obj;
+
+  run(() => {
+    obj = new EventedDuckPOJO();
+    obj.myTask();
+  });
+
+  assert.notOk(triggerCalled, "expect task not to have fired any events");
+});

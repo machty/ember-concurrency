@@ -7,6 +7,7 @@ import {
   dropButKeepLatestPolicy
 } from './-buffer-policy';
 import Scheduler from './-scheduler';
+import { ANONYMOUS_TASK_NAME } from './-task-property';
 
 // this is mixed into TaskProperties and TaskGroup properties, i.e.
 // the Computed Propertys that ultimately produce Tasks and TaskGroups.
@@ -73,6 +74,8 @@ export const taskModifiers = {
 
   _createTask(context, _propertyName) {
     let _taskState = getInitialTaskState();
+    let isAnonymous = ANONYMOUS_TASK_NAME === _propertyName;
+    let _hasEnabledEvents = isAnonymous ? false : this._hasEnabledEvents;
 
     return this._TaskConstructor.create({
       fn: this.taskFn,
@@ -82,7 +85,7 @@ export const taskModifiers = {
       _propertyName,
       _scheduler: makeScheduler(this, context, _taskState),
       _debug: this._debug,
-      _hasEnabledEvents: this._hasEnabledEvents,
+      _hasEnabledEvents,
       _taskState
     });
   },

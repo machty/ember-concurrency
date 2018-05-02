@@ -23,8 +23,10 @@ import {
 import EncapsulatedTask from './-encapsulated-task';
 import Ember from 'ember';
 
+export const ANONYMOUS_TASK_NAME = '(anonymous task)';
+
 const { WeakMap } = Ember;
-const NULL_OBJECT = {};
+const SHARED_CONTEXT = {};
 
 const PerformProxy = EmberObject.extend({
   _task: null,
@@ -634,11 +636,11 @@ objectAssign(TaskProperty.prototype, taskModifiers, {
 
     let fn = function(...args) {
       let context = this;
-      let concurrencyContext = context || NULL_OBJECT;
+      let concurrencyContext = context || SHARED_CONTEXT;
       let task = taskWeakMap.get(concurrencyContext);
 
       if (!task) {
-        task = tp._createTask(context, "(anonymous task)");
+        task = tp._createTask(context, ANONYMOUS_TASK_NAME);
         taskWeakMap.set(concurrencyContext, task);
       }
 
