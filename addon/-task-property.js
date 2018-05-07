@@ -597,6 +597,27 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
    */
 
   /**
+   * Activates lifecycle events, allowing Evented host objects to react to task state
+   * changes.
+   *
+   * ```js
+   * export default Component.extend({
+   *   uploadTask: task(function* (file) {
+   *     // ... file upload stuff
+   *   }).drop(),
+   *
+   *   uploadedStarted: on('uploadTask:started', function(taskInstance) {
+   *     this.get('analytics').track("User Photo: upload started");
+   *   }),
+   * });
+   * ```
+   *
+   * @method evented
+   * @memberof TaskProperty
+   * @instance
+   */
+
+  /**
    * Logs lifecycle events to aid in debugging unexpected Task behavior.
    * Presently only logs cancelation events and the reason for the cancelation,
    * e.g. "TaskInstance 'doStuff' was canceled because the object it lives on was destroyed or unrendered"
