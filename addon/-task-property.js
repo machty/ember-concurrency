@@ -601,10 +601,12 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
    * changes.
    *
    * ```js
-   * export default Component.extend({
+   * import Evented from '@ember/object/evented';
+   *
+   * export default Component.extend(Evented, {
    *   uploadTask: task(function* (file) {
    *     // ... file upload stuff
-   *   }).drop(),
+   *   }).evented(),
    *
    *   uploadedStarted: on('uploadTask:started', function(taskInstance) {
    *     this.get('analytics').track("User Photo: upload started");
