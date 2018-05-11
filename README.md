@@ -64,7 +64,7 @@ For more information on using ember-cli, visit [http://www.ember-cli.com/](http:
 
 ### Generate Docs
 
-TODO: use build pipeline.
+TODO: bullsauce.
 
     ./builddocs.sh
 
