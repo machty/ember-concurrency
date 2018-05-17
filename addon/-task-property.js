@@ -601,9 +601,8 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
    * changes.
    *
    * ```js
-   * import Evented from '@ember/object/evented';
    *
-   * export default Component.extend(Evented, {
+   * export default Component.extend({
    *   uploadTask: task(function* (file) {
    *     // ... file upload stuff
    *   }).evented(),
