@@ -66,12 +66,6 @@
     <code>lastSuccessful</code>: the last Task Instance that ran to completion
     (it returned a value that wasn't a rejecting promise).
   </li>
-  <li>
-    <code>isSuccessful</code>: true if the Task Instance ran to completion
-  </li>
-  <li>
-    <code>isError</code>: true if Task Instance failed to run to completion due to an exception
-  </li>
 </ul>
 
 <p>
@@ -86,6 +80,14 @@
 <h4>Properties on <a href="/api/TaskInstance.html">Task Instances</a></h4>
 
 <ul>
+  <li>
+    <code>isSuccessful</code>: true if the Task Instance ran to completion
+  </li>
+  
+  <li>
+    <code>isError</code>: true if Task Instance failed to run to completion due to an exception
+  </li>
+  
   <li>
     <code>value</code>: the value returned from the task function. Is
     <code>null</code> before a value is returned, and remains null
