@@ -100,7 +100,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line393">line 393</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line400">line 400</a>
     </li></ul></dd>
     
 
@@ -252,7 +252,7 @@ specified events fire on the parent object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line481">line 481</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line489">line 489</a>
     </li></ul></dd>
     
 
@@ -336,7 +336,7 @@ e.g. &quot;TaskInstance 'doStuff' was canceled because the object it lives on wa
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line591">line 591</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line621">line 621</a>
     </li></ul></dd>
     
 
@@ -420,7 +420,7 @@ at maxConcurrency. Sets default maxConcurrency to 1.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line526">line 526</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line534">line 534</a>
     </li></ul></dd>
     
 
@@ -504,7 +504,100 @@ maxConcurrency to 1.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line516">line 516</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line524">line 524</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="evented"><span class="type-signature"></span>evented<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Activates lifecycle events, allowing Evented host objects to react to task state
+changes.</p>
+<pre class="prettyprint source lang-js"><code>
+export default Component.extend({
+  uploadTask: task(function* (file) {
+    // ... file upload stuff
+  }).evented(),
+
+  uploadedStarted: on('uploadTask:started', function(taskInstance) {
+    this.get('analytics').track(&quot;User Photo: upload started&quot;);
+  }),
+});</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line599">line 599</a>
     </li></ul></dd>
     
 
@@ -637,7 +730,7 @@ can be shared between multiple tasks.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line579">line 579</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line587">line 587</a>
     </li></ul></dd>
     
 
@@ -720,7 +813,7 @@ performed <a href="TaskInstance.html"><code>TaskInstance</code></a>.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line536">line 536</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line544">line 544</a>
     </li></ul></dd>
     
 
@@ -871,7 +964,7 @@ elsewhere() {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line545">line 545</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line553">line 553</a>
     </li></ul></dd>
     
 
@@ -1019,7 +1112,7 @@ when the host object is initialized.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line444">line 444</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line452">line 452</a>
     </li></ul></dd>
     
 
@@ -1104,7 +1197,7 @@ maxConcurrency to 1.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line504">line 504</a>
+        <a href="task-property.js.html">-task-property.js</a>, <a href="task-property.js.html#line512">line 512</a>
     </li></ul></dd>
     
 
@@ -1146,13 +1239,13 @@ maxConcurrency to 1.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Events</h3><ul><li><a href="TaskInstance.html#event:TASK_NAME:canceled">TASK_NAME:canceled</a></li><li><a href="TaskInstance.html#event:TASK_NAME:errored">TASK_NAME:errored</a></li><li><a href="TaskInstance.html#event:TASK_NAME:started">TASK_NAME:started</a></li><li><a href="TaskInstance.html#event:TASK_NAME:succeeded">TASK_NAME:succeeded</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 28 2018 11:11:05 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Jul 23 2018 09:58:55 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>
