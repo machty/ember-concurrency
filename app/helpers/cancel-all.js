@@ -1,1 +1,1 @@
-export { default, cancelAll } from 'ember-concurrency/helpers/cancel-all';
+export { default } from 'ember-concurrency/helpers/cancel-all';
