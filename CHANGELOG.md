@@ -1,4 +1,7 @@
 # Changelog
+### 0.8.19
+  - Fixes ES5 getter syntax on Ember Canary (#248)
+
 ### 0.8.18
   - Adds `.evented()` task modifier and task lifecycle events.
 
