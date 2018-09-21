@@ -435,11 +435,16 @@ export function TaskProperty(taskFn) {
   this._observes = null;
 }
 
+const superSetup = _ComputedProperty.prototype.setup;
 TaskProperty.prototype = Object.create(_ComputedProperty.prototype);
 objectAssign(TaskProperty.prototype, propertyModifiers, {
   constructor: TaskProperty,
 
   setup(proto, taskName) {
+    if (superSetup) {
+      superSetup.call(this, proto, taskName);
+    }
+
     if (this._maxConcurrency !== Infinity && !this._hasSetBufferPolicy) {
       Ember.Logger.warn(`The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${this._maxConcurrency})\``);
     }
