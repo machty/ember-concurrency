@@ -1,5 +1,5 @@
 # Changelog
-### 0.8.19
+### 0.8.21
   - Fixes ES5 getter syntax on Ember Canary (#248)
 
 ### 0.8.18
