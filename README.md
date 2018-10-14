@@ -31,7 +31,7 @@ approach).
 
 - [Open an Issue](https://github.com/machty/ember-concurrency/issues).
   - Try to replicate the issue within an [ember-twiddle][twiddle-starter]
-- Ask a question in the `#e-concurrency` channel at the [Ember.js Community Slack](https://embercommunity.slack.com)
+- Ask a question in the `#e-concurrency` channel at the [Ember Community Discord server](https://discord.gg/zT3asNS)
 
 ## Contributing
 
