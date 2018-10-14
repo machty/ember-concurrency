@@ -442,7 +442,7 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
 
   setup(proto, taskName) {
     if (superSetup) {
-      superSetup.call(this, proto, taskName);
+      superSetup.apply(this, arguments);
     }
 
     if (this._maxConcurrency !== Infinity && !this._hasSetBufferPolicy) {
