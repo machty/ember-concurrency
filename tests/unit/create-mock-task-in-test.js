@@ -1,4 +1,4 @@
-import { get } from '@ember/object';
+import { default as EmberObject, get } from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import { task } from 'ember-concurrency';
@@ -8,12 +8,12 @@ module('Unit: test environment', function() {
     assert.expect(1);
 
     let taskRan = false;
-    let myMock = {
+    let myMock = EmberObject.extend({
       doAsync: task(function* () {
         taskRan = true;
         yield true;
       })
-    };
+    }).create();
 
     run(() => {
       return get(myMock, 'doAsync').perform()
