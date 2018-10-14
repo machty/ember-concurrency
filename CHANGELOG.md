@@ -1,4 +1,7 @@
 # Changelog
+### 0.8.22
+  - Fixes ember-metal related issues on Ember Canary.
+
 ### 0.8.21
   - Fixes ES5 getter syntax on Ember Canary (#248)
 
