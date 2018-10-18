@@ -23,7 +23,7 @@ const Scheduler = EmberObject.extend({
     this.queuedTaskInstances = [];
   },
 
-  cancelAll(reason) {
+  cancelAll({ reason }) {
     let seen = [];
     this.spliceTaskInstances(reason, this.activeTaskInstances, 0, this.activeTaskInstances.length, seen);
     this.spliceTaskInstances(reason, this.queuedTaskInstances, 0, this.queuedTaskInstances.length, seen);

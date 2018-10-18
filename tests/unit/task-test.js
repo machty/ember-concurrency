@@ -124,6 +124,54 @@ module('Unit: task', function(hooks) {
     assert.equal(instances[0].get('cancelReason'), "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help");
   });
 
+  test("task.cancelAll normally preserves the last derived state", function(assert) {
+    assert.expect(2);
+
+    let Obj = EmberObject.extend(Evented, {
+      doStuff: task(function * () {
+        yield timeout(1);
+        return 1;
+      }),
+    });
+
+    let instance;
+    return run(() => {
+      let obj = Obj.create();
+      let task = obj.get('doStuff');
+      instance = task.perform();
+      return instance.then(() => {
+        assert.equal(task.get('lastSuccessful.value'), 1);
+        instance = task.perform();
+        task.cancelAll();
+        assert.equal(task.get('lastSuccessful.value'), 1);
+      });
+    });
+  });
+
+  test("task.cancelAll({ resetState: true }) resets defired state", function(assert) {
+    assert.expect(2);
+
+    let Obj = EmberObject.extend(Evented, {
+      doStuff: task(function * () {
+        yield timeout(1);
+        return 1;
+      }),
+    });
+
+    let instance;
+    return run(() => {
+      let obj = Obj.create();
+      let task = obj.get('doStuff');
+      instance = task.perform();
+      return instance.then(() => {
+        assert.equal(task.get('lastSuccessful.value'), 1);
+        instance = task.perform();
+        task.cancelAll({ resetState: true });
+        assert.ok(!task.get('lastSuccessful.value'), 'expected there to be no last successful value');
+      });
+    });
+  });
+
   test("cancelation due to task modifier supplies useful message", function(assert) {
     assert.expect(2);
 

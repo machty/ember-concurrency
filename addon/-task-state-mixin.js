@@ -40,8 +40,13 @@ export default Mixin.create({
   numQueued: 0,
   _seenIndex: 0,
 
-  cancelAll(reason = ".cancelAll() was explicitly called on the Task") {
-    this._scheduler.cancelAll(reason);
+  cancelAll(options) {
+    let { reason, resetState } = options || {};
+    reason = reason || ".cancelAll() was explicitly called on the Task";
+
+    this._scheduler.cancelAll({ reason });
+
+    if (resetState) { this.set('_scheduler', null); }
   },
 
   group: computed(function() {
