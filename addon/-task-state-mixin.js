@@ -64,6 +64,9 @@ export default Mixin.create({
       'lastPerformed': null,
       'lastSuccessful': null,
       'lastComplete': null,
+      'lastErrored': null,
+      'lastCanceled': null,
+      'lastIncomplete': null,
       'performCount': 0,
     });
   },
