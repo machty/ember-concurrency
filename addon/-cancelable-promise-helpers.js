@@ -20,7 +20,7 @@ function * resolver(value) {
  *   are canceled), all of the other unfinished `TaskInstance`s will
  *   be automatically canceled.
  *
- * [Check out the "Awaiting Multiple Child Tasks example"](/#/docs/examples/joining-tasks)
+ * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
 export const all = (things) => {
   if (things.length === 0) {
@@ -77,7 +77,7 @@ export const allSettled = taskAwareVariantOf(RSVP, 'allSettled', identity);
  * - once any of the tasks/promises passed in complete (either success, failure,
  *   or cancelation), any of the {@linkcode TaskInstance}s passed in will be canceled
  *
- * [Check out the "Awaiting Multiple Child Tasks example"](/#/docs/examples/joining-tasks)
+ * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
 export const race = taskAwareVariantOf(Promise, 'race', identity);
 
