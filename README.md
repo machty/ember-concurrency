@@ -43,7 +43,6 @@ This project uses `yarn` as a package manager. If you're adding a new dependency
 
 * `git clone` this repository
 * `yarn install`
-* `bower install`
 
 ### Running
 
