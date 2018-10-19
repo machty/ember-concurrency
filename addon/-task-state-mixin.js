@@ -47,14 +47,7 @@ export default Mixin.create({
     this._scheduler.cancelAll({ reason });
 
     if (resetState) {
-      this.setProperties({
-        'last': null,
-        'lastRunning': null,
-        'lastPerformed': null,
-        'lastSuccessful': null,
-        'lastComplete': null,
-        'performCount': 0,
-      });
+      this._resetState();
     }
   },
 
@@ -64,5 +57,15 @@ export default Mixin.create({
 
   _scheduler: null,
 
+  _resetState() {
+    this.setProperties({
+      'last': null,
+      'lastRunning': null,
+      'lastPerformed': null,
+      'lastSuccessful': null,
+      'lastComplete': null,
+      'performCount': 0,
+    });
+  },
 });
 
