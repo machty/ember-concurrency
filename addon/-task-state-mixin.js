@@ -44,7 +44,7 @@ export default Mixin.create({
     let { reason, resetState } = options || {};
     reason = reason || ".cancelAll() was explicitly called on the Task";
 
-    this._scheduler.cancelAll({ reason });
+    this._scheduler.cancelAll(reason);
 
     if (resetState) {
       this._resetState();
