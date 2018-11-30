@@ -413,38 +413,30 @@ export const Task = EmberObject.extend(TaskStateMixin, {
 
   @class TaskProperty
 */
-export function TaskProperty(taskFn) {
-  let tp = this;
-  _ComputedProperty.call(this, function(_propertyName) {
-    taskFn.displayName = `${_propertyName} (task)`;
-    return Task.create({
-      fn: tp.taskFn,
-      context: this,
-      _origin: this,
-      _taskGroupPath: tp._taskGroupPath,
-      _scheduler: resolveScheduler(tp, this, TaskGroup),
-      _propertyName,
-      _debug: tp._debug,
-      _hasEnabledEvents: tp._hasEnabledEvents
+export class TaskProperty extends _ComputedProperty {
+  constructor(taskFn) {
+    let tp;
+    super(function(_propertyName) {
+      taskFn.displayName = `${_propertyName} (task)`;
+      return Task.create({
+        fn: tp.taskFn,
+        context: this,
+        _origin: this,
+        _taskGroupPath: tp._taskGroupPath,
+        _scheduler: resolveScheduler(tp, this, TaskGroup),
+        _propertyName,
+        _debug: tp._debug,
+        _hasEnabledEvents: tp._hasEnabledEvents
+      });
     });
-  });
-
-  this.taskFn = taskFn;
-  this.eventNames = null;
-  this.cancelEventNames = null;
-  this._observes = null;
-}
-
-const superSetup = _ComputedProperty.prototype.setup;
-TaskProperty.prototype = Object.create(_ComputedProperty.prototype);
-objectAssign(TaskProperty.prototype, propertyModifiers, {
-  constructor: TaskProperty,
+    tp = this;
+    this.taskFn = taskFn;
+    this.eventNames = null;
+    this.cancelEventNames = null;
+    this._observes = null;
+  }
 
   setup(proto, taskName) {
-    if (superSetup) {
-      superSetup.apply(this, arguments);
-    }
-
     if (this._maxConcurrency !== Infinity && !this._hasSetBufferPolicy) {
       Ember.Logger.warn(`The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${this._maxConcurrency})\``);
     }
@@ -452,7 +444,7 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
     registerOnPrototype(addListener, proto, this.eventNames, taskName, 'perform', false);
     registerOnPrototype(addListener, proto, this.cancelEventNames, taskName, 'cancelAll', false);
     registerOnPrototype(addObserver, proto, this._observes, taskName, 'perform', true);
-  },
+  }
 
   /**
    * Calling `task(...).on(eventName)` configures the task to be
@@ -489,7 +481,7 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
     this.eventNames = this.eventNames || [];
     this.eventNames.push.apply(this.eventNames, arguments);
     return this;
-  },
+  }
 
   /**
    * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
@@ -507,12 +499,12 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
     this.cancelEventNames = this.cancelEventNames || [];
     this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
     return this;
-  },
+  }
 
   observes(...properties) {
     this._observes = properties;
     return this;
-  },
+  }
 
   /**
    * Configures the task to cancel old currently task instances
@@ -635,8 +627,10 @@ objectAssign(TaskProperty.prototype, propertyModifiers, {
 
   perform() {
     throw new Error("It looks like you tried to perform a task via `this.nameOfTask.perform()`, which isn't supported. Use `this.get('nameOfTask').perform()` instead.");
-  },
-});
+  }
+}
+
+objectAssign(TaskProperty.prototype, propertyModifiers);
 
 function registerOnPrototype(addListenerOrObserver, proto, names, taskName, taskMethod, once) {
   if (names) {
