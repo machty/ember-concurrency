@@ -1,1 +1,1 @@
-export { default, initialize } from 'ember-concurrency/initializers/ember-concurrency';
+export { default } from 'ember-concurrency/initializers/ember-concurrency';

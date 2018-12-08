@@ -419,6 +419,7 @@ export function TaskProperty(taskFn) {
   this._sharedConstructor(taskFn);
 }
 
+const superSetup = ComputedProperty.prototype.setup;
 TaskProperty.prototype = Object.create(ComputedProperty.prototype);
 objectAssign(TaskProperty.prototype, taskModifiers, {
   constructor: TaskProperty,
@@ -429,6 +430,10 @@ objectAssign(TaskProperty.prototype, taskModifiers, {
   _observes: null,
 
   setup(proto, taskName) {
+    if (superSetup) {
+      superSetup.apply(this, arguments);
+    }
+
     if (this._maxConcurrency !== Infinity && !this._hasSetBufferPolicy) {
       Ember.Logger.warn(`The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${this._maxConcurrency})\``);
     }
@@ -582,6 +587,28 @@ objectAssign(TaskProperty.prototype, taskModifiers, {
    * @method group
    * @memberof TaskProperty
    * @param {String} groupPath A path to the TaskGroup property
+   * @instance
+   */
+
+  /**
+   * Activates lifecycle events, allowing Evented host objects to react to task state
+   * changes.
+   *
+   * ```js
+   *
+   * export default Component.extend({
+   *   uploadTask: task(function* (file) {
+   *     // ... file upload stuff
+   *   }).evented(),
+   *
+   *   uploadedStarted: on('uploadTask:started', function(taskInstance) {
+   *     this.get('analytics').track("User Photo: upload started");
+   *   }),
+   * });
+   * ```
+   *
+   * @method evented
+   * @memberof TaskProperty
    * @instance
    */
 

@@ -1,1 +1,1 @@
-export { default, task } from 'ember-concurrency/helpers/task';
+export { default } from 'ember-concurrency/helpers/task';

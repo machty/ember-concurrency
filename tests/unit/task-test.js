@@ -564,4 +564,25 @@ module('Unit: task', function(hooks) {
       ]
     ]);
   });
+
+  test("ES5 getter syntax works", function(assert) {
+    let Obj = EmberObject.extend({
+      es5getterSyntaxSupported: computed(function() {
+        return "yes";
+      }),
+      task: task(function * () {
+        assert.ok(true);
+      }),
+    });
+
+    run(() => {
+      let obj = Obj.create();
+      if (obj.es5getterSyntaxSupported === 'yes') {
+        assert.expect(1);
+        obj.task.perform();
+      } else {
+        assert.expect(0);
+      }
+    });
+  });
 });
