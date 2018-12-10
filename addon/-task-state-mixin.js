@@ -61,6 +61,7 @@ export default Mixin.create({
     this.setProperties({
       'last': null,
       'lastRunning': null,
+      'lastStarted': null,
       'lastPerformed': null,
       'lastSuccessful': null,
       'lastComplete': null,
