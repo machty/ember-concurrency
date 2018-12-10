@@ -187,7 +187,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       this._taskInstanceFactory = EncapsulatedTask.extend(ownerInjection, this.fn);
     }
 
-    _cleanupOnDestroy(this.context, this, 'cancelAll', 'the object it lives on was destroyed or unrendered');
+    _cleanupOnDestroy(this.context, this, 'cancelAll', { reason: 'the object it lives on was destroyed or unrendered' });
   },
 
   _curry(...args) {

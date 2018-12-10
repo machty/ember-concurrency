@@ -10,7 +10,7 @@ export function cancelHelper(args) {
     assert(`The first argument passed to the \`cancel-all\` helper should be a Task or TaskGroup (without quotes); you passed ${cancelable}`, false);
   }
 
-  return taskHelperClosure('cancel-all', 'cancelAll', [cancelable, CANCEL_REASON]);
+  return taskHelperClosure('cancel-all', 'cancelAll', [cancelable, { reason: CANCEL_REASON }]);
 }
 
 export default helper(cancelHelper);
