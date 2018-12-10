@@ -1,4 +1,8 @@
 # Changelog
+### 0.8.24
+  - cancelAll({ resetState: true }) can remove existing derived state (#253)
+  - fix issue with Ember 3.6.0+ when IE11 is not being targeted (#261)
+
 ### 0.8.22
   - Fixes ember-metal related issues on Ember Canary.
 
