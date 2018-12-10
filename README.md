@@ -43,7 +43,6 @@ This project uses `yarn` as a package manager. If you're adding a new dependency
 
 * `git clone` this repository
 * `yarn install`
-* `bower install`
 
 ### Running
 
@@ -52,7 +51,7 @@ This project uses `yarn` as a package manager. If you're adding a new dependency
 
 ### Running Tests
 
-* `yarn test` (Runs `ember try:each` to test your addon against multiple Ember versions)
+* `yarn test:all` (Runs `ember try:each` to test your addon against multiple Ember versions)
 * `ember test`
 * `ember test --server`
 
