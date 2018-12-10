@@ -19,7 +19,7 @@
   modifiers described below.
 </p>
 
-<h3>Examples</h3>
+<h3 id="examples">Examples</h3>
 
 <p>
   All of the examples below run the same task function (which
@@ -29,7 +29,7 @@
 
 {{code-snippet name="shared-tasks.js"}}
 
-<h5>Default Behavior: Tasks Run Concurrently</h5>
+<h5 id="default">Default Behavior: Tasks Run Concurrently</h5>
 
 <p>
   Tap the <code>task.perform()</code> button a few times. Note how
@@ -39,10 +39,10 @@
 {{concurrency-graph task=defaultTask}}
 
 
-<h4>restartable</h4>
+<h4 id="restartable">restartable</h4>
 
 <p>
-  The <code>restartable</code> modifier ensures that only one instance
+  The <code>.restartable()</code> modifier ensures that only one instance
   of a task is running by canceling any currently-running tasks and starting
   a new task instance immediately. Note how there is no task overlap,
   and how currently running tasks get canceled
@@ -59,10 +59,10 @@
 
 {{concurrency-graph task=restartableTask}}
 
-<h4>enqueue</h4>
+<h4 id="enqueue">enqueue</h4>
 
 <p>
-  The <code>enqueue</code> modifier ensures that only one instance
+  The <code>.enqueue()</code> modifier ensures that only one instance
   of a task is running by maintaining a queue of pending tasks and
   running them sequentially. Note how there is no task overlap, but no
   tasks are canceled either.
@@ -71,24 +71,24 @@
 {{concurrency-graph task=enqueuedTask}}
 
 
-<h4>drop</h4>
+<h4 id="drop">drop</h4>
 
 <p>
-  The <code>drop</code> modifier drops tasks that are <code>.perform</code>ed
+  The <code>.drop()</code> modifier drops tasks that are <code>.perform()</code>ed
   while another is already running. Dropped tasks' functions are never even called.
 </p>
 
 <p>
   <em>
     Check out the {{link-to 'Loading UI' 'docs.examples.loading-ui'}} example for a common
-    use case for <code>drop</code>
+    use case for <code>.drop()</code>
   </em>
 </p>
 
 {{concurrency-graph task=droppingTask}}
 
 
-<h4>.keepLatest()</h4>
+<h4 id="keepLatest">keepLatest</h4>
 
 <p>
   The <code>.keepLatest()</code> will drop all but the most recent intermediate <code>.perform()</code>,
