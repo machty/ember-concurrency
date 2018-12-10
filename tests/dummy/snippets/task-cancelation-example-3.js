@@ -6,7 +6,7 @@ export default Component.extend({
   }),
 
   fetchResults: task(function * () {
-    let results = this.get('doStuff').perform();
+    let results = yield this.get('doStuff').perform();
     this.set('results', results);
   }),
 });
