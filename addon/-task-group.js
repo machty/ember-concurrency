@@ -20,22 +20,21 @@ export const TaskGroup = EmberObject.extend(TaskStateMixin, {
   isQueued:  false
 });
 
-export function TaskGroupProperty(...decorators) {
-  let taskFn = decorators.pop();
-  let tp = this;
-  _ComputedProperty.call(this, function(_propertyName) {
-    return TaskGroup.create({
-      fn: taskFn,
-      context: this,
-      _origin: this,
-      _taskGroupPath: tp._taskGroupPath,
-      _scheduler: resolveScheduler(tp, this, TaskGroup),
-      _propertyName,
+export class TaskGroupProperty extends _ComputedProperty {
+  constructor(taskFn) {
+    let tp;
+    super(function(_propertyName) {
+      return TaskGroup.create({
+        fn: taskFn,
+        context: this,
+        _origin: this,
+        _taskGroupPath: tp._taskGroupPath,
+        _scheduler: resolveScheduler(tp, this, TaskGroup),
+        _propertyName,
+      });
     });
-  });
+    tp = this;
+  }
 }
 
-TaskGroupProperty.prototype = Object.create(_ComputedProperty.prototype);
-objectAssign(TaskGroupProperty.prototype, propertyModifiers, {
-  constructor: TaskGroupProperty,
-});
+objectAssign(TaskGroupProperty.prototype, propertyModifiers);

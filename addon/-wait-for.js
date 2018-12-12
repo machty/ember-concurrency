@@ -37,7 +37,9 @@ class WaitForEventYieldable extends WaitFor {
 
   [yieldableSymbol](taskInstance, resumeIndex) {
     let unbind = () => {};
+    let didFinish = false;
     let fn = (event) => {
+      didFinish = true;
       unbind();
       taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, event);
     };
@@ -59,7 +61,9 @@ class WaitForEventYieldable extends WaitFor {
       this.object.one(this.eventName, fn);
 
       return () => {
-        this.object.off(this.eventName, fn);
+        if (!didFinish) {
+          this.object.off(this.eventName, fn);
+        }
       };
     }
   }
