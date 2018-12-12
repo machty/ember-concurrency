@@ -88,6 +88,14 @@ module.exports = function() {
           }
         },
         {
+          name: 'ember-canary-dev-browser',
+          npm: {
+            devDependencies: {
+              'ember-source': urls[2]
+            }
+          }
+        },
+        {
           name: 'ember-default',
           npm: {
             devDependencies: {}
