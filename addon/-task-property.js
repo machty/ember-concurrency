@@ -635,11 +635,16 @@ export class TaskProperty extends _ComputedProperty {
 
 objectAssign(TaskProperty.prototype, propertyModifiers);
 
+let handlerCounter = 0;
+
 function registerOnPrototype(addListenerOrObserver, proto, names, taskName, taskMethod, once) {
   if (names) {
     for (let i = 0; i < names.length; ++i) {
       let name = names[i];
-      addListenerOrObserver(proto, name, null, makeTaskCallback(taskName, taskMethod, once));
+
+      let handlerName = `__ember_concurrency_handler_${handlerCounter++}`;
+      proto[handlerName] = makeTaskCallback(taskName, taskMethod, once);
+      addListenerOrObserver(proto, name, null, handlerName);
     }
   }
 }

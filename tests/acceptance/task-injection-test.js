@@ -1,5 +1,5 @@
 import { click, visit } from '@ember/test-helpers';
-import { find } from 'ember-native-dom-helpers';
+import { find } from '@ember/test-helpers';
 import { setupApplicationTest } from 'ember-qunit';
 import { module, test } from 'qunit';
 
