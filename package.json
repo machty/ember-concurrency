@@ -52,7 +52,6 @@
     "ember-sinon": "^2.1.0",
     "ember-source": "~3.6.0",
     "ember-source-channel-url": "^1.0.1",
-    "@ember/test-helpers": "1.0.1",
     "ember-try": "^1.1.0",
     "jsdom": "^11.6.2",
     "eslint-plugin-node": "^6.0.1",
@@ -72,6 +71,9 @@
     "babel-core": "^6.24.1",
     "ember-cli-babel": "^6.8.2",
     "ember-maybe-import-regenerator": "^0.1.5"
+  },
+  "resolutions": {
+    "ember-qunit/@ember/test-helpers": "1.0.1"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config",
