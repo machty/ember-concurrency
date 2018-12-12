@@ -1,5 +1,5 @@
 import { click, visit, currentURL } from '@ember/test-helpers';
-import { find } from 'ember-native-dom-helpers';
+import { find } from '@ember/test-helpers';
 import Ember from 'ember';
 import { setupApplicationTest } from 'ember-qunit';
 import { module, test } from 'qunit';
