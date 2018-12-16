@@ -54,8 +54,9 @@
     "ember-source-channel-url": "^1.0.1",
     "ember-try": "^1.1.0",
     "jsdom": "^11.6.2",
-    "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-ember": "^5.1.0",
+    "eslint-plugin-node": "^6.0.1",
+    "jsdom": "^11.6.2",
     "loader.js": "^4.2.3",
     "prember": "0.3.0-alpha.3"
   },
@@ -68,8 +69,8 @@
     "cancelation"
   ],
   "dependencies": {
-    "babel-core": "^6.24.1",
-    "ember-cli-babel": "^6.8.2",
+    "@babel/core": "^7.1.2",
+    "ember-cli-babel": "7.1.2",
     "ember-maybe-import-regenerator": "^0.1.5"
   },
   "resolutions": {
