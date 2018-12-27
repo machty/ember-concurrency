@@ -415,7 +415,8 @@ let taskInstanceAttrs = {
       value = new Error(this.cancelReason);
 
       if (this._debug || Ember.ENV.DEBUG_TASKS) {
-        Ember.Logger.log(this.cancelReason);
+        // eslint-disable-next-line no-console
+        console.log(this.cancelReason);
       }
 
       value.name = TASK_CANCELATION_NAME;
@@ -544,7 +545,8 @@ let taskInstanceAttrs = {
     } finally {
       if (this._expectsLinkedYield) {
         if (!this._generatorValue || this._generatorValue._performType !== PERFORM_TYPE_LINKED) {
-          Ember.Logger.warn("You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency).");
+          // eslint-disable-next-line no-console
+          console.warn("You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency).");
         }
         this._expectsLinkedYield = false;
       }
@@ -783,7 +785,8 @@ taskInstanceAttrs[yieldableSymbol] = function handleYieldedTaskInstance(parentTa
             get(yieldedTaskInstance, 'isRunning')) {
           let parentName = `\`${parentTaskInstance.task._propertyName}\``;
           let childName = `\`${yieldedTaskInstance.task._propertyName}\``;
-          Ember.Logger.warn(`ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task ${parentName} and child task ${childName}. If you want child task ${childName} to be canceled when parent task ${parentName} is canceled, please change \`.perform()\` to \`.linked().perform()\`. If you want child task ${childName} to keep running after parent task ${parentName} is canceled, change it to \`.unlinked().perform()\``);
+          // eslint-disable-next-line no-console
+          console.warn(`ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task ${parentName} and child task ${childName}. If you want child task ${childName} to be canceled when parent task ${parentName} is canceled, please change \`.perform()\` to \`.linked().perform()\`. If you want child task ${childName} to keep running after parent task ${parentName} is canceled, change it to \`.unlinked().perform()\``);
         }
       }
       yieldedTaskInstance.cancel();

@@ -3,7 +3,6 @@ import { addObserver } from '@ember/object/observers';
 import { addListener } from '@ember/object/events';
 import EmberObject from '@ember/object';
 import { getOwner } from '@ember/application';
-import Ember from 'ember';
 import {
   default as TaskInstance,
   getRunningInstance
@@ -441,7 +440,8 @@ export class TaskProperty extends _ComputedProperty {
       super.setup(...arguments);
     }
     if (this._maxConcurrency !== Infinity && !this._hasSetBufferPolicy) {
-      Ember.Logger.warn(`The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${this._maxConcurrency})\``);
+      // eslint-disable-next-line no-console
+      console.warn(`The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${this._maxConcurrency})\``);
     }
 
     registerOnPrototype(addListener, proto, this.eventNames, taskName, 'perform', false);
