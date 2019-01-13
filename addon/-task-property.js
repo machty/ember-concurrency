@@ -26,6 +26,7 @@ import {
   _ComputedProperty
 } from './utils';
 import EncapsulatedTask from './-encapsulated-task';
+import { deprecate } from '@ember/debug';
 
 const PerformProxy = EmberObject.extend({
   _task: null,
@@ -629,7 +630,17 @@ export class TaskProperty extends _ComputedProperty {
    */
 
   perform() {
-    throw new Error("It looks like you tried to perform a task via `this.nameOfTask.perform()`, which isn't supported. Use `this.get('nameOfTask').perform()` instead.");
+    deprecate(`[DEPRECATED] An ember-concurrency task property was not set on its object via 'defineProperty'. 
+              You probably used 'set(obj, "myTask", task(function* () { ... }) )'. 
+              Unfortunately due to this we can't tell you the name of the task.`,
+      false,
+      {
+        id: 'ember-meta.descriptor-on-object',
+        until: '3.5.0',
+        url: 'https://emberjs.com/deprecations/v3.x#toc_use-defineProperty-to-define-computed-properties',
+      }
+    );
+    throw new Error("An ember-concurrency task property was not set on its object via 'defineProperty'. See deprecation warning for details.");
   }
 }
 
