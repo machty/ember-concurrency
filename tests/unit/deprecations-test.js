@@ -1,22 +1,22 @@
+/* eslint-disable no-console */
 import { run } from '@ember/runloop';
 import EmberObject from '@ember/object';
-import Ember from 'ember';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
-const originalWarn = Ember.Logger.warn;
+const originalWarn = console.warn;
 let warnings;
 
 module('Deprecations', function(hooks) {
   hooks.beforeEach(function() {
     warnings = [];
-    Ember.Logger.warn = (w) => {
+    console.warn = (w) => {
       warnings.push(w);
     };
   });
 
   hooks.afterEach(function() {
-    Ember.Logger.warn = originalWarn;
+    console.warn = originalWarn;
   });
 
   test("warn if using maxConcurrency without specifying other task modifier", function(assert) {

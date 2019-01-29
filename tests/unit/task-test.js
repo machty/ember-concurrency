@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { defer } from 'rsvp';
 import { A } from '@ember/array';
 import Evented from '@ember/object/evented';
@@ -7,13 +8,13 @@ import Ember from 'ember';
 import { task, timeout, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
-const originalLog = Ember.Logger.log;
-const originalWarn = Ember.Logger.warn;
+const originalLog = console.log;
+const originalWarn = console.warn;
 
 module('Unit: task', function(hooks) {
   hooks.afterEach(function() {
-    Ember.Logger.log = originalLog;
-    Ember.Logger.warn = originalWarn;
+    console.log = originalLog;
+    console.warn = originalWarn;
     Ember.ENV.DEBUG_TASKS = false;
   });
 
@@ -452,7 +453,7 @@ module('Unit: task', function(hooks) {
     assert.expect(1);
 
     let logs = [];
-    Ember.Logger.log = (...args) => {
+    console.log = (...args) => {
       logs.push(args);
     };
 
@@ -481,7 +482,7 @@ module('Unit: task', function(hooks) {
     Ember.ENV.DEBUG_TASKS = true;
 
     let logs = [];
-    Ember.Logger.log = (...args) => {
+    console.log = (...args) => {
       logs.push(args);
     };
 
@@ -535,7 +536,7 @@ module('Unit: task', function(hooks) {
     assert.expect(2);
 
     let warnings = [];
-    Ember.Logger.warn = (...args) => {
+    console.warn = (...args) => {
       warnings.push(args);
     };
 
@@ -606,7 +607,7 @@ module('Unit: task', function(hooks) {
     assert.expect(1);
 
     let warnings = [];
-    Ember.Logger.warn = (...args) => {
+    console.warn = (...args) => {
       warnings.push(args);
     };
 
