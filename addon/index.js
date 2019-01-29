@@ -1,4 +1,4 @@
-import { timeout } from './utils';
+import { timeout, forever } from './utils';
 import { TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
 import { TaskGroupProperty } from './-task-group';
@@ -88,5 +88,6 @@ export {
   timeout,
   waitForQueue,
   waitForEvent,
-  waitForProperty
+  waitForProperty,
+  forever
 };
