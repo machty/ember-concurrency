@@ -4,7 +4,7 @@ import Evented from '@ember/object/evented';
 import { run, later } from '@ember/runloop';
 import EmberObject, { computed } from '@ember/object';
 import Ember from 'ember';
-import { task, timeout } from 'ember-concurrency';
+import { task, timeout, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 const originalLog = Ember.Logger.log;
@@ -100,6 +100,21 @@ module('Unit: task', function(hooks) {
       obj.destroy();
       start();
     });
+  });
+
+  test("tasks can be paused indefinitely by yielding `forever`", function(assert) {
+    assert.expect(2);
+
+    let Obj = EmberObject.extend(Evented, {
+      doStuff: task(function * () {
+        yield forever;
+      }).on('init'),
+    });
+
+    let obj = run(() => Obj.create());
+    assert.ok(obj.get('doStuff.isRunning'));
+    run(() => obj.destroy());
+    assert.ok(!obj.get('doStuff.isRunning'));
   });
 
   test("task.cancelAll cancels all running task instances", function(assert) {
