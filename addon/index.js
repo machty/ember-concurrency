@@ -1,9 +1,31 @@
+import Ember from 'ember';
+import { computed } from '@ember/object';
 import { timeout, forever } from './utils';
-import { TaskProperty } from './-task-property';
+import { Task, TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
-import { TaskGroupProperty } from './-task-group';
+import { TaskGroup, TaskGroupProperty } from './-task-group';
 import { all, allSettled, hash, race } from './-cancelable-promise-helpers';
 import { waitForQueue, waitForEvent, waitForProperty } from './-wait-for';
+import { resolveScheduler } from './-property-modifiers-mixin';
+import { gte } from 'ember-compatibility-helpers';
+
+function _computed(fn) {
+  if (gte('3.10.0')) {
+    let cp = function(proto, key) {
+      if (cp.setup !== undefined) {
+        cp.setup(proto, key);
+      }
+
+      return computed(fn)(...arguments);
+    };
+
+    Ember._setComputedDecorator(cp);
+
+    return cp;
+  } else {
+    return computed(fn);
+  }
+}
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -50,8 +72,26 @@ import { waitForQueue, waitForEvent, waitForProperty } from './-wait-for';
  * @param {function} generatorFunction the generator function backing the task.
  * @returns {TaskProperty}
  */
-export function task(...args) {
-  return new TaskProperty(...args);
+export function task(taskFn) {
+  let tp = _computed(function(_propertyName) {
+    tp.taskFn.displayName = `${_propertyName} (task)`;
+    return Task.create({
+      fn: tp.taskFn,
+      context: this,
+      _origin: this,
+      _taskGroupPath: tp._taskGroupPath,
+      _scheduler: resolveScheduler(tp, this, TaskGroup),
+      _propertyName,
+      _debug: tp._debug,
+      _hasEnabledEvents: tp._hasEnabledEvents,
+    });
+  });
+
+  tp.taskFn = taskFn;
+
+  Object.setPrototypeOf(tp, TaskProperty.prototype);
+
+  return tp;
 }
 
 /**
@@ -74,9 +114,24 @@ export function task(...args) {
  * ```
  *
  * @returns {TaskGroup}
-*/
-export function taskGroup(...args) {
-  return new TaskGroupProperty(...args);
+ */
+export function taskGroup(taskFn) {
+  let tp = _computed(function(_propertyName) {
+    return TaskGroup.create({
+      fn: tp.taskFn,
+      context: this,
+      _origin: this,
+      _taskGroupPath: tp._taskGroupPath,
+      _scheduler: resolveScheduler(tp, this, TaskGroup),
+      _propertyName,
+    });
+  });
+
+  tp.taskFn = taskFn;
+
+  Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
+
+  return tp;
 }
 
 export {
@@ -89,5 +144,5 @@ export {
   waitForQueue,
   waitForEvent,
   waitForProperty,
-  forever
+  forever,
 };
