@@ -169,26 +169,34 @@ module('Unit: task error handling', function() {
     assert.equal(state, 2, "continued after error");
   });
 
-  test("task that catches throw in yield block should continue", async function(assert) {
+  test("task that catches throw in yield block should continue and should not be in error state when object is destroyed", async function(assert) {
     let state = 0;
     let throwError = () => { throw "whoops"; };
+    let i=0;
     let Obj = EmberObject.extend({
       taskThatFails: task(function * () {
-        yield timeout(1);
-        state = 1;
-        try {
-          yield throwError();
-        } catch(e) {
-          assert.equal(e, "whoops", "correct error was thrown");
+        while(i++ < 10) {
+          yield timeout(10);
+          state = 1;
+          try {
+            yield throwError();
+          } catch(e) {
+            assert.equal(e, "whoops", "correct error was thrown");
+          }
+          yield timeout(1);
+          state = 2;
         }
-        yield timeout(1);
-        state = 2;
-      })
+      }).restartable()
     });
 
     let obj = Obj.create();
     try {
-      await obj.taskThatFails.perform();
+      let promise = obj.taskThatFails.perform();
+
+      await timeout(50);
+      obj.destroy();
+      
+      await promise;
     } catch(e) {
       assert.notOk(true, "should not have an error result for task");
     }
