@@ -1,7 +1,7 @@
 import { run } from '@ember/runloop';
-import { defer } from 'rsvp';
+import { defer, reject } from 'rsvp';
 import EmberObject from '@ember/object';
-import { task } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: task error handling', function() {
@@ -91,4 +91,109 @@ module('Unit: task error handling', function() {
       obj.get('parent').cancelAll();
     });
   });
+
+  test("task that throws error should stop", async function(assert) {
+    let state = 0;
+    let throwError = () => { throw "whoops"; };
+    let Obj = EmberObject.extend({
+      taskThatFails: task(function * () {
+        yield timeout(1);
+        state = 1;
+        throwError();
+        yield timeout(1);
+        state = 2;
+      })
+    });
+
+    let obj = Obj.create();
+    try {
+      await obj.taskThatFails.perform();
+    } catch(e) {
+     assert.equal(e, "whoops");
+    }
+    assert.ok(obj.taskThatFails.last.isError);
+    assert.equal(state, 1, "stopped after error");
+  });
+
+  test("task that catches error should continue", async function(assert) {
+    let state = 0;
+    let throwError = () => { throw "whoops"; };
+    let Obj = EmberObject.extend({
+      taskThatFails: task(function * () {
+        yield timeout(1);
+        state = 1;
+        try {
+          throwError();
+        } catch(e) {
+          assert.equal(e, "whoops", "correct error was thrown");
+        }
+        yield timeout(1);
+        state = 2;
+      })
+    });
+
+    let obj = Obj.create();
+    try {
+      await obj.taskThatFails.perform();
+    } catch(e) {
+      assert.notOk(true, "should not have an error result for task");
+    }
+    assert.notOk(obj.taskThatFails.last.isError, "task should not be in error state");
+    assert.equal(state, 2, "continued after error");
+  });
+
+  test("task that catches rejection in yield block should continue", async function(assert) {
+    let state = 0;
+    let throwError = () => { return reject("whoops"); };
+    let Obj = EmberObject.extend({
+      taskThatFails: task(function * () {
+        yield timeout(1);
+        state = 1;
+        try {
+          yield throwError();
+        } catch(e) {
+          assert.equal(e, "whoops", "correct error was thrown");
+        }
+        yield timeout(1);
+        state = 2;
+      })
+    });
+
+    let obj = Obj.create();
+    try {
+      await obj.taskThatFails.perform();
+    } catch(e) {
+      assert.notOk(true, "should not have an error result for task");
+    }
+    assert.notOk(obj.taskThatFails.last.isError, "task should not be in error state");
+    assert.equal(state, 2, "continued after error");
+  });
+
+  test("task that catches throw in yield block should continue", async function(assert) {
+    let state = 0;
+    let throwError = () => { throw "whoops"; };
+    let Obj = EmberObject.extend({
+      taskThatFails: task(function * () {
+        yield timeout(1);
+        state = 1;
+        try {
+          yield throwError();
+        } catch(e) {
+          assert.equal(e, "whoops", "correct error was thrown");
+        }
+        yield timeout(1);
+        state = 2;
+      })
+    });
+
+    let obj = Obj.create();
+    try {
+      await obj.taskThatFails.perform();
+    } catch(e) {
+      assert.notOk(true, "should not have an error result for task");
+    }
+    assert.notOk(obj.taskThatFails.last.isError, "task should not be in error state");
+    assert.equal(state, 2, "continued after error");
+  });
+
 });
