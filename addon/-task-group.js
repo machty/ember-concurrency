@@ -19,7 +19,7 @@ export const TaskGroup = EmberObject.extend(TaskStateMixin, {
 
 export let TaskGroupProperty;
 
-if (gte('3.10.0')) {
+if (gte('3.10.0-alpha.1')) {
   TaskGroupProperty = class {};
 } else {
   TaskGroupProperty = class extends _ComputedProperty {};
