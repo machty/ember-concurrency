@@ -3,29 +3,23 @@ import { addObserver } from '@ember/object/observers';
 import { addListener } from '@ember/object/events';
 import EmberObject from '@ember/object';
 import { getOwner } from '@ember/application';
-import {
-  default as TaskInstance,
-  getRunningInstance
-} from './-task-instance';
+import { default as TaskInstance, getRunningInstance } from './-task-instance';
 import {
   PERFORM_TYPE_DEFAULT,
   PERFORM_TYPE_UNLINKED,
-  PERFORM_TYPE_LINKED
+  PERFORM_TYPE_LINKED,
 } from './-task-instance';
 import TaskStateMixin from './-task-state-mixin';
-import { TaskGroup } from './-task-group';
-import {
-  propertyModifiers,
-  resolveScheduler
-} from './-property-modifiers-mixin';
+import { propertyModifiers } from './-property-modifiers-mixin';
 import {
   objectAssign,
   INVOKE,
   _cleanupOnDestroy,
-  _ComputedProperty
+  _ComputedProperty,
 } from './utils';
 import EncapsulatedTask from './-encapsulated-task';
 import { deprecate } from '@ember/debug';
+import { gte } from 'ember-compatibility-helpers';
 
 const PerformProxy = EmberObject.extend({
   _task: null,
@@ -33,7 +27,11 @@ const PerformProxy = EmberObject.extend({
   _linkedObject: null,
 
   perform(...args) {
-    return this._task._performShared(args, this._performType, this._linkedObject);
+    return this._task._performShared(
+      args,
+      this._performType,
+      this._linkedObject
+    );
   },
 });
 
@@ -184,10 +182,15 @@ export const Task = EmberObject.extend(TaskStateMixin, {
     if (typeof this.fn === 'object') {
       let owner = getOwner(this.context);
       let ownerInjection = owner ? owner.ownerInjection() : {};
-      this._taskInstanceFactory = EncapsulatedTask.extend(ownerInjection, this.fn);
+      this._taskInstanceFactory = EncapsulatedTask.extend(
+        ownerInjection,
+        this.fn
+      );
     }
 
-    _cleanupOnDestroy(this.context, this, 'cancelAll', { reason: 'the object it lives on was destroyed or unrendered' });
+    _cleanupOnDestroy(this.context, this, 'cancelAll', {
+      reason: 'the object it lives on was destroyed or unrendered',
+    });
   },
 
   _curry(...args) {
@@ -315,7 +318,6 @@ export const Task = EmberObject.extend(TaskStateMixin, {
    * @readOnly
    */
 
-
   /**
    * The current number of active running task instances. This
    * number will never exceed maxConcurrency.
@@ -413,42 +415,62 @@ export const Task = EmberObject.extend(TaskStateMixin, {
 
   @class TaskProperty
 */
-export class TaskProperty extends _ComputedProperty {
-  constructor(taskFn) {
-    let tp;
-    super(function(_propertyName) {
-      taskFn.displayName = `${_propertyName} (task)`;
-      return Task.create({
-        fn: tp.taskFn,
-        context: this,
-        _origin: this,
-        _taskGroupPath: tp._taskGroupPath,
-        _scheduler: resolveScheduler(tp, this, TaskGroup),
-        _propertyName,
-        _debug: tp._debug,
-        _hasEnabledEvents: tp._hasEnabledEvents
-      });
-    });
-    tp = this;
-    this.taskFn = taskFn;
-    this.eventNames = null;
-    this.cancelEventNames = null;
-    this._observes = null;
-  }
+export let TaskProperty;
 
-  setup(proto, taskName) {
-    if (super.setup) {
-      super.setup(...arguments);
+if (gte('3.10.0')) {
+  TaskProperty = class {};
+} else {
+  // Prior to the 3.10.0 refactors, we had to extend the _ComputedProprety class
+  // for a classic decorator/descriptor to run correctly.
+  TaskProperty = class extends _ComputedProperty {
+    callSuperSetup() {
+      if (super.setup) {
+        super.setup(...arguments);
+      }
     }
+  };
+}
+
+objectAssign(TaskProperty.prototype, {
+  setup(proto, taskName) {
+    if (this.callSuperSetup) {
+      this.callSuperSetup(...arguments);
+    }
+
     if (this._maxConcurrency !== Infinity && !this._hasSetBufferPolicy) {
       // eslint-disable-next-line no-console
-      console.warn(`The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${this._maxConcurrency})\``);
+      console.warn(
+        `The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${
+          this._maxConcurrency
+        })\``
+      );
     }
 
-    registerOnPrototype(addListener, proto, this.eventNames, taskName, 'perform', false);
-    registerOnPrototype(addListener, proto, this.cancelEventNames, taskName, 'cancelAll', false);
-    registerOnPrototype(addObserver, proto, this._observes, taskName, 'perform', true);
-  }
+    registerOnPrototype(
+      addListener,
+      proto,
+      this.eventNames,
+      taskName,
+      'perform',
+      false
+    );
+    registerOnPrototype(
+      addListener,
+      proto,
+      this.cancelEventNames,
+      taskName,
+      'cancelAll',
+      false
+    );
+    registerOnPrototype(
+      addObserver,
+      proto,
+      this._observes,
+      taskName,
+      'perform',
+      true
+    );
+  },
 
   /**
    * Calling `task(...).on(eventName)` configures the task to be
@@ -485,7 +507,7 @@ export class TaskProperty extends _ComputedProperty {
     this.eventNames = this.eventNames || [];
     this.eventNames.push.apply(this.eventNames, arguments);
     return this;
-  }
+  },
 
   /**
    * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
@@ -503,12 +525,12 @@ export class TaskProperty extends _ComputedProperty {
     this.cancelEventNames = this.cancelEventNames || [];
     this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
     return this;
-  }
+  },
 
   observes(...properties) {
     this._observes = properties;
     return this;
-  }
+  },
 
   /**
    * Configures the task to cancel old currently task instances
@@ -630,25 +652,34 @@ export class TaskProperty extends _ComputedProperty {
    */
 
   perform() {
-    deprecate(`[DEPRECATED] An ember-concurrency task property was not set on its object via 'defineProperty'. 
-              You probably used 'set(obj, "myTask", task(function* () { ... }) )'. 
+    deprecate(
+      `[DEPRECATED] An ember-concurrency task property was not set on its object via 'defineProperty'.
+              You probably used 'set(obj, "myTask", task(function* () { ... }) )'.
               Unfortunately due to this we can't tell you the name of the task.`,
       false,
       {
         id: 'ember-meta.descriptor-on-object',
         until: '3.5.0',
-        url: 'https://emberjs.com/deprecations/v3.x#toc_use-defineProperty-to-define-computed-properties',
+        url:
+          'https://emberjs.com/deprecations/v3.x#toc_use-defineProperty-to-define-computed-properties',
       }
     );
-    throw new Error("An ember-concurrency task property was not set on its object via 'defineProperty'. See deprecation warning for details.");
-  }
-}
+    throw new Error(
+      "An ember-concurrency task property was not set on its object via 'defineProperty'. See deprecation warning for details."
+    );
+  },
+});
 
 objectAssign(TaskProperty.prototype, propertyModifiers);
 
-let handlerCounter = 0;
-
-function registerOnPrototype(addListenerOrObserver, proto, names, taskName, taskMethod, once) {
+function registerOnPrototype(
+  addListenerOrObserver,
+  proto,
+  names,
+  taskName,
+  taskMethod,
+  once
+) {
   if (names) {
     for (let i = 0; i < names.length; ++i) {
       let name = names[i];
@@ -671,3 +702,5 @@ function makeTaskCallback(taskName, method, once) {
     }
   };
 }
+
+let handlerCounter = 0;
