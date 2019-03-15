@@ -7,7 +7,7 @@ export default Component.extend({
 
   actions: {
     fetchResults() {
-      this.get('doStuff').perform().then((results) => {
+      this.get('queryServer').perform().then((results) => {
         this.set('results', results);
       });
     }
