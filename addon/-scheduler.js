@@ -21,6 +21,68 @@ const Scheduler = EmberObject.extend({
     this._super(...arguments);
     this.activeTaskInstances = [];
     this.queuedTaskInstances = [];
+    this.allTaskInstances = [];
+  },
+
+  lastWithArguments() {
+    return this._lastWithArgumentsHelper(() => true, arguments);
+  },
+
+  lastStartedWithArguments() {
+    return this._lastWithArgumentsHelper((taskInstance) => taskInstance.get('hasStarted'), arguments);
+  },
+
+  lastRunningWithArguments() {
+    return this._lastWithArgumentsHelper((taskInstance) => taskInstance.get('isRunning'), arguments);
+  },
+
+  lastSuccessfulWithArguments() {
+    return this._lastWithArgumentsHelper((taskInstance) => taskInstance.get('isSuccessful'), arguments);
+  },
+
+  lastCompleteWithArguments() {
+    return this._lastWithArgumentsHelper((taskInstance) => taskInstance.get('isFinished'), arguments);
+  },
+
+  lastErroredWithArguments() {
+    return this._lastWithArgumentsHelper((taskInstance) => taskInstance.get('isError'), arguments);
+  },
+
+  lastCanceledWithArguments() {
+    return this._lastWithArgumentsHelper((taskInstance) => taskInstance.get('isCanceled'), arguments);
+  },
+
+  lastIncompleteWithArguments() {
+    return this._lastWithArgumentsHelper((taskInstance) => taskInstance.get('isCanceled') || taskInstance.get('isError'), arguments);
+  },
+
+  _lastWithArgumentsHelper(matchFunction, argumentsList) {
+    if (!this.trackAllTaskInstances) {
+      console.warn('Task instance tracking must be enabled with the .trackAllTaskInstances() modifier to access previous task instances by their arguments.');
+    }
+
+    for (let i = this.allTaskInstances.length - 1; i >= 0; i -= 1) {
+      let taskInstance = this.allTaskInstances[i];
+
+      if (this._argumentsAreEqual(taskInstance.args, argumentsList) && matchFunction(taskInstance)) {
+        return taskInstance;
+      }
+    }
+
+    return null;
+  },
+
+  _argumentsAreEqual(args1, args2) {
+    let argsLength = Math.max(args1.length, args2.length);
+
+    // Considers implicit and explicit undefined to be equal
+    for (let i = 0; i <= argsLength; i += 1) {
+      if (args1[i] !== args2[i]) {
+        return false;
+      }
+    }
+
+    return true;
   },
 
   cancelAll(reason) {
@@ -50,6 +112,10 @@ const Scheduler = EmberObject.extend({
   },
 
   schedule(taskInstance) {
+    if (this.trackAllTaskInstances) {
+      this.allTaskInstances.push(taskInstance);
+    }
+
     set(this, 'lastPerformed', taskInstance);
     this.incrementProperty('performCount');
     taskInstance.task.incrementProperty('numQueued');
