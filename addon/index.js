@@ -19,7 +19,7 @@ function _computed(fn) {
       return computed(fn)(...arguments);
     };
 
-    Ember._setComputedDecorator(cp);
+    Ember._setClassicDecorator(cp);
 
     return cp;
   } else {
@@ -75,7 +75,7 @@ function _computed(fn) {
 export function task(taskFn) {
   let tp = _computed(function(_propertyName) {
     tp.taskFn.displayName = `${_propertyName} (task)`;
-    return Task.create({
+    const task = Task.create({
       fn: tp.taskFn,
       context: this,
       _origin: this,
@@ -83,8 +83,17 @@ export function task(taskFn) {
       _scheduler: resolveScheduler(tp, this, TaskGroup),
       _propertyName,
       _debug: tp._debug,
-      _hasEnabledEvents: tp._hasEnabledEvents,
+      _hasEnabledEvents: tp._hasEnabledEvents
     });
+
+    if (!gte('3.10.0')) {
+      return task;
+    }
+
+    const perform = (...args) => task.perform(...args);
+    Object.setPrototypeOf(perform, task);
+
+    return perform;
   });
 
   tp.taskFn = taskFn;
