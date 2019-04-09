@@ -6,7 +6,8 @@ import { run, later } from '@ember/runloop';
 import EmberObject, { computed } from '@ember/object';
 import Ember from 'ember';
 import { task, timeout, forever } from 'ember-concurrency';
-import { module, test } from 'qunit';
+import { module, test, skip } from 'qunit';
+import { gte } from 'ember-compatibility-helpers';
 
 const originalLog = console.log;
 const originalWarn = console.warn;
@@ -16,6 +17,25 @@ module('Unit: task', function(hooks) {
     console.log = originalLog;
     console.warn = originalWarn;
     Ember.ENV.DEBUG_TASKS = false;
+  });
+
+  (gte('3.10.0')
+    ? test
+    : skip)('Tasks can be performed by direct plain invocation', async function(assert) {
+    let Obj = EmberObject.extend({
+      doStuff: task(function*() {
+        yield timeout(1000);
+        return 'foo';
+      })
+    });
+
+    const obj = Obj.create();
+    assert.notOk(obj.doStuff.isRunning);
+    const ti = obj.doStuff();
+    assert.ok(obj.doStuff.isRunning);
+
+    assert.strictEqual(await ti, 'foo');
+    assert.strictEqual(obj.doStuff.last.value, 'foo');
   });
 
   test("task init", function(assert) {
