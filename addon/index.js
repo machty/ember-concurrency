@@ -9,6 +9,8 @@ import { waitForQueue, waitForEvent, waitForProperty } from './-wait-for';
 import { resolveScheduler } from './-property-modifiers-mixin';
 import { gte } from 'ember-compatibility-helpers';
 
+const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
+
 function _computed(fn) {
   if (gte('3.10.0')) {
     let cp = function(proto, key) {
@@ -19,7 +21,7 @@ function _computed(fn) {
       return computed(fn)(...arguments);
     };
 
-    Ember._setComputedDecorator(cp);
+    setDecorator(cp);
 
     return cp;
   } else {
