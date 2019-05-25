@@ -1,34 +1,32 @@
-# Contributing
+# How To Contribute
 
-This project uses `yarn` as a package manager. If you're adding a new dependency, ensure that the `yarn.lock` lockfile is updated and committed into your pull request.
+## Installation
 
-## Addon Maintenance
+* `git clone <repository-url>`
+* `cd my-addon`
+* `npm install`
 
-### Installation
+## Linting
 
-* `git clone` this repository
-* `yarn install`
+* `npm run lint:hbs`
+* `npm run lint:js`
+* `npm run lint:js -- --fix`
 
-### Running
+## Running tests
 
-* `ember server`
-* Visit your app at http://localhost:4200.
+* `ember test` – Runs the test suite on the current Ember version
+* `ember test --server` – Runs the test suite in "watch mode"
+* `ember try:each` – Runs the test suite against multiple Ember versions
 
-### Running Tests
+## Running the dummy application
 
-* `yarn test:all` (Runs `ember try:each` to test your addon against multiple Ember versions)
-* `ember test`
-* `ember test --server`
+* `ember serve`
+* Visit the dummy application at [http://localhost:4200](http://localhost:4200).
 
-### Building
-
-* `ember build`
-
-For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+For more information on using ember-cli, visit [https://ember-cli.com/](https://ember-cli.com/).
 
 ### Generate Docs
 
 TODO: use build pipeline.
 
     ./builddocs.sh
-
