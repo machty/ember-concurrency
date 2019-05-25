@@ -22,7 +22,7 @@ g:hover {
               width="{{scale (width tracker.startTime tracker.endTime upperLimit) lowerLimit upperLimit}}%"
               stroke="black"
               fill={{color}}
-              fill-opacity=0.3 />
+              fill-opacity="0.3" />
       {{/if}}
 
       {{#with (scale (subtract tracker.performTime lowerLimit) lowerLimit upperLimit) as |x|}}

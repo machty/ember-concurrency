@@ -33,7 +33,7 @@
 <p>
 {{! BEGIN-SNIPPET debounced-search-with-cancelation-template }}
   <input type="text" oninput={{perform searchRepo value="target.value"}}
-         placeholder="Search GitHub..." />
+         placeholder="Search GitHub...">
 
   {{#if searchRepo.isRunning}}
     {{loading-spinner}}
