@@ -4,6 +4,7 @@ import Ember from 'ember';
 
 export default Route.extend({
   fastboot: inject(),
+  router: inject(),
 
   beforeModel() {
     if (!Ember.testing && !this.get('fastboot.isFastBoot')) {
