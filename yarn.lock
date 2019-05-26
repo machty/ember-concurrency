@@ -4797,6 +4797,15 @@ ember-export-application-global@^2.0.0:
   dependencies:
     ember-cli-babel "^6.0.0-beta.7"
 
+ember-jquery@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/ember-jquery/-/ember-jquery-1.0.5.tgz#99186d3e123ce1164b86c15dec0bbda5e04dca19"
+  integrity sha512-pOTjWGrJZBSgvfVvEZq/FktC6mxBolSkp7M++Jag55YTzy5Ncf9y32AFFMMFWEj1yU/NuWriP3yTEkiTUJo1rA==
+  dependencies:
+    broccoli-funnel "^1.0.0"
+    broccoli-merge-trees "^2.0.0"
+    jquery "^3.0.0"
+
 ember-load-initializers@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ember-load-initializers/-/ember-load-initializers-2.0.0.tgz#d4b3108dd14edb0f9dc3735553cc96dadd8a80cb"
@@ -7460,6 +7469,11 @@ jquery-deferred@^0.3.0:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/jquery-deferred/-/jquery-deferred-0.3.1.tgz#596eca1caaff54f61b110962b23cafea74c35355"
   integrity sha1-WW7KHKr/VPYbEQlisjyv6nTDU1U=
+
+jquery@^3.0.0:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
+  integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
 
 jquery@^3.3.1:
   version "3.3.1"
