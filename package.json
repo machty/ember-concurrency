@@ -1,10 +1,11 @@
 {
   "name": "ember-concurrency",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Improved concurrency/async primitives for Ember.js",
   "scripts": {
     "build": "ember build",
     "lint:hbs": "ember-template-lint .",
+    "lint:js": "eslint .",
     "start": "ember serve",
     "test": "ember test",
     "test:all": "ember try:each"
