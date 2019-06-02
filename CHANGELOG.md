@@ -1,4 +1,7 @@
 # Changelog
+### 1.0.0
+  - No changes, just a long overdue 1.0 release :)
+
 ### 0.8.27
   - Fix Ember.Logger deprecations (#266)
   - Add the ability to `yield forever` to pause a task indefinitely (#274)
