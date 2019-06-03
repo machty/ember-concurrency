@@ -4473,7 +4473,7 @@ ember-load-initializers@^1.0.0:
   dependencies:
     ember-cli-babel "^6.6.0"
 
-ember-maybe-import-regenerator@^0.1.5:
+ember-maybe-import-regenerator@^0.1.6:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/ember-maybe-import-regenerator/-/ember-maybe-import-regenerator-0.1.6.tgz#35d41828afa6d6a59bc0da3ce47f34c573d776ca"
   integrity sha1-NdQYKK+m1qWbwNo85H80xXPXdso=
