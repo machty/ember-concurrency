@@ -105,6 +105,17 @@ module.exports = function() {
           }
         },
         {
+          name: 'ember-canary-tracked-properties',
+          npm: {
+            devDependencies: {
+              'ember-source': urls[2]
+            }
+          },
+          env: {
+            EMBER_METAL_TRACKED_PROPERTIES: true
+          }
+        },
+        {
           name: 'ember-default',
           npm: {
             devDependencies: {}
