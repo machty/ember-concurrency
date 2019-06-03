@@ -26,7 +26,8 @@ module.exports = function(defaults) {
     babel: babelOptions,
 
     'ember-cli-babel': {
-      includePolyfill: process.env.EMBER_ENV === 'production'
+      includePolyfill:
+        process.env.EMBER_ENV === 'production' || Boolean(process.env.CI)
     },
 
     prember: {
