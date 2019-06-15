@@ -95,7 +95,8 @@ function spliceSlice(str, index, count, add) {
 
   @class TaskInstance
 */
-let taskInstanceAttrs = {
+
+const  TaskInstance = EmberObject.extend({
   iterator: null,
   _disposer: null,
   _completionState: COMPLETION_PENDING,
@@ -756,45 +757,43 @@ let taskInstanceAttrs = {
     if (host && host.trigger && eventNamespace) {
       host.trigger(`${eventNamespace}:${eventType}`, ...args);
     }
-  }
-};
+  },
 
-taskInstanceAttrs[yieldableSymbol] = function handleYieldedTaskInstance(parentTaskInstance, resumeIndex) {
-  let yieldedTaskInstance = this;
-  yieldedTaskInstance._hasSubscribed = true;
+  [yieldableSymbol]: function handleYieldedTaskInstance(parentTaskInstance, resumeIndex) {
+    let yieldedTaskInstance = this;
+    yieldedTaskInstance._hasSubscribed = true;
 
-  yieldedTaskInstance._onFinalize(() => {
-    let state = yieldedTaskInstance._completionState;
-    if (state === COMPLETION_SUCCESS) {
-      parentTaskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, yieldedTaskInstance.value);
-    } else if (state === COMPLETION_ERROR) {
-      parentTaskInstance.proceed(resumeIndex, YIELDABLE_THROW, yieldedTaskInstance.error);
-    } else if (state === COMPLETION_CANCEL) {
-      parentTaskInstance.proceed(resumeIndex, YIELDABLE_CANCEL, null);
-    }
-  });
-
-  return function disposeYieldedTaskInstance() {
-    if (yieldedTaskInstance._performType !== PERFORM_TYPE_UNLINKED) {
-      if (yieldedTaskInstance._performType === PERFORM_TYPE_DEFAULT) {
-        let parentObj = get(parentTaskInstance, 'task.context');
-        let childObj = get(yieldedTaskInstance, 'task.context');
-        if (parentObj && childObj &&
-            parentObj !== childObj &&
-            parentObj.isDestroying &&
-            get(yieldedTaskInstance, 'isRunning')) {
-          let parentName = `\`${parentTaskInstance.task._propertyName}\``;
-          let childName = `\`${yieldedTaskInstance.task._propertyName}\``;
-          // eslint-disable-next-line no-console
-          console.warn(`ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task ${parentName} and child task ${childName}. If you want child task ${childName} to be canceled when parent task ${parentName} is canceled, please change \`.perform()\` to \`.linked().perform()\`. If you want child task ${childName} to keep running after parent task ${parentName} is canceled, change it to \`.unlinked().perform()\``);
-        }
+    yieldedTaskInstance._onFinalize(() => {
+      let state = yieldedTaskInstance._completionState;
+      if (state === COMPLETION_SUCCESS) {
+        parentTaskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, yieldedTaskInstance.value);
+      } else if (state === COMPLETION_ERROR) {
+        parentTaskInstance.proceed(resumeIndex, YIELDABLE_THROW, yieldedTaskInstance.error);
+      } else if (state === COMPLETION_CANCEL) {
+        parentTaskInstance.proceed(resumeIndex, YIELDABLE_CANCEL, null);
       }
-      yieldedTaskInstance.cancel();
-    }
-  };
-};
+    });
 
-let TaskInstance = EmberObject.extend(taskInstanceAttrs);
+    return function disposeYieldedTaskInstance() {
+      if (yieldedTaskInstance._performType !== PERFORM_TYPE_UNLINKED) {
+        if (yieldedTaskInstance._performType === PERFORM_TYPE_DEFAULT) {
+          let parentObj = get(parentTaskInstance, 'task.context');
+          let childObj = get(yieldedTaskInstance, 'task.context');
+          if (parentObj && childObj &&
+              parentObj !== childObj &&
+              parentObj.isDestroying &&
+              get(yieldedTaskInstance, 'isRunning')) {
+            let parentName = `\`${parentTaskInstance.task._propertyName}\``;
+            let childName = `\`${yieldedTaskInstance.task._propertyName}\``;
+            // eslint-disable-next-line no-console
+            console.warn(`ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task ${parentName} and child task ${childName}. If you want child task ${childName} to be canceled when parent task ${parentName} is canceled, please change \`.perform()\` to \`.linked().perform()\`. If you want child task ${childName} to keep running after parent task ${parentName} is canceled, change it to \`.unlinked().perform()\``);
+          }
+        }
+        yieldedTaskInstance.cancel();
+      }
+    };
+  },
+});
 
 export function go(args, fn, attrs = {}) {
   return TaskInstance.create(
