@@ -8,7 +8,7 @@ class UnboundedReducer {
 
 const SINGLETON_REDUCER = new UnboundedReducer();
 
-class UnboundedPolicy extends SchedulerPolicy {
+class UnboundedPolicy {
   makeReducer() {
     return SINGLETON_REDUCER;
   }

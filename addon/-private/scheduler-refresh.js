@@ -1,8 +1,9 @@
+import { STARTED, QUEUED, CANCELLED } from "./scheduler/policies/desired-states"
 import {
   COMPLETION_SUCCESS,
   COMPLETION_ERROR,
-  COMPLETION_CANCEL,
-} from "./-private/completion-states"
+  COMPLETION_CANCEL
+} from "./completion-states";
 
 // TODO: figure these out; might need to use TaskInstance as a scratch pad.
 // lastPerformed:  alias('_scheduler.lastScheduled'),
@@ -50,10 +51,13 @@ class RefreshTaskState {
   }
 
   applyState() {
-    let props = Object.assign({
-      numRunning: this.numRunning,
-      numQueued: this.numQueued,
-    }, this.attrs);
+    let props = Object.assign(
+      {
+        numRunning: this.numRunning,
+        numQueued: this.numQueued
+      },
+      this.attrs
+    );
     this.taskOrGroup.setProperties(props);
   }
 }
@@ -85,14 +89,14 @@ class TaskStates {
   calculateRecursiveState() {
     this.forEachState(taskState => {
       let lastState = taskState;
-      state.recurseTaskGroups(taskGroup => {
+      taskState.recurseTaskGroups(taskGroup => {
         let newState = this.findOrInit(taskGroup);
         Object.assign(newState.attrs, lastState.attrs);
         newState.numRunning += lastState.numRunning;
         newState.numQueued += lastState.numQueued;
         taskGroup = taskGroup.group;
         lastState = newState;
-      })
+      });
     });
   }
 
@@ -109,24 +113,8 @@ class SchedulerRefresh {
   }
 
   process(schedulerPolicy, taskInstances) {
-    let unfinishedTaskInstances = taskInstances.filter(taskInstance => {
-      let taskState = this.taskStates.findOrInit(taskInstance.task);
-
-      if (taskInstance.isFinished) {
-        taskState.onCompletion(taskInstance);
-        return false;
-      }
-
-      if (taskInstance.hasStarted) {
-        numRunning += 1;
-      } else {
-        numQueued += 1;
-      }
-
-      return true;
-    });
-
-    let reducer = schedulerPolicy.makeReducer(numRunning, numQueued);
+    let unfinishedTaskInstances = this.filterFinishedTaskInstances(taskInstances);
+    let reducer = schedulerPolicy.makeReducer(this.numRunning, this.numQueued);
 
     let finalTaskInstances = unfinishedTaskInstances.filter(taskInstance => {
       return this._setTaskInstanceState(taskInstance, reducer.step());
@@ -137,10 +125,29 @@ class SchedulerRefresh {
     return finalTaskInstances;
   }
 
+  filterFinishedTaskInstances(taskInstances) {
+    return taskInstances.filter(taskInstance => {
+      let taskState = this.taskStates.findOrInit(taskInstance.task);
+
+      if (taskInstance.isFinished) {
+        taskState.onCompletion(taskInstance);
+        return false;
+      }
+
+      if (taskInstance.hasStarted) {
+        this.numRunning += 1;
+      } else {
+        this.numQueued += 1;
+      }
+
+      return true;
+    });
+  }
+
   _setTaskInstanceState(taskInstance, desiredState) {
     let taskState = this.taskStates.findOrInit(taskInstance.task);
 
-    switch(desiredState.type) {
+    switch (desiredState.type) {
       case CANCELLED:
         // this will cause a follow up flush which will detect and recompute cancellation state
         taskInstance.cancel(desiredState.reason);
