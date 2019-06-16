@@ -1,7 +1,7 @@
 import BoundedPolicy from "./bounded-policy";
 import { STARTED, QUEUED } from "./desired-states";
 
-class EnqueuedRefresh {
+class EnqueuedReducer {
   constructor(remainingSlots) {
     this.remainingSlots = remainingSlots;
   }
@@ -17,8 +17,8 @@ class EnqueuedRefresh {
 }
 
 class EnqueuedPolicy extends BoundedPolicy {
-  makeRefresh(_numRunning, _numQueued) {
-    return new EnqueuedRefresh(this.maxConcurrency);
+  makeReducer(_numRunning, _numQueued) {
+    return new EnqueuedReducer(this.maxConcurrency);
   }
 }
 

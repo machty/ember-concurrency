@@ -1,16 +1,16 @@
 import { STARTED } from "./desired-states";
 
-class UnboundedRefreshState {
+class UnboundedReducer {
   step() {
     return STARTED;
   }
 }
 
-const SIMPLE_REFRESH_SINGLETON = new UnboundedRefreshState();
+const SINGLETON_REDUCER = new UnboundedReducer();
 
 class UnboundedPolicy extends SchedulerPolicy {
-  makeRefresh() {
-    return SIMPLE_REFRESH_SINGLETON;
+  makeReducer() {
+    return SINGLETON_REDUCER;
   }
 }
 

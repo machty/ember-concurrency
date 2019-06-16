@@ -1,5 +1,5 @@
 import { once } from '@ember/runloop';
-import SchedulerRefresh from "./-private/scheduler-refresh"
+import SchedulerRefresh from "../scheduler-refresh"
 
 class Scheduler {
   constructor(schedulerPolicy) {
@@ -11,7 +11,7 @@ class Scheduler {
     this.taskInstances.forEach(taskInstance => taskInstance.cancel(reason));
   }
 
-  schedule(taskInstance) {
+  perform(taskInstance) {
     taskInstance._onFinalize(() => once(this, this._reschedule));
     this.taskInstances.push(taskInstance);
     this._reschedule();
@@ -19,7 +19,7 @@ class Scheduler {
 
   _reschedule() {
     let refresh = new SchedulerRefresh();
-    this.taskInstances = refresh.process(this.taskInstances);
+    this.taskInstances = refresh.process(this.schedulerPolicy, this.taskInstances);
   }
 }
 

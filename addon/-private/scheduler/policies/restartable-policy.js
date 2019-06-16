@@ -5,7 +5,7 @@ const CANCELLED = makeCancelState(
   `it belongs to a 'restartable' Task that was .perform()ed again`
 );
 
-class RestartableRefresh {
+class RestartableReducer {
   constructor(numToCancel) {
     this.numToCancel = numToCancel;
   }
@@ -21,8 +21,8 @@ class RestartableRefresh {
 }
 
 class RestartablePolicy extends BoundedPolicy {
-  makeRefresh(numRunning, numQueued) {
-    return new RestartableRefresh(numRunning + numQueued - this.maxConcurrency);
+  makeReducer(numRunning, numQueued) {
+    return new RestartableReducer(numRunning + numQueued - this.maxConcurrency);
   }
 }
 

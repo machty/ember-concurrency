@@ -108,7 +108,7 @@ class SchedulerRefresh {
     this.taskStates = new TaskStates();
   }
 
-  process(taskInstances) {
+  process(schedulerPolicy, taskInstances) {
     let unfinishedTaskInstances = taskInstances.filter(taskInstance => {
       let taskState = this.taskStates.findOrInit(taskInstance.task);
 
@@ -126,10 +126,10 @@ class SchedulerRefresh {
       return true;
     });
 
-    let schedulerRefresh = this.makeRefresh(numRunning, numQueued);
+    let reducer = schedulerPolicy.makeReducer(numRunning, numQueued);
 
     let finalTaskInstances = unfinishedTaskInstances.filter(taskInstance => {
-      return this._setTaskInstanceState(taskInstance, schedulerRefresh.step());
+      return this._setTaskInstanceState(taskInstance, reducer.step());
     });
 
     this.taskStates.flush();
@@ -159,3 +159,5 @@ class SchedulerRefresh {
     }
   }
 }
+
+export default SchedulerRefresh;

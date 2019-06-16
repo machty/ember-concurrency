@@ -17,7 +17,7 @@ const CANCELLED = makeCancelState(
 //       concurrent task instances, but after a number of queued instances has been
 //       reached, they should be cancelled.
 
-class KeepLatestRefresh {
+class KeepLatestReducer {
   constructor(remainingSlots, numToCancel) {
     this.remainingSlots = remainingSlots;
     this.numToCancel = numToCancel;
@@ -39,10 +39,10 @@ class KeepLatestRefresh {
 }
 
 class KeepLatestPolicy extends BoundedPolicy {
-  makeRefresh(_numRunning, _numQueued) {
+  makeReducer(_numRunning, _numQueued) {
     let maxEnqueued = 1;
     let totalRunning = numRunning + numQueued;
-    return new KeepLatestRefresh(
+    return new KeepLatestReducer(
       this.maxConcurrency,
       totalRunning - this.maxConcurrency - maxEnqueued
     );

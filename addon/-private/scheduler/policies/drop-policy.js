@@ -3,7 +3,7 @@ import { makeCancelState, STARTED } from "./desired-states";
 
 const CANCELLED = makeCancelState(`it belongs to a 'drop' Task that was already running`);
 
-class DropRefresh {
+class DropReducer {
   constructor(remainingSlots) {
     this.remainingSlots = remainingSlots;
   }
@@ -19,8 +19,8 @@ class DropRefresh {
 }
 
 class DropPolicy extends BoundedPolicy {
-  makeRefresh(_numRunning, _numQueued) {
-    return new DropRefresh(this.maxConcurrency);
+  makeReducer(_numRunning, _numQueued) {
+    return new DropReducer(this.maxConcurrency);
   }
 }
 
