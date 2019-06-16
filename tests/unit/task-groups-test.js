@@ -175,7 +175,7 @@ module('Unit: task groups', function() {
   test("calling cancelAll on a task doesn't cancel other tasks in group", function(assert) {
     assert.expect(3);
 
-    let obj, taskA, tg;
+    let obj, taskA, taskB, tg;
     let Obj = EmberObject.extend({
       tg: taskGroup(),
 
@@ -193,13 +193,19 @@ module('Unit: task groups', function() {
       tg = obj.get('tg');
       taskA = obj.get('taskA');
       taskA.perform();
+      taskB = obj.get('taskB');
     });
 
-    run(() => {
-      obj.get('taskB').cancelAll();
-    });
+    function assertRunning() {
+      assert.strictEqual(tg.get('isRunning'), true);
+      assert.strictEqual(taskA.get('isRunning'), true);
+      assert.strictEqual(taskB.get('isRunning'), false);
+    }
 
-    assert.strictEqual(tg.get('isRunning'), true);
-    assert.strictEqual(taskA.get('isRunning'), true);
+    assertRunning();
+
+    run(() => obj.get('taskB').cancelAll());
+
+    assertRunning();
   });
 });

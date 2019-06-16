@@ -3,3 +3,5 @@ class BoundedPolicy {
     this.maxConcurrency = maxConcurrency;
   }
 }
+
+export default BoundedPolicy;

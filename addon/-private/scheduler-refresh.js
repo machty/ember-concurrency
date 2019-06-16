@@ -1,4 +1,4 @@
-import { STARTED, QUEUED, CANCELLED } from "./scheduler/policies/desired-states"
+import { TYPE_STARTED, TYPE_QUEUED, TYPE_CANCELLED } from "./scheduler/policies/desired-states"
 import {
   COMPLETION_SUCCESS,
   COMPLETION_ERROR,
@@ -40,6 +40,11 @@ class RefreshTaskState {
 
   onRunning(taskInstance) {
     this.attrs.lastRunning = taskInstance;
+    this.numRunning += 1;
+  }
+
+  onQueued(_taskInstance) {
+    this.numQueued += 1;
   }
 
   recurseTaskGroups(callback) {
@@ -71,7 +76,7 @@ class TaskStates {
     let guid = taskOrGroup.guid;
     let taskState = this.states[guid];
     if (!taskState) {
-      taskState = this.states[guid] = new RefreshTaskState();
+      taskState = this.states[guid] = new RefreshTaskState(taskOrGroup);
     }
     return taskState;
   }
@@ -101,7 +106,7 @@ class TaskStates {
   }
 
   forEachState(callback) {
-    Object.keys(this.states).forEach(callback);
+    Object.keys(this.states).forEach(k => callback(this.states[k]));
   }
 }
 
@@ -148,18 +153,19 @@ class SchedulerRefresh {
     let taskState = this.taskStates.findOrInit(taskInstance.task);
 
     switch (desiredState.type) {
-      case CANCELLED:
+      case TYPE_CANCELLED:
         // this will cause a follow up flush which will detect and recompute cancellation state
         taskInstance.cancel(desiredState.reason);
         return false;
-      case STARTED:
+      case TYPE_STARTED:
         if (!taskInstance.hasStarted) {
-          this.startTaskInstance(taskInstance);
+          taskInstance._start();
           taskState.onStart(taskInstance);
         }
         taskState.onRunning(taskInstance);
         return true;
-      case QUEUED:
+      case TYPE_QUEUED:
+        taskState.onQueued(taskInstance);
         // TODO: assert taskInstance hasn't started?
         // Or perhaps this can be a way to pause?
         return true;
