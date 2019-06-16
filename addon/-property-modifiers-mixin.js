@@ -5,7 +5,7 @@ import {
   dropQueuedTasksPolicy,
   cancelOngoingTasksPolicy,
   dropButKeepLatestPolicy
-} from './-buffer-policy';
+} from './-private/scheduler-policy';
 
 export const propertyModifiers = {
   // by default, task(...) expands to task(...).enqueue().maxConcurrency(Infinity)
