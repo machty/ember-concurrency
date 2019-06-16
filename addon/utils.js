@@ -23,7 +23,7 @@ Arguments.prototype.resolve = function(value) {
 
 let guidId = 0;
 export function makeGuid() {
-  return `ec-${guidId++}`;
+  return `ec_${guidId++}`;
 }
 
 export let objectAssign = Object.assign || function objectAssign(target) {

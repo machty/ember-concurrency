@@ -79,23 +79,6 @@ function spliceSlice(str, index, count, add) {
   return str.slice(0, index) + (add || "") + str.slice(index + count);
 }
 
-
-
-
-class InnerTaskInstance {
-  // this needs to have a generic interface for sending changelogs.
-  // Idea: this low level class should support a listener interface.
-  // Listeners can implement an observer-based interface if that's what
-  // makes sense for the framework.
-
-   
-}
-
-
-
-
-
-
 /**
   A `TaskInstance` represent a single execution of a
   {@linkcode Task}. Every call to {@linkcode Task#perform} returns
@@ -127,6 +110,7 @@ const TaskInstance = EmberObject.extend({
   cancelReason: null,
   _performType: PERFORM_TYPE_DEFAULT,
   _expectsLinkedYield: false,
+  _tags: null,
 
   /**
    * If this TaskInstance runs to completion by returning a property

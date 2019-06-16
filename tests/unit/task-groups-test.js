@@ -173,7 +173,7 @@ module('Unit: task groups', function() {
   });
 
   test("calling cancelAll on a task doesn't cancel other tasks in group", function(assert) {
-    assert.expect(3);
+    assert.expect(6);
 
     let obj, taskA, taskB, tg;
     let Obj = EmberObject.extend({

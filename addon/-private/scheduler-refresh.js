@@ -73,7 +73,7 @@ class TaskStates {
   }
 
   findOrInit(taskOrGroup) {
-    let guid = taskOrGroup.guid;
+    let guid = taskOrGroup._guid;
     let taskState = this.states[guid];
     if (!taskState) {
       taskState = this.states[guid] = new RefreshTaskState(taskOrGroup);

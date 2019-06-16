@@ -179,7 +179,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
 
   init() {
     this._super(...arguments);
-    this.guid = makeGuid();
+    this._guid = makeGuid();
 
     if (typeof this.fn === 'object') {
       let owner = getOwner(this.context);
@@ -380,6 +380,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       _hasEnabledEvents: this._hasEnabledEvents,
       _origin: this,
       _performType: performType,
+      _tags: this.get('_tags'),
     });
 
     if (performType === PERFORM_TYPE_LINKED) {

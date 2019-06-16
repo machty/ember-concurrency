@@ -8,7 +8,7 @@ import { gte } from 'ember-compatibility-helpers';
 export const TaskGroup = EmberObject.extend(TaskStateMixin, {
   init() {
     this._super(...arguments);
-    this.guid = makeGuid();
+    this._guid = makeGuid();
   },
 
   toString() {
