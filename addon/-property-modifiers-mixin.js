@@ -1,5 +1,5 @@
 import { assert } from '@ember/debug';
-import Scheduler from './-private/scheduler/scheduler';
+import EmberScheduler from './-private/scheduler/ember-scheduler';
 
 import UnboundedSchedulerPolicy from './-private/scheduler/policies/unbounded-policy'
 import EnqueueSchedulerPolicy from './-private/scheduler/policies/enqueued-policy'
@@ -79,7 +79,7 @@ export function resolveScheduler(propertyObj, obj, TaskGroup) {
     return taskGroup._scheduler;
   } else {
     let schedulerPolicy = new propertyObj._schedulerPolicyClass(propertyObj._maxConcurrency);
-    return new Scheduler(schedulerPolicy);
+    return new EmberScheduler(schedulerPolicy);
   }
 }
 

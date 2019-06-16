@@ -1,4 +1,3 @@
-import { once } from '@ember/runloop';
 import SchedulerRefresh from "../scheduler-refresh"
 
 class Scheduler {
@@ -12,12 +11,15 @@ class Scheduler {
   }
 
   perform(taskInstance) {
-    taskInstance._onFinalize(() => once(this, this._reschedule));
+    taskInstance._onFinalize(() => this.scheduleRefresh());
     this.taskInstances.push(taskInstance);
-    this._reschedule();
+    this.refresh();
   }
 
-  _reschedule() {
+  // override
+  scheduleRefresh() { }
+
+  refresh() {
     let refresh = new SchedulerRefresh();
     this.taskInstances = refresh.process(this.schedulerPolicy, this.taskInstances);
   }
