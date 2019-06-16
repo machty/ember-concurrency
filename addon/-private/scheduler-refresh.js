@@ -1,3 +1,13 @@
+import {
+  COMPLETION_SUCCESS,
+  COMPLETION_ERROR,
+  COMPLETION_CANCEL,
+} from "./-private/completion-states"
+
+// TODO: figure these out; might need to use TaskInstance as a scratch pad.
+// lastPerformed:  alias('_scheduler.lastScheduled'),
+// performCount:   alias('_scheduler.scheduleCount'),
+
 class RefreshTaskState {
   constructor(taskOrGroup) {
     this.taskOrGroup = taskOrGroup;
@@ -6,22 +16,7 @@ class RefreshTaskState {
     this.attrs = {};
   }
 
-  finalize(seen) {
-    let taskGroup = this.taskOrGroup.group;
-    let lastCount = this;
-
-    while (taskGroup) {
-      let newCount = RefreshTaskState.for(seen, taskGroup);
-      Object.assign(newCount.attrs, lastCount.attrs);
-      newCount.numRunning += lastCount.numRunning;
-      newCount.numQueued += lastCount.numQueued;
-      taskGroup = taskGroup.group;
-      lastCount = newCount;
-    }
-  }
-
   onCompletion(taskInstance) {
-    // TODO: when is this called?
     let state = taskInstance._completionState;
     this.attrs.lastComplete = taskInstance;
 
@@ -36,20 +31,73 @@ class RefreshTaskState {
       this.attrs.lastIncomplete = taskInstance;
     }
   }
+
+  onStart(taskInstance) {
+    // a.k.a. lastStarted
+    this.attrs.last = taskInstance;
+  }
+
+  onRunning(taskInstance) {
+    this.attrs.lastRunning = taskInstance;
+  }
+
+  recurseTaskGroups(callback) {
+    let taskGroup = this.taskOrGroup.group;
+    while (taskGroup) {
+      callback(taskGroup);
+      taskGroup = taskGroup.group;
+    }
+  }
+
+  applyState() {
+    let props = Object.assign({
+      numRunning: this.numRunning,
+      numQueued: this.numQueued,
+    }, this.attrs);
+    this.taskOrGroup.setProperties(props);
+  }
 }
 
-class RefreshState {
+class TaskStates {
   constructor() {
-    this.map = {};
+    this.states = {};
   }
 
   findOrInit(taskOrGroup) {
     let guid = taskOrGroup.guid;
-    let RefreshTaskState = this.map[guid];
-    if (!RefreshTaskState) {
-      RefreshTaskState = this.map[guid] = new RefreshTaskState();
+    let taskState = this.states[guid];
+    if (!taskState) {
+      taskState = this.states[guid] = new RefreshTaskState();
     }
-    return RefreshTaskState;
+    return taskState;
+  }
+
+  // After cancelling/queueing task instances, we have to recompute the derived state
+  // of all the tasks that had/have task instances in this scheduler. We do this by
+  // looping through all the Tasks that we've accumulated state for, and then recursively
+  // applying/adding them to any TaskGroups they belong to, and then finally we loop
+  // through each Task/TaskGroup state and write it to the Task/TaskGroup objects themselves.
+  flush() {
+    this.calculateRecursiveState();
+    this.forEachState(state => state.applyState());
+  }
+
+  calculateRecursiveState() {
+    this.forEachState(taskState => {
+      let lastState = taskState;
+      state.recurseTaskGroups(taskGroup => {
+        let newState = this.findOrInit(taskGroup);
+        Object.assign(newState.attrs, lastState.attrs);
+        newState.numRunning += lastState.numRunning;
+        newState.numQueued += lastState.numQueued;
+        taskGroup = taskGroup.group;
+        lastState = newState;
+      })
+    });
+  }
+
+  forEachState(callback) {
+    Object.keys(this.states).forEach(callback);
   }
 }
 
@@ -57,14 +105,15 @@ class SchedulerRefresh {
   constructor() {
     this.numQueued = 0;
     this.numRunning = 0;
-    this.refreshState = new RefreshState();
+    this.taskStates = new TaskStates();
   }
 
-  process(scheduler) {
-    let unfinishedTaskInstances = scheduler.taskInstances.filter(taskInstance => {
-      this.refreshState.findOrInit(taskInstance.task);
+  process(taskInstances) {
+    let unfinishedTaskInstances = taskInstances.filter(taskInstance => {
+      let taskState = this.taskStates.findOrInit(taskInstance.task);
 
       if (taskInstance.isFinished) {
+        taskState.onCompletion(taskInstance);
         return false;
       }
 
@@ -79,12 +128,34 @@ class SchedulerRefresh {
 
     let schedulerRefresh = this.makeRefresh(numRunning, numQueued);
 
-    unfinishedTaskInstances.forEach(taskInstance => {
-      return scheduler._setTaskInstanceState(taskInstance, schedulerRefresh.step());
+    let finalTaskInstances = unfinishedTaskInstances.filter(taskInstance => {
+      return this._setTaskInstanceState(taskInstance, schedulerRefresh.step());
     });
 
+    this.taskStates.flush();
 
-    // return [unfinishedTaskInstances, numRunning, numQueued];
+    return finalTaskInstances;
+  }
 
+  _setTaskInstanceState(taskInstance, desiredState) {
+    let taskState = this.taskStates.findOrInit(taskInstance.task);
+
+    switch(desiredState.type) {
+      case CANCELLED:
+        // this will cause a follow up flush which will detect and recompute cancellation state
+        taskInstance.cancel(desiredState.reason);
+        return false;
+      case STARTED:
+        if (!taskInstance.hasStarted) {
+          this.startTaskInstance(taskInstance);
+          taskState.onStart(taskInstance);
+        }
+        taskState.onRunning(taskInstance);
+        return true;
+      case QUEUED:
+        // TODO: assert taskInstance hasn't started?
+        // Or perhaps this can be a way to pause?
+        return true;
+    }
   }
 }

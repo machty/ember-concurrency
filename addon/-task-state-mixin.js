@@ -26,19 +26,17 @@ export default Mixin.create({
   name: alias('_propertyName'),
 
   concurrency:    alias('numRunning'),
-  last:           alias('_scheduler.lastStarted'),
-  lastRunning:    alias('_scheduler.lastRunning'),
-  lastPerformed:  alias('_scheduler.lastScheduled'),
-  lastSuccessful: alias('_scheduler.lastSuccessful'),
-  lastComplete:   alias('_scheduler.lastComplete'),
-  lastErrored:    alias('_scheduler.lastErrored'),
-  lastCanceled:   alias('_scheduler.lastCanceled'),
-  lastIncomplete: alias('_scheduler.lastIncomplete'),
-  performCount: alias('_scheduler.scheduleCount'),
-
+  last:           null,
+  lastRunning:    null,
+  lastPerformed:  null,
+  lastSuccessful: null,
+  lastComplete:   null,
+  lastErrored:    null,
+  lastCanceled:   null,
+  lastIncomplete: null,
+  performCount:   0,
   numRunning: 0,
   numQueued: 0,
-  _seenIndex: 0,
 
   cancelAll(options) {
     let { reason, resetState } = options || {};
@@ -59,16 +57,16 @@ export default Mixin.create({
 
   _resetState() {
     this.setProperties({
-      'last': null,
-      'lastRunning': null,
-      'lastStarted': null,
-      'lastPerformed': null,
-      'lastSuccessful': null,
-      'lastComplete': null,
-      'lastErrored': null,
-      'lastCanceled': null,
-      'lastIncomplete': null,
-      'performCount': 0,
+      last: null,
+      lastRunning: null,
+      lastStarted: null,
+      lastPerformed: null,
+      lastSuccessful: null,
+      lastComplete: null,
+      lastErrored: null,
+      lastCanceled: null,
+      lastIncomplete: null,
+      performCount: 0,
     });
   },
 });
