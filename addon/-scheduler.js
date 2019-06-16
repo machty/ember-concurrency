@@ -126,7 +126,7 @@ const Scheduler = EmberObject.extend({
     let refreshState = this.schedulerPolicy.prepareRefresh(numRunning, numQueued);
 
     unfinishedTaskInstances.forEach(taskInstance => {
-      let desiredState = refreshState.step(taskInstance, numRunning, numQueued);
+      let desiredState = refreshState.step();
       return this._handleDesiredState(taskInstance, desiredState);
     });
 

@@ -1,3 +1,4 @@
+import BoundedPolicy from "./bounded-policy";
 import { STARTED, QUEUED } from "./desired-states";
 
 class EnqueuedRefresh {

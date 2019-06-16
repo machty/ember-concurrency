@@ -1,15 +1,14 @@
 import { assert } from '@ember/debug';
 import Scheduler from './-scheduler';
-import {
-  enqueueTasksPolicy,
-  dropQueuedTasksPolicy,
-  cancelOngoingTasksPolicy,
-  dropButKeepLatestPolicy
-} from './-private/scheduler-policy';
+
+import UnboundedSchedulerPolicy from './-private/scheduler-policies/unbounded-policy'
+import EnqueueSchedulerPolicy from './-private/scheduler-policies/enqueued-policy'
+import DropSchedulerPolicy from './-private/scheduler-policies/drop-policy'
+import KeepLatestSchedulerPolicy from './-private/scheduler-policies/keep-latest-policy'
+import RestartableSchedulerPolicy from './-private/scheduler-policies/restartable-policy'
 
 export const propertyModifiers = {
-  // by default, task(...) expands to task(...).enqueue().maxConcurrency(Infinity)
-  _bufferPolicy: enqueueTasksPolicy,
+  _bufferPolicy: UnboundedSchedulerPolicy,
   _maxConcurrency: Infinity,
   _taskGroupPath: null,
   _hasUsedModifier: false,
@@ -17,19 +16,19 @@ export const propertyModifiers = {
   _hasEnabledEvents: false,
 
   restartable() {
-    return setBufferPolicy(this, cancelOngoingTasksPolicy);
+    return setBufferPolicy(this, RestartableSchedulerPolicy);
   },
 
   enqueue() {
-    return setBufferPolicy(this, enqueueTasksPolicy);
+    return setBufferPolicy(this, EnqueueSchedulerPolicy);
   },
 
   drop() {
-    return setBufferPolicy(this, dropQueuedTasksPolicy);
+    return setBufferPolicy(this, DropSchedulerPolicy);
   },
 
   keepLatest() {
-    return setBufferPolicy(this, dropButKeepLatestPolicy);
+    return setBufferPolicy(this, KeepLatestSchedulerPolicy);
   },
 
   maxConcurrency(n) {
@@ -80,8 +79,7 @@ export function resolveScheduler(propertyObj, obj, TaskGroup) {
     return taskGroup._scheduler;
   } else {
     return Scheduler.create({
-      bufferPolicy: propertyObj._bufferPolicy,
-      maxConcurrency: propertyObj._maxConcurrency
+      bufferPolicy: new propertyObj._bufferPolicy(propertyObj._maxConcurrency),
     });
   }
 }
