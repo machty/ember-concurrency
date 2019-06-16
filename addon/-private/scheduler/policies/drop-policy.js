@@ -10,11 +10,11 @@ class DropReducer {
 
   step() {
     if (this.remainingSlots > 0) {
-      return CANCELLED;
+      this.remainingSlots--;
+      return STARTED;
     }
 
-    this.remainingSlots--;
-    return STARTED;
+    return CANCELLED;
   }
 }
 
