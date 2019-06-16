@@ -8,7 +8,7 @@ import KeepLatestSchedulerPolicy from './-private/scheduler-policies/keep-latest
 import RestartableSchedulerPolicy from './-private/scheduler-policies/restartable-policy'
 
 export const propertyModifiers = {
-  _bufferPolicy: UnboundedSchedulerPolicy,
+  _schedulerPolicyClass: UnboundedSchedulerPolicy,
   _maxConcurrency: Infinity,
   _taskGroupPath: null,
   _hasUsedModifier: false,
@@ -58,7 +58,7 @@ export const propertyModifiers = {
 function setBufferPolicy(obj, policy) {
   obj._hasSetBufferPolicy = true;
   obj._hasUsedModifier = true;
-  obj._bufferPolicy = policy;
+  obj._schedulerPolicyClass = policy;
   assertModifiersNotMixedWithGroup(obj);
 
   if (obj._maxConcurrency === Infinity) {
@@ -78,9 +78,8 @@ export function resolveScheduler(propertyObj, obj, TaskGroup) {
     assert(`Expected path '${propertyObj._taskGroupPath}' to resolve to a TaskGroup object, but instead was ${taskGroup}`, taskGroup instanceof TaskGroup);
     return taskGroup._scheduler;
   } else {
-    return Scheduler.create({
-      bufferPolicy: new propertyObj._bufferPolicy(propertyObj._maxConcurrency),
-    });
+    let schedulerPolicy = new propertyObj._schedulerPolicyClass(propertyObj._maxConcurrency);
+    return new Scheduler(schedulerPolicy);
   }
 }
 
