@@ -19,7 +19,7 @@ class DropRefresh {
 }
 
 class DropPolicy extends BoundedPolicy {
-  prepareRefresh(_numRunning, _numQueued) {
+  makeRefresh(_numRunning, _numQueued) {
     return new DropRefresh(this.maxConcurrency);
   }
 }

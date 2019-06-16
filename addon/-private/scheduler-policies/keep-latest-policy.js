@@ -39,7 +39,7 @@ class KeepLatestRefresh {
 }
 
 class KeepLatestPolicy extends BoundedPolicy {
-  prepareRefresh(_numRunning, _numQueued) {
+  makeRefresh(_numRunning, _numQueued) {
     let maxEnqueued = 1;
     let totalRunning = numRunning + numQueued;
     return new KeepLatestRefresh(

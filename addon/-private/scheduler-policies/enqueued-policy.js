@@ -17,7 +17,7 @@ class EnqueuedRefresh {
 }
 
 class EnqueuedPolicy extends BoundedPolicy {
-  prepareRefresh(_numRunning, _numQueued) {
+  makeRefresh(_numRunning, _numQueued) {
     return new EnqueuedRefresh(this.maxConcurrency);
   }
 }

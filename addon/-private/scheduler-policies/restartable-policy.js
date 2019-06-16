@@ -21,7 +21,7 @@ class RestartableRefresh {
 }
 
 class RestartablePolicy extends BoundedPolicy {
-  prepareRefresh(numRunning, numQueued) {
+  makeRefresh(numRunning, numQueued) {
     return new RestartableRefresh(numRunning + numQueued - this.maxConcurrency);
   }
 }

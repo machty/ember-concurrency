@@ -1,66 +1,13 @@
 import { once } from '@ember/runloop';
 import EmberObject, { set, get, setProperties } from '@ember/object';
-import {
-  COMPLETION_SUCCESS,
-  COMPLETION_ERROR,
-  COMPLETION_CANCEL,
-} from "./-private/completion-states"
 
-class WorkUnit {
-  constructor(taskInstance, origin) {
-    this.taskInstance = taskInstance;
-    this.origin = origin;
-    this.tags = {};
-  }
-}
+import SchedulerRefresh from "./-private/scheduler-refresh"
 
-class CountData {
-  constructor(taskOrGroup) {
-    this.taskOrGroup = taskOrGroup;
-    this.numRunning = 0;
-    this.numQueued = 0;
-    this.attrs = {};
-  }
-
-  finalize(seen) {
-    let taskGroup = this.taskOrGroup.group;
-    let lastCount = this;
-
-    while (taskGroup) {
-      let newCount = CountData.for(seen, taskGroup);
-      Object.assign(newCount.attrs, lastCount.attrs);
-      newCount.numRunning += lastCount.numRunning;
-      newCount.numQueued += lastCount.numQueued;
-      taskGroup = taskGroup.group;
-      lastCount = newCount;
-    }
-  }
-
-  onCompletion(taskInstance) {
-    let state = taskInstance._completionState;
-    this.attrs.lastComplete = taskInstance;
-
-    if (state === COMPLETION_SUCCESS) {
-      this.attrs.lastSuccessful = taskInstance;
-    } else {
-      if (state === COMPLETION_ERROR) {
-        this.attrs.lastErrored = taskInstance;
-      } else if (state === COMPLETION_CANCEL) {
-        this.attrs.lastCanceled = taskInstance;
-      }
-      this.attrs.lastIncomplete = taskInstance;
-    }
-  }
-}
-
-CountData.for = function(seen, taskOrGroup) {
-  let guid = taskOrGroup.guid;
-  let countData = seen[guid];
-  if (!countData) {
-    countData = seen[guid] = new CountData();
-  }
-  return countData;
-}
+// import {
+//   COMPLETION_SUCCESS,
+//   COMPLETION_ERROR,
+//   COMPLETION_CANCEL,
+// } from "./-private/completion-states"
 
 class ProxyScheduler {
   // schedulers maintain state.
@@ -107,53 +54,32 @@ const Scheduler = EmberObject.extend({
   schedule(workUnit) {
     set(this, 'lastScheduled', taskInstance);
     this.incrementProperty('scheduleCount');
-    if (this.proxyScheduler) {
-      let workUnit = new WorkUnit(taskInstance);
-    } else {
-    }
 
-    taskInstance._onFinalize(() => this._taskInstanceDidFinalize(taskInstance));
+    taskInstance._onFinalize(() => once(this, this._reschedule));
+
     this.taskInstances.push(taskInstance);
     this._reschedule();
   },
 
   // _reschedule runs:
   // 1. When a new TaskInstance is scheduled (so that the new TaskInstance
-  //    can start executing, be enqueued, or be cancelled depending on the buffer policy).
+  //    can start executing, be enqueued, or be cancelled depending on the SchedulerPolicy).
   // 2. When a prior task instance finalizes.
   _reschedule() {
-    let [unfinishedTaskInstances, numRunning, numQueued] = this._filterAndCount(this.taskInstances);
-    let refreshState = this.schedulerPolicy.prepareRefresh(numRunning, numQueued);
+    let refresh = new SchedulerRefresh();
+    this.taskInstances = refresh.process(self);
 
-    unfinishedTaskInstances.forEach(taskInstance => {
-      let desiredState = refreshState.step();
-      return this._handleDesiredState(taskInstance, desiredState);
-    });
+    // if (lastStarted) {
+    //   set(this, 'lastStarted', lastStarted);
+    // }
+    // set(this, 'lastRunning', lastStarted);
 
-
-
-    let result = this.schedulerPolicy.refresh(this.taskInstances);
-
-    this.bufferPolicy.schedule(activeTaskInstances, queuedTaskInstances, this.maxConcurrency);
-
-
-    // Filter out task instances that are finished (including those cancelled while enqueued)
-    this.taskInstances = this.taskInstances.filter(taskInstance => !get(taskInstance, 'isFinished'));
-
-    // Delegate to buffer policy to cancel / start task instances
-    
-
-    if (lastStarted) {
-      set(this, 'lastStarted', lastStarted);
-    }
-    set(this, 'lastRunning', lastStarted);
-
-    this.updateCounts();
+    // this.updateCounts();
 
     set(this, 'concurrency', this.activeTaskInstances.length);
   },
 
-  _handleDesiredState(taskInstance, desiredState) {
+  _setTaskInstanceState(taskInstance, desiredState) {
     switch(desiredState.type) {
       case CANCELLED:
         // how to prevent this from unnecessarily flushing twice?
@@ -170,27 +96,6 @@ const Scheduler = EmberObject.extend({
         // Or perhaps this can be a way to pause?
         return true;
     }
-  },
-
-  _filterAndCount(taskInstances) {
-    let numRunning = 0, numQueued = 0;
-
-    let unfinishedTaskInstances = taskInstances.filter(taskInstance => {
-      CountData.for(this.counts, taskInstance.task);
-      if (taskInstance.isFinished) {
-        return false;
-      }
-
-      if (taskInstance.hasStarted) {
-        numRunning += 1;
-      } else {
-        numQueued += 1;
-      }
-
-      return true;
-    });
-
-    return [unfinishedTaskInstances, numRunning, numQueued];
   },
 
   updateCounts() {
@@ -233,30 +138,6 @@ const Scheduler = EmberObject.extend({
   _increment(numRunningInc, numQueuedInc) {
     task.incrementProperty('numQueued', numQueuedInc);
     task.incrementProperty('numRunning', numRunningInc);
-  },
-
-  _taskInstanceDidFinalize(taskInstance) {
-    let { task } = taskInstance;
-    task.decrementProperty('numRunning');
-    setProperties(this, this._updatesForTaskInstance(taskInstance));
-    once(this, this._reschedule);
-  },
-
-  _updatesForTaskInstance(taskInstance) {
-    // TODO these might be updated elsewhere
-    let state = taskInstance._completionState;
-    let updates = { lastComplete: taskInstance };
-    if (state === COMPLETION_SUCCESS) {
-      updates.lastSuccessful = taskInstance;
-    } else {
-      if (state === COMPLETION_ERROR) {
-        updates.lastErrored = taskInstance;
-      } else if (state === COMPLETION_CANCEL) {
-        updates.lastCanceled = taskInstance;
-      }
-      updates.lastIncomplete = taskInstance;
-    }
-    return updates;
   },
 });
 

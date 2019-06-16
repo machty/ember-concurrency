@@ -9,7 +9,7 @@ class UnboundedRefreshState {
 const SIMPLE_REFRESH_SINGLETON = new UnboundedRefreshState();
 
 class UnboundedPolicy extends SchedulerPolicy {
-  prepareRefresh() {
+  makeRefresh() {
     return SIMPLE_REFRESH_SINGLETON;
   }
 }
