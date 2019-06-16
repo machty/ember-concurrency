@@ -10,15 +10,17 @@ import {
   YIELDABLE_THROW,
   YIELDABLE_RETURN,
   YIELDABLE_CANCEL,
-  RawValue
+  RawValue,
 } from './utils';
 
 const TASK_CANCELATION_NAME = 'TaskCancelation';
 
-const COMPLETION_PENDING = 0;
-const COMPLETION_SUCCESS = 1;
-const COMPLETION_ERROR = 2;
-const COMPLETION_CANCEL = 3;
+import { 
+  COMPLETION_PENDING,
+  COMPLETION_SUCCESS,
+  COMPLETION_ERROR,
+  COMPLETION_CANCEL,
+} from "./-private/completion-states"
 
 const GENERATOR_STATE_BEFORE_CREATE = "BEFORE_CREATE";
 const GENERATOR_STATE_HAS_MORE_VALUES = "HAS_MORE_VALUES";
@@ -77,6 +79,23 @@ function spliceSlice(str, index, count, add) {
   return str.slice(0, index) + (add || "") + str.slice(index + count);
 }
 
+
+
+
+class InnerTaskInstance {
+  // this needs to have a generic interface for sending changelogs.
+  // Idea: this low level class should support a listener interface.
+  // Listeners can implement an observer-based interface if that's what
+  // makes sense for the framework.
+
+   
+}
+
+
+
+
+
+
 /**
   A `TaskInstance` represent a single execution of a
   {@linkcode Task}. Every call to {@linkcode Task#perform} returns
@@ -95,8 +114,7 @@ function spliceSlice(str, index, count, add) {
 
   @class TaskInstance
 */
-
-const  TaskInstance = EmberObject.extend({
+const TaskInstance = EmberObject.extend({
   iterator: null,
   _disposer: null,
   _completionState: COMPLETION_PENDING,

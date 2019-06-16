@@ -1,7 +1,7 @@
 import { run } from '@ember/runloop';
 import RSVP from 'rsvp';
 import EmberObject from '@ember/object';
-import { task, taskGroup } from 'ember-concurrency';
+import { task, taskGroup, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: task groups', function() {
@@ -87,27 +87,22 @@ module('Unit: task groups', function() {
     });
   });
 
-  test("task groups can be canceled", function(assert) {
-    assert.expect(18);
-
-    let deferA, deferB;
+  function sharedTaskGroupSetup(taskGroupProperty) {
     let Obj = EmberObject.extend({
-      tg: taskGroup().enqueue(),
+      tg: taskGroupProperty,
 
       taskA: task(function * () {
-        deferA = RSVP.defer();
-        yield deferA.promise;
+        yield forever;
       }).group('tg'),
 
       taskB: task(function * () {
-        deferB = RSVP.defer();
-        yield deferB.promise;
+        yield forever;
       }).group('tg'),
     });
 
-    let obj, taskA, taskB, suffix, tg;
+    let taskA, taskB, tg;
     run(() => {
-      obj = Obj.create();
+      let obj = Obj.create();
       tg = obj.get('tg');
       taskA = obj.get('taskA');
       taskB = obj.get('taskB');
@@ -115,11 +110,36 @@ module('Unit: task groups', function() {
       taskB.perform();
     });
 
-    suffix = "after first run loop";
+    return [taskA, taskB, tg];
+  }
+
+  test("enqueued task groups can be canceled", function(assert) {
+    assert.expect(18);
+
+    let [taskA, taskB, tg] = sharedTaskGroupSetup(taskGroup().enqueue());
+    let suffix = "after first run loop";
 
     assertStates(assert, tg,    true, false, false, suffix);
     assertStates(assert, taskA, true, false, false, suffix);
     assertStates(assert, taskB, false, true, false, suffix);
+
+    run(tg, 'cancelAll');
+
+    suffix = "after tg.cancelAll()";
+    assertStates(assert, tg,    false, false, true, suffix);
+    assertStates(assert, taskA, false, false, true, suffix);
+    assertStates(assert, taskB, false, false, true, suffix);
+  });
+
+  test("unmodified task groups can be canceled", function(assert) {
+    assert.expect(18);
+
+    let [taskA, taskB, tg] = sharedTaskGroupSetup(taskGroup());
+    let suffix = "after first run loop";
+
+    assertStates(assert, tg,    true, false, false, suffix);
+    assertStates(assert, taskA, true, false, false, suffix);
+    assertStates(assert, taskB, true, false, false, suffix);
 
     run(tg, 'cancelAll');
 

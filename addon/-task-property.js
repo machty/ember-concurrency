@@ -420,7 +420,7 @@ export let TaskProperty;
 if (gte('3.10.0')) {
   TaskProperty = class {};
 } else {
-  // Prior to the 3.10.0 refactors, we had to extend the _ComputedProprety class
+  // Prior to the 3.10.0 refactors, we had to extend the _ComputedProperty class
   // for a classic decorator/descriptor to run correctly.
   TaskProperty = class extends _ComputedProperty {
     callSuperSetup() {

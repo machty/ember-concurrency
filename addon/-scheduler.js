@@ -1,10 +1,20 @@
 import { once } from '@ember/runloop';
-import EmberObject, { set, get } from '@ember/object';
+import EmberObject, { set, get, setProperties } from '@ember/object';
+import {
+  COMPLETION_SUCCESS,
+  COMPLETION_ERROR,
+  COMPLETION_CANCEL,
+} from "./-private/completion-states"
 
-let SEEN_INDEX = 0;
+class WorkUnit {
+  constructor(taskInstance, origin) {
+    this.taskInstance = taskInstance;
+    this.origin = origin;
+  }
+}
 
 const Scheduler = EmberObject.extend({
-  lastPerformed:  null,
+  lastScheduled:  null,
   lastStarted:    null,
   lastRunning:    null,
   lastSuccessful: null,
@@ -12,119 +22,89 @@ const Scheduler = EmberObject.extend({
   lastErrored:    null,
   lastCanceled:   null,
   lastIncomplete: null,
-  performCount: 0,
+  scheduleCount: 0,
 
-  boundHandleFulfill: null,
-  boundHandleReject: null,
-
-  init() {
-    this._super(...arguments);
-    this.activeTaskInstances = [];
-    this.queuedTaskInstances = [];
+  init(...args) {
+    this._super(...args);
+    this.taskInstances = [];
   },
 
   cancelAll(reason) {
-    let seen = [];
-    this.spliceTaskInstances(reason, this.activeTaskInstances, 0, this.activeTaskInstances.length, seen);
-    this.spliceTaskInstances(reason, this.queuedTaskInstances, 0, this.queuedTaskInstances.length, seen);
-    flushTaskCounts(seen);
+    this.taskInstances.forEach(taskInstance => taskInstance.cancel());
+    this.taskInstances = [];
   },
 
-  spliceTaskInstances(cancelReason, taskInstances, index, count, seen) {
-    for (let i = index; i < index + count; ++i) {
-      let taskInstance = taskInstances[i];
-
-      if (!taskInstance.hasStarted) {
-        // This tracking logic is kinda spread all over the place...
-        // maybe TaskInstances themselves could notify
-        // some delegate of queued state changes upon cancelation?
-        taskInstance.task.decrementProperty('numQueued');
-      }
-
-      taskInstance.cancel(cancelReason);
-      if (seen) {
-        seen.push(taskInstance.task);
-      }
-    }
-    taskInstances.splice(index, count);
+  // schedule(taskInstance) {
+  schedule(workUnit) {
+    set(this, 'lastScheduled', taskInstance);
+    this.incrementProperty('scheduleCount');
+    taskInstance._onFinalize(() => this._taskInstanceDidFinalize(taskInstance));
+    this.taskInstances.push(taskInstance);
+    this._reschedule();
   },
 
-  schedule(taskInstance) {
-    set(this, 'lastPerformed', taskInstance);
-    this.incrementProperty('performCount');
-    taskInstance.task.incrementProperty('numQueued');
-    this.queuedTaskInstances.push(taskInstance);
-    this._flushQueues();
-  },
+  // _reschedule runs:
+  // 1. When a new TaskInstance is scheduled (so that the new TaskInstance
+  //    can start executing, be enqueued, or be cancelled depending on the buffer policy).
+  // 2. When a prior task instance finalizes.
+  _reschedule() {
+    // Filter out task instances that are finished (including those cancelled while enqueued)
+    this.taskInstances = this.taskInstances.filter(taskInstance => !get(taskInstance, 'isFinished'));
 
-  _flushQueues() {
-    let seen = [];
-
-    for (let i = 0; i < this.activeTaskInstances.length; ++i) {
-      seen.push(this.activeTaskInstances[i].task);
-    }
-
-    this.activeTaskInstances = filterFinished(this.activeTaskInstances);
-
+    // Delegate to buffer policy to cancel / start task instances
     this.bufferPolicy.schedule(this);
+    
+    // at this point, bufferPolicy has cancelled some policies and run others
+    this.taskInstances = this.taskInstances.filter(taskInstance => {
+      // origin points to either task or taskGroup.
+      // There should be a work unit that knows which task/taskGroup it originated from.
+      // Because Scheduler could be deeply nested.
+      // When a task is done, we don't know shit.
 
-    var lastStarted = null;
-    for (let i = 0; i < this.activeTaskInstances.length; ++i) {
-      let taskInstance = this.activeTaskInstances[i];
-      if (!taskInstance.hasStarted) {
-        this._startTaskInstance(taskInstance);
-        lastStarted = taskInstance;
-      }
-      seen.push(taskInstance.task);
-    }
+      return !get(taskInstance, 'isFinished');
+    });
 
     if (lastStarted) {
       set(this, 'lastStarted', lastStarted);
     }
     set(this, 'lastRunning', lastStarted);
 
-    for (let i = 0; i < this.queuedTaskInstances.length; ++i) {
-      seen.push(this.queuedTaskInstances[i].task);
-    }
-
-    flushTaskCounts(seen);
     set(this, 'concurrency', this.activeTaskInstances.length);
   },
 
   _startTaskInstance(taskInstance) {
-    let task = taskInstance.task;
-    task.decrementProperty('numQueued');
-    task.incrementProperty('numRunning');
+    taskInstance._start();
+    set(this, 'lastStarted', taskInstance);
+  },
 
-    taskInstance._start()._onFinalize(() => {
-      task.decrementProperty('numRunning');
-      var state = taskInstance._completionState;
-      set(this, 'lastComplete', taskInstance);
-      if (state === 1) {
-        set(this, 'lastSuccessful', taskInstance);
-      } else {
-        if (state === 2) {
-          set(this, 'lastErrored', taskInstance);
-        } else if (state === 3) {
-          set(this, 'lastCanceled', taskInstance);
-        }
-        set(this, 'lastIncomplete', taskInstance);
+  _increment(numRunningInc, numQueuedInc) {
+    task.incrementProperty('numQueued', numQueuedInc);
+    task.incrementProperty('numRunning', numRunningInc);
+  },
+
+  _taskInstanceDidFinalize(taskInstance) {
+    let { task } = taskInstance;
+    task.decrementProperty('numRunning');
+    setProperties(this, this._updatesForTaskInstance(taskInstance));
+    once(this, this._reschedule);
+  },
+
+  _updatesForTaskInstance(taskInstance) {
+    let state = taskInstance._completionState;
+    let updates = { lastComplete: taskInstance };
+    if (state === COMPLETION_SUCCESS) {
+      updates.lastSuccessful = taskInstance;
+    } else {
+      if (state === COMPLETION_ERROR) {
+        updates.lastErrored = taskInstance;
+      } else if (state === COMPLETION_CANCEL) {
+        updates.lastCanceled = taskInstance;
       }
-      once(this, this._flushQueues);
-    });
-  }
-});
-
-function flushTaskCounts(tasks) {
-  SEEN_INDEX++;
-  for (let i = 0, l = tasks.length; i < l; ++i) {
-    let task = tasks[i];
-    if (task._seenIndex < SEEN_INDEX) {
-      task._seenIndex = SEEN_INDEX;
-      updateTaskChainCounts(task);
+      updates.lastIncomplete = taskInstance;
     }
-  }
-}
+    return updates;
+  },
+});
 
 function updateTaskChainCounts(task) {
   let numRunning = task.numRunning;
@@ -136,17 +116,6 @@ function updateTaskChainCounts(task) {
     set(taskGroup, 'numQueued', numQueued);
     taskGroup = taskGroup.get('group');
   }
-}
-
-function filterFinished(taskInstances) {
-  let ret = [];
-  for (let i = 0, l = taskInstances.length; i < l; ++i) {
-    let taskInstance = taskInstances[i];
-    if (get(taskInstance, 'isFinished') === false) {
-      ret.push(taskInstance);
-    }
-  }
-  return ret;
 }
 
 export default Scheduler;
