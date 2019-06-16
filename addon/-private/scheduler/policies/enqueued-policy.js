@@ -17,7 +17,7 @@ class EnqueuedReducer {
 }
 
 class EnqueuedPolicy extends BoundedPolicy {
-  makeReducer(_numRunning, _numQueued) {
+  makeReducer() {
     return new EnqueuedReducer(this.maxConcurrency);
   }
 }

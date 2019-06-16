@@ -39,7 +39,7 @@ class KeepLatestReducer {
 }
 
 class KeepLatestPolicy extends BoundedPolicy {
-  makeReducer(_numRunning, _numQueued) {
+  makeReducer(numRunning, numQueued) {
     let maxEnqueued = 1;
     let totalRunning = numRunning + numQueued;
     return new KeepLatestReducer(

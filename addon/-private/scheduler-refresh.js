@@ -43,7 +43,7 @@ class RefreshTaskState {
     this.numRunning += 1;
   }
 
-  onQueued(_taskInstance) {
+  onQueued() {
     this.numQueued += 1;
   }
 

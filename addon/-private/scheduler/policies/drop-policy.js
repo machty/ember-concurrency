@@ -19,7 +19,7 @@ class DropReducer {
 }
 
 class DropPolicy extends BoundedPolicy {
-  makeReducer(_numRunning, _numQueued) {
+  makeReducer() {
     return new DropReducer(this.maxConcurrency);
   }
 }
