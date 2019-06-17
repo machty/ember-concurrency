@@ -2,7 +2,7 @@ import Ember from 'ember';
 import { computed } from '@ember/object';
 import { timeout, forever } from './-private/utils';
 import { Task, TaskProperty } from './-private/task-property';
-import { didCancel } from './-private/task-instance';
+import { default as TaskInstance, didCancel } from './-private/task-instance';
 import { TaskGroup, TaskGroupProperty } from './-private/task-group';
 import { all, allSettled, hash, race } from './-private/cancelable-promise-helpers';
 import { waitForQueue, waitForEvent, waitForProperty } from './-private/wait-for';
@@ -146,4 +146,9 @@ export {
   waitForEvent,
   waitForProperty,
   forever,
+  Task,
+  TaskProperty,
+  TaskInstance,
+  TaskGroup,
+  TaskGroupProperty
 };
