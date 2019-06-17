@@ -1,4 +1,4 @@
-import SchedulerRefresh from "../scheduler-refresh"
+import SchedulerRefresh from "./refresh"
 
 class Scheduler {
   constructor(schedulerPolicy) {
