@@ -41,17 +41,17 @@ class RefreshStateSet {
 }
 
 class Refresh {
-  constructor() {
-    this.numQueued = 0;
-    this.numRunning = 0;
+  constructor(schedulerPolicy, taskInstances) {
     this.taskStates = new RefreshStateSet();
+    this.schedulerPolicy = schedulerPolicy;
+    this.initialTaskInstances = taskInstances;
   }
 
-  process(schedulerPolicy, taskInstances) {
-    let unfinishedTaskInstances = this.filterFinishedTaskInstances(taskInstances);
-    let reducer = schedulerPolicy.makeReducer(this.numRunning, this.numQueued);
+  process() {
+    let [taskInstances, numRunning, numQueued] = this.filterFinishedTaskInstances();
+    let reducer = this.schedulerPolicy.makeReducer(numRunning, numQueued);
 
-    let finalTaskInstances = unfinishedTaskInstances.filter(taskInstance => {
+    let finalTaskInstances = taskInstances.filter(taskInstance => {
       return this.setTaskInstanceState(taskInstance, reducer.step());
     });
 
@@ -60,8 +60,9 @@ class Refresh {
     return finalTaskInstances;
   }
 
-  filterFinishedTaskInstances(taskInstances) {
-    return taskInstances.filter(taskInstance => {
+  filterFinishedTaskInstances() {
+    let numRunning = 0, numQueued = 0;
+    let taskInstances = this.initialTaskInstances.filter(taskInstance => {
       let taskState = this.taskStates.findOrInit(taskInstance.task);
 
       if (taskInstance.isFinished) {
@@ -70,13 +71,14 @@ class Refresh {
       }
 
       if (taskInstance.hasStarted) {
-        this.numRunning += 1;
+        numRunning += 1;
       } else {
-        this.numQueued += 1;
+        numQueued += 1;
       }
 
       return true;
     });
+    return [taskInstances, numRunning, numQueued];
   }
 
   setTaskInstanceState(taskInstance, desiredState) {
@@ -88,6 +90,10 @@ class Refresh {
         taskInstance.cancel(desiredState.reason);
         return false;
       case TYPE_STARTED:
+        if (!taskInstance._counted) {
+          taskInstance._counted = true;
+          taskState.onPerformed(taskInstance);
+        }
         if (!taskInstance.hasStarted) {
           taskInstance._start();
           taskState.onStart(taskInstance);

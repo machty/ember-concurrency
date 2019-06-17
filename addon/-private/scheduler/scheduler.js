@@ -24,8 +24,8 @@ class Scheduler {
   scheduleRefresh() { }
 
   refresh() {
-    let refresh = new SchedulerRefresh();
-    this.taskInstances = refresh.process(this.schedulerPolicy, this.taskInstances);
+    let refresh = new SchedulerRefresh(this.schedulerPolicy, this.taskInstances);
+    this.taskInstances = refresh.process();
   }
 }
 

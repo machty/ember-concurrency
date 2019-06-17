@@ -111,6 +111,7 @@ const TaskInstance = EmberObject.extend({
   _performType: PERFORM_TYPE_DEFAULT,
   _expectsLinkedYield: false,
   _tags: null,
+  _counted: false,
 
   /**
    * If this TaskInstance runs to completion by returning a property

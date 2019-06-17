@@ -9,6 +9,7 @@ export class RefreshTaskState {
     this.taskOrGroup = taskOrGroup;
     this.numRunning = 0;
     this.numQueued = 0;
+    this.numPerformed = 0;
     this.attrs = {};
   }
 
@@ -27,6 +28,11 @@ export class RefreshTaskState {
       }
       this.attrs.lastIncomplete = taskInstance;
     }
+  }
+
+  onPerformed(taskInstance) {
+    this.numPerformed += 1;
+    this.attrs.lastPerformed = taskInstance;
   }
 
   onStart(taskInstance) {
@@ -54,7 +60,8 @@ export class RefreshTaskState {
   computeState() {
     return Object.assign({
       numRunning: this.numRunning,
-      numQueued: this.numQueued
+      numQueued: this.numQueued,
+      performCount: this.numPerformed,
     }, this.attrs);
   }
 
@@ -62,5 +69,6 @@ export class RefreshTaskState {
     Object.assign(this.attrs, other.attrs);
     this.numRunning += other.numRunning;
     this.numQueued += other.numQueued;
+    this.numPerformed += other.numPerformed;
   }
 }
