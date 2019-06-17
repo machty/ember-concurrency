@@ -460,14 +460,13 @@ const TaskInstance = EmberObject.extend({
   },
 
   _runFinalizeCallbacks() {
-    this._maybeResolveDefer();
     if (this._finalizeCallbacks) {
       for (let i = 0, l = this._finalizeCallbacks.length; i < l; ++i) {
         this._finalizeCallbacks[i]();
       }
       this._finalizeCallbacks = null;
     }
-
+    this._maybeResolveDefer();
     this._maybeThrowUnhandledTaskErrorLater();
   },
 
