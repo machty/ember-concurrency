@@ -226,6 +226,11 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       context: this.context,
       _origin: this._origin,
       _propertyName: this._propertyName,
+      group: this.group,
+      _debug: this._debug,
+      _hasEnabledEvents: this._hasEnabledEvents,
+      _guid: this._guid,
+      _scheduler: this._scheduler,
     });
   },
 
