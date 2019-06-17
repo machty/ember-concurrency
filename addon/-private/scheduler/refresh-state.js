@@ -1,10 +1,6 @@
 import { COMPLETION_SUCCESS, COMPLETION_ERROR, COMPLETION_CANCEL } from "../completion-states";
 
-// TODO: figure these out; might need to use TaskInstance as a scratch pad.
-// lastPerformed:  alias('_scheduler.lastScheduled'),
-// performCount:   alias('_scheduler.scheduleCount'),
-
-export class RefreshTaskState {
+class RefreshState {
   constructor(taskOrGroup) {
     this.taskOrGroup = taskOrGroup;
     this.numRunning = 0;
@@ -72,3 +68,5 @@ export class RefreshTaskState {
     this.numPerformed += other.numPerformed;
   }
 }
+
+export default RefreshState;

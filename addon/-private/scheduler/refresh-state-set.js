@@ -1,6 +1,6 @@
-import { RefreshTaskState } from "./refresh";
+import RefreshState from "./refresh-state";
 
-export class RefreshStateSet {
+class RefreshStateSet {
   constructor() {
     this.states = {};
   }
@@ -9,7 +9,7 @@ export class RefreshStateSet {
     let guid = taskOrGroup._guid;
     let taskState = this.states[guid];
     if (!taskState) {
-      taskState = this.states[guid] = new RefreshTaskState(taskOrGroup);
+      taskState = this.states[guid] = new RefreshState(taskOrGroup);
     }
     return taskState;
   }
@@ -20,9 +20,7 @@ export class RefreshStateSet {
   // applying/adding to the state of any TaskGroups they belong to.
   computeFinalStates(callback) {
     this.computeRecursiveState();
-    this.forEachState(state =>
-      callback(state.taskOrGroup, state.computeState())
-    );
+    this.forEachState(state => callback(state.taskOrGroup, state.computeState()));
   }
 
   computeRecursiveState() {
@@ -40,3 +38,5 @@ export class RefreshStateSet {
     Object.keys(this.states).forEach(k => callback(this.states[k]));
   }
 }
+
+export default RefreshStateSet;
