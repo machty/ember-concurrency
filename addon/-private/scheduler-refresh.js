@@ -55,15 +55,20 @@ class RefreshTaskState {
     }
   }
 
-  applyState() {
-    let props = Object.assign(
+  computeState() {
+    return Object.assign(
       {
         numRunning: this.numRunning,
         numQueued: this.numQueued
       },
-      this.attrs
+      this.attrs,
     );
-    this.taskOrGroup.setProperties(props);
+  }
+
+  applyStateFrom(other) {
+    Object.assign(this.attrs, other.attrs);
+    this.numRunning += other.numRunning;
+    this.numQueued += other.numQueued;
   }
 }
 
@@ -84,23 +89,19 @@ class TaskStates {
   // After cancelling/queueing task instances, we have to recompute the derived state
   // of all the tasks that had/have task instances in this scheduler. We do this by
   // looping through all the Tasks that we've accumulated state for, and then recursively
-  // applying/adding them to any TaskGroups they belong to, and then finally we loop
-  // through each Task/TaskGroup state and write it to the Task/TaskGroup objects themselves.
-  flush() {
-    this.calculateRecursiveState();
-    this.forEachState(state => state.applyState());
+  // applying/adding to the state of any TaskGroups they belong to.
+  computeFinalStates(callback) {
+    this.computeRecursiveState();
+    this.forEachState(state => callback(state.taskOrGroup, state.computeState()));
   }
 
-  calculateRecursiveState() {
+  computeRecursiveState() {
     this.forEachState(taskState => {
       let lastState = taskState;
       taskState.recurseTaskGroups(taskGroup => {
-        let newState = this.findOrInit(taskGroup);
-        Object.assign(newState.attrs, lastState.attrs);
-        newState.numRunning += lastState.numRunning;
-        newState.numQueued += lastState.numQueued;
-        taskGroup = taskGroup.group;
-        lastState = newState;
+        let state = this.findOrInit(taskGroup);
+        state.applyStateFrom(lastState);
+        lastState = state;
       });
     });
   }
@@ -122,10 +123,10 @@ class SchedulerRefresh {
     let reducer = schedulerPolicy.makeReducer(this.numRunning, this.numQueued);
 
     let finalTaskInstances = unfinishedTaskInstances.filter(taskInstance => {
-      return this._setTaskInstanceState(taskInstance, reducer.step());
+      return this.setTaskInstanceState(taskInstance, reducer.step());
     });
 
-    this.taskStates.flush();
+    this.taskStates.computeFinalStates((taskOrGroup, props) => taskOrGroup.setProperties(props));
 
     return finalTaskInstances;
   }
@@ -149,7 +150,7 @@ class SchedulerRefresh {
     });
   }
 
-  _setTaskInstanceState(taskInstance, desiredState) {
+  setTaskInstanceState(taskInstance, desiredState) {
     let taskState = this.taskStates.findOrInit(taskInstance.task);
 
     switch (desiredState.type) {

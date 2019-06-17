@@ -164,7 +164,7 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  test("task.cancelAll({ resetState: true }) resets defired state", function(assert) {
+  test("task.cancelAll({ resetState: true }) resets derived state", function(assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend(Evented, {
