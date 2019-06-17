@@ -6,6 +6,7 @@ class Refresh {
     this.taskStates = new RefreshStateSet();
     this.schedulerPolicy = schedulerPolicy;
     this.initialTaskInstances = taskInstances;
+    this.startingInstances = [];
   }
 
   process() {
@@ -17,6 +18,7 @@ class Refresh {
     });
 
     this.taskStates.computeFinalStates(state => this.applyState(state));
+    this.startingInstances.forEach(taskInstance => taskInstance._start());
 
     return finalTaskInstances;
   }
@@ -57,7 +59,7 @@ class Refresh {
         return false;
       case TYPE_STARTED:
         if (!taskInstance.hasStarted) {
-          taskInstance._start();
+          this.startingInstances.push(taskInstance);
           taskState.onStart(taskInstance);
         }
         taskState.onRunning(taskInstance);
@@ -65,7 +67,7 @@ class Refresh {
       case TYPE_QUEUED:
         taskState.onQueued(taskInstance);
         // TODO: assert taskInstance hasn't started?
-        // Or perhaps this can be a way to pause?
+        // Or perhaps this can be a way to pause a task?
         return true;
     }
   }
