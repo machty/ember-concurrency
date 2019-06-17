@@ -16,7 +16,7 @@ class Refresh {
       return this.setTaskInstanceState(taskInstance, reducer.step());
     });
 
-    this.taskStates.computeFinalStates((taskOrGroup, props) => taskOrGroup.setProperties(props));
+    this.taskStates.computeFinalStates(state => this.applyState(state));
 
     return finalTaskInstances;
   }
@@ -67,6 +67,18 @@ class Refresh {
         // Or perhaps this can be a way to pause?
         return true;
     }
+  }
+
+  applyState(state) {
+    let { taskOrGroup } = state;
+
+    let props = Object.assign({
+      numRunning: state.numRunning,
+      numQueued: state.numQueued,
+      performCount: taskOrGroup.performCount + state.numPerformedInc,
+    }, state.attrs);
+
+    taskOrGroup.setProperties(props);
   }
 }
 

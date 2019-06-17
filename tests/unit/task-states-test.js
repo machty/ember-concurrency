@@ -71,6 +71,25 @@ module('Unit: task states', function() {
     });
   });
 
+  test(".performCount exposes the number of times a task has been performed", function(assert) {
+    assert.expect(3);
+
+    let Obj = EmberObject.extend({
+      doStuff: task(function * () { })
+    });
+
+    run(() => {
+      let obj = Obj.create();
+      let doStuff = obj.get('doStuff');
+      assert.equal(doStuff.get('performCount'), 0);
+      doStuff.perform();
+      assert.equal(doStuff.get('performCount'), 1);
+      doStuff.perform();
+      doStuff.perform();
+      assert.equal(doStuff.get('performCount'), 3);
+    });
+  });
+
   test("a dropped .lastPerformed shows up as canceled", function(assert) {
     assert.expect(3);
 

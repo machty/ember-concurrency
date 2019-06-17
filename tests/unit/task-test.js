@@ -400,25 +400,6 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  test(".performCount exposes the number of times a task has been performed", function(assert) {
-    assert.expect(3);
-
-    let Obj = EmberObject.extend({
-      doStuff: task(function * () { })
-    });
-
-    run(() => {
-      let obj = Obj.create();
-      let doStuff = obj.get('doStuff');
-      assert.equal(doStuff.get('performCount'), 0);
-      doStuff.perform();
-      assert.equal(doStuff.get('performCount'), 1);
-      doStuff.perform();
-      doStuff.perform();
-      assert.equal(doStuff.get('performCount'), 3);
-    });
-  });
-
   test("call stack stays within reasonable bounds", function(assert) {
     assert.expect(1);
 

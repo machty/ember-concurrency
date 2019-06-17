@@ -20,7 +20,7 @@ class RefreshStateSet {
   // applying/adding to the state of any TaskGroups they belong to.
   computeFinalStates(callback) {
     this.computeRecursiveState();
-    this.forEachState(state => callback(state.taskOrGroup, state.computeState()));
+    this.forEachState(state => callback(state));
   }
 
   computeRecursiveState() {

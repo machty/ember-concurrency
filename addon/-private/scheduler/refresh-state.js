@@ -5,7 +5,7 @@ class RefreshState {
     this.taskOrGroup = taskOrGroup;
     this.numRunning = 0;
     this.numQueued = 0;
-    this.numPerformed = 0;
+    this.numPerformedInc = 0;
     this.attrs = {};
   }
 
@@ -27,7 +27,7 @@ class RefreshState {
   }
 
   onPerformed(taskInstance) {
-    this.numPerformed += 1;
+    this.numPerformedInc += 1;
     this.attrs.lastPerformed = taskInstance;
   }
 
@@ -53,19 +53,11 @@ class RefreshState {
     }
   }
 
-  computeState() {
-    return Object.assign({
-      numRunning: this.numRunning,
-      numQueued: this.numQueued,
-      performCount: this.numPerformed,
-    }, this.attrs);
-  }
-
   applyStateFrom(other) {
     Object.assign(this.attrs, other.attrs);
     this.numRunning += other.numRunning;
     this.numQueued += other.numQueued;
-    this.numPerformed += other.numPerformed;
+    this.numPerformedInc += other.numPerformedInc;
   }
 }
 
