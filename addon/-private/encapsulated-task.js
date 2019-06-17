@@ -1,5 +1,5 @@
 import { assert } from '@ember/debug';
-import TaskInstance from './-task-instance';
+import TaskInstance from './task-instance';
 
 export default TaskInstance.extend({
   _makeIterator() {

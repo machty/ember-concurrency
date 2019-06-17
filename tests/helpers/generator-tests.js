@@ -1,13 +1,13 @@
 import { resolve } from 'rsvp';
 import $ from 'jquery';
 import { test as qunitTest } from 'ember-qunit';
-import { wrap, go } from 'ember-concurrency/-task-instance';
+import { wrap, go } from 'ember-concurrency/-private/task-instance';
 import { run } from "@ember/runloop";
 import { visit, click, settled } from '@ember/test-helpers';
 import {
   raw,
   rawTimeout
-} from 'ember-concurrency/utils';
+} from 'ember-concurrency/-private/utils';
 
 const find = wrap(function * (app, selector, options = {}) {
   let startedAt = + new Date();

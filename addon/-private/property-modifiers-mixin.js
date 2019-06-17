@@ -1,11 +1,11 @@
 import { assert } from '@ember/debug';
-import EmberScheduler from './-private/scheduler/ember-scheduler';
+import EmberScheduler from './scheduler/ember-scheduler';
 
-import UnboundedSchedulerPolicy from './-private/scheduler/policies/unbounded-policy'
-import EnqueueSchedulerPolicy from './-private/scheduler/policies/enqueued-policy'
-import DropSchedulerPolicy from './-private/scheduler/policies/drop-policy'
-import KeepLatestSchedulerPolicy from './-private/scheduler/policies/keep-latest-policy'
-import RestartableSchedulerPolicy from './-private/scheduler/policies/restartable-policy'
+import UnboundedSchedulerPolicy from './scheduler/policies/unbounded-policy'
+import EnqueueSchedulerPolicy from './scheduler/policies/enqueued-policy'
+import DropSchedulerPolicy from './scheduler/policies/drop-policy'
+import KeepLatestSchedulerPolicy from './scheduler/policies/keep-latest-policy'
+import RestartableSchedulerPolicy from './scheduler/policies/restartable-policy'
 
 export const propertyModifiers = {
   _schedulerPolicyClass: UnboundedSchedulerPolicy,

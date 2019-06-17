@@ -4,7 +4,7 @@ import {
   default as TaskInstance,
   wrap,
   didCancel
-} from 'ember-concurrency/-task-instance';
+} from 'ember-concurrency/-private/task-instance';
 import { module, test } from 'qunit';
 
 module('Unit: task instance', function() {

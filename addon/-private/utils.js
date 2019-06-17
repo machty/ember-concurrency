@@ -201,3 +201,7 @@ export function yieldableToPromise(yieldable) {
 
   return def.promise;
 }
+
+export function deprecatePrivateModule(moduleName) {
+  console.warn(`an Ember addon is importing a private ember-concurrency module '${moduleName}' that has moved`);
+}

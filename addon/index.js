@@ -1,14 +1,13 @@
 import Ember from 'ember';
 import { computed } from '@ember/object';
-import { timeout, forever } from './utils';
-import { Task, TaskProperty } from './-task-property';
-import { didCancel } from './-task-instance';
-import { TaskGroup, TaskGroupProperty } from './-task-group';
-import { all, allSettled, hash, race } from './-cancelable-promise-helpers';
-import { waitForQueue, waitForEvent, waitForProperty } from './-wait-for';
-import { resolveScheduler } from './-property-modifiers-mixin';
+import { timeout, forever } from './-private/utils';
+import { Task, TaskProperty } from './-private/task-property';
+import { didCancel } from './-private/task-instance';
+import { TaskGroup, TaskGroupProperty } from './-private/task-group';
+import { all, allSettled, hash, race } from './-private/cancelable-promise-helpers';
+import { waitForQueue, waitForEvent, waitForProperty } from './-private/wait-for';
+import { resolveScheduler } from './-private/property-modifiers-mixin';
 import { gte } from 'ember-compatibility-helpers';
-
 const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
 
 function _computed(fn) {

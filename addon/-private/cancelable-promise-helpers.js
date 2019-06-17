@@ -1,5 +1,5 @@
 import RSVP, { Promise } from 'rsvp';
-import TaskInstance from './-task-instance';
+import TaskInstance from './task-instance';
 import { yieldableSymbol } from './utils';
 
 const asyncAll = taskAwareVariantOf(Promise, 'all', identity);

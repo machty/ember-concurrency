@@ -1,8 +1,8 @@
 import { or, bool } from '@ember/object/computed';
 import EmberObject from '@ember/object';
 import { objectAssign, _ComputedProperty, makeGuid } from './utils';
-import TaskStateMixin from './-task-state-mixin';
-import { propertyModifiers } from './-property-modifiers-mixin';
+import TaskStateMixin from './task-state-mixin';
+import { propertyModifiers } from './property-modifiers-mixin';
 import { gte } from 'ember-compatibility-helpers';
 
 export const TaskGroup = EmberObject.extend(TaskStateMixin, {
