@@ -28,7 +28,7 @@ export default Mixin.create({
     let tags = {
       [this._guid]: true
     };
-    let group = this.get("group");
+    let group = this.group;
     if (group) {
       Object.assign(tags, group.get("_tags"));
     }
@@ -59,10 +59,6 @@ export default Mixin.create({
       this._resetState();
     }
   },
-
-  group: computed(function() {
-    return this._taskGroupPath && this.context.get(this._taskGroupPath);
-  }),
 
   _scheduler: null,
 

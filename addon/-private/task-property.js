@@ -17,7 +17,6 @@ import {
   INVOKE,
   _cleanupOnDestroy,
   _ComputedProperty,
-  makeGuid,
 } from './utils';
 import EncapsulatedTask from './encapsulated-task';
 import { deprecate } from '@ember/debug';
@@ -180,7 +179,6 @@ export const Task = EmberObject.extend(TaskStateMixin, {
 
   init() {
     this._super(...arguments);
-    this._guid = makeGuid();
 
     if (typeof this.fn === 'object') {
       let owner = getOwner(this.context);
@@ -227,8 +225,6 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       fn: this.fn,
       context: this.context,
       _origin: this._origin,
-      _taskGroupPath: this._taskGroupPath,
-      _scheduler: this._scheduler,
       _propertyName: this._propertyName,
     });
   },

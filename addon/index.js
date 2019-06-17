@@ -1,13 +1,13 @@
 import Ember from 'ember';
 import { computed } from '@ember/object';
-import { timeout, forever } from './-private/utils';
+import { timeout, forever, makeGuid } from './-private/utils';
 import { Task, TaskProperty } from './-private/task-property';
 import { default as TaskInstance, didCancel } from './-private/task-instance';
 import { TaskGroup, TaskGroupProperty } from './-private/task-group';
 import { all, allSettled, hash, race } from './-private/cancelable-promise-helpers';
 import { waitForQueue, waitForEvent, waitForProperty } from './-private/wait-for';
-import { resolveScheduler } from './-private/property-modifiers-mixin';
 import { gte } from 'ember-compatibility-helpers';
+import EmberScheduler from './-private/scheduler/ember-scheduler';
 const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
 
 function _computed(fn) {
@@ -74,18 +74,11 @@ function _computed(fn) {
  * @returns {TaskProperty}
  */
 export function task(taskFn) {
-  let tp = _computed(function(_propertyName) {
-    tp.taskFn.displayName = `${_propertyName} (task)`;
-    return Task.create({
-      fn: tp.taskFn,
-      context: this,
-      _origin: this,
-      _taskGroupPath: tp._taskGroupPath,
-      _scheduler: resolveScheduler(tp, this, TaskGroup),
-      _propertyName,
-      _debug: tp._debug,
-      _hasEnabledEvents: tp._hasEnabledEvents,
-    });
+  let tp = _computed(function(key) {
+    tp.taskFn.displayName = `${key} (task)`;
+    return Task.create(
+      sharedTaskProperties(tp, this, key)
+    );
   });
 
   tp.taskFn = taskFn;
@@ -117,15 +110,10 @@ export function task(taskFn) {
  * @returns {TaskGroup}
  */
 export function taskGroup(taskFn) {
-  let tp = _computed(function(_propertyName) {
-    return TaskGroup.create({
-      fn: tp.taskFn,
-      context: this,
-      _origin: this,
-      _taskGroupPath: tp._taskGroupPath,
-      _scheduler: resolveScheduler(tp, this, TaskGroup),
-      _propertyName,
-    });
+  let tp = _computed(function(key) {
+    return TaskGroup.create(
+      sharedTaskProperties(tp, this, key)
+    );
   });
 
   tp.taskFn = taskFn;
@@ -133,6 +121,29 @@ export function taskGroup(taskFn) {
   Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
 
   return tp;
+}
+
+function sharedTaskProperties(taskProperty, context, _propertyName) {
+  let props = {
+    fn: taskProperty.taskFn,
+    context,
+    _origin: context,
+    _propertyName,
+    _debug: taskProperty._debug,
+    _hasEnabledEvents: taskProperty._hasEnabledEvents,
+    _guid: makeGuid(),
+  };
+
+  if (taskProperty._taskGroupPath) {
+    let group = context.get(taskProperty._taskGroupPath)
+    props.group = group;
+    props._scheduler = group._scheduler;
+  } else {
+    let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);
+    props._scheduler = new EmberScheduler(schedulerPolicy);
+  }
+
+  return props;
 }
 
 export {

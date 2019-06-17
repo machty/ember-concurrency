@@ -1,5 +1,4 @@
 import { assert } from '@ember/debug';
-import EmberScheduler from './scheduler/ember-scheduler';
 
 import UnboundedSchedulerPolicy from './scheduler/policies/unbounded-policy'
 import EnqueueSchedulerPolicy from './scheduler/policies/enqueued-policy'
@@ -71,15 +70,3 @@ function setBufferPolicy(obj, policy) {
 function assertModifiersNotMixedWithGroup(obj) {
   assert(`ember-concurrency does not currently support using both .group() with other task modifiers (e.g. drop(), enqueue(), restartable())`, !obj._hasUsedModifier || !obj._taskGroupPath);
 }
-
-export function resolveScheduler(propertyObj, obj, TaskGroup) {
-  if (propertyObj._taskGroupPath) {
-    let taskGroup = obj.get(propertyObj._taskGroupPath);
-    assert(`Expected path '${propertyObj._taskGroupPath}' to resolve to a TaskGroup object, but instead was ${taskGroup}`, taskGroup instanceof TaskGroup);
-    return taskGroup._scheduler;
-  } else {
-    let schedulerPolicy = new propertyObj._schedulerPolicyClass(propertyObj._maxConcurrency);
-    return new EmberScheduler(schedulerPolicy);
-  }
-}
-

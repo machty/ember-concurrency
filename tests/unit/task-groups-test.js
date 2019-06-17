@@ -52,7 +52,7 @@ module('Unit: task groups', function() {
     run(taskB, 'perform');
 
     suffix = "after taskB is performed, but before taskA is finished";
-    assertStates(assert, tg,    true, false, false, suffix);
+    assertStates(assert, tg,    true, true, false, suffix);
     assertStates(assert, taskA, true, false, false, suffix);
     assertStates(assert, taskB, false, true, false, suffix);
     assert.ok(deferA);
@@ -119,7 +119,7 @@ module('Unit: task groups', function() {
     let [taskA, taskB, tg] = sharedTaskGroupSetup(taskGroup().enqueue());
     let suffix = "after first run loop";
 
-    assertStates(assert, tg,    true, false, false, suffix);
+    assertStates(assert, tg,    true, true, false, suffix);
     assertStates(assert, taskA, true, false, false, suffix);
     assertStates(assert, taskB, false, true, false, suffix);
 
