@@ -3,8 +3,21 @@ import Mixin from "@ember/object/mixin";
 import { computed } from "@ember/object";
 const { alias } = computed;
 
+const DEFAULT_STATE = {
+  last: null,
+  lastRunning: null,
+  lastStarted: null,
+  lastPerformed: null,
+  lastSuccessful: null,
+  lastComplete: null,
+  lastErrored: null,
+  lastCanceled: null,
+  lastIncomplete: null,
+  performCount: 0
+};
+
 // this is a mixin of properties/methods shared between Tasks and TaskGroups
-export default Mixin.create({
+let mixinProps = {
   isRunning: gt("numRunning", 0),
   isQueued: gt("numQueued", 0),
   isIdle: computed("isRunning", "isQueued", function() {
@@ -37,15 +50,6 @@ export default Mixin.create({
   name: alias("_propertyName"),
 
   concurrency: alias("numRunning"),
-  last: null,
-  lastRunning: null,
-  lastPerformed: null,
-  lastSuccessful: null,
-  lastComplete: null,
-  lastErrored: null,
-  lastCanceled: null,
-  lastIncomplete: null,
-  performCount: 0,
   numRunning: 0,
   numQueued: 0,
 
@@ -63,17 +67,10 @@ export default Mixin.create({
   _scheduler: null,
 
   _resetState() {
-    this.setProperties({
-      last: null,
-      lastRunning: null,
-      lastStarted: null,
-      lastPerformed: null,
-      lastSuccessful: null,
-      lastComplete: null,
-      lastErrored: null,
-      lastCanceled: null,
-      lastIncomplete: null,
-      performCount: 0
-    });
+    this.setProperties(DEFAULT_STATE);
   }
-});
+};
+
+Object.assign(mixinProps, DEFAULT_STATE);
+
+export default Mixin.create(mixinProps);
