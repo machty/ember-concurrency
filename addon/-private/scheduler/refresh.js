@@ -45,16 +45,17 @@ class Refresh {
   setTaskInstanceState(taskInstance, desiredState) {
     let taskState = this.taskStates.findOrInit(taskInstance.task);
 
+    if (!taskInstance._counted) {
+      taskInstance._counted = true;
+      taskState.onPerformed(taskInstance);
+    }
+
     switch (desiredState.type) {
       case TYPE_CANCELLED:
         // this will cause a follow up flush which will detect and recompute cancellation state
         taskInstance.cancel(desiredState.reason);
         return false;
       case TYPE_STARTED:
-        if (!taskInstance._counted) {
-          taskInstance._counted = true;
-          taskState.onPerformed(taskInstance);
-        }
         if (!taskInstance.hasStarted) {
           taskInstance._start();
           taskState.onStart(taskInstance);

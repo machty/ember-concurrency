@@ -1,7 +1,7 @@
 import RSVP from 'rsvp';
 import { run } from '@ember/runloop';
 import EmberObject from '@ember/object';
-import { task, timeout } from 'ember-concurrency';
+import { task, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: task states', function() {
@@ -94,7 +94,7 @@ module('Unit: task states', function() {
     assert.expect(3);
 
     let Obj = EmberObject.extend({
-      myTask: task(function * () { yield timeout(10); }).drop(),
+      myTask: task(function * () { yield forever; }).drop(),
     });
 
     let myTask, taskInstance1;
