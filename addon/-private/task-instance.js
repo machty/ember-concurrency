@@ -24,8 +24,8 @@ import {
 
 import {
   GeneratorState,
-  GENERATOR_STATE_DONE,
-  GENERATOR_STATE_ERRORED,
+  GENERATOR_STATE_DONE_COMPLETE,
+  GENERATOR_STATE_DONE_ERRORED,
 } from './generator-state';
 
 export const PERFORM_TYPE_DEFAULT  = "PERFORM_TYPE_DEFAULT";
@@ -541,7 +541,6 @@ const TaskInstance = EmberObject.extend({
       }
       this._expectsLinkedYield = false;
     }
-
   },
 
   /**
@@ -608,7 +607,7 @@ const TaskInstance = EmberObject.extend({
   _proceedSync(yieldResumeType, value) {
     if (this._completionState) { return; }
 
-    if (this._generator.state === GENERATOR_STATE_DONE) {
+    if (this._generator.done) {
       this._handleResolvedReturnedValue(yieldResumeType, value);
     } else {
       this._handleResolvedContinueValue(yieldResumeType, value);
@@ -620,7 +619,6 @@ const TaskInstance = EmberObject.extend({
     // value is the resolved value of the yieldable. We just
     // need to decide how to finalize.
     assert("expected completion state to be pending", this._completionState === COMPLETION_PENDING);
-    assert("expected generator to be done", this._generator.state === GENERATOR_STATE_DONE);
 
     switch(yieldResumeType) {
       case YIELDABLE_CONTINUE:
@@ -649,11 +647,12 @@ const TaskInstance = EmberObject.extend({
     let beforeIndex = this._index;
     this._resumeGenerator(resumeValue, iteratorMethod);
 
+    // TODO: what is this doing? write breaking test.
     if (!this._advanceIndex(beforeIndex)) {
       return;
     }
 
-    if (this._generator.state === GENERATOR_STATE_ERRORED) {
+    if (this._generator.state === GENERATOR_STATE_DONE_ERRORED) {
       this._finalize(this._generator.value, COMPLETION_ERROR);
       return;
     }
@@ -680,11 +679,12 @@ const TaskInstance = EmberObject.extend({
     } else if (typeof yieldedValue.then === 'function') {
       handleYieldedUnknownThenable(yieldedValue, this, this._index);
     } else {
-      this._proceedWithSimpleValue(yieldedValue); }
+      this._proceedWithSimpleValue(yieldedValue);
+    }
   },
 
   _proceedWithSimpleValue(yieldedValue) {
-    this.proceed(this._index, YIELDABLE_CONTINUE, yieldedValue);
+    this._proceedAsync(YIELDABLE_CONTINUE, yieldedValue);
   },
 
   _addDisposer(maybeDisposer) {
