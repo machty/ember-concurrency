@@ -22,10 +22,11 @@ import {
   COMPLETION_CANCEL,
 } from "./completion-states"
 
-const GENERATOR_STATE_BEFORE_CREATE = "BEFORE_CREATE";
-const GENERATOR_STATE_HAS_MORE_VALUES = "HAS_MORE_VALUES";
-const GENERATOR_STATE_DONE = "DONE";
-const GENERATOR_STATE_ERRORED = "ERRORED";
+import {
+  GeneratorState,
+  GENERATOR_STATE_DONE,
+  GENERATOR_STATE_ERRORED,
+} from './generator-state';
 
 export const PERFORM_TYPE_DEFAULT  = "PERFORM_TYPE_DEFAULT";
 export const PERFORM_TYPE_UNLINKED = "PERFORM_TYPE_UNLINKED";
@@ -104,7 +105,6 @@ const TaskInstance = EmberObject.extend({
   task: null,
   args: [],
   _hasSubscribed: false,
-  _runLoop: true,
   _debug: false,
   _hasEnabledEvents: false,
   cancelReason: null,
@@ -112,6 +112,11 @@ const TaskInstance = EmberObject.extend({
   _expectsLinkedYield: false,
   _tags: null,
   _counted: false,
+
+  init(...args) {
+    this._super(...args);
+    this._generator = new GeneratorState(this._generatorBuilder());
+  },
 
   /**
    * If this TaskInstance runs to completion by returning a property
@@ -329,9 +334,10 @@ const TaskInstance = EmberObject.extend({
   _index: 1,
 
   _start() {
+    // This method assumes a run loop
     if (this.hasStarted || this.isCanceling) { return this; }
     set(this, 'hasStarted', true);
-    this._scheduleProceed(YIELDABLE_CONTINUE, undefined);
+    this._proceedSync(YIELDABLE_CONTINUE, undefined);
     this._triggerEvent('started', this);
     return this;
   },
@@ -357,7 +363,7 @@ const TaskInstance = EmberObject.extend({
     set(this, 'cancelReason', `TaskInstance '${name}' was canceled because ${cancelReason}. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help`);
 
     if (this.hasStarted) {
-      this._proceedSoon(YIELDABLE_CANCEL, null);
+      this._proceedAsync(YIELDABLE_CANCEL, null);
     } else {
       this._finalize(null, COMPLETION_CANCEL);
     }
@@ -516,11 +522,6 @@ const TaskInstance = EmberObject.extend({
     }
   },
 
-  _isGeneratorDone() {
-    let state = this._generatorState;
-    return state === GENERATOR_STATE_DONE || state === GENERATOR_STATE_ERRORED;
-  },
-
   /**
    * Calls .next()/.throw()/.return() on the task's generator function iterator,
    * essentially taking a single step of execution on the task function.
@@ -528,41 +529,19 @@ const TaskInstance = EmberObject.extend({
    * @private
    */
   _resumeGenerator(nextValue, iteratorMethod) {
-    assert("The task generator function has already run to completion. This is probably an ember-concurrency bug.", !this._isGeneratorDone());
+    TASK_INSTANCE_STACK.push(this);
+    this._generator.resume(nextValue, iteratorMethod);
+    TASK_INSTANCE_STACK.pop();
 
-    try {
-      TASK_INSTANCE_STACK.push(this);
-
-      let iterator = this._getIterator();
-      let result = iterator[iteratorMethod](nextValue);
-
-      this._generatorValue = result.value;
-      if (result.done) {
-        this._generatorState = GENERATOR_STATE_DONE;
-      } else {
-        this._generatorState = GENERATOR_STATE_HAS_MORE_VALUES;
+    if (this._expectsLinkedYield) {
+      let value = this._generator.value;
+      if (!value || value._performType !== PERFORM_TYPE_LINKED) {
+        // eslint-disable-next-line no-console
+        console.warn("You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency).");
       }
-    } catch(e) {
-      this._generatorValue = e;
-      this._generatorState = GENERATOR_STATE_ERRORED;
-    } finally {
-      if (this._expectsLinkedYield) {
-        if (!this._generatorValue || this._generatorValue._performType !== PERFORM_TYPE_LINKED) {
-          // eslint-disable-next-line no-console
-          console.warn("You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency).");
-        }
-        this._expectsLinkedYield = false;
-      }
-
-      TASK_INSTANCE_STACK.pop();
+      this._expectsLinkedYield = false;
     }
-  },
 
-  _getIterator() {
-    if (!this.iterator) {
-      this.iterator = this._makeIterator();
-    }
-    return this.iterator;
   },
 
   /**
@@ -573,14 +552,14 @@ const TaskInstance = EmberObject.extend({
    * the args passed to `perform(...args)` through to the generator
    * function.
    *
-   * `_makeIterator` is overridden in EncapsulatedTask to produce
+   * `_generatorBuilder` is overridden in EncapsulatedTask to produce
    * an iterator based on the `*perform()` function on the
    * EncapsulatedTask definition.
    *
    * @private
    */
-  _makeIterator() {
-    return this.fn.apply(this.context, this.args);
+  _generatorBuilder() {
+    return () => this.fn.apply(this.context, this.args);
   },
 
   /**
@@ -609,43 +588,27 @@ const TaskInstance = EmberObject.extend({
     }
   },
 
-  _proceedSoon(yieldResumeType, value) {
-    this._advanceIndex(this._index);
-    if (this._runLoop) {
-      join(() => {
-        schedule('actions', this, this._proceed, yieldResumeType, value);
-      });
-    } else {
-      setTimeout(() => this._proceed(yieldResumeType, value), 1);
-    }
-  },
-
+  // this is the "public" API for how yieldables resume TaskInstances;
+  // this should probably be cleanup / generalized, but until then,
+  // we can't change the name.
   proceed(index, yieldResumeType, value) {
     if (this._completionState) { return; }
-    if (!this._advanceIndex(index)) {
-      return;
-    }
-    this._proceedSoon(yieldResumeType, value);
+    if (!this._advanceIndex(index)) { return; }
+    this._proceedAsync(yieldResumeType, value);
   },
 
-  _scheduleProceed(yieldResumeType, value) {
-    if (this._completionState) { return; }
+  _proceedAsync(yieldResumeType, value) {
+    this._advanceIndex(this._index);
 
-    if (this._runLoop && !run.currentRunLoop) {
-      run(this, this._proceed, yieldResumeType, value);
-      return;
-    } else if (!this._runLoop && run.currentRunLoop) {
-      setTimeout(() => this._proceed(yieldResumeType, value), 1);
-      return;
-    } else {
-      this._proceed(yieldResumeType, value);
-    }
+    join(() => {
+      schedule('actions', this, this._proceedSync, yieldResumeType, value);
+    });
   },
 
-  _proceed(yieldResumeType, value) {
+  _proceedSync(yieldResumeType, value) {
     if (this._completionState) { return; }
 
-    if (this._generatorState === GENERATOR_STATE_DONE) {
+    if (this._generator.state === GENERATOR_STATE_DONE) {
       this._handleResolvedReturnedValue(yieldResumeType, value);
     } else {
       this._handleResolvedContinueValue(yieldResumeType, value);
@@ -657,7 +620,7 @@ const TaskInstance = EmberObject.extend({
     // value is the resolved value of the yieldable. We just
     // need to decide how to finalize.
     assert("expected completion state to be pending", this._completionState === COMPLETION_PENDING);
-    assert("expected generator to be done", this._generatorState === GENERATOR_STATE_DONE);
+    assert("expected generator to be done", this._generator.state === GENERATOR_STATE_DONE);
 
     switch(yieldResumeType) {
       case YIELDABLE_CONTINUE:
@@ -674,8 +637,6 @@ const TaskInstance = EmberObject.extend({
     }
   },
 
-  _generatorState: GENERATOR_STATE_BEFORE_CREATE,
-  _generatorValue: null,
   _handleResolvedContinueValue(_yieldResumeType, resumeValue) {
     let iteratorMethod = _yieldResumeType;
     if (iteratorMethod === YIELDABLE_CANCEL) {
@@ -692,8 +653,8 @@ const TaskInstance = EmberObject.extend({
       return;
     }
 
-    if (this._generatorState === GENERATOR_STATE_ERRORED) {
-      this._finalize(this._generatorValue, COMPLETION_ERROR);
+    if (this._generator.state === GENERATOR_STATE_ERRORED) {
+      this._finalize(this._generator.value, COMPLETION_ERROR);
       return;
     }
 
@@ -701,7 +662,7 @@ const TaskInstance = EmberObject.extend({
   },
 
   _handleYieldedValue() {
-    let yieldedValue = this._generatorValue;
+    let yieldedValue = this._generator.value;
     if (!yieldedValue) {
       this._proceedWithSimpleValue(yieldedValue);
       return;
@@ -719,8 +680,7 @@ const TaskInstance = EmberObject.extend({
     } else if (typeof yieldedValue.then === 'function') {
       handleYieldedUnknownThenable(yieldedValue, this, this._index);
     } else {
-      this._proceedWithSimpleValue(yieldedValue);
-    }
+      this._proceedWithSimpleValue(yieldedValue); }
   },
 
   _proceedWithSimpleValue(yieldedValue) {

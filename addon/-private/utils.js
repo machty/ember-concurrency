@@ -203,5 +203,6 @@ export function yieldableToPromise(yieldable) {
 }
 
 export function deprecatePrivateModule(moduleName) {
-  console.warn(`an Ember addon is importing a private ember-concurrency module '${moduleName}' that has moved`); // eslint-disable-line no-console
+  // eslint-disable-next-line no-console
+  console.warn(`an Ember addon is importing a private ember-concurrency module '${moduleName}' that has moved`);
 }
