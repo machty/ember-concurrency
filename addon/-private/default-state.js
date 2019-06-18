@@ -11,6 +11,4 @@ export const DEFAULT_STATE = {
   performCount: 0
 };
 
-if (Object.freeze) {
-  Object.freeze(DEFAULT_STATE);
-}
+Object.freeze(DEFAULT_STATE);
