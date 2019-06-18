@@ -140,7 +140,7 @@ function sharedTaskProperties(taskProperty, context, _propertyName) {
     props._scheduler = group._scheduler;
   } else {
     let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);
-    props._scheduler = new EmberScheduler(schedulerPolicy);
+    props._scheduler = new EmberScheduler(schedulerPolicy, taskProperty._stateless);
   }
 
   return props;

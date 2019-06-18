@@ -1,9 +1,8 @@
 import { TYPE_STARTED, TYPE_QUEUED, TYPE_CANCELLED } from "./policies/desired-states"
-import RefreshStateSet from "./refresh-state-set";
 
 class Refresh {
-  constructor(schedulerPolicy, taskInstances) {
-    this.taskStates = new RefreshStateSet();
+  constructor(schedulerPolicy, stateTracker, taskInstances) {
+    this.stateTracker = stateTracker;
     this.schedulerPolicy = schedulerPolicy;
     this.initialTaskInstances = taskInstances;
     this.startingInstances = [];
@@ -17,7 +16,7 @@ class Refresh {
       return this.setTaskInstanceState(taskInstance, reducer.step());
     });
 
-    this.taskStates.computeFinalStates(state => this.applyState(state));
+    this.stateTracker.computeFinalStates(state => this.applyState(state));
     this.startingInstances.forEach(taskInstance => taskInstance._start());
 
     return finalTaskInstances;
@@ -26,7 +25,7 @@ class Refresh {
   filterFinishedTaskInstances() {
     let numRunning = 0, numQueued = 0;
     let taskInstances = this.initialTaskInstances.filter(taskInstance => {
-      let taskState = this.taskStates.findOrInit(taskInstance.task);
+      let taskState = this.stateTracker.stateFor(taskInstance.task);
 
       if (taskInstance.isFinished) {
         taskState.onCompletion(taskInstance);
@@ -45,7 +44,7 @@ class Refresh {
   }
 
   setTaskInstanceState(taskInstance, desiredState) {
-    let taskState = this.taskStates.findOrInit(taskInstance.task);
+    let taskState = this.stateTracker.stateFor(taskInstance.task);
 
     if (!taskInstance._counted) {
       taskInstance._counted = true;

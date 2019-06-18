@@ -1,11 +1,11 @@
-import RefreshState from "./refresh-state";
+import RefreshState from "./state";
 
 class RefreshStateSet {
   constructor() {
     this.states = {};
   }
 
-  findOrInit(taskOrGroup) {
+  stateFor(taskOrGroup) {
     let guid = taskOrGroup._guid;
     let taskState = this.states[guid];
     if (!taskState) {
@@ -27,7 +27,7 @@ class RefreshStateSet {
     this.forEachState(taskState => {
       let lastState = taskState;
       taskState.recurseTaskGroups(taskGroup => {
-        let state = this.findOrInit(taskGroup);
+        let state = this.stateFor(taskGroup);
         state.applyStateFrom(lastState);
         lastState = state;
       });

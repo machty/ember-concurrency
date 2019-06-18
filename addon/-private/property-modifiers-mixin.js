@@ -51,6 +51,12 @@ export const propertyModifiers = {
   debug() {
     this._debug = true;
     return this;
+  },
+
+  stateless() {
+    this._stateless = true;
+    assertModifiersNotMixedWithGroup(this);
+    return this;
   }
 };
 

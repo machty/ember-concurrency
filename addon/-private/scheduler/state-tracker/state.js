@@ -1,4 +1,4 @@
-import { COMPLETION_SUCCESS, COMPLETION_ERROR, COMPLETION_CANCEL } from "../completion-states";
+import { COMPLETION_SUCCESS, COMPLETION_ERROR, COMPLETION_CANCEL } from "../../completion-states";
 
 class RefreshState {
   constructor(taskOrGroup) {
