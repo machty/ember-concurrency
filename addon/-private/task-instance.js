@@ -22,11 +22,7 @@ import {
   COMPLETION_CANCEL,
 } from "./completion-states"
 
-import {
-  GeneratorState,
-  GENERATOR_STATE_DONE_COMPLETE,
-  GENERATOR_STATE_DONE_ERRORED,
-} from './generator-state';
+import { GeneratorState } from './generator-state';
 
 export const PERFORM_TYPE_DEFAULT  = "PERFORM_TYPE_DEFAULT";
 export const PERFORM_TYPE_UNLINKED = "PERFORM_TYPE_UNLINKED";
@@ -528,19 +524,21 @@ const TaskInstance = EmberObject.extend({
    *
    * @private
    */
-  _resumeGenerator(nextValue, iteratorMethod) {
+  _generatorStep(nextValue, iteratorMethod) {
     TASK_INSTANCE_STACK.push(this);
-    this._generator.resume(nextValue, iteratorMethod);
+    let stepResult = this._generator.step(nextValue, iteratorMethod);
     TASK_INSTANCE_STACK.pop();
 
     if (this._expectsLinkedYield) {
-      let value = this._generator.value;
+      let value = stepResult.value;
       if (!value || value._performType !== PERFORM_TYPE_LINKED) {
         // eslint-disable-next-line no-console
         console.warn("You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency).");
       }
       this._expectsLinkedYield = false;
     }
+
+    return stepResult;
   },
 
   /**
@@ -645,23 +643,23 @@ const TaskInstance = EmberObject.extend({
     this._dispose();
 
     let beforeIndex = this._index;
-    this._resumeGenerator(resumeValue, iteratorMethod);
+    let stepResult = this._generatorStep(resumeValue, iteratorMethod);
 
     // TODO: what is this doing? write breaking test.
     if (!this._advanceIndex(beforeIndex)) {
       return;
     }
 
-    if (this._generator.state === GENERATOR_STATE_DONE_ERRORED) {
-      this._finalize(this._generator.value, COMPLETION_ERROR);
+    if (stepResult.errored) {
+      this._finalize(stepResult.value, COMPLETION_ERROR);
       return;
     }
 
-    this._handleYieldedValue();
+    this._handleYieldedValue(stepResult);
   },
 
-  _handleYieldedValue() {
-    let yieldedValue = this._generator.value;
+  _handleYieldedValue(stepResult) {
+    let yieldedValue = stepResult.value;
     if (!yieldedValue) {
       this._proceedWithSimpleValue(yieldedValue);
       return;

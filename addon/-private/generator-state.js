@@ -1,34 +1,34 @@
 import { assert } from '@ember/debug';
 
-export const GENERATOR_STATE_HAS_MORE_VALUES = "HAS_MORE_VALUES";
-export const GENERATOR_STATE_DONE_COMPLETE = "COMPLETE";
-export const GENERATOR_STATE_DONE_ERRORED = "ERRORED";
+export class GeneratorStepResult {
+  constructor(value, done, errored) {
+    this.value = value;
+    this.done = done;
+    this.errored = errored;
+  }
+}
 
 export class GeneratorState {
   constructor(generatorBuilder) {
-    this.state = GENERATOR_STATE_HAS_MORE_VALUES;
-    this.value = null;
     this.done = false;
     this.generatorBuilder = generatorBuilder;
     this.iterator = null;
   }
 
-  resume(nextValue, iteratorMethod) {
+  step(resolvedValue, iteratorMethod) {
     this.assertNotFinished();
 
     try {
       let iterator = this.getIterator();
-      let result = iterator[iteratorMethod](nextValue);
+      let { value, done } = iterator[iteratorMethod](resolvedValue);
 
-      this.value = result.value;
-      if (result.done) {
-        this.finalize(GENERATOR_STATE_DONE_COMPLETE);
+      if (done) {
+        return this.finalize(value, false);
       } else {
-        this.state = GENERATOR_STATE_HAS_MORE_VALUES;
+        return new GeneratorStepResult(value, false, false);
       }
     } catch(e) {
-      this.value = e;
-      this.finalize(GENERATOR_STATE_DONE_ERRORED);
+      return this.finalize(e, true);
     } 
   }
 
@@ -39,10 +39,10 @@ export class GeneratorState {
     return this.iterator;
   }
 
-  finalize(finalState) {
-    this.state = finalState;
+  finalize(value, errored) {
     this.done = true;
     this.iterator = null;
+    return new GeneratorStepResult(value, true, errored);
   }
 
   assertNotFinished() {
