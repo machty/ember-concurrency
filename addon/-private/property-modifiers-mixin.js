@@ -14,7 +14,7 @@ export const propertyModifiers = {
   _hasSetBufferPolicy: false,
   _hasEnabledEvents: false,
   _onStateCallback: (taskOrGroup, state) => {
-    taskOrGroup.setProperties(state);
+    taskOrGroup.applyState(state);
   },
 
   restartable() {

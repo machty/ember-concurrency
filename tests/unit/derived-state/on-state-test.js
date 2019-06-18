@@ -13,9 +13,9 @@ module('Unit: task states - onState', function() {
     let Obj = EmberObject.extend({
       myTask: task(function * () {
         yield forever;
-      }).onState((task, state, object) => {
-        assert.equal(obj, object);
+      }).onState((task, state) => {
         assert.equal(obj.get('myTask'), task);
+        assert.equal(task.context, obj);
         states.push(state);
       }),
     });
@@ -33,7 +33,7 @@ module('Unit: task states - onState', function() {
       lastRunning: taskInstance,
       numQueued: 0,
       numRunning: 1,
-      performCount: 1,
+      numPerformedInc: 1,
     })
 
     run(() => obj.get('myTask').cancelAll());
@@ -45,7 +45,7 @@ module('Unit: task states - onState', function() {
       lastIncomplete: taskInstance,
       numQueued: 0,
       numRunning: 0,
-      performCount: 0,
+      numPerformedInc: 0,
     })
   });
 

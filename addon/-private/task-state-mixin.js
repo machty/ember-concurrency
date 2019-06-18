@@ -56,7 +56,12 @@ let mixinProps = {
 
   _resetState() {
     this.setProperties(DEFAULT_STATE);
-  }
+  },
+
+  applyState(state) {
+    this.setProperties(state);
+    this.incrementProperty('performCount', state.numPerformedInc);
+  },
 };
 
 Object.assign(mixinProps, DEFAULT_STATE);
