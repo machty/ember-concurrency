@@ -131,6 +131,7 @@ function sharedTaskProperties(taskProperty, context, _propertyName) {
     _propertyName,
     _debug: taskProperty._debug,
     _hasEnabledEvents: taskProperty._hasEnabledEvents,
+    _onStateCallback: taskProperty._onStateCallback,
     _guid: makeGuid(),
   };
 
@@ -140,7 +141,8 @@ function sharedTaskProperties(taskProperty, context, _propertyName) {
     props._scheduler = group._scheduler;
   } else {
     let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);
-    props._scheduler = new EmberScheduler(schedulerPolicy, taskProperty._stateless);
+    let stateTrackingEnabled = taskProperty._onStateCallback;
+    props._scheduler = new EmberScheduler(schedulerPolicy, stateTrackingEnabled);
   }
 
   return props;

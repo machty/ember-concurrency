@@ -17,9 +17,9 @@ import NullStateTracker from "./state-tracker/null-state-tracker";
 // in which case all the Tasks in a group share a single Scheduler.
 
 class Scheduler {
-  constructor(schedulerPolicy, stateless) {
+  constructor(schedulerPolicy, stateTrackingEnabled) {
     this.schedulerPolicy = schedulerPolicy;
-    this.stateless = stateless;
+    this.stateTrackingEnabled = stateTrackingEnabled;
     this.taskInstances = [];
   }
 
@@ -41,7 +41,7 @@ class Scheduler {
   scheduleRefresh() { }
 
   refresh() {
-    let stateTracker = this.stateless ? new NullStateTracker() : new StateTracker();
+    let stateTracker = this.stateTrackingEnabled ? new StateTracker() : new NullStateTracker();
     let refresh = new SchedulerRefresh(this.schedulerPolicy, stateTracker, this.taskInstances);
     this.taskInstances = refresh.process();
   }

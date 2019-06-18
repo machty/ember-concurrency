@@ -74,13 +74,17 @@ class Refresh {
   applyState(state) {
     let { taskOrGroup } = state;
 
+    if (!taskOrGroup._onStateCallback) {
+      return;
+    }
+
     let props = Object.assign({
       numRunning: state.numRunning,
       numQueued: state.numQueued,
       performCount: taskOrGroup.performCount + state.numPerformedInc,
     }, state.attrs);
 
-    taskOrGroup.setProperties(props);
+    taskOrGroup._onStateCallback(taskOrGroup, props, taskOrGroup.context);
   }
 }
 

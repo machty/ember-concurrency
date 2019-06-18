@@ -305,20 +305,4 @@ module('Unit: task states', function() {
       assert.equal(myTask.get('lastIncomplete'), taskInstance2);
     }
   });
-
-  test("task state-tracking can be disabled with .stateless()", function(assert) {
-    assert.expect(3);
-
-    let Obj = EmberObject.extend({
-      myTask: task(function * () {
-        yield forever;
-      }).stateless()
-    });
-
-    run(() => {
-      let obj= Obj.create();
-      obj.get('myTask').perform();
-      assert.equal(obj.get('myTask.isIdle'), true);
-    });
-  });
 });

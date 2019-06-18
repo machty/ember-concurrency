@@ -1,6 +1,6 @@
 import RefreshState from "./state";
 
-class RefreshStateSet {
+class StateTracker {
   constructor() {
     this.states = {};
   }
@@ -39,4 +39,4 @@ class RefreshStateSet {
   }
 }
 
-export default RefreshStateSet;
+export default StateTracker;

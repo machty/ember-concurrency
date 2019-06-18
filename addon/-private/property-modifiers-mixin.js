@@ -13,6 +13,9 @@ export const propertyModifiers = {
   _hasUsedModifier: false,
   _hasSetBufferPolicy: false,
   _hasEnabledEvents: false,
+  _onStateCallback: (taskOrGroup, state) => {
+    taskOrGroup.setProperties(state);
+  },
 
   restartable() {
     return setBufferPolicy(this, RestartableSchedulerPolicy);
@@ -53,9 +56,8 @@ export const propertyModifiers = {
     return this;
   },
 
-  stateless() {
-    this._stateless = true;
-    assertModifiersNotMixedWithGroup(this);
+  onState(callback) {
+    this._onStateCallback = callback;
     return this;
   }
 };

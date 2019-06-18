@@ -1,20 +1,8 @@
 import { gt } from "@ember/object/computed";
 import Mixin from "@ember/object/mixin";
 import { computed } from "@ember/object";
+import { DEFAULT_STATE } from "./default-state";
 const { alias } = computed;
-
-const DEFAULT_STATE = {
-  last: null,
-  lastRunning: null,
-  lastStarted: null,
-  lastPerformed: null,
-  lastSuccessful: null,
-  lastComplete: null,
-  lastErrored: null,
-  lastCanceled: null,
-  lastIncomplete: null,
-  performCount: 0
-};
 
 // this is a mixin of properties/methods shared between Tasks and TaskGroups
 let mixinProps = {
