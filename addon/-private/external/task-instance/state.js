@@ -290,20 +290,20 @@ export class TaskInstanceState {
   }
 
   promise() {
-    debugger;
     if (!this.defer) {
       this.defer = this.env.defer();
+      this.asyncHandlerAttached = true;
       this.maybeResolveDefer();
     }
     return this.defer.promise;
   }
 
   maybeThrowUnhandledTaskErrorLater() {
-    if (!this.hasSubscribed &&
+    if (!this.asyncHandlerAttached &&
          this.state.completionState === COMPLETION_ERROR &&
          !didCancel(this.state.error)) {
       this.env.async(() => {
-        if (!this.hasSubscribed) {
+        if (!this.asyncHandlerAttached) {
           this.env.reportUncaughtRejection(this.state.error);
         }
       });
@@ -316,10 +316,11 @@ export class TaskInstanceState {
 
     // we probably track this because the yieldable state might be different.
     // some cancel teardowns are slow and async. 
-    if (this.isCanceling || completionState === COMPLETION_CANCEL) {
+    if (this.state.isCanceling || completionState === COMPLETION_CANCEL) {
       state.isCanceling = true;
+      state.isCanceled = true;
       completionState = COMPLETION_CANCEL;
-      value = new Error(this.cancelReason);
+      value = new Error(this.state.cancelReason);
 
       if (this._debug || Ember.ENV.DEBUG_TASKS) {
         // eslint-disable-next-line no-console
@@ -327,7 +328,6 @@ export class TaskInstanceState {
       }
 
       value.name = TASK_CANCELATION_NAME;
-      // value.taskInstance = this;
     }
 
     state.completionState = completionState;
@@ -375,7 +375,7 @@ export class TaskInstanceState {
   }
 
   onYielded(parent, resumeIndex) {
-    this.hasSubscribed = true;
+    this.asyncHandlerAttached = true;
 
     this.onFinalize(() => {
       let completionState = this.state.completionState;

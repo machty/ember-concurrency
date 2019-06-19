@@ -304,7 +304,7 @@ module('Unit: task instance', function(hooks) {
     });
   });
 
-  test("exception handling", function(assert) {
+  test("exception handling", async function(assert) {
     assert.expect(7);
 
     let defer0, defer1;
@@ -337,9 +337,7 @@ module('Unit: task instance', function(hooks) {
 
   test("unhandled yielded rejections are asyncly reported to Ember.onerror", async function(assert) {
     assert.expect(2);
-
     let errors = stubEmberOnerror();
-
     run(() => {
       wrap(function * () {
         yield reject("wat");
@@ -347,21 +345,8 @@ module('Unit: task instance', function(hooks) {
     });
 
     assert.deepEqual(errors, []);
-    await timeout(5);
+    await timeout(1);
     assert.deepEqual(errors, ["wat"]);
-  });
-
-  test("unhandled thrown exceptions bubble", function(assert) {
-    assert.expect(1);
-    try {
-      run(() => {
-        wrap(function * () {
-          throw "wat";
-        })();
-      });
-    } catch(e) {
-      assert.equal(e, "wat");
-    }
   });
 
   test("yielding to other tasks", function(assert) {

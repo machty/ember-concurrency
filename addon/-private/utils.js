@@ -88,7 +88,6 @@ for (let i = 0; i < locations.length; i++) {
   }
 }
 
-// TODO: Symbol polyfill?
 export const yieldableSymbol = "__ec_yieldable__";
 export const YIELDABLE_CONTINUE = "next";
 export const YIELDABLE_THROW = "throw";
