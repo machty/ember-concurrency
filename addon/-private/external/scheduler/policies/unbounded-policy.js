@@ -1,4 +1,4 @@
-import { STARTED } from "./desired-states";
+import { STARTED } from "./execution-states";
 
 class UnboundedReducer {
   step() {

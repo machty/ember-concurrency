@@ -1,5 +1,5 @@
 import BoundedPolicy from "./bounded-policy";
-import { STARTED, QUEUED } from "./desired-states";
+import { STARTED, QUEUED } from "./execution-states";
 
 class EnqueuedReducer {
   constructor(remainingSlots) {
