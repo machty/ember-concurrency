@@ -6,6 +6,8 @@ import { TaskInstanceState, TASK_CANCELATION_NAME } from './task-instance-state'
 import { INITIAL_STATE } from './task-instance-initial-state';
 import { EmberTaskInstanceListener } from './ember-task-instance-listener';
 
+const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
+
 export const PERFORM_TYPE_DEFAULT  = "PERFORM_TYPE_DEFAULT";
 export const PERFORM_TYPE_UNLINKED = "PERFORM_TYPE_UNLINKED";
 export const PERFORM_TYPE_LINKED   = "PERFORM_TYPE_LINKED";

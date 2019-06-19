@@ -10,7 +10,7 @@ class RefreshState {
   }
 
   onCompletion(taskInstance) {
-    let state = taskInstance._completionState;
+    let state = taskInstance.completionState;
     this.attrs.lastComplete = taskInstance;
     if (state === COMPLETION_SUCCESS) {
       this.attrs.lastSuccessful = taskInstance;
