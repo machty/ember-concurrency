@@ -41,17 +41,6 @@ export function didCancel(e) {
   return e && e.name === TASK_CANCELATION_NAME;
 }
 
-function forwardToInternalPromise(method) {
-  return function(...args) {
-    this._hasSubscribed = true;
-    return this.get('_promise')[method](...args);
-  };
-}
-
-function spliceSlice(str, index, count, add) {
-  return str.slice(0, index) + (add || "") + str.slice(index + count);
-}
-
 /**
   A `TaskInstance` represent a single execution of a
   {@linkcode Task}. Every call to {@linkcode Task#perform} returns
@@ -241,8 +230,7 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
   },
 
   toString() {
-    let taskString = ""+this.task;
-    return spliceSlice(taskString, -1, 0, `.perform()`);
+    return `${this.task} TaskInstance`;
   },
 
   /**
@@ -257,10 +245,6 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
     this._state.cancel(cancelReason);
   },
 
-  _promise: computed(function() {
-    return this._state.getPromise();
-  }),
-
   /**
    * Returns a promise that resolves with the value returned
    * from the task's (generator) function, or rejects with
@@ -272,7 +256,9 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
    * @instance
    * @return {Promise}
    */
-  then: forwardToInternalPromise('then'),
+  then(...args) {
+    return this._state.promise().then(...args);
+  },
 
   /**
    * @method catch
@@ -280,7 +266,9 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
    * @instance
    * @return {Promise}
    */
-  catch: forwardToInternalPromise('catch'),
+  catch(...args) {
+    return this._state.promise().catch(...args);
+  },
 
   /**
    * @method finally
@@ -288,7 +276,9 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
    * @instance
    * @return {Promise}
    */
-  finally: forwardToInternalPromise('finally'),
+  finally(...args) {
+    return this._state.promise().finally(...args);
+  },
 
   _onFinalize(callback) {
     this._state.onFinalize(callback);

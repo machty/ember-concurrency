@@ -276,7 +276,7 @@ export class TaskInstanceState {
     this.maybeThrowUnhandledTaskErrorLater();
   }
 
-  getPromise() {
+  promise() {
     if (!this.defer) {
       this.defer = defer();
       this.maybeResolveDefer();
