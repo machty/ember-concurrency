@@ -131,7 +131,7 @@ export class TaskInstanceState {
   handleResolvedContinueValue(_yieldResumeType, resumeValue) {
     let iteratorMethod = _yieldResumeType;
     if (iteratorMethod === YIELDABLE_CANCEL) {
-      this.cancelRequested = true;
+      this.setState({ isCanceling: true }); // TODO: this feels bad
       iteratorMethod = YIELDABLE_RETURN;
     }
 
@@ -292,18 +292,18 @@ export class TaskInstanceState {
   promise() {
     if (!this.defer) {
       this.defer = this.env.defer();
-      this.asyncHandlerAttached = true;
+      this.asyncErrorsHandled = true;
       this.maybeResolveDefer();
     }
     return this.defer.promise;
   }
 
   maybeThrowUnhandledTaskErrorLater() {
-    if (!this.asyncHandlerAttached &&
+    if (!this.asyncErrorsHandled &&
          this.state.completionState === COMPLETION_ERROR &&
          !didCancel(this.state.error)) {
       this.env.async(() => {
-        if (!this.asyncHandlerAttached) {
+        if (!this.asyncErrorsHandled) {
           this.env.reportUncaughtRejection(this.state.error);
         }
       });
@@ -368,14 +368,14 @@ export class TaskInstanceState {
     try {
       let yieldContext = this.listener.getYieldContext();
       let maybeDisposer = yieldedValue[yieldableSymbol](yieldContext, this.index);
-      this._addDisposer(maybeDisposer);
+      this.addDisposer(maybeDisposer);
     } catch(e) {
-      // TODO: handle erroneous yieldable implementation
+      this.env.reportUncaughtRejection(e);
     }
   }
 
   onYielded(parent, resumeIndex) {
-    this.asyncHandlerAttached = true;
+    this.asyncErrorsHandled = true;
 
     this.onFinalize(() => {
       let completionState = this.state.completionState;
