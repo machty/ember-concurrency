@@ -2,15 +2,12 @@ import { not, and } from '@ember/object/computed';
 import EmberObject, { computed, get, set } from '@ember/object';
 import { yieldableSymbol, RawValue } from './utils';
 
-import { TaskInstanceState, TASK_CANCELATION_NAME } from './external/task-instance/state';
+import { TaskInstanceState } from './external/task-instance/state';
 import { INITIAL_STATE } from './external/task-instance/initial-state';
 import { EmberTaskInstanceListener } from './ember-task-instance-listener';
+import { EmberEnvironment } from './ember-environment';
 
 const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
-
-export const PERFORM_TYPE_DEFAULT  = "PERFORM_TYPE_DEFAULT";
-export const PERFORM_TYPE_UNLINKED = "PERFORM_TYPE_UNLINKED";
-export const PERFORM_TYPE_LINKED   = "PERFORM_TYPE_LINKED";
 
 let TASK_INSTANCE_STACK = [];
 
@@ -18,28 +15,7 @@ export function getRunningInstance() {
   return TASK_INSTANCE_STACK[TASK_INSTANCE_STACK.length - 1];
 }
 
-/**
- * Returns true if the object passed to it is a TaskCancelation error.
- * If you call `someTask.perform().catch(...)` or otherwise treat
- * a {@linkcode TaskInstance} like a promise, you may need to
- * handle the cancelation of a TaskInstance differently from
- * other kinds of errors it might throw, and you can use this
- * convenience function to distinguish cancelation from errors.
- *
- * ```js
- * click() {
- *   this.get('myTask').perform().catch(e => {
- *     if (!didCancel(e)) { throw e; }
- *   });
- * }
- * ```
- *
- * @param {Object} error the caught error, which might be a TaskCancelation
- * @returns {Boolean}
- */
-export function didCancel(e) {
-  return e && e.name === TASK_CANCELATION_NAME;
-}
+const EMBER_ENVIRONMENT = new EmberEnvironment();
 
 /**
   A `TaskInstance` represent a single execution of a
@@ -63,11 +39,9 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
   iterator: null,
   task: null,
   args: [],
-  _hasSubscribed: false,
   _debug: false,
   _hasEnabledEvents: false,
   cancelReason: null,
-  _performType: PERFORM_TYPE_DEFAULT,
   _expectsLinkedYield: false,
   _tags: null,
   _counted: false,
@@ -76,7 +50,7 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
     this._super(...args);
     let listener = new EmberTaskInstanceListener(this);
     let name = get(this, 'task._propertyName') || "<unknown>";
-    this._state = new TaskInstanceState(this._generatorBuilder(), name, listener);
+    this._state = new TaskInstanceState(this._generatorBuilder(), name, listener, EMBER_ENVIRONMENT);
   },
 
   /**
@@ -306,43 +280,11 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
   // this should probably be cleanup / generalized, but until then,
   // we can't change the name.
   proceed(index, yieldResumeType, value) {
-    this._state.proceedSafe(index, yieldResumeType, value);
+    this._state.proceedChecked(index, yieldResumeType, value);
   },
 
-  [yieldableSymbol]: function handleYieldedTaskInstance(parentTaskInstance, resumeIndex) {
-    // TODO
-    let yieldedTaskInstance = this;
-    yieldedTaskInstance._hasSubscribed = true;
-
-    yieldedTaskInstance._onFinalize(() => {
-      let state = yieldedTaskInstance._completionState;
-      if (state === COMPLETION_SUCCESS) {
-        parentTaskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, yieldedTaskInstance.value);
-      } else if (state === COMPLETION_ERROR) {
-        parentTaskInstance.proceed(resumeIndex, YIELDABLE_THROW, yieldedTaskInstance.error);
-      } else if (state === COMPLETION_CANCEL) {
-        parentTaskInstance.proceed(resumeIndex, YIELDABLE_CANCEL, null);
-      }
-    });
-
-    return function disposeYieldedTaskInstance() {
-      if (yieldedTaskInstance._performType !== PERFORM_TYPE_UNLINKED) {
-        if (yieldedTaskInstance._performType === PERFORM_TYPE_DEFAULT) {
-          let parentObj = get(parentTaskInstance, 'task.context');
-          let childObj = get(yieldedTaskInstance, 'task.context');
-          if (parentObj && childObj &&
-              parentObj !== childObj &&
-              parentObj.isDestroying &&
-              get(yieldedTaskInstance, 'isRunning')) {
-            let parentName = `\`${parentTaskInstance.task._propertyName}\``;
-            let childName = `\`${yieldedTaskInstance.task._propertyName}\``;
-            // eslint-disable-next-line no-console
-            console.warn(`ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task ${parentName} and child task ${childName}. If you want child task ${childName} to be canceled when parent task ${parentName} is canceled, please change \`.perform()\` to \`.linked().perform()\`. If you want child task ${childName} to keep running after parent task ${parentName} is canceled, change it to \`.unlinked().perform()\``);
-          }
-        }
-        yieldedTaskInstance.cancel();
-      }
-    };
+  [yieldableSymbol](parentTaskInstance, resumeIndex) {
+    return this._state.onYielded(parentTaskInstance._state, resumeIndex);
   },
 }));
 

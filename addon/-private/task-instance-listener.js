@@ -4,4 +4,5 @@ export class TaskInstanceListener {
   onSuccess() {}
   onError() {}
   onCancel() {}
+  getYieldContext() {}
 }

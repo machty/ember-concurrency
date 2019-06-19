@@ -1,8 +1,5 @@
-import { defer, reject } from 'rsvp'; // TODO: stub this
-import { assert } from '@ember/debug';
 import { GeneratorState } from "../../generator-state";
 import { INITIAL_STATE } from "./initial-state";
-import { run, join, schedule } from '@ember/runloop';
 import {
   yieldableSymbol,
   YIELDABLE_CONTINUE,
@@ -12,30 +9,53 @@ import {
   RawValue,
 } from '../../utils';
 
+
+export const PERFORM_TYPE_DEFAULT  = "PERFORM_TYPE_DEFAULT";
+export const PERFORM_TYPE_UNLINKED = "PERFORM_TYPE_UNLINKED";
+export const PERFORM_TYPE_LINKED   = "PERFORM_TYPE_LINKED";
+
 export const TASK_CANCELATION_NAME = 'TaskCancelation';
 
+/**
+ * Returns true if the object passed to it is a TaskCancelation error.
+ * If you call `someTask.perform().catch(...)` or otherwise treat
+ * a {@linkcode TaskInstance} like a promise, you may need to
+ * handle the cancelation of a TaskInstance differently from
+ * other kinds of errors it might throw, and you can use this
+ * convenience function to distinguish cancelation from errors.
+ *
+ * ```js
+ * click() {
+ *   this.get('myTask').perform().catch(e => {
+ *     if (!didCancel(e)) { throw e; }
+ *   });
+ * }
+ * ```
+ *
+ * @param {Object} error the caught error, which might be a TaskCancelation
+ * @returns {Boolean}
+ */
+export function didCancel(e) {
+  return e && e.name === TASK_CANCELATION_NAME;
+}
+
 import { 
-  COMPLETION_PENDING,
   COMPLETION_SUCCESS,
   COMPLETION_ERROR,
   COMPLETION_CANCEL,
 } from "./completion-states"
 
 export class TaskInstanceState {
-  constructor(generatorBuilder, name, listener) {
+  constructor(generatorBuilder, name, listener, env) {
     this.generatorState = new GeneratorState(generatorBuilder);
     this.name = name;
     this.listener = listener;
     this.state = Object.assign({}, INITIAL_STATE);
     this.index = 1;
-    this.disposer = null;
+    this.disposers = [];
     this.finalizeCallbacks = [];
-    this.completionState = COMPLETION_PENDING;
-  }
-
-  async(callback) {
-    // TODO: make this pluggable
-    join(() => schedule('actions', null, callback));
+    this.env = env;
+    this.performType = PERFORM_TYPE_DEFAULT; // TODO
   }
 
   start() {
@@ -67,7 +87,7 @@ export class TaskInstanceState {
     this.listener.setState(state);
   }
   
-  proceedSafe(index, yieldResumeType, value) {
+  proceedChecked(index, yieldResumeType, value) {
     if (this.state.isFinished) { return; }
     if (!this.advanceIndex(index)) { return; }
     this.proceedAsync(yieldResumeType, value);
@@ -75,7 +95,7 @@ export class TaskInstanceState {
 
   proceedAsync(yieldResumeType, value) {
     this.advanceIndex(this.index);
-    this.async(() => this.proceedSync(yieldResumeType, value))
+    this.env.async(() => this.proceedSync(yieldResumeType, value))
   }
 
   proceedSync(yieldResumeType, value) {
@@ -92,7 +112,7 @@ export class TaskInstanceState {
     // decide what to do in the case of `return maybeYieldable`;
     // value is the resolved value of the yieldable. We just
     // need to decide how to finalize.
-    assert("expected completion state to be pending", !this.state.isFinished);
+    this.env.assert("expected completion state to be pending", !this.state.isFinished);
 
     switch(yieldResumeType) {
       case YIELDABLE_CONTINUE:
@@ -136,9 +156,9 @@ export class TaskInstanceState {
   handleYieldedUnknownThenable(thenable) {
     let resumeIndex = this.index;
     thenable.then(value => {
-      this.proceedSafe(resumeIndex, YIELDABLE_CONTINUE, value);
+      this.proceedChecked(resumeIndex, YIELDABLE_CONTINUE, value);
     }, error => {
-      this.proceedSafe(resumeIndex, YIELDABLE_THROW, error);
+      this.proceedChecked(resumeIndex, YIELDABLE_THROW, error);
     });
   }
 
@@ -196,17 +216,11 @@ export class TaskInstanceState {
   }
 
   addDisposer(maybeDisposer) {
-    if (typeof maybeDisposer === 'function') {
-      let priorDisposer = this.disposer;
-      if (priorDisposer) {
-        this.disposer = () => {
-          priorDisposer();
-          maybeDisposer();
-        };
-      } else {
-        this.disposer = maybeDisposer;
-      }
+    if (typeof maybeDisposer !== 'function') {
+      return;
     }
+
+    this.disposers.push(maybeDisposer);
   }
 
   /**
@@ -217,14 +231,13 @@ export class TaskInstanceState {
    *
    * @private
    */
-  dispose() {
-    if (this.disposer) {
-      let disposer = this.disposer;
-      this.disposer = null;
-
-      // TODO: test erroring disposer
-      disposer();
+  dispose(reason) {
+    let disposers = this.disposers;
+    if (disposers.length === 0) {
+      return;
     }
+    this.disposers = [];
+    disposers.forEach(disposer => disposer(reason));
   }
 
   /**
@@ -252,12 +265,12 @@ export class TaskInstanceState {
   }
 
   maybeResolveDefer() {
-    if (!this.defer || this.state.isFinished) { return; }
+    if (!this.defer || !this.state.isFinished) { return; }
 
-    if (this.completionState === COMPLETION_SUCCESS) {
-      this.defer.resolve(this.value);
+    if (this.state.completionState === COMPLETION_SUCCESS) {
+      this.defer.resolve(this.state.value);
     } else {
-      this.defer.reject(this.error);
+      this.defer.reject(this.state.error);
     }
   }
 
@@ -277,24 +290,23 @@ export class TaskInstanceState {
   }
 
   promise() {
+    debugger;
     if (!this.defer) {
-      this.defer = defer();
+      this.defer = this.env.defer();
       this.maybeResolveDefer();
     }
     return this.defer.promise;
   }
 
   maybeThrowUnhandledTaskErrorLater() {
-    // this backports the Ember 2.0+ RSVP _onError 'after' microtask behavior to Ember < 2.0
-    if (!this.hasSubscribed && this.state.completionState === COMPLETION_ERROR) {
-      schedule(
-        run.backburner.queueNames[run.backburner.queueNames.length - 1],
-        () => {
-          if (!this._hasSubscribed && !didCancel(this.error)) {
-            reject(this.error);
-          }
+    if (!this.hasSubscribed &&
+         this.state.completionState === COMPLETION_ERROR &&
+         !didCancel(this.state.error)) {
+      this.env.async(() => {
+        if (!this.hasSubscribed) {
+          this.env.reportUncaughtRejection(this.state.error);
         }
-      );
+      });
     }
   }
 
@@ -354,10 +366,54 @@ export class TaskInstanceState {
 
   invokeYieldable(yieldedValue) {
     try {
-      let maybeDisposer = yieldedValue[yieldableSymbol](this, this.index);
+      let yieldContext = this.listener.getYieldContext();
+      let maybeDisposer = yieldedValue[yieldableSymbol](yieldContext, this.index);
       this._addDisposer(maybeDisposer);
     } catch(e) {
       // TODO: handle erroneous yieldable implementation
     }
+  }
+
+  onYielded(parent, resumeIndex) {
+    this.hasSubscribed = true;
+
+    this.onFinalize(() => {
+      let completionState = this.state.completionState;
+      if (completionState === COMPLETION_SUCCESS) {
+        parent.proceedChecked(resumeIndex, YIELDABLE_CONTINUE, this.state.value);
+      } else if (completionState === COMPLETION_ERROR) {
+        parent.proceedChecked(resumeIndex, YIELDABLE_THROW, this.state.error);
+      } else if (completionState === COMPLETION_CANCEL) {
+        parent.proceedChecked(resumeIndex, YIELDABLE_CANCEL, null);
+      }
+    });
+
+    if (this.performType === PERFORM_TYPE_UNLINKED) {
+      return;
+    }
+
+    return (reason) => {
+      this.detectSelfCancelLoop(reason, parent);
+      this.cancel(); // TODO: cancel reason?
+    };
+  }
+
+  detectSelfCancelLoop(reason, parent) {
+    if (this.performType !== PERFORM_TYPE_DEFAULT) {
+      return;
+    }
+
+    // let parentObj = get(parentTaskInstance, 'task.context');
+    // let childObj = get(thisTaskInstance, 'task.context');
+
+    // if (parentObj && childObj &&
+    //     parentObj !== childObj &&
+    //     parentObj.isDestroying &&
+    //     get(thisTaskInstance, 'isRunning')) {
+    //   let parentName = `\`${parentTaskInstance.task._propertyName}\``;
+    //   let childName = `\`${thisTaskInstance.task._propertyName}\``;
+    //   // eslint-disable-next-line no-console
+    //   console.warn(`ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task ${parentName} and child task ${childName}. If you want child task ${childName} to be canceled when parent task ${parentName} is canceled, please change \`.perform()\` to \`.linked().perform()\`. If you want child task ${childName} to keep running after parent task ${parentName} is canceled, change it to \`.unlinked().perform()\``);
+    // }
   }
 }

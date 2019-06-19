@@ -26,6 +26,10 @@ export class EmberTaskInstanceListener extends TaskInstanceListener {
     this.triggerEvent('canceled', this.taskInstance, cancelReason);
   }
 
+  getYieldContext() {
+    return this.taskInstance;
+  }
+
   triggerEvent(...allArgs) {
     if (!this.taskInstance._hasEnabledEvents) {
       return;

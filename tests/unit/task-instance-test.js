@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import RSVP, { resolve, reject } from 'rsvp';
 import { run } from '@ember/runloop';
 import {
@@ -6,8 +7,17 @@ import {
   didCancel
 } from 'ember-concurrency/-private/task-instance';
 import { module, test } from 'qunit';
+import { timeout } from 'ember-concurrency';
 
-module('Unit: task instance', function() {
+function stubEmberOnerror() {
+  let errors = [];
+  Ember.onerror = (e) => errors.push(e);
+  return errors;
+}
+
+module('Unit: task instance', function(hooks) {
+  hooks.afterEach(() => Ember.onerror = null);
+
   test("basics", function(assert) {
     assert.expect(2);
 
@@ -325,17 +335,20 @@ module('Unit: task instance', function() {
     assert.ok(taskInstance.get('isFinished'));
   });
 
-  test("unhandled yielded rejections bubble", function(assert) {
-    assert.expect(1);
-    try {
-      run(() => {
-        wrap(function * () {
-          yield reject("wat");
-        })();
-      });
-    } catch(e) {
-      assert.equal(e, "wat");
-    }
+  test("unhandled yielded rejections are asyncly reported to Ember.onerror", async function(assert) {
+    assert.expect(2);
+
+    let errors = stubEmberOnerror();
+
+    run(() => {
+      wrap(function * () {
+        yield reject("wat");
+      })();
+    });
+
+    assert.deepEqual(errors, []);
+    await timeout(5);
+    assert.deepEqual(errors, ["wat"]);
   });
 
   test("unhandled thrown exceptions bubble", function(assert) {
