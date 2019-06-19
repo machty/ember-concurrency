@@ -1,5 +1,7 @@
+import { COMPLETION_PENDING } from "./completion-states";
+
 export const INITIAL_STATE = {
-  completionState: 0, // TODO: import
+  completionState: COMPLETION_PENDING,
 
   /**
    * If this TaskInstance runs to completion by returning a property

@@ -1,7 +1,7 @@
 import { defer, reject } from 'rsvp'; // TODO: stub this
 import { assert } from '@ember/debug';
-import { GeneratorState } from "../generator-state";
-import { INITIAL_STATE } from "../task-instance-initial-state";
+import { GeneratorState } from "../../generator-state";
+import { INITIAL_STATE } from "./initial-state";
 import { run, join, schedule } from '@ember/runloop';
 import {
   yieldableSymbol,
@@ -10,7 +10,7 @@ import {
   YIELDABLE_RETURN,
   YIELDABLE_CANCEL,
   RawValue,
-} from '../utils';
+} from '../../utils';
 
 export const TASK_CANCELATION_NAME = 'TaskCancelation';
 
@@ -19,7 +19,7 @@ import {
   COMPLETION_SUCCESS,
   COMPLETION_ERROR,
   COMPLETION_CANCEL,
-} from "../task-instance-completion-states"
+} from "./completion-states"
 
 export class TaskInstanceState {
   constructor(generatorBuilder, name, listener) {
