@@ -2,7 +2,7 @@ import { not, and } from '@ember/object/computed';
 import EmberObject, { computed, get, set } from '@ember/object';
 import { yieldableSymbol, RawValue } from './utils';
 
-import { TaskInstanceState, TASK_CANCELATION_NAME } from './task-instance-state';
+import { TaskInstanceState, TASK_CANCELATION_NAME } from './external/task-instance-state';
 import { INITIAL_STATE } from './task-instance-initial-state';
 import { EmberTaskInstanceListener } from './ember-task-instance-listener';
 

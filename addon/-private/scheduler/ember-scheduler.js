@@ -1,4 +1,4 @@
-import Scheduler from './scheduler';
+import Scheduler from '../external/scheduler/scheduler';
 import { once } from '@ember/runloop';
 
 class EmberScheduler extends Scheduler {

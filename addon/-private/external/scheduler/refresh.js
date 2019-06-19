@@ -13,7 +13,7 @@ class Refresh {
     let reducer = this.schedulerPolicy.makeReducer(numRunning, numQueued);
 
     let finalTaskInstances = taskInstances.filter(taskInstance => {
-      return this.setTaskInstanceState(taskInstance, reducer.step());
+      return this.setTaskInstanceExecutionState(taskInstance, reducer.step());
     });
 
     this.stateTracker.computeFinalStates(state => this.applyState(state));
@@ -43,7 +43,7 @@ class Refresh {
     return [taskInstances, numRunning, numQueued];
   }
 
-  setTaskInstanceState(taskInstance, desiredState) {
+  setTaskInstanceExecutionState(taskInstance, desiredState) {
     let taskState = this.stateTracker.stateFor(taskInstance.task);
 
     if (!taskInstance._counted) {
