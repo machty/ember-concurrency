@@ -1,10 +1,10 @@
-import { not, and } from '@ember/object/computed';
-import EmberObject, { computed, get, set } from '@ember/object';
-import { yieldableSymbol, RawValue } from './utils';
+import { not } from '@ember/object/computed';
+import EmberObject, { computed, get } from '@ember/object';
+import { yieldableSymbol } from './utils';
 
 import { TaskInstanceState, PERFORM_TYPE_DEFAULT } from './external/task-instance/state';
 import { INITIAL_STATE } from './external/task-instance/initial-state';
-import { EmberTaskInstanceListener } from './ember-task-instance-listener';
+import { EmberTaskInstanceDelegate } from './ember-task-instance-delegate';
 import { EmberEnvironment } from './ember-environment';
 
 const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
@@ -52,7 +52,7 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
     this._state = new TaskInstanceState({
       generatorFactory: this._generatorBuilder(),
       name: get(this, 'task._propertyName') || "<unknown>",
-      listener: new EmberTaskInstanceListener(this),
+      delegate: new EmberTaskInstanceDelegate(this),
       env: EMBER_ENVIRONMENT,
       debug: this._debug,
       performType: this._performType,

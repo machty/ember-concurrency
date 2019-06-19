@@ -46,10 +46,10 @@ import {
 } from "./completion-states"
 
 export class TaskInstanceState {
-  constructor({ generatorFactory, name, listener, env, debug, performType }) {
+  constructor({ generatorFactory, name, delegate, env, debug, performType }) {
     this.generatorState = new GeneratorState(generatorFactory);
     this.name = name;
-    this.listener = listener;
+    this.delegate = delegate;
     this.state = Object.assign({}, INITIAL_STATE);
     this.index = 1;
     this.disposers = [];
@@ -63,7 +63,7 @@ export class TaskInstanceState {
     if (this.state.hasStarted || this.state.isCanceling) { return; }
     this.setState({ hasStarted: true });
     this.proceedSync(YIELDABLE_CONTINUE, undefined);
-    this.listener.onStarted();
+    this.delegate.onStarted();
   }
 
   cancel(sourceCancelReason) {
@@ -85,7 +85,7 @@ export class TaskInstanceState {
 
   setState(state) {
     Object.assign(this.state, state);
-    this.listener.setState(state);
+    this.delegate.setState(state);
   }
   
   proceedChecked(index, yieldResumeType, value) {
@@ -354,20 +354,20 @@ export class TaskInstanceState {
   dispatchFinalizeEvents(completionState) {
     switch(completionState) {
       case COMPLETION_SUCCESS:
-        this.listener.onSuccess();
+        this.delegate.onSuccess();
         break;
       case COMPLETION_ERROR:
-        this.listener.onError(this.state.error);
+        this.delegate.onError(this.state.error);
         break;
       case COMPLETION_CANCEL:
-        this.listener.onCancel(this.state.cancelReason);
+        this.delegate.onCancel(this.state.cancelReason);
         break;
     }
   }
 
   invokeYieldable(yieldedValue) {
     try {
-      let yieldContext = this.listener.getYieldContext();
+      let yieldContext = this.delegate.getYieldContext();
       let maybeDisposer = yieldedValue[yieldableSymbol](yieldContext, this.index);
       this.addDisposer(maybeDisposer);
     } catch(e) {

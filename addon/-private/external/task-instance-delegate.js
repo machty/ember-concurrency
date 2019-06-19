@@ -1,4 +1,4 @@
-export class TaskInstanceListener {
+export class TaskInstanceDelegate {
   setState() {}
   onStarted() {}
   onSuccess() {}

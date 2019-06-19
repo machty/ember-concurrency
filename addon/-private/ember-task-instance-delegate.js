@@ -1,6 +1,6 @@
-import { TaskInstanceListener } from "./task-instance-listener";
+import { TaskInstanceDelegate } from "./external/task-instance-delegate";
 
-export class EmberTaskInstanceListener extends TaskInstanceListener {
+export class EmberTaskInstanceDelegate extends TaskInstanceDelegate {
   constructor(taskInstance) {
     super();
     this.taskInstance = taskInstance;
