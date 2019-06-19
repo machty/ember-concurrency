@@ -1,28 +1,10 @@
-import { assert } from '@ember/debug';
-import { defer, reject } from 'rsvp';
 import { not, and } from '@ember/object/computed';
-import { run, join, schedule } from '@ember/runloop';
 import EmberObject, { computed, get, set } from '@ember/object';
-import Ember from 'ember';
-import {
-  yieldableSymbol,
-  YIELDABLE_CONTINUE,
-  YIELDABLE_THROW,
-  YIELDABLE_RETURN,
-  YIELDABLE_CANCEL,
-  RawValue,
-} from './utils';
+import { yieldableSymbol, RawValue } from './utils';
 
-const TASK_CANCELATION_NAME = 'TaskCancelation';
-
-import { 
-  COMPLETION_PENDING,
-  COMPLETION_SUCCESS,
-  COMPLETION_ERROR,
-  COMPLETION_CANCEL,
-} from "./completion-states"
-
-import { GeneratorState } from './generator-state';
+import { TaskInstanceState, TASK_CANCELATION_NAME } from './task-instance-state';
+import { INITIAL_STATE } from './task-instance-initial-state';
+import { EmberTaskInstanceListener } from './ember-task-instance-listener';
 
 export const PERFORM_TYPE_DEFAULT  = "PERFORM_TYPE_DEFAULT";
 export const PERFORM_TYPE_UNLINKED = "PERFORM_TYPE_UNLINKED";
@@ -32,14 +14,6 @@ let TASK_INSTANCE_STACK = [];
 
 export function getRunningInstance() {
   return TASK_INSTANCE_STACK[TASK_INSTANCE_STACK.length - 1];
-}
-
-function handleYieldedUnknownThenable(thenable, taskInstance, resumeIndex) {
-  thenable.then(value => {
-    taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, value);
-  }, error => {
-    taskInstance.proceed(resumeIndex, YIELDABLE_THROW, error);
-  });
 }
 
 /**
@@ -94,10 +68,8 @@ function spliceSlice(str, index, count, add) {
 
   @class TaskInstance
 */
-const TaskInstance = EmberObject.extend({
+const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
   iterator: null,
-  _disposer: null,
-  _completionState: COMPLETION_PENDING,
   task: null,
   args: [],
   _hasSubscribed: false,
@@ -111,85 +83,10 @@ const TaskInstance = EmberObject.extend({
 
   init(...args) {
     this._super(...args);
-    this._generator = new GeneratorState(this._generatorBuilder());
+    let listener = new EmberTaskInstanceListener(this);
+    let name = get(this, 'task._propertyName') || "<unknown>";
+    this._state = new TaskInstanceState(this._generatorBuilder(), name, listener);
   },
-
-  /**
-   * If this TaskInstance runs to completion by returning a property
-   * other than a rejecting promise, this property will be set
-   * with that value.
-   *
-   * @memberof TaskInstance
-   * @instance
-   * @readOnly
-   */
-  value: null,
-
-  /**
-   * If this TaskInstance is canceled or throws an error (or yields
-   * a promise that rejects), this property will be set with that error.
-   * Otherwise, it is null.
-   *
-   * @memberof TaskInstance
-   * @instance
-   * @readOnly
-   */
-  error: null,
-
-  /**
-   * True if the task instance is fulfilled.
-   *
-   * @memberof TaskInstance
-   * @instance
-   * @readOnly
-   */
-  isSuccessful: false,
-
-  /**
-   * True if the task instance resolves to a rejection.
-   *
-   * @memberof TaskInstance
-   * @instance
-   * @readOnly
-   */
-  isError: false,
-
-  /**
-   * True if the task instance was canceled before it could run to completion.
-   *
-   * @memberof TaskInstance
-   * @instance
-   * @readOnly
-   */
-  isCanceled: and('isCanceling', 'isFinished'),
-  isCanceling: false,
-
-  /**
-   * True if the task instance has started, else false.
-   *
-   * @memberof TaskInstance
-   * @instance
-   * @readOnly
-   */
-  hasStarted: false,
-
-  /**
-   * True if the task has run to completion.
-   *
-   * @memberof TaskInstance
-   * @instance
-   * @readOnly
-   */
-  isFinished: false,
-
-  /**
-   * True if the task is still running.
-   *
-   * @memberof TaskInstance
-   * @instance
-   * @readOnly
-   */
-  isRunning: not('isFinished'),
 
   /**
    * Describes the state that the task instance is in. Can be used for debugging,
@@ -239,6 +136,15 @@ const TaskInstance = EmberObject.extend({
   isDropped: computed('isCanceling', 'hasStarted', function() {
     return get(this, 'isCanceling') && !get(this, 'hasStarted');
   }),
+
+  /**
+   * True if the task is still running.
+   *
+   * @memberof TaskInstance
+   * @instance
+   * @readOnly
+   */
+  isRunning: not('isFinished'),
 
   /**
    * Event emitted when a new {@linkcode TaskInstance} starts executing.
@@ -327,14 +233,8 @@ const TaskInstance = EmberObject.extend({
    * @param {string} cancelationReason - Cancelation reason that was was provided to {@linkcode TaskInstance#cancel}
    */
 
-  _index: 1,
-
   _start() {
-    // This method assumes a run loop
-    if (this.hasStarted || this.isCanceling) { return this; }
-    set(this, 'hasStarted', true);
-    this._proceedSync(YIELDABLE_CONTINUE, undefined);
-    this._triggerEvent('started', this);
+    this._state.start();
     return this;
   },
 
@@ -351,36 +251,13 @@ const TaskInstance = EmberObject.extend({
    * @memberof TaskInstance
    * @instance
    */
-  cancel(cancelReason = ".cancel() was explicitly called") {
-    if (this.isCanceling || get(this, 'isFinished')) { return; }
-    set(this, 'isCanceling', true);
-
-    let name = get(this, 'task._propertyName') || "<unknown>";
-    set(this, 'cancelReason', `TaskInstance '${name}' was canceled because ${cancelReason}. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help`);
-
-    if (this.hasStarted) {
-      this._proceedAsync(YIELDABLE_CANCEL, null);
-    } else {
-      this._finalize(null, COMPLETION_CANCEL);
-    }
+  cancel(cancelReason = EXPLICIT_CANCEL_REASON) {
+    this._state.cancel(cancelReason);
   },
 
-  _defer: null,
   _promise: computed(function() {
-    this._defer = defer();
-    this._maybeResolveDefer();
-    return this._defer.promise;
+    return this._state.getPromise();
   }),
-
-  _maybeResolveDefer() {
-    if (!this._defer || !this._completionState) { return; }
-
-    if (this._completionState === COMPLETION_SUCCESS) {
-      this._defer.resolve(this.value);
-    } else {
-      this._defer.reject(this.error);
-    }
-  },
 
   /**
    * Returns a promise that resolves with the value returned
@@ -411,134 +288,8 @@ const TaskInstance = EmberObject.extend({
    */
   finally: forwardToInternalPromise('finally'),
 
-  _finalize(_value, _completionState) {
-    let completionState = _completionState;
-    let value = _value;
-    this._index++;
-
-    if (this.isCanceling) {
-      completionState = COMPLETION_CANCEL;
-      value = new Error(this.cancelReason);
-
-      if (this._debug || Ember.ENV.DEBUG_TASKS) {
-        // eslint-disable-next-line no-console
-        console.log(this.cancelReason);
-      }
-
-      value.name = TASK_CANCELATION_NAME;
-      value.taskInstance = this;
-    }
-
-    set(this, '_completionState', completionState);
-    set(this, '_result', value);
-
-    if (completionState === COMPLETION_SUCCESS) {
-      set(this, 'isSuccessful', true);
-      set(this, 'value', value);
-    } else if (completionState === COMPLETION_ERROR) {
-      set(this, 'isError', true);
-      set(this, 'error', value);
-    } else if (completionState === COMPLETION_CANCEL) {
-      set(this, 'error', value);
-    }
-
-    set(this, 'isFinished', true);
-
-    this._dispose();
-    this._runFinalizeCallbacks();
-    this._dispatchFinalizeEvents();
-  },
-
-  _finalizeCallbacks: null,
   _onFinalize(callback) {
-    if (!this._finalizeCallbacks) {
-      this._finalizeCallbacks = [];
-    }
-    this._finalizeCallbacks.push(callback);
-
-    if (this._completionState) {
-      this._runFinalizeCallbacks();
-    }
-  },
-
-  _runFinalizeCallbacks() {
-    if (this._finalizeCallbacks) {
-      for (let i = 0, l = this._finalizeCallbacks.length; i < l; ++i) {
-        this._finalizeCallbacks[i]();
-      }
-      this._finalizeCallbacks = null;
-    }
-    this._maybeResolveDefer();
-    this._maybeThrowUnhandledTaskErrorLater();
-  },
-
-  _maybeThrowUnhandledTaskErrorLater() {
-    // this backports the Ember 2.0+ RSVP _onError 'after' microtask behavior to Ember < 2.0
-    if (!this._hasSubscribed && this._completionState === COMPLETION_ERROR) {
-      schedule(
-        run.backburner.queueNames[run.backburner.queueNames.length - 1],
-        () => {
-          if (!this._hasSubscribed && !didCancel(this.error)) {
-            reject(this.error);
-          }
-        }
-      );
-    }
-  },
-
-  _dispatchFinalizeEvents() {
-    switch(this._completionState) {
-      case COMPLETION_SUCCESS:
-        this._triggerEvent('succeeded', this);
-        break;
-      case COMPLETION_ERROR:
-        this._triggerEvent('errored', this, get(this, 'error'));
-        break;
-      case COMPLETION_CANCEL:
-        this._triggerEvent('canceled', this, get(this, 'cancelReason'));
-        break;
-    }
-  },
-
-  /**
-   * Runs any disposers attached to the task's most recent `yield`.
-   * For instance, when a task yields a TaskInstance, it registers that
-   * child TaskInstance's disposer, so that if the parent task is canceled,
-   * _dispose() will run that disposer and cancel the child TaskInstance.
-   *
-   * @private
-   */
-  _dispose() {
-    if (this._disposer) {
-      let disposer = this._disposer;
-      this._disposer = null;
-
-      // TODO: test erroring disposer
-      disposer();
-    }
-  },
-
-  /**
-   * Calls .next()/.throw()/.return() on the task's generator function iterator,
-   * essentially taking a single step of execution on the task function.
-   *
-   * @private
-   */
-  _generatorStep(nextValue, iteratorMethod) {
-    TASK_INSTANCE_STACK.push(this);
-    let stepResult = this._generator.step(nextValue, iteratorMethod);
-    TASK_INSTANCE_STACK.pop();
-
-    if (this._expectsLinkedYield) {
-      let value = stepResult.value;
-      if (!value || value._performType !== PERFORM_TYPE_LINKED) {
-        // eslint-disable-next-line no-console
-        console.warn("You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency).");
-      }
-      this._expectsLinkedYield = false;
-    }
-
-    return stepResult;
+    this._state.onFinalize(callback);
   },
 
   /**
@@ -559,167 +310,15 @@ const TaskInstance = EmberObject.extend({
     return () => this.fn.apply(this.context, this.args);
   },
 
-  /**
-   * The TaskInstance internally tracks an index/sequence number
-   * (the `_index` property) which gets incremented every time the
-   * task generator function iterator takes a step. When a task
-   * function is paused at a `yield`, there are two events that
-   * cause the TaskInstance to take a step: 1) the yielded value
-   * "resolves", thus resuming the TaskInstance's execution, or
-   * 2) the TaskInstance is canceled. We need some mechanism to prevent
-   * stale yielded value resolutions from resuming the TaskFunction
-   * after the TaskInstance has already moved on (either because
-   * the TaskInstance has since been canceled or because an
-   * implementation of the Yieldable API tried to resume the
-   * TaskInstance more than once). The `_index` serves as
-   * that simple mechanism: anyone resuming a TaskInstance
-   * needs to pass in the `index` they were provided that acts
-   * as a ticket to resume the TaskInstance that expires once
-   * the TaskInstance has moved on.
-   *
-   * @private
-   */
-  _advanceIndex(index) {
-    if (this._index === index) {
-      return ++this._index;
-    }
-  },
-
   // this is the "public" API for how yieldables resume TaskInstances;
   // this should probably be cleanup / generalized, but until then,
   // we can't change the name.
   proceed(index, yieldResumeType, value) {
-    if (this._completionState) { return; }
-    if (!this._advanceIndex(index)) { return; }
-    this._proceedAsync(yieldResumeType, value);
-  },
-
-  _proceedAsync(yieldResumeType, value) {
-    this._advanceIndex(this._index);
-
-    join(() => {
-      schedule('actions', this, this._proceedSync, yieldResumeType, value);
-    });
-  },
-
-  _proceedSync(yieldResumeType, value) {
-    if (this._completionState) { return; }
-
-    if (this._generator.done) {
-      this._handleResolvedReturnedValue(yieldResumeType, value);
-    } else {
-      this._handleResolvedContinueValue(yieldResumeType, value);
-    }
-  },
-
-  _handleResolvedReturnedValue(yieldResumeType, value) {
-    // decide what to do in the case of `return maybeYieldable`;
-    // value is the resolved value of the yieldable. We just
-    // need to decide how to finalize.
-    assert("expected completion state to be pending", this._completionState === COMPLETION_PENDING);
-
-    switch(yieldResumeType) {
-      case YIELDABLE_CONTINUE:
-      case YIELDABLE_RETURN:
-        this._finalize(value, COMPLETION_SUCCESS);
-        break;
-      case YIELDABLE_THROW:
-        this._finalize(value, COMPLETION_ERROR);
-        break;
-      case YIELDABLE_CANCEL:
-        set(this, 'isCanceling', true);
-        this._finalize(null, COMPLETION_CANCEL);
-        break;
-    }
-  },
-
-  _handleResolvedContinueValue(_yieldResumeType, resumeValue) {
-    let iteratorMethod = _yieldResumeType;
-    if (iteratorMethod === YIELDABLE_CANCEL) {
-      set(this, 'isCanceling', true);
-      iteratorMethod = YIELDABLE_RETURN;
-    }
-
-    this._dispose();
-
-    let beforeIndex = this._index;
-    let stepResult = this._generatorStep(resumeValue, iteratorMethod);
-
-    // TODO: what is this doing? write breaking test.
-    if (!this._advanceIndex(beforeIndex)) {
-      return;
-    }
-
-    if (stepResult.errored) {
-      this._finalize(stepResult.value, COMPLETION_ERROR);
-      return;
-    }
-
-    this._handleYieldedValue(stepResult);
-  },
-
-  _handleYieldedValue(stepResult) {
-    let yieldedValue = stepResult.value;
-    if (!yieldedValue) {
-      this._proceedWithSimpleValue(yieldedValue);
-      return;
-    }
-
-    if (yieldedValue instanceof RawValue) {
-      this._proceedWithSimpleValue(yieldedValue.value);
-      return;
-    }
-
-    this._addDisposer(yieldedValue.__ec_cancel__);
-
-    if (yieldedValue[yieldableSymbol]) {
-      this._invokeYieldable(yieldedValue);
-    } else if (typeof yieldedValue.then === 'function') {
-      handleYieldedUnknownThenable(yieldedValue, this, this._index);
-    } else {
-      this._proceedWithSimpleValue(yieldedValue);
-    }
-  },
-
-  _proceedWithSimpleValue(yieldedValue) {
-    this._proceedAsync(YIELDABLE_CONTINUE, yieldedValue);
-  },
-
-  _addDisposer(maybeDisposer) {
-    if (typeof maybeDisposer === 'function') {
-      let priorDisposer = this._disposer;
-      if (priorDisposer) {
-        this._disposer = () => {
-          priorDisposer();
-          maybeDisposer();
-        };
-      } else {
-        this._disposer = maybeDisposer;
-      }
-    }
-  },
-
-  _invokeYieldable(yieldedValue) {
-    try {
-      let maybeDisposer = yieldedValue[yieldableSymbol](this, this._index);
-      this._addDisposer(maybeDisposer);
-    } catch(e) {
-      // TODO: handle erroneous yieldable implementation
-    }
-  },
-
-  _triggerEvent(eventType, ...args) {
-    if (!this._hasEnabledEvents) { return; }
-
-    let host = get(this, 'task.context');
-    let eventNamespace = get(this, 'task._propertyName');
-
-    if (host && host.trigger && eventNamespace) {
-      host.trigger(`${eventNamespace}:${eventType}`, ...args);
-    }
+    this._state.proceedSafe(index, yieldResumeType, value);
   },
 
   [yieldableSymbol]: function handleYieldedTaskInstance(parentTaskInstance, resumeIndex) {
+    // TODO
     let yieldedTaskInstance = this;
     yieldedTaskInstance._hasSubscribed = true;
 
@@ -753,7 +352,7 @@ const TaskInstance = EmberObject.extend({
       }
     };
   },
-});
+}));
 
 export function go(args, fn, attrs = {}) {
   return TaskInstance.create(

@@ -177,7 +177,7 @@ export function rawTimeout(ms) {
   return {
     [yieldableSymbol](taskInstance, resumeIndex) {
       let timerId = setTimeout(() => {
-        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, this._result);
+        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, null);
       }, ms);
       return () => {
         window.clearInterval(timerId);
