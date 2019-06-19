@@ -26,4 +26,8 @@ export class EmberEnvironment extends Environment {
   defer() {
     return defer();
   }
+
+  globalDebuggingEnabled() {
+    return Ember.ENV.DEBUG_TASKS;
+  }
 }

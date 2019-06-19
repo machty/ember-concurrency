@@ -9,7 +9,7 @@ import { didCancel } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 function asyncError() {
-  return new Promise(r => Ember.onerror = r);
+  return new window.Promise(r => Ember.onerror = r);
 }
 
 module('Unit: task instance', function(hooks) {

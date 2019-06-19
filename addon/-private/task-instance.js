@@ -2,7 +2,7 @@ import { not, and } from '@ember/object/computed';
 import EmberObject, { computed, get, set } from '@ember/object';
 import { yieldableSymbol, RawValue } from './utils';
 
-import { TaskInstanceState } from './external/task-instance/state';
+import { TaskInstanceState, PERFORM_TYPE_DEFAULT } from './external/task-instance/state';
 import { INITIAL_STATE } from './external/task-instance/initial-state';
 import { EmberTaskInstanceListener } from './ember-task-instance-listener';
 import { EmberEnvironment } from './ember-environment';
@@ -45,12 +45,18 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
   _expectsLinkedYield: false,
   _tags: null,
   _counted: false,
+  _performType: PERFORM_TYPE_DEFAULT,
 
   init(...args) {
     this._super(...args);
-    let listener = new EmberTaskInstanceListener(this);
-    let name = get(this, 'task._propertyName') || "<unknown>";
-    this._state = new TaskInstanceState(this._generatorBuilder(), name, listener, EMBER_ENVIRONMENT);
+    this._state = new TaskInstanceState({
+      generatorFactory: this._generatorBuilder(),
+      name: get(this, 'task._propertyName') || "<unknown>",
+      listener: new EmberTaskInstanceListener(this),
+      env: EMBER_ENVIRONMENT,
+      debug: this._debug,
+      performType: this._performType,
+    });
   },
 
   /**

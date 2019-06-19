@@ -46,8 +46,8 @@ import {
 } from "./completion-states"
 
 export class TaskInstanceState {
-  constructor(generatorBuilder, name, listener, env) {
-    this.generatorState = new GeneratorState(generatorBuilder);
+  constructor({ generatorFactory, name, listener, env, debug, performType }) {
+    this.generatorState = new GeneratorState(generatorFactory);
     this.name = name;
     this.listener = listener;
     this.state = Object.assign({}, INITIAL_STATE);
@@ -55,7 +55,8 @@ export class TaskInstanceState {
     this.disposers = [];
     this.finalizeCallbacks = [];
     this.env = env;
-    this.performType = PERFORM_TYPE_DEFAULT; // TODO
+    this.performType = performType;
+    this.debug = debug;
   }
 
   start() {
@@ -322,7 +323,7 @@ export class TaskInstanceState {
       completionState = COMPLETION_CANCEL;
       value = new Error(this.state.cancelReason);
 
-      if (this._debug || Ember.ENV.DEBUG_TASKS) {
+      if (this.debug || this.env.globalDebuggingEnabled()) {
         // eslint-disable-next-line no-console
         console.log(this.cancelReason);
       }
