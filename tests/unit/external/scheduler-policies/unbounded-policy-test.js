@@ -1,17 +1,14 @@
 
 import { module, test } from 'qunit';
 import UnboundedPolicy from 'ember-concurrency/-private/external/scheduler/policies/unbounded-policy';
-import { testScheduler } from './helpers';
+import { typesFor } from './helpers';
 
 module('Unit: Unbounded policy', function() {
   test("always requests that the instance be started", function(assert) {
-    assert.expect(20);
     let policy = new UnboundedPolicy();
-    [
-      [1, 0],
-      [3, 3],
-    ].forEach(args => {
-      testScheduler(policy, args).forEach(({ type }) => assert.equal(type, "STARTED"));
-    });
+    assert.deepEqual(typesFor(policy, 0, 1), ["STARTED"]);
+    assert.deepEqual(typesFor(policy, 1, 1), ["STARTED", "STARTED"]);
+    assert.deepEqual(typesFor(policy, 1, 2), ["STARTED", "STARTED", "STARTED"]);
+    assert.deepEqual(typesFor(policy, 1, 3), ["STARTED", "STARTED", "STARTED", "STARTED"]);
   });
 });
