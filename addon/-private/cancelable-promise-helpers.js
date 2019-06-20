@@ -1,12 +1,5 @@
 import RSVP, { Promise } from 'rsvp';
 import TaskInstance from './task-instance';
-import { yieldableSymbol } from './utils';
-
-const asyncAll = taskAwareVariantOf(Promise, 'all', identity);
-
-function * resolver(value) {
-  return value;
-}
 
 /**
  * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
@@ -22,38 +15,7 @@ function * resolver(value) {
  *
  * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
-export const all = (things) => {
-  if (things.length === 0) {
-    return things;
-  }
-
-  for (let i = 0; i < things.length; ++i) {
-    let t = things[i];
-    if(!(t && t[yieldableSymbol])) {
-      return asyncAll(things);
-    }
-  }
-
-  let isAsync = false;
-  let taskInstances = things.map(thing => {
-    let ti = TaskInstance.create({
-      // TODO: consider simpler iterator than full on generator fn?
-      fn: resolver,
-      args: [thing],
-    })._start();
-
-    if (ti._completionState !== 1) {
-      isAsync = true;
-    }
-    return ti;
-  });
-
-  if (isAsync) {
-    return asyncAll(taskInstances);
-  } else {
-    return taskInstances.map(ti => ti.value);
-  }
-};
+export const all = taskAwareVariantOf(RSVP.Promise, 'all', identity);
 
 /**
  * A cancelation-aware variant of [RSVP.allSettled](http://emberjs.com/api/classes/RSVP.html#method_allSettled).
