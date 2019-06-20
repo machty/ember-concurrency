@@ -1,4 +1,4 @@
-import { GeneratorState } from "../../generator-state";
+import { GeneratorState } from "../generator-state";
 import { INITIAL_STATE } from "./initial-state";
 import {
   yieldableSymbol,

@@ -1,5 +1,3 @@
-import { assert } from '@ember/debug';
-
 export class GeneratorStepResult {
   constructor(value, done, errored) {
     this.value = value;
@@ -16,8 +14,6 @@ export class GeneratorState {
   }
 
   step(resolvedValue, iteratorMethod) {
-    this.assertNotFinished();
-
     try {
       let iterator = this.getIterator();
       let { value, done } = iterator[iteratorMethod](resolvedValue);
@@ -33,7 +29,7 @@ export class GeneratorState {
   }
 
   getIterator() {
-    if (!this.iterator) {
+    if (!this.iterator && !this.done) {
       this.iterator = this.generatorBuilder();
     }
     return this.iterator;
@@ -43,9 +39,5 @@ export class GeneratorState {
     this.done = true;
     this.iterator = null;
     return new GeneratorStepResult(value, true, errored);
-  }
-
-  assertNotFinished() {
-    assert("The task generator function has already run to completion. This is probably an ember-concurrency bug.", !this.done);
   }
 }

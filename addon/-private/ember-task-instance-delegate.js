@@ -1,4 +1,4 @@
-import { TaskInstanceDelegate } from "./external/task-instance-delegate";
+import { TaskInstanceDelegate } from "./external/task-instance/delegate";
 
 export class EmberTaskInstanceDelegate extends TaskInstanceDelegate {
   constructor(taskInstance) {
