@@ -9,7 +9,6 @@ import { EmberEnvironment } from './ember-environment';
 import { CancelRequest, CANCEL_KIND_EXPLICIT } from './external/task-instance/cancel-request';
 
 const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
-
 const EMBER_ENVIRONMENT = new EmberEnvironment();
 
 /**
@@ -31,7 +30,6 @@ const EMBER_ENVIRONMENT = new EmberEnvironment();
   @class TaskInstance
 */
 const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
-  iterator: null,
   task: null,
   args: [],
   _debug: false,
