@@ -17,3 +17,12 @@ export class BaseTaskInstance {
     this.executor.onFinalize(callback);
   }
 }
+
+Object.assign(BaseTaskInstance.prototype, {
+  state: 'waiting',
+  isDropped: false,
+  isCanceled: false,
+  hasStarted: false,
+  isRunning: true,
+  isDropped: false
+});

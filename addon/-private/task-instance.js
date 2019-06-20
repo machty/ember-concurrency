@@ -27,11 +27,6 @@ const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
 */
 
 export class TaskInstance extends BaseTaskInstance {
-  constructor(task, executor) {
-    super(task, executor)
-    this.setState(INITIAL_STATE);
-  }
-
   setState(props) {
     setProperties(this, props);
     let state = this._recomputeState();

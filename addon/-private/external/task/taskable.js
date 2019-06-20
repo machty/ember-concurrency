@@ -7,15 +7,14 @@ function makeGuid() {
 }
 
 export class Taskable {
-  constructor(context, scheduler, group) {
-    this.context = context;
-    this.scheduler = scheduler;
-    this.group = group;
+  constructor(options) {
+    Object.assign(this, options)
+
     this.guid = makeGuid();
     this.guids = {};
     this.guids[this.guid] = true;
-    if (group) {
-      Object.assign(this.guids, group.guids);
+    if (this.group) {
+      Object.assign(this.guids, this.group.guids);
     }
   }
 
@@ -40,3 +39,10 @@ export class Taskable {
 }
 
 Object.assign(Taskable.prototype, DEFAULT_STATE);
+Object.assign(Taskable.prototype, {
+  numRunning: 0,
+  numQueued: 0,
+  isRunning: false,
+  isQueued: false,
+  isIdle: true,
+});

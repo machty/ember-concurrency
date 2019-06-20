@@ -92,16 +92,3 @@ export function deprecatePrivateModule(moduleName) {
   // eslint-disable-next-line no-console
   console.warn(`an Ember addon is importing a private ember-concurrency module '${moduleName}' that has moved`);
 }
-
-export function setTaskableState(taskable, state) {
-  setProperties(taskable, state);
-  let isRunning = taskable.numRunning > 0;
-  let derivedState = {
-    performCount: taskable.performCount + (state.numPerformedInc || 0),
-    isRunning,
-    isQueued: taskable.numQueued > 0,
-    isIdle: !isRunning,
-    state: isRunning ? "running" : "idle",
-  };
-  setProperties(taskable, derivedState);
-}

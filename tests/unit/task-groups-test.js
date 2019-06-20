@@ -54,7 +54,7 @@ module('Unit: task groups', function() {
     suffix = "after taskB is performed, but before taskA is finished";
     assertStates(assert, tg,    true, true, false, suffix);
     assertStates(assert, taskA, true, false, false, suffix);
-    assertStates(assert, taskB, false, true, false, suffix);
+    assertStates(assert, taskB, false, true, false, suffix); // this is expecting it NOT to be idle
     assert.ok(deferA);
     assert.ok(!deferB);
 

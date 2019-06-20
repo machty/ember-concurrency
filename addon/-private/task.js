@@ -1,15 +1,15 @@
 import { Task as BaseTask } from "./external/task/task";
-import { set, get } from '@ember/object';
 import { setTaskableState, INVOKE } from "./utils";
 import { TaskInstance } from './task-instance';
 import { PERFORM_TYPE_DEFAULT, TaskInstanceExecutor, PERFORM_TYPE_LINKED } from "./external/task-instance/executor";
 import { EmberEnvironment } from "./ember-environment";
+import { TASKABLE_MIXIN } from "./taskable-mixin";
 const EMBER_ENVIRONMENT = new EmberEnvironment();
 
 export class Task extends BaseTask {
   constructor(...args) {
     super(...args);
-    this.setState({});
+    this.setState({}); // TODO: double check this is necessary
   }
 
   setState(state) {
@@ -62,7 +62,6 @@ export class Task extends BaseTask {
     this.scheduler.perform(taskInstance);
     return taskInstance;
   }
-
 
   /**
    * `true` if any current task instances are running.
@@ -184,12 +183,6 @@ export class Task extends BaseTask {
   [INVOKE](...args) {
     return this.perform(...args);
   }
-
-  get(key) {
-    return get(this, key);
-  }
-
-  set(key, value) {
-    return set(this, key, value);
-  }
 }
+
+Object.assign(Task.prototype, TASKABLE_MIXIN);

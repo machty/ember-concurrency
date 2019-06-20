@@ -2,7 +2,6 @@ import Ember from 'ember';
 import EmberObject, { computed } from '@ember/object';
 import { assert } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
-import { EmberEnvironment } from './ember-environment';
 import UnboundedSchedulerPolicy from './external/scheduler/policies/unbounded-policy'
 import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy'
 import DropSchedulerPolicy from './external/scheduler/policies/drop-policy'
@@ -14,6 +13,7 @@ import { addListener } from '@ember/object/events';
 import { getOwner } from '@ember/application';
 import { addObserver } from '@ember/object/observers';
 import { Task } from './task';
+import { TaskGroup } from './task-group';
 
 let handlerCounter = 0;
 
@@ -666,9 +666,10 @@ export function taskComputed(fn) {
 export function task(taskFn) {
   let tp = taskComputed(function(key) {
     tp.taskFn.displayName = `${key} (task)`;
-    let generatorFactory = (args) => taskFn.apply(this, args);
-    let { group, scheduler, onState } = sharedTaskProperties(tp, this, key);
-    return new Task(this, scheduler, group, generatorFactory, onState);
+    let options = Object.assign({
+      generatorFactory: (args) => taskFn.apply(this, args),
+    }, sharedTaskProperties(tp, this, key));
+    return new Task(options);
   });
 
   tp.taskFn = taskFn;
@@ -701,9 +702,7 @@ export function task(taskFn) {
  */
 export function taskGroup(taskFn) {
   let tp = taskComputed(function(key) {
-    return TaskGroup.create(
-      sharedTaskProperties(tp, this, key)
-    );
+    return new TaskGroup(sharedTaskProperties(tp, this, key));
   });
 
   tp.taskFn = taskFn;
@@ -718,7 +717,7 @@ function sharedTaskProperties(taskProperty, context, key) {
 
   if (taskProperty._taskGroupPath) {
     group = context.get(taskProperty._taskGroupPath);
-    scheduler = groupState.scheduler;
+    scheduler = group.scheduler;
   } else {
     let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);
     let stateTrackingEnabled = taskProperty._onStateCallback;
@@ -726,10 +725,11 @@ function sharedTaskProperties(taskProperty, context, key) {
   }
 
   return {
+    context,
+    _propertyName: key,
+    name: key,
     group,
     scheduler,
     onState: taskProperty._onStateCallback, 
   };
-
-  return props;
 }
