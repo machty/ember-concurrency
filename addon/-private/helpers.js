@@ -20,5 +20,3 @@ export function taskHelperClosure(helperName, taskMethod, _args, hash) {
     return task[taskMethod](...outerArgs, ...innerArgs);
   });
 }
-
-
