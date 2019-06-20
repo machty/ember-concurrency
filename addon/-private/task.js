@@ -2,9 +2,8 @@ import { Task as BaseTask } from "./external/task/task";
 import { setTaskableState, INVOKE } from "./utils";
 import { TaskInstance } from './task-instance';
 import { PERFORM_TYPE_DEFAULT, TaskInstanceExecutor, PERFORM_TYPE_LINKED } from "./external/task-instance/executor";
-import { EmberEnvironment } from "./ember-environment";
+import { EMBER_ENVIRONMENT } from "./ember-environment";
 import { TASKABLE_MIXIN } from "./taskable-mixin";
-const EMBER_ENVIRONMENT = new EmberEnvironment();
 
 export class Task extends BaseTask {
   constructor(...args) {

@@ -31,3 +31,5 @@ export class EmberEnvironment extends Environment {
     return Ember.ENV.DEBUG_TASKS;
   }
 }
+
+export const EMBER_ENVIRONMENT = new EmberEnvironment();

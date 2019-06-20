@@ -1,12 +1,14 @@
 import RSVP, { resolve, reject } from 'rsvp';
 import { run } from '@ember/runloop';
 import {
-  default as TaskInstance,
+  TaskInstance,
   wrap,
 } from 'ember-concurrency/-private/task-instance';
 import { didCancel } from 'ember-concurrency';
 import { module, test } from 'qunit';
 import { makeAsyncError } from '../helpers/helpers';
+import { TaskInstanceExecutor } from "ember-concurrency/-private/external/task-instance/executor";
+import { EMBER_ENVIRONMENT } from "ember-concurrency/-private/ember-environment";
 
 module('Unit: task instance', function(hooks) {
   let asyncError = makeAsyncError(hooks);
@@ -16,14 +18,14 @@ module('Unit: task instance', function(hooks) {
 
     let context = {};
     run(() => {
-      TaskInstance.create({
+      makeTaskInstance({
         *fn(...args) {
           assert.equal(this, context, "generator functions' `this` is the context passed in");
           assert.deepEqual(args, [1,2,3]);
         },
         args: [1,2,3],
         context,
-      })._start();
+      }).start();
     });
   });
 
@@ -208,7 +210,7 @@ module('Unit: task instance', function(hooks) {
 
     let shouldBeRunning = false;
     let taskInstance = run(() => {
-      return TaskInstance.create({
+      return makeTaskInstance({
         *fn(...args) {
           assert.ok(shouldBeRunning);
           assert.deepEqual(args, [1,2,3]);
@@ -220,16 +222,16 @@ module('Unit: task instance', function(hooks) {
     assert.ok(!taskInstance.get('hasStarted'));
     run(() => {
       shouldBeRunning = true;
-      taskInstance._start();
+      taskInstance.start();
     });
     assert.ok(taskInstance.get('hasStarted'));
   });
 
-  test("deferred start: .cancel() before ._start()", function(assert) {
+  test("deferred start: .cancel() before .start()", function(assert) {
     assert.expect(4);
 
     let taskInstance = run(() => {
-      return TaskInstance.create({
+      return makeTaskInstance({
         *fn() {
           assert.ok(false, "should not get here");
         },
@@ -241,7 +243,7 @@ module('Unit: task instance', function(hooks) {
 
     run(() => {
       taskInstance.cancel();
-      taskInstance._start();
+      taskInstance.start();
     });
     assert.ok(!taskInstance.get('hasStarted'));
     assert.ok(taskInstance.get('isCanceled'));
@@ -430,7 +432,7 @@ module('Unit: task instance', function(hooks) {
     assert.expect(2);
 
     let taskInstance = run(() => {
-      return TaskInstance.create({
+      return makeTaskInstance({
         *fn() {
           return 123;
         },
@@ -439,7 +441,7 @@ module('Unit: task instance', function(hooks) {
     });
 
     assert.equal(taskInstance.get('value'), null);
-    run(taskInstance, '_start');
+    run(taskInstance, 'start');
     assert.equal(taskInstance.get('value'), 123);
   });
 
@@ -447,7 +449,7 @@ module('Unit: task instance', function(hooks) {
     assert.expect(3);
 
     let taskInstance = run(() => {
-      return TaskInstance.create({
+      return makeTaskInstance({
         *fn() {
           throw "justin bailey";
         },
@@ -456,7 +458,7 @@ module('Unit: task instance', function(hooks) {
     });
 
     assert.equal(taskInstance.get('error'), null);
-    run(taskInstance, '_start');
+    run(taskInstance, 'start');
 
     let error = await asyncError();
     assert.equal(error, "justin bailey");
@@ -472,7 +474,7 @@ module('Unit: task instance', function(hooks) {
       })();
     });
 
-    run(taskInstance, '_start');
+    run(taskInstance, 'start');
     run(taskInstance, 'cancel');
     assert.equal(taskInstance.get('error.name'), "TaskCancelation");
   });
@@ -494,13 +496,13 @@ module('Unit: task instance', function(hooks) {
     assert.expect(4);
 
     let taskInstance = run(() => {
-      return TaskInstance.create({
+      return makeTaskInstance({
         *fn() {},
         args: [],
       });
     });
 
-    run(taskInstance, '_start');
+    run(taskInstance, 'start');
     assert.equal(taskInstance.get('isFinished'), true);
     assert.equal(taskInstance.get('isSuccessful'), true);
     assert.equal(taskInstance.get('isCanceled'), false);
@@ -511,7 +513,7 @@ module('Unit: task instance', function(hooks) {
     assert.expect(4);
 
     let taskInstance = run(() => {
-      return TaskInstance.create({
+      return makeTaskInstance({
         *fn() {
           throw "wat";
         },
@@ -519,7 +521,7 @@ module('Unit: task instance', function(hooks) {
       });
     });
 
-    run(taskInstance, '_start');
+    run(taskInstance, 'start');
 
     assert.equal(taskInstance.get('isFinished'), true);
     assert.equal(taskInstance.get('isSuccessful'), false);
@@ -652,14 +654,14 @@ module('Unit: task instance', function(hooks) {
 
     let defer;
     let taskInstance = run(() => {
-      return TaskInstance.create({
+      return makeTaskInstance({
         *fn() {
           defer = RSVP.defer();
           yield defer.promise;
           taskInstance.cancel();
           return 123;
         },
-      })._start();
+      }).start();
     });
 
     taskInstance.then(() => {
@@ -671,4 +673,28 @@ module('Unit: task instance', function(hooks) {
     run(null, defer.resolve);
     assert.ok(taskInstance.get('isCanceled'));
   });
+
+  let guid = 0;
+  function makeTaskInstance({ context, args, fn }) {
+    args = args || [];
+    let stubTask = { guid: `ec_${guid++}`, context };
+    let executor = new TaskInstanceExecutor({
+      generatorFactory: () => fn.apply(context, args),
+      env: EMBER_ENVIRONMENT,
+    });
+    return new TaskInstance(stubTask, executor);
+  }
+
+
+  function go(options) {
+    let taskInstance = makeTaskInstance(options)
+    taskInstance.executor.start();
+    return taskInstance;
+  }
+
+  function wrap(fn) {
+    return function wrappedRunnerFunction(...args) {
+      return go({ fn, context: {}, args });
+    };
+  }
 });

@@ -1,7 +1,5 @@
 import { set, get, setProperties } from '@ember/object';
 import { yieldableSymbol } from './external/yieldables';
-
-import { INITIAL_STATE } from './external/task-instance/initial-state';
 import { CancelRequest, CANCEL_KIND_EXPLICIT } from './external/task-instance/cancelation';
 import { BaseTaskInstance } from './external/task-instance/base';
 
@@ -307,16 +305,9 @@ export class TaskInstance extends BaseTaskInstance {
   set(key, value) {
     return set(this, key, value);
   }
-}
 
-export function go(args, fn, attrs = {}) {
-  return TaskInstance.create(
-    Object.assign({ args, fn, context: this }, attrs)
-  )._start();
-}
-
-export function wrap(fn, attrs = {}) {
-  return function wrappedRunnerFunction(...args) {
-    return go.call(this, args, fn, attrs);
-  };
+  start() {
+    this.executor.start();
+    return this;
+  }
 }
