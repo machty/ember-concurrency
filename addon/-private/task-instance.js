@@ -1,6 +1,6 @@
 import { not } from '@ember/object/computed';
 import EmberObject, { computed, get } from '@ember/object';
-import { yieldableSymbol } from './utils';
+import { yieldableSymbol } from './external/yieldables';
 
 import { TaskInstanceState, PERFORM_TYPE_DEFAULT } from './external/task-instance/state';
 import { INITIAL_STATE } from './external/task-instance/initial-state';

@@ -7,7 +7,8 @@ import {
   YIELDABLE_RETURN,
   YIELDABLE_CANCEL,
   RawValue
-} from "../../utils";
+} from '../yieldables';
+
 import {
   COMPLETION_SUCCESS,
   COMPLETION_ERROR,

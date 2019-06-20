@@ -7,7 +7,6 @@ import TaskInstance from './task-instance';
 import TaskStateMixin from './task-state-mixin';
 import { propertyModifiers } from './property-modifiers-mixin';
 import {
-  objectAssign,
   INVOKE,
   _cleanupOnDestroy,
   _ComputedProperty,
@@ -438,19 +437,10 @@ if (gte('3.10.0')) {
   };
 }
 
-objectAssign(TaskProperty.prototype, {
+Object.assign(TaskProperty.prototype, {
   setup(proto, taskName) {
     if (this.callSuperSetup) {
       this.callSuperSetup(...arguments);
-    }
-
-    if (this._maxConcurrency !== Infinity && !this._hasSetBufferPolicy) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `The use of maxConcurrency() without a specified task modifier is deprecated and won't be supported in future versions of ember-concurrency. Please specify a task modifier instead, e.g. \`${taskName}: task(...).enqueue().maxConcurrency(${
-          this._maxConcurrency
-        })\``
-      );
     }
 
     registerOnPrototype(
@@ -677,7 +667,7 @@ objectAssign(TaskProperty.prototype, {
   },
 });
 
-objectAssign(TaskProperty.prototype, propertyModifiers);
+Object.assign(TaskProperty.prototype, propertyModifiers);
 
 function registerOnPrototype(
   addListenerOrObserver,

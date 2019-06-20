@@ -1,13 +1,13 @@
-import { assert } from '@ember/debug';
-import { schedule } from '@ember/runloop';
-import { get } from '@ember/object';
-
-import { isEventedObject, yieldableToPromise } from './utils';
-
+import { assert } from "@ember/debug";
+import { defer } from 'rsvp';
+import { schedule } from "@ember/runloop";
+import { get } from "@ember/object";
+import { isEventedObject } from "./utils";
 import {
   yieldableSymbol,
-  YIELDABLE_CONTINUE
-} from './utils';
+  YIELDABLE_CONTINUE,
+  YIELDABLE_RETURN
+} from "./external/yieldables";
 
 class WaitFor {
   then(...args) {
@@ -38,13 +38,13 @@ class WaitForEventYieldable extends WaitFor {
   [yieldableSymbol](taskInstance, resumeIndex) {
     let unbind = () => {};
     let didFinish = false;
-    let fn = (event) => {
+    let fn = event => {
       didFinish = true;
       unbind();
       taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, event);
     };
 
-    if (typeof this.object.addEventListener === 'function') {
+    if (typeof this.object.addEventListener === "function") {
       // assume that we're dealing with a DOM `EventTarget`.
       this.object.addEventListener(this.eventName, fn);
 
@@ -75,10 +75,10 @@ class WaitForPropertyYieldable extends WaitFor {
     this.object = object;
     this.key = key;
 
-    if (typeof predicateCallback === 'function') {
+    if (typeof predicateCallback === "function") {
       this.predicateCallback = predicateCallback;
     } else {
-      this.predicateCallback = (v) => v === predicateCallback;
+      this.predicateCallback = v => v === predicateCallback;
     }
   }
 
@@ -146,7 +146,10 @@ export function waitForQueue(queueName) {
  * @param {function} eventName the name of the event to wait for
  */
 export function waitForEvent(object, eventName) {
-  assert(`${object} must include Ember.Evented (or support \`.one()\` and \`.off()\`) or DOM EventTarget (or support \`addEventListener\` and  \`removeEventListener\`) to be able to use \`waitForEvent\``, isEventedObject(object));
+  assert(
+    `${object} must include Ember.Evented (or support \`.one()\` and \`.off()\`) or DOM EventTarget (or support \`addEventListener\` and  \`removeEventListener\`) to be able to use \`waitForEvent\``,
+    isEventedObject(object)
+  );
   return new WaitForEventYieldable(object, eventName);
 }
 
@@ -195,4 +198,26 @@ export function waitForEvent(object, eventName) {
  */
 export function waitForProperty(object, key, predicateCallback) {
   return new WaitForPropertyYieldable(object, key, predicateCallback);
+}
+
+function yieldableToPromise(yieldable) {
+  let def = defer();
+
+  def.promise.__ec_cancel__ = yieldable[yieldableSymbol](
+    {
+      proceed(_index, resumeType, value) {
+        if (
+          resumeType == YIELDABLE_CONTINUE ||
+          resumeType == YIELDABLE_RETURN
+        ) {
+          def.resolve(value);
+        } else {
+          def.reject(value);
+        }
+      }
+    },
+    0
+  );
+
+  return def.promise;
 }

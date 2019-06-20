@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { computed } from '@ember/object';
-import { timeout, forever, makeGuid } from './-private/utils';
+import { timeout} from './-private/utils';
 import { Task, TaskProperty } from './-private/task-property';
 import { default as TaskInstance } from './-private/task-instance';
 import { TaskGroup, TaskGroupProperty } from './-private/task-group';
@@ -9,6 +9,7 @@ import { waitForQueue, waitForEvent, waitForProperty } from './-private/wait-for
 import { gte } from 'ember-compatibility-helpers';
 import EmberScheduler from './-private/scheduler/ember-scheduler';
 import { didCancel } from './-private/external/task-instance/state';
+import { forever } from './-private/external/yieldables';
 const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
 
 function _computed(fn) {
@@ -122,6 +123,11 @@ export function taskGroup(taskFn) {
   Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
 
   return tp;
+}
+
+let guidId = 0;
+function makeGuid() {
+  return `ec_${guidId++}`;
 }
 
 function sharedTaskProperties(taskProperty, context, _propertyName) {

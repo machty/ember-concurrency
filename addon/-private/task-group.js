@@ -1,5 +1,5 @@
 import EmberObject from '@ember/object';
-import { objectAssign, _ComputedProperty } from './utils';
+import { _ComputedProperty } from './utils';
 import TaskStateMixin from './task-state-mixin';
 import { propertyModifiers } from './property-modifiers-mixin';
 import { gte } from 'ember-compatibility-helpers';
@@ -18,4 +18,4 @@ if (gte('3.10.0-alpha.1')) {
   TaskGroupProperty = class extends _ComputedProperty {};
 }
 
-objectAssign(TaskGroupProperty.prototype, propertyModifiers);
+Object.assign(TaskGroupProperty.prototype, propertyModifiers);

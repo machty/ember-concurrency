@@ -1,5 +1,5 @@
 import { later, cancel } from '@ember/runloop';
-import { Promise, defer } from 'rsvp';
+import { Promise } from 'rsvp';
 import ComputedProperty from '@ember/object/computed';
 import Ember from 'ember';
 
@@ -9,42 +9,6 @@ export function isEventedObject(c) {
     (typeof c.addEventListener === 'function' && typeof c.removeEventListener === 'function')
   ));
 }
-
-export function Arguments(args, defer) {
-  this.args = args;
-  this.defer = defer;
-}
-
-Arguments.prototype.resolve = function(value) {
-  if (this.defer) {
-    this.defer.resolve(value);
-  }
-};
-
-let guidId = 0;
-export function makeGuid() {
-  return `ec_${guidId++}`;
-}
-
-export let objectAssign = Object.assign || function objectAssign(target) {
-  'use strict';
-  if (target == null) {
-    throw new TypeError('Cannot convert undefined or null to object');
-  }
-
-  target = Object(target);
-  for (var index = 1; index < arguments.length; index++) {
-    var source = arguments[index];
-    if (source != null) {
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-  }
-  return target;
-};
 
 export function _cleanupOnDestroy(owner, object, cleanupMethodName, ...args) {
   // TODO: find a non-mutate-y, non-hacky way of doing this.
@@ -88,12 +52,6 @@ for (let i = 0; i < locations.length; i++) {
   }
 }
 
-export const yieldableSymbol = "__ec_yieldable__";
-export const YIELDABLE_CONTINUE = "next";
-export const YIELDABLE_THROW = "throw";
-export const YIELDABLE_RETURN = "return";
-export const YIELDABLE_CANCEL = "cancel";
-
 export const _ComputedProperty = ComputedProperty;
 
 /**
@@ -127,78 +85,6 @@ export function timeout(ms) {
     cancel(timerId);
   };
   return promise;
-}
-
-/**
- *
- * Yielding `forever` will pause a task indefinitely until
- * it is cancelled (i.e. via host object destruction, .restartable(),
- * or manual cancellation).
- *
- * This is often useful in cases involving animation: if you're
- * using Liquid Fire, or some other animation scheme, sometimes you'll
- * notice buttons visibly reverting to their inactive states during
- * a route transition. By yielding `forever` in a Component task that drives a
- * button's active state, you can keep a task indefinitely running
- * until the animation runs to completion.
- *
- * NOTE: Liquid Fire also includes a useful `waitUntilIdle()` method
- * on the `liquid-fire-transitions` service that you can use in a lot
- * of these cases, but it won't cover cases of asynchrony that are
- * unrelated to animation, in which case `forever` might be better suited
- * to your needs.
- *
- * ```js
- * import { task, forever } from 'ember-concurrency';
- *
- * export default Component.extend({
- *   myService: service(),
- *   myTask: task(function * () {
- *     yield this.myService.doSomethingThatCausesATransition();
- *     yield forever;
- *   })
- * });
- * ```
- */
-export const forever = {
-  [yieldableSymbol]() {}
-};
-
-export function RawValue(value) {
-  this.value = value;
-}
-
-export function raw(value) {
-  return new RawValue(value);
-}
-
-export function rawTimeout(ms) {
-  return {
-    [yieldableSymbol](taskInstance, resumeIndex) {
-      let timerId = setTimeout(() => {
-        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, null);
-      }, ms);
-      return () => {
-        window.clearInterval(timerId);
-      };
-    }
-  };
-}
-
-export function yieldableToPromise(yieldable) {
-  let def = defer();
-
-  def.promise.__ec_cancel__ = yieldable[yieldableSymbol]({
-    proceed(_index, resumeType, value) {
-      if (resumeType == YIELDABLE_CONTINUE || resumeType == YIELDABLE_RETURN) {
-        def.resolve(value);
-      } else {
-        def.reject(value);
-      }
-    }
-  }, 0);
-
-  return def.promise;
 }
 
 export function deprecatePrivateModule(moduleName) {
