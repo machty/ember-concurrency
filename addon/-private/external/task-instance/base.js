@@ -1,10 +1,9 @@
-export class TaskInstanceDelegate {
+export class BaseTaskInstance {
   setState() {}
   onStarted() {}
   onSuccess() {}
   onError() {}
   onCancel() {}
-  getYieldContext() {}
   formatCancelReason() {}
   selfCancelLoopWarning() {}
 }

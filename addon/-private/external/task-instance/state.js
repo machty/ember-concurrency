@@ -56,11 +56,16 @@ export function didCancel(e) {
   return e && e.name === TASK_CANCELATION_NAME;
 }
 
+// what does this class do?
+// it encapsulates all the performing logic, dealing with generators n shit.
+// Seems good.
+
 export class TaskInstanceState {
-  constructor({ generatorFactory, taskState, delegate, env, debug, performType }) {
+  constructor({ generatorFactory, taskState, env, debug, performType }) {
+    // this.taskInstance = here_or_later
+
     this.generatorState = new GeneratorState(generatorFactory);
     this.taskState = taskState;
-    this.delegate = delegate;
     this.state = Object.assign({}, INITIAL_STATE);
     this.index = 1;
     this.disposers = [];
@@ -77,7 +82,8 @@ export class TaskInstanceState {
     }
     this.setState({ hasStarted: true });
     this.proceedSync(YIELDABLE_CONTINUE, undefined);
-    this.delegate.onStarted();
+    this.triggerEvent("started", this.taskInstance);
+    this.taskInstance.onStarted();
   }
 
   cancel(cancelRequest) {
@@ -94,7 +100,7 @@ export class TaskInstanceState {
 
   setState(state) {
     Object.assign(this.state, state);
-    this.delegate.setState(state);
+    this.taskInstance.setState(state);
   }
 
   proceedChecked(index, yieldResumeType, value) {
@@ -405,7 +411,7 @@ export class TaskInstanceState {
   }
 
   finalizeWithCancel() {
-    let cancelReason = this.delegate.formatCancelReason(
+    let cancelReason = this.taskInstance.formatCancelReason(
       this.cancelRequest.reason
     );
     let error = new Error(cancelReason);
@@ -436,22 +442,21 @@ export class TaskInstanceState {
   dispatchFinalizeEvents(completionState) {
     switch (completionState) {
       case COMPLETION_SUCCESS:
-        this.delegate.onSuccess();
+        this.taskInstance.onSuccess();
         break;
       case COMPLETION_ERROR:
-        this.delegate.onError(this.state.error);
+        this.taskInstance.onError(this.state.error);
         break;
       case COMPLETION_CANCEL:
-        this.delegate.onCancel(this.state.cancelReason);
+        this.taskInstance.onCancel(this.state.cancelReason);
         break;
     }
   }
 
   invokeYieldable(yieldedValue) {
     try {
-      let yieldContext = this.delegate.getYieldContext();
       let maybeDisposer = yieldedValue[yieldableSymbol](
-        yieldContext,
+        this.taskInstance,
         this.index
       );
       this.addDisposer(maybeDisposer);
@@ -521,7 +526,8 @@ export class TaskInstanceState {
       !this.cancelRequest &&
       !this.state.isFinished
     ) {
-      this.delegate.selfCancelLoopWarning(parent.delegate);
+      // TODO:
+      // this.taskInstance.selfCancelLoopWarning(parent.delegate);
     }
   }
 }

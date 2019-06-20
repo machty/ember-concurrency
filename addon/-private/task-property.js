@@ -2,7 +2,6 @@ import { scheduleOnce } from '@ember/runloop';
 import { addObserver } from '@ember/object/observers';
 import { addListener } from '@ember/object/events';
 import EmberObject from '@ember/object';
-import { EmberTaskInstanceDelegate } from './ember-task-instance-delegate';
 import { EmberEnvironment } from './ember-environment';
 import { getOwner } from '@ember/application';
 import TaskInstance from './task-instance';
@@ -385,6 +384,35 @@ export const Task = EmberObject.extend(TaskStateMixin, {
 
   _performShared(args, performType, linkedObject) {
     let fullArgs = this._curryArgs ? [...this._curryArgs, ...args] : args;
+
+
+
+
+
+    let taskInstanceState = new TaskInstanceState({
+      generatorFactory,
+      delegate,
+      env,
+      debug: this.debug,
+      performType,
+      taskState: this,
+    });
+
+    let taskInstance = new TaskInstance(this);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     let delegate = new EmberTaskInstanceDelegate(this._state.hasEnabledEvents);
     let taskInstanceState = this._state.makeTaskInstanceState(delegate,
                                                               performType,
