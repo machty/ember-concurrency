@@ -1,8 +1,8 @@
 import { COMPLETION_SUCCESS, COMPLETION_ERROR, COMPLETION_CANCEL } from "../../task-instance/completion-states";
 
 class RefreshState {
-  constructor(taskOrGroup) {
-    this.taskOrGroup = taskOrGroup;
+  constructor(group) {
+    this.group = group;
     this.numRunning = 0;
     this.numQueued = 0;
     this.numPerformedInc = 0;
@@ -46,10 +46,10 @@ class RefreshState {
   }
 
   recurseTaskGroups(callback) {
-    let taskGroup = this.taskOrGroup.group;
-    while (taskGroup) {
-      callback(taskGroup);
-      taskGroup = taskGroup.group;
+    let group = this.group;
+    while (group) {
+      callback(group);
+      group = group.group;
     }
   }
 

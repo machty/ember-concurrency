@@ -1,38 +1,38 @@
 import { TYPE_STARTED, TYPE_QUEUED, TYPE_CANCELLED } from "./policies/execution-states"
 
 class Refresh {
-  constructor(schedulerPolicy, stateTracker, taskInstances) {
+  constructor(schedulerPolicy, stateTracker, taskInstanceStates) {
     this.stateTracker = stateTracker;
     this.schedulerPolicy = schedulerPolicy;
-    this.initialTaskInstances = taskInstances;
+    this.initialTaskInstances = taskInstanceStates;
     this.startingInstances = [];
   }
 
   process() {
-    let [taskInstances, numRunning, numQueued] = this.filterFinishedTaskInstances();
+    let [taskInstanceStates, numRunning, numQueued] = this.filterFinishedTaskInstances();
     let reducer = this.schedulerPolicy.makeReducer(numRunning, numQueued);
 
-    let finalTaskInstances = taskInstances.filter(taskInstance => {
-      return this.setTaskInstanceExecutionState(taskInstance, reducer.step());
+    let finalTaskInstances = taskInstanceStates.filter(taskInstanceState => {
+      return this.setTaskInstanceExecutionState(taskInstanceState, reducer.step());
     });
 
     this.stateTracker.computeFinalStates(state => this.applyState(state));
-    this.startingInstances.forEach(taskInstance => taskInstance._start());
+    this.startingInstances.forEach(taskInstanceState => taskInstanceState.start());
 
     return finalTaskInstances;
   }
 
   filterFinishedTaskInstances() {
     let numRunning = 0, numQueued = 0;
-    let taskInstances = this.initialTaskInstances.filter(taskInstance => {
-      let taskState = this.stateTracker.stateFor(taskInstance.task);
+    let taskInstanceStates = this.initialTaskInstances.filter(taskInstanceState => {
+      let taskState = this.stateTracker.stateFor(taskInstanceState.taskState);
 
-      if (taskInstance.isFinished) {
-        taskState.onCompletion(taskInstance);
+      if (taskInstanceState.isFinished) {
+        taskState.onCompletion(taskInstanceState);
         return false;
       }
 
-      if (taskInstance.hasStarted) {
+      if (taskInstanceState.hasStarted) {
         numRunning += 1;
       } else {
         numQueued += 1;
@@ -40,32 +40,32 @@ class Refresh {
 
       return true;
     });
-    return [taskInstances, numRunning, numQueued];
+    return [taskInstanceStates, numRunning, numQueued];
   }
 
-  setTaskInstanceExecutionState(taskInstance, desiredState) {
-    let taskState = this.stateTracker.stateFor(taskInstance.task);
+  setTaskInstanceExecutionState(taskInstanceState, desiredState) {
+    let taskState = this.stateTracker.stateFor(taskInstanceState.taskState);
 
-    if (!taskInstance._counted) {
-      taskInstance._counted = true;
-      taskState.onPerformed(taskInstance);
+    if (!taskInstanceState._counted) {
+      taskInstanceState._counted = true;
+      taskState.onPerformed(taskInstanceState);
     }
 
     switch (desiredState.type) {
       case TYPE_CANCELLED:
         // this will cause a follow up flush which will detect and recompute cancellation state
-        taskInstance.cancel(desiredState.reason);
+        taskInstanceState.cancel(desiredState.reason);
         return false;
       case TYPE_STARTED:
-        if (!taskInstance.hasStarted) {
-          this.startingInstances.push(taskInstance);
-          taskState.onStart(taskInstance);
+        if (!taskInstanceState.hasStarted) {
+          this.startingInstances.push(taskInstanceState);
+          taskState.onStart(taskInstanceState);
         }
-        taskState.onRunning(taskInstance);
+        taskState.onRunning(taskInstanceState);
         return true;
       case TYPE_QUEUED:
-        taskState.onQueued(taskInstance);
-        // TODO: assert taskInstance hasn't started?
+        taskState.onQueued(taskInstanceState);
+        // TODO: assert taskInstanceState hasn't started?
         // Or perhaps this can be a way to pause a task?
         return true;
     }

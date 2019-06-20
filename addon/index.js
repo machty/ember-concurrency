@@ -10,6 +10,7 @@ import { gte } from 'ember-compatibility-helpers';
 import EmberScheduler from './-private/scheduler/ember-scheduler';
 import { didCancel } from './-private/external/task-instance/state';
 import { forever } from './-private/external/yieldables';
+import { TaskState } from './-private/external/task-state';
 const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
 
 function _computed(fn) {
@@ -125,32 +126,31 @@ export function taskGroup(taskFn) {
   return tp;
 }
 
-let guidId = 0;
-function makeGuid() {
-  return `ec_${guidId++}`;
-}
-
 function sharedTaskProperties(taskProperty, context, _propertyName) {
+  let groupState, scheduler;
+
+  if (taskProperty._taskGroupPath) {
+    groupState = context.get(taskProperty._taskGroupPath)._state;
+    scheduler = groupState.scheduler;
+  } else {
+    let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);
+    let stateTrackingEnabled = taskProperty._onStateCallback;
+    scheduler = new EmberScheduler(schedulerPolicy, stateTrackingEnabled);
+  }
+
   let props = {
     fn: taskProperty.taskFn,
     context,
     _origin: context,
     _propertyName,
-    _debug: taskProperty._debug,
-    _hasEnabledEvents: taskProperty._hasEnabledEvents,
     _onStateCallback: taskProperty._onStateCallback,
-    _guid: makeGuid(),
+    _state: new TaskState({
+      scheduler,
+      groupState,
+      hasEnabledEvents: taskProperty._hasEnabledEvents,
+      debug: taskProperty._debug,
+    }),
   };
-
-  if (taskProperty._taskGroupPath) {
-    let group = context.get(taskProperty._taskGroupPath)
-    props.group = group;
-    props._scheduler = group._scheduler;
-  } else {
-    let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);
-    let stateTrackingEnabled = taskProperty._onStateCallback;
-    props._scheduler = new EmberScheduler(schedulerPolicy, stateTrackingEnabled);
-  }
 
   return props;
 }

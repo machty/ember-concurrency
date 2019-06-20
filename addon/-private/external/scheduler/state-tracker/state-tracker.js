@@ -5,11 +5,11 @@ class StateTracker {
     this.states = {};
   }
 
-  stateFor(taskOrGroup) {
-    let guid = taskOrGroup._guid;
+  stateFor(source) {
+    let guid = source.guid;
     let taskState = this.states[guid];
     if (!taskState) {
-      taskState = this.states[guid] = new RefreshState(taskOrGroup);
+      taskState = this.states[guid] = new RefreshState(source.group);
     }
     return taskState;
   }

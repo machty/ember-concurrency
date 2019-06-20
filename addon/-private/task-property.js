@@ -2,6 +2,8 @@ import { scheduleOnce } from '@ember/runloop';
 import { addObserver } from '@ember/object/observers';
 import { addListener } from '@ember/object/events';
 import EmberObject from '@ember/object';
+import { EmberTaskInstanceDelegate } from './ember-task-instance-delegate';
+import { EmberEnvironment } from './ember-environment';
 import { getOwner } from '@ember/application';
 import TaskInstance from './task-instance';
 import TaskStateMixin from './task-state-mixin';
@@ -11,7 +13,6 @@ import {
   _cleanupOnDestroy,
   _ComputedProperty,
 } from './utils';
-import EncapsulatedTask from './encapsulated-task';
 import { deprecate } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
 import {
@@ -21,6 +22,8 @@ import {
   getRunningInstance
 } from './external/task-instance/state';
 import { CANCEL_KIND_LIFESPAN_END } from './external/task-instance/cancel-request';
+
+const EMBER_ENVIRONMENT = new EmberEnvironment();
 
 const PerformProxy = EmberObject.extend({
   _task: null,
@@ -177,16 +180,27 @@ export const Task = EmberObject.extend(TaskStateMixin, {
   _curryArgs: null,
   _linkedObjects: null,
 
+  _generatorFactory(args) {
+    return () => this.fn.apply(this.context, args);
+  },
+
   init() {
     this._super(...arguments);
 
     if (typeof this.fn === 'object') {
       let owner = getOwner(this.context);
       let ownerInjection = owner ? owner.ownerInjection() : {};
-      this._taskInstanceFactory = EncapsulatedTask.extend(
+      this._taskInstanceFactory = TaskInstance.extend(
         ownerInjection,
         this.fn
       );
+      this._generatorFactory = (fullArgs) => {
+        return () => {
+          let perform = this.fn.perform;
+          assert("The object passed to `task()` must define a `perform` generator function, e.g. `perform: function * (a,b,c) {...}`, or better yet `*perform(a,b,c) {...}`", typeof perform === 'function');
+          return perform.apply(this, fullArgs);
+        };
+      }
     }
 
     _cleanupOnDestroy(this.context, this, 'cancelAll', {
@@ -229,9 +243,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       _propertyName: this._propertyName,
       group: this.group,
       _debug: this._debug,
-      _hasEnabledEvents: this._hasEnabledEvents,
-      _guid: this._guid,
-      _scheduler: this._scheduler,
+      _state: this._state,
     });
   },
 
@@ -373,18 +385,21 @@ export const Task = EmberObject.extend(TaskStateMixin, {
 
   _performShared(args, performType, linkedObject) {
     let fullArgs = this._curryArgs ? [...this._curryArgs, ...args] : args;
+    let delegate = new EmberTaskInstanceDelegate(this._state.hasEnabledEvents);
+    let taskInstanceState = this._state.makeTaskInstanceState(delegate,
+                                                              performType,
+                                                              this._generatorFactory(fullArgs),
+                                                              EMBER_ENVIRONMENT);
+
+    // TODO: audit all these properties
     let taskInstance = this._taskInstanceFactory.create({
-      fn: this.fn,
-      args: fullArgs,
+      _state: taskInstanceState,
       context: this.context,
       owner: this.context,
-      task: this,
-      _debug: this._debug,
-      _hasEnabledEvents: this._hasEnabledEvents,
       _origin: this,
-      _performType: performType,
-      _tags: this.get('_tags'),
+      task: this,
     });
+    delegate.taskInstance = taskInstance;
 
     if (performType === PERFORM_TYPE_LINKED) {
       linkedObject._expectsLinkedYield = true;
@@ -396,7 +411,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       taskInstance.cancel();
     }
 
-    this._scheduler.perform(taskInstance);
+    this._state.scheduler.perform(taskInstanceState);
     return taskInstance;
   },
 

@@ -2,14 +2,10 @@ import { not } from '@ember/object/computed';
 import EmberObject, { computed, get } from '@ember/object';
 import { yieldableSymbol } from './external/yieldables';
 
-import { TaskInstanceState, PERFORM_TYPE_DEFAULT } from './external/task-instance/state';
 import { INITIAL_STATE } from './external/task-instance/initial-state';
-import { EmberTaskInstanceDelegate } from './ember-task-instance-delegate';
-import { EmberEnvironment } from './ember-environment';
 import { CancelRequest, CANCEL_KIND_EXPLICIT } from './external/task-instance/cancel-request';
 
 const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
-const EMBER_ENVIRONMENT = new EmberEnvironment();
 
 /**
   A `TaskInstance` represent a single execution of a
@@ -31,24 +27,6 @@ const EMBER_ENVIRONMENT = new EmberEnvironment();
 */
 const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
   task: null,
-  args: [],
-  _debug: false,
-  _hasEnabledEvents: false,
-  _expectsLinkedYield: false,
-  _tags: null,
-  _counted: false,
-  _performType: PERFORM_TYPE_DEFAULT,
-
-  init(...args) {
-    this._super(...args);
-    this._state = new TaskInstanceState({
-      generatorFactory: this._generatorBuilder(),
-      delegate: new EmberTaskInstanceDelegate(this),
-      env: EMBER_ENVIRONMENT,
-      debug: this._debug,
-      performType: this._performType,
-    });
-  },
 
   /**
    * Describes the state that the task instance is in. Can be used for debugging,
@@ -195,11 +173,6 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
    * @param {string} cancelationReason - Cancelation reason that was was provided to {@linkcode TaskInstance#cancel}
    */
 
-  _start() {
-    this._state.start();
-    return this;
-  },
-
   toString() {
     return `${this.task} TaskInstance`;
   },
@@ -249,28 +222,6 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
    */
   finally(...args) {
     return this._state.promise().finally(...args);
-  },
-
-  _onFinalize(callback) {
-    this._state.onFinalize(callback);
-  },
-
-  /**
-   * Returns a generator function iterator (the object with
-   * .next()/.throw()/.return() methods) using the task function
-   * supplied to `task(...)`. It uses `apply` so that the `this`
-   * context is the host object the task lives on, and passes
-   * the args passed to `perform(...args)` through to the generator
-   * function.
-   *
-   * `_generatorBuilder` is overridden in EncapsulatedTask to produce
-   * an iterator based on the `*perform()` function on the
-   * EncapsulatedTask definition.
-   *
-   * @private
-   */
-  _generatorBuilder() {
-    return () => this.fn.apply(this.context, this.args);
   },
 
   // this is the "public" API for how yieldables resume TaskInstances;

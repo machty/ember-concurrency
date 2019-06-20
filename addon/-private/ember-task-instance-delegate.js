@@ -1,9 +1,9 @@
 import { TaskInstanceDelegate } from "./external/task-instance/delegate";
 
 export class EmberTaskInstanceDelegate extends TaskInstanceDelegate {
-  constructor(taskInstance) {
+  constructor(eventsEnabled) {
     super();
-    this.taskInstance = taskInstance;
+    this.eventsEnabled = eventsEnabled;
   }
 
   setState(state) {
@@ -31,7 +31,7 @@ export class EmberTaskInstanceDelegate extends TaskInstanceDelegate {
   }
 
   triggerEvent(...allArgs) {
-    if (!this.taskInstance._hasEnabledEvents) {
+    if (!this.eventsEnabled) {
       return;
     }
 

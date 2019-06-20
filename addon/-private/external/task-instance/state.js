@@ -57,8 +57,9 @@ export function didCancel(e) {
 }
 
 export class TaskInstanceState {
-  constructor({ generatorFactory, delegate, env, debug, performType }) {
+  constructor({ generatorFactory, taskState, delegate, env, debug, performType }) {
     this.generatorState = new GeneratorState(generatorFactory);
+    this.taskState = taskState;
     this.delegate = delegate;
     this.state = Object.assign({}, INITIAL_STATE);
     this.index = 1;

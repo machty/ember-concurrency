@@ -25,17 +25,6 @@ let mixinProps = {
 
   _propertyName: null,
   _origin: null,
-  _guid: null,
-  _tags: computed(function() {
-    let tags = {
-      [this._guid]: true
-    };
-    let group = this.group;
-    if (group) {
-      Object.assign(tags, group.get("_tags"));
-    }
-    return tags;
-  }),
   name: alias("_propertyName"),
 
   concurrency: alias("numRunning"),
@@ -47,14 +36,12 @@ let mixinProps = {
     reason = reason || ".cancelAll() was explicitly called on the Task";
 
     let cancelRequest = new CancelRequest(cancelRequestKind || CANCEL_KIND_EXPLICIT, reason);
-    this._scheduler.cancelAll(this._guid, cancelRequest);
+    this._state.cancelAll(cancelRequest);
 
     if (resetState) {
       this._resetState();
     }
   },
-
-  _scheduler: null,
 
   _resetState() {
     this.setProperties(DEFAULT_STATE);
