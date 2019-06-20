@@ -184,7 +184,6 @@ export const OldTask = EmberObject.extend({
       _propertyName: this._propertyName,
       group: this.group,
       _debug: this._debug,
-      _state: this._state,
     });
   },
 
@@ -667,7 +666,7 @@ export function taskComputed(fn) {
 export function task(taskFn) {
   let tp = taskComputed(function(key) {
     tp.taskFn.displayName = `${key} (task)`;
-    let generatorFactory = (args) => taskFn.apply(this.context, args);
+    let generatorFactory = (args) => taskFn.apply(this, args);
     let { group, scheduler, onState } = sharedTaskProperties(tp, this, key);
     return new Task(this, scheduler, group, generatorFactory, onState);
   });
@@ -730,16 +729,6 @@ function sharedTaskProperties(taskProperty, context, key) {
     group,
     scheduler,
     onState: taskProperty._onStateCallback, 
-
-    // fn: taskProperty.taskFn,
-    // _propertyName,
-    // _onStateCallback: taskProperty._onStateCallback,
-    // _state: new TaskState({
-    //   scheduler,
-    //   groupState,
-    //   hasEnabledEvents: taskProperty._hasEnabledEvents,
-    //   debug: taskProperty._debug,
-    // }),
   };
 
   return props;

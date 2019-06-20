@@ -1,4 +1,5 @@
 import { DEFAULT_STATE } from './default-state';
+import { CancelRequest, CANCEL_KIND_EXPLICIT } from '../task-instance/cancelation';
 
 let guidId = 0;
 function makeGuid() {
@@ -23,7 +24,7 @@ export class Taskable {
     reason = reason || ".cancelAll() was explicitly called on the Task";
 
     let cancelRequest = new CancelRequest(cancelRequestKind || CANCEL_KIND_EXPLICIT, reason);
-    this._state.cancelAll(cancelRequest);
+    this.scheduler.cancelAll(this.guid, cancelRequest);
 
     if (resetState) {
       this._resetState();

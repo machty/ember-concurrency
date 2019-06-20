@@ -25,7 +25,7 @@ class Scheduler {
 
   cancelAll(guid, cancelRequest) {
     this.taskInstances.forEach(taskInstance => {
-      if (taskInstance.guids[guid]) {
+      if (taskInstance.task.guids[guid]) {
         taskInstance.cancel(cancelRequest);
       }
     });
