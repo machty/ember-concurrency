@@ -1,6 +1,6 @@
 class BoundedPolicy {
   constructor(maxConcurrency) {
-    this.maxConcurrency = maxConcurrency;
+    this.maxConcurrency = maxConcurrency || 1;
   }
 }
 

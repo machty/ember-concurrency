@@ -8,7 +8,7 @@ import RestartableSchedulerPolicy from './external/scheduler/policies/restartabl
 
 export const propertyModifiers = {
   _schedulerPolicyClass: UnboundedSchedulerPolicy,
-  _maxConcurrency: Infinity,
+  _maxConcurrency: null,
   _taskGroupPath: null,
   _hasUsedModifier: false,
   _hasSetBufferPolicy: false,
@@ -67,10 +67,6 @@ function setBufferPolicy(obj, policy) {
   obj._hasUsedModifier = true;
   obj._schedulerPolicyClass = policy;
   assertModifiersNotMixedWithGroup(obj);
-
-  if (obj._maxConcurrency === Infinity) {
-    obj._maxConcurrency = 1;
-  }
 
   return obj;
 }
