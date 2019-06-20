@@ -6,4 +6,5 @@ export class TaskInstanceDelegate {
   onCancel() {}
   getYieldContext() {}
   formatCancelReason() {}
+  selfCancelLoopWarning() {}
 }

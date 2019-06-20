@@ -13,7 +13,7 @@ import {
   COMPLETION_ERROR,
   COMPLETION_CANCEL,
 } from "./completion-states"
-import { CancelRequest, CANCEL_KIND_EXPLICIT, CANCEL_KIND_YIELDED } from "./cancel-request";
+import { CancelRequest, CANCEL_KIND_EXPLICIT, CANCEL_KIND_YIELDED, CANCEL_KIND_LIFESPAN_END } from "./cancel-request";
 
 export const PERFORM_TYPE_DEFAULT  = "PERFORM_TYPE_DEFAULT";
 export const PERFORM_TYPE_UNLINKED = "PERFORM_TYPE_UNLINKED";
@@ -71,8 +71,8 @@ export class TaskInstanceState {
     this.delegate.onStarted();
   }
 
-  cancel(sourceCancelReason) {
-    if (!this.requestCancel(new CancelRequest(CANCEL_KIND_EXPLICIT, sourceCancelReason))) {
+  cancel(cancelRequest) {
+    if (!this.requestCancel(cancelRequest)) {
       return;
     }
 
@@ -270,13 +270,13 @@ export class TaskInstanceState {
    *
    * @private
    */
-  dispose(reason) {
+  dispose() {
     let disposers = this.disposers;
     if (disposers.length === 0) {
       return;
     }
     this.disposers = [];
-    disposers.forEach(disposer => disposer(reason));
+    disposers.forEach(disposer => disposer());
   }
 
   /**
@@ -464,30 +464,28 @@ export class TaskInstanceState {
       return;
     }
 
-    return (reason) => {
-      this.detectSelfCancelLoop(reason, parent);
+    return () => {
+      this.detectSelfCancelLoop(parent);
       this.cancel(); // TODO: cancel reason?
     };
   }
 
-  detectSelfCancelLoop(reason, parent) {
+  getContext() {
+    return this.delegate.getContext();
+  }
+
+  detectSelfCancelLoop(parent) {
     if (this.performType !== PERFORM_TYPE_DEFAULT) {
       return;
     }
 
-    // debugger;
-
-    // let parentObj = get(parentTaskInstance, 'task.context');
-    // let childObj = get(thisTaskInstance, 'task.context');
-
-    // if (parentObj && childObj &&
-    //     parentObj !== childObj &&
-    //     parentObj.isDestroying &&
-    //     get(thisTaskInstance, 'isRunning')) {
-    //   let parentName = `\`${parentTaskInstance.task._propertyName}\``;
-    //   let childName = `\`${thisTaskInstance.task._propertyName}\``;
-    //   // eslint-disable-next-line no-console
-    //   console.warn(`ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task ${parentName} and child task ${childName}. If you want child task ${childName} to be canceled when parent task ${parentName} is canceled, please change \`.perform()\` to \`.linked().perform()\`. If you want child task ${childName} to keep running after parent task ${parentName} is canceled, change it to \`.unlinked().perform()\``);
-    // }
+    // Detect that the parent was cancelled by a lifespan ending and
+    // that the child is still running and not cancelled.
+    if (parent.cancelRequest &&
+        parent.cancelRequest.kind === CANCEL_KIND_LIFESPAN_END &&
+        !this.cancelRequest &&
+        !this.state.isFinished) {
+      this.delegate.selfCancelLoopWarning(parent.delegate);
+    }
   }
 }

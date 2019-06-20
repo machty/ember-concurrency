@@ -21,6 +21,7 @@ import {
   PERFORM_TYPE_UNLINKED,
   getRunningInstance
 } from './external/task-instance/state';
+import { CANCEL_KIND_LIFESPAN_END } from './external/task-instance/cancel-request';
 
 const PerformProxy = EmberObject.extend({
   _task: null,
@@ -191,6 +192,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
 
     _cleanupOnDestroy(this.context, this, 'cancelAll', {
       reason: 'the object it lives on was destroyed or unrendered',
+      cancelRequestKind: CANCEL_KIND_LIFESPAN_END,
     });
   },
 

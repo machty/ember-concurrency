@@ -6,6 +6,7 @@ import { TaskInstanceState, PERFORM_TYPE_DEFAULT } from './external/task-instanc
 import { INITIAL_STATE } from './external/task-instance/initial-state';
 import { EmberTaskInstanceDelegate } from './ember-task-instance-delegate';
 import { EmberEnvironment } from './ember-environment';
+import { CancelRequest, CANCEL_KIND_EXPLICIT } from './external/task-instance/cancel-request';
 
 const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
 
@@ -35,7 +36,6 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
   args: [],
   _debug: false,
   _hasEnabledEvents: false,
-  cancelReason: null,
   _expectsLinkedYield: false,
   _tags: null,
   _counted: false,
@@ -215,7 +215,7 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
    * @instance
    */
   cancel(cancelReason = EXPLICIT_CANCEL_REASON) {
-    this._state.cancel(cancelReason);
+    this._state.cancel(new CancelRequest(CANCEL_KIND_EXPLICIT, cancelReason));
   },
 
   /**

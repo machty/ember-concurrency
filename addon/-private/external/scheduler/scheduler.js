@@ -23,10 +23,10 @@ class Scheduler {
     this.taskInstances = [];
   }
 
-  cancelAll(guid, reason, reasonKind) {
+  cancelAll(guid, cancelRequest) {
     this.taskInstances.forEach(taskInstance => {
       if (taskInstance._tags[guid]) {
-        taskInstance.cancel(reason);
+        taskInstance._state.cancel(cancelRequest);
       }
     });
   }

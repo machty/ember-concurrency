@@ -2,6 +2,7 @@ import { gt } from "@ember/object/computed";
 import Mixin from "@ember/object/mixin";
 import { computed } from "@ember/object";
 import { DEFAULT_STATE } from "./default-state";
+import { CancelRequest, CANCEL_KIND_EXPLICIT } from "./external/task-instance/cancel-request";
 const { alias } = computed;
 
 // this is a mixin of properties/methods shared between Tasks and TaskGroups
@@ -42,10 +43,11 @@ let mixinProps = {
   numQueued: 0,
 
   cancelAll(options) {
-    let { reason, reasonKind, resetState } = options || {};
+    let { reason, cancelRequestKind, resetState } = options || {};
     reason = reason || ".cancelAll() was explicitly called on the Task";
 
-    this._scheduler.cancelAll(this._guid, reason, reasonKind);
+    let cancelRequest = new CancelRequest(cancelRequestKind || CANCEL_KIND_EXPLICIT, reason);
+    this._scheduler.cancelAll(this._guid, cancelRequest);
 
     if (resetState) {
       this._resetState();
