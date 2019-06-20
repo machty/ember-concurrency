@@ -1,28 +1,91 @@
-import { scheduleOnce } from '@ember/runloop';
-import { addObserver } from '@ember/object/observers';
-import { addListener } from '@ember/object/events';
-import EmberObject from '@ember/object';
-import { EmberEnvironment } from './ember-environment';
-import { getOwner } from '@ember/application';
-import TaskInstance from './task-instance';
-import TaskStateMixin from './task-state-mixin';
-import { propertyModifiers } from './property-modifiers-mixin';
-import {
-  INVOKE,
-  _cleanupOnDestroy,
-  _ComputedProperty,
-} from './utils';
-import { deprecate } from '@ember/debug';
+import Ember from 'ember';
+import EmberObject, { computed } from '@ember/object';
+import { assert } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
-import {
-  PERFORM_TYPE_DEFAULT,
-  PERFORM_TYPE_LINKED,
-  PERFORM_TYPE_UNLINKED,
-  getRunningInstance
-} from './external/task-instance/state';
-import { CANCEL_KIND_LIFESPAN_END } from './external/task-instance/cancel-request';
+import { EmberEnvironment } from './ember-environment';
+import UnboundedSchedulerPolicy from './external/scheduler/policies/unbounded-policy'
+import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy'
+import DropSchedulerPolicy from './external/scheduler/policies/drop-policy'
+import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy'
+import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy'
+import { _ComputedProperty } from './utils';
+import EmberScheduler from './scheduler/ember-scheduler';
+import { addListener } from '@ember/object/events';
+import { getOwner } from '@ember/application';
+import { addObserver } from '@ember/object/observers';
+import { Task } from './task';
 
-const EMBER_ENVIRONMENT = new EmberEnvironment();
+let handlerCounter = 0;
+
+export const propertyModifiers = {
+  _schedulerPolicyClass: UnboundedSchedulerPolicy,
+  _maxConcurrency: null,
+  _taskGroupPath: null,
+  _hasUsedModifier: false,
+  _hasSetBufferPolicy: false,
+  _hasEnabledEvents: false,
+
+  restartable() {
+    return setBufferPolicy(this, RestartableSchedulerPolicy);
+  },
+
+  enqueue() {
+    return setBufferPolicy(this, EnqueueSchedulerPolicy);
+  },
+
+  drop() {
+    return setBufferPolicy(this, DropSchedulerPolicy);
+  },
+
+  keepLatest() {
+    return setBufferPolicy(this, KeepLatestSchedulerPolicy);
+  },
+
+  maxConcurrency(n) {
+    this._hasUsedModifier = true;
+    this._maxConcurrency = n;
+    assertModifiersNotMixedWithGroup(this);
+    return this;
+  },
+
+  group(taskGroupPath) {
+    this._taskGroupPath = taskGroupPath;
+    assertModifiersNotMixedWithGroup(this);
+    return this;
+  },
+
+  evented() {
+    this._hasEnabledEvents = true;
+    return this;
+  },
+
+  debug() {
+    this._debug = true;
+    return this;
+  },
+
+  onState(callback) {
+    this._onStateCallback = callback;
+    return this;
+  },
+
+  _onStateCallback(props, taskable) {
+    taskable.setState(props);
+  },
+};
+
+function setBufferPolicy(obj, policy) {
+  obj._hasSetBufferPolicy = true;
+  obj._hasUsedModifier = true;
+  obj._schedulerPolicyClass = policy;
+  assertModifiersNotMixedWithGroup(obj);
+
+  return obj;
+}
+
+function assertModifiersNotMixedWithGroup(obj) {
+  assert(`ember-concurrency does not currently support using both .group() with other task modifiers (e.g. drop(), enqueue(), restartable())`, !obj._hasUsedModifier || !obj._taskGroupPath);
+}
 
 const PerformProxy = EmberObject.extend({
   _task: null,
@@ -55,133 +118,12 @@ const PerformProxy = EmberObject.extend({
 
   @class Task
 */
-export const Task = EmberObject.extend(TaskStateMixin, {
-  /**
-   * `true` if any current task instances are running.
-   *
-   * @memberof Task
-   * @member {boolean} isRunning
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * `true` if any future task instances are queued.
-   *
-   * @memberof Task
-   * @member {boolean} isQueued
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * `true` if the task is not in the running or queued state.
-   *
-   * @memberof Task
-   * @member {boolean} isIdle
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * The current state of the task: `"running"`, `"queued"` or `"idle"`.
-   *
-   * @memberof Task
-   * @member {string} state
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * The most recently started task instance.
-   *
-   * @memberof Task
-   * @member {TaskInstance} last
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * The most recent task instance that is currently running.
-   *
-   * @memberof Task
-   * @member {TaskInstance} lastRunning
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * The most recently performed task instance.
-   *
-   * @memberof Task
-   * @member {TaskInstance} lastPerformed
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * The most recent task instance that succeeded.
-   *
-   * @memberof Task
-   * @member {TaskInstance} lastSuccessful
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * The most recently completed task instance.
-   *
-   * @memberof Task
-   * @member {TaskInstance} lastComplete
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * The most recent task instance that errored.
-   *
-   * @memberof Task
-   * @member {TaskInstance} lastErrored
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * The most recently canceled task instance.
-   *
-   * @memberof Task
-   * @member {TaskInstance} lastCanceled
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * The most recent task instance that is incomplete.
-   *
-   * @memberof Task
-   * @member {TaskInstance} lastIncomplete
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * The number of times this task has been performed.
-   *
-   * @memberof Task
-   * @member {number} performCount
-   * @instance
-   * @readOnly
-   */
-
+export const OldTask = EmberObject.extend({
   fn: null,
   context: null,
   _observes: null,
   _curryArgs: null,
   _linkedObjects: null,
-
-  _generatorFactory(args) {
-    return () => this.fn.apply(this.context, args);
-  },
 
   init() {
     this._super(...arguments);
@@ -358,94 +300,8 @@ export const Task = EmberObject.extend(TaskStateMixin, {
     return `<Task:${this._propertyName}>`;
   },
 
-  _taskInstanceFactory: TaskInstance,
+  // _taskInstanceFactory: TaskInstance,
 
-  /**
-   * Creates a new {@linkcode TaskInstance} and attempts to run it right away.
-   * If running this task instance would increase the task's concurrency
-   * to a number greater than the task's maxConcurrency, this task
-   * instance might be immediately canceled (dropped), or enqueued
-   * to run at later time, after the currently running task(s) have finished.
-   *
-   * @method perform
-   * @memberof Task
-   * @param {*} arg* - args to pass to the task function
-   * @instance
-   *
-   * @fires TaskInstance#TASK_NAME:started
-   * @fires TaskInstance#TASK_NAME:succeeded
-   * @fires TaskInstance#TASK_NAME:errored
-   * @fires TaskInstance#TASK_NAME:canceled
-   *
-   */
-  perform(...args) {
-    return this._performShared(args, PERFORM_TYPE_DEFAULT, null);
-  },
-
-  _performShared(args, performType, linkedObject) {
-    let fullArgs = this._curryArgs ? [...this._curryArgs, ...args] : args;
-
-
-
-
-
-    let taskInstanceState = new TaskInstanceState({
-      generatorFactory,
-      delegate,
-      env,
-      debug: this.debug,
-      performType,
-      taskState: this,
-    });
-
-    let taskInstance = new TaskInstance(this);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    let delegate = new EmberTaskInstanceDelegate(this._state.hasEnabledEvents);
-    let taskInstanceState = this._state.makeTaskInstanceState(delegate,
-                                                              performType,
-                                                              this._generatorFactory(fullArgs),
-                                                              EMBER_ENVIRONMENT);
-
-    // TODO: audit all these properties
-    let taskInstance = this._taskInstanceFactory.create({
-      _state: taskInstanceState,
-      context: this.context,
-      owner: this.context,
-      _origin: this,
-      task: this,
-    });
-    delegate.taskInstance = taskInstance;
-
-    if (performType === PERFORM_TYPE_LINKED) {
-      linkedObject._expectsLinkedYield = true;
-    }
-
-    if (this.context.isDestroying) {
-      // TODO: express this in terms of lifetimes; a task linked to
-      // a dead lifetime should immediately cancel.
-      taskInstance.cancel();
-    }
-
-    this._state.scheduler.perform(taskInstanceState);
-    return taskInstance;
-  },
-
-  [INVOKE](...args) {
-    return this.perform(...args);
-  },
 });
 
 /**
@@ -464,10 +320,12 @@ export const Task = EmberObject.extend(TaskStateMixin, {
 
   @class TaskProperty
 */
-export let TaskProperty;
+let TaskProperty;
+let TaskGroupProperty;
 
 if (gte('3.10.0')) {
   TaskProperty = class {};
+  TaskGroupProperty = class {};
 } else {
   // Prior to the 3.10.0 refactors, we had to extend the _ComputedProperty class
   // for a classic decorator/descriptor to run correctly.
@@ -478,9 +336,11 @@ if (gte('3.10.0')) {
       }
     }
   };
+  TaskGroupProperty = class extends _ComputedProperty {};
 }
 
-Object.assign(TaskProperty.prototype, {
+Object.assign(TaskGroupProperty.prototype, propertyModifiers);
+Object.assign(TaskProperty.prototype, propertyModifiers, {
   setup(proto, taskName) {
     if (this.callSuperSetup) {
       this.callSuperSetup(...arguments);
@@ -709,9 +569,6 @@ Object.assign(TaskProperty.prototype, {
     );
   },
 });
-
-Object.assign(TaskProperty.prototype, propertyModifiers);
-
 function registerOnPrototype(
   addListenerOrObserver,
   proto,
@@ -743,4 +600,147 @@ function makeTaskCallback(taskName, method, once) {
   };
 }
 
-let handlerCounter = 0;
+const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
+export function taskComputed(fn) {
+  if (gte('3.10.0')) {
+    let cp = function(proto, key) {
+      if (cp.setup !== undefined) {
+        cp.setup(proto, key);
+      }
+
+      return computed(fn)(...arguments);
+    };
+
+    setDecorator(cp);
+
+    return cp;
+  } else {
+    return computed(fn);
+  }
+}
+
+/**
+ * A Task is a cancelable, restartable, asynchronous operation that
+ * is driven by a generator function. Tasks are automatically canceled
+ * when the object they live on is destroyed (e.g. a Component
+ * is unrendered).
+ *
+ * To define a task, use the `task(...)` function, and pass in
+ * a generator function, which will be invoked when the task
+ * is performed. The reason generator functions are used is
+ * that they (like the proposed ES7 async-await syntax) can
+ * be used to elegantly express asynchronous, cancelable
+ * operations.
+ *
+ * You can also define an
+ * <a href="/#/docs/encapsulated-task">Encapsulated Task</a>
+ * by passing in an object that defined a `perform` generator
+ * function property.
+ *
+ * The following Component defines a task called `myTask` that,
+ * when performed, prints a message to the console, sleeps for 1 second,
+ * prints a final message to the console, and then completes.
+ *
+ * ```js
+ * import { task, timeout } from 'ember-concurrency';
+ * export default Component.extend({
+ *   myTask: task(function * () {
+ *     console.log("Pausing for a second...");
+ *     yield timeout(1000);
+ *     console.log("Done!");
+ *   })
+ * });
+ * ```
+ *
+ * ```hbs
+ * <button {{action myTask.perform}}>Perform Task</button>
+ * ```
+ *
+ * By default, tasks have no concurrency constraints
+ * (multiple instances of a task can be running at the same time)
+ * but much of a power of tasks lies in proper usage of Task Modifiers
+ * that you can apply to a task.
+ *
+ * @param {function} generatorFunction the generator function backing the task.
+ * @returns {TaskProperty}
+ */
+export function task(taskFn) {
+  let tp = taskComputed(function(key) {
+    tp.taskFn.displayName = `${key} (task)`;
+    let generatorFactory = (args) => taskFn.apply(this.context, args);
+    let { group, scheduler, onState } = sharedTaskProperties(tp, this, key);
+    return new Task(this, scheduler, group, generatorFactory, onState);
+  });
+
+  tp.taskFn = taskFn;
+
+  Object.setPrototypeOf(tp, TaskProperty.prototype);
+
+  return tp;
+}
+
+/**
+ * "Task Groups" provide a means for applying
+ * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
+ * as part of a group task, modifiers like `drop()` or `restartable()`
+ * will no longer affect the individual `Task`. Instead those
+ * modifiers can be applied to the entire group.
+ *
+ * ```js
+ * import { task, taskGroup } from 'ember-concurrency';
+ *
+ * export default Controller.extend({
+ *   chores: taskGroup().drop(),
+ *
+ *   mowLawn:       task(taskFn).group('chores'),
+ *   doDishes:      task(taskFn).group('chores'),
+ *   changeDiapers: task(taskFn).group('chores')
+ * });
+ * ```
+ *
+ * @returns {TaskGroup}
+ */
+export function taskGroup(taskFn) {
+  let tp = taskComputed(function(key) {
+    return TaskGroup.create(
+      sharedTaskProperties(tp, this, key)
+    );
+  });
+
+  tp.taskFn = taskFn;
+
+  Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
+
+  return tp;
+}
+
+function sharedTaskProperties(taskProperty, context, key) {
+  let group, scheduler;
+
+  if (taskProperty._taskGroupPath) {
+    group = context.get(taskProperty._taskGroupPath);
+    scheduler = groupState.scheduler;
+  } else {
+    let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);
+    let stateTrackingEnabled = taskProperty._onStateCallback;
+    scheduler = new EmberScheduler(schedulerPolicy, stateTrackingEnabled);
+  }
+
+  return {
+    group,
+    scheduler,
+    onState: taskProperty._onStateCallback, 
+
+    // fn: taskProperty.taskFn,
+    // _propertyName,
+    // _onStateCallback: taskProperty._onStateCallback,
+    // _state: new TaskState({
+    //   scheduler,
+    //   groupState,
+    //   hasEnabledEvents: taskProperty._hasEnabledEvents,
+    //   debug: taskProperty._debug,
+    // }),
+  };
+
+  return props;
+}

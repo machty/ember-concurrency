@@ -18,8 +18,9 @@ import {
   CancelRequest,
   CANCEL_KIND_YIELDABLE_CANCEL,
   CANCEL_KIND_LIFESPAN_END,
-  CANCEL_KIND_PARENT_CANCEL
-} from "./cancel-request";
+  CANCEL_KIND_PARENT_CANCEL,
+  didCancel
+} from "./cancelation";
 
 export const PERFORM_TYPE_DEFAULT = "PERFORM_TYPE_DEFAULT";
 export const PERFORM_TYPE_UNLINKED = "PERFORM_TYPE_UNLINKED";
@@ -33,46 +34,14 @@ export function getRunningInstance() {
   return TASK_INSTANCE_STACK[TASK_INSTANCE_STACK.length - 1];
 }
 
-/**
- * Returns true if the object passed to it is a TaskCancelation error.
- * If you call `someTask.perform().catch(...)` or otherwise treat
- * a {@linkcode TaskInstance} like a promise, you may need to
- * handle the cancelation of a TaskInstance differently from
- * other kinds of errors it might throw, and you can use this
- * convenience function to distinguish cancelation from errors.
- *
- * ```js
- * click() {
- *   this.get('myTask').perform().catch(e => {
- *     if (!didCancel(e)) { throw e; }
- *   });
- * }
- * ```
- *
- * @param {Object} error the caught error, which might be a TaskCancelation
- * @returns {Boolean}
- */
-export function didCancel(e) {
-  return e && e.name === TASK_CANCELATION_NAME;
-}
-
-// what does this class do?
-// it encapsulates all the performing logic, dealing with generators n shit.
-// Seems good.
-
-export class TaskInstanceState {
-  constructor({ generatorFactory, taskState, env, debug, performType }) {
-    // this.taskInstance = here_or_later
-
+export class TaskInstanceExecutor {
+  constructor({ generatorFactory, env }) {
     this.generatorState = new GeneratorState(generatorFactory);
-    this.taskState = taskState;
     this.state = Object.assign({}, INITIAL_STATE);
     this.index = 1;
     this.disposers = [];
     this.finalizeCallbacks = [];
     this.env = env;
-    this.performType = performType;
-    this.debug = debug;
     this.cancelRequest = null;
   }
 
@@ -82,7 +51,6 @@ export class TaskInstanceState {
     }
     this.setState({ hasStarted: true });
     this.proceedSync(YIELDABLE_CONTINUE, undefined);
-    this.triggerEvent("started", this.taskInstance);
     this.taskInstance.onStarted();
   }
 
@@ -320,7 +288,7 @@ export class TaskInstanceState {
     // TODO: fix this!
     if (this._expectsLinkedYield) {
       let value = stepResult.value;
-      if (!value || value._performType !== PERFORM_TYPE_LINKED) {
+      if (!value || value.performType !== PERFORM_TYPE_LINKED) {
         // eslint-disable-next-line no-console
         console.warn(
           "You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency)."
@@ -416,7 +384,7 @@ export class TaskInstanceState {
     );
     let error = new Error(cancelReason);
 
-    if (this.debug || this.env.globalDebuggingEnabled()) {
+    if (this.debugEnabled()) {
       // eslint-disable-next-line no-console
       console.log(cancelReason);
     }
@@ -429,6 +397,10 @@ export class TaskInstanceState {
       error,
       cancelReason
     });
+  }
+
+  debugEnabled() {
+    return this.taskInstance.debug || this.env.globalDebuggingEnabled();
   }
 
   finalizeShared(state) {
@@ -503,18 +475,23 @@ export class TaskInstanceState {
       }
     });
 
-    if (this.performType === PERFORM_TYPE_UNLINKED) {
+    let performType = this.getPerformType();
+    if (performType === PERFORM_TYPE_UNLINKED) {
       return;
     }
 
     return () => {
-      this.detectSelfCancelLoop(parent);
+      this.detectSelfCancelLoop(performType, parent);
       this.cancel(new CancelRequest(CANCEL_KIND_PARENT_CANCEL));
     };
   }
 
-  detectSelfCancelLoop(parent) {
-    if (this.performType !== PERFORM_TYPE_DEFAULT) {
+  getPerformType() {
+    return this.taskInstance.performType || PERFORM_TYPE_DEFAULT;
+  }
+
+  detectSelfCancelLoop(performType, parent) {
+    if (performType !== PERFORM_TYPE_DEFAULT) {
       return;
     }
 

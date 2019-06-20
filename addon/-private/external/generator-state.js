@@ -7,9 +7,9 @@ export class GeneratorStepResult {
 }
 
 export class GeneratorState {
-  constructor(generatorBuilder) {
+  constructor(generatorFactory) {
     this.done = false;
-    this.generatorBuilder = generatorBuilder;
+    this.generatorFactory = generatorFactory;
     this.iterator = null;
   }
 
@@ -30,7 +30,7 @@ export class GeneratorState {
 
   getIterator() {
     if (!this.iterator && !this.done) {
-      this.iterator = this.generatorBuilder();
+      this.iterator = this.generatorFactory();
     }
     return this.iterator;
   }

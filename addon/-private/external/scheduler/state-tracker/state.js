@@ -1,8 +1,9 @@
 import { COMPLETION_SUCCESS, COMPLETION_ERROR, COMPLETION_CANCEL } from "../../task-instance/completion-states";
 
 class RefreshState {
-  constructor(group) {
-    this.group = group;
+  constructor(taskable) {
+    this.taskable = taskable;
+    this.group = taskable.group;
     this.numRunning = 0;
     this.numQueued = 0;
     this.numPerformedInc = 0;

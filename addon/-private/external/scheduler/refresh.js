@@ -1,38 +1,38 @@
 import { TYPE_STARTED, TYPE_QUEUED, TYPE_CANCELLED } from "./policies/execution-states"
 
 class Refresh {
-  constructor(schedulerPolicy, stateTracker, taskInstanceStates) {
+  constructor(schedulerPolicy, stateTracker, taskInstances) {
     this.stateTracker = stateTracker;
     this.schedulerPolicy = schedulerPolicy;
-    this.initialTaskInstances = taskInstanceStates;
+    this.initialTaskInstances = taskInstances;
     this.startingInstances = [];
   }
 
   process() {
-    let [taskInstanceStates, numRunning, numQueued] = this.filterFinishedTaskInstances();
+    let [taskInstances, numRunning, numQueued] = this.filterFinishedTaskInstances();
     let reducer = this.schedulerPolicy.makeReducer(numRunning, numQueued);
 
-    let finalTaskInstances = taskInstanceStates.filter(taskInstanceState => {
-      return this.setTaskInstanceExecutionState(taskInstanceState, reducer.step());
+    let finalTaskInstances = taskInstances.filter(taskInstance => {
+      return this.setTaskInstanceExecutionState(taskInstance, reducer.step());
     });
 
     this.stateTracker.computeFinalStates(state => this.applyState(state));
-    this.startingInstances.forEach(taskInstanceState => taskInstanceState.start());
+    this.startingInstances.forEach(taskInstance => taskInstance.executor.start());
 
     return finalTaskInstances;
   }
 
   filterFinishedTaskInstances() {
     let numRunning = 0, numQueued = 0;
-    let taskInstanceStates = this.initialTaskInstances.filter(taskInstanceState => {
-      let taskState = this.stateTracker.stateFor(taskInstanceState.taskState);
+    let taskInstances = this.initialTaskInstances.filter(taskInstance => {
+      let taskState = this.stateTracker.stateFor(taskInstance.task);
 
-      if (taskInstanceState.isFinished) {
-        taskState.onCompletion(taskInstanceState);
+      if (taskInstance.isFinished) {
+        taskState.onCompletion(taskInstance);
         return false;
       }
 
-      if (taskInstanceState.hasStarted) {
+      if (taskInstance.hasStarted) {
         numRunning += 1;
       } else {
         numQueued += 1;
@@ -40,41 +40,41 @@ class Refresh {
 
       return true;
     });
-    return [taskInstanceStates, numRunning, numQueued];
+    return [taskInstances, numRunning, numQueued];
   }
 
-  setTaskInstanceExecutionState(taskInstanceState, desiredState) {
-    let taskState = this.stateTracker.stateFor(taskInstanceState.taskState);
+  setTaskInstanceExecutionState(taskInstance, desiredState) {
+    let taskState = this.stateTracker.stateFor(taskInstance.task);
 
-    if (!taskInstanceState._counted) {
-      taskInstanceState._counted = true;
-      taskState.onPerformed(taskInstanceState);
+    if (!taskInstance._counted) {
+      taskInstance._counted = true;
+      taskState.onPerformed(taskInstance);
     }
 
     switch (desiredState.type) {
       case TYPE_CANCELLED:
         // this will cause a follow up flush which will detect and recompute cancellation state
-        taskInstanceState.cancel(desiredState.reason);
+        taskInstance.cancel(desiredState.reason);
         return false;
       case TYPE_STARTED:
-        if (!taskInstanceState.hasStarted) {
-          this.startingInstances.push(taskInstanceState);
-          taskState.onStart(taskInstanceState);
+        if (!taskInstance.hasStarted) {
+          this.startingInstances.push(taskInstance);
+          taskState.onStart(taskInstance);
         }
-        taskState.onRunning(taskInstanceState);
+        taskState.onRunning(taskInstance);
         return true;
       case TYPE_QUEUED:
-        taskState.onQueued(taskInstanceState);
-        // TODO: assert taskInstanceState hasn't started?
+        taskState.onQueued(taskInstance);
+        // TODO: assert taskInstance hasn't started?
         // Or perhaps this can be a way to pause a task?
         return true;
     }
   }
 
   applyState(state) {
-    let { taskOrGroup } = state;
+    let { taskable } = state;
 
-    if (!taskOrGroup._onStateCallback) {
+    if (!taskable.onState) {
       return;
     }
 
@@ -84,7 +84,7 @@ class Refresh {
       numPerformedInc: state.numPerformedInc,
     }, state.attrs);
 
-    taskOrGroup._onStateCallback(taskOrGroup, props);
+    taskable.onState(props, taskable);
   }
 }
 

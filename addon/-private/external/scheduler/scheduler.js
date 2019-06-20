@@ -20,20 +20,20 @@ class Scheduler {
   constructor(schedulerPolicy, stateTrackingEnabled) {
     this.schedulerPolicy = schedulerPolicy;
     this.stateTrackingEnabled = stateTrackingEnabled;
-    this.taskInstanceStates = [];
+    this.taskInstances = [];
   }
 
   cancelAll(guid, cancelRequest) {
-    this.taskInstanceStates.forEach(taskInstanceState => {
-      if (taskInstanceState.guids[guid]) {
-        taskInstanceState._state.cancel(cancelRequest);
+    this.taskInstances.forEach(taskInstance => {
+      if (taskInstance.guids[guid]) {
+        taskInstance.cancel(cancelRequest);
       }
     });
   }
 
-  perform(taskInstanceState) {
-    taskInstanceState.onFinalize(() => this.scheduleRefresh());
-    this.taskInstanceStates.push(taskInstanceState);
+  perform(taskInstance) {
+    taskInstance.onFinalize(() => this.scheduleRefresh());
+    this.taskInstances.push(taskInstance);
     this.refresh();
   }
 
@@ -42,8 +42,8 @@ class Scheduler {
 
   refresh() {
     let stateTracker = this.stateTrackingEnabled ? new StateTracker() : new NullStateTracker();
-    let refresh = new SchedulerRefresh(this.schedulerPolicy, stateTracker, this.taskInstanceStates);
-    this.taskInstanceStates = refresh.process();
+    let refresh = new SchedulerRefresh(this.schedulerPolicy, stateTracker, this.taskInstances);
+    this.taskInstances = refresh.process();
   }
 }
 

@@ -1,4 +1,10 @@
 export class BaseTaskInstance {
+  constructor(task, executor) {
+    this.task = task;
+    this.executor = executor;
+    this.executor.taskInstance = this;
+  }
+
   setState() {}
   onStarted() {}
   onSuccess() {}
@@ -6,4 +12,8 @@ export class BaseTaskInstance {
   onCancel() {}
   formatCancelReason() {}
   selfCancelLoopWarning() {}
+
+  onFinalize(callback) {
+    this.executor.onFinalize(callback);
+  }
 }

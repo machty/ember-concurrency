@@ -2,6 +2,7 @@ import { later, cancel } from '@ember/runloop';
 import { Promise } from 'rsvp';
 import ComputedProperty from '@ember/object/computed';
 import Ember from 'ember';
+import { set, setProperties } from '@ember/object';
 
 export function isEventedObject(c) {
   return (c && (
@@ -90,4 +91,17 @@ export function timeout(ms) {
 export function deprecatePrivateModule(moduleName) {
   // eslint-disable-next-line no-console
   console.warn(`an Ember addon is importing a private ember-concurrency module '${moduleName}' that has moved`);
+}
+
+export function setTaskableState(taskable, state) {
+  setProperties(taskable, state);
+  let isRunning = taskable.numRunning > 0;
+  let derivedState = {
+    performCount: taskable.performCount + (state.numPerformedInc || 0),
+    isRunning,
+    isQueued: taskable.numQueued > 0,
+    isIdle: !isRunning,
+    state: isRunning ? "running" : "idle",
+  };
+  setProperties(taskable, derivedState);
 }

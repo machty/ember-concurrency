@@ -2,7 +2,7 @@ import { set, get, setProperties } from '@ember/object';
 import { yieldableSymbol } from './external/yieldables';
 
 import { INITIAL_STATE } from './external/task-instance/initial-state';
-import { CancelRequest, CANCEL_KIND_EXPLICIT } from './external/task-instance/cancel-request';
+import { CancelRequest, CANCEL_KIND_EXPLICIT } from './external/task-instance/cancelation';
 import { BaseTaskInstance } from './external/task-instance/base';
 
 const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
@@ -26,9 +26,10 @@ const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
   @class TaskInstance
 */
 
-class TaskInstance extends BaseTaskInstance {
-  constructor(task) {
-    this._setState(INITIAL_STATE);
+export class TaskInstance extends BaseTaskInstance {
+  constructor(task, executor) {
+    super(task, executor)
+    this.setState(INITIAL_STATE);
   }
 
   setState(props) {
@@ -255,7 +256,7 @@ class TaskInstance extends BaseTaskInstance {
    * @instance
    */
   cancel(cancelReason = EXPLICIT_CANCEL_REASON) {
-    this._state.cancel(new CancelRequest(CANCEL_KIND_EXPLICIT, cancelReason));
+    this.executor.cancel(new CancelRequest(CANCEL_KIND_EXPLICIT, cancelReason));
   }
 
   /**
@@ -270,7 +271,7 @@ class TaskInstance extends BaseTaskInstance {
    * @return {Promise}
    */
   then(...args) {
-    return this._state.promise().then(...args);
+    return this.executor.promise().then(...args);
   }
 
   /**
@@ -280,7 +281,7 @@ class TaskInstance extends BaseTaskInstance {
    * @return {Promise}
    */
   catch(...args) {
-    return this._state.promise().catch(...args);
+    return this.executor.promise().catch(...args);
   }
 
   /**
@@ -290,18 +291,18 @@ class TaskInstance extends BaseTaskInstance {
    * @return {Promise}
    */
   finally(...args) {
-    return this._state.promise().finally(...args);
+    return this.executor.promise().finally(...args);
   }
 
   // this is the "public" API for how yieldables resume TaskInstances;
   // this should probably be cleanup / generalized, but until then,
   // we can't change the name.
   proceed(index, yieldResumeType, value) {
-    this._state.proceedChecked(index, yieldResumeType, value);
+    this.executor.proceedChecked(index, yieldResumeType, value);
   }
 
   [yieldableSymbol](parentTaskInstance, resumeIndex) {
-    return this._state.onYielded(parentTaskInstance._state, resumeIndex);
+    return this.executor.onYielded(parentTaskInstance.executor, resumeIndex);
   }
 
   get(key) {
@@ -324,5 +325,3 @@ export function wrap(fn, attrs = {}) {
     return go.call(this, args, fn, attrs);
   };
 }
-
-export default TaskInstance;

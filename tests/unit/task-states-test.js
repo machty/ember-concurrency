@@ -12,7 +12,7 @@ module('Unit: task states', function(hooks) {
     assert.expect(3);
 
     let Obj = EmberObject.extend({
-      myTask: task(function * () { })
+      myTask: task(function * () {})
     });
 
     let obj;
@@ -51,7 +51,7 @@ module('Unit: task states', function(hooks) {
     run(() => {
       let t = obj.get('myTask');
       assert.equal(t.get('isIdle'), false);
-      assert.equal(t.get('concurrency'), 1);
+      assert.equal(t.get('numRunning'), 1);
       t.perform();
     });
   });
