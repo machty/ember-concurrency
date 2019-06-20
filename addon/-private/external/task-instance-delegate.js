@@ -5,4 +5,5 @@ export class TaskInstanceDelegate {
   onError() {}
   onCancel() {}
   getYieldContext() {}
+  formatCancelReason() {}
 }

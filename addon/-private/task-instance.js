@@ -9,12 +9,6 @@ import { EmberEnvironment } from './ember-environment';
 
 const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
 
-let TASK_INSTANCE_STACK = [];
-
-export function getRunningInstance() {
-  return TASK_INSTANCE_STACK[TASK_INSTANCE_STACK.length - 1];
-}
-
 const EMBER_ENVIRONMENT = new EmberEnvironment();
 
 /**
@@ -51,7 +45,6 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
     this._super(...args);
     this._state = new TaskInstanceState({
       generatorFactory: this._generatorBuilder(),
-      name: get(this, 'task._propertyName') || "<unknown>",
       delegate: new EmberTaskInstanceDelegate(this),
       env: EMBER_ENVIRONMENT,
       debug: this._debug,
@@ -79,10 +72,10 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
    * @instance
    * @readOnly
    */
-  state: computed('isDropped', 'isCanceling', 'hasStarted', 'isFinished', function() {
+  state: computed('isDropped', 'isCanceled', 'hasStarted', 'isFinished', function() {
     if (get(this, 'isDropped')) {
       return 'dropped';
-    } else if (get(this, 'isCanceling')) {
+    } else if (get(this, 'isCanceled')) {
       return 'canceled';
     } else if (get(this, 'isFinished')) {
       return 'finished';
@@ -104,8 +97,8 @@ const TaskInstance = EmberObject.extend(Object.assign({}, INITIAL_STATE, {
    * @instance
    * @readOnly
    */
-  isDropped: computed('isCanceling', 'hasStarted', function() {
-    return get(this, 'isCanceling') && !get(this, 'hasStarted');
+  isDropped: computed('isCanceled', 'hasStarted', function() {
+    return get(this, 'isCanceled') && !get(this, 'hasStarted');
   }),
 
   /**

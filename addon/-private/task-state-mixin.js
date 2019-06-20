@@ -42,10 +42,10 @@ let mixinProps = {
   numQueued: 0,
 
   cancelAll(options) {
-    let { reason, resetState } = options || {};
+    let { reason, reasonKind, resetState } = options || {};
     reason = reason || ".cancelAll() was explicitly called on the Task";
 
-    this._scheduler.cancelAll(this._guid, reason);
+    this._scheduler.cancelAll(this._guid, reason, reasonKind);
 
     if (resetState) {
       this._resetState();

@@ -3,7 +3,7 @@ import { addObserver } from '@ember/object/observers';
 import { addListener } from '@ember/object/events';
 import EmberObject from '@ember/object';
 import { getOwner } from '@ember/application';
-import TaskInstance, { getRunningInstance } from './task-instance';
+import TaskInstance from './task-instance';
 import TaskStateMixin from './task-state-mixin';
 import { propertyModifiers } from './property-modifiers-mixin';
 import {
@@ -18,7 +18,8 @@ import { gte } from 'ember-compatibility-helpers';
 import {
   PERFORM_TYPE_DEFAULT,
   PERFORM_TYPE_LINKED,
-  PERFORM_TYPE_UNLINKED
+  PERFORM_TYPE_UNLINKED,
+  getRunningInstance
 } from './external/task-instance/state';
 
 const PerformProxy = EmberObject.extend({
@@ -200,15 +201,15 @@ export const Task = EmberObject.extend(TaskStateMixin, {
   },
 
   linked() {
-    let taskInstance = getRunningInstance();
-    if (!taskInstance) {
+    let _linkedObject = getRunningInstance();
+    if (!_linkedObject) {
       throw new Error(`You can only call .linked() from within a task.`);
     }
 
     return PerformProxy.create({
       _task: this,
       _performType: PERFORM_TYPE_LINKED,
-      _linkedObject: taskInstance,
+      _linkedObject,
     });
   },
 

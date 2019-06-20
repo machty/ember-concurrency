@@ -45,4 +45,15 @@ export class EmberTaskInstanceDelegate extends TaskInstanceDelegate {
       host.trigger(`${eventNamespace}:${eventType}`, ...args);
     }
   }
+
+  formatCancelReason(reason) {
+    return `TaskInstance '${this.getName()}' was canceled because ${reason}. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help`
+  }
+
+  getName() {
+    if (!this.name) {
+      this.name = this.taskInstance.get('task._propertyName') || "<unknown>";
+    }
+    return this.name;
+  }
 }

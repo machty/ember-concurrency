@@ -158,7 +158,7 @@ module('Unit: task instance', function(hooks) {
   }
 
   test("cancelation: yields in finally block", function(assert) {
-    assert.expect(19);
+    assert.expect(16);
 
     let defer0, defer1, defer2;
     let taskInstance = run(() => {
@@ -187,14 +187,12 @@ module('Unit: task instance', function(hooks) {
       taskInstance.cancel();
       assert.ok(!taskInstance.get('isFinished'), "task is not yet finished");
       assert.ok(!taskInstance.get('isCanceled'), "task is not yet canceled");
-      assert.ok(taskInstance.get('isCanceling'), "task is canceling");
       assert.ok(!taskInstance.get('isError'));
     });
 
     run(null, defer1.resolve, 123);
     assert.ok(!taskInstance.get('isFinished'), "task is not yet finished");
     assert.ok(!taskInstance.get('isCanceled'), "task is not yet canceled");
-    assert.ok(taskInstance.get('isCanceling'), "task is canceling");
     run(null, defer2.resolve, 456);
     assert.ok(taskInstance.get('isCanceled'));
     assert.ok(!taskInstance.get('isSuccessful'));
@@ -204,7 +202,6 @@ module('Unit: task instance', function(hooks) {
     assert.ok(taskInstance.get('isCanceled'));
     assert.ok(!taskInstance.get('isSuccessful'));
     assert.ok(!taskInstance.get('isError'));
-    assert.ok(taskInstance.get('isCanceling'));
   });
 
   test("deferred start", function(assert) {
@@ -649,7 +646,7 @@ module('Unit: task instance', function(hooks) {
   });
 
   test("canceling a task instance should be async", function(assert) {
-    assert.expect(4);
+    assert.expect(2);
 
     let defer;
     let taskInstance = run(() => {
@@ -669,9 +666,7 @@ module('Unit: task instance', function(hooks) {
       assert.ok(didCancel(e), "canceling a task instance right before it returns is still considered a cancelation");
     });
 
-    assert.ok(!taskInstance.get('isCanceling'));
     run(null, defer.resolve);
-    assert.ok(taskInstance.get('isCanceling'));
     assert.ok(taskInstance.get('isCanceled'));
   });
 });

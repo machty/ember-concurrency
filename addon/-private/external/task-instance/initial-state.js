@@ -51,7 +51,6 @@ export const INITIAL_STATE = {
    * @readOnly
    */
   isCanceled: false,
-  isCanceling: false,
 
   /**
    * True if the task instance has started, else false.
