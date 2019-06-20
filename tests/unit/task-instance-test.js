@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import RSVP, { resolve, reject } from 'rsvp';
 import { run } from '@ember/runloop';
 import {
@@ -7,10 +6,10 @@ import {
 } from 'ember-concurrency/-private/task-instance';
 import { didCancel } from 'ember-concurrency';
 import { module, test } from 'qunit';
-import { asyncError } from '../helpers/helpers';
+import { makeAsyncError } from '../helpers/helpers';
 
 module('Unit: task instance', function(hooks) {
-  hooks.afterEach(() => Ember.onerror = null);
+  let asyncError = makeAsyncError(hooks);
 
   test("basics", function(assert) {
     assert.expect(2);
@@ -359,7 +358,7 @@ module('Unit: task instance', function(hooks) {
   });
 
   test("yielding to other tasks: parent task gets canceled", function(assert) {
-    assert.expect(2);
+    assert.expect(4);
 
     let taskInstance0, taskInstance1, defer;
     run(() => {
@@ -373,6 +372,9 @@ module('Unit: task instance', function(hooks) {
         assert.equal(value, 123);
       })();
     });
+
+    assert.equal(taskInstance0.get('state'), 'running');
+    assert.equal(taskInstance1.get('state'), 'running');
 
     run(taskInstance0, 'cancel');
 

@@ -3,9 +3,11 @@ import { run } from '@ember/runloop';
 import EmberObject from '@ember/object';
 import { task, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
-import { asyncError } from '../helpers/helpers';
+import { makeAsyncError } from '../helpers/helpers';
 
-module('Unit: task states', function() {
+module('Unit: task states', function(hooks) {
+  let asyncError = makeAsyncError(hooks);
+
   test("isIdle basic", function(assert) {
     assert.expect(3);
 

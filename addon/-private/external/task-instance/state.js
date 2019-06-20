@@ -6,19 +6,24 @@ import {
   YIELDABLE_THROW,
   YIELDABLE_RETURN,
   YIELDABLE_CANCEL,
-  RawValue,
-} from '../../utils';
-import { 
+  RawValue
+} from "../../utils";
+import {
   COMPLETION_SUCCESS,
   COMPLETION_ERROR,
-  COMPLETION_CANCEL,
-} from "./completion-states"
-import { CancelRequest, CANCEL_KIND_EXPLICIT, CANCEL_KIND_YIELDED, CANCEL_KIND_LIFESPAN_END } from "./cancel-request";
+  COMPLETION_CANCEL
+} from "./completion-states";
+import {
+  CancelRequest,
+  CANCEL_KIND_YIELDABLE_CANCEL,
+  CANCEL_KIND_LIFESPAN_END,
+  CANCEL_KIND_PARENT_CANCEL
+} from "./cancel-request";
 
-export const PERFORM_TYPE_DEFAULT  = "PERFORM_TYPE_DEFAULT";
+export const PERFORM_TYPE_DEFAULT = "PERFORM_TYPE_DEFAULT";
 export const PERFORM_TYPE_UNLINKED = "PERFORM_TYPE_UNLINKED";
-export const PERFORM_TYPE_LINKED   = "PERFORM_TYPE_LINKED";
-export const TASK_CANCELATION_NAME = 'TaskCancelation';
+export const PERFORM_TYPE_LINKED = "PERFORM_TYPE_LINKED";
+export const TASK_CANCELATION_NAME = "TaskCancelation";
 
 const CANCEL_RETURN_VALUE_SENTINEL = {};
 let TASK_INSTANCE_STACK = [];
@@ -65,7 +70,9 @@ export class TaskInstanceState {
   }
 
   start() {
-    if (this.state.hasStarted || this.cancelRequest) { return; }
+    if (this.state.hasStarted || this.cancelRequest) {
+      return;
+    }
     this.setState({ hasStarted: true });
     this.proceedSync(YIELDABLE_CONTINUE, undefined);
     this.delegate.onStarted();
@@ -87,13 +94,20 @@ export class TaskInstanceState {
     Object.assign(this.state, state);
     this.delegate.setState(state);
   }
-  
+
   proceedChecked(index, yieldResumeType, value) {
-    if (this.state.isFinished) { return; }
-    if (!this.advanceIndex(index)) { return; }
+    if (this.state.isFinished) {
+      return;
+    }
+    if (!this.advanceIndex(index)) {
+      return;
+    }
 
     if (yieldResumeType === YIELDABLE_CANCEL) {
-      this.requestCancel(new CancelRequest(CANCEL_KIND_YIELDED), value);
+      this.requestCancel(
+        new CancelRequest(CANCEL_KIND_YIELDABLE_CANCEL),
+        value
+      );
       this.proceedWithCancelAsync();
     } else {
       this.proceedAsync(yieldResumeType, value);
@@ -106,11 +120,13 @@ export class TaskInstanceState {
 
   proceedAsync(yieldResumeType, value) {
     this.advanceIndex(this.index);
-    this.env.async(() => this.proceedSync(yieldResumeType, value))
+    this.env.async(() => this.proceedSync(yieldResumeType, value));
   }
 
   proceedSync(yieldResumeType, value) {
-    if (this.state.isFinished) { return; }
+    if (this.state.isFinished) {
+      return;
+    }
 
     this.dispose();
 
@@ -126,8 +142,8 @@ export class TaskInstanceState {
    * the generator has been resolved, and now it's time to pass
    * it back into the generator. There are 3 ways to "resume" a
    * generator:
-   * 
-   * - call `.next(value)` on it, which is used to pass in a resolved 
+   *
+   * - call `.next(value)` on it, which is used to pass in a resolved
    *   value (the fulfilled value of a promise), e.g. if a task generator fn
    *   does `yield Promise.resolve(5)`, then we take that promise yielded
    *   by the generator, detect that it's a promise, resolve it, and then
@@ -148,7 +164,7 @@ export class TaskInstanceState {
    *   it would require all tasks that used try/catch to conditionally ignore
    *   cancellations, which is annoying. So we `.return()` from generator functions
    *   in the case of errors as a matter of convenience.
-   * 
+   *
    * @private
    */
   handleResolvedContinueValue(iteratorMethod, resumeValue) {
@@ -172,7 +188,7 @@ export class TaskInstanceState {
    * This method is called when the generator function is all
    * out of values, and the last value returned from the function
    * (possible a thenable/yieldable/promise/etc) has been resolved.
-   * 
+   *
    * Possible cases:
    * - `return "simple value";` // resolved value is "simple value"
    * - `return undefined;` // (or omitted return) resolved value is undefined
@@ -181,7 +197,7 @@ export class TaskInstanceState {
    * @private
    */
   handleResolvedReturnedValue(yieldResumeType, value) {
-    switch(yieldResumeType) {
+    switch (yieldResumeType) {
       case YIELDABLE_CONTINUE:
       case YIELDABLE_RETURN:
         this.finalize(value, COMPLETION_SUCCESS);
@@ -194,11 +210,14 @@ export class TaskInstanceState {
 
   handleYieldedUnknownThenable(thenable) {
     let resumeIndex = this.index;
-    thenable.then(value => {
-      this.proceedChecked(resumeIndex, YIELDABLE_CONTINUE, value);
-    }, error => {
-      this.proceedChecked(resumeIndex, YIELDABLE_THROW, error);
-    });
+    thenable.then(
+      value => {
+        this.proceedChecked(resumeIndex, YIELDABLE_CONTINUE, value);
+      },
+      error => {
+        this.proceedChecked(resumeIndex, YIELDABLE_THROW, error);
+      }
+    );
   }
 
   /**
@@ -243,7 +262,7 @@ export class TaskInstanceState {
 
     if (yieldedValue[yieldableSymbol]) {
       this.invokeYieldable(yieldedValue);
-    } else if (typeof yieldedValue.then === 'function') {
+    } else if (typeof yieldedValue.then === "function") {
       this.handleYieldedUnknownThenable(yieldedValue);
     } else {
       this.proceedWithSimpleValue(yieldedValue);
@@ -255,7 +274,7 @@ export class TaskInstanceState {
   }
 
   addDisposer(maybeDisposer) {
-    if (typeof maybeDisposer !== 'function') {
+    if (typeof maybeDisposer !== "function") {
       return;
     }
 
@@ -295,7 +314,9 @@ export class TaskInstanceState {
       let value = stepResult.value;
       if (!value || value._performType !== PERFORM_TYPE_LINKED) {
         // eslint-disable-next-line no-console
-        console.warn("You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency).");
+        console.warn(
+          "You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency)."
+        );
       }
       this._expectsLinkedYield = false;
     }
@@ -304,7 +325,9 @@ export class TaskInstanceState {
   }
 
   maybeResolveDefer() {
-    if (!this.defer || !this.state.isFinished) { return; }
+    if (!this.defer || !this.state.isFinished) {
+      return;
+    }
 
     if (this.state.completionState === COMPLETION_SUCCESS) {
       this.defer.resolve(this.state.value);
@@ -338,9 +361,11 @@ export class TaskInstanceState {
   }
 
   maybeThrowUnhandledTaskErrorLater() {
-    if (!this.asyncErrorsHandled &&
-         this.state.completionState === COMPLETION_ERROR &&
-         !didCancel(this.state.error)) {
+    if (
+      !this.asyncErrorsHandled &&
+      this.state.completionState === COMPLETION_ERROR &&
+      !didCancel(this.state.error)
+    ) {
       this.env.async(() => {
         if (!this.asyncErrorsHandled) {
           this.env.reportUncaughtRejection(this.state.error);
@@ -350,7 +375,9 @@ export class TaskInstanceState {
   }
 
   requestCancel(request) {
-    if (this.cancelRequest || this.state.isFinished) { return false; }
+    if (this.cancelRequest || this.state.isFinished) {
+      return false;
+    }
     this.cancelRequest = request;
     return true;
   }
@@ -376,7 +403,9 @@ export class TaskInstanceState {
   }
 
   finalizeWithCancel() {
-    let cancelReason = this.delegate.formatCancelReason(this.cancelRequest.reason);
+    let cancelReason = this.delegate.formatCancelReason(
+      this.cancelRequest.reason
+    );
     let error = new Error(cancelReason);
 
     if (this.debug || this.env.globalDebuggingEnabled()) {
@@ -390,7 +419,7 @@ export class TaskInstanceState {
       isCanceled: true,
       completionState: COMPLETION_CANCEL,
       error,
-      cancelReason,
+      cancelReason
     });
   }
 
@@ -403,7 +432,7 @@ export class TaskInstanceState {
   }
 
   dispatchFinalizeEvents(completionState) {
-    switch(completionState) {
+    switch (completionState) {
       case COMPLETION_SUCCESS:
         this.delegate.onSuccess();
         break;
@@ -411,7 +440,7 @@ export class TaskInstanceState {
         this.delegate.onError(this.state.error);
         break;
       case COMPLETION_CANCEL:
-        this.delegate.onCancel(this.cancelRequest.reason);
+        this.delegate.onCancel(this.state.cancelReason);
         break;
     }
   }
@@ -419,9 +448,12 @@ export class TaskInstanceState {
   invokeYieldable(yieldedValue) {
     try {
       let yieldContext = this.delegate.getYieldContext();
-      let maybeDisposer = yieldedValue[yieldableSymbol](yieldContext, this.index);
+      let maybeDisposer = yieldedValue[yieldableSymbol](
+        yieldContext,
+        this.index
+      );
       this.addDisposer(maybeDisposer);
-    } catch(e) {
+    } catch (e) {
       this.env.reportUncaughtRejection(e);
     }
   }
@@ -432,15 +464,15 @@ export class TaskInstanceState {
    * this opportunity to conditionally link up the tasks
    * so that when the parent or child cancels, the other
    * is cancelled.
-   * 
+   *
    * Given the following case:
-   * 
+   *
    * ```js
    * parentTask: task(function * () {
    *   yield otherTask.perform();
    * })
    * ```
-   * 
+   *
    * Then the `parent` param is the task instance that is executing, `this`
    * is the `otherTask` task instance that was yielded.
    *
@@ -452,7 +484,11 @@ export class TaskInstanceState {
     this.onFinalize(() => {
       let completionState = this.state.completionState;
       if (completionState === COMPLETION_SUCCESS) {
-        parent.proceedChecked(resumeIndex, YIELDABLE_CONTINUE, this.state.value);
+        parent.proceedChecked(
+          resumeIndex,
+          YIELDABLE_CONTINUE,
+          this.state.value
+        );
       } else if (completionState === COMPLETION_ERROR) {
         parent.proceedChecked(resumeIndex, YIELDABLE_THROW, this.state.error);
       } else if (completionState === COMPLETION_CANCEL) {
@@ -466,12 +502,8 @@ export class TaskInstanceState {
 
     return () => {
       this.detectSelfCancelLoop(parent);
-      this.cancel(); // TODO: cancel reason?
+      this.cancel(new CancelRequest(CANCEL_KIND_PARENT_CANCEL));
     };
-  }
-
-  getContext() {
-    return this.delegate.getContext();
   }
 
   detectSelfCancelLoop(parent) {
@@ -481,10 +513,12 @@ export class TaskInstanceState {
 
     // Detect that the parent was cancelled by a lifespan ending and
     // that the child is still running and not cancelled.
-    if (parent.cancelRequest &&
-        parent.cancelRequest.kind === CANCEL_KIND_LIFESPAN_END &&
-        !this.cancelRequest &&
-        !this.state.isFinished) {
+    if (
+      parent.cancelRequest &&
+      parent.cancelRequest.kind === CANCEL_KIND_LIFESPAN_END &&
+      !this.cancelRequest &&
+      !this.state.isFinished
+    ) {
       this.delegate.selfCancelLoopWarning(parent.delegate);
     }
   }

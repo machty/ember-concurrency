@@ -58,9 +58,9 @@ export class EmberTaskInstanceDelegate extends TaskInstanceDelegate {
   }
 
   selfCancelLoopWarning(parent) {
-    // eslint-disable-next-line no-console
     let parentName = `\`${parent.getName()}\``;
     let childName = `\`${this.getName()}\``;
+    // eslint-disable-next-line no-console
     console.warn(`ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task ${parentName} and child task ${childName}. If you want child task ${childName} to be canceled when parent task ${parentName} is canceled, please change \`.perform()\` to \`.linked().perform()\`. If you want child task ${childName} to keep running after parent task ${parentName} is canceled, change it to \`.unlinked().perform()\``);
   }
 }
