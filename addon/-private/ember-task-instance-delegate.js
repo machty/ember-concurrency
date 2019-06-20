@@ -37,7 +37,7 @@ export class EmberTaskInstanceDelegate extends TaskInstanceDelegate {
 
     let taskInstance = this.taskInstance;
     let task = taskInstance.task;
-    let host = task.host;
+    let host = task.context;
     let eventNamespace = task && task._propertyName;
 
     if (host && host.trigger && eventNamespace) {

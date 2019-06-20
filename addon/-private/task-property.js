@@ -3,13 +3,7 @@ import { addObserver } from '@ember/object/observers';
 import { addListener } from '@ember/object/events';
 import EmberObject from '@ember/object';
 import { getOwner } from '@ember/application';
-import {
-  default as TaskInstance,
-  getRunningInstance,
-  PERFORM_TYPE_DEFAULT,
-  PERFORM_TYPE_UNLINKED,
-  PERFORM_TYPE_LINKED,
-} from './task-instance';
+import TaskInstance, { getRunningInstance } from './task-instance';
 import TaskStateMixin from './task-state-mixin';
 import { propertyModifiers } from './property-modifiers-mixin';
 import {
@@ -21,6 +15,11 @@ import {
 import EncapsulatedTask from './encapsulated-task';
 import { deprecate } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
+import {
+  PERFORM_TYPE_DEFAULT,
+  PERFORM_TYPE_LINKED,
+  PERFORM_TYPE_UNLINKED
+} from './external/task-instance/state';
 
 const PerformProxy = EmberObject.extend({
   _task: null,

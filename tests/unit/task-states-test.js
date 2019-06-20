@@ -3,6 +3,7 @@ import { run } from '@ember/runloop';
 import EmberObject from '@ember/object';
 import { task, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
+import { asyncError } from '../helpers/helpers';
 
 module('Unit: task states', function() {
   test("isIdle basic", function(assert) {
@@ -136,7 +137,7 @@ module('Unit: task states', function() {
     assert.equal(myTask.get('last'), taskInstance1);
   });
 
-  test(".lastSuccessful is set when a task instance returns a value", function(assert) {
+  test(".lastSuccessful is set when a task instance returns a value", async function(assert) {
     assert.expect(5);
 
     let defer, taskInstance0, taskInstance1;
@@ -162,15 +163,12 @@ module('Unit: task states', function() {
     assert.equal(myTask.get('lastSuccessful'), taskInstance0);
     run(defer, 'resolve');
     assert.equal(myTask.get('lastSuccessful'), taskInstance1);
-    try {
-      run(defer, 'reject', 'i am error');
-      assert.ok(false);
-    } catch(e) {
-      assert.equal(myTask.get('lastSuccessful'), taskInstance1, "still is taskInstance1 because taskInstance2 failed");
-    }
+    run(defer, 'reject', 'i am error');
+    assert.equal(myTask.get('lastSuccessful'), taskInstance1, "still is taskInstance1 because taskInstance2 failed");
+    await asyncError();
   });
 
-  test(".lastComplete is set when a task instance returns/cancels/errors", function(assert) {
+  test(".lastComplete is set when a task instance returns/cancels/errors", async function(assert) {
     assert.expect(5);
 
     let defer, taskInstance0, taskInstance1, taskInstance2;
@@ -196,15 +194,12 @@ module('Unit: task states', function() {
     assert.equal(myTask.get('lastComplete'), taskInstance0);
     run(taskInstance1, 'cancel');
     assert.equal(myTask.get('lastComplete'), taskInstance1);
-    try {
-      run(defer, 'reject', 'i am error');
-      assert.ok(false);
-    } catch(e) {
-      assert.equal(myTask.get('lastComplete'), taskInstance2);
-    }
+    run(defer, 'reject', 'i am error');
+    assert.equal(myTask.get('lastComplete'), taskInstance2);
+    await asyncError();
   });
 
-  test(".lastErrored is set when a task instance errors (but not cancels)", function(assert) {
+  test(".lastErrored is set when a task instance errors (but not cancels)", async function(assert) {
     assert.expect(5);
 
     let defer, taskInstance1, taskInstance2;
@@ -230,15 +225,12 @@ module('Unit: task states', function() {
     assert.equal(myTask.get('lastErrored'), null);
     run(taskInstance1, 'cancel');
     assert.equal(myTask.get('lastErrored'), null);
-    try {
-      run(defer, 'reject', 'i am error');
-      assert.ok(false);
-    } catch(e) {
-      assert.equal(myTask.get('lastErrored'), taskInstance2);
-    }
+    run(defer, 'reject', 'i am error');
+    assert.equal(myTask.get('lastErrored'), taskInstance2);
+    await asyncError();
   });
 
-  test(".lastCanceled is set when a task instance cancels (but not errors)", function(assert) {
+  test(".lastCanceled is set when a task instance cancels (but not errors)", async function(assert) {
     assert.expect(5);
 
     let defer, taskInstance1;
@@ -264,15 +256,12 @@ module('Unit: task states', function() {
     assert.equal(myTask.get('lastCanceled'), null);
     run(taskInstance1, 'cancel');
     assert.equal(myTask.get('lastCanceled'), taskInstance1);
-    try {
-      run(defer, 'reject', 'i am error');
-      assert.ok(false);
-    } catch(e) {
-      assert.equal(myTask.get('lastCanceled'), taskInstance1, "still taskInstance1");
-    }
+    run(defer, 'reject', 'i am error');
+    assert.equal(myTask.get('lastCanceled'), taskInstance1, "still taskInstance1");
+    await asyncError();
   });
 
-  test(".lastIncomplete is set when a task instance errors or cancels", function(assert) {
+  test(".lastIncomplete is set when a task instance errors or cancels", async function(assert) {
     assert.expect(5);
 
     let defer, taskInstance1, taskInstance2;
@@ -298,11 +287,8 @@ module('Unit: task states', function() {
     assert.equal(myTask.get('lastIncomplete'), null);
     run(taskInstance1, 'cancel');
     assert.equal(myTask.get('lastIncomplete'), taskInstance1);
-    try {
-      run(defer, 'reject', 'i am error');
-      assert.ok(false);
-    } catch(e) {
-      assert.equal(myTask.get('lastIncomplete'), taskInstance2);
-    }
+    run(defer, 'reject', 'i am error');
+    assert.equal(myTask.get('lastIncomplete'), taskInstance2);
+    await asyncError();
   });
 });

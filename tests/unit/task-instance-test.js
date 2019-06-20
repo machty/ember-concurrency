@@ -7,10 +7,7 @@ import {
 } from 'ember-concurrency/-private/task-instance';
 import { didCancel } from 'ember-concurrency';
 import { module, test } from 'qunit';
-
-function asyncError() {
-  return new window.Promise(r => Ember.onerror = r);
-}
+import { asyncError } from '../helpers/helpers';
 
 module('Unit: task instance', function(hooks) {
   hooks.afterEach(() => Ember.onerror = null);
@@ -387,10 +384,6 @@ module('Unit: task instance', function(hooks) {
 
     run(null, defer.resolve, "naw");
   });
-
-  function shouldNotGetCalled() {
-    throw new Error("should not be called");
-  }
 
   test("yielding to other tasks: child task gets canceled", async function(assert) {
     assert.expect(2);
