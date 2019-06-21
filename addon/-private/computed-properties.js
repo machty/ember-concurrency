@@ -69,9 +69,7 @@ export const propertyModifiers = {
     return this;
   },
 
-  _onStateCallback(props, taskable) {
-    taskable.setState(props);
-  },
+  _onStateCallback: (state, taskable) => taskable.setState(state),
 };
 
 function setBufferPolicy(obj, policy) {
@@ -647,14 +645,14 @@ export function taskGroup(taskFn) {
 
 function sharedTaskProperties(taskProperty, context, key) {
   let group, scheduler;
+  let onStateCallback = taskProperty._onStateCallback;
 
   if (taskProperty._taskGroupPath) {
     group = context.get(taskProperty._taskGroupPath);
     scheduler = group.scheduler;
   } else {
     let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);
-    let stateTrackingEnabled = taskProperty._onStateCallback;
-    scheduler = new EmberScheduler(schedulerPolicy, stateTrackingEnabled);
+    scheduler = new EmberScheduler(schedulerPolicy, onStateCallback);
   }
 
   return {
@@ -665,6 +663,6 @@ function sharedTaskProperties(taskProperty, context, key) {
     group,
     scheduler,
     hasEnabledEvents: taskProperty._hasEnabledEvents,
-    onState: taskProperty._onStateCallback, 
+    onStateCallback,
   };
 }

@@ -26,4 +26,10 @@ export const TASKABLE_MIXIN = {
   setProperties(props) {
     return setProperties(this, props);
   },
+
+  onState(state, task) {
+    if (task.onStateCallback) {
+      task.onStateCallback(state, task);
+    }
+  },
 };
