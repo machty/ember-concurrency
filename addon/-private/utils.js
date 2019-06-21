@@ -2,7 +2,6 @@ import { later, cancel } from '@ember/runloop';
 import { Promise } from 'rsvp';
 import ComputedProperty from '@ember/object/computed';
 import Ember from 'ember';
-import { set, setProperties } from '@ember/object';
 
 export function isEventedObject(c) {
   return (c && (
@@ -11,29 +10,26 @@ export function isEventedObject(c) {
   ));
 }
 
-export function _cleanupOnDestroy(owner, object, cleanupMethodName, ...args) {
-  // TODO: find a non-mutate-y, non-hacky way of doing this.
-
-  if (!owner.willDestroy)
-  {
-    // we're running in non Ember object (possibly in a test mock)
+const DESTROY_TAG = "__ec_disposer__";
+export function cleanupOnDestroy(owner, object, methodName, cleanupMethodName, ...args) {
+  let method = owner[methodName];
+  if (!method) {
     return;
   }
 
-  if (!owner.willDestroy.__ember_processes_destroyers__) {
-    let oldWillDestroy = owner.willDestroy;
+  if (!method[DESTROY_TAG]) {
     let disposers = [];
 
     owner.willDestroy = function() {
       for (let i = 0, l = disposers.length; i < l; i ++) {
         disposers[i]();
       }
-      oldWillDestroy.apply(owner, arguments);
+      method.apply(owner, arguments);
     };
-    owner.willDestroy.__ember_processes_destroyers__ = disposers;
+    owner.willDestroy[DESTROY_TAG] = disposers;
   }
 
-  owner.willDestroy.__ember_processes_destroyers__.push(() => {
+  owner.willDestroy[DESTROY_TAG].push(() => {
     object[cleanupMethodName](...args);
   });
 }

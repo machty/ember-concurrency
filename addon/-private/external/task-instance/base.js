@@ -4,8 +4,9 @@ import { CancelRequest, CANCEL_KIND_EXPLICIT } from './cancelation';
 const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
 
 export class BaseTaskInstance {
-  constructor(task, executor) {
+  constructor(task, executor, performType) {
     this.task = task;
+    this.performType = performType;
     this.executor = executor;
     this.executor.taskInstance = this;
   }

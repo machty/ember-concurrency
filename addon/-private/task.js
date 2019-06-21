@@ -1,14 +1,20 @@
 import { Task as BaseTask } from "./external/task/task";
-import { setTaskableState, INVOKE } from "./utils";
+import { setTaskableState, INVOKE, cleanupOnDestroy } from "./utils";
 import { TaskInstance } from './task-instance';
 import { PERFORM_TYPE_DEFAULT, TaskInstanceExecutor, PERFORM_TYPE_LINKED } from "./external/task-instance/executor";
 import { EMBER_ENVIRONMENT } from "./ember-environment";
 import { TASKABLE_MIXIN } from "./taskable-mixin";
+import { CANCEL_KIND_LIFESPAN_END } from "./external/task-instance/cancelation";
 
 export class Task extends BaseTask {
   constructor(options) {
     super(options);
     this.setState({}); // TODO: double check this is necessary
+
+    cleanupOnDestroy(this.context, this, 'willDestroy', 'cancelAll', {
+      reason: 'the object it lives on was destroyed or unrendered',
+      cancelRequestKind: CANCEL_KIND_LIFESPAN_END,
+    });
   }
 
   setState(state) {
@@ -47,7 +53,7 @@ export class Task extends BaseTask {
       env: EMBER_ENVIRONMENT,
       debug: this.debug,
     });
-    let taskInstance = new TaskInstance(this, executor);
+    let taskInstance = new TaskInstance(this, executor, performType);
 
     if (performType === PERFORM_TYPE_LINKED) {
       linkedObject._expectsLinkedYield = true;

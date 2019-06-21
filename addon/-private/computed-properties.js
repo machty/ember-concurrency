@@ -87,20 +87,6 @@ function assertModifiersNotMixedWithGroup(obj) {
   assert(`ember-concurrency does not currently support using both .group() with other task modifiers (e.g. drop(), enqueue(), restartable())`, !obj._hasUsedModifier || !obj._taskGroupPath);
 }
 
-const PerformProxy = EmberObject.extend({
-  _task: null,
-  _performType: null,
-  _linkedObject: null,
-
-  perform(...args) {
-    return this._task._performShared(
-      args,
-      this._performType,
-      this._linkedObject
-    );
-  },
-});
-
 /**
   The `Task` object lives on a host Ember object (e.g.
   a Component, Route, or Controller). You call the
@@ -119,44 +105,6 @@ const PerformProxy = EmberObject.extend({
   @class Task
 */
 export const OldTask = EmberObject.extend({
-  fn: null,
-  context: null,
-  _observes: null,
-  _curryArgs: null,
-  _linkedObjects: null,
-
-  init() {
-    this._super(...arguments);
-
-    if (typeof this.fn === 'object') {
-    }
-
-    _cleanupOnDestroy(this.context, this, 'cancelAll', {
-      reason: 'the object it lives on was destroyed or unrendered',
-      cancelRequestKind: CANCEL_KIND_LIFESPAN_END,
-    });
-  },
-
-  linked() {
-    let _linkedObject = getRunningInstance();
-    if (!_linkedObject) {
-      throw new Error(`You can only call .linked() from within a task.`);
-    }
-
-    return PerformProxy.create({
-      _task: this,
-      _performType: PERFORM_TYPE_LINKED,
-      _linkedObject,
-    });
-  },
-
-  unlinked() {
-    return PerformProxy.create({
-      _task: this,
-      _performType: PERFORM_TYPE_UNLINKED,
-    });
-  },
-
   /**
    * This property is true if this task is NOT running, i.e. the number
    * of currently running TaskInstances is zero.
