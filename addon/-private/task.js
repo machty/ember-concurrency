@@ -1,10 +1,11 @@
 import { Task as BaseTask } from "./external/task/task";
-import { setTaskableState, INVOKE, cleanupOnDestroy } from "./utils";
+import { INVOKE } from "./utils";
 import { TaskInstance } from './task-instance';
 import { PERFORM_TYPE_DEFAULT, TaskInstanceExecutor, PERFORM_TYPE_LINKED } from "./external/task-instance/executor";
 import { EMBER_ENVIRONMENT } from "./ember-environment";
 import { TASKABLE_MIXIN } from "./taskable-mixin";
 import { CANCEL_KIND_LIFESPAN_END } from "./external/task-instance/cancelation";
+import { cleanupOnDestroy } from "./external/lifespan";
 
 export class Task extends BaseTask {
   constructor(options) {
@@ -15,10 +16,6 @@ export class Task extends BaseTask {
       reason: 'the object it lives on was destroyed or unrendered',
       cancelRequestKind: CANCEL_KIND_LIFESPAN_END,
     });
-  }
-
-  setState(state) {
-    setTaskableState(this, state);
   }
 
   /**
