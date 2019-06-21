@@ -9,16 +9,16 @@ export function cleanupOnDestroy(owner, object, methodName, cleanupMethodName, .
   if (!method[DESTROY_TAG]) {
     let disposers = [];
 
-    owner.willDestroy = function() {
+    owner[methodName] = function() {
       for (let i = 0, l = disposers.length; i < l; i ++) {
         disposers[i]();
       }
       method.apply(owner, arguments);
     };
-    owner.willDestroy[DESTROY_TAG] = disposers;
+    owner[methodName][DESTROY_TAG] = disposers;
   }
 
-  owner.willDestroy[DESTROY_TAG].push(() => {
+  owner[methodName][DESTROY_TAG].push(() => {
     object[cleanupMethodName](...args);
   });
 }
