@@ -1,4 +1,4 @@
-import { TASK_CANCELATION_NAME } from "./executor";
+export const TASK_CANCELATION_NAME = "TaskCancelation";
 
 /**
  * Returns true if the object passed to it is a TaskCancelation error.
