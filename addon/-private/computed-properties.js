@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import EmberObject, { computed } from '@ember/object';
-import { assert } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
 import UnboundedSchedulerPolicy from './external/scheduler/policies/unbounded-policy'
 import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy'
@@ -587,7 +587,7 @@ export function task(originalTaskFn) {
 
     let options = sharedTaskProperties(tp, this, key);
     if (typeof tp.taskFn === 'object') {
-      return buildEncapsulatedTask(taskFn, options);
+      return buildEncapsulatedTask(tp.taskFn, options);
     } else {
       return buildRegularTask(tp.taskFn, options);
     }
@@ -608,19 +608,8 @@ function buildRegularTask(taskFn, options) {
   );
 }
 
-function buildEncapsulatedTask(encapsObject, options) {
+function buildEncapsulatedTask() {
   throw new Error("encapsulated tasks aren't yet supported in this version");
-
-  // class AdhocEncapsulatedTask extends EncapsulatedTask {
-  // }
-
-  // let context = options.context;
-  // let owner = getOwner(context);
-  // let ownerInjection = owner ? owner.ownerInjection() : {};
-  // Object.assign(EncapsulatedTask.prototype, ownerInjection);
-  // let task = new EncapsulatedTask(options);
-  // task.generatorFactory = (args) => perform.apply(task, args);
-  // return task;
 }
 
 /**
@@ -678,13 +667,4 @@ function sharedTaskProperties(taskProperty, context, key) {
     hasEnabledEvents: taskProperty._hasEnabledEvents,
     onState: taskProperty._onStateCallback, 
   };
-}
-
-function generatorFactoryFor(context, taskFn) {
-  if (typeof taskFn === 'object') {
-  } else {
-  }
-}
-
-function makeEncapsulatedTask() {
 }

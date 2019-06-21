@@ -1,7 +1,7 @@
 import { Taskable } from "./taskable";
 import { PERFORM_TYPE_LINKED, PERFORM_TYPE_UNLINKED, getRunningInstance } from "../task-instance/executor";
 
-class PerformProxy {
+class TaskLinkProxy {
   constructor(task, performType, linkedObject) {
     this.task = task;
     this.performType = performType;
@@ -9,7 +9,6 @@ class PerformProxy {
   }
 
   perform(...args) {
-    debugger;
     return this.task._performShared(
       args,
       this.performType,
@@ -30,11 +29,11 @@ export class Task extends Taskable {
       throw new Error(`You can only call .linked() from within a task.`);
     }
 
-    return new PerformProxy(this, PERFORM_TYPE_LINKED, linkedObject);
+    return new TaskLinkProxy(this, PERFORM_TYPE_LINKED, linkedObject);
   }
 
   unlinked() {
-    return new PerformProxy(this, PERFORM_TYPE_UNLINKED, null);
+    return new TaskLinkProxy(this, PERFORM_TYPE_UNLINKED, null);
   }
 
   _perform() {}
