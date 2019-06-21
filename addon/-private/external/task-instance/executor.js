@@ -464,15 +464,15 @@ export class TaskInstanceExecutor {
     this.onFinalize(() => {
       let completionState = this.state.completionState;
       if (completionState === COMPLETION_SUCCESS) {
-        parent.proceedChecked(
+        parent.proceed(
           resumeIndex,
           YIELDABLE_CONTINUE,
           this.state.value
         );
       } else if (completionState === COMPLETION_ERROR) {
-        parent.proceedChecked(resumeIndex, YIELDABLE_THROW, this.state.error);
+        parent.proceed(resumeIndex, YIELDABLE_THROW, this.state.error);
       } else if (completionState === COMPLETION_CANCEL) {
-        parent.proceedChecked(resumeIndex, YIELDABLE_CANCEL, null);
+        parent.proceed(resumeIndex, YIELDABLE_CANCEL, null);
       }
     });
 
@@ -496,16 +496,17 @@ export class TaskInstanceExecutor {
       return;
     }
 
+    let parentCancelRequest = parent.executor && parent.executor.cancelRequest;
+
     // Detect that the parent was cancelled by a lifespan ending and
     // that the child is still running and not cancelled.
     if (
-      parent.cancelRequest &&
-      parent.cancelRequest.kind === CANCEL_KIND_LIFESPAN_END &&
+      parentCancelRequest &&
+      parentCancelRequest.kind === CANCEL_KIND_LIFESPAN_END &&
       !this.cancelRequest &&
       !this.state.isFinished
     ) {
-      // TODO:
-      // this.taskInstance.selfCancelLoopWarning(parent.delegate);
+      this.taskInstance.selfCancelLoopWarning(parent);
     }
   }
 }

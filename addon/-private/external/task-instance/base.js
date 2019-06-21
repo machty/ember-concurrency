@@ -4,11 +4,12 @@ import { CancelRequest, CANCEL_KIND_EXPLICIT } from './cancelation';
 const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
 
 export class BaseTaskInstance {
-  constructor(task, executor, performType) {
+  constructor({ task, executor, performType, hasEnabledEvents }) {
     this.task = task;
     this.performType = performType;
     this.executor = executor;
     this.executor.taskInstance = this;
+    this.hasEnabledEvents = hasEnabledEvents;
   }
 
   setState() {}
@@ -28,7 +29,7 @@ export class BaseTaskInstance {
   }
 
   [yieldableSymbol](parentTaskInstance, resumeIndex) {
-    return this.executor.onYielded(parentTaskInstance.executor, resumeIndex);
+    return this.executor.onYielded(parentTaskInstance, resumeIndex);
   }
 
   cancel(cancelReason = EXPLICIT_CANCEL_REASON) {

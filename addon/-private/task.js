@@ -48,12 +48,16 @@ export class Task extends BaseTask {
     let fullArgs = this._curryArgs ? [...this._curryArgs, ...args] : args;
     let generatorFactory = () => this.generatorFactory(fullArgs);
 
-    let executor = new TaskInstanceExecutor({
-      generatorFactory,
-      env: EMBER_ENVIRONMENT,
-      debug: this.debug,
-    });
-    let taskInstance = new TaskInstance(this, executor, performType);
+    let taskInstance = new TaskInstance({
+      task: this,
+      executor: new TaskInstanceExecutor({
+        generatorFactory,
+        env: EMBER_ENVIRONMENT,
+        debug: this.debug,
+      }),
+      performType,
+      hasEnabledEvents: this.hasEnabledEvents,
+    })
 
     if (performType === PERFORM_TYPE_LINKED) {
       linkedObject._expectsLinkedYield = true;

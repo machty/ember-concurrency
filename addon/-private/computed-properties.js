@@ -581,19 +581,19 @@ export function taskComputed(fn) {
  * @param {function} generatorFunction the generator function backing the task.
  * @returns {TaskProperty}
  */
-export function task(taskFn) {
+export function task(originalTaskFn) {
   let tp = taskComputed(function(key) {
     tp.taskFn.displayName = `${key} (task)`;
 
     let options = sharedTaskProperties(tp, this, key);
-    if (typeof taskFn === 'object') {
+    if (typeof tp.taskFn === 'object') {
       return buildEncapsulatedTask(taskFn, options);
     } else {
-      return buildRegularTask(taskFn, options);
+      return buildRegularTask(tp.taskFn, options);
     }
   });
 
-  tp.taskFn = taskFn;
+  tp.taskFn = originalTaskFn;
 
   Object.setPrototypeOf(tp, TaskProperty.prototype);
 
@@ -675,6 +675,7 @@ function sharedTaskProperties(taskProperty, context, key) {
     name: key,
     group,
     scheduler,
+    hasEnabledEvents: taskProperty._hasEnabledEvents,
     onState: taskProperty._onStateCallback, 
   };
 }

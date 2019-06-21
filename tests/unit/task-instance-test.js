@@ -682,7 +682,10 @@ module('Unit: task instance', function(hooks) {
       generatorFactory: () => fn.apply(context, args),
       env: EMBER_ENVIRONMENT,
     });
-    return new TaskInstance(stubTask, executor);
+    return new TaskInstance({
+      task: stubTask,
+      executor,
+    });
   }
 
 

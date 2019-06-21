@@ -87,7 +87,7 @@ export class TaskInstance extends BaseTaskInstance {
   }
 
   triggerEvent(...allArgs) {
-    if (!this.eventsEnabled) {
+    if (!this.hasEnabledEvents) {
       return;
     }
 
