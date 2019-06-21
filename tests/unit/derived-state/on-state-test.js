@@ -13,7 +13,7 @@ module('Unit: task states - onState', function() {
     let Obj = EmberObject.extend({
       myTask: task(function * () {
         yield forever;
-      }).onState((task, state) => {
+      }).onState((state, task) => {
         assert.equal(obj.get('myTask'), task);
         assert.equal(task.context, obj);
         states.push(state);
@@ -94,7 +94,7 @@ module('Unit: task states - onState', function() {
 
     let fn = function * () { yield forever };
     let changes = [];
-    let onState = task => changes.push(task._propertyName);
+    let onState = (_, task) => changes.push(task._propertyName);
 
     let Obj = EmberObject.extend({
       a: task(fn).group('gg1').onState(onState),
@@ -112,5 +112,27 @@ module('Unit: task states - onState', function() {
     });
 
     assert.deepEqual(changes, ["a", "gg2", "gg3", "a", "gg2", "gg3"]);
+  });
+
+  test("the task schedular doesn't rely on state tracking functionality in order to work", function(assert) {
+    assert.expect(1);
+
+    let obj;
+    let Obj = EmberObject.extend({
+      a: task(function * () {}).onState(null),
+    });
+
+    let taskInstances = [];
+    run(() => {
+      obj = Obj.create();
+      taskInstances.push(obj.get('a').perform());
+    });
+
+    run(() => {
+      taskInstances.push(obj.get('a').perform());
+    });
+
+    let states = taskInstances.map(ti => ti.state);
+    assert.deepEqual(states, ['finished', 'finished']);
   });
 });

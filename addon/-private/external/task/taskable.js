@@ -8,6 +8,7 @@ function makeGuid() {
 
 export class Taskable {
   constructor(options) {
+    this.options = options;
     Object.assign(this, options)
 
     this.guid = makeGuid();

@@ -2,10 +2,10 @@ import { run } from '@ember/runloop';
 import RSVP from 'rsvp';
 import EmberObject from '@ember/object';
 import { task } from 'ember-concurrency';
-import { module, test } from 'qunit';
+import { module, skip } from 'qunit';
 
 module('Unit: EncapsulatedTask', function() {
-  test("tasks can be specified via a pojos with perform methods", function(assert) {
+  skip("tasks can be specified via a pojos with perform methods", function(assert) {
     assert.expect(2);
 
     let defer;

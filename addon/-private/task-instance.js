@@ -1,9 +1,5 @@
 import { set, get, setProperties } from '@ember/object';
-import { yieldableSymbol } from './external/yieldables';
-import { CancelRequest, CANCEL_KIND_EXPLICIT } from './external/task-instance/cancelation';
 import { BaseTaskInstance } from './external/task-instance/base';
-
-const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
 
 /**
   A `TaskInstance` represent a single execution of a
@@ -236,9 +232,6 @@ export class TaskInstance extends BaseTaskInstance {
    * @param {TaskInstance} taskInstance - Task instance that was started
    * @param {string} cancelationReason - Cancelation reason that was was provided to {@linkcode TaskInstance#cancel}
    */
-  toString() {
-    return `${this.task} TaskInstance`;
-  }
 
   /**
    * Cancels the task instance. Has no effect if the task instance has
@@ -248,9 +241,6 @@ export class TaskInstance extends BaseTaskInstance {
    * @memberof TaskInstance
    * @instance
    */
-  cancel(cancelReason = EXPLICIT_CANCEL_REASON) {
-    this.executor.cancel(new CancelRequest(CANCEL_KIND_EXPLICIT, cancelReason));
-  }
 
   /**
    * Returns a promise that resolves with the value returned
@@ -263,9 +253,6 @@ export class TaskInstance extends BaseTaskInstance {
    * @instance
    * @return {Promise}
    */
-  then(...args) {
-    return this.executor.promise().then(...args);
-  }
 
   /**
    * @method catch
@@ -273,9 +260,6 @@ export class TaskInstance extends BaseTaskInstance {
    * @instance
    * @return {Promise}
    */
-  catch(...args) {
-    return this.executor.promise().catch(...args);
-  }
 
   /**
    * @method finally
@@ -283,20 +267,6 @@ export class TaskInstance extends BaseTaskInstance {
    * @instance
    * @return {Promise}
    */
-  finally(...args) {
-    return this.executor.promise().finally(...args);
-  }
-
-  // this is the "public" API for how yieldables resume TaskInstances;
-  // this should probably be cleanup / generalized, but until then,
-  // we can't change the name.
-  proceed(index, yieldResumeType, value) {
-    this.executor.proceedChecked(index, yieldResumeType, value);
-  }
-
-  [yieldableSymbol](parentTaskInstance, resumeIndex) {
-    return this.executor.onYielded(parentTaskInstance.executor, resumeIndex);
-  }
 
   get(key) {
     return get(this, key);
@@ -304,10 +274,5 @@ export class TaskInstance extends BaseTaskInstance {
 
   set(key, value) {
     return set(this, key, value);
-  }
-
-  start() {
-    this.executor.start();
-    return this;
   }
 }

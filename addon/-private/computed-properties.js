@@ -10,10 +10,10 @@ import RestartableSchedulerPolicy from './external/scheduler/policies/restartabl
 import { _ComputedProperty } from './utils';
 import EmberScheduler from './scheduler/ember-scheduler';
 import { addListener } from '@ember/object/events';
-import { getOwner } from '@ember/application';
 import { addObserver } from '@ember/object/observers';
 import { Task } from './task';
 import { TaskGroup } from './task-group';
+import { scheduleOnce } from '@ember/runloop';
 
 let handlerCounter = 0;
 
@@ -129,31 +129,12 @@ export const OldTask = EmberObject.extend({
     this._super(...arguments);
 
     if (typeof this.fn === 'object') {
-      let owner = getOwner(this.context);
-      let ownerInjection = owner ? owner.ownerInjection() : {};
-      this._taskInstanceFactory = TaskInstance.extend(
-        ownerInjection,
-        this.fn
-      );
-      this._generatorFactory = (fullArgs) => {
-        return () => {
-          let perform = this.fn.perform;
-          assert("The object passed to `task()` must define a `perform` generator function, e.g. `perform: function * (a,b,c) {...}`, or better yet `*perform(a,b,c) {...}`", typeof perform === 'function');
-          return perform.apply(this, fullArgs);
-        };
-      }
     }
 
     _cleanupOnDestroy(this.context, this, 'cancelAll', {
       reason: 'the object it lives on was destroyed or unrendered',
       cancelRequestKind: CANCEL_KIND_LIFESPAN_END,
     });
-  },
-
-  _curry(...args) {
-    let task = this._clone();
-    task._curryArgs = [...(this._curryArgs || []), ...args];
-    return task;
   },
 
   linked() {
@@ -173,17 +154,6 @@ export const OldTask = EmberObject.extend({
     return PerformProxy.create({
       _task: this,
       _performType: PERFORM_TYPE_UNLINKED,
-    });
-  },
-
-  _clone() {
-    return Task.create({
-      fn: this.fn,
-      context: this.context,
-      _origin: this._origin,
-      _propertyName: this._propertyName,
-      group: this.group,
-      _debug: this._debug,
     });
   },
 
@@ -666,10 +636,13 @@ export function taskComputed(fn) {
 export function task(taskFn) {
   let tp = taskComputed(function(key) {
     tp.taskFn.displayName = `${key} (task)`;
-    let options = Object.assign({
-      generatorFactory: (args) => taskFn.apply(this, args),
-    }, sharedTaskProperties(tp, this, key));
-    return new Task(options);
+
+    let options = sharedTaskProperties(tp, this, key);
+    if (typeof taskFn === 'object') {
+      return buildEncapsulatedTask(taskFn, options);
+    } else {
+      return buildRegularTask(taskFn, options);
+    }
   });
 
   tp.taskFn = taskFn;
@@ -677,6 +650,29 @@ export function task(taskFn) {
   Object.setPrototypeOf(tp, TaskProperty.prototype);
 
   return tp;
+}
+
+function buildRegularTask(taskFn, options) {
+  return new Task(
+    Object.assign({
+      generatorFactory: (args) => taskFn.apply(options.context, args),
+    }, options)
+  );
+}
+
+function buildEncapsulatedTask(encapsObject, options) {
+  throw new Error("encapsulated tasks aren't yet supported in this version");
+
+  // class AdhocEncapsulatedTask extends EncapsulatedTask {
+  // }
+
+  // let context = options.context;
+  // let owner = getOwner(context);
+  // let ownerInjection = owner ? owner.ownerInjection() : {};
+  // Object.assign(EncapsulatedTask.prototype, ownerInjection);
+  // let task = new EncapsulatedTask(options);
+  // task.generatorFactory = (args) => perform.apply(task, args);
+  // return task;
 }
 
 /**
@@ -726,10 +722,20 @@ function sharedTaskProperties(taskProperty, context, key) {
 
   return {
     context,
+    debug: taskProperty._debug,
     _propertyName: key,
     name: key,
     group,
     scheduler,
     onState: taskProperty._onStateCallback, 
   };
+}
+
+function generatorFactoryFor(context, taskFn) {
+  if (typeof taskFn === 'object') {
+  } else {
+  }
+}
+
+function makeEncapsulatedTask() {
 }

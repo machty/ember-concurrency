@@ -35,13 +35,14 @@ export function getRunningInstance() {
 }
 
 export class TaskInstanceExecutor {
-  constructor({ generatorFactory, env }) {
+  constructor({ generatorFactory, env, debug }) {
     this.generatorState = new GeneratorState(generatorFactory);
     this.state = Object.assign({}, INITIAL_STATE);
     this.index = 1;
     this.disposers = [];
     this.finalizeCallbacks = [];
     this.env = env;
+    this.debug = debug;
     this.cancelRequest = null;
   }
 
@@ -400,7 +401,7 @@ export class TaskInstanceExecutor {
   }
 
   debugEnabled() {
-    return this.taskInstance.debug || this.env.globalDebuggingEnabled();
+    return this.debug || this.env.globalDebuggingEnabled();
   }
 
   finalizeShared(state) {

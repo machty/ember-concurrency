@@ -1,5 +1,6 @@
 import RSVP, { Promise } from 'rsvp';
-import TaskInstance from './task-instance';
+import { TaskInstance } from './task-instance';
+
 
 /**
  * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).

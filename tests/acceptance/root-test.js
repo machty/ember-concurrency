@@ -1,4 +1,4 @@
-import { module, test } from 'qunit';
+import { module, test, skip } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 import { visit } from '@ember/test-helpers';
 import { run } from '@ember/runloop';
@@ -10,7 +10,8 @@ module('Acceptance | root', function(hooks) {
 
   DocsController.proto().get('flatContents').forEach(page => {
     if (!page.route) { return; }
-    test(`visiting ${page.route}`, async function(assert) {
+    let testMethod = page.skipTest ? skip : test;
+    testMethod(`visiting ${page.route}`, async function(assert) {
       assert.expect(0);
       let url = page.route.replace(/\./g, '/');
       setTimeout(() => run.cancelTimers(), 500);

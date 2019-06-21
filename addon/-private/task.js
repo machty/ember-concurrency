@@ -6,8 +6,8 @@ import { EMBER_ENVIRONMENT } from "./ember-environment";
 import { TASKABLE_MIXIN } from "./taskable-mixin";
 
 export class Task extends BaseTask {
-  constructor(...args) {
-    super(...args);
+  constructor(options) {
+    super(options);
     this.setState({}); // TODO: double check this is necessary
   }
 
@@ -45,6 +45,7 @@ export class Task extends BaseTask {
     let executor = new TaskInstanceExecutor({
       generatorFactory,
       env: EMBER_ENVIRONMENT,
+      debug: this.debug,
     });
     let taskInstance = new TaskInstance(this, executor);
 
@@ -60,6 +61,16 @@ export class Task extends BaseTask {
 
     this.scheduler.perform(taskInstance);
     return taskInstance;
+  }
+
+  _curry(...args) {
+    let task = this._clone();
+    task._curryArgs = [...(this._curryArgs || []), ...args];
+    return task;
+  }
+
+  _clone() {
+    return new Task(this.options);
   }
 
   /**
@@ -185,3 +196,14 @@ export class Task extends BaseTask {
 }
 
 Object.assign(Task.prototype, TASKABLE_MIXIN);
+
+export class EncapsulatedTask extends Task {
+  constructor(options, other) {
+    super(options);
+    this.other = other;
+  }
+
+  _perform() {
+
+  }
+}
