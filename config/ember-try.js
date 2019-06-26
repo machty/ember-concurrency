@@ -81,6 +81,15 @@ module.exports = function() {
           }
         },
         {
+          name: 'ember-lts-3.8-with-decorators-polyfill',
+          npm: {
+            devDependencies: {
+              'ember-source': '~3.8.0',
+              'ember-decorators-polyfill': '^1.0.0'
+            }
+          }
+        },
+        {
           name: 'ember-release',
           npm: {
             devDependencies: {
