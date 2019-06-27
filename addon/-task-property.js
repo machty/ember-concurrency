@@ -332,7 +332,7 @@ export const Task = EmberObject.extend(TaskStateMixin, {
    * If you're trying to cancel a specific TaskInstance (rather
    * than all of the instances running under this task) call
    * `.cancel()` on the specific TaskInstance.
-   *    *
+   *
    * @method cancelAll
    * @memberof Task
    * @param {Object} [options]
