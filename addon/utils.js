@@ -176,7 +176,7 @@ export function rawTimeout(ms) {
         taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, this._result);
       }, ms);
       return () => {
-        window.clearInterval(timerId);
+        clearTimeout(timerId);
       };
     }
   };
