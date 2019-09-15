@@ -11,6 +11,11 @@ export default Route.extend({
     this.get('pollServerForChanges').perform(model.id);
   },
 
+  resetController() {
+    this._super(...arguments);
+    this.get('pollServerForChanges').cancelAll();
+  },
+
   pollServerForChanges: task(function * (id) {
     let notify = this.get('notify');
     yield timeout(500);
@@ -23,7 +28,6 @@ export default Route.extend({
     } finally {
       notify.warning(`Thing ${id}: No longer polling for changes`);
     }
-  }).cancelOn('deactivate').restartable(),
+  }).restartable()
 });
 // END-SNIPPET
-
