@@ -113,6 +113,15 @@ module('Unit: cancelable promises test helpers', function() {
     assert.equal(childTask.get('concurrency'), 0);
   });
 
+  test("all throws an assertion, if something other than an array is passed", function (assert) {
+    assert.expectAssertion(() => {
+      all();
+    }, /'all' expects an array/);
+    assert.expectAssertion(() => {
+      all(RSVP.Promise.resolve());
+    }, /'all' expects an array/);
+  });
+
   test("allSettled behaves like Promise.allSettled", function(assert) {
     assert.expect(6);
 
@@ -230,6 +239,15 @@ module('Unit: cancelable promises test helpers', function() {
     assert.equal(childTask.get('concurrency'), 0);
   });
 
+  test("allSettled throws an assertion, if something other than an array is passed", function (assert) {
+    assert.expectAssertion(() => {
+      allSettled();
+    }, /'allSettled' expects an array/);
+    assert.expectAssertion(() => {
+      allSettled(RSVP.Promise.resolve());
+    }, /'allSettled' expects an array/);
+  });
+
   test("hash", function(assert) {
     assert.expect(1);
 
@@ -306,6 +324,15 @@ module('Unit: cancelable promises test helpers', function() {
     assert.equal(obj.get('child.concurrency'), 3);
     run(obj.get('parent'), 'cancelAll');
     assert.equal(obj.get('child.concurrency'), 0);
+  });
+
+  test("race throws an assertion, if something other than an array is passed", function (assert) {
+    assert.expectAssertion(() => {
+      race();
+    }, /'race' expects an array/);
+    assert.expectAssertion(() => {
+      race(RSVP.Promise.resolve());
+    }, /'race' expects an array/);
   });
 
   test("yieldable helpers work with null/undefined values", function(assert) {

@@ -1,3 +1,4 @@
+import { assert } from '@ember/debug';
 import RSVP, { Promise } from 'rsvp';
 import TaskInstance from './-task-instance';
 import { yieldableSymbol } from './utils';
@@ -23,6 +24,9 @@ function * resolver(value) {
  * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
 export const all = (things) => {
+  // Extra assertion here to circumvent the `things.length` short circuit.
+  assert(`'all' expects an array.`, Array.isArray(things));
+
   if (things.length === 0) {
     return things;
   }
@@ -105,6 +109,7 @@ function getValues(obj) {
 function taskAwareVariantOf(obj, method, getItems) {
   return function(thing) {
     let items = getItems(thing);
+    assert(`'${method}' expects an array.`, Array.isArray(items));
     let defer = RSVP.defer();
 
     obj[method](thing).then(defer.resolve, defer.reject);
