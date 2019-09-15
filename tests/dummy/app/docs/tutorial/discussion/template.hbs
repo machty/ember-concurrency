@@ -1,10 +1,10 @@
 <h3>A Quick Post-Mortem</h3>
 
 <p>
-In the previous part of the tutorial, we built a component that
-fetches and displays nearby retail stores. As you can see, it takes
-quite a bit of code to cover all of the corner cases and build
-something that is actually production-ready:
+  In the previous part of the tutorial, we built a component that
+  fetches and displays nearby retail stores. As you can see, it takes
+  quite a bit of code to cover all of the corner cases and build
+  something that is actually production-ready:
 </p>
 
 {{code-template-toggle
@@ -13,40 +13,28 @@ something that is actually production-ready:
 {{tutorial-5}}
 
 <p>
-This is not the beautiful Ember code we all thought we'd be writing,
-and unfortunately this kind of code is extremely commonplace.
+  This is not the beautiful Ember code we all thought we'd be writing,
+  and unfortunately this kind of code is extremely commonplace.
 </p>
 
 <h5>Alternative: Move tricky code to an object with a long lifespan</h5>
 
 <p>
-Components have limited lifespans: they're rendered, and then
-eventually they're unrendered and destroyed. Controllers, Services, Ember-Data
-Stores, and Routes, on the other hand, live forever (or at least until
-the app is torn down in a testing environment).
+  Components have limited lifespans: they're rendered, and then
+  eventually they're unrendered and destroyed. Controllers, Services, Ember-Data
+  Stores, and Routes, on the other hand, live forever (or at least until
+  the app is torn down in a testing environment).
 </p>
 
 <p>
-As such, one approach
-to avoiding <code>"set on destroyed object"</code> errors is to move
-tricky async logic into a method/action on a Controller or Service that
-is invoked by a Component. Sometimes this works, but it's often the case
-that even though you no longer see exceptions in the console, you still need to
-clean up / stop / cancel some operation on a long lived object in response
-to a Component being destroyed. There are Component lifecycle hooks
-like <code>willDestroyElement</code> that you can use for these kinds of things,
-but then you still end up with the same amount of code, but now it's smeared
-between Component and Controller.
+  As such, one approach
+  to avoiding <code>"set on destroyed object"</code> errors is to move
+  tricky async logic into a method/action on a Controller or Service that
+  is invoked by a Component. Sometimes this works, but it's often the case
+  that even though you no longer see exceptions in the console, you still need to
+  clean up / stop / cancel some operation on a long lived object in response
+  to a Component being destroyed. There are Component lifecycle hooks
+  like <code>willDestroyElement</code> that you can use for these kinds of things,
+  but then you still end up with the same amount of code, but now it's smeared
+  between Component and Controller.
 </p>
-
-
-
-
-
-
-
-
-
-
-
-

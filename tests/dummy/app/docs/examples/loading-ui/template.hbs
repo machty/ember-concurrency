@@ -13,7 +13,7 @@
   a lot of the boilerplate of setting a property at the beginning of some async operation,
   and unsetting when the operation completes. Also, because the task in the example
   below uses the <code>drop()</code> modifier
-  (see {{link-to 'Managing Task Concurrency' 'docs.task-concurrency'}}),
+  (see {{link-to "Managing Task Concurrency" "docs.task-concurrency"}}),
   there's no need to write a guard at the beginning of the task to return early if
   the task is already running.
 </p>
@@ -28,14 +28,14 @@
 
 <p>
   {{! BEGIN-SNIPPET ask-button }}
-  <button class={{if askQuestion.isIdle 'button-primary'}}
+  <button class={{if askQuestion.isIdle "button-primary"}}
     onclick={{perform askQuestion}}>
-        {{#if askQuestion.isIdle}}
-          Ask
-        {{else}}
-          Thinking...
-          {{loading-spinner}}
-        {{/if}}
+    {{#if askQuestion.isIdle}}
+      Ask
+    {{else}}
+      Thinking...
+      {{loading-spinner}}
+    {{/if}}
   </button>
   {{! END-SNIPPET }}
 </p>
@@ -43,4 +43,3 @@
 {{code-snippet name="loading-ui-controller.js"}}
 
 {{code-snippet name="ask-button.hbs"}}
-

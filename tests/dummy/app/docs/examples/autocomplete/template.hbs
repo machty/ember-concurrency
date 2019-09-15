@@ -9,16 +9,16 @@
   <li>
     Debouncing: the browser won't make network requests until the user has
     stopped typing for more than 250ms. This is accomplished by combining the
-    <code>{{link-to '.restartable()' 'docs.task-concurrency'}}</code> task modifier
+    <code>{{link-to ".restartable()" "docs.task-concurrency"}}</code> task modifier
     with a <code>yield timeout(250)</code> at the beginning of the task.
   </li>
   <li>
     XHR cancelation: if the user starts typing while a prior XHR request
     is underway, that XHR request will be canceled to save network resources
-    (this is accomplished via the {{link-to "try / finally cancelation pattern" 'docs.error-vs-cancelation'}}).
+    (this is accomplished via the {{link-to "try / finally cancelation pattern" "docs.error-vs-cancelation"}}).
   </li>
   <li>
-    Use {{link-to 'Derived State' 'docs.derived-state'}} to display
+    Use {{link-to "Derived State" "docs.derived-state"}} to display
     both a loading spinner and the final search results without using
     a single <code>.set()</code>.
   </li>
@@ -31,9 +31,9 @@
 </p>
 
 <p>
-{{! BEGIN-SNIPPET debounced-search-with-cancelation-template }}
+  {{! BEGIN-SNIPPET debounced-search-with-cancelation-template }}
   <input type="text" oninput={{perform searchRepo value="target.value"}}
-         placeholder="Search GitHub..." />
+         placeholder="Search GitHub...">
 
   {{#if searchRepo.isRunning}}
     {{loading-spinner}}
@@ -44,7 +44,7 @@
       <li>{{repo.full_name}}</li>
     {{/each}}
   </ul>
-{{! END-SNIPPET }}
+  {{! END-SNIPPET }}
 </p>
 
 
@@ -55,4 +55,3 @@
 <h5>Template</h5>
 
 {{code-snippet name="debounced-search-with-cancelation-template.hbs"}}
-

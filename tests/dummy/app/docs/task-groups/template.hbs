@@ -1,7 +1,7 @@
 <h3>Task Groups</h3>
 
 <p>
-  While {{link-to 'Task Modifiers' 'docs.task-concurrency'}}
+  While {{link-to "Task Modifiers" "docs.task-concurrency"}}
   prevent a single task from running concurrently, <strong>Task Groups</strong>
   make it possible to prevent <em>multiple tasks</em> from running at the same time.
   Using Task Groups is a two-step process:
@@ -9,8 +9,10 @@
 
 <ol>
   <li>Define the task group property, e.g. <code>nameOfGroup: taskGroup()</code></li>
-  <li>For each task in the group, use <code>.group()</code> to associate
-      the task with the group, e.g. <code>myTask: task(...).group('nameOfGroup')</code></li>
+  <li>
+    For each task in the group, use <code>.group()</code> to associate
+    the task with the group, e.g. <code>myTask: task(...).group('nameOfGroup')</code>
+  </li>
 </ol>
 
 <p>
@@ -34,8 +36,10 @@
 
 {{! BEGIN-SNIPPET task-groups-template }}
 {{#each tasks as |task|}}
-  <button class={{if task.isIdle 'clickable'}}
-          onclick={{perform task}}>{{task.name}}</button>
+  <button class={{if task.isIdle "clickable"}}
+          onclick={{perform task}}>
+    {{task.name}}
+  </button>
 {{/each}}
 
 <h5>Chores group state: {{chores.state}}</h5>
@@ -50,4 +54,3 @@
 
 {{code-snippet name="task-groups.js"}}
 {{code-snippet name="task-groups-template.hbs"}}
-

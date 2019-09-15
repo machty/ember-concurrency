@@ -36,7 +36,7 @@
 <p>
   This example demonstrates how to use encapsulated tasks to
   model file uploads. It keeps all of the upload state <em>within</em>
-  each TaskInstance, and uses {{link-to 'Derived State' 'docs.derived-state'}}
+  each TaskInstance, and uses {{link-to "Derived State" "docs.derived-state"}}
   to expose the values set within the encapsulated tasks.
 </p>
 
@@ -57,10 +57,10 @@
 {{/with}}
 
 {{#if uploadFile.lastSuccessful}}
-  <h5 style="color: green;">
+  <h5 style="color: green;" {{! template-lint-disable no-inline-styles }}>
     <strong>
-    Upload to {{uploadFile.lastSuccessful.url}}:
-    {{uploadFile.lastSuccessful.value}}
+      Upload to {{uploadFile.lastSuccessful.url}}:
+      {{uploadFile.lastSuccessful.value}}
     </strong>
   </h5>
 {{/if}}
