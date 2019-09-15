@@ -1,9 +1,10 @@
 import Route from '@ember/routing/route';
-import { inject } from '@ember/service';
+import { inject as service } from '@ember/service';
 import Ember from 'ember';
 
 export default Route.extend({
-  fastboot: inject(),
+  fastboot: service(),
+  router: service(),
 
   beforeModel() {
     if (!Ember.testing && !this.get('fastboot.isFastBoot')) {
