@@ -10,7 +10,7 @@ module.exports = function(defaults) {
   if (includePolyfill) {
     babelOptions.includePolyfill = true;
   } else {
-    babelOptions.blacklist = ['regenerator'];
+    babelOptions.exclude = ['@babel/plugin-transform-regenerator'];
   }
 
   var app = new EmberAddon(defaults, {
