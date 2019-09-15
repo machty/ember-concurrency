@@ -77,7 +77,6 @@
     "ember-maybe-import-regenerator": "^0.1.6"
   },
   "resolutions": {
-    "ember-qunit/@ember/test-helpers": "1.0.1",
     "ip-regex": "^2.1.0"
   },
   "ember-addon": {
