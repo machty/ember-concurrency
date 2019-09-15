@@ -45,4 +45,3 @@ See the [Contributing](CONTRIBUTING.md) guide for details.
 [ember-observer-url]: http://emberobserver.com/addons/ember-concurrency
 [ember-version]: https://img.shields.io/badge/Ember-2.4%2B-brightgreen.svg
 [twiddle-starter]: https://ember-twiddle.com/b2b0c016f4df24261381487b60c707f3?numColumns=2&openFiles=templates.application.hbs%2Ctemplates.application.hbs
-
