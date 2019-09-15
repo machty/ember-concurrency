@@ -1,9 +1,8 @@
 import { resolve } from 'rsvp';
-import $ from 'jquery';
 import { test as qunitTest } from 'ember-qunit';
 import { wrap, go } from 'ember-concurrency/-task-instance';
 import { run } from "@ember/runloop";
-import { visit, click, settled } from '@ember/test-helpers';
+import { visit, click, settled, findAll } from '@ember/test-helpers';
 import {
   raw,
   rawTimeout
@@ -20,19 +19,19 @@ const find = wrap(function * (app, selector, options = {}) {
   });
 
   while(true) {
-    let $el = $(selector);
+    let els = findAll(selector);
 
-    if ($el.length === count) {
-      return raw($el);
+    if (els.length === count) {
+      return raw([...els]);
     } else {
       if (timeoutMs) {
         let now = + new Date();
         if (now - startedAt > timeoutMs) {
-          throw new Error(`Tried to find ${count} occurrence(s) of "${selector}" within ${timeoutMs}ms, instead found ${$el.length}`);
+          throw new Error(`Tried to find ${count} occurrence(s) of "${selector}" within ${timeoutMs}ms, instead found ${els.length}`);
         }
       } else {
         if (isSettled) {
-          throw new Error(`Tried to find ${count} occurrence(s) of "${selector}" before test waiters settled, instead found ${$el.length}`);
+          throw new Error(`Tried to find ${count} occurrence(s) of "${selector}" before test waiters settled, instead found ${els.length}`);
         }
       }
 

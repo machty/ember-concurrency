@@ -1,5 +1,5 @@
 import { run } from '@ember/runloop';
-import $ from 'jquery';
+import { findAll } from '@ember/test-helpers';
 import { timeout } from 'ember-concurrency';
 import { test } from '../../tests/helpers/generator-tests';
 import { module } from 'qunit';
@@ -32,10 +32,10 @@ module('Acceptance | testing utilities', function(hooks) {
     assert.expect(2);
     this.visit('/testing-ergo/foo');
 
-    let sel = `.eventual-button:contains('Eventual Button')`;
-    assert.equal($(sel).length, 0);
-    let $loadedSel = yield this.find(sel);
-    assert.equal($loadedSel.length, 1);
+    let sel = `.eventual-button`;
+    assert.equal(findAll(sel).length, 0);
+    let loadedSel = yield this.find(sel);
+    assert.equal(loadedSel.length, 1);
   });
 
   test('find() with count 0 waits for element to not exist', function * (assert) {
@@ -43,15 +43,15 @@ module('Acceptance | testing utilities', function(hooks) {
     this.visit('/testing-ergo/foo');
 
     yield this.find(`.disappearing-content`);
-    let $sel = yield this.find(`.disappearing-content`, { count: 0 });
-    assert.equal($sel.length, 0);
+    let sel = yield this.find(`.disappearing-content`, { count: 0 });
+    assert.equal(sel.length, 0);
   });
 
   test('click() waits for element to exist', function * (assert) {
     assert.expect(0);
     this.visit('/testing-ergo/foo');
     yield this.click(`.eventual-button`);
-    yield this.find(`.value:contains('value=123')`);
+    yield this.find(`.value`);
   });
 
   test('find() fails eagerly if waiters settle', function * (assert) {
@@ -75,19 +75,19 @@ module('Acceptance | testing utilities', function(hooks) {
       assert.equal(e.message, "Tried to find 1 occurrence(s) of \".nonexistent-button\" within 100ms, instead found 0");
     }
 
-    let $el = yield this.find(`.eventual-button`, { timeout: 1000 });
-    assert.equal($el.length, 1);
+    let el = yield this.find(`.eventual-button`, { timeout: 1000 });
+    assert.equal(el.length, 1);
   });
 
   test('it is easy to test loading routes by yielding selectors rather than awaiting "settledness"', function * (assert) {
     assert.expect(2);
     this.visit('/testing-ergo/slow');
 
-    let $loadingBanner = yield this.find('.loading-message');
-    assert.equal($loadingBanner.text(), "I am a loading route.");
+    let loadingBanner = yield this.find('.loading-message');
+    assert.equal(loadingBanner[0].textContent, "I am a loading route.");
 
-    let $slowBanner = yield this.find('.slow-banner');
-    assert.equal($slowBanner.text(), "Welcome to slow route.");
+    let slowBanner = yield this.find('.slow-banner');
+    assert.equal(slowBanner[0].textContent, "Welcome to slow route.");
   });
 
   // test('it is easy to test timer loops', function * (assert) {
@@ -123,10 +123,10 @@ module('ember-concurrency testing utilities (async await)', function(hooks) {
     assert.expect(2);
     this.visit('/testing-ergo/foo');
 
-    let sel = `.eventual-button:contains('Eventual Button')`;
-    assert.equal($(sel).length, 0);
-    let $loadedSel = await this.find(sel);
-    assert.equal($loadedSel.length, 1);
+    let sel = `.eventual-button`;
+    assert.equal(findAll(sel).length, 0);
+    let loadedSel = await this.find(sel);
+    assert.equal(loadedSel.length, 1);
   });
 
   test('find() with count 0 waits for element to not exist', async function (assert) {
@@ -134,15 +134,15 @@ module('ember-concurrency testing utilities (async await)', function(hooks) {
     this.visit('/testing-ergo/foo');
 
     await this.find(`.disappearing-content`);
-    let $sel = await this.find(`.disappearing-content`, { count: 0 });
-    assert.equal($sel.length, 0);
+    let sel = await this.find(`.disappearing-content`, { count: 0 });
+    assert.equal(sel.length, 0);
   });
 
   test('click() waits for element to exist', async function(assert) {
     assert.expect(0);
     this.visit('/testing-ergo/foo');
     await this.click(`.eventual-button`);
-    await this.find(`.value:contains('value=123')`);
+    await this.find(`.value`);
   });
 
   test('find() fails eagerly if waiters settle', async function(assert) {
@@ -166,19 +166,19 @@ module('ember-concurrency testing utilities (async await)', function(hooks) {
       assert.equal(e.message, "Tried to find 1 occurrence(s) of \".nonexistent-button\" within 100ms, instead found 0");
     }
 
-    let $el = await this.find(`.eventual-button`, { timeout: 1000 });
-    assert.equal($el.length, 1);
+    let el = await this.find(`.eventual-button`, { timeout: 1000 });
+    assert.equal(el.length, 1);
   });
 
   test('it is easy to test loading routes by yielding selectors rather than awaiting "settledness"', async function(assert) {
     assert.expect(2);
     this.visit('/testing-ergo/slow');
 
-    let $loadingBanner = await this.find('.loading-message');
-    assert.equal($loadingBanner.text(), "I am a loading route.");
+    let loadingBanner = await this.find('.loading-message');
+    assert.equal(loadingBanner[0].textContent, "I am a loading route.");
 
-    let $slowBanner = await this.find('.slow-banner');
-    assert.equal($slowBanner.text(), "Welcome to slow route.");
+    let slowBanner = await this.find('.slow-banner');
+    assert.equal(slowBanner[0].textContent, "Welcome to slow route.");
   });
 
   // test('it is easy to test timer loops', async function(assert) {
