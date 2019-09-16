@@ -6,7 +6,8 @@ import { isEventedObject, yieldableToPromise } from './utils';
 
 import {
   yieldableSymbol,
-  YIELDABLE_CONTINUE
+  YIELDABLE_CONTINUE,
+  YIELDABLE_THROW
 } from './utils';
 
 class WaitFor {
@@ -22,9 +23,13 @@ class WaitForQueueYieldable extends WaitFor {
   }
 
   [yieldableSymbol](taskInstance, resumeIndex) {
-    schedule(this.queueName, () => {
-      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, null);
-    });
+    try {
+      schedule(this.queueName, () => {
+        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, null);
+      });
+    } catch(error) {
+      taskInstance.proceed(resumeIndex, YIELDABLE_THROW, error);
+    }
   }
 }
 

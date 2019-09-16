@@ -49,6 +49,28 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
     assert.notOk(taskCompleted, 'Task should not have completed');
   });
 
+  test('waitForQueue throws if invalid queue is used', function(assert) {
+    assert.expect(2);
+
+    let taskErrored = false;
+    const Obj = EmberObject.extend({
+      task: task(function*() {
+        try {
+          yield waitForQueue('non-existing-queue');
+        } catch(error) {
+          assert.equal(error.toString(), 'Error: You attempted to schedule an action in a queue (non-existing-queue) that doesn\'t exist', 'it correctly bubbles error up');
+          taskErrored = true;
+        }
+      })
+    });
+
+    run(() => {
+      let obj = Obj.create();
+      obj.get('task').perform();
+      assert.notOk(taskErrored, 'Task should have errored');
+    });
+  });
+
   test('waitForEvent works (`Ember.Evented` interface)', function(assert) {
     assert.expect(4);
     let taskCompleted = false;
