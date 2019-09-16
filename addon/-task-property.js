@@ -2,7 +2,7 @@ import { scheduleOnce } from '@ember/runloop';
 import { addObserver } from '@ember/object/observers';
 import { addListener } from '@ember/object/events';
 import EmberObject from '@ember/object';
-import { getOwner } from '@ember/application';
+import { getOwner, setOwner } from '@ember/application';
 import { default as TaskInstance, getRunningInstance } from './-task-instance';
 import {
   PERFORM_TYPE_DEFAULT,
@@ -382,6 +382,8 @@ export const Task = EmberObject.extend(TaskStateMixin, {
       _origin: this,
       _performType: performType,
     });
+
+    setOwner(taskInstance, getOwner(this.context));
 
     if (performType === PERFORM_TYPE_LINKED) {
       linkedObject._expectsLinkedYield = true;
