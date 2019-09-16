@@ -1,8 +1,9 @@
-import Controller, { inject as controller } from '@ember/controller';
+import Controller from '@ember/controller';
 import { computed } from '@ember/object';
+import { inject as service } from '@ember/service';
 
 export default Controller.extend({
-  appController: controller('application'),
+  router: service(),
 
   tableOfContents: [
     { route: "docs.introduction", title: "Home" },
@@ -51,9 +52,9 @@ export default Controller.extend({
     return flattened;
   }),
 
-  currentIndex: computed('appController.currentRouteName', 'flatContents', function(){
+  currentIndex: computed('router.currentRouteName', 'flatContents', function(){
     var contents = this.get('flatContents'),
-        current = this.get('appController.currentRouteName'),
+        current = this.get('router.currentRouteName'),
         bestMatch,
         entry;
 

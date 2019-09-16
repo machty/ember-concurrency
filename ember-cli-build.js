@@ -4,16 +4,14 @@ const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 const urls = require('./lib/prember-urls');
 
 module.exports = function(defaults) {
-  var includePolyfill = process.env.EMBER_ENV === 'production' || process.env.CI;
+  let includePolyfill = process.env.EMBER_ENV === 'production';
 
-  var babelOptions = {};
-  if (includePolyfill) {
-    babelOptions.includePolyfill = true;
-  } else {
-    babelOptions.blacklist = ['regenerator'];
+  let babelOptions = {};
+  if (!includePolyfill) {
+    babelOptions.exclude = ['@babel/plugin-transform-regenerator'];
   }
 
-  var app = new EmberAddon(defaults, {
+  let app = new EmberAddon(defaults, {
     minifyJS: {
       enabled: false
     },
@@ -26,6 +24,10 @@ module.exports = function(defaults) {
     },
 
     babel: babelOptions,
+
+    'ember-cli-babel': {
+      includePolyfill: process.env.EMBER_ENV === 'production'
+    },
 
     prember: {
       urls,

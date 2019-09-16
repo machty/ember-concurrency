@@ -1,4 +1,4 @@
-<p style="font-size: 20px;">
+<p style="font-size: 20px;" {{! template-lint-disable no-inline-styles }}>
   <strong>ember-concurrency</strong> is an Ember Addon that
   makes it easy to write concise, robust, and beautiful
   asynchronous code.
@@ -19,7 +19,7 @@
     having to manually track / mutate state yourself.
   </li>
   <li>
-    {{link-to 'Task Modifiers' 'docs.task-concurrency'}} make it trivial
+    {{link-to "Task Modifiers" "docs.task-concurrency"}} make it trivial
     to prevent two executions of the same task from running at the same time, e.g.
     you can prevent double form submissions using the <code>.drop()</code> modifier,
     or you can configure a task to be <code>.restartable()</code> so that it starts over
@@ -67,4 +67,3 @@
     </a>
   </li>
 </ul>
-

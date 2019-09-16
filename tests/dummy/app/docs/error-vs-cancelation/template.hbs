@@ -12,7 +12,7 @@
 </ol>
 
 <p>
-  The {{link-to 'Task Function Syntax docs' 'docs.task-function-syntax'}}
+  The {{link-to "Task Function Syntax docs" "docs.task-function-syntax"}}
   demonstrates how you can use standard JavaScript <code>try/catch</code> blocks
   to catch exceptions thrown when you yield a rejecting promise, but
   what about cancelation? Are cancelations considered exceptions/errors, or something else?
@@ -41,7 +41,7 @@
   <em>
     * While <code>finally</code> blocks are nice for cleanup logic, make
     sure you're leveraging the power of
-    {{link-to 'Task Modifiers' 'docs.task-concurrency'}} and <code>.isRunning / .isIdle</code>
+    {{link-to "Task Modifiers" "docs.task-concurrency"}} and <code>.isRunning / .isIdle</code>
     task properties as much as possible so that you're not manually re-implementing
     a lot of the implicit state that ember-concurrency provides you for free, e.g.
     you should avoid manually toggling the visibility of a loading spinner within
@@ -80,4 +80,3 @@
 
 {{code-snippet name="error-vs-cancelation-template.hbs"}}
 {{code-snippet name="error-vs-cancelation.js"}}
-

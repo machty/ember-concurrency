@@ -38,7 +38,7 @@
 {{! BEGIN-SNIPPET decorating-tasks-template-isIdle }}
 <p>
   {{#each tasks as |task|}}
-    <button {{action task.perform}} class={{if task.isIdle 'button-primary'}}>
+    <button {{action task.perform}} class={{if task.isIdle "button-primary"}}>
       {{task.name}}
     </button>
   {{/each}}
@@ -60,7 +60,7 @@
 {{! BEGIN-SNIPPET decorating-tasks-template-performWillSucceed }}
 <p>
   {{#each tasks as |task|}}
-    <button {{action task.perform}} class={{if task.performWillSucceed 'button-primary'}}>
+    <button {{action task.perform}} class={{if task.performWillSucceed "button-primary"}}>
       {{task.name}}
     </button>
   {{/each}}
@@ -70,4 +70,3 @@
 {{code-snippet name="decorating-tasks.js"}}
 {{code-snippet name="decorating-tasks-template-isIdle.hbs"}}
 {{code-snippet name="decorating-tasks-template-performWillSucceed.hbs"}}
-

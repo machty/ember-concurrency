@@ -1,14 +1,14 @@
 <h3>Refactoring With Tasks</h3>
 
 <p>
-Now we're going to build the same functionality using
-ember-concurrency tasks, starting with the same bare minimum
-implementation as before, and making incremental improvements.
+  Now we're going to build the same functionality using
+  ember-concurrency tasks, starting with the same bare minimum
+  implementation as before, and making incremental improvements.
 </p>
 
 <p>
-For reference, here is the bare minimum implementation that we
-started with before (which only uses core Ember APIs):
+  For reference, here is the bare minimum implementation that we
+  started with before (which only uses core Ember APIs):
 </p>
 
 {{code-template-toggle
@@ -19,7 +19,7 @@ started with before (which only uses core Ember APIs):
 <h4>Version 1: Bare Minimum Implementation (with Tasks)</h4>
 
 <p>
-Now let's build the same thing with ember-concurrency tasks:
+  Now let's build the same thing with ember-concurrency tasks:
 </p>
 
 {{code-template-toggle
@@ -28,7 +28,7 @@ Now let's build the same thing with ember-concurrency tasks:
 {{tutorial-6}}
 
 <p>
-Let's take a moment to point out everything that has changed:
+  Let's take a moment to point out everything that has changed:
 </p>
 
 <p>
@@ -49,7 +49,7 @@ Let's take a moment to point out everything that has changed:
 </p>
 
 <p>
-  {{link-to "We'll get into much greater detail" 'docs.task-function-syntax'}}
+  {{link-to "We'll get into much greater detail" "docs.task-function-syntax"}}
   about how this syntax is used, but for now, the most important thing to understand
   is that when you <code>yield</code> a promise, the task will pause until that promise fulfills,
   and then continue executing with the resolved value of that promise.
@@ -60,10 +60,10 @@ Let's take a moment to point out everything that has changed:
 <h5>Version 2: Add a Loading Spinner (with Tasks)</h5>
 
 <p>
-Rather than defining a separate boolean flag and manually tracking
-the state of the task, we can use the <code>isRunning</code> property
-exposed by the task to drive our loading spinner, which means we only
-need to make a change to the template code; the JavaScript can stay the same:
+  Rather than defining a separate boolean flag and manually tracking
+  the state of the task, we can use the <code>isRunning</code> property
+  exposed by the task to drive our loading spinner, which means we only
+  need to make a change to the template code; the JavaScript can stay the same:
 </p>
 
 {{code-template-toggle
@@ -75,18 +75,18 @@ need to make a change to the template code; the JavaScript can stay the same:
 <h4>Version 3: Preventing Concurrency (with Tasks)</h4>
 
 <p>
-So far so good, but we still haven't addressed the issue that clicking
-the button multiple times causes weird behavior due to multiple
-fetch operations running at the same time.
+  So far so good, but we still haven't addressed the issue that clicking
+  the button multiple times causes weird behavior due to multiple
+  fetch operations running at the same time.
 </p>
 
 <p>
-Rather than putting an <code>if</code> guard at the start of the task,
-the ember-concurrency way to prevent concurrency is to apply a
-{{link-to 'Task Modifier' 'docs.task-concurrency'}} to the task.
-The one we want to use is the <code>.drop()</code> modifier, which prevents
-concurrency by "dropping" any attempt to perform the task while it is
-already running.
+  Rather than putting an <code>if</code> guard at the start of the task,
+  the ember-concurrency way to prevent concurrency is to apply a
+  {{link-to "Task Modifier" "docs.task-concurrency"}} to the task.
+  The one we want to use is the <code>.drop()</code> modifier, which prevents
+  concurrency by "dropping" any attempt to perform the task while it is
+  already running.
 </p>
 
 {{code-template-toggle
@@ -95,61 +95,61 @@ already running.
 {{tutorial-8}}
 
 <p>
-Now when you button mash "Find Nearby Stores", you no longer get the weird
-behavior due to concurrent fetches.
+  Now when you button mash "Find Nearby Stores", you no longer get the weird
+  behavior due to concurrent fetches.
 </p>
 
 <h4>Version 4: Handling "set on destroyed object" errors (with Tasks)</h4>
 
 <p>
-What about those pesky <code>"set on destroyed object"</code> errors?
+  What about those pesky <code>"set on destroyed object"</code> errors?
 </p>
 
 <p>
-Good news! Our code is already safe because ember-concurrency automatically
-cancels tasks when their host object (e.g. a Component) is destroyed.
-In our example, if the <code>findStores</code> task is paused
-at the unresolved <code>getNearbyStores</code> promise right when the user navigates
-away, the component will be destroyed and the <code>findStores</code> task will
-stop right where it is and will never hit the line of code with the <code>this.set()</code>,
-thus avoiding the <code>"set on destroyed object"</code> error.
+  Good news! Our code is already safe because ember-concurrency automatically
+  cancels tasks when their host object (e.g. a Component) is destroyed.
+  In our example, if the <code>findStores</code> task is paused
+  at the unresolved <code>getNearbyStores</code> promise right when the user navigates
+  away, the component will be destroyed and the <code>findStores</code> task will
+  stop right where it is and will never hit the line of code with the <code>this.set()</code>,
+  thus avoiding the <code>"set on destroyed object"</code> error.
 </p>
 
 <p>
-The ability to cancel a task in mid-execution is one of ember-concurrency's
-most powerful features, and it is the generator function syntax that
-makes cancelation possible.
+  The ability to cancel a task in mid-execution is one of ember-concurrency's
+  most powerful features, and it is the generator function syntax that
+  makes cancelation possible.
 </p>
 
 <h4>Version 5: Handle Promise Rejection (with Tasks)</h4>
 
 <p>
-Will a promise rejection put our task into an unrecoverable state?
+  Will a promise rejection put our task into an unrecoverable state?
 </p>
 
 <p>
-It turns out that, again, we don't need to change any code; if either
-<code>getCoords</code> or <code>getNearbyStores</code> returned a rejecting promise,
-the <code>findStores</code> task would stop execution where the error occurred, bubble
-the exception to the console (so that error reporters can catch it), but from there on
-the task can be immediately performed / retried again. So, we don't need to change any code.
+  It turns out that, again, we don't need to change any code; if either
+  <code>getCoords</code> or <code>getNearbyStores</code> returned a rejecting promise,
+  the <code>findStores</code> task would stop execution where the error occurred, bubble
+  the exception to the console (so that error reporters can catch it), but from there on
+  the task can be immediately performed / retried again. So, we don't need to change any code.
 </p>
 
 <h3>Final Diff</h3>
 
 <p>
-JavaScript:
+  JavaScript:
 </p>
 
 {{code-template-toggle
     codeSnippet="better-syntax-10.js"
     templateSnippet="better-syntax-6.js"
     toggleDescription="diff"
-    }}
+}}
 
 <p>
-<br>
-Template:
+  <br>
+  Template:
 </p>
 
 {{code-template-toggle
@@ -162,8 +162,7 @@ Template:
 <h3>Conclusion</h3>
 
 <p>
-This was a very successful refactor. We were able to remove a lot
-of ugly boilerplate and defensive programming code, and what we're left
-with is very clean, concise, safe, and stress-free code.
+  This was a very successful refactor. We were able to remove a lot
+  of ugly boilerplate and defensive programming code, and what we're left
+  with is very clean, concise, safe, and stress-free code.
 </p>
-

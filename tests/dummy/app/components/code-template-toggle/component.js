@@ -1,6 +1,5 @@
 import { schedule } from '@ember/runloop';
 import Component from '@ember/component';
-import $ from 'jquery';
 
 export default Component.extend({
   classNames: ["code-template-toggle"],
@@ -10,11 +9,12 @@ export default Component.extend({
 
   didInsertElement() {
     schedule('afterRender', null, () => {
-      let maxHeight = Math.max.apply(null, this.$('.code-template-toggle-section').map(function ()
+      let sectionToggles = this.element.querySelectorAll('.code-template-toggle-section');
+      let maxHeight = Math.max.apply(null, [].map.call(sectionToggles, function (el)
         {
-          return $(this).height();
-        }).get());
-      this.$().css({ height: `${maxHeight}px` });
+          return el.offsetHeight;
+        }));
+      this.element.style.height = `${maxHeight}px`;
     });
   },
 
@@ -24,4 +24,3 @@ export default Component.extend({
     }
   }
 });
-

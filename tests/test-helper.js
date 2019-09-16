@@ -15,8 +15,8 @@ QUnitAdapter.reopen({
   },
 
   asyncStart: function asyncStart() {
-    if (window.QUnit.config.current._isTaskTest) {
-      this.doneCallbacks.push(noop);
+    if (this.qunit.config.current._isTaskTest) {
+      this.doneCallbacks.push({ test: this.qunit.config.current, done: noop });
     } else {
       this._super();
     }

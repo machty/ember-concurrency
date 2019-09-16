@@ -1,52 +1,49 @@
-<button {{action 'startTask'}}>task.perform()</button>
-<button {{action 'restart'}}>Clear Timeline</button>
+<button {{action "startTask"}}>task.perform()</button>
+<button {{action "restart"}}>Clear Timeline</button>
 {{#if task.isRunning}}
-  <button {{action 'cancelAll' target=task}}>Cancel All</button>
+  <button {{action "cancelAll" target=task}}>Cancel All</button>
 {{/if}}
 
 <style type="text/css">
-g:hover {
-  stroke-width: 3px;
-  font-weight: 700;
-}
+  g:hover {
+    stroke-width: 3px;
+    font-weight: 700;
+  }
 </style>
 
-<svg style="width: 100%; padding: 5px;" >
-{{#each trackers as |tracker|}}
-  <g height="20px">
-    {{#with (pick-from colors tracker.id) as |color|}}
-      {{#if tracker.hasStarted}}
-        <rect x="{{scale (subtract tracker.startTime lowerLimit) lowerLimit upperLimit}}%"
-              y={{pick-from labelHeights tracker.id}}
-              height="20px"
-              width="{{scale (width tracker.startTime tracker.endTime upperLimit) lowerLimit upperLimit}}%"
-              stroke="black"
-              fill={{color}}
-              fill-opacity=0.3 />
-      {{/if}}
+<svg style="width: 100%; padding: 5px;" {{! template-lint-disable no-inline-styles }}>
+  {{#each trackers as |tracker|}}
+    <g height="20px">
+      {{#with (pick-from colors tracker.id) as |color|}}
+        {{#if tracker.hasStarted}}
+          <rect x="{{scale (subtract tracker.startTime lowerLimit) lowerLimit upperLimit}}%"
+                y={{pick-from labelHeights tracker.id}}
+                height="20px"
+                width="{{scale (width tracker.startTime tracker.endTime upperLimit) lowerLimit upperLimit}}%"
+                stroke="black"
+                fill={{color}}
+                fill-opacity="0.3" />
+        {{/if}}
 
-      {{#with (scale (subtract tracker.performTime lowerLimit) lowerLimit upperLimit) as |x|}}
-        <text x="{{sum 0.5 x}}%"
-              y={{sum 15 (pick-from labelHeights tracker.id)}}
-              font-family="Raleway"
-              fill={{color}}
-              font-size="14"
-              text-decoration={{if tracker.isCanceled 'line-through' 'none'}}
-              font-style={{if tracker.startTime 'normal' 'italic'}} >
-          {{tracker.state}}
-        </text>
-        {{#with (pick-from labelHeights tracker.id) as |y|}}
-          <line x1="{{x}}%" y1={{y}} x2="{{x}}%" y2={{sum 20 y}} stroke={{color}} />
+        {{#with (scale (subtract tracker.performTime lowerLimit) lowerLimit upperLimit) as |x|}}
+          <text x="{{sum 0.5 x}}%"
+                y={{sum 15 (pick-from labelHeights tracker.id)}}
+                font-family="Raleway"
+                fill={{color}}
+                font-size="14"
+                text-decoration={{if tracker.isCanceled "line-through" "none"}}
+                font-style={{if tracker.startTime "normal" "italic"}} >
+            {{tracker.state}}
+          </text>
+          {{#with (pick-from labelHeights tracker.id) as |y|}}
+            <line x1="{{x}}%" y1={{y}} x2="{{x}}%" y2={{sum 20 y}} stroke={{color}} />
+          {{/with}}
         {{/with}}
       {{/with}}
-    {{/with}}
-  </g>
-{{/each}}
+    </g>
+  {{/each}}
 
-{{#with (scale timeElapsed lowerLimit upperLimit) as |x|}}
-  <line x1="{{x}}%" y1="0" x2="{{x}}%" y2="100" stroke="black" />
-{{/with}}
-
+  {{#with (scale timeElapsed lowerLimit upperLimit) as |x|}}
+    <line x1="{{x}}%" y1="0" x2="{{x}}%" y2="100" stroke="black" />
+  {{/with}}
 </svg>
-
-

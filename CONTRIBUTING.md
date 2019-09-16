@@ -32,4 +32,3 @@ TODO: use build pipeline.
 * `npm install -g jsdoc`
 * From addon root directory `./builddocs.sh`
 * View built docs in `tests/dummy/public/api`
-
