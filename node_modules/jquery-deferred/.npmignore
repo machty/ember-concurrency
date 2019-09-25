@@ -1,6 +1,0 @@
-support
-test
-examples
-*.sock
-node_modules
-npm-debug.log

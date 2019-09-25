@@ -1,1 +1,0 @@
-<%= globalDeclarations(dasherizedPackageName) %>

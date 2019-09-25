@@ -1,3 +1,0 @@
-# master
-
-* Initial version
