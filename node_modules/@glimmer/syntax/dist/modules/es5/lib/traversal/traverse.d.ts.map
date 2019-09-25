@@ -1,0 +1,1 @@
+{"version":3,"file":"traverse.d.ts","sourceRoot":"","sources":["../../../../../packages/@glimmer/syntax/lib/traversal/traverse.ts"],"names":[],"mappings":"AAMA,OAAO,KAAK,GAAG,MAAM,gBAAgB,CAAC;AAGtC,OAAO,EAAe,WAAW,EAA2C,MAAM,WAAW,CAAC;AA4N9F,MAAM,CAAC,OAAO,UAAU,QAAQ,CAAC,IAAI,EAAE,GAAG,CAAC,IAAI,EAAE,OAAO,EAAE,WAAW,QAEpE"}

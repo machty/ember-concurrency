@@ -1,0 +1,23 @@
+{
+  "name": "slugg",
+  "version": "0.1.2",
+  "description": "Make strings url safe (with no dependencies)",
+  "keywords": [
+    "slug",
+    "url",
+    "string"
+  ],
+  "main": "slugg.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test -R spec",
+    "test-browser": "./node_modules/.bin/mocha-srv test"
+  },
+  "devDependencies": {
+    "mocha": "~1.7",
+    "mocha-srv": "~0.1",
+    "proclaim": "~1.2"
+  },
+  "repository": "git@github.com:bengourley/slugg.git",
+  "author": "Ben Gourley",
+  "license": "BSD"
+}

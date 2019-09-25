@@ -1,0 +1,51 @@
+{
+  "name": "loader.js",
+  "version": "4.7.0",
+  "description": "loader.js =========",
+  "main": "dist/loader/loader.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "ara": "0.0.3",
+    "babel-core": "^6.25.0",
+    "babel-plugin-transform-es2015-destructuring": "^6.23.0",
+    "babel6-plugin-strip-heimdall": "^6.0.1",
+    "heimdalljs": "^0.3.2",
+    "jscs": "^2.11.0",
+    "jshint": "^2.9.2",
+    "mkdirp": "^0.5.1",
+    "ora": "^0.2.1",
+    "promise-map-series": "^0.2.2",
+    "qunitjs": "^1.20.0",
+    "testem": "^1.0.0"
+  },
+  "scripts": {
+    "build": "node build",
+    "test": "testem ci && jshint lib tests && jscs lib tests",
+    "test:dev": "testem",
+    "prepublish": "./build.js"
+  },
+  "files": [
+    "dist",
+    "index.js",
+    "utils.js"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ember-cli/loader.js/issues"
+  },
+  "homepage": "https://github.com/ember-cli/loader.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ember-cli/loader.js.git"
+  },
+  "keywords": [
+    "ember-addon"
+  ],
+  "ember-addon": {
+    "main": "index.js"
+  }
+}

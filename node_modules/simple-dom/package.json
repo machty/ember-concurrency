@@ -1,0 +1,37 @@
+{
+  "name": "simple-dom",
+  "version": "1.4.0",
+  "keywords": [
+    "dom",
+    "html",
+    "parser",
+    "serializer"
+  ],
+  "license": "MIT",
+  "author": "Kris Selden",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "main": "dist/commonjs/es5/index.js",
+  "module": "dist/modules/es2017/index.js",
+  "types": "dist/types/index.d.ts",
+  "repository": "https://github.com/ember-fastboot/simple-dom",
+  "scripts": {
+    "prepare": "ember build --environment=production"
+  },
+  "dependencies": {
+    "@simple-dom/document": "^1.4.0",
+    "@simple-dom/interface": "^1.4.0",
+    "@simple-dom/parser": "^1.4.0",
+    "@simple-dom/serializer": "^1.4.0",
+    "@simple-dom/void-map": "^1.4.0"
+  },
+  "devDependencies": {
+    "ember-cli": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "c9675480044a0a21f7036ccb135cacf93f855799"
+}

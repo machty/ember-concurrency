@@ -1,0 +1,32 @@
+{
+  "name": "async-some",
+  "version": "1.0.2",
+  "description": "short-circuited, asynchronous version of Array.protototype.some",
+  "main": "some.js",
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/othiym23/async-some.git"
+  },
+  "keywords": [
+    "async",
+    "some",
+    "array",
+    "collections",
+    "fp"
+  ],
+  "author": "Forrest L Norvell <ogd@aoaioxxysz.net>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/othiym23/async-some/issues"
+  },
+  "homepage": "https://github.com/othiym23/async-some",
+  "dependencies": {
+    "dezalgo": "^1.0.2"
+  },
+  "devDependencies": {
+    "tap": "^1.1.0"
+  }
+}

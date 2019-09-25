@@ -1,0 +1,59 @@
+{
+  "name": "vfile-reporter",
+  "version": "1.5.0",
+  "description": "Stylish reporter for virtual files",
+  "license": "MIT",
+  "keywords": [
+    "vfile",
+    "formatter",
+    "reporter",
+    "lint",
+    "validate",
+    "format",
+    "message",
+    "warning",
+    "error",
+    "retext",
+    "mdast"
+  ],
+  "repository": "wooorm/vfile-reporter",
+  "dependencies": {
+    "chalk": "^1.1.0",
+    "log-symbols": "^1.0.2",
+    "plur": "^2.0.0",
+    "repeat-string": "^1.5.0",
+    "string-width": "^1.0.0",
+    "text-table": "^0.2.0",
+    "vfile-sort": "^1.0.0"
+  },
+  "author": "Titus Wormer <tituswormer@gmail.com>",
+  "files": [
+    "index.js"
+  ],
+  "devDependencies": {
+    "eslint": "^1.0.0",
+    "esmangle": "^1.0.0",
+    "istanbul": "^0.3.0",
+    "jscs": "^2.0.0",
+    "jscs-jsdoc": "^1.0.0",
+    "mdast": "^1.0.0",
+    "mdast-comment-config": "^1.0.0",
+    "mdast-github": "^1.0.0",
+    "mdast-lint": "^1.0.0",
+    "mocha": "^2.0.0",
+    "to-vfile": "^1.0.0",
+    "vfile": "^1.0.0"
+  },
+  "scripts": {
+    "test-api": "mocha --check-leaks test.js",
+    "test-coverage": "istanbul cover _mocha -- test.js",
+    "test-travis": "npm run test-coverage",
+    "test": "npm run test-api",
+    "lint-api": "eslint .",
+    "lint-style": "jscs --reporter inline .",
+    "lint": "npm run lint-api && npm run lint-style",
+    "make": "npm run lint && npm run test-coverage",
+    "build-md": "mdast . --quiet",
+    "build": "npm run build-md"
+  }
+}

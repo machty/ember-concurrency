@@ -1,0 +1,21 @@
+{
+  "name": "git-repo-version",
+  "version": "1.0.2",
+  "description": "Generates a version string based on the version specified in your package.json and the sha revision of the current commit branch.",
+  "repository": "https://github.com/cibernox/git-repo-version",
+  "author": "Miguel Camba",
+  "license": "MIT",
+  "main": "index.js",
+  "engines": {
+    "node": "^ 4.5 || 6.* || >= 7.*"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "git-repo-info": "^1.4.1"
+  },
+  "devDependencies": {
+    "mocha": "^4.0.1"
+  }
+}

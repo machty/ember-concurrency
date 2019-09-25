@@ -1,0 +1,22 @@
+{
+  "name": "calculate-cache-key-for-tree",
+  "version": "2.0.0",
+  "description": "ember-cli addon tree cache key builder",
+  "main": "index.js",
+  "author": "Robert Jackson <me@rwjblue.com>",
+  "license": "MIT",
+  "repository": "git://github.com/ember-cli/calculate-cache-key-for-tree.git",
+  "scripts": {
+    "test": "mocha test.js"
+  },
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "mocha": "^6.0.2"
+  },
+  "dependencies": {
+    "json-stable-stringify": "^1.0.1"
+  },
+  "engines": {
+    "node": "6.* || 8.* || >= 10.*"
+  }
+}

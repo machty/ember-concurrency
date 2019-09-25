@@ -1,0 +1,106 @@
+.ember-notify-default.ember-notify-cn {
+  position: fixed;
+  z-index: 5000;
+  bottom: 0px;
+  right: 0px;
+}
+
+.ember-notify-default .ember-notify {
+  display: block;
+  margin: 10px;
+  position: relative;
+  width: 300px;
+  /* the following is purely so that it doesn't look broken without Foundation installed */
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.ember-notify-default .ember-notify-show {
+  -webkit-animation-duration: 500ms;
+  animation-duration: 500ms;
+  -webkit-animation-name: ember-notify-show;
+  animation-name: ember-notify-show;
+  -webkit-animation-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  animation-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.275);
+}
+
+.ember-notify-default .ember-notify-hide {
+  -webkit-animation-duration: 250ms;
+  animation-duration: 250ms;
+  -webkit-animation-name: ember-notify-hide;
+  animation-name: ember-notify-hide;
+  -webkit-animation-timing-function: cubic-bezier(0.600, -0.280, 0.735, 0.045);
+  animation-timing-function: cubic-bezier(0.600, -0.280, 0.735, 0.045);
+}
+
+.ember-notify-hide:hover {
+  -webkit-animation-play-state: paused;
+  -moz-animation-play-state: paused;
+  -o-animation-play-state: paused; 
+  animation-play-state: paused;
+}
+
+@-webkit-keyframes ember-notify-show {
+  from {
+    right: -310px;
+  }
+  to {
+    right: 0;
+  }
+}
+
+@keyframes ember-notify-show {
+  from {
+    right: -310px;
+  }
+  to {
+    right: 0;
+  }
+}
+@-webkit-keyframes ember-notify-hide {
+  from {
+    right: 0;
+  }
+  to {
+    right: -310px;
+  }
+}
+@keyframes ember-notify-hide {
+  from {
+    right: 0;
+  }
+  to {
+    right: -310px;
+  }
+}
+
+.ember-notify-default .ember-notify .close {
+  float: right;
+  cursor: pointer;
+}
+
+
+@media only screen and (max-width: 680px) {
+  .ember-notify-default.ember-notify-cn {
+    width: 100%;
+    padding-left: 20px;
+    box-sizing: border-box;
+  }
+  .ember-notify-default .ember-notify {
+    width: 100%;
+    float: right;
+  }
+}
+
+.ember-notify-cn .clearfix {
+  *zoom: 1;
+}
+.ember-notify-cn .clearfix:before,
+.ember-notify-cn .clearfix:after {
+  content: " ";
+  display: table;
+}
+.ember-notify-cn .clearfix:after {
+  clear: both;
+}

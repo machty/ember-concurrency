@@ -1,0 +1,57 @@
+{
+  "name": "stream-array",
+  "version": "1.1.2",
+  "description": "Pipe an Array through Node.js streams",
+  "dependencies": {
+    "readable-stream": "~2.1.0"
+  },
+  "devDependencies": {
+    "concat-stream": "~1.5.0",
+    "tape": "~4.5.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/tape ./test/*",
+    "coverage": "covert ./test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mimetnet/node-stream-array"
+  },
+  "bugs": {
+    "url": "https://github.com/mimetnet/node-stream-array/issues"
+  },
+  "homepage": "https://github.com/mimetnet/node-stream-array",
+  "keywords": [
+    "array",
+    "readable",
+    "stream",
+    "pipe"
+  ],
+  "author": "Matthew I. Metnetsky <matthew@cowarthill.com>",
+  "license": "MIT",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "testling": {
+    "files": "test/*.js",
+    "browsers": [
+      "ie/8..latest",
+      "firefox/3.5",
+      "firefox/latest",
+      "firefox/nightly",
+      "chrome/10",
+      "chrome/latest",
+      "chrome/canary",
+      "opera/12..latest",
+      "opera/next",
+      "safari/5.1..latest",
+      "ipad/6.0..latest",
+      "iphone/6.0..latest",
+      "android-browser/4.2..latest"
+    ]
+  },
+  "engines": {
+    "node" : ">= 0.8"
+  }
+}

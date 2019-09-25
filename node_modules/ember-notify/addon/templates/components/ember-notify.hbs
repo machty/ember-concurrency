@@ -1,0 +1,20 @@
+{{#each messages as |message|}}
+  {{#if hasBlock}}
+    {{#ember-notify/message
+       message=message
+       theme=theme
+       closeAfter=closeAfter
+       class='ember-notify clearfix'
+       as |message close|
+    }}
+      {{yield message close}}
+    {{/ember-notify/message}}
+  {{else}}
+    {{ember-notify/message
+      message=message
+      theme=theme
+      closeAfter=closeAfter
+      class='ember-notify clearfix'
+    }}
+  {{/if}}
+{{/each}}

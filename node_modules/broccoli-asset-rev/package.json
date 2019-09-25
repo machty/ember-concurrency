@@ -1,0 +1,54 @@
+{
+  "name": "broccoli-asset-rev",
+  "version": "3.0.0",
+  "description": "broccoli asset revisions (fingerprint)",
+  "main": "lib/asset-rev.js",
+  "files": [
+    "lib/",
+    "index.js"
+  ],
+  "ember-addon": {
+    "main": "index.js"
+  },
+  "scripts": {
+    "test": "mocha tests",
+    "test:cover": "istanbul cover ./node_modules/mocha/bin/_mocha tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rickharrison/broccoli-asset-rev"
+  },
+  "keywords": [
+    "broccoli",
+    "broccoli-plugin",
+    "asset",
+    "rev",
+    "fingerprint",
+    "cloudfront",
+    "cdn",
+    "ember-addon"
+  ],
+  "author": "Rick Harrison",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rickharrison/broccoli-asset-rev/issues"
+  },
+  "homepage": "https://github.com/rickharrison/broccoli-asset-rev",
+  "dependencies": {
+    "broccoli-asset-rewrite": "^2.0.0",
+    "broccoli-filter": "^1.2.2",
+    "broccoli-persistent-filter": "^1.4.3",
+    "json-stable-stringify": "^1.0.0",
+    "minimatch": "^3.0.4",
+    "rsvp": "^3.0.6"
+  },
+  "devDependencies": {
+    "broccoli": "^0.13.3",
+    "broccoli-merge-trees": "^0.2.1",
+    "codecov": "^1.0.1",
+    "istanbul": "^0.4.1",
+    "mocha": "^2.0.1",
+    "sinon": "^1.14.1",
+    "walk-sync": "^0.1.3"
+  }
+}

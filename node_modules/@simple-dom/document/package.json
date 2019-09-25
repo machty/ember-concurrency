@@ -1,0 +1,44 @@
+{
+  "name": "@simple-dom/document",
+  "version": "1.4.0",
+  "description": "A subset of the DOM API for serializing",
+  "keywords": [
+    "SSR",
+    "dom",
+    "html",
+    "serialization"
+  ],
+  "license": "MIT",
+  "author": "Kris Selden",
+  "files": [
+    "dist",
+    "!dist/test",
+    "src"
+  ],
+  "main": "dist/commonjs/es5/index.js",
+  "module": "dist/modules/es2017/index.js",
+  "types": "dist/types/index.d.ts",
+  "repository": "https://github.com/ember-fastboot/simple-dom/tree/master/packages/@simple-dom/document",
+  "scripts": {
+    "build": "ember build",
+    "prepare": "ember build --environment=production",
+    "test": "yarn run test:browser && yarn run test:node",
+    "test:browser": "ember test",
+    "test:node": "nyc --check-coverage -- qunit dist/test/commonjs/index.js"
+  },
+  "dependencies": {
+    "@simple-dom/interface": "^1.4.0"
+  },
+  "devDependencies": {
+    "@simple-dom/dom-test-helper": "^1.4.0",
+    "@simple-dom/serializer": "^1.4.0",
+    "@simple-dom/void-map": "^1.4.0",
+    "ember-cli": "^3.0.0",
+    "nyc": "^11.3.0",
+    "qunit": "^2.4.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "c9675480044a0a21f7036ccb135cacf93f855799"
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"guid.d.ts","sourceRoot":"","sources":["../../../../packages/@glimmer/util/lib/guid.ts"],"names":[],"mappings":"AAEA,MAAM,WAAW,OAAO;IACtB,KAAK,EAAE,MAAM,CAAC;CACf;AAED,wBAAgB,cAAc,CAAC,MAAM,EAAE,OAAO,GAAG,MAAM,CAEtD;AAED,wBAAgB,UAAU,CAAC,MAAM,EAAE,OAAO,GAAG,MAAM,CAElD"}

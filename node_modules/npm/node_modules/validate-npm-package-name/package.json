@@ -1,0 +1,34 @@
+{
+  "name": "validate-npm-package-name",
+  "version": "2.2.2",
+  "description": "Give me a string and I'll tell you if it's a valid npm package name",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "builtins": "0.0.7"
+  },
+  "devDependencies": {
+    "tap": "^0.4.13"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/npm/validate-npm-package-name"
+  },
+  "keywords": [
+    "npm",
+    "package",
+    "names",
+    "validation"
+  ],
+  "author": "zeke",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/npm/validate-npm-package-name/issues"
+  },
+  "homepage": "https://github.com/npm/validate-npm-package-name"
+}

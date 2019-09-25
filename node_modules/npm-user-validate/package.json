@@ -1,0 +1,23 @@
+{
+  "name": "npm-user-validate",
+  "version": "0.1.5",
+  "description": "User validations for npm",
+  "main": "npm-user-validate.js",
+  "devDependencies": {
+    "tap": "^1.2.0"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/npm/npm-user-validate.git"
+  },
+  "keywords": [
+    "npm",
+    "validation",
+    "registry"
+  ],
+  "author": "Robert Kowalski <rok@kowalski.gd>",
+  "license": "BSD-2-Clause"
+}

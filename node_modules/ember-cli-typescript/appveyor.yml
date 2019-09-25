@@ -1,0 +1,49 @@
+# http://www.appveyor.com/docs/appveyor-yml
+
+# Fix line endings in Windows. (runs before repo cloning)
+init:
+  - git config --global core.autocrlf true
+
+# Test against these versions of Node.js.
+environment:
+  matrix:
+    - nodejs_version: "8"
+
+# Install scripts. (runs after repo cloning)
+install:
+  - git rev-parse HEAD
+  # Get the latest stable version of Node 0.STABLE.latest
+  - ps: Install-Product node $env:nodejs_version
+  # hide python so node-gyp won't try to build native extentions
+  - rename C:\Python27 Python27hidden
+  # Typical npm stuff.
+  - md C:\nc
+  - yarn
+
+cache:
+  - "%LOCALAPPDATA%\\Yarn"
+
+# Post-install test scripts.
+test_script:
+  # Output useful info for debugging.
+  - yarn versions
+  # Typecheck and compile the addon, then nuke the TS source so we're testing the code we would publish
+  - cmd: yarn ci:prepare
+  - cmd: yarn ci:test
+
+# Don't actually build.
+build: off
+
+# Set build version format here instead of in the admin panel.
+version: "{build}"
+
+# We build PRs, but don't trigger separate builds for the PR from the branch.
+branches:
+  only:
+    - master
+
+# Skip commits that include only Markdown files. There's no reason to trigger a
+# build for docs-only changes More details here: /docs/appveyor-yml
+skip_commits:
+ files:
+   - '**/*.md'

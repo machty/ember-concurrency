@@ -1,0 +1,58 @@
+{
+  "name": "to-vfile",
+  "version": "1.0.0",
+  "description": "Create a vfile from a file-path",
+  "license": "MIT",
+  "keywords": [
+    "virtual",
+    "file",
+    "text",
+    "processing",
+    "file-path",
+    "file",
+    "path"
+  ],
+  "dependencies": {
+    "vfile": "^1.0.0"
+  },
+  "main": "index.js",
+  "browser": "lib/to-vfile.js",
+  "files": [
+    "lib",
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wooorm/to-vfile.git"
+  },
+  "author": "Titus Wormer <tituswormer@gmail.com>",
+  "devDependencies": {
+    "browserify": "^11.0.1",
+    "eslint": "^1.0.0",
+    "esmangle": "^1.0.1",
+    "istanbul": "^0.3.0",
+    "jscs": "^2.0.0",
+    "jscs-jsdoc": "^1.0.0",
+    "mdast": "^1.0.0",
+    "mdast-comment-config": "^0.1.2",
+    "mdast-github": "^0.3.2",
+    "mdast-lint": "^0.4.2",
+    "mdast-slug": "^0.1.1",
+    "mdast-validate-links": "^0.3.1",
+    "mocha": "^2.0.0"
+  },
+  "scripts": {
+    "test-api": "mocha --check-leaks test.js",
+    "test-coverage": "istanbul cover _mocha -- test.js",
+    "test-travis": "npm run test-coverage",
+    "test": "npm run test-api",
+    "lint-api": "eslint .",
+    "lint-style": "jscs --reporter inline .",
+    "lint": "npm run lint-api && npm run lint-style",
+    "make": "npm run lint && npm run test-coverage",
+    "bundle": "browserify lib/to-vfile.js -s toVFile > to-vfile.js",
+    "postbundle": "esmangle to-vfile.js > to-vfile.min.js",
+    "build-md": "mdast . --quiet",
+    "build": "npm run bundle && npm run build-md"
+  }
+}

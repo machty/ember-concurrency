@@ -1,0 +1,16 @@
+toc:
+  - name: Test Waiter Manager
+    children:
+      - register
+      - unregister
+      - getWaiters
+      - getPendingWaiterState
+      - hasPendingWaiters
+      - _reset
+  - name: Test Waiter class
+    children:
+      - TestWaiter
+      - beginAsync
+      - endAsync
+      - waitUntil
+      - debugInfo

@@ -1,0 +1,13 @@
+{
+  "name": "extend.js",
+  "version": "0.0.2",
+  "description": "extend(obj, obj2, ...)",
+  "keywords": [],
+  "author": "matthew mueller <mattmuelle@mgail.com>",
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  },
+  "main": "index"
+}

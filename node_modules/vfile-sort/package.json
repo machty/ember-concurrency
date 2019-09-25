@@ -1,0 +1,49 @@
+{
+  "name": "vfile-sort",
+  "version": "1.0.0",
+  "description": "Sort VFile messages by line/column",
+  "license": "MIT",
+  "keywords": [
+    "vfile",
+    "node",
+    "sort",
+    "message",
+    "warning",
+    "error",
+    "retext",
+    "mdast"
+  ],
+  "repository": "wooorm/vfile-sort",
+  "author": "Titus Wormer <tituswormer@gmail.com>",
+  "files": [
+    "index.js"
+  ],
+  "devDependencies": {
+    "browserify": "^11.0.0",
+    "eslint": "^1.0.0",
+    "esmangle": "^1.0.0",
+    "istanbul": "^0.3.0",
+    "jscs": "^2.0.0",
+    "jscs-jsdoc": "^1.0.0",
+    "mdast": "^1.0.0",
+    "mdast-github": "^0.3.0",
+    "mdast-lint": "^0.4.0",
+    "mdast-yaml-config": "^1.0.0",
+    "mocha": "^2.0.0",
+    "vfile": "^1.0.0"
+  },
+  "scripts": {
+    "test-api": "mocha --check-leaks test.js",
+    "test-coverage": "istanbul cover _mocha -- test.js",
+    "test-travis": "npm run test-coverage",
+    "test": "npm run test-api",
+    "lint-api": "eslint .",
+    "lint-style": "jscs --reporter inline .",
+    "lint": "npm run lint-api && npm run lint-style",
+    "make": "npm run lint && npm run test-coverage",
+    "bundle": "browserify index.js --no-builtins -s vfileSort > vfile-sort.js",
+    "postbundle": "esmangle vfile-sort.js > vfile-sort.min.js",
+    "build-md": "mdast . --quiet",
+    "build": "npm run bundle && npm run build-md"
+  }
+}

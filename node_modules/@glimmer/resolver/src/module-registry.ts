@@ -1,0 +1,5 @@
+export interface ModuleRegistry {
+  has(specifier: string): boolean;
+
+  get(specifier: string): any;
+}

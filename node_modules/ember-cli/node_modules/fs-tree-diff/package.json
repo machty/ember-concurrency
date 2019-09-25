@@ -1,0 +1,47 @@
+{
+  "name": "fs-tree-diff",
+  "version": "2.0.1",
+  "description": "Backs out file tree changes",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "npm run test:js",
+    "test:js": "mocha tests/*-test.js",
+    "test:js:debug": "mocha debug tests/*-test.js",
+    "build": "tsc",
+    "prepublish": "tsc"
+  },
+  "keywords": [
+    "broccoli"
+  ],
+  "author": "Stefan Penner, David J. Hamilton, Chad Hietala",
+  "license": "MIT",
+  "dependencies": {
+    "@types/symlink-or-copy": "^1.2.0",
+    "heimdalljs-logger": "^0.1.7",
+    "object-assign": "^4.1.0",
+    "path-posix": "^1.0.0",
+    "symlink-or-copy": "^1.1.8"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/fs-extra": "^5.0.4",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.21",
+    "chai": "^3.3.0",
+    "fs-extra": "^1.0.0",
+    "mocha": "^2.3.3",
+    "typescript": "^3.3.3",
+    "walk-sync": "^0.3.1"
+  },
+  "engines": {
+    "node": "6.* || 8.* || >= 10.*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/stefanpenner/fs-tree-diff.git"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "name": "ember-cli-dependency-checker",
+  "version": "3.2.0",
+  "description": "Ember CLI addon for detecting missing npm and bower dependencies before executing ember commands",
+  "keywords": [
+    "bower",
+    "check",
+    "dependency",
+    "ember",
+    "ember-addon",
+    "ember-cli",
+    "node",
+    "npm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quaertym/ember-cli-dependency-checker.git"
+  },
+  "license": "MIT",
+  "author": "Emre Unal",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "bugs": {
+    "url": "https://github.com/quaertym/ember-cli-dependency-checker/issues"
+  },
+  "scripts": {
+    "lint:js": "eslint .",
+    "test": "node tests/runner",
+    "test:debug": "node debug tests/runner"
+  },
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "find-yarn-workspace-root": "^1.1.0",
+    "is-git-url": "^1.0.0",
+    "resolve": "^1.5.0",
+    "semver": "^5.3.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "ember-cli": "~3.2.0",
+    "ember-maybe-import-regenerator": "^0.1.6",
+    "ember-source-channel-url": "^1.0.1",
+    "ember-try": "^0.2.23",
+    "eslint-plugin-chai": "0.0.1",
+    "eslint-plugin-ember": "^5.0.0",
+    "eslint-plugin-mocha": "^5.1.0",
+    "eslint-plugin-node": "^6.0.1",
+    "glob": "^7.1.1",
+    "mocha": "^5.2.0",
+    "mocha-eslint": "^4.1.0",
+    "qunit-dom": "^0.7.0"
+  },
+  "engines": {
+    "node": ">= 6"
+  },
+  "ember-addon": {
+    "configPath": "tests/dummy/config"
+  },
+  "readmeFile": "README.md"
+}

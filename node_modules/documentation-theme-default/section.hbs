@@ -1,0 +1,138 @@
+<section class='py2 clearfix'>
+  <h2 id='{{permalink}}' class='mt0'>
+    {{name}}<span class='gray'>{{{format_params}}}</span>
+  </h2>
+  {{#if augments}}
+    <p>
+      Extends
+      {{#augments}}
+        {{{autolink name}}}
+      {{/augments}}
+    </p>
+  {{/if}}
+  {{#if context.github}}
+    <p><a href='{{{context.github}}}'><code>{{{context.path}}}</code></a></p>
+  {{/if}}
+  {{{md description}}}
+  {{#if params}}
+    <h4>Parameters</h4>
+    <ul class='suppress-p-margin'>
+      {{#params}}
+        <li>{{{format_type type}}} <strong>{{name}}</strong>
+          {{#default}}
+            (default <code>{{.}}</code>)
+          {{/default}}
+          :
+          <div class='force-inline'>
+            {{{md description}}}
+          </div>
+          {{#if properties}}
+            <ul>
+              {{#properties}}
+                <li>{{{format_type type}}} {{name}}
+                  {{#default}}
+                    (default <code>{{.}}</code>)
+                  {{/default}}
+                  {{{md description}}}</li>
+              {{/properties}}
+            </ul>
+          {{/if}}
+        </li>
+      {{/params}}
+    </ul>
+  {{/if}}
+  {{#if properties}}
+    <h4>Properties</h4>
+    <ul class='suppress-p-margin'>
+      {{#properties}}
+        <li>{{{format_type type}}} <strong>{{name}}</strong>
+            {{#default}}
+              (default <code>{{.}}</code>)
+            {{/default}}
+            {{#description}}
+              :
+              <div class='force-inline'>
+                {{{md .}}}
+              </div>
+            {{/description}}
+            </li>
+        {{#if properties}}
+          <ul>
+            {{#properties}}
+              <li><code>{{name}}</code> {{{format_type type}}}
+                {{#default}}
+                  (default <code>{{.}}</code>)
+                {{/default}}
+                {{{md description}}}</li>
+            {{/properties}}
+          </ul>
+        {{/if}}
+      {{/properties}}
+    </li>
+  {{/if}}
+  {{#if returns}}
+    {{#returns}}
+      <h4>Returns</h4>
+      <code>{{{format_type type}}}</code>
+      {{#if description}}:{{/if}}
+      <div class='force-inline'>
+        {{{md description}}}
+      </div>
+    {{/returns}}
+  {{/if}}
+  {{#if throws}}
+    <h4>Throws</h4>
+    <ul>
+      {{#throws}}
+        <li>{{{format_type type}}}: <div class='force-inline'>{{{md description}}}</div></li>
+      {{/throws}}
+    </ul>
+  {{/if}}
+  {{#if examples}}
+    <h4>Examples</h4>
+{{#each examples ~}}<pre class='overflow-auto'>{{{.}}}</pre>{{/each}}
+  {{/if}}
+    {{#if members.static}}
+      <h4>Static members</h4>
+      {{#each members.static}}
+        <div class='collapsible' id='{{permalink}}'>
+          <a href='#{{permalink}}'>
+            <code>
+              .{{name}}<span class='gray'>{{{format_params}}}</span>
+            </code>
+            <div class='force-inline'>
+              {{{md description}}}
+            </div>
+          </a>
+          <div class='collapser border px2 m2'>
+            {{> section}}
+          </div>
+        </div>
+      {{/each}}
+    {{/if}}
+    {{#if members.instance}}
+      <h4>Instance members</h4>
+      {{#each members.instance}}
+        <div class='collapsible' id='{{permalink}}'>
+          <a href='#{{permalink}}'>
+            <code>
+              #{{name}}<span class='gray'>{{{format_params}}}</span>
+            </code>
+            <div class='force-inline'>
+              {{{md description}}}
+            </div>
+          </a>
+          <div class='collapser border px2'>
+            {{> section}}
+          </div>
+        </div>
+      {{/each}}
+    {{/if}}
+    {{#if events}}
+      {{#each events}}
+        <div>
+  {{> section}}
+        </div>
+      {{/each}}
+    {{/if}}
+</section>

@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "allowJs": false,
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "baseUrl": ".",
+    "paths": {
+      "dummy/tests/*": ["tests/*", "tests/dummy/lib/in-repo-a/test-support/*"],
+      "dummy/src/*": ["tests/dummy/src/*"],
+      "dummy/*": ["tests/dummy/app/*", "tests/dummy/lib/in-repo-a/app/*", "tests/dummy/lib/in-repo-b/app/*"],
+      "in-repo-a/*": ["tests/dummy/lib/in-repo-a/addon/*"],
+      "in-repo-a/test-support": ["tests/dummy/lib/in-repo-a/addon-test-support/"],
+      "in-repo-a/test-support/*": ["tests/dummy/lib/in-repo-a/addon-test-support/*"],
+      "in-repo-b/*": ["tests/dummy/lib/in-repo-b/addon/*"],
+      "in-repo-c/src/*": ["tests/dummy/lib/in-repo-c/src/*"]
+    }
+  },
+  "include": [
+    "tests"
+  ]
+}

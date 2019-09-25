@@ -1,0 +1,81 @@
+{
+  "name": "ember-cli-htmlbars-inline-precompile",
+  "version": "2.1.0",
+  "description": "Precompile inline HTMLBars templates via ES6 tagged template strings",
+  "scripts": {
+    "build": "ember build",
+    "changelog": "lerna-changelog",
+    "lint:hbs": "ember-template-lint .",
+    "lint:js": "eslint .",
+    "start": "ember serve",
+    "test": "ember test",
+    "test:all": "ember try:each",
+    "test:ember": "ember test",
+    "test:node": "mocha node-tests/*.js",
+    "test:node:debug": "mocha debug node-tests/*.js"
+  },
+  "engines": {
+    "node": "6.* || 8.* || >= 10.*"
+  },
+  "devDependencies": {
+    "@ember/optional-features": "^0.7.0",
+    "chai": "^4.1.0",
+    "ember-cli": "~3.6.0",
+    "ember-cli-babel": "^7.1.3",
+    "ember-cli-coffeescript": "github:rwjblue/ember-cli-coffeescript#update-version-checker-api",
+    "ember-cli-dependency-checker": "^3.0.0",
+    "ember-cli-htmlbars": "^3.0.0",
+    "ember-cli-inject-live-reload": "^2.0.1",
+    "ember-cli-lodash-subset": "^2.0.1",
+    "ember-cli-preprocess-registry": "^3.1.1",
+    "ember-cli-template-lint": "^1.0.0-beta.1",
+    "ember-cli-test-loader": "^2.2.0",
+    "ember-disable-prototype-extensions": "^1.1.3",
+    "ember-load-initializers": "^2.0.0",
+    "ember-maybe-import-regenerator": "^0.1.6",
+    "ember-qunit": "^4.1.2",
+    "ember-resolver": "^5.0.1",
+    "ember-source": "~3.6.0",
+    "ember-source-channel-url": "^1.1.0",
+    "ember-try": "^1.0.0",
+    "eslint": "^5.9.0",
+    "eslint-plugin-ember": "^6.0.1",
+    "eslint-plugin-node": "^8.0.0",
+    "htmlbars-comment-redactor": "^0.0.4",
+    "lerna-changelog": "^0.8.2",
+    "loader.js": "^4.7.0",
+    "mocha": "^5.2.0",
+    "qunit-dom": "^0.8.0",
+    "username-sync": "^1.0.1"
+  },
+  "keywords": [
+    "ember-addon",
+    "ember-cli"
+  ],
+  "repository": "https://github.com/ember-cli/ember-cli-htmlbars-inline-precompile",
+  "license": "MIT",
+  "author": "Clemens Müller <cmueller.418@gmail.com>",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "dependencies": {
+    "babel-plugin-htmlbars-inline-precompile": "^1.0.0",
+    "ember-cli-version-checker": "^2.1.2",
+    "hash-for-dep": "^1.2.3",
+    "heimdalljs-logger": "^0.1.9",
+    "silent-error": "^1.1.0"
+  },
+  "peerDependencies": {
+    "ember-cli-babel": "^6.7.1 || ^7.0.0"
+  },
+  "resolutions": {
+    "ember-cli-qunit/qunit": "~2.6.0",
+    "ember-cli-broccoli-sane-watcher": "~2.1.0",
+    "**/ember-cli-htmlbars-inline-precompile": "^1.0.5"
+  },
+  "ember-addon": {
+    "configPath": "tests/dummy/config",
+    "after": "ember-cli-htmlbars"
+  }
+}

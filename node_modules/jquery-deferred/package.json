@@ -1,0 +1,12 @@
+{
+    "name": "jquery-deferred"
+  , "version": "0.3.1"
+  , "description": "jQuery 1.8.2 deferred lib for nodeJS."
+  , "keywords": ["deferred"]
+  , "author": "Hidden <zzdhidden@gmail.com>"
+  , "repository" : { "type" :  "git", "url" : "http://github.com/zzdhidden/node-jquery-deferred.git" }
+  , "dependencies": {}
+  , "main": "index"
+  , "engines": { "node": ">=0.4.0" }
+  , "license": "MIT"
+}

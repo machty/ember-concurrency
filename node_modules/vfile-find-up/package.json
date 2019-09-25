@@ -1,0 +1,49 @@
+{
+  "name": "vfile-find-up",
+  "version": "1.0.0",
+  "description": "Find one or more files by searching the file system upwards",
+  "license": "MIT",
+  "keywords": [
+    "vfile",
+    "walk",
+    "find",
+    "up",
+    "upward",
+    "upwards",
+    "above",
+    "retext",
+    "mdast"
+  ],
+  "repository": "wooorm/vfile-find-up",
+  "dependencies": {
+    "to-vfile": "^1.0.0"
+  },
+  "author": "Titus Wormer <tituswormer@gmail.com>",
+  "files": [
+    "index.js"
+  ],
+  "devDependencies": {
+    "eslint": "^1.0.0",
+    "esmangle": "^1.0.0",
+    "istanbul": "^0.3.0",
+    "jscs": "^2.0.0",
+    "jscs-jsdoc": "^1.0.0",
+    "mdast": "^1.0.0",
+    "mdast-comment-config": "^1.0.0",
+    "mdast-github": "^1.0.0",
+    "mdast-lint": "^1.0.0",
+    "mdast-slug": "^2.0.0",
+    "mdast-validate-links": "^1.1.1",
+    "tape": "^4.2.0"
+  },
+  "scripts": {
+    "build-md": "mdast . --quiet  --frail",
+    "build": "npm run build-md",
+    "lint-api": "eslint .",
+    "lint-style": "jscs --reporter inline .",
+    "lint": "npm run lint-api && npm run lint-style",
+    "test-api": "node test/index.js",
+    "test-coverage": "istanbul cover test/index.js",
+    "test": "npm run build && npm run lint && npm run test-coverage"
+  }
+}

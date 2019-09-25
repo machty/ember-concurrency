@@ -1,0 +1,32 @@
+{
+  "name": "exists-sync",
+  "version": "0.0.4",
+  "description": "existsSync that also checks for symlinks",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "test": "mocha test",
+    "preversion": "npm test",
+    "postversion": "git push origin master --follow-tags && npm publish"
+  },
+  "keywords": [
+    "fs",
+    "existsSync",
+    "exists",
+    "lstatSync"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ember-cli/exists-sync.git"
+  },
+  "author": "Jake Bixby",
+  "license": "ISC",
+  "homepage": "https://github.com/ember-cli/exists-sync#readme",
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "fs-extra": "^0.19.0",
+    "mocha": "^2.2.5"
+  }
+}
