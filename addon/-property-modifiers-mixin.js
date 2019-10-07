@@ -1,4 +1,5 @@
 import { assert } from '@ember/debug';
+import { get } from '@ember/object';
 import Scheduler from './-scheduler';
 import {
   enqueueTasksPolicy,
@@ -75,7 +76,7 @@ function assertModifiersNotMixedWithGroup(obj) {
 
 export function resolveScheduler(propertyObj, obj, TaskGroup) {
   if (propertyObj._taskGroupPath) {
-    let taskGroup = obj.get(propertyObj._taskGroupPath);
+    let taskGroup = get(obj, propertyObj._taskGroupPath);
     assert(`Expected path '${propertyObj._taskGroupPath}' to resolve to a TaskGroup object, but instead was ${taskGroup}`, taskGroup instanceof TaskGroup);
     return taskGroup._scheduler;
   } else {
