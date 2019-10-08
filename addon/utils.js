@@ -98,6 +98,11 @@ export const _ComputedProperty = ComputedProperty;
  * Yielding `timeout(ms)` will pause a task for the duration
  * of time passed in, in milliseconds.
  *
+ * This timeout will be scheduled on the Ember runloop, which
+ * means that test helpers will wait for it to complete before
+ * continuing with the test. See `rawTimeout()` if you need
+ * different behavior.
+ *
  * The task below, when performed, will print a message to the
  * console every second.
  *
@@ -169,6 +174,32 @@ export function raw(value) {
   return new RawValue(value);
 }
 
+/**
+ *
+ * Yielding `rawTimeout(ms)` will pause a task for the duration
+ * of time passed in, in milliseconds.
+ *
+ * The timeout will use the native `setTimeout()` browser API,
+ * instead of the Ember runloop, which means that test helpers
+ * will *not* wait for it to complete.
+ *
+ * The task below, when performed, will print a message to the
+ * console every second.
+ *
+ * ```js
+ * export default Component.extend({
+ *   myTask: task(function * () {
+ *     while (true) {
+ *       console.log("Hello!");
+ *       yield rawTimeout(1000);
+ *     }
+ *   })
+ * });
+ * ```
+ *
+ * @param {number} ms - the amount of time to sleep before resuming
+ *   the task, in milliseconds
+ */
 export function rawTimeout(ms) {
   return {
     [yieldableSymbol](taskInstance, resumeIndex) {
