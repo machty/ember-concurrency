@@ -307,7 +307,7 @@ export default Component.extend({
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line160">line 160</a>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line165">line 165</a>
     </li></ul></dd>
     
 
@@ -644,6 +644,159 @@ convenience function to distinguish cancelation from errors.</p>
     
 
     
+    <h4 class="name" id="rawTimeout"><span class="type-signature"></span>rawTimeout<span class="signature">(ms)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Yielding <code>rawTimeout(ms)</code> will pause a task for the duration
+of time passed in, in milliseconds.</p>
+<p>The timeout will use the native <code>setTimeout()</code> browser API,
+instead of the Ember runloop, which means that test helpers
+will <em>not</em> wait for it to complete.</p>
+<p>The task below, when performed, will print a message to the
+console every second.</p>
+<pre class="prettyprint source lang-js"><code>export default Component.extend({
+  myTask: task(function * () {
+    while (true) {
+      console.log(&quot;Hello!&quot;);
+      yield rawTimeout(1000);
+    }
+  })
+});
+</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ms</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the amount of time to sleep before resuming
+the task, in milliseconds</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line203">line 203</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="task"><span class="type-signature"></span>task<span class="signature">(generatorFunction)</span><span class="type-signature"> &rarr; {<a href="TaskProperty.html">TaskProperty</a>}</span></h4>
     
 
@@ -960,6 +1113,10 @@ export default Controller.extend({
 <div class="description">
     <p>Yielding <code>timeout(ms)</code> will pause a task for the duration
 of time passed in, in milliseconds.</p>
+<p>This timeout will be scheduled on the Ember runloop, which
+means that test helpers will wait for it to complete before
+continuing with the test. See <code>rawTimeout()</code> if you need
+different behavior.</p>
 <p>The task below, when performed, will print a message to the
 console every second.</p>
 <pre class="prettyprint source lang-js"><code>export default Component.extend({
@@ -1064,7 +1221,7 @@ the task, in milliseconds</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line118">line 118</a>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line123">line 123</a>
     </li></ul></dd>
     
 
@@ -1649,13 +1806,13 @@ export default Component.extend({
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Events</h3><ul><li><a href="TaskInstance.html#event:TASK_NAME:canceled">TASK_NAME:canceled</a></li><li><a href="TaskInstance.html#event:TASK_NAME:errored">TASK_NAME:errored</a></li><li><a href="TaskInstance.html#event:TASK_NAME:started">TASK_NAME:started</a></li><li><a href="TaskInstance.html#event:TASK_NAME:succeeded">TASK_NAME:succeeded</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Events</h3><ul><li><a href="TaskInstance.html#event:TASK_NAME:canceled">TASK_NAME:canceled</a></li><li><a href="TaskInstance.html#event:TASK_NAME:errored">TASK_NAME:errored</a></li><li><a href="TaskInstance.html#event:TASK_NAME:started">TASK_NAME:started</a></li><li><a href="TaskInstance.html#event:TASK_NAME:succeeded">TASK_NAME:succeeded</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Sep 24 2019 20:15:55 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Oct 10 2019 22:26:09 GMT-0500 (Central Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
