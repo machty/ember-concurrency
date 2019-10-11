@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { computed } from '@ember/object';
-import { timeout, forever } from './utils';
+import { timeout, forever, rawTimeout } from './utils';
 import { Task, TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
 import { TaskGroup, TaskGroupProperty } from './-task-group';
@@ -143,6 +143,7 @@ export {
   hash,
   race,
   timeout,
+  rawTimeout,
   waitForQueue,
   waitForEvent,
   waitForProperty,

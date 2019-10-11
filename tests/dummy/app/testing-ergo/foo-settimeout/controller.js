@@ -1,6 +1,5 @@
 import Controller from '@ember/controller';
-import { task } from 'ember-concurrency';
-import { rawTimeout } from 'ember-concurrency/utils';
+import { task, rawTimeout } from 'ember-concurrency';
 
 export default Controller.extend({
   isShowingButton: false,
