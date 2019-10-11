@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.1.1
+  - Fix use of task groups with ES native class components (#321, thanks @jrjohnson)
+  - Document and export `rawTimeout` helper in top-level `ember-concurrency` module. (#310, thanks @Turbo87)
+
 ### 1.1.0
   - Babel 7 (#317)
   - Assert argument is an `Array` for Promise helpers (`race`, `all`, `allSettled`) (#313, thanks @buschtoens!)
