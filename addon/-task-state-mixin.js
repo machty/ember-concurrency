@@ -1,6 +1,6 @@
 import { gt } from '@ember/object/computed';
 import Mixin from '@ember/object/mixin';
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 const { alias } = computed;
 
 // this is a mixin of properties/methods shared between Tasks and TaskGroups
@@ -52,7 +52,7 @@ export default Mixin.create({
   },
 
   group: computed(function() {
-    return this._taskGroupPath && this.context.get(this._taskGroupPath);
+    return this._taskGroupPath && get(this.context, this._taskGroupPath);
   }),
 
   _scheduler: null,

@@ -129,12 +129,12 @@ function flushTaskCounts(tasks) {
 function updateTaskChainCounts(task) {
   let numRunning = task.numRunning;
   let numQueued  = task.numQueued;
-  let taskGroup = task.get('group');
+  let taskGroup = get(task, 'group');
 
   while (taskGroup) {
     set(taskGroup, 'numRunning', numRunning);
     set(taskGroup, 'numQueued', numQueued);
-    taskGroup = taskGroup.get('group');
+    taskGroup = get(taskGroup, 'group');
   }
 }
 
