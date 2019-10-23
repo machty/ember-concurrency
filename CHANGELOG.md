@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.1.2
+  - _Totally_ fix use of task groups with ES native class/Glimmer components (#324, thanks @jrjohnson)
+  - [dev] Add test coverage for tasks on ES native class/Glimmer components
+
 ### 1.1.1
   - Fix use of task groups with ES native class components (#321, thanks @jrjohnson)
   - Document and export `rawTimeout` helper in top-level `ember-concurrency` module. (#310, thanks @Turbo87)
