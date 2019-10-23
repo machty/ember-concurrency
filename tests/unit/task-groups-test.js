@@ -2,6 +2,7 @@ import { run } from '@ember/runloop';
 import RSVP from 'rsvp';
 import EmberObject from '@ember/object';
 import { task, taskGroup } from 'ember-concurrency';
+import { gte } from 'ember-compatibility-helpers';
 import { module, test } from 'qunit';
 
 module('Unit: task groups', function() {
@@ -151,4 +152,41 @@ module('Unit: task groups', function() {
     run(defer, defer.resolve);
     assert.strictEqual(tg.get('isRunning'), false);
   });
+
+  if (gte('3.10.0')) {
+    test("ES class syntax with decorators works with task groups", function(assert) {
+      assert.expect(9);
+
+      let deferA, deferB;
+      class FakeGlimmerComponent {
+        @(taskGroup().enqueue()) tg;
+
+        @(task(function * () {
+          deferA = RSVP.defer();
+          yield deferA.promise;
+        }).group('tg')) taskA;
+
+        @(task(function * () {
+          deferB = RSVP.defer();
+          yield deferB.promise;
+        }).group('tg')) taskB;
+      }
+
+      let obj, taskA, taskB, suffix, tg;
+
+      run(() => {
+        obj = new FakeGlimmerComponent();
+        tg = obj.tg;
+        taskA = obj.taskA;
+        taskB = obj.taskB;
+
+        taskA.perform();
+      });
+
+      suffix = "performing taskA";
+      assertStates(assert, tg,    true, false, false, suffix);
+      assertStates(assert, taskA, true, false, false, suffix);
+      assertStates(assert, taskB, false, false, true, suffix);
+    });
+  }
 });

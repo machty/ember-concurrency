@@ -44,6 +44,7 @@ module('Acceptance | helpers', function(hooks) {
     assert.deepEqual(assertArgs, []);
     await click('.maybe-null-task');
     assert.deepEqual(assertArgs, [ "The first argument passed to the `perform` helper should be a Task object (without quotes); you passed null" ]);
+    // eslint-disable-next-line require-atomic-updates
     assertArgs.length = 0;
     await click('.setup-task');
     await click('.maybe-null-task');
