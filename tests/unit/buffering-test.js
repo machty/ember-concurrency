@@ -1,5 +1,5 @@
 import EmberObject from '@ember/object';
-import { later, run, join } from '@ember/runloop';
+import { run, join } from '@ember/runloop';
 import { task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
@@ -48,11 +48,10 @@ module('Unit: buffering', function() {
           yield timeout(10);
           arr.push(v);
           if (v === last) {
-            later(() => {
-              assert.equal(maxSem, maxConcurrency, "assert expected maxConcurrency");
-              assert.deepEqual(arr, expectations);
-              start();
-            }, 20);
+            yield timeout(20);
+            assert.equal(maxSem, maxConcurrency, "assert expected maxConcurrency");
+            assert.deepEqual(arr, expectations);
+            start();
           }
         } finally {
           bumpSemaphore(-1);

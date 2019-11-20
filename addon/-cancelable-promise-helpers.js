@@ -1,7 +1,7 @@
 import { assert } from '@ember/debug';
 import RSVP, { Promise } from 'rsvp';
 import TaskInstance from './-task-instance';
-import { yieldableSymbol } from './utils';
+import { cancelableSymbol, yieldableSymbol } from './utils';
 
 const asyncAll = taskAwareVariantOf(Promise, 'all', identity);
 
@@ -122,15 +122,15 @@ function taskAwareVariantOf(obj, method, getItems) {
         if (it) {
           if (it instanceof TaskInstance) {
             it.cancel();
-          } else if (typeof it.__ec_cancel__ === 'function') {
-            it.__ec_cancel__();
+          } else if (typeof it[cancelableSymbol] === 'function') {
+            it[cancelableSymbol]();
           }
         }
       });
     };
 
     let promise = defer.promise.finally(cancelAll);
-    promise.__ec_cancel__ = cancelAll;
+    promise[cancelableSymbol] = cancelAll;
     return promise;
   };
 }

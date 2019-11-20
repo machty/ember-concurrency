@@ -1,5 +1,5 @@
 import { later, cancel } from '@ember/runloop';
-import { Promise, defer } from 'rsvp';
+import { defer } from 'rsvp';
 import ComputedProperty from '@ember/object/computed';
 import Ember from 'ember';
 
@@ -10,17 +10,17 @@ export function isEventedObject(c) {
   ));
 }
 
-export function Arguments(args, defer) {
-  this.args = args;
-  this.defer = defer;
-}
-
-Arguments.prototype.resolve = function(value) {
-  if (this.defer) {
-    this.defer.resolve(value);
+export class Arguments {
+  constructor(args, defer) {
+    this.args = args;
+    this.defer = defer;
   }
-};
-
+  resolve(value) {
+    if (this.defer) {
+      this.defer.resolve(value);
+    }
+  }
+}
 
 export let objectAssign = Object.assign || function objectAssign(target) {
   'use strict';
@@ -85,6 +85,7 @@ for (let i = 0; i < locations.length; i++) {
 }
 
 // TODO: Symbol polyfill?
+export const cancelableSymbol = "__ec_cancel__";
 export const yieldableSymbol = "__ec_yieldable__";
 export const YIELDABLE_CONTINUE = "next";
 export const YIELDABLE_THROW = "throw";
@@ -92,6 +93,39 @@ export const YIELDABLE_RETURN = "return";
 export const YIELDABLE_CANCEL = "cancel";
 
 export const _ComputedProperty = ComputedProperty;
+
+export class Yieldable {
+  constructor() {
+    this[yieldableSymbol] = this[yieldableSymbol].bind(this);
+    this[cancelableSymbol] = this[cancelableSymbol].bind(this);
+  }
+
+  then(...args) {
+    return yieldableToPromise(this).then(...args);
+  }
+
+  [yieldableSymbol]() {}
+  [cancelableSymbol]() {}
+}
+
+class TimeoutYieldable extends Yieldable {
+  constructor(ms) {
+    super();
+    this.ms = ms;
+    this.timerId = null;
+  }
+
+  [yieldableSymbol](taskInstance, resumeIndex) {
+    this.timerId = later(() => {
+      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, taskInstance._result);
+    }, this.ms);
+  }
+
+  [cancelableSymbol]() {
+    cancel(this.timerId);
+    this.timerId = null;
+  }
+}
 
 /**
  *
@@ -121,14 +155,7 @@ export const _ComputedProperty = ComputedProperty;
  *   the task, in milliseconds
  */
 export function timeout(ms) {
-  let timerId;
-  let promise = new Promise(r => {
-    timerId = later(r, ms);
-  });
-  promise.__ec_cancel__ = () => {
-    cancel(timerId);
-  };
-  return promise;
+  return new TimeoutYieldable(ms);
 }
 
 /**
@@ -162,16 +189,42 @@ export function timeout(ms) {
  * });
  * ```
  */
-export const forever = {
-  [yieldableSymbol]() {}
-};
 
-export function RawValue(value) {
-  this.value = value;
+class ForeverYieldable extends Yieldable {
+  [yieldableSymbol]() {}
+  [cancelableSymbol]() {}
+}
+
+
+export const forever = new ForeverYieldable();
+
+export class RawValue {
+  constructor(value) {
+    this.value = value;
+  }
 }
 
 export function raw(value) {
   return new RawValue(value);
+}
+
+class RawTimeoutYieldable extends Yieldable {
+  constructor(ms) {
+    super();
+    this.ms = ms;
+    this.timerId = null;
+  }
+
+  [yieldableSymbol](taskInstance, resumeIndex) {
+    this.timerId = setTimeout(() => {
+      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, taskInstance._result);
+    }, this.ms);
+  }
+
+  [cancelableSymbol]() {
+    clearTimeout(this.timerId);
+    this.timerId = null;
+  }
 }
 
 /**
@@ -201,22 +254,12 @@ export function raw(value) {
  *   the task, in milliseconds
  */
 export function rawTimeout(ms) {
-  return {
-    [yieldableSymbol](taskInstance, resumeIndex) {
-      let timerId = setTimeout(() => {
-        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, this._result);
-      }, ms);
-      return () => {
-        clearTimeout(timerId);
-      };
-    }
-  };
+  return new RawTimeoutYieldable(ms);
 }
 
 export function yieldableToPromise(yieldable) {
   let def = defer();
-
-  def.promise.__ec_cancel__ = yieldable[yieldableSymbol]({
+  let thinInstance = {
     proceed(_index, resumeType, value) {
       if (resumeType == YIELDABLE_CONTINUE || resumeType == YIELDABLE_RETURN) {
         def.resolve(value);
@@ -224,7 +267,10 @@ export function yieldableToPromise(yieldable) {
         def.reject(value);
       }
     }
-  }, 0);
+  };
+
+  let maybeDisposer = yieldable[yieldableSymbol](thinInstance, 0);
+  def.promise[cancelableSymbol] = maybeDisposer || yieldable[cancelableSymbol];
 
   return def.promise;
 }
