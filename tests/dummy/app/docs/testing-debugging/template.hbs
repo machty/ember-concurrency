@@ -110,17 +110,6 @@
 
 <h3>Debugging</h3>
 
-<p>
-  <a href="http://vanderwijk.info/blog/how-disable-es6-transpilation-emberjs-in-order-have-better-debugging-experience/">This article</a>
-  provides some nice ideas as to how to improve the debugging experience within ember-concurrency:
-  in particular, by blacklisting "regenerator" in your app's Babel configuration,
-  you can avoid Ember transpiling your task generator functions into a somewhat
-  unrecognizable format. Just keep in mind that you should probably only enable
-  this configuration in a development environment, and that whatever browser
-  you're testing on needs to have a spec-compliant implementation of generator
-  functions (Chrome's implementation only became spec-compliant around June, 2016).
-</p>
-
 <h4>Unexpected Cancelation</h4>
 
 <p>
@@ -135,5 +124,3 @@
   To enable lifecycle logging on ALL ember-concurrency tasks, you can enable the <code>DEBUG_TASKS</code>
   flag on <code>EmberENV</code> in your project's <code>config/environment.js</code> file.
 </p>
-
-
