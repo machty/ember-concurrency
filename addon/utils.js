@@ -72,6 +72,7 @@ export function _cleanupOnDestroy(owner, object, cleanupMethodName, ...args) {
 export let INVOKE = "__invoke_symbol__";
 
 let locations = [
+  'ember-glimmer',
   'ember-glimmer/helpers/action',
   'ember-routing-htmlbars/keywords/closure-action',
   'ember-routing/keywords/closure-action'
