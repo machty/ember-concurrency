@@ -5,6 +5,7 @@ import { run, join, schedule } from '@ember/runloop';
 import EmberObject, { computed, get, set } from '@ember/object';
 import Ember from 'ember';
 import {
+  cancelableSymbol,
   yieldableSymbol,
   YIELDABLE_CONTINUE,
   YIELDABLE_THROW,
@@ -709,7 +710,7 @@ let taskInstanceAttrs = {
       return;
     }
 
-    this._addDisposer(yieldedValue.__ec_cancel__);
+    this._addDisposer(yieldedValue[cancelableSymbol]);
 
     if (yieldedValue[yieldableSymbol]) {
       this._invokeYieldable(yieldedValue);
