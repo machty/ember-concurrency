@@ -4804,6 +4804,15 @@ ember-export-application-global@^2.0.0:
   dependencies:
     ember-cli-babel "^6.0.0-beta.7"
 
+ember-fn-helper-polyfill@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/ember-fn-helper-polyfill/-/ember-fn-helper-polyfill-1.0.2.tgz#deb035fced77f98b9256ba4eb17694b7a2e2a526"
+  integrity sha512-T/YG1Do59xvyMCUItqvY61ZJfSLiUsUuykG8C4o9ffrwDuspbquL3eJdLi+NF1dNoihwcIdJHcxLKvwvQB05LQ==
+  dependencies:
+    calculate-cache-key-for-tree "^2.0.0"
+    ember-cli-babel "^7.7.3"
+    ember-cli-version-checker "^3.1.3"
+
 ember-load-initializers@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/ember-load-initializers/-/ember-load-initializers-2.1.0.tgz#b402815ab9c823ff48a1369b52633721987e72d4"

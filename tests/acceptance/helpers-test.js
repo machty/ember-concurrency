@@ -51,4 +51,22 @@ module('Acceptance | helpers', function(hooks) {
     assert.deepEqual(assertArgs, []);
     assert.equal(find('.task-status').textContent, 'someTask');
   });
+
+  test('passing a task to the action helper performs it like a regular function', async function(assert) {
+    assert.expect(2);
+    await visit('/helpers-test');
+    assert.equal(currentURL(), '/helpers-test');
+
+    await click('.action-task');
+    assert.equal(find('.task-status').textContent, 'someTask');
+  });
+
+  test('passing a task to the fn helper performs it like a regular function', async function(assert) {
+    assert.expect(2);
+    await visit('/helpers-test');
+    assert.equal(currentURL(), '/helpers-test');
+
+    await click('.action-task');
+    assert.equal(find('.task-status').textContent, 'someTask');
+  });
 });
