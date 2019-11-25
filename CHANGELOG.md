@@ -1,5 +1,13 @@
 # Changelog
 
+### 1.1.3
+  - Fix issue where `rawTimeout`, `waitForEvent`, and `waitForQueue` helper timers
+    were not properly canceled or cleaned up in some cases, such as when used with
+    Task-aware Promise helpers such as `race`. (#331. Fixes #309, #329)
+  - Fix use of Tasks with `action` and `fn` helpers in Ember 3.x (#312, #333. Thanks @thiagofelix for the find!)
+  - [docs] Remove 404'd link on outdated regenerator runtime removal
+  - [docs] Document task syntax for use with ES native classes and Ember Octane
+
 ### 1.1.2
   - _Totally_ fix use of task groups with ES native class/Glimmer components (#324, thanks @jrjohnson)
   - [dev] Add test coverage for tasks on ES native class/Glimmer components
