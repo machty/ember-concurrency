@@ -23,11 +23,11 @@
 
 <ul>
   {{#each ids as |id|}}
-  <li>
-    {{#link-to 'docs.examples.route-tasks.detail' id}}
-      Thing {{id}}
-    {{/link-to}}
-  </li>
+    <li>
+      {{#link-to "docs.examples.route-tasks.detail" id}}
+        Thing {{id}}
+      {{/link-to}}
+    </li>
   {{/each}}
 </ul>
 
@@ -55,4 +55,3 @@
 </ul>
 
 {{code-snippet name="detail-route.js"}}
-

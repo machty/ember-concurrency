@@ -1,4 +1,32 @@
 # Changelog
+
+### 1.1.3
+  - Fix issue where `rawTimeout`, `waitForEvent`, and `waitForQueue` helper timers
+    were not properly canceled or cleaned up in some cases, such as when used with
+    Task-aware Promise helpers such as `race`. (#331. Fixes #309, #329)
+  - Fix use of Tasks with `action` and `fn` helpers in Ember 3.x (#312, #333. Thanks @thiagofelix for the find!)
+  - [docs] Remove 404'd link on outdated regenerator runtime removal
+  - [docs] Document task syntax for use with ES native classes and Ember Octane
+
+### 1.1.2
+  - _Totally_ fix use of task groups with ES native class/Glimmer components (#324, thanks @jrjohnson)
+  - [dev] Add test coverage for tasks on ES native class/Glimmer components
+
+### 1.1.1
+  - Fix use of task groups with ES native class components (#321, thanks @jrjohnson)
+  - Document and export `rawTimeout` helper in top-level `ember-concurrency` module. (#310, thanks @Turbo87)
+
+### 1.1.0
+  - Babel 7 (#317)
+  - Assert argument is an `Array` for Promise helpers (`race`, `all`, `allSettled`) (#313, thanks @buschtoens!)
+  - Throw an error in `waitForQueue` when queue does not exist (#314, @mydea!)
+  - Resolve warning about colliding `ember-maybe-import-regenerator` versions (#316, thanks @jherdman!)
+  - Fix service injection on nested encapsulated tasks on Ember 3.13+ (#318)
+  - Use `clearTimeout()` instead of `clearInterval()` on timer set with `setTimeout` (#309, thanks @Turbo87!)
+  - Document options for `cancelAll()` (#305, thanks @ggayowsky!)
+  - [dev] Upgrade Ember-CLI to 3.12 (#317)
+  - [dev] Upgrade ember-cli-sass to enable use on Node 12 (#299, thanks @buschtoens!)
+
 ### 1.0.0
   - No changes, just a long overdue 1.0 release :)
 
@@ -349,4 +377,3 @@
 ### 0.5.0:
  - First stable version since re-working the docs site
  - No more reliance on js-csp, or CSP concepts whatsoever
-

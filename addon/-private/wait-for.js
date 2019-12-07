@@ -1,75 +1,82 @@
 import { assert } from "@ember/debug";
-import { defer } from 'rsvp';
-import { schedule } from "@ember/runloop";
+import { schedule, cancel } from "@ember/runloop";
 import { get } from "@ember/object";
-import { isEventedObject } from "./utils";
 import {
+  Yieldable,
   yieldableSymbol,
   YIELDABLE_CONTINUE,
-  YIELDABLE_RETURN
+  YIELDABLE_THROW,
+  cancelableSymbol
 } from "./external/yieldables";
+import { isEventedObject } from './utils';
 
-class WaitFor {
-  then(...args) {
-    return yieldableToPromise(this).then(...args);
-  }
-}
-
-class WaitForQueueYieldable extends WaitFor {
+class WaitForQueueYieldable extends Yieldable {
   constructor(queueName) {
     super();
     this.queueName = queueName;
+    this.timerId = null;
   }
 
   [yieldableSymbol](taskInstance, resumeIndex) {
-    schedule(this.queueName, () => {
-      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, null);
-    });
+    try {
+      this.timerId = schedule(this.queueName, () => {
+        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, null);
+      });
+    } catch(error) {
+      taskInstance.proceed(resumeIndex, YIELDABLE_THROW, error);
+    }
+  }
+
+  [cancelableSymbol]() {
+    cancel(this.timerId);
+    this.timerId = null;
   }
 }
 
-class WaitForEventYieldable extends WaitFor {
+class WaitForEventYieldable extends Yieldable {
   constructor(object, eventName) {
     super();
     this.object = object;
     this.eventName = eventName;
+    this.fn = null;
+    this.didFinish = false;
+    this.usesDOMEvents = false;
   }
 
   [yieldableSymbol](taskInstance, resumeIndex) {
-    let unbind = () => {};
-    let didFinish = false;
-    let fn = event => {
-      didFinish = true;
-      unbind();
+    this.fn = (event) => {
+      this.didFinish = true;
+      this[cancelableSymbol]();
       taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, event);
     };
 
     if (typeof this.object.addEventListener === "function") {
       // assume that we're dealing with a DOM `EventTarget`.
-      this.object.addEventListener(this.eventName, fn);
-
-      // unfortunately this is required, because IE 11 does not support the
-      // `once` option: https://caniuse.com/#feat=once-event-listener
-      unbind = () => {
-        this.object.removeEventListener(this.eventName, fn);
-      };
-
-      return unbind;
+      this.usesDOMEvents = true;
+      this.object.addEventListener(this.eventName, this.fn);
     } else {
       // assume that we're dealing with either `Ember.Evented` or a compatible
       // interface, like jQuery.
-      this.object.one(this.eventName, fn);
+      this.object.one(this.eventName, this.fn);
+    }
+  }
 
-      return () => {
-        if (!didFinish) {
-          this.object.off(this.eventName, fn);
-        }
-      };
+  [cancelableSymbol]() {
+    if (this.fn) {
+      if (this.usesDOMEvents) {
+        // unfortunately this is required, because IE 11 does not support the
+        // `once` option: https://caniuse.com/#feat=once-event-listener
+        this.object.removeEventListener(this.eventName, this.fn);
+      } else if (!this.didFinish) {
+        this.object.off(this.eventName, this.fn);
+      }
+
+      this.fn = null;
     }
   }
 }
 
-class WaitForPropertyYieldable extends WaitFor {
+class WaitForPropertyYieldable extends Yieldable {
   constructor(object, key, predicateCallback = Boolean) {
     super();
     this.object = object;
@@ -80,10 +87,12 @@ class WaitForPropertyYieldable extends WaitFor {
     } else {
       this.predicateCallback = v => v === predicateCallback;
     }
+
+    this.observerBound = false;
   }
 
   [yieldableSymbol](taskInstance, resumeIndex) {
-    let observerFn = () => {
+    this.observerFn = () => {
       let value = get(this.object, this.key);
       let predicateValue = this.predicateCallback(value);
       if (predicateValue) {
@@ -92,11 +101,16 @@ class WaitForPropertyYieldable extends WaitFor {
       }
     };
 
-    if (!observerFn()) {
-      this.object.addObserver(this.key, null, observerFn);
-      return () => {
-        this.object.removeObserver(this.key, null, observerFn);
-      };
+    if (!this.observerFn()) {
+      this.object.addObserver(this.key, null, this.observerFn);
+      this.observerBound = true;
+    }
+  }
+
+  [cancelableSymbol]() {
+    if (this.observerBound && this.observerFn) {
+      this.object.removeObserver(this.key, null, this.observerFn);
+      this.observerFn = null;
     }
   }
 }
@@ -198,26 +212,4 @@ export function waitForEvent(object, eventName) {
  */
 export function waitForProperty(object, key, predicateCallback) {
   return new WaitForPropertyYieldable(object, key, predicateCallback);
-}
-
-function yieldableToPromise(yieldable) {
-  let def = defer();
-
-  def.promise.__ec_cancel__ = yieldable[yieldableSymbol](
-    {
-      proceed(_index, resumeType, value) {
-        if (
-          resumeType == YIELDABLE_CONTINUE ||
-          resumeType == YIELDABLE_RETURN
-        ) {
-          def.resolve(value);
-        } else {
-          def.reject(value);
-        }
-      }
-    },
-    0
-  );
-
-  return def.promise;
 }

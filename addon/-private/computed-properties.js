@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import EmberObject, { computed } from '@ember/object';
+import EmberObject, { get, computed } from '@ember/object';
 import { assert, deprecate } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
 import UnboundedSchedulerPolicy from './external/scheduler/policies/unbounded-policy'
@@ -408,11 +408,11 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    *
    * ```js
    * doSomeAjax: task(function * (url) {
-   *   return Ember.$.getJSON(url).promise();
+   *   return fetch(url);
    * }).maxConcurrency(3),
    *
    * elsewhere() {
-   *   this.get('doSomeAjax').perform("http://www.example.com/json");
+   *   this.doSomeAjax.perform("http://www.example.com/json");
    * },
    * ```
    *
@@ -446,7 +446,7 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    *   }).evented(),
    *
    *   uploadedStarted: on('uploadTask:started', function(taskInstance) {
-   *     this.get('analytics').track("User Photo: upload started");
+   *     this.analytics.track("User Photo: upload started");
    *   }),
    * });
    * ```
@@ -505,7 +505,7 @@ function registerOnPrototype(
 
 function makeTaskCallback(taskName, method, once) {
   return function() {
-    let task = this.get(taskName);
+    let task = get(this, taskName);
 
     if (once) {
       scheduleOnce('actions', task, method, ...arguments);
@@ -648,7 +648,7 @@ function sharedTaskProperties(taskProperty, context, key) {
   let onStateCallback = taskProperty._onStateCallback;
 
   if (taskProperty._taskGroupPath) {
-    group = context.get(taskProperty._taskGroupPath);
+    group = get(context, taskProperty._taskGroupPath);
     scheduler = group.scheduler;
   } else {
     let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);

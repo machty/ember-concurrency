@@ -1,5 +1,7 @@
+import { assert } from '@ember/debug';
 import RSVP, { Promise } from 'rsvp';
 import { TaskInstance } from './task-instance';
+import { cancelableSymbol } from './utils';
 
 
 /**
@@ -68,6 +70,7 @@ function getValues(obj) {
 function taskAwareVariantOf(obj, method, getItems) {
   return function(thing) {
     let items = getItems(thing);
+    assert(`'${method}' expects an array.`, Array.isArray(items));
     let defer = RSVP.defer();
 
     obj[method](thing).then(defer.resolve, defer.reject);
@@ -80,15 +83,15 @@ function taskAwareVariantOf(obj, method, getItems) {
         if (it) {
           if (it instanceof TaskInstance) {
             it.cancel();
-          } else if (typeof it.__ec_cancel__ === 'function') {
-            it.__ec_cancel__();
+          } else if (typeof it[cancelableSymbol] === 'function') {
+            it[cancelableSymbol]();
           }
         }
       });
     };
 
     let promise = defer.promise.finally(cancelAll);
-    promise.__ec_cancel__ = cancelAll;
+    promise[cancelableSymbol] = cancelAll;
     return promise;
   };
 }

@@ -1,3 +1,4 @@
+import { getOwner, setOwner } from '@ember/application';
 import { Task as BaseTask } from "./external/task/task";
 import { INVOKE } from "./utils";
 import { TaskInstance } from './task-instance';
@@ -54,7 +55,9 @@ export class Task extends BaseTask {
       }),
       performType,
       hasEnabledEvents: this.hasEnabledEvents,
-    })
+    });
+
+    setOwner(taskInstance, getOwner(this.context));
 
     if (performType === PERFORM_TYPE_LINKED) {
       linkedObject._expectsLinkedYield = true;

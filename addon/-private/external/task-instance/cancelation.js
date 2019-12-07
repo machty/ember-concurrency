@@ -10,7 +10,7 @@ export const TASK_CANCELATION_NAME = "TaskCancelation";
  *
  * ```js
  * click() {
- *   this.get('myTask').perform().catch(e => {
+ *   this.myTask.perform().catch(e => {
  *     if (!didCancel(e)) { throw e; }
  *   });
  * }

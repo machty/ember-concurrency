@@ -1,7 +1,18 @@
 import { run } from '@ember/runloop';
 import RSVP, { resolve } from 'rsvp';
 import EmberObject from '@ember/object';
-import { task, all, allSettled, hash, race } from 'ember-concurrency';
+import {
+  task,
+  all,
+  allSettled,
+  hash,
+  race,
+  rawTimeout,
+  timeout,
+  waitForEvent,
+  waitForProperty,
+  waitForQueue
+} from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 module('Unit: cancelable promises test helpers', function() {
@@ -111,6 +122,15 @@ module('Unit: cancelable promises test helpers', function() {
     assert.equal(childTask.get('numRunning'), 3);
     run(() => obj.get('parent').cancelAll());
     assert.equal(childTask.get('numRunning'), 0);
+  });
+
+  test("all throws an assertion, if something other than an array is passed", function (assert) {
+    assert.expectAssertion(() => {
+      all();
+    }, /'all' expects an array/);
+    assert.expectAssertion(() => {
+      all(RSVP.Promise.resolve());
+    }, /'all' expects an array/);
   });
 
   test("allSettled behaves like Promise.allSettled", function(assert) {
@@ -230,6 +250,15 @@ module('Unit: cancelable promises test helpers', function() {
     assert.equal(childTask.get('numRunning'), 0);
   });
 
+  test("allSettled throws an assertion, if something other than an array is passed", function (assert) {
+    assert.expectAssertion(() => {
+      allSettled();
+    }, /'allSettled' expects an array/);
+    assert.expectAssertion(() => {
+      allSettled(RSVP.Promise.resolve());
+    }, /'allSettled' expects an array/);
+  });
+
   test("hash", function(assert) {
     assert.expect(1);
 
@@ -308,6 +337,15 @@ module('Unit: cancelable promises test helpers', function() {
     assert.equal(obj.get('child.numRunning'), 0);
   });
 
+  test("race throws an assertion, if something other than an array is passed", function (assert) {
+    assert.expectAssertion(() => {
+      race();
+    }, /'race' expects an array/);
+    assert.expectAssertion(() => {
+      race(RSVP.Promise.resolve());
+    }, /'race' expects an array/);
+  });
+
   test("yieldable helpers work with null/undefined values", function(assert) {
     assert.expect(1);
 
@@ -343,6 +381,59 @@ module('Unit: cancelable promises test helpers', function() {
     let Obj = EmberObject.extend({
       _checkValueOrTimeOutAfterOneSec: task(function * () {
         yield race([promise, resolve()]);
+      }).on('init')
+    });
+
+    run(() => {
+      Obj.create();
+    });
+  });
+
+  test("yieldable helpers support cancelation on all manner of Yieldable-derived classes", function(assert) {
+    assert.expect(5);
+
+    let wrapCancelation = (yieldable, shouldBeCalled = true) => {
+      let originalCancel = yieldable.__ec_cancel__.bind(yieldable);
+      yieldable.__ec_cancel__ = () => {
+        originalCancel();
+        assert.ok(shouldBeCalled);
+      };
+    }
+
+    let fakeNode = {
+      // eslint-disable-next-line no-unused-vars
+      addEventListener(_eventName, _fn) {},
+      // eslint-disable-next-line no-unused-vars
+      removeEventListener(_eventName, _fn) {}
+    };
+
+    let Obj = EmberObject.extend({
+      a: 12,
+
+      someTask: task(function * () {
+        let eventYieldable = waitForEvent(fakeNode, 'never');
+        wrapCancelation(eventYieldable);
+
+        let propertyYieldable = waitForProperty(this, 'a', 3);
+        wrapCancelation(propertyYieldable);
+
+        let queueYieldable = waitForQueue('afterRender');
+        wrapCancelation(queueYieldable);
+
+        let rawTimeoutYieldable = rawTimeout(100000);
+        wrapCancelation(rawTimeoutYieldable);
+
+        let timeoutYieldable = timeout(100000);
+        wrapCancelation(timeoutYieldable);
+
+        yield race([
+          eventYieldable,
+          propertyYieldable,
+          queueYieldable,
+          rawTimeoutYieldable,
+          timeoutYieldable,
+          resolve(42)
+        ]);
       }).on('init')
     });
 

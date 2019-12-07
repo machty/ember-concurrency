@@ -21,7 +21,7 @@
               {{#each entry.children as |child|}}
                 <div class="toc-entry toc-subentry">
                   {{#link-to child.route}}{{child.title}}{{/link-to}}
-                  </div>
+                </div>
               {{/each}}
             {{/if}}
           {{/if}}
@@ -34,7 +34,7 @@
 
       {{outlet}}
 
-      <br> <br> <br> <br> 
+      <br> <br> <br> <br>
 
       {{nav-header nextTopic=nextTopic prevTopic=prevTopic}}
     </div>

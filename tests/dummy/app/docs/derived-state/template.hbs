@@ -83,11 +83,11 @@
   <li>
     <code>isSuccessful</code>: true if the Task Instance ran to completion
   </li>
-  
+
   <li>
     <code>isError</code>: true if Task Instance failed to run to completion due to an exception
   </li>
-  
+
   <li>
     <code>value</code>: the value returned from the task function. Is
     <code>null</code> before a value is returned, and remains null
@@ -97,7 +97,8 @@
   <li>
     <code>error</code>: the error/exception thrown from the task function
     (might also be the value of a rejected promise that was yielded).
-    <em>Note: until <a href="https://github.com/machty/ember-concurrency/issues/40">this issue</a>
+    <em>
+      Note: until <a href="https://github.com/machty/ember-concurrency/issues/40">this issue</a>
       is resolved, unless you write code to explicitly <code>.catch()</code>
       an error thrown from a performed task, this error will bubble
       to the browser (so error reporters like Bugsnag will see it).
@@ -128,15 +129,15 @@
 
     <p>
       <button onclick={{perform task false}}
-        class={{if task.isIdle 'button-primary'}}>
+        class={{if task.isIdle "button-primary"}}>
         Run to Completion
       </button>
       <button onclick={{perform task true}}
-        class={{if task.isIdle 'button-primary'}}>
+        class={{if task.isIdle "button-primary"}}>
         Run until Error
       </button>
       <button onclick={{cancel-all task}}
-        class={{if task.isRunning 'button-primary'}}>
+        class={{if task.isRunning "button-primary"}}>
         Cancel
       </button>
     </p>
@@ -153,35 +154,34 @@
       </thead>
       <tbody>
         {{#each taskProperties as |tp|}}
-        <tr>
-          <td>
-            <strong>myTask.{{tp}}</strong>
-          </td>
-          <td>
-            {{#with (get task (concat tp '.value')) as |v|}}
-              <div class="completion-status completion-success">{{v}}</div>
-            {{/with}}
-          </td>
-          <td>
-            {{#with (get task (concat tp '.error')) as |v|}}
-              <div class="completion-status completion-error">{{v}}</div>
-            {{/with}}
-          </td>
-          <td>
-            {{#with (get task (concat tp '.isSuccessful')) as |v|}}
-              {{v}}
-            {{/with}}
-          </td>
-          <td>
-            {{#with (get task (concat tp '.isError')) as |v|}}
-              {{v}}
-            {{/with}}
-          </td>
-        </tr>
+          <tr>
+            <td>
+              <strong>myTask.{{tp}}</strong>
+            </td>
+            <td>
+              {{#with (get task (concat tp ".value")) as |v|}}
+                <div class="completion-status completion-success">{{v}}</div>
+              {{/with}}
+            </td>
+            <td>
+              {{#with (get task (concat tp ".error")) as |v|}}
+                <div class="completion-status completion-error">{{v}}</div>
+              {{/with}}
+            </td>
+            <td>
+              {{#with (get task (concat tp ".isSuccessful")) as |v|}}
+                {{v}}
+              {{/with}}
+            </td>
+            <td>
+              {{#with (get task (concat tp ".isError")) as |v|}}
+                {{v}}
+              {{/with}}
+            </td>
+          </tr>
         {{/each}}
       </tbody>
     </table>
-    <br />
+    <br>
   {{/with}}
 {{/each}}
-

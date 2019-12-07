@@ -29,14 +29,14 @@
 
 {{! BEGIN-SNIPPET joining-tasks-template }}
 <p>
-  <button onclick={{perform parent 'all'}}>all()</button>
-  <button onclick={{perform parent 'race'}}>race()</button>
+  <button onclick={{perform parent "all"}}>all()</button>
+  <button onclick={{perform parent "race"}}>race()</button>
 </p>
 {{! END-SNIPPET }}
 
 {{#each trackers as |tracker|}}
   <div class="progress-outer">
-    <div class="progress-inner" style={{progress-style tracker.percent tracker.id colors}}>
+    <div class="progress-inner" style={{progress-style tracker.percent tracker.id colors}} {{! template-lint-disable no-inline-styles }}>
       Progress: {{tracker.percent}}%
       {{#if tracker.word}}
         Word: {{tracker.word}}
@@ -47,4 +47,3 @@
 
 {{code-snippet name="joining-tasks.js"}}
 {{code-snippet name="joining-tasks-template.hbs"}}
-

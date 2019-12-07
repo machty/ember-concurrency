@@ -1,6 +1,6 @@
 <p>
-{{! BEGIN-SNIPPET start-task-example-template }}
-  <button {{action 'performTask' "one"}}>
+  {{! BEGIN-SNIPPET start-task-example-template }}
+  <button {{action "performTask" "one"}}>
     1. task.perform(...)
   </button>
 
@@ -13,9 +13,9 @@
   </button>
 
   <input type="checkbox"
-         onchange={{perform myTask value="target.checked"}} />
+        onchange={{perform myTask value="target.checked"}}>
   4. Checkbox
-{{! END-SNIPPET }}
+  {{! END-SNIPPET }}
 </p>
 
 <h4>Status: {{status}}</h4>
@@ -27,4 +27,3 @@
 <h5>Template</h5>
 
 {{code-snippet name="start-task-example-template.hbs"}}
-

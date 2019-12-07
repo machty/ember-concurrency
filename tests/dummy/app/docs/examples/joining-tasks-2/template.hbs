@@ -1,7 +1,7 @@
 <h3>Awaiting Multiple Child Tasks (or, cancelable Promise.all, Promise.race)</h3>
 
 <p>
-  This is a rewrite of the {{link-to 'Awaiting Multiple Child Tasks' 'docs.examples.joining-tasks'}}
+  This is a rewrite of the {{link-to "Awaiting Multiple Child Tasks" "docs.examples.joining-tasks"}}
   example, using encapsulated-tasks and completion state on task objects.
 </p>
 
@@ -11,14 +11,14 @@
 
 {{! BEGIN-SNIPPET joining-tasks-2-template }}
 <p>
-  <button onclick={{perform parent 'all'}}>all()</button>
-  <button onclick={{perform parent 'race'}}>race()</button>
+  <button onclick={{perform parent "all"}}>all()</button>
+  <button onclick={{perform parent "race"}}>race()</button>
 </p>
 {{! END-SNIPPET }}
 
 {{#each childTasks as |ti|}}
   <div class="progress-outer">
-    <div class="progress-inner" style={{progress-style ti.percent ti.id colors}}>
+    <div class="progress-inner" style={{progress-style ti.percent ti.id colors}} {{! template-lint-disable no-inline-styles }}>
       Progress: {{ti.percent}}%
       {{#if ti.value}}
         Word: {{ti.value}}
@@ -29,4 +29,3 @@
 
 {{code-snippet name="joining-tasks-2.js"}}
 {{code-snippet name="joining-tasks-2-template.hbs"}}
-

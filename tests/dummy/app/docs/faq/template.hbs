@@ -3,7 +3,7 @@
 <h4>Why am I seeing TaskCancelation errors in my logs?</h4>
 
 <p>
-See {{link-to 'this link' 'docs.task-cancelation-help'}}.
+  See {{link-to "this link" "docs.task-cancelation-help"}}.
 </p>
 
 <h4>Does ember-concurrency work with older browsers?</h4>
@@ -44,7 +44,7 @@ See {{link-to 'this link' 'docs.task-cancelation-help'}}.
 
 <ul>
   <li>
-    {{link-to 'Docs: implicit vs explicit cancelation' 'docs.cancelation'}}
+    {{link-to "Docs: implicit vs explicit cancelation" "docs.cancelation"}}
   </li>
   <li>
     <a href="https://github.com/machty/ember-concurrency/issues/98">
@@ -57,23 +57,26 @@ See {{link-to 'this link' 'docs.task-cancelation-help'}}.
 
 
 <ul>
-  <li><strong>Cancelability</strong>
+  <li>
+    <strong>Cancelability</strong>
     Both Observable subscriptions and Task instances are cancelable. Observables
     can be canceled implicitly when all subscribers have unsubscribed, or explicitly
     by calling <code>.dispose()</code> (though this approach is frowned up in favor
     of explicitly specifying when an observable should terminate -- e.g. via <code>takeUntil()</code>).
-    {{link-to 'Tasks can be canceled' 'docs.cancelation'}} implicitly (via 1. host object destruction, 2. the
+    {{link-to "Tasks can be canceled" "docs.cancelation"}} implicitly (via 1. host object destruction, 2. the
     <code>.restartable()</code> task modifier) or explicitly (via <code>.cancel() / .cancelAll()</code>), though,
     like Observables, the implicit approach is preferable.
   </li>
-  <li><strong>Multiple / Single Values</strong>
+  <li>
+    <strong>Multiple / Single Values</strong>
     Observables can emit multiple values over time. Tasks don't really "emit" values,
     but can <code>.set()</code> values on the object the task lives on so that those
     values can be easily displayed in the template. Tasks also expose the value / error
-    returned from the task function (see {{link-to 'Derived State' 'docs.derived-state'}}),
+    returned from the task function (see {{link-to "Derived State" "docs.derived-state"}}),
     which are preferable to <code>.set()</code>s where possible.
   </li>
-  <li><strong>Composability</strong>
+  <li>
+    <strong>Composability</strong>
     The degree to which an abstraction "composes" depends highly on the problems
     it is trying to solve and the constraints therein. Observables as a low-level
     primitive aren't designed to solve specific problems but rather to be as flexible
@@ -84,15 +87,17 @@ See {{link-to 'this link' 'docs.task-cancelation-help'}}.
     they live on, which constrains how and where Tasks can be used, but this tradeoff
     is deliberate and enables some of the patterns described below.
   </li>
-  <li><strong>Marble Diagrams vs Block Diagrams</strong>
+  <li>
+    <strong>Marble Diagrams vs Block Diagrams</strong>
     The behavior of Observables and their various combinators can be
     visualized by <a href="http://rxmarbles.com/">Marble Diagrams</a>, where each
     marble represents a discrete event emitted. Tasks don't emit multiple values,
     and instead make a greater emphasis on the concept of task/object lifespans, hence
     are more easily visualized as
-    {{link-to 'possibly overlapping blocks' 'docs.task-concurrency'}} over time.
+    {{link-to "possibly overlapping blocks" "docs.task-concurrency"}} over time.
   </li>
-  <li><strong>Readability</strong>
+  <li>
+    <strong>Readability</strong>
     Warning: highly subjective. ember-concurrency tasks are designed to "feel" like
     an Ember-y API; among other design goals, it should be relatively easy for a
     newcomer to the code base come along and understand the flow and various steps
@@ -111,4 +116,3 @@ See {{link-to 'this link' 'docs.task-cancelation-help'}}.
     discrete events.
   </li>
 </ul>
-

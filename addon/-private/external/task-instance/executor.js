@@ -6,7 +6,8 @@ import {
   YIELDABLE_THROW,
   YIELDABLE_RETURN,
   YIELDABLE_CANCEL,
-  RawValue
+  RawValue,
+  cancelableSymbol
 } from '../yieldables';
 
 import {
@@ -235,7 +236,7 @@ export class TaskInstanceExecutor {
       return;
     }
 
-    this.addDisposer(yieldedValue.__ec_cancel__);
+    this.addDisposer(yieldedValue[cancelableSymbol]);
 
     if (yieldedValue[yieldableSymbol]) {
       this.invokeYieldable(yieldedValue);

@@ -13,6 +13,7 @@ function taskCounterWrapper(taskProperty) {
     try {
       return yield * originalTaskFn.apply(this, args);
     } finally {
+      // eslint-disable-next-line require-atomic-updates
       taskRunCounter -= 1;
     }
   };

@@ -29,6 +29,6 @@ For more information on using ember-cli, visit [http://www.ember-cli.com/](http:
 ### Generate Docs
 
 TODO: use build pipeline.
-
-    ./builddocs.sh
-
+* `npm install -g jsdoc`
+* From addon root directory `./builddocs.sh`
+* View built docs in `tests/dummy/public/api`

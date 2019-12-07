@@ -10,7 +10,7 @@
 
 <p>
   Generally speaking, it is <em>much</em> better to configure your tasks properly
-  (via {{link-to 'Task Modifiers' 'docs.task-concurrency'}})
+  (via {{link-to "Task Modifiers" "docs.task-concurrency"}})
   such that they'll be implicitly/automatically canceled at
   the right time, but there are still some cases where
   explicit cancelation is the only option.
@@ -23,11 +23,13 @@
 </p>
 
 <ol>
-  <li>Call <code>task.cancelAll()</code> on the Task object &mdash;
+  <li>
+    Call <code>task.cancelAll()</code> on the Task object &mdash;
     this will cancel all running or enqueued Task Instances for that
     task.
   </li>
-  <li>Call <code>taskInstance.cancel()</code> on a Task Instance
+  <li>
+    Call <code>taskInstance.cancel()</code> on a Task Instance
     (the object returned from a prior call to <code>task.perform()</code>)
   </li>
 </ol>
@@ -37,12 +39,12 @@
 {{! BEGIN-SNIPPET cancelation-template }}
 <h5>Running tasks: {{count}}</h5>
 
-<button {{action 'performTask'}}>Perform Task</button>
+<button {{action "performTask"}}>Perform Task</button>
 {{#if count}}
-  <button {{action 'cancelAll'}}>Cancel All</button>
+  <button {{action "cancelAll"}}>Cancel All</button>
 {{/if}}
 {{#if mostRecent.isRunning}}
-  <button {{action 'cancelMostRecent'}}>Cancel Most Recent</button>
+  <button {{action "cancelMostRecent"}}>Cancel Most Recent</button>
 {{/if}}
 {{! END-SNIPPET }}
 
@@ -56,4 +58,3 @@
 
 {{code-snippet name="cancelation-template.hbs"}}
 {{code-snippet name="cancelation.js"}}
-

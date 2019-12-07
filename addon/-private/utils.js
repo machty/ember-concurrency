@@ -1,7 +1,12 @@
-import { later, cancel } from '@ember/runloop';
-import { Promise } from 'rsvp';
 import ComputedProperty from '@ember/object/computed';
+import { later, cancel } from '@ember/runloop';
 import Ember from 'ember';
+import {
+  Yieldable,
+  yieldableSymbol,
+  YIELDABLE_CONTINUE,
+  cancelableSymbol
+} from "./external/yieldables";
 
 export function isEventedObject(c) {
   return (c && (
@@ -13,6 +18,9 @@ export function isEventedObject(c) {
 export let INVOKE = "__invoke_symbol__";
 
 let locations = [
+  '@ember/-internals/glimmer/index',
+  '@ember/-internals/glimmer',
+  'ember-glimmer',
   'ember-glimmer/helpers/action',
   'ember-routing-htmlbars/keywords/closure-action',
   'ember-routing/keywords/closure-action'
@@ -27,10 +35,34 @@ for (let i = 0; i < locations.length; i++) {
 
 export const _ComputedProperty = ComputedProperty;
 
+class TimeoutYieldable extends Yieldable {
+  constructor(ms) {
+    super();
+    this.ms = ms;
+    this.timerId = null;
+  }
+
+  [yieldableSymbol](taskInstance, resumeIndex) {
+    this.timerId = later(() => {
+      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, taskInstance._result);
+    }, this.ms);
+  }
+
+  [cancelableSymbol]() {
+    cancel(this.timerId);
+    this.timerId = null;
+  }
+}
+
 /**
  *
  * Yielding `timeout(ms)` will pause a task for the duration
  * of time passed in, in milliseconds.
+ *
+ * This timeout will be scheduled on the Ember runloop, which
+ * means that test helpers will wait for it to complete before
+ * continuing with the test. See `rawTimeout()` if you need
+ * different behavior.
  *
  * The task below, when performed, will print a message to the
  * console every second.
@@ -50,14 +82,7 @@ export const _ComputedProperty = ComputedProperty;
  *   the task, in milliseconds
  */
 export function timeout(ms) {
-  let timerId;
-  let promise = new Promise(r => {
-    timerId = later(r, ms);
-  });
-  promise.__ec_cancel__ = () => {
-    cancel(timerId);
-  };
-  return promise;
+  return new TimeoutYieldable(ms);
 }
 
 export function deprecatePrivateModule(moduleName) {
