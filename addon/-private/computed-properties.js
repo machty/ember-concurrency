@@ -235,8 +235,8 @@ export const OldTask = EmberObject.extend({
 
   @class TaskProperty
 */
-let TaskProperty;
-let TaskGroupProperty;
+export let TaskProperty;
+export let TaskGroupProperty;
 
 if (gte('3.10.0')) {
   TaskProperty = class {};
