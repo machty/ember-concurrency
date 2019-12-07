@@ -5,46 +5,52 @@ export const YIELDABLE_THROW = "throw";
 export const YIELDABLE_RETURN = "return";
 export const YIELDABLE_CANCEL = "cancel";
 
-export function yieldableToPromise(yieldable) {
-  let def = { resolve: undefined, reject: undefined };
-
-  def.promise = new window.Promise((resolve, reject) => {
-    def.resolve = resolve;
-    def.reject = reject;
-  });
-
-  let thinInstance = {
-    proceed(_index, resumeType, value) {
-      if (resumeType == YIELDABLE_CONTINUE || resumeType == YIELDABLE_RETURN) {
-        def.resolve(value);
-      } else {
-        def.reject(value);
-      }
-    }
-  };
-
-  let maybeDisposer = yieldable[yieldableSymbol](thinInstance, 0);
-  def.promise[cancelableSymbol] = maybeDisposer || yieldable[cancelableSymbol];
-
-  return def.promise;
-}
-
 export class Yieldable {
   constructor() {
     this[yieldableSymbol] = this[yieldableSymbol].bind(this);
     this[cancelableSymbol] = this[cancelableSymbol].bind(this);
   }
 
+  _deferable() {
+    let def = { resolve: undefined, reject: undefined };
+
+    def.promise = new Promise((resolve, reject) => {
+      def.resolve = resolve;
+      def.reject = reject;
+    });
+
+    return def;
+  }
+
+  _toPromise() {
+    let def = this._deferable();
+
+    let thinInstance = {
+      proceed(_index, resumeType, value) {
+        if (resumeType == YIELDABLE_CONTINUE || resumeType == YIELDABLE_RETURN) {
+          def.resolve(value);
+        } else {
+          def.reject(value);
+        }
+      }
+    };
+
+    let maybeDisposer = this[yieldableSymbol](thinInstance, 0);
+    def.promise[cancelableSymbol] = maybeDisposer || this[cancelableSymbol];
+
+    return def.promise;
+  }
+
   then(...args) {
-    return yieldableToPromise(this).then(...args);
+    return this._toPromise().then(...args);
   }
 
   catch(...args) {
-    return yieldableToPromise(this).catch(...args);
+    return this._toPromise().catch(...args);
   }
 
   finally(...args) {
-    return yieldableToPromise(this).finally(...args);
+    return this._toPromise().finally(...args);
   }
 
   [yieldableSymbol]() {}

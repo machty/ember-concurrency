@@ -1,6 +1,7 @@
 import ComputedProperty from '@ember/object/computed';
 import { later, cancel } from '@ember/runloop';
 import Ember from 'ember';
+import { EMBER_ENVIRONMENT } from "./ember-environment";
 import {
   Yieldable,
   yieldableSymbol,
@@ -35,7 +36,13 @@ for (let i = 0; i < locations.length; i++) {
 
 export const _ComputedProperty = ComputedProperty;
 
-class TimeoutYieldable extends Yieldable {
+export class EmberYieldable extends Yieldable {
+  _deferable() {
+    return EMBER_ENVIRONMENT.defer();
+  }
+}
+
+class TimeoutYieldable extends EmberYieldable {
   constructor(ms) {
     super();
     this.ms = ms;

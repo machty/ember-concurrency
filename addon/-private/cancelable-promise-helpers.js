@@ -1,8 +1,7 @@
 import { assert } from '@ember/debug';
 import RSVP, { Promise } from 'rsvp';
 import { TaskInstance } from './task-instance';
-import { cancelableSymbol } from './utils';
-
+import { cancelableSymbol } from './external/yieldables';
 
 /**
  * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).

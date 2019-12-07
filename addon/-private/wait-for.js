@@ -2,15 +2,14 @@ import { assert } from "@ember/debug";
 import { schedule, cancel } from "@ember/runloop";
 import { get } from "@ember/object";
 import {
-  Yieldable,
   yieldableSymbol,
   YIELDABLE_CONTINUE,
   YIELDABLE_THROW,
   cancelableSymbol
 } from "./external/yieldables";
-import { isEventedObject } from './utils';
+import { EmberYieldable, isEventedObject } from './utils';
 
-class WaitForQueueYieldable extends Yieldable {
+class WaitForQueueYieldable extends EmberYieldable {
   constructor(queueName) {
     super();
     this.queueName = queueName;
@@ -33,7 +32,7 @@ class WaitForQueueYieldable extends Yieldable {
   }
 }
 
-class WaitForEventYieldable extends Yieldable {
+class WaitForEventYieldable extends EmberYieldable {
   constructor(object, eventName) {
     super();
     this.object = object;
@@ -76,7 +75,7 @@ class WaitForEventYieldable extends Yieldable {
   }
 }
 
-class WaitForPropertyYieldable extends Yieldable {
+class WaitForPropertyYieldable extends EmberYieldable {
   constructor(object, key, predicateCallback = Boolean) {
     super();
     this.object = object;
