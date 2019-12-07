@@ -1,12 +1,12 @@
 import { click, visit } from '@ember/test-helpers';
 import { find } from '@ember/test-helpers';
 import { setupApplicationTest } from 'ember-qunit';
-import { module, test } from 'qunit';
+import { module, skip } from 'qunit';
 
 module('Acceptance | injections on encapsulated tests', function(hooks) {
   setupApplicationTest(hooks);
 
-  test('encapsulated tasks support injections', async function(assert) {
+  skip('encapsulated tasks support injections', async function(assert) {
     assert.expect(1);
 
     await visit('/task-injection-test');
