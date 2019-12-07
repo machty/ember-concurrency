@@ -48,6 +48,7 @@ export class Task extends BaseTask {
 
     let taskInstance = new TaskInstance({
       task: this,
+      args: fullArgs,
       executor: new TaskInstanceExecutor({
         generatorFactory,
         env: EMBER_ENVIRONMENT,

@@ -707,6 +707,7 @@ module("Unit: task instance", function(hooks) {
     });
     return new TaskInstance({
       task: stubTask,
+      args: args,
       executor
     });
   }
