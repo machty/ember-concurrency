@@ -1,3 +1,8 @@
+# v2 Development Branch
+
+This here is the work-in-progress branch for ember-concurrency v2. This will be
+merged into master when v2 is ready for release.
+
 # ember-concurrency
 
 [![Build Status][build-status-img]][build-status-link]
