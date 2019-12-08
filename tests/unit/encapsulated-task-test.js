@@ -12,7 +12,7 @@ module('Unit: EncapsulatedTask', function() {
     let defer;
     let Obj = EmberObject.extend({
       myTask: task({
-        perform: function * (...args) {
+        *perform(...args) {
           assert.deepEqual(args, [1,2,3]);
           defer = RSVP.defer();
           yield defer.promise;

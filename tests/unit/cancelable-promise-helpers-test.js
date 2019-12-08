@@ -48,13 +48,13 @@ module('Unit: cancelable promises test helpers', function() {
     });
 
     let childTask = obj.get('child');
-    assert.equal(childTask.get('concurrency'), 3);
+    assert.equal(childTask.get('numRunning'), 3);
     run(() => defers.shift().resolve('a'));
-    assert.equal(childTask.get('concurrency'), 2);
+    assert.equal(childTask.get('numRunning'), 2);
     run(() => defers.shift().resolve('b'));
-    assert.equal(childTask.get('concurrency'), 1);
+    assert.equal(childTask.get('numRunning'), 1);
     run(() => defers.shift().resolve('c'));
-    assert.equal(childTask.get('concurrency'), 0);
+    assert.equal(childTask.get('numRunning'), 0);
   });
 
   test("all cancels all other joined tasks if one of them fails", function(assert) {
@@ -89,9 +89,9 @@ module('Unit: cancelable promises test helpers', function() {
     });
 
     let childTask = obj.get('child');
-    assert.equal(childTask.get('concurrency'), 3);
+    assert.equal(childTask.get('numRunning'), 3);
     run(() => defers.shift().reject({ wat: 'lol' }));
-    assert.equal(childTask.get('concurrency'), 0);
+    assert.equal(childTask.get('numRunning'), 0);
   });
 
   test("all cancels all joined tasks if parent task is canceled", function(assert) {
@@ -119,9 +119,9 @@ module('Unit: cancelable promises test helpers', function() {
     });
 
     let childTask = obj.get('child');
-    assert.equal(childTask.get('concurrency'), 3);
+    assert.equal(childTask.get('numRunning'), 3);
     run(() => obj.get('parent').cancelAll());
-    assert.equal(childTask.get('concurrency'), 0);
+    assert.equal(childTask.get('numRunning'), 0);
   });
 
   test("all throws an assertion, if something other than an array is passed", function (assert) {
@@ -165,13 +165,13 @@ module('Unit: cancelable promises test helpers', function() {
     });
 
     let childTask = obj.get('child');
-    assert.equal(childTask.get('concurrency'), 3);
+    assert.equal(childTask.get('numRunning'), 3);
     run(() => defers.shift().resolve('a'));
-    assert.equal(childTask.get('concurrency'), 2);
+    assert.equal(childTask.get('numRunning'), 2);
     run(() => defers.shift().resolve('b'));
-    assert.equal(childTask.get('concurrency'), 1);
+    assert.equal(childTask.get('numRunning'), 1);
     run(() => defers.shift().resolve('c'));
-    assert.equal(childTask.get('concurrency'), 0);
+    assert.equal(childTask.get('numRunning'), 0);
   });
 
   test("allSettled does not cancel all other joined tasks if one of them fails", function(assert) {
@@ -211,13 +211,13 @@ module('Unit: cancelable promises test helpers', function() {
     });
 
     let childTask = obj.get('child');
-    assert.equal(childTask.get('concurrency'), 3);
+    assert.equal(childTask.get('numRunning'), 3);
     run(() => defers.shift().resolve('a'));
-    assert.equal(childTask.get('concurrency'), 2);
+    assert.equal(childTask.get('numRunning'), 2);
     run(() => defers.shift().reject(new Error('wat')));
-    assert.equal(childTask.get('concurrency'), 1);
+    assert.equal(childTask.get('numRunning'), 1);
     run(() => defers.shift().resolve('c'));
-    assert.equal(childTask.get('concurrency'), 0);
+    assert.equal(childTask.get('numRunning'), 0);
   });
 
   test("allSettled cancels all joined tasks if parent task is canceled", function(assert) {
@@ -245,9 +245,9 @@ module('Unit: cancelable promises test helpers', function() {
     });
 
     let childTask = obj.get('child');
-    assert.equal(childTask.get('concurrency'), 3);
+    assert.equal(childTask.get('numRunning'), 3);
     run(() => obj.get('parent').cancelAll());
-    assert.equal(childTask.get('concurrency'), 0);
+    assert.equal(childTask.get('numRunning'), 0);
   });
 
   test("allSettled throws an assertion, if something other than an array is passed", function (assert) {
@@ -305,9 +305,9 @@ module('Unit: cancelable promises test helpers', function() {
       obj = Obj.create();
       obj.get('parent').perform();
     });
-    assert.equal(obj.get('child.concurrency'), 3);
+    assert.equal(obj.get('child.numRunning'), 3);
     run(obj.get('child.last'), 'cancel');
-    assert.equal(obj.get('child.concurrency'), 0);
+    assert.equal(obj.get('child.numRunning'), 0);
   });
 
   test("hash cancels children if parent is canceled", function(assert) {
@@ -332,9 +332,9 @@ module('Unit: cancelable promises test helpers', function() {
       obj = Obj.create();
       obj.get('parent').perform();
     });
-    assert.equal(obj.get('child.concurrency'), 3);
+    assert.equal(obj.get('child.numRunning'), 3);
     run(obj.get('parent'), 'cancelAll');
-    assert.equal(obj.get('child.concurrency'), 0);
+    assert.equal(obj.get('child.numRunning'), 0);
   });
 
   test("race throws an assertion, if something other than an array is passed", function (assert) {

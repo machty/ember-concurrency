@@ -1,7 +1,7 @@
 import { run } from '@ember/runloop';
 import RSVP from 'rsvp';
 import EmberObject from '@ember/object';
-import { task, taskGroup } from 'ember-concurrency';
+import { task, taskGroup, forever } from 'ember-concurrency';
 import { gte } from 'ember-compatibility-helpers';
 import { module, test } from 'qunit';
 
@@ -53,9 +53,9 @@ module('Unit: task groups', function() {
     run(taskB, 'perform');
 
     suffix = "after taskB is performed, but before taskA is finished";
-    assertStates(assert, tg,    true, false, false, suffix);
+    assertStates(assert, tg,    true, true, false, suffix);
     assertStates(assert, taskA, true, false, false, suffix);
-    assertStates(assert, taskB, false, true, false, suffix);
+    assertStates(assert, taskB, false, true, false, suffix); // this is expecting it NOT to be idle
     assert.ok(deferA);
     assert.ok(!deferB);
 
@@ -88,27 +88,22 @@ module('Unit: task groups', function() {
     });
   });
 
-  test("task groups can be canceled", function(assert) {
-    assert.expect(18);
-
-    let deferA, deferB;
+  function sharedTaskGroupSetup(taskGroupProperty) {
     let Obj = EmberObject.extend({
-      tg: taskGroup().enqueue(),
+      tg: taskGroupProperty,
 
       taskA: task(function * () {
-        deferA = RSVP.defer();
-        yield deferA.promise;
+        yield forever;
       }).group('tg'),
 
       taskB: task(function * () {
-        deferB = RSVP.defer();
-        yield deferB.promise;
+        yield forever;
       }).group('tg'),
     });
 
-    let obj, taskA, taskB, suffix, tg;
+    let taskA, taskB, tg;
     run(() => {
-      obj = Obj.create();
+      let obj = Obj.create();
       tg = obj.get('tg');
       taskA = obj.get('taskA');
       taskB = obj.get('taskB');
@@ -116,11 +111,36 @@ module('Unit: task groups', function() {
       taskB.perform();
     });
 
-    suffix = "after first run loop";
+    return [taskA, taskB, tg];
+  }
+
+  test("enqueued task groups can be canceled", function(assert) {
+    assert.expect(18);
+
+    let [taskA, taskB, tg] = sharedTaskGroupSetup(taskGroup().enqueue());
+    let suffix = "after first run loop";
+
+    assertStates(assert, tg,    true, true, false, suffix);
+    assertStates(assert, taskA, true, false, false, suffix);
+    assertStates(assert, taskB, false, true, false, suffix);
+
+    run(tg, 'cancelAll');
+
+    suffix = "after tg.cancelAll()";
+    assertStates(assert, tg,    false, false, true, suffix);
+    assertStates(assert, taskA, false, false, true, suffix);
+    assertStates(assert, taskB, false, false, true, suffix);
+  });
+
+  test("unmodified task groups can be canceled", function(assert) {
+    assert.expect(18);
+
+    let [taskA, taskB, tg] = sharedTaskGroupSetup(taskGroup());
+    let suffix = "after first run loop";
 
     assertStates(assert, tg,    true, false, false, suffix);
     assertStates(assert, taskA, true, false, false, suffix);
-    assertStates(assert, taskB, false, true, false, suffix);
+    assertStates(assert, taskB, true, false, false, suffix);
 
     run(tg, 'cancelAll');
 
@@ -151,6 +171,43 @@ module('Unit: task groups', function() {
     assert.strictEqual(tg.get('isRunning'), true);
     run(defer, defer.resolve);
     assert.strictEqual(tg.get('isRunning'), false);
+  });
+
+  test("calling cancelAll on a task doesn't cancel other tasks in group", function(assert) {
+    assert.expect(6);
+
+    let obj, taskA, taskB, tg;
+    let Obj = EmberObject.extend({
+      tg: taskGroup(),
+
+      taskA: task(function * () {
+        yield forever;
+      }).group('tg'),
+
+      taskB: task(function * () {
+        yield forever;
+      }).group('tg'),
+    });
+
+    run(() => {
+      obj = Obj.create();
+      tg = obj.get('tg');
+      taskA = obj.get('taskA');
+      taskA.perform();
+      taskB = obj.get('taskB');
+    });
+
+    function assertRunning() {
+      assert.strictEqual(tg.get('isRunning'), true);
+      assert.strictEqual(taskA.get('isRunning'), true);
+      assert.strictEqual(taskB.get('isRunning'), false);
+    }
+
+    assertRunning();
+
+    run(() => obj.get('taskB').cancelAll());
+
+    assertRunning();
   });
 
   if (gte('3.10.0')) {

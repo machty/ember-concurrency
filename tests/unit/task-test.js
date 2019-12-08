@@ -165,7 +165,7 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  test("task.cancelAll({ resetState: true }) resets defired state", function(assert) {
+  test("task.cancelAll({ resetState: true }) resets derived state", function(assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend(Evented, {
@@ -401,25 +401,6 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  test(".performCount exposes the number of times a task has been performed", function(assert) {
-    assert.expect(3);
-
-    let Obj = EmberObject.extend({
-      doStuff: task(function * () { })
-    });
-
-    run(() => {
-      let obj = Obj.create();
-      let doStuff = obj.get('doStuff');
-      assert.equal(doStuff.get('performCount'), 0);
-      doStuff.perform();
-      assert.equal(doStuff.get('performCount'), 1);
-      doStuff.perform();
-      doStuff.perform();
-      assert.equal(doStuff.get('performCount'), 3);
-    });
-  });
-
   test("call stack stays within reasonable bounds", function(assert) {
     assert.expect(1);
 
@@ -531,61 +512,6 @@ module('Unit: task', function(hooks) {
 
     assert.ok(!obj.get('a.isRunning'));
     assert.ok(obj.get('b.isRunning'));
-  });
-
-  test("a warning is logged when a non-link-specified cross object parent->child cancelation occurs due to parent object's destruction", function(assert) {
-    assert.expect(2);
-
-    let warnings = [];
-    console.warn = (...args) => {
-      warnings.push(args);
-    };
-
-    let Obj = EmberObject.extend({
-      a: task(function * () {
-        yield this.get('child.b').perform();
-      }),
-
-      b: task(function * () {
-        yield defer().promise;
-      }),
-
-      c: task(function * () {
-        yield this.get('child.b').linked().perform();
-      }),
-
-      child: null,
-    });
-
-    let child, canceledParent, destroyedParent;
-    run(() => {
-      child = Obj.create();
-      canceledParent = Obj.create({ child });
-      destroyedParent = Obj.create({ child });
-      canceledParent.get('a').perform();
-      destroyedParent.get('a').perform();
-    });
-
-    run(() => {
-      destroyedParent.destroy();
-      canceledParent.get('a').cancelAll();
-    });
-
-    assert.deepEqual(warnings, [
-      [
-        "ember-concurrency detected a potentially hazardous \"self-cancel loop\" between parent task `a` and child task `b`. If you want child task `b` to be canceled when parent task `a` is canceled, please change `.perform()` to `.linked().perform()`. If you want child task `b` to keep running after parent task `a` is canceled, change it to `.unlinked().perform()`"
-      ]
-    ]);
-    warnings.length = 0;
-
-    run(() => {
-      child = Obj.create();
-      destroyedParent = Obj.create({ child });
-      destroyedParent.get('c').perform();
-    });
-
-    run(() => { destroyedParent.destroy(); });
-    assert.equal(warnings.length, 0);
   });
 
   test(".linked() throws an error if called outside of a task", function(assert) {

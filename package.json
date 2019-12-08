@@ -78,6 +78,7 @@
     "test": "tests"
   },
   "dependencies": {
+    "broccoli-file-creator": "^2.1.1",
     "ember-cli-babel": "^7.7.3",
     "ember-compatibility-helpers": "^1.2.0",
     "ember-maybe-import-regenerator": "^0.1.6"
