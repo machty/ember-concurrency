@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { getOwner } from '@ember/application';
+import { setOwner, getOwner } from '@ember/application';
 import EmberObject, { get, computed } from '@ember/object';
 import { assert, deprecate } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
@@ -609,11 +609,8 @@ function buildRegularTask(taskFn, options) {
 
 function buildEncapsulatedTask(taskObj, options) {
   let owner = getOwner(options.context);
-  let ownerInjection = owner ? owner.ownerInjection() : {};
-  let encapsulatedTask = EmberObject.extend(
-    ownerInjection,
-    taskObj
-  ).create();
+  let encapsulatedTask = EmberObject.extend(taskObj).create();
+  setOwner(encapsulatedTask, owner);
 
   return new EncapsulatedTask(
     Object.assign({
