@@ -208,13 +208,4 @@ export class Task extends BaseTask {
 
 Object.assign(Task.prototype, TASKABLE_MIXIN);
 
-export class EncapsulatedTask extends Task {
-  constructor(options, other) {
-    super(options);
-    this.other = other;
-  }
-
-  _perform() {
-
-  }
-}
+export class EncapsulatedTask extends Task {}

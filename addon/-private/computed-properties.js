@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { getOwner } from '@ember/application';
 import EmberObject, { get, computed } from '@ember/object';
 import { assert, deprecate } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
@@ -11,7 +12,7 @@ import { _ComputedProperty } from './utils';
 import EmberScheduler from './scheduler/ember-scheduler';
 import { addListener } from '@ember/object/events';
 import { addObserver } from '@ember/object/observers';
-import { Task } from './task';
+import { Task, EncapsulatedTask } from './task';
 import { TaskGroup } from './task-group';
 import { scheduleOnce } from '@ember/runloop';
 
@@ -606,8 +607,19 @@ function buildRegularTask(taskFn, options) {
   );
 }
 
-function buildEncapsulatedTask() {
-  throw new Error("encapsulated tasks aren't yet supported in this version");
+function buildEncapsulatedTask(taskObj, options) {
+  let owner = getOwner(options.context);
+  let ownerInjection = owner ? owner.ownerInjection() : {};
+  let encapsulatedTask = EmberObject.extend(
+    ownerInjection,
+    taskObj
+  ).create();
+
+  return new EncapsulatedTask(
+    Object.assign({
+      generatorFactory: (args) => encapsulatedTask.perform.apply(encapsulatedTask, args),
+    }, options)
+  );
 }
 
 /**

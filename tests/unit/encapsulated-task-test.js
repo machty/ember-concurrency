@@ -3,16 +3,16 @@ import RSVP from 'rsvp';
 import EmberObject from '@ember/object';
 import { task } from 'ember-concurrency';
 import { gte } from 'ember-compatibility-helpers';
-import { module, skip } from 'qunit';
+import { module, test } from 'qunit';
 
 module('Unit: EncapsulatedTask', function() {
-  skip("tasks can be specified via a pojos with perform methods", function(assert) {
+  test("tasks can be specified via a pojos with perform methods", function(assert) {
     assert.expect(2);
 
     let defer;
     let Obj = EmberObject.extend({
       myTask: task({
-        perform: function * (...args) {
+        *perform(...args) {
           assert.deepEqual(args, [1,2,3]);
           defer = RSVP.defer();
           yield defer.promise;
@@ -32,7 +32,7 @@ module('Unit: EncapsulatedTask', function() {
   });
 
   if (gte('3.10.0')) {
-    skip("encapsulated tasks work with native ES classes and decorators", function(assert) {
+    test("encapsulated tasks work with native ES classes and decorators", function(assert) {
       assert.expect(2);
 
       let defer;
