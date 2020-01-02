@@ -17,6 +17,7 @@
     "@babel/core": "^7.6.4",
     "@ember/jquery": "^0.6.1",
     "@ember/optional-features": "^0.7.0",
+    "@embroider/macros": "^0.10.0",
     "babel-eslint": "^10.0.3",
     "broccoli-asset-rev": "^3.0.0",
     "broccoli-clean-css": "^1.1.0",
