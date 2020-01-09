@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.1.4
+  - Avoid auto-tracking rerender assertion thrown in certain contexts in Ember 3.15+
+  - Fix passing tasks into `action` helper directly on Ember 2.8 (yes, 2.8)
+
 ### 1.1.3
   - Fix issue where `rawTimeout`, `waitForEvent`, and `waitForQueue` helper timers
     were not properly canceled or cleaned up in some cases, such as when used with
