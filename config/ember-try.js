@@ -19,7 +19,8 @@ module.exports = async function() {
         npm: {
           devDependencies: {
             '@ember/jquery': null,
-            'ember-source': null
+            'ember-source': null,
+            '@embroider/macros': null
           }
         }
       },
@@ -33,12 +34,20 @@ module.exports = async function() {
             'ember': 'lts-2-8'
           }
         },
+        npm: {
+          devDependencies: {
+            '@ember/jquery': null,
+            'ember-source': null,
+            '@embroider/macros': null
+          }
+        }
       },
       {
         name: 'ember-lts-2.12',
         npm: {
           devDependencies: {
-            'ember-source': '~2.12.0'
+            'ember-source': '~2.12.0',
+            '@embroider/macros': null
           }
         }
       },

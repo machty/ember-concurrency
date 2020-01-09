@@ -76,6 +76,7 @@ let locations = [
   '@ember/-internals/glimmer',
   'ember-glimmer',
   'ember-glimmer/helpers/action',
+  'ember-htmlbars/keywords/closure-action',
   'ember-routing-htmlbars/keywords/closure-action',
   'ember-routing/keywords/closure-action'
 ];

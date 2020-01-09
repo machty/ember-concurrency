@@ -38,7 +38,7 @@ const Scheduler = EmberObject.extend({
         // This tracking logic is kinda spread all over the place...
         // maybe TaskInstances themselves could notify
         // some delegate of queued state changes upon cancelation?
-        taskInstance.task.decrementProperty('numQueued');
+        set(taskInstance.task, 'numQueued', taskInstance.task.numQueued - 1);
       }
 
       taskInstance.cancel(cancelReason);
@@ -51,8 +51,8 @@ const Scheduler = EmberObject.extend({
 
   schedule(taskInstance) {
     set(this, 'lastPerformed', taskInstance);
-    this.incrementProperty('performCount');
-    taskInstance.task.incrementProperty('numQueued');
+    set(this, 'performCount', this.performCount + 1);
+    set(taskInstance.task, 'numQueued', taskInstance.task.numQueued + 1);
     this.queuedTaskInstances.push(taskInstance);
     this._flushQueues();
   },
@@ -93,11 +93,11 @@ const Scheduler = EmberObject.extend({
 
   _startTaskInstance(taskInstance) {
     let task = taskInstance.task;
-    task.decrementProperty('numQueued');
-    task.incrementProperty('numRunning');
+    set(task, 'numQueued', task.numQueued - 1);
+    set(task, 'numRunning', task.numRunning + 1);
 
     taskInstance._start()._onFinalize(() => {
-      task.decrementProperty('numRunning');
+      set(task, 'numRunning', task.numRunning - 1);
       var state = taskInstance._completionState;
       set(this, 'lastComplete', taskInstance);
       if (state === 1) {
@@ -150,4 +150,3 @@ function filterFinished(taskInstances) {
 }
 
 export default Scheduler;
-
