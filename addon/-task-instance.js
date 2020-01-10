@@ -210,11 +210,11 @@ let taskInstanceAttrs = {
   state: computed('isDropped', 'isCanceling', 'hasStarted', 'isFinished', function() {
     if (get(this, 'isDropped')) {
       return 'dropped';
-    } else if (get(this, 'isCanceling')) {
+    } else if (this.isCanceling) {
       return 'canceled';
-    } else if (get(this, 'isFinished')) {
+    } else if (this.isFinished) {
       return 'finished';
-    } else if (get(this, 'hasStarted')) {
+    } else if (this.hasStarted) {
       return 'running';
     } else {
       return 'waiting';
@@ -233,7 +233,7 @@ let taskInstanceAttrs = {
    * @readOnly
    */
   isDropped: computed('isCanceling', 'hasStarted', function() {
-    return get(this, 'isCanceling') && !get(this, 'hasStarted');
+    return this.isCanceling && !this.hasStarted;
   }),
 
   /**
@@ -347,10 +347,10 @@ let taskInstanceAttrs = {
    * @instance
    */
   cancel(cancelReason = ".cancel() was explicitly called") {
-    if (this.isCanceling || get(this, 'isFinished')) { return; }
+    if (this.isCanceling || this.isFinished) { return; }
     set(this, 'isCanceling', true);
 
-    let name = get(this, 'task._propertyName') || "<unknown>";
+    let name = (this.task && this.task._propertyName) || "<unknown>";
     set(this, 'cancelReason', `TaskInstance '${name}' was canceled because ${cancelReason}. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help`);
 
     if (this.hasStarted) {
@@ -488,10 +488,10 @@ let taskInstanceAttrs = {
         this._triggerEvent('succeeded', this);
         break;
       case COMPLETION_ERROR:
-        this._triggerEvent('errored', this, get(this, 'error'));
+        this._triggerEvent('errored', this, this.error);
         break;
       case COMPLETION_CANCEL:
-        this._triggerEvent('canceled', this, get(this, 'cancelReason'));
+        this._triggerEvent('canceled', this, this.cancelReason);
         break;
     }
   },
@@ -751,8 +751,8 @@ let taskInstanceAttrs = {
   _triggerEvent(eventType, ...args) {
     if (!this._hasEnabledEvents) { return; }
 
-    let host = get(this, 'task.context');
-    let eventNamespace = get(this, 'task._propertyName');
+    let host = this.task && this.task.context;
+    let eventNamespace = this.task && this.task._propertyName;
 
     if (host && host.trigger && eventNamespace) {
       host.trigger(`${eventNamespace}:${eventType}`, ...args);
@@ -778,8 +778,8 @@ taskInstanceAttrs[yieldableSymbol] = function handleYieldedTaskInstance(parentTa
   return function disposeYieldedTaskInstance() {
     if (yieldedTaskInstance._performType !== PERFORM_TYPE_UNLINKED) {
       if (yieldedTaskInstance._performType === PERFORM_TYPE_DEFAULT) {
-        let parentObj = get(parentTaskInstance, 'task.context');
-        let childObj = get(yieldedTaskInstance, 'task.context');
+        let parentObj = parentTaskInstance.task && parentTaskInstance.task.context;
+        let childObj = yieldedTaskInstance.task && yieldedTaskInstance.task.context;
         if (parentObj && childObj &&
             parentObj !== childObj &&
             parentObj.isDestroying &&
