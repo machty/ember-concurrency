@@ -142,7 +142,7 @@ function filterFinished(taskInstances) {
   let ret = [];
   for (let i = 0, l = taskInstances.length; i < l; ++i) {
     let taskInstance = taskInstances[i];
-    if (get(taskInstance, 'isFinished') === false) {
+    if (taskInstance.isFinished === false) {
       ret.push(taskInstance);
     }
   }
