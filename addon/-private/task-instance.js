@@ -72,7 +72,7 @@ export class TaskInstance extends BaseTaskInstance {
 
   getName() {
     if (!this.name) {
-      this.name = this.get("task._propertyName") || "<unknown>";
+      this.name = (this.task && this.task._propertyName) || "<unknown>";
     }
     return this.name;
   }
