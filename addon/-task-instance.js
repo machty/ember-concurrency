@@ -13,6 +13,7 @@ import {
   YIELDABLE_CANCEL,
   RawValue
 } from './utils';
+import { tracked } from '@glimmer/tracking';
 
 const TASK_CANCELATION_NAME = 'TaskCancelation';
 
@@ -29,6 +30,16 @@ const GENERATOR_STATE_ERRORED = "ERRORED";
 export const PERFORM_TYPE_DEFAULT  = "PERFORM_TYPE_DEFAULT";
 export const PERFORM_TYPE_UNLINKED = "PERFORM_TYPE_UNLINKED";
 export const PERFORM_TYPE_LINKED   = "PERFORM_TYPE_LINKED";
+
+const USE_TRACKED = Ember.VERSION >= '3.15.0';
+
+function maybeTracked(value) {
+  if (USE_TRACKED) {
+    return tracked({ value });
+  }
+
+  return value;
+}
 
 let TASK_INSTANCE_STACK = [];
 
@@ -119,7 +130,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  value: null,
+  value: maybeTracked(null),
 
   /**
    * If this TaskInstance is canceled or throws an error (or yields
@@ -130,7 +141,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  error: null,
+  error: maybeTracked(null),
 
   /**
    * True if the task instance is fulfilled.
@@ -139,7 +150,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  isSuccessful: false,
+  isSuccessful: maybeTracked(false),
 
   /**
    * True if the task instance resolves to a rejection.
@@ -148,7 +159,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  isError: false,
+  isError: maybeTracked(false),
 
   /**
    * True if the task instance was canceled before it could run to completion.
@@ -158,7 +169,7 @@ let taskInstanceAttrs = {
    * @readOnly
    */
   isCanceled: and('isCanceling', 'isFinished'),
-  isCanceling: false,
+  isCanceling: maybeTracked(false),
 
   /**
    * True if the task instance has started, else false.
@@ -167,7 +178,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  hasStarted: false,
+  hasStarted: maybeTracked(false),
 
   /**
    * True if the task has run to completion.
@@ -176,7 +187,7 @@ let taskInstanceAttrs = {
    * @instance
    * @readOnly
    */
-  isFinished: false,
+  isFinished: maybeTracked(false),
 
   /**
    * True if the task is still running.
