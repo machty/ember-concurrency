@@ -1,5 +1,6 @@
 import { set, get, setProperties } from '@ember/object';
 import { BaseTaskInstance } from './external/task-instance/base';
+import { TRACKED_INITIAL_INSTANCE_STATE } from './tracked-state';
 
 /**
   A `TaskInstance` represent a single execution of a
@@ -275,4 +276,8 @@ export class TaskInstance extends BaseTaskInstance {
   set(key, value) {
     return set(this, key, value);
   }
+}
+
+if (TRACKED_INITIAL_INSTANCE_STATE) {
+  Object.defineProperties(TaskInstance.prototype, TRACKED_INITIAL_INSTANCE_STATE);
 }

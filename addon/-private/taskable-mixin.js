@@ -2,16 +2,15 @@ import { set, get, setProperties } from '@ember/object';
 
 export const TASKABLE_MIXIN = {
   setState(state) {
-    this.setProperties(state);
-    let isRunning = this.numRunning > 0;
-    let isQueued = this.numQueued > 0;
-    let derivedState = {
+    let isRunning = state.numRunning > 0;
+    let isQueued = state.numQueued > 0;
+    let derivedState = Object.assign(state, {
       performCount: this.performCount + (state.numPerformedInc || 0),
       isRunning,
       isQueued,
       isIdle: !isRunning && !isQueued,
       state: isRunning ? "running" : "idle",
-    };
+    });
     setProperties(this, derivedState);
   },
 
