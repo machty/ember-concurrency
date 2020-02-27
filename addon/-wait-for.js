@@ -160,12 +160,12 @@ export function waitForQueue(queueName) {
  * });
  * ```
  *
- * @param {object} object the Ember Object or jQuery selector (with ,on(), .one(), and .off())
+ * @param {object} object the Ember Object, jQuery element, or other object with .on() and .off() APIs
  *                 that the event fires from
  * @param {function} eventName the name of the event to wait for
  */
 export function waitForEvent(object, eventName) {
-  assert(`${object} must include Ember.Evented (or support \`.one()\` and \`.off()\`) or DOM EventTarget (or support \`addEventListener\` and  \`removeEventListener\`) to be able to use \`waitForEvent\``, isEventedObject(object));
+  assert(`${object} must include Ember.Evented (or support \`.on()\` and \`.off()\`) or DOM EventTarget (or support \`addEventListener\` and  \`removeEventListener\`) to be able to use \`waitForEvent\``, isEventedObject(object));
   return new WaitForEventYieldable(object, eventName);
 }
 
