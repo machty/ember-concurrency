@@ -7,6 +7,36 @@ import { alias } from '@ember/object/computed';
 
 const EventedObject = EmberObject.extend(Evented);
 
+const GenericEventedMixin = {
+  init() {
+    this._super(...arguments);
+    this._handlers = {};
+  },
+
+  has(eventName) {
+    return this._handlers[eventName] && this._handlers[eventName].length > 0;
+  },
+
+  trigger(eventName, data) {
+    const eventHandlers = this._handlers[eventName];
+    if (eventHandlers) {
+      eventHandlers.forEach((handler) => handler.call(this, data));
+    }
+  },
+
+  on(eventName, fn) {
+    this._handlers[eventName] = this._handlers[eventName] || [];
+    this._handlers[eventName].push(fn);
+  },
+
+  off(eventName, fn) {
+    const eventHandlers = this._handlers[eventName];
+    if (eventHandlers) {
+      this._handlers[eventName] = eventHandlers.filter((handler) => handler !== fn);
+    }
+  }
+};
+
 module('Unit: test waitForQueue and waitForEvent and waitForProperty', function() {
   test('waitForQueue works', function(assert) {
     assert.expect(2);
@@ -183,6 +213,64 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
     });
 
     assert.ok(removeEventListenerCalled, '`removeEventListener` was called');
+    assert.notOk(taskCompleted, 'Task should not have completed');
+  });
+
+  test('waitForEvent works (generic on/off interface)', function(assert) {
+    assert.expect(4);
+    let taskCompleted = false;
+    const Obj = EmberObject.extend({
+      ...GenericEventedMixin,
+
+      task: task(function*() {
+        let value = yield waitForEvent(this, 'foo');
+        assert.equal(value, 123);
+        taskCompleted = true;
+      })
+    });
+
+    let obj;
+    run(() => {
+      obj = Obj.create();
+      obj.get('task').perform();
+    });
+
+    run(() => {
+      assert.notOk(taskCompleted, 'Task should not have completed');
+      assert.ok(obj.has('foo'), 'Object has the event listener');
+      obj.trigger('foo', 123);
+    });
+
+    assert.ok(taskCompleted, 'Task should have completed');
+  });
+
+  test('canceling waitForEvent works (generic on/off interface)', function(assert) {
+    assert.expect(4);
+    let taskCompleted = false;
+    const Obj = EmberObject.extend({
+      ...GenericEventedMixin,
+
+      task: task(function*() {
+        let value = yield waitForEvent(this, 'foo');
+        assert.equal(value, 123);
+        taskCompleted = true;
+      })
+    });
+
+    let obj;
+    run(() => {
+      obj = Obj.create();
+      obj.get('task').perform();
+    });
+
+    run(() => {
+      assert.notOk(taskCompleted, 'Task should not have completed');
+      assert.ok(obj.has('foo'), 'Object has the event listener');
+      obj.get('task').cancelAll();
+      obj.trigger('foo');
+    });
+
+    assert.notOk(obj.has('foo'), 'Object does not have the event listener');
     assert.notOk(taskCompleted, 'Task should not have completed');
   });
 

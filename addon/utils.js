@@ -6,6 +6,7 @@ import Ember from 'ember';
 export function isEventedObject(c) {
   return (c && (
     (typeof c.one === 'function' && typeof c.off === 'function') ||
+    (typeof c.on === 'function' && typeof c.off === 'function') ||
     (typeof c.addEventListener === 'function' && typeof c.removeEventListener === 'function')
   ));
 }
