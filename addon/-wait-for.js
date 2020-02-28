@@ -42,6 +42,7 @@ class WaitForEventYieldable extends Yieldable {
     this.fn = null;
     this.didFinish = false;
     this.usesDOMEvents = false;
+    this.requiresCleanup = false;
   }
 
   [yieldableSymbol](taskInstance, resumeIndex) {
@@ -55,10 +56,13 @@ class WaitForEventYieldable extends Yieldable {
       // assume that we're dealing with a DOM `EventTarget`.
       this.usesDOMEvents = true;
       this.object.addEventListener(this.eventName, this.fn);
-    } else {
+    } else if (typeof this.object.one === 'function') {
       // assume that we're dealing with either `Ember.Evented` or a compatible
       // interface, like jQuery.
       this.object.one(this.eventName, this.fn);
+    } else {
+      this.requiresCleanup = true;
+      this.object.on(this.eventName, this.fn);
     }
   }
 
@@ -68,7 +72,7 @@ class WaitForEventYieldable extends Yieldable {
         // unfortunately this is required, because IE 11 does not support the
         // `once` option: https://caniuse.com/#feat=once-event-listener
         this.object.removeEventListener(this.eventName, this.fn);
-      } else if (!this.didFinish) {
+      } else if (!this.didFinish || this.requiresCleanup) {
         this.object.off(this.eventName, this.fn);
       }
 
@@ -156,12 +160,12 @@ export function waitForQueue(queueName) {
  * });
  * ```
  *
- * @param {object} object the Ember Object or jQuery selector (with ,on(), .one(), and .off())
+ * @param {object} object the Ember Object, jQuery element, or other object with .on() and .off() APIs
  *                 that the event fires from
  * @param {function} eventName the name of the event to wait for
  */
 export function waitForEvent(object, eventName) {
-  assert(`${object} must include Ember.Evented (or support \`.one()\` and \`.off()\`) or DOM EventTarget (or support \`addEventListener\` and  \`removeEventListener\`) to be able to use \`waitForEvent\``, isEventedObject(object));
+  assert(`${object} must include Ember.Evented (or support \`.on()\` and \`.off()\`) or DOM EventTarget (or support \`addEventListener\` and  \`removeEventListener\`) to be able to use \`waitForEvent\``, isEventedObject(object));
   return new WaitForEventYieldable(object, eventName);
 }
 
