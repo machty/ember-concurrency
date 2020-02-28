@@ -1,5 +1,11 @@
 # Changelog
 
+### 1.1.6
+  - Add support for `waitForEvent` helper on host objects supporting 'on' API.
+    Previously, `waitForEvent` only supported DOM-like objects with
+    `addEventListener`/`removeEventListener` or jQuery-like objects with `one`/`off`,
+    but did not support those with just `on`/`off`. (#348. Fixes #164)
+
 ### 1.1.5
   - Avoid auto-tracking rerender assertion / infinite rerender during cancelation
     in certain contexts in Ember 3.15+ (#341, Fixes #340)
