@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Class: ForeverYieldable</title>
 
     <script src="scripts/prettify/prettify-1e5ad0d34670f47d1ec98e5eddea2f92.js"> </script>
     <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
@@ -17,76 +17,160 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
-
-    
-
-
-
-    
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
+    <h1 class="page-title">Class: ForeverYieldable</h1>
 
     
 
 
 
 
-    <section>
-        <article><h2>ember-concurrency API docs</h2>
-<p>All of <code>ember-concurrency</code>'s public API is available
-on the <code>&quot;ember-concurrency&quot;</code> module, and
-most of the time, you'll only be using the <code>task</code> and <code>timeout</code>
-imports, e.g.:</p>
-<pre class="prettyprint source lang-js"><code>import { task, timeout } from 'ember-concurrency';
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>ForeverYieldable<span class="signature">()</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description"><p>Yielding <code>forever</code> will pause a task indefinitely until
+it is cancelled (i.e. via host object destruction, .restartable(),
+or manual cancellation).</p>
+<p>This is often useful in cases involving animation: if you're
+using Liquid Fire, or some other animation scheme, sometimes you'll
+notice buttons visibly reverting to their inactive states during
+a route transition. By yielding <code>forever</code> in a Component task that drives a
+button's active state, you can keep a task indefinitely running
+until the animation runs to completion.</p>
+<p>NOTE: Liquid Fire also includes a useful <code>waitUntilIdle()</code> method
+on the <code>liquid-fire-transitions</code> service that you can use in a lot
+of these cases, but it won't cover cases of asynchrony that are
+unrelated to animation, in which case <code>forever</code> might be better suited
+to your needs.</p>
+<pre class="prettyprint source lang-js"><code>import { task, forever } from 'ember-concurrency';
 
 export default Component.extend({
-  loopingTask: task(function * () {
-    while (true) {
-      this.set('num', Math.random());
-      yield timeout(100);
-    }
-  }).on('init')
+  myService: service(),
+  myTask: task(function * () {
+    yield this.myService.doSomethingThatCausesATransition();
+    yield forever;
+  })
 });
-</code></pre>
-<h2>Task Modifiers</h2>
-<p>You can find a description of all the Task Modifiers
-under the <a href="TaskProperty.html">Task Property API docs</a>.</p>
-<ul>
-<li><a href="TaskProperty.html#restartable">restartable</a></li>
-<li><a href="TaskProperty.html#enqueue">enqueue</a></li>
-<li><a href="TaskProperty.html#drop">drop</a></li>
-<li><a href="TaskProperty.html#keepLatest">keepLatest</a></li>
-<li><a href="TaskProperty.html#maxConcurrency">maxConcurrency</a></li>
-</ul>
-<h2>Task/cancelation-aware variants of Promise helpers</h2>
-<p>These helpers are just like their Promise/RSVP equivalents, but with
-the added behavior that they support cancelation and can hence be
-used in conjunction with Tasks / TaskInstances.</p>
-<ul>
-<li><a href="global.html#all">all</a></li>
-<li><a href="global.html#allSettled">allSettled</a></li>
-<li><a href="global.html#hash">hash</a></li>
-<li><a href="global.html#race">race</a></li>
-</ul>
-<h2>Misc</h2>
-<ul>
-<li><a href="global.html#waitForEvent">waitForEvent</a></li>
-<li><a href="global.html#waitForQueue">waitForQueue</a></li>
-</ul></article>
-    </section>
+</code></pre></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="ForeverYieldable"><span class="type-signature"></span>new ForeverYieldable<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line198">line 198</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

@@ -240,91 +240,6 @@ additional behavior:</p>
 
         
             
-<h4 class="name" id="forever"><span class="type-signature">(constant) </span>forever<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    <p>Yielding <code>forever</code> will pause a task indefinitely until
-it is cancelled (i.e. via host object destruction, .restartable(),
-or manual cancellation).</p>
-<p>This is often useful in cases involving animation: if you're
-using Liquid Fire, or some other animation scheme, sometimes you'll
-notice buttons visibly reverting to their inactive states during
-a route transition. By yielding <code>forever</code> in a Component task that drives a
-button's active state, you can keep a task indefinitely running
-until the animation runs to completion.</p>
-<p>NOTE: Liquid Fire also includes a useful <code>waitUntilIdle()</code> method
-on the <code>liquid-fire-transitions</code> service that you can use in a lot
-of these cases, but it won't cover cases of asynchrony that are
-unrelated to animation, in which case <code>forever</code> might be better suited
-to your needs.</p>
-<pre class="prettyprint source lang-js"><code>import { task, forever } from 'ember-concurrency';
-
-export default Component.extend({
-  myService: service(),
-  myTask: task(function * () {
-    yield this.myService.doSomethingThatCausesATransition();
-    yield forever;
-  })
-});
-</code></pre>
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line165">line 165</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
 <h4 class="name" id="hash"><span class="type-signature">(constant) </span>hash<span class="type-signature"></span></h4>
 
 
@@ -590,7 +505,7 @@ convenience function to distinguish cancelation from errors.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-instance.js.html">-task-instance.js</a>, <a href="task-instance.js.html#line65">line 65</a>
+        <a href="task-instance.js.html">-task-instance.js</a>, <a href="task-instance.js.html#line66">line 66</a>
     </li></ul></dd>
     
 
@@ -761,7 +676,7 @@ the task, in milliseconds</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line203">line 203</a>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line261">line 261</a>
     </li></ul></dd>
     
 
@@ -1221,7 +1136,7 @@ the task, in milliseconds</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line123">line 123</a>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line162">line 162</a>
     </li></ul></dd>
     
 
@@ -1333,7 +1248,7 @@ export default Component.extend({
 
             
 
-            <td class="description last"><p>the Ember Object or jQuery selector (with ,on(), .one(), and .off())
+            <td class="description last"><p>the Ember Object, jQuery element, or other object with .on() and .off() APIs
 that the event fires from</p></td>
         </tr>
 
@@ -1398,7 +1313,7 @@ that the event fires from</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="wait-for.js.html">-wait-for.js</a>, <a href="wait-for.js.html#line153">line 153</a>
+        <a href="wait-for.js.html">-wait-for.js</a>, <a href="wait-for.js.html#line167">line 167</a>
     </li></ul></dd>
     
 
@@ -1615,7 +1530,7 @@ needs to equal before the task will continue running</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="wait-for.js.html">-wait-for.js</a>, <a href="wait-for.js.html#line201">line 201</a>
+        <a href="wait-for.js.html">-wait-for.js</a>, <a href="wait-for.js.html#line215">line 215</a>
     </li></ul></dd>
     
 
@@ -1760,7 +1675,7 @@ export default Component.extend({
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="wait-for.js.html">-wait-for.js</a>, <a href="wait-for.js.html#line124">line 124</a>
+        <a href="wait-for.js.html">-wait-for.js</a>, <a href="wait-for.js.html#line138">line 138</a>
     </li></ul></dd>
     
 
@@ -1806,13 +1721,13 @@ export default Component.extend({
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Events</h3><ul><li><a href="TaskInstance.html#event:TASK_NAME:canceled">TASK_NAME:canceled</a></li><li><a href="TaskInstance.html#event:TASK_NAME:errored">TASK_NAME:errored</a></li><li><a href="TaskInstance.html#event:TASK_NAME:started">TASK_NAME:started</a></li><li><a href="TaskInstance.html#event:TASK_NAME:succeeded">TASK_NAME:succeeded</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ForeverYieldable.html">ForeverYieldable</a></li><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Events</h3><ul><li><a href="TaskInstance.html#event:TASK_NAME:canceled">TASK_NAME:canceled</a></li><li><a href="TaskInstance.html#event:TASK_NAME:errored">TASK_NAME:errored</a></li><li><a href="TaskInstance.html#event:TASK_NAME:started">TASK_NAME:started</a></li><li><a href="TaskInstance.html#event:TASK_NAME:succeeded">TASK_NAME:succeeded</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Oct 22 2019 19:08:03 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Feb 27 2020 20:18:38 GMT-0600 (Central Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

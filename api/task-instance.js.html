@@ -33,6 +33,7 @@ import { run, join, schedule } from '@ember/runloop';
 import EmberObject, { computed, get, set } from '@ember/object';
 import Ember from 'ember';
 import {
+  cancelableSymbol,
   yieldableSymbol,
   YIELDABLE_CONTINUE,
   YIELDABLE_THROW,
@@ -237,11 +238,11 @@ let taskInstanceAttrs = {
   state: computed('isDropped', 'isCanceling', 'hasStarted', 'isFinished', function() {
     if (get(this, 'isDropped')) {
       return 'dropped';
-    } else if (get(this, 'isCanceling')) {
+    } else if (this.isCanceling) {
       return 'canceled';
-    } else if (get(this, 'isFinished')) {
+    } else if (this.isFinished) {
       return 'finished';
-    } else if (get(this, 'hasStarted')) {
+    } else if (this.hasStarted) {
       return 'running';
     } else {
       return 'waiting';
@@ -260,7 +261,7 @@ let taskInstanceAttrs = {
    * @readOnly
    */
   isDropped: computed('isCanceling', 'hasStarted', function() {
-    return get(this, 'isCanceling') &amp;&amp; !get(this, 'hasStarted');
+    return this.isCanceling &amp;&amp; !this.hasStarted;
   }),
 
   /**
@@ -374,10 +375,10 @@ let taskInstanceAttrs = {
    * @instance
    */
   cancel(cancelReason = ".cancel() was explicitly called") {
-    if (this.isCanceling || get(this, 'isFinished')) { return; }
+    if (this.isCanceling || this.isFinished) { return; }
     set(this, 'isCanceling', true);
 
-    let name = get(this, 'task._propertyName') || "&lt;unknown>";
+    let name = (this.task &amp;&amp; this.task._propertyName) || "&lt;unknown>";
     set(this, 'cancelReason', `TaskInstance '${name}' was canceled because ${cancelReason}. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help`);
 
     if (this.hasStarted) {
@@ -515,10 +516,10 @@ let taskInstanceAttrs = {
         this._triggerEvent('succeeded', this);
         break;
       case COMPLETION_ERROR:
-        this._triggerEvent('errored', this, get(this, 'error'));
+        this._triggerEvent('errored', this, this.error);
         break;
       case COMPLETION_CANCEL:
-        this._triggerEvent('canceled', this, get(this, 'cancelReason'));
+        this._triggerEvent('canceled', this, this.cancelReason);
         break;
     }
   },
@@ -737,7 +738,7 @@ let taskInstanceAttrs = {
       return;
     }
 
-    this._addDisposer(yieldedValue.__ec_cancel__);
+    this._addDisposer(yieldedValue[cancelableSymbol]);
 
     if (yieldedValue[yieldableSymbol]) {
       this._invokeYieldable(yieldedValue);
@@ -778,8 +779,8 @@ let taskInstanceAttrs = {
   _triggerEvent(eventType, ...args) {
     if (!this._hasEnabledEvents) { return; }
 
-    let host = get(this, 'task.context');
-    let eventNamespace = get(this, 'task._propertyName');
+    let host = this.task &amp;&amp; this.task.context;
+    let eventNamespace = this.task &amp;&amp; this.task._propertyName;
 
     if (host &amp;&amp; host.trigger &amp;&amp; eventNamespace) {
       host.trigger(`${eventNamespace}:${eventType}`, ...args);
@@ -805,8 +806,8 @@ taskInstanceAttrs[yieldableSymbol] = function handleYieldedTaskInstance(parentTa
   return function disposeYieldedTaskInstance() {
     if (yieldedTaskInstance._performType !== PERFORM_TYPE_UNLINKED) {
       if (yieldedTaskInstance._performType === PERFORM_TYPE_DEFAULT) {
-        let parentObj = get(parentTaskInstance, 'task.context');
-        let childObj = get(yieldedTaskInstance, 'task.context');
+        let parentObj = parentTaskInstance.task &amp;&amp; parentTaskInstance.task.context;
+        let childObj = yieldedTaskInstance.task &amp;&amp; yieldedTaskInstance.task.context;
         if (parentObj &amp;&amp; childObj &amp;&amp;
             parentObj !== childObj &amp;&amp;
             parentObj.isDestroying &amp;&amp;
@@ -847,13 +848,13 @@ export default TaskInstance;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Events</h3><ul><li><a href="TaskInstance.html#event:TASK_NAME:canceled">TASK_NAME:canceled</a></li><li><a href="TaskInstance.html#event:TASK_NAME:errored">TASK_NAME:errored</a></li><li><a href="TaskInstance.html#event:TASK_NAME:started">TASK_NAME:started</a></li><li><a href="TaskInstance.html#event:TASK_NAME:succeeded">TASK_NAME:succeeded</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ForeverYieldable.html">ForeverYieldable</a></li><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Events</h3><ul><li><a href="TaskInstance.html#event:TASK_NAME:canceled">TASK_NAME:canceled</a></li><li><a href="TaskInstance.html#event:TASK_NAME:errored">TASK_NAME:errored</a></li><li><a href="TaskInstance.html#event:TASK_NAME:started">TASK_NAME:started</a></li><li><a href="TaskInstance.html#event:TASK_NAME:succeeded">TASK_NAME:succeeded</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Oct 22 2019 19:08:03 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Feb 27 2020 20:18:38 GMT-0600 (Central Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
