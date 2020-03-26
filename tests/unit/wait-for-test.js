@@ -1,9 +1,10 @@
 import Evented from '@ember/object/evented';
-import EmberObject from '@ember/object';
+import EmberObject, { computed, set } from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import { task, waitForQueue, waitForEvent, waitForProperty, race } from 'ember-concurrency';
 import { alias } from '@ember/object/computed';
+import { gte } from 'ember-compatibility-helpers';
 
 const EventedObject = EmberObject.extend(Evented);
 
@@ -312,4 +313,40 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
     run(obj, 'trigger', 'bar', 456);
     assert.equal(ev, 456);
   });
+
+  if (gte('3.10.0')) {
+    test('waitForProperty works on an ES class', function(assert) {
+      assert.expect(1);
+
+      let values = [];
+      class Obj {
+        a = 1;
+
+        @computed('a')
+        get b() {
+          return this.a;
+        }
+
+        @(task(function*() {
+          let result = yield waitForProperty(this, 'b', v => {
+            values.push(v);
+            return v == 3 ? 'done' : false;
+          });
+          values.push(`val=${result}`);
+        })) task;
+      }
+
+      let obj;
+      run(() => {
+        obj = new Obj();
+        obj.task.perform();
+      });
+
+      run(() => set(obj, 'a', 2));
+      run(() => set(obj, 'a', 3));
+      run(() => set(obj, 'a', 4));
+
+      assert.deepEqual(values, [1, 2, 3, 'val=3']);
+    });
+  }
 });

@@ -1,6 +1,7 @@
 import { assert } from "@ember/debug";
 import { schedule, cancel } from "@ember/runloop";
 import { get } from "@ember/object";
+import { addObserver, removeObserver } from '@ember/object/observers';
 import {
   yieldableSymbol,
   YIELDABLE_CONTINUE,
@@ -101,14 +102,14 @@ class WaitForPropertyYieldable extends EmberYieldable {
     };
 
     if (!this.observerFn()) {
-      this.object.addObserver(this.key, null, this.observerFn);
+      addObserver(this.object, this.key, null, this.observerFn);
       this.observerBound = true;
     }
   }
 
   [cancelableSymbol]() {
     if (this.observerBound && this.observerFn) {
-      this.object.removeObserver(this.key, null, this.observerFn);
+      removeObserver(this.object, this.key, null, this.observerFn);
       this.observerFn = null;
     }
   }
