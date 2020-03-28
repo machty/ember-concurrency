@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.1.7
+  - Fix waitForProperty on non-EmberObject hosts (#352. Fixes #292. Thanks @andrewfan for the find!)
+
 ### 1.1.6
   - Add support for `waitForEvent` helper on host objects supporting 'on' API.
     Previously, `waitForEvent` only supported DOM-like objects with
