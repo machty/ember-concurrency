@@ -126,20 +126,85 @@ export interface Task<T = unknown, Args extends any[] = []> {
  * ```
  */
 export interface TaskGroup<T = unknown> {
-  // readonly isRunning: boolean;
-  // readonly isQueued: boolean;
-  // readonly isIdle: boolean;
-  // readonly state: 'running' | 'queued' | 'idle';
-  // readonly last: TaskInstance<T> | null;
-  // readonly lastRunning: TaskInstance<T> | null;
-  // readonly lastPerformed: TaskInstance<T> | null;
-  // readonly lastSuccessful: TaskInstance<T> | null;
-  // readonly lastComplete: TaskInstance<T> | null;
-  // readonly lastErrored: TaskInstance<T> | null;
-  // readonly lastCanceled: TaskInstance<T> | null;
-  // readonly lastIncomplete: TaskInstance<T> | null;
-  // readonly performCount: number;
-  // cancelAll(options?: { reason?: string, resetState?: boolean }): void;
+  /**
+   * `true` if any current task instances are running.
+   */
+  readonly isRunning: boolean;
+
+  /**
+   * `true` if any future task instances are queued.
+   */
+  readonly isQueued: boolean;
+
+  /**
+   * `true` if the task group is not in the running or queued state.
+   */
+  readonly isIdle: boolean;
+
+  /**
+   * The current state of the task group: `"running"`, `"queued"` or `"idle"`.
+   */
+  readonly state: 'running' | 'queued' | 'idle';
+
+  /**
+   * The most recently started task instance.
+   */
+  readonly last: TaskInstance<T> | null;
+
+  /**
+   * The most recent task instance that is currently running.
+   */
+  readonly lastRunning: TaskInstance<T> | null;
+
+  /**
+   * The most recently performed task instance.
+   */
+  readonly lastPerformed: TaskInstance<T> | null;
+
+  /**
+   * The most recent task instance that succeeded.
+   */
+  readonly lastSuccessful: TaskInstance<T> | null;
+
+  /**
+   * The most recently completed task instance.
+   */
+  readonly lastComplete: TaskInstance<T> | null;
+
+  /**
+   * The most recent task instance that errored.
+   */
+  readonly lastErrored: TaskInstance<T> | null;
+
+  /**
+   * The most recently canceled task instance.
+   */
+  readonly lastCanceled: TaskInstance<T> | null;
+
+  /**
+   * The most recent task instance that is incomplete.
+   */
+  readonly lastIncomplete: TaskInstance<T> | null;
+
+  /**
+   * The number of times this task group has been performed.
+   */
+  readonly performCount: number;
+
+  /**
+   * Cancels all running or queued `TaskInstance`s for this task group.
+   * If you're trying to cancel a specific TaskInstance (rather
+   * than all of the instances running under this task group) call
+   * `.cancel()` on the specific TaskInstance.
+   *
+   * @param options.reason A descriptive reason the task group was
+   *   cancelled. Defaults to `".cancelAll() was explicitly called
+   *   on the Task"`.
+   * @param options.resetState If true, will clear the task group state
+   *   (`last*` and `performCount` properties will be set to initial
+   *   values). Defaults to false.
+   */
+  cancelAll(options?: { reason?: string, resetState?: boolean }): void;
 }
 
 /**
@@ -407,10 +472,92 @@ export interface TaskGroupProperty<T = unknown> extends ComputedProperty<TaskGro
   property: never;
   meta: never;
 
+  /**
+   * Configures the task group to cancel old currently task
+   * instances to make room for a new one to perform. Sets
+   * default maxConcurrency to 1.
+   *
+   * [See the Live Example](/#/docs/examples/route-tasks/1)
+   *
+   * @method restartable
+   * @memberof TaskGroupProperty
+   * @instance
+   */
   restartable(): this;
+
+  /**
+   * Configures the task group to run task instances
+   * one-at-a-time in the order they were `.perform()`ed.
+   * Sets default maxConcurrency to 1.
+   *
+   * @method enqueue
+   * @memberof TaskGroupProperty
+   * @instance
+   */
   enqueue(): this;
+
+  /**
+   * Configures the task group to immediately cancel (i.e.
+   * drop) any task instances performed when the task group
+   * is already running at maxConcurrency. Sets default
+   * maxConcurrency to 1.
+   *
+   * @method drop
+   * @memberof TaskGroupProperty
+   * @instance
+   */
   drop(): this;
+
+  /**
+   * Configures the task group to drop all but the most
+   * recently performed {@linkcode TaskInstance }.
+   *
+   * @method keepLatest
+   * @memberof TaskGroupProperty
+   * @instance
+   */
   keepLatest(): this;
+
+  /**
+   * Sets the maximum number of task instances that are
+   * allowed to run in this task group at the same time.
+   * By default, with no task modifiers applied, this number
+   * is Infinity (there is no limit to the number of tasks
+   * that can run at the same time).
+   * {@linkcode TaskGroupProperty#restartable .restartable()},
+   * {@linkcode TaskGroupProperty#enqueue .enqueue()}, and
+   * {@linkcode TaskGroupProperty#drop .drop()} set the
+   * default maxConcurrency to 1, but you can override this
+   * value to set the maximum number of concurrently running
+   * tasks to a number greater than 1.
+   *
+   * [See the AJAX Throttling example](/#/docs/examples/ajax-throttling)
+   *
+   * The example below uses a task group with `maxConcurrency(3)`
+   * to limit the number of concurrent AJAX requests (for anyone
+   * using tasks in this group) to 3.
+   *
+   * ```js
+   * ajax: taskGroup().maxConcurrency(3),
+   *
+   * doSomeAjax: task(function * (url) {
+   *   return Ember.$.getJSON(url).promise();
+   * }).group('ajax'),
+   *
+   * doSomeAjax: task(function * (url) {
+   *   return Ember.$.getJSON(url).promise();
+   * }).group('ajax'),
+   *
+   * elsewhere() {
+   *   this.get('doSomeAjax').perform("http://www.example.com/json");
+   * },
+   * ```
+   *
+   * @method maxConcurrency
+   * @memberof TaskGroupProperty
+   * @param {Number} n The maximum number of concurrently running tasks
+   * @instance
+   */
   maxConcurrency(n: number): this;
 }
 
