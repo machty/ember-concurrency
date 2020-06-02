@@ -1,8 +1,14 @@
 import ComputedProperty from '@ember/object/computed';
 
-export type TaskGenerator<T = unknown> = Generator<unknown, T, unknown>;
-export type TaskGeneratorFunction<T = unknown, Args extends any[] = []> =
-  (...args: Args) => TaskGenerator<T>;
+export type TaskGenerator<T> = Generator<any, T, unknown>;
+
+export type TaskFunction<T, Args extends any[]> = (...args: Args) => TaskGenerator<T>;
+
+export type TaskFunctionArgs<T extends TaskFunction<any, any[]>> =
+  T extends (...args: infer A) => TaskGenerator<any> ? A : [];
+
+export type TaskFunctionReturnType<T extends TaskFunction<any, any[]>> =
+  T extends (...args: any[]) => TaskGenerator<infer R> ? R : unknown;
 
 /**
  * The `Task` object lives on a host Ember object (e.g.
@@ -13,7 +19,7 @@ export type TaskGeneratorFunction<T = unknown, Args extends any[] = []> =
  * method on this object to cancel all running or enqueued
  * {@linkcode TaskInstance}s.
  */
-export interface Task<T = unknown, Args extends any[] = []> {
+export interface Task<T, Args extends any[]> {
   /**
    * `true` if any current task instances are running.
    */
@@ -125,7 +131,7 @@ export interface Task<T = unknown, Args extends any[] = []> {
  * });
  * ```
  */
-export interface TaskGroup<T = unknown> {
+export interface TaskGroup<T> {
   /**
    * `true` if any current task instances are running.
    */
@@ -218,7 +224,7 @@ export interface TaskGroup<T = unknown> {
  * because concurrency policy enforced by a
  * {@linkcode TaskProperty Task Modifier} canceled the task instance.
  */
-export interface TaskInstance<T = unknown> extends Promise<T> {
+export interface TaskInstance<T> extends Promise<T> {
   /**
    * If this TaskInstance runs to completion by returning a property
    * other than a rejecting promise, this property will be set
@@ -325,7 +331,7 @@ export interface TaskInstance<T = unknown> extends Promise<T> {
  * overview of all the different task modifiers you can use and how
  * they impact automatic cancelation / enqueueing of task instances.
  */
-export interface TaskProperty<T = unknown, Args extends any[] = []> extends ComputedProperty<Task<T, Args>> {
+export interface TaskProperty<T, Args extends any[]> extends ComputedProperty<Task<T, Args>> {
   volatile: never;
   readOnly: never;
   property: never;
@@ -619,9 +625,8 @@ export type Evented = {
  *
  * @param taskFn The generator function backing the task.
  */
-export function task<T = unknown, Args extends any[] = []>(
-  taskFn: TaskGeneratorFunction<T, Args>
-): TaskProperty<T, Args>;
+export function task<T extends TaskFunction<any, any[]>>(taskFn: T):
+  TaskProperty<TaskFunctionReturnType<T>, TaskFunctionArgs<T>>;
 
 /**
  * "Task Groups" provide a means for applying
@@ -644,7 +649,7 @@ export function task<T = unknown, Args extends any[] = []>(
  *
  * @returns {TaskGroupProperty}
  */
-export function taskGroup<T = unknown>(): TaskGroupProperty<T>;
+export function taskGroup<T>(): TaskGroupProperty<T>;
 
 /**
  * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
