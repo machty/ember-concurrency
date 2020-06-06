@@ -115,12 +115,11 @@ export function task(taskFn) {
  * });
  * ```
  *
- * @returns {TaskGroup}
+ * @returns {TaskGroupProperty}
  */
-export function taskGroup(taskFn) {
+export function taskGroup() {
   let tp = _computed(function(_propertyName) {
     return TaskGroup.create({
-      fn: tp.taskFn,
       context: this,
       _origin: this,
       _taskGroupPath: tp._taskGroupPath,
@@ -128,8 +127,6 @@ export function taskGroup(taskFn) {
       _propertyName,
     });
   });
-
-  tp.taskFn = taskFn;
 
   Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
 
