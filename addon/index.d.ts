@@ -1,6 +1,6 @@
 import ComputedProperty from '@ember/object/computed';
 
-export type TaskGenerator<T> = Generator<any, T, unknown>;
+export type TaskGenerator<T> = Generator<any, T, any>;
 
 export type TaskFunction<T, Args extends any[]> = (...args: Args) => TaskGenerator<T>;
 
