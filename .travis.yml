@@ -54,10 +54,17 @@ jobs:
     - env: EMBER_TRY_SCENARIO=ember-lts-2.18
     - env: EMBER_TRY_SCENARIO=ember-lts-3.4
     - env: EMBER_TRY_SCENARIO=ember-lts-3.8
+    - env: EMBER_TRY_SCENARIO=ember-lts-3.12
+    - env: EMBER_TRY_SCENARIO=ember-lts-3.16
     - env: EMBER_TRY_SCENARIO=ember-release
     - env: EMBER_TRY_SCENARIO=ember-beta
     - env: EMBER_TRY_SCENARIO=ember-canary
     - env: EMBER_TRY_SCENARIO=ember-default-with-jquery
+    - env: EMBER_TRY_SCENARIO=typescript-3.6
+      before_script: find tests/types -type f -name '*.ts' | xargs sed -i 's/@ts-expect-error/@ts-ignore/g'
+    - env: EMBER_TRY_SCENARIO=typescript-3.7
+      before_script: find tests/types -type f -name '*.ts' | xargs sed -i 's/@ts-expect-error/@ts-ignore/g'
+    - env: EMBER_TRY_SCENARIO=typescript-3.9
 
 script:
   - node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO

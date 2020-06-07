@@ -22,4 +22,6 @@ export function taskFor(task: AnyTaskFunction | AnyAsyncTaskFunction): AnyTask {
   return task as any;
 }
 
-export type JSON = string | number | boolean | null | JSON[] | { [key: string]: JSON };
+export type JSON = string | number | boolean | null | JSONArray | JSONObject;
+export interface JSONArray extends Array<JSON> {}
+export interface JSONObject extends Record<string, JSON> {}
