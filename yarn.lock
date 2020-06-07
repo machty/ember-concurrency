@@ -7707,6 +7707,11 @@ expand-tilde@^2.0.0, expand-tilde@^2.0.2:
   dependencies:
     homedir-polyfill "^1.0.1"
 
+expect-type@^0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/expect-type/-/expect-type-0.7.4.tgz#588739f5e86e6713df49ae43812570f11225f9d7"
+  integrity sha512-/ykfDxhYq9vz/EgqH8YTeIehvb9YCP2W7qztpEqm84LaA23nOeGe6+H7huxxfncehig2bV0S0Gyhf+ncUwt2Mg==
+
 express@^4.10.7, express@^4.16.2:
   version "4.16.4"
   resolved "https://registry.yarnpkg.com/express/-/express-4.16.4.tgz#fddef61926109e24c515ea97fd2f1bdbf62df12e"
@@ -14523,6 +14528,11 @@ typescript-memoize@^1.0.0-alpha.3:
   integrity sha1-aZpUFfiGaUqNbi5UUbwoo5prwvk=
   dependencies:
     core-js "2.4.1"
+
+typescript@~3.9.5:
+  version "3.9.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.5.tgz#586f0dba300cde8be52dd1ac4f7e1009c1b13f36"
+  integrity sha512-hSAifV3k+i6lEoCJ2k6R2Z/rp/H3+8sdmcn5NrS3/3kE7+RyZXm9aqvxWqjEXHAd8b0pShatpcdMTvEdvAJltQ==
 
 uc.micro@^1.0.1, uc.micro@^1.0.5:
   version "1.0.6"

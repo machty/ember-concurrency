@@ -571,7 +571,7 @@ export type TaskCancelation = Error & { name: 'TaskCancelation' };
 
 export type Yieldable<T = void> = PromiseLike<T>;
 
-export type Evented = {
+type Evented = {
   on(event: string, callback: (...args: any[]) => void): void;
   off(event: string, callback: (...args: any[]) => void): void;
 } | {
@@ -580,6 +580,12 @@ export type Evented = {
   addEventListener(event: string, callback: (...args: any[]) => void): void;
   removeEventListener(event: string, callback: (...args: any[]) => void): void;
 };
+
+type Resolved<T> = T extends PromiseLike<infer R> ? R : T;
+
+type Settlement<T> = { state: 'fulfilled', value: T } | { state: 'rejected', reason: any };
+
+type Settled<T> = Settlement<Resolved<T>>;
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -665,9 +671,10 @@ export function taskGroup<T>(): TaskGroupProperty<T>;
  *
  * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
-export function all<T>(
-  values: Iterable<T | TaskInstance<T> | PromiseLike<T>>
-): Promise<T[]>;
+export function all<T extends readonly unknown[] | readonly [unknown]>(
+  values: T
+): Promise<{ -readonly [K in keyof T]: Resolved<T[K]> }>;
+export function all<T>(values: Iterable<T>): Promise<Array<Resolved<T>>>;
 
 /**
  * A cancelation-aware variant of [RSVP.allSettled](http://emberjs.com/api/classes/RSVP.html#method_allSettled).
@@ -678,10 +685,10 @@ export function all<T>(
  * - if the task that `yield`ed `allSettled()` is canceled, any of the
  *   {@linkcode TaskInstance}s passed in to `allSettled` will be canceled
  */
-export function allSettled<T>(
-  values: Iterable<T | TaskInstance<T> | PromiseLike<T>>
-): Promise<T[]>;
-
+export function allSettled<T extends readonly unknown[] | readonly [unknown]>(
+  values: T
+): Promise<{ -readonly [K in keyof T]: Settled<T[K]> }>;
+export function allSettled<T>(values: Iterable<T>): Promise<Array<Settled<T>>>;
 
 /**
  * Returns true if the object passed to it is a TaskCancelation error.
@@ -714,9 +721,10 @@ export function didCancel(error: unknown): error is TaskCancelation;
  * - if any of the items rejects/cancels, all other cancelable items
  *   (e.g. {@linkcode TaskInstance}s) will be canceled
  */
-export function hash<T>(
-  values: Record<string, T | TaskInstance<T> | PromiseLike<T>>
-): Promise<Record<string, T>>;
+export function hash<T extends Record<string, unknown>>(
+  values: T
+): Promise<{ [K in keyof T]: Resolved<T[K]> }>;
+export function hash<T>(values: Record<string, T>): Promise<Record<string, Resolved<T>>>;
 
 /**
  * A cancelation-aware variant of [Promise.race](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race).
@@ -731,9 +739,8 @@ export function hash<T>(
  *
  * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
-export function race<T>(
-  values: Iterable<T | TaskInstance<T> | PromiseLike<T>>
-): Promise<T>;
+export function race<T>(values: readonly T[]): Promise<Resolved<T>>;
+export function race<T>(values: Iterable<T>): Promise<Resolved<T>>;
 
 /**
  * Yielding `timeout(ms)` will pause a task for the duration
