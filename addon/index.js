@@ -43,9 +43,9 @@ function _computed(fn) {
  * operations.
  *
  * You can also define an
- * <a href="/#/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/encapsulated-task">Encapsulated Task</a>
  * by passing in an object that defined a `perform` generator
- * function property.
+ * method.
  *
  * The following Component defines a task called `myTask` that,
  * when performed, prints a message to the console, sleeps for 1 second,
@@ -71,7 +71,7 @@ function _computed(fn) {
  * but much of a power of tasks lies in proper usage of Task Modifiers
  * that you can apply to a task.
  *
- * @param {function} generatorFunction the generator function backing the task.
+ * @param {function | object} taskFn A generator function backing the task or an encapsulated task descriptor object with a `perform` generator method.
  * @returns {TaskProperty}
  */
 export function task(taskFn) {

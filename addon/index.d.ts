@@ -10,6 +10,16 @@ export type TaskFunctionArgs<T extends TaskFunction<any, any[]>> =
 export type TaskFunctionReturnType<T extends TaskFunction<any, any[]>> =
   T extends (...args: any[]) => TaskGenerator<infer R> ? R : unknown;
 
+export interface EncapsulatedTaskDescriptor<T, Args extends any[]> {
+  perform(...args: Args): TaskGenerator<T>;
+}
+
+export type EncapsulatedTaskDescriptorArgs<T extends EncapsulatedTaskDescriptor<any, any[]>> =
+  T extends { perform(...args: infer A): TaskGenerator<any> } ? A : [];
+
+export type EncapsulatedTaskDescriptorReturnType<T extends EncapsulatedTaskDescriptor<any, any[]>> =
+  T extends { perform(...args: any[]): TaskGenerator<infer R> } ? R : unknown;
+
 /**
  * The `Task` object lives on a host Ember object (e.g.
  * a Component, Route, or Controller). You call the
@@ -601,9 +611,9 @@ type Settled<T> = Settlement<Resolved<T>>;
  * operations.
  *
  * You can also define an
- * <a href="/#/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/encapsulated-task">Encapsulated Task</a>
  * by passing in an object that defined a `perform` generator
- * function property.
+ * method.
  *
  * The following Component defines a task called `myTask` that,
  * when performed, prints a message to the console, sleeps for 1 second,
@@ -629,10 +639,12 @@ type Settled<T> = Settlement<Resolved<T>>;
  * but much of a power of tasks lies in proper usage of Task Modifiers
  * that you can apply to a task.
  *
- * @param taskFn The generator function backing the task.
+ * @param taskFn A generator function backing the task or an encapsulated task descriptor object with a `perform` generator method.
  */
 export function task<T extends TaskFunction<any, any[]>>(taskFn: T):
   TaskProperty<TaskFunctionReturnType<T>, TaskFunctionArgs<T>>;
+export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(taskFn: T):
+  TaskProperty<EncapsulatedTaskDescriptorReturnType<T>, EncapsulatedTaskDescriptorArgs<T>>;
 
 /**
  * "Task Groups" provide a means for applying
