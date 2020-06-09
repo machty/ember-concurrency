@@ -482,7 +482,7 @@ export interface TaskProperty<T, Args extends any[]> extends ComputedProperty<Ta
   debug(): this;
 }
 
-export interface TaskGroupProperty<T = unknown> extends ComputedProperty<TaskGroup<T>> {
+export interface TaskGroupProperty<T> extends ComputedProperty<TaskGroup<T>> {
   volatile: never;
   readOnly: never;
   property: never;
