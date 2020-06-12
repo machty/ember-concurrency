@@ -1,5 +1,4 @@
 import { Task, task, taskGroup } from 'ember-concurrency';
-import { taskFor } from './utils';
 
 declare module 'ember-concurrency' {
   export type AsyncTaskFunction<T, Args extends any[]> = (...args: Args) => Promise<T>;
