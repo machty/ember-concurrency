@@ -897,13 +897,13 @@ export function waitForEvent(object: Evented, eventName: string): Yieldable;
  *   needs to equal before the task will continue running.
  */
 export function waitForProperty<O extends object, K extends keyof O>(
-  object: O, key: K, callbackOrValue: O[K]
-): Yieldable;
-export function waitForProperty<O extends object, K extends keyof O>(
   object: O, key: K, callbackOrValue: (value: O[K]) => boolean
 ): Yieldable;
 export function waitForProperty(
   object: object, key: string, callbackOrValue: (value: unknown) => boolean
+): Yieldable;
+export function waitForProperty<O extends object, K extends keyof O>(
+  object: O, key: K, callbackOrValue: O[K]
 ): Yieldable;
 
 /**

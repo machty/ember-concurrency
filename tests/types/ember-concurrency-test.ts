@@ -1552,17 +1552,11 @@ module('unit tests', () => {
   test('waitForProperty', async () => {
     let obj = { foo: 'foo' };
 
-    // @ts-expect-error (it actually works – bug in expect-type?)
     expect(waitForProperty).toBeCallableWith(obj, 'foo', 'bar');
-    waitForProperty(obj, 'foo', 'bar');
-
-    expect(waitForProperty).toBeCallableWith(obj, 'foo', v => v === 'bar');
-
-    // @ts-expect-error (it actually works – bug in expect-type?)
+    expect(waitForProperty).toBeCallableWith(obj, 'foo', (v: unknown) => v === 'bar');
     expect(waitForProperty).toBeCallableWith(obj, 'foo', (v: string) => v === 'bar');
-    waitForProperty(obj, 'foo', (v: string) => v === 'bar');
 
-    expect(waitForProperty).parameters.toEqualTypeOf<[object, string, (value: unknown) => boolean]>();
+    expect(waitForProperty).parameters.toEqualTypeOf<[object, string | number | symbol, unknown]>();
     expect(waitForProperty).returns.toEqualTypeOf<PromiseLike<void>>();
 
     // @ts-expect-error
