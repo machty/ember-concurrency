@@ -281,6 +281,9 @@ module('unit tests', () => {
 
     let tp!: TaskProperty<string, [boolean, number?]>;
 
+    // We inherited from ComputedProperty to make Ember.get work, but a TP is
+    // not actually a CP so we need to make sure CP methods are not callable
+
     expect(tp.volatile).toBeNever();
     expect(tp.readOnly).toBeNever();
     expect(tp.property).toBeNever();
