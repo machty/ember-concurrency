@@ -98,27 +98,27 @@ module('unit tests', () => {
     let t!: Task<string, [boolean, number?]>;
     type MyTaskInstance = TaskInstance<string>;
 
-    expect<typeof t.isRunning>().toBeBoolean();
-    expect<typeof t.isQueued>().toBeBoolean;
-    expect<typeof t.isIdle>().toBeBoolean();
-    expect<typeof t.state>().toEqualTypeOf<'running' | 'queued' | 'idle'>();
-    expect<typeof t.last>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof t.lastRunning>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof t.lastPerformed>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof t.lastSuccessful>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof t.lastComplete>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof t.lastErrored>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof t.lastCanceled>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof t.lastIncomplete>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof t.performCount>().toBeNumber();
+    expect(t.isRunning).toBeBoolean();
+    expect(t.isQueued).toBeBoolean;
+    expect(t.isIdle).toBeBoolean();
+    expect(t.state).toEqualTypeOf<'running' | 'queued' | 'idle'>();
+    expect(t.last).toEqualTypeOf<MyTaskInstance | null>();
+    expect(t.lastRunning).toEqualTypeOf<MyTaskInstance | null>();
+    expect(t.lastPerformed).toEqualTypeOf<MyTaskInstance | null>();
+    expect(t.lastSuccessful).toEqualTypeOf<MyTaskInstance | null>();
+    expect(t.lastComplete).toEqualTypeOf<MyTaskInstance | null>();
+    expect(t.lastErrored).toEqualTypeOf<MyTaskInstance | null>();
+    expect(t.lastCanceled).toEqualTypeOf<MyTaskInstance | null>();
+    expect(t.lastIncomplete).toEqualTypeOf<MyTaskInstance | null>();
+    expect(t.performCount).toBeNumber();
 
-    expect<typeof t.cancelAll>().toBeCallableWith();
-    expect<typeof t.cancelAll>().toBeCallableWith({});
-    expect<typeof t.cancelAll>().toBeCallableWith({ reason: 'why do you care' });
-    expect<typeof t.cancelAll>().toBeCallableWith({ resetState: true });
-    expect<typeof t.cancelAll>().toBeCallableWith({ reason: 'why do you care', resetState: true });
-    expect<typeof t.cancelAll>().parameters.toEqualTypeOf<[{ reason?: string, resetState?: boolean }?]>();
-    expect<typeof t.cancelAll>().returns.toEqualTypeOf<void>();
+    expect(t.cancelAll).toBeCallableWith();
+    expect(t.cancelAll).toBeCallableWith({});
+    expect(t.cancelAll).toBeCallableWith({ reason: 'why do you care' });
+    expect(t.cancelAll).toBeCallableWith({ resetState: true });
+    expect(t.cancelAll).toBeCallableWith({ reason: 'why do you care', resetState: true });
+    expect(t.cancelAll).parameters.toEqualTypeOf<[{ reason?: string, resetState?: boolean }?]>();
+    expect(t.cancelAll).returns.toEqualTypeOf<void>();
 
     // @ts-expect-error
     t.cancelAll(null);
@@ -126,10 +126,10 @@ module('unit tests', () => {
     // @ts-expect-error
     t.cancelAll({ wow: false });
 
-    expect<typeof t.perform>().toBeCallableWith(true);
-    expect<typeof t.perform>().toBeCallableWith(false, 2);
-    expect<typeof t.perform>().parameters.toEqualTypeOf<[boolean, number?]>();
-    expect<typeof t.perform>().returns.toEqualTypeOf<MyTaskInstance>();
+    expect(t.perform).toBeCallableWith(true);
+    expect(t.perform).toBeCallableWith(false, 2);
+    expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
+    expect(t.perform).returns.toEqualTypeOf<MyTaskInstance>();
 
     // @ts-expect-error
     t.perform();
@@ -154,27 +154,27 @@ module('unit tests', () => {
     let tg!: TaskGroup<string>;
     type MyTaskInstance = TaskInstance<string>;
 
-    expect<typeof tg.isRunning>().toBeBoolean();
-    expect<typeof tg.isQueued>().toBeBoolean;
-    expect<typeof tg.isIdle>().toBeBoolean();
-    expect<typeof tg.state>().toEqualTypeOf<'running' | 'queued' | 'idle'>();
-    expect<typeof tg.last>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof tg.lastRunning>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof tg.lastPerformed>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof tg.lastSuccessful>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof tg.lastComplete>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof tg.lastErrored>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof tg.lastCanceled>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof tg.lastIncomplete>().toEqualTypeOf<MyTaskInstance | null>();
-    expect<typeof tg.performCount>().toBeNumber();
+    expect(tg.isRunning).toBeBoolean();
+    expect(tg.isQueued).toBeBoolean;
+    expect(tg.isIdle).toBeBoolean();
+    expect(tg.state).toEqualTypeOf<'running' | 'queued' | 'idle'>();
+    expect(tg.last).toEqualTypeOf<MyTaskInstance | null>();
+    expect(tg.lastRunning).toEqualTypeOf<MyTaskInstance | null>();
+    expect(tg.lastPerformed).toEqualTypeOf<MyTaskInstance | null>();
+    expect(tg.lastSuccessful).toEqualTypeOf<MyTaskInstance | null>();
+    expect(tg.lastComplete).toEqualTypeOf<MyTaskInstance | null>();
+    expect(tg.lastErrored).toEqualTypeOf<MyTaskInstance | null>();
+    expect(tg.lastCanceled).toEqualTypeOf<MyTaskInstance | null>();
+    expect(tg.lastIncomplete).toEqualTypeOf<MyTaskInstance | null>();
+    expect(tg.performCount).toBeNumber();
 
-    expect<typeof tg.cancelAll>().toBeCallableWith();
-    expect<typeof tg.cancelAll>().toBeCallableWith({});
-    expect<typeof tg.cancelAll>().toBeCallableWith({ reason: 'why do you care' });
-    expect<typeof tg.cancelAll>().toBeCallableWith({ resetState: true });
-    expect<typeof tg.cancelAll>().toBeCallableWith({ reason: 'why do you care', resetState: true });
-    expect<typeof tg.cancelAll>().parameters.toEqualTypeOf<[{ reason?: string, resetState?: boolean }?]>();
-    expect<typeof tg.cancelAll>().returns.toEqualTypeOf<void>();
+    expect(tg.cancelAll).toBeCallableWith();
+    expect(tg.cancelAll).toBeCallableWith({});
+    expect(tg.cancelAll).toBeCallableWith({ reason: 'why do you care' });
+    expect(tg.cancelAll).toBeCallableWith({ resetState: true });
+    expect(tg.cancelAll).toBeCallableWith({ reason: 'why do you care', resetState: true });
+    expect(tg.cancelAll).parameters.toEqualTypeOf<[{ reason?: string, resetState?: boolean }?]>();
+    expect(tg.cancelAll).returns.toEqualTypeOf<void>();
 
     // @ts-expect-error
     tg.cancelAll(null);
@@ -195,39 +195,39 @@ module('unit tests', () => {
 
     let t!: TaskInstance<string>;
 
-    expect<typeof t.value>().toEqualTypeOf<string | null>();
-    expect<typeof t.error>().toBeUnknown();
-    expect<typeof t.isSuccessful>().toBeBoolean();
-    expect<typeof t.isError>().toBeBoolean();
-    expect<typeof t.isCanceled>().toBeBoolean();
-    expect<typeof t.hasStarted>().toBeBoolean();
-    expect<typeof t.isFinished>().toBeBoolean();
-    expect<typeof t.isRunning>().toBeBoolean();
-    expect<typeof t.state>().toEqualTypeOf<'dropped' | 'canceled' | 'finished' | 'running' | 'waiting'>();
-    expect<typeof t.isDropped>().toBeBoolean();
+    expect(t.value).toEqualTypeOf<string | null>();
+    expect(t.error).toBeUnknown();
+    expect(t.isSuccessful).toBeBoolean();
+    expect(t.isError).toBeBoolean();
+    expect(t.isCanceled).toBeBoolean();
+    expect(t.hasStarted).toBeBoolean();
+    expect(t.isFinished).toBeBoolean();
+    expect(t.isRunning).toBeBoolean();
+    expect(t.state).toEqualTypeOf<'dropped' | 'canceled' | 'finished' | 'running' | 'waiting'>();
+    expect(t.isDropped).toBeBoolean();
 
-    expect<typeof t.cancel>().toBeCallableWith();
-    expect<typeof t.cancel>().toBeCallableWith('why do you care');
-    expect<typeof t.cancel>().parameters.toEqualTypeOf<[string?]>();
-    expect<typeof t.cancel>().returns.toEqualTypeOf<void>();
+    expect(t.cancel).toBeCallableWith();
+    expect(t.cancel).toBeCallableWith('why do you care');
+    expect(t.cancel).parameters.toEqualTypeOf<[string?]>();
+    expect(t.cancel).returns.toEqualTypeOf<void>();
 
-    expect<typeof t>().toMatchTypeOf<Promise<string>>();
-    expect<typeof t>().resolves.toBeString();
+    expect(t).toMatchTypeOf<Promise<string>>();
+    expect(t).resolves.toBeString();
 
-    expect<typeof t.then>().toBeCallableWith();
-    expect<typeof t.then>().toBeCallableWith(() => {});
-    expect<typeof t.then>().toBeCallableWith(() => {}, () => {});
-    expect<typeof t.then>().toBeCallableWith(
-      v => expect<typeof v>().toBeString()
+    expect(t.then).toBeCallableWith();
+    expect(t.then).toBeCallableWith(() => {});
+    expect(t.then).toBeCallableWith(() => {}, () => {});
+    expect(t.then).toBeCallableWith(
+      v => expect(v).toBeString()
     );
-    expect<typeof t.then>().toBeCallableWith(
-      v => expect<typeof v>().toBeString(),
-      e => expect<typeof e>().toBeAny()
+    expect(t.then).toBeCallableWith(
+      v => expect(v).toBeString(),
+      e => expect(e).toBeAny()
     );
 
     {
       let chained = t.then(v => v.length);
-      expect<typeof chained>().resolves.toBeNumber();
+      expect(chained).resolves.toBeNumber();
     }
 
     // @ts-expect-error
@@ -236,15 +236,15 @@ module('unit tests', () => {
     // @ts-expect-error
     t.then(() => {}, () => {}, () => {});
 
-    expect<typeof t.catch>().toBeCallableWith();
-    expect<typeof t.catch>().toBeCallableWith(() => {});
-    expect<typeof t.catch>().toBeCallableWith(
-      e => expect<typeof e>().toBeAny()
+    expect(t.catch).toBeCallableWith();
+    expect(t.catch).toBeCallableWith(() => {});
+    expect(t.catch).toBeCallableWith(
+      e => expect(e).toBeAny()
     );
 
     {
       let chained = t.catch(() => 'caught');
-      expect<typeof chained>().resolves.toBeString();
+      expect(chained).resolves.toBeString();
     }
 
     // @ts-expect-error
@@ -253,12 +253,12 @@ module('unit tests', () => {
     // @ts-expect-error
     t.catch(() => {}, () => {});
 
-    expect<typeof t.finally>().toBeCallableWith();
-    expect<typeof t.finally>().toBeCallableWith(() => {});
+    expect(t.finally).toBeCallableWith();
+    expect(t.finally).toBeCallableWith(() => {});
 
     {
       let chained = t.finally(() => 'finally');
-      expect<typeof chained>().resolves.toBeString();
+      expect(chained).resolves.toBeString();
     }
 
     // @ts-expect-error
@@ -266,9 +266,9 @@ module('unit tests', () => {
 
     try {
       let r = await t;
-      expect<typeof r>().toBeString();
+      expect(r).toBeString();
     } catch(e) {
-      expect<typeof e>().toBeAny();
+      expect(e).toBeAny();
     }
   });
 
@@ -281,10 +281,10 @@ module('unit tests', () => {
 
     let tp!: TaskProperty<string, [boolean, number?]>;
 
-    expect<typeof tp.volatile>().toBeNever();
-    expect<typeof tp.readOnly>().toBeNever();
-    expect<typeof tp.property>().toBeNever();
-    expect<typeof tp.meta>().toBeNever();
+    expect(tp.volatile).toBeNever();
+    expect(tp.readOnly).toBeNever();
+    expect(tp.property).toBeNever();
+    expect(tp.meta).toBeNever();
 
     // @ts-expect-error
     tp.volatile();
@@ -298,11 +298,11 @@ module('unit tests', () => {
     // @ts-expect-error
     tp.meta();
 
-    expect<typeof tp.on>().toBeCallableWith();
-    expect<typeof tp.on>().toBeCallableWith('init');
-    expect<typeof tp.on>().toBeCallableWith('init', 'didInsertElement');
-    expect<typeof tp.on>().parameters.toEqualTypeOf<string[]>();
-    expect<typeof tp.on>().returns.toEqualTypeOf<typeof tp>();
+    expect(tp.on).toBeCallableWith();
+    expect(tp.on).toBeCallableWith('init');
+    expect(tp.on).toBeCallableWith('init', 'didInsertElement');
+    expect(tp.on).parameters.toEqualTypeOf<string[]>();
+    expect(tp.on).returns.toEqualTypeOf<typeof tp>();
 
     // @ts-expect-error
     tp.on(false);
@@ -310,11 +310,11 @@ module('unit tests', () => {
     // @ts-expect-error
     tp.on('init', false);
 
-    expect<typeof tp.cancelOn>().toBeCallableWith();
-    expect<typeof tp.cancelOn>().toBeCallableWith('init');
-    expect<typeof tp.cancelOn>().toBeCallableWith('init', 'didInsertElement');
-    expect<typeof tp.cancelOn>().parameters.toEqualTypeOf<string[]>();
-    expect<typeof tp.cancelOn>().returns.toEqualTypeOf<typeof tp>();
+    expect(tp.cancelOn).toBeCallableWith();
+    expect(tp.cancelOn).toBeCallableWith('init');
+    expect(tp.cancelOn).toBeCallableWith('init', 'didInsertElement');
+    expect(tp.cancelOn).parameters.toEqualTypeOf<string[]>();
+    expect(tp.cancelOn).returns.toEqualTypeOf<typeof tp>();
 
     // @ts-expect-error
     tp.cancelOn(false);
@@ -322,37 +322,37 @@ module('unit tests', () => {
     // @ts-expect-error
     tp.cancelOn('init', false);
 
-    expect<typeof tp.restartable>().toBeCallableWith();
-    expect<typeof tp.restartable>().parameters.toEqualTypeOf<[]>();
-    expect<typeof tp.restartable>().returns.toEqualTypeOf<typeof tp>();
+    expect(tp.restartable).toBeCallableWith();
+    expect(tp.restartable).parameters.toEqualTypeOf<[]>();
+    expect(tp.restartable).returns.toEqualTypeOf<typeof tp>();
 
     // @ts-expect-error
     tp.restartable('nope');
 
-    expect<typeof tp.enqueue>().toBeCallableWith();
-    expect<typeof tp.enqueue>().parameters.toEqualTypeOf<[]>();
-    expect<typeof tp.enqueue>().returns.toEqualTypeOf<typeof tp>();
+    expect(tp.enqueue).toBeCallableWith();
+    expect(tp.enqueue).parameters.toEqualTypeOf<[]>();
+    expect(tp.enqueue).returns.toEqualTypeOf<typeof tp>();
 
     // @ts-expect-error
     tp.enqueue('nope');
 
-    expect<typeof tp.drop>().toBeCallableWith();
-    expect<typeof tp.drop>().parameters.toEqualTypeOf<[]>();
-    expect<typeof tp.drop>().returns.toEqualTypeOf<typeof tp>();
+    expect(tp.drop).toBeCallableWith();
+    expect(tp.drop).parameters.toEqualTypeOf<[]>();
+    expect(tp.drop).returns.toEqualTypeOf<typeof tp>();
 
     // @ts-expect-error
     tp.drop('nope');
 
-    expect<typeof tp.keepLatest>().toBeCallableWith();
-    expect<typeof tp.keepLatest>().parameters.toEqualTypeOf<[]>();
-    expect<typeof tp.keepLatest>().returns.toEqualTypeOf<typeof tp>();
+    expect(tp.keepLatest).toBeCallableWith();
+    expect(tp.keepLatest).parameters.toEqualTypeOf<[]>();
+    expect(tp.keepLatest).returns.toEqualTypeOf<typeof tp>();
 
     // @ts-expect-error
     tp.keepLatest('nope');
 
-    expect<typeof tp.maxConcurrency>().toBeCallableWith(5);
-    expect<typeof tp.maxConcurrency>().parameters.toEqualTypeOf<[number]>();
-    expect<typeof tp.maxConcurrency>().returns.toEqualTypeOf<typeof tp>();
+    expect(tp.maxConcurrency).toBeCallableWith(5);
+    expect(tp.maxConcurrency).parameters.toEqualTypeOf<[number]>();
+    expect(tp.maxConcurrency).returns.toEqualTypeOf<typeof tp>();
 
     // @ts-expect-error
     tp.maxConcurrency();
@@ -360,9 +360,9 @@ module('unit tests', () => {
     // @ts-expect-error
     tp.maxConcurrency('nope');
 
-    expect<typeof tp.group>().toBeCallableWith('foo');
-    expect<typeof tp.group>().parameters.toEqualTypeOf<[string]>();
-    expect<typeof tp.group>().returns.toEqualTypeOf<typeof tp>();
+    expect(tp.group).toBeCallableWith('foo');
+    expect(tp.group).parameters.toEqualTypeOf<[string]>();
+    expect(tp.group).returns.toEqualTypeOf<typeof tp>();
 
     // @ts-expect-error
     tp.group();
@@ -370,16 +370,16 @@ module('unit tests', () => {
     // @ts-expect-error
     tp.group(false);
 
-    expect<typeof tp.evented>().toBeCallableWith();
-    expect<typeof tp.evented>().parameters.toEqualTypeOf<[]>();
-    expect<typeof tp.evented>().returns.toEqualTypeOf<typeof tp>();
+    expect(tp.evented).toBeCallableWith();
+    expect(tp.evented).parameters.toEqualTypeOf<[]>();
+    expect(tp.evented).returns.toEqualTypeOf<typeof tp>();
 
     // @ts-expect-error
     tp.evented('nope');
 
-    expect<typeof tp.debug>().toBeCallableWith();
-    expect<typeof tp.debug>().parameters.toEqualTypeOf<[]>();
-    expect<typeof tp.debug>().returns.toEqualTypeOf<typeof tp>();
+    expect(tp.debug).toBeCallableWith();
+    expect(tp.debug).parameters.toEqualTypeOf<[]>();
+    expect(tp.debug).returns.toEqualTypeOf<typeof tp>();
 
     // @ts-expect-error
     tp.debug('nope');
@@ -389,13 +389,13 @@ module('unit tests', () => {
 
       foo() {
         let t = this.get('tp');
-        expect<typeof t>().toEqualTypeOf<Task<string, [boolean, number?]>>();
-        expect<typeof t.last>().toEqualTypeOf<TaskInstance<string> | null>();
-        expect<typeof t.perform>().parameters.toEqualTypeOf<[boolean, number?]>();
+        expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
+        expect(t.last).toEqualTypeOf<TaskInstance<string> | null>();
+        expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
 
         let i = this.get('tp').perform(true);
-        expect<typeof i>().toEqualTypeOf<TaskInstance<string>>();
-        expect<typeof i.value>().toEqualTypeOf<string | null>();
+        expect(i).toEqualTypeOf<TaskInstance<string>>();
+        expect(i.value).toEqualTypeOf<string | null>();
 
         // @ts-expect-error
         this.get('tp').perform();
@@ -412,13 +412,13 @@ module('unit tests', () => {
 
       bar() {
         let t = get(this, 'tp');
-        expect<typeof t>().toEqualTypeOf<Task<string, [boolean, number?]>>();
-        expect<typeof t.last>().toEqualTypeOf<TaskInstance<string> | null>();
-        expect<typeof t.perform>().parameters.toEqualTypeOf<[boolean, number?]>();
+        expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
+        expect(t.last).toEqualTypeOf<TaskInstance<string> | null>();
+        expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
 
         let i = get(this, 'tp').perform(true);
-        expect<typeof i>().toEqualTypeOf<TaskInstance<string>>();
-        expect<typeof i.value>().toEqualTypeOf<string | null>();
+        expect(i).toEqualTypeOf<TaskInstance<string>>();
+        expect(i.value).toEqualTypeOf<string | null>();
 
         // @ts-expect-error
         get(this, 'tp').perform();
@@ -439,12 +439,12 @@ module('unit tests', () => {
 
       let t = o.get('tp');
 
-      expect<typeof t>().toEqualTypeOf<Task<string, [boolean, number?]>>();
-      expect<typeof t.last>().toEqualTypeOf<TaskInstance<string> | null>();
+      expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
+      expect(t.last).toEqualTypeOf<TaskInstance<string> | null>();
 
       let i = o.get('tp').perform(false, 5);
-      expect<typeof i>().toEqualTypeOf<TaskInstance<string>>();
-      expect<typeof i.value>().toEqualTypeOf<string | null>();
+      expect(i).toEqualTypeOf<TaskInstance<string>>();
+      expect(i.value).toEqualTypeOf<string | null>();
 
       // @ts-expect-error
       o.get('tp').perform();
@@ -462,12 +462,12 @@ module('unit tests', () => {
     {
       let t = get(O.create(), 'tp');
 
-      expect<typeof t>().toEqualTypeOf<Task<string, [boolean, number?]>>();
-      expect<typeof t.last>().toEqualTypeOf<TaskInstance<string> | null>();
+      expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
+      expect(t.last).toEqualTypeOf<TaskInstance<string> | null>();
 
       let i = get(O.create(), 'tp').perform(false, 5);
-      expect<typeof i>().toEqualTypeOf<TaskInstance<string>>();
-      expect<typeof i.value>().toEqualTypeOf<string | null>();
+      expect(i).toEqualTypeOf<TaskInstance<string>>();
+      expect(i.value).toEqualTypeOf<string | null>();
 
       // @ts-expect-error
       get(O.create(), 'tp').perform();
@@ -492,10 +492,10 @@ module('unit tests', () => {
 
     let tgp!: TaskGroupProperty<string>;
 
-    expect<typeof tgp.volatile>().toBeNever();
-    expect<typeof tgp.readOnly>().toBeNever();
-    expect<typeof tgp.property>().toBeNever();
-    expect<typeof tgp.meta>().toBeNever();
+    expect(tgp.volatile).toBeNever();
+    expect(tgp.readOnly).toBeNever();
+    expect(tgp.property).toBeNever();
+    expect(tgp.meta).toBeNever();
 
     // @ts-expect-error
     tgp.volatile();
@@ -515,37 +515,37 @@ module('unit tests', () => {
     // @ts-expect-error
     tgp.cancelOn('init');
 
-    expect<typeof tgp.restartable>().toBeCallableWith();
-    expect<typeof tgp.restartable>().parameters.toEqualTypeOf<[]>();
-    expect<typeof tgp.restartable>().returns.toEqualTypeOf<typeof tgp>();
+    expect(tgp.restartable).toBeCallableWith();
+    expect(tgp.restartable).parameters.toEqualTypeOf<[]>();
+    expect(tgp.restartable).returns.toEqualTypeOf<typeof tgp>();
 
     // @ts-expect-error
     tgp.restartable('nope');
 
-    expect<typeof tgp.enqueue>().toBeCallableWith();
-    expect<typeof tgp.enqueue>().parameters.toEqualTypeOf<[]>();
-    expect<typeof tgp.enqueue>().returns.toEqualTypeOf<typeof tgp>();
+    expect(tgp.enqueue).toBeCallableWith();
+    expect(tgp.enqueue).parameters.toEqualTypeOf<[]>();
+    expect(tgp.enqueue).returns.toEqualTypeOf<typeof tgp>();
 
     // @ts-expect-error
     tgp.enqueue('nope');
 
-    expect<typeof tgp.drop>().toBeCallableWith();
-    expect<typeof tgp.drop>().parameters.toEqualTypeOf<[]>();
-    expect<typeof tgp.drop>().returns.toEqualTypeOf<typeof tgp>();
+    expect(tgp.drop).toBeCallableWith();
+    expect(tgp.drop).parameters.toEqualTypeOf<[]>();
+    expect(tgp.drop).returns.toEqualTypeOf<typeof tgp>();
 
     // @ts-expect-error
     tgp.drop('nope');
 
-    expect<typeof tgp.keepLatest>().toBeCallableWith();
-    expect<typeof tgp.keepLatest>().parameters.toEqualTypeOf<[]>();
-    expect<typeof tgp.keepLatest>().returns.toEqualTypeOf<typeof tgp>();
+    expect(tgp.keepLatest).toBeCallableWith();
+    expect(tgp.keepLatest).parameters.toEqualTypeOf<[]>();
+    expect(tgp.keepLatest).returns.toEqualTypeOf<typeof tgp>();
 
     // @ts-expect-error
     tgp.keepLatest('nope');
 
-    expect<typeof tgp.maxConcurrency>().toBeCallableWith(5);
-    expect<typeof tgp.maxConcurrency>().parameters.toEqualTypeOf<[number]>();
-    expect<typeof tgp.maxConcurrency>().returns.toEqualTypeOf<typeof tgp>();
+    expect(tgp.maxConcurrency).toBeCallableWith(5);
+    expect(tgp.maxConcurrency).parameters.toEqualTypeOf<[number]>();
+    expect(tgp.maxConcurrency).returns.toEqualTypeOf<typeof tgp>();
 
     // @ts-expect-error
     tgp.maxConcurrency();
@@ -567,8 +567,8 @@ module('unit tests', () => {
 
       foo() {
         let tg = this.get('tgp');
-        expect<typeof tg>().toEqualTypeOf<TaskGroup<string>>();
-        expect<typeof tg.last>().toEqualTypeOf<TaskInstance<string> | null>();
+        expect(tg).toEqualTypeOf<TaskGroup<string>>();
+        expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
         // @ts-expect-error
         tg.perform();
@@ -579,8 +579,8 @@ module('unit tests', () => {
 
       bar() {
         let tg = get(this, 'tgp');
-        expect<typeof tg>().toEqualTypeOf<TaskGroup<string>>();
-        expect<typeof tg.last>().toEqualTypeOf<TaskInstance<string> | null>();
+        expect(tg).toEqualTypeOf<TaskGroup<string>>();
+        expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
         // @ts-expect-error
         tg.perform();
@@ -595,8 +595,8 @@ module('unit tests', () => {
 
       let tg = o.get('tgp');
 
-      expect<typeof tg>().toEqualTypeOf<TaskGroup<string>>();
-      expect<typeof tg.last>().toEqualTypeOf<TaskInstance<string> | null>();
+      expect(tg).toEqualTypeOf<TaskGroup<string>>();
+      expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
       // @ts-expect-error
       o.get('tgp').perform();
@@ -605,8 +605,8 @@ module('unit tests', () => {
     {
       let tg = get(O.create(), 'tgp');
 
-      expect<typeof tg>().toEqualTypeOf<TaskGroup<string>>();
-      expect<typeof tg.last>().toEqualTypeOf<TaskInstance<string> | null>();
+      expect(tg).toEqualTypeOf<TaskGroup<string>>();
+      expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
       // @ts-expect-error
       get(O.create(), 'tp').perform();
@@ -616,18 +616,18 @@ module('unit tests', () => {
   test('task', function() {
     {
       let tp = task(function * () {});
-      expect<typeof tp>().toEqualTypeOf<TaskProperty<void, []>>();
+      expect(tp).toEqualTypeOf<TaskProperty<void, []>>();
 
       let t = get({ tp }, 'tp');
-      expect<typeof t>().toEqualTypeOf<Task<void, []>>();
-      expect<typeof t.perform>().toBeCallableWith();
-      expect<typeof t.perform>().parameters.toEqualTypeOf<[]>();
-      expect<typeof t.perform>().returns.toEqualTypeOf<TaskInstance<void>>();
+      expect(t).toEqualTypeOf<Task<void, []>>();
+      expect(t.perform).toBeCallableWith();
+      expect(t.perform).parameters.toEqualTypeOf<[]>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<void>>();
 
       let i = get({ tp }, 'tp').perform();
-      expect<typeof i>().toEqualTypeOf<TaskInstance<void>>();
-      expect<typeof i.value>().toEqualTypeOf<void | null>();
-      expect<typeof i>().resolves.toEqualTypeOf<void>();
+      expect(i).toEqualTypeOf<TaskInstance<void>>();
+      expect(i.value).toEqualTypeOf<void | null>();
+      expect(i).resolves.toEqualTypeOf<void>();
 
       // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
@@ -635,18 +635,18 @@ module('unit tests', () => {
 
     {
       let tp = task(function * () { return 'foo' });
-      expect<typeof tp>().toEqualTypeOf<TaskProperty<string, []>>();
+      expect(tp).toEqualTypeOf<TaskProperty<string, []>>();
 
       let t = get({ tp }, 'tp');
-      expect<typeof t>().toEqualTypeOf<Task<string, []>>();
-      expect<typeof t.perform>().toBeCallableWith();
-      expect<typeof t.perform>().parameters.toEqualTypeOf<[]>();
-      expect<typeof t.perform>().returns.toEqualTypeOf<TaskInstance<string>>();
+      expect(t).toEqualTypeOf<Task<string, []>>();
+      expect(t.perform).toBeCallableWith();
+      expect(t.perform).parameters.toEqualTypeOf<[]>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<string>>();
 
       let i = get({ tp }, 'tp').perform();
-      expect<typeof i>().toEqualTypeOf<TaskInstance<string>>();
-      expect<typeof i.value>().toEqualTypeOf<string | null>();
-      expect<typeof i>().resolves.toBeString();
+      expect(i).toEqualTypeOf<TaskInstance<string>>();
+      expect(i.value).toEqualTypeOf<string | null>();
+      expect(i).resolves.toBeString();
 
       // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
@@ -654,19 +654,19 @@ module('unit tests', () => {
 
     {
       let tp = task(function * (foo: boolean, bar?: number) {});
-      expect<typeof tp>().toEqualTypeOf<TaskProperty<void, [boolean, number?]>>();
+      expect(tp).toEqualTypeOf<TaskProperty<void, [boolean, number?]>>();
 
       let t = get({ tp }, 'tp');
-      expect<typeof t>().toEqualTypeOf<Task<void, [boolean, number?]>>();
-      expect<typeof t.perform>().toBeCallableWith(true);
-      expect<typeof t.perform>().toBeCallableWith(false, 5);
-      expect<typeof t.perform>().parameters.toEqualTypeOf<[boolean, number?]>();
-      expect<typeof t.perform>().returns.toEqualTypeOf<TaskInstance<void>>();
+      expect(t).toEqualTypeOf<Task<void, [boolean, number?]>>();
+      expect(t.perform).toBeCallableWith(true);
+      expect(t.perform).toBeCallableWith(false, 5);
+      expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<void>>();
 
       let i = get({ tp }, 'tp').perform(true);
-      expect<typeof i>().toEqualTypeOf<TaskInstance<void>>();
-      expect<typeof i.value>().toEqualTypeOf<void | null>();
-      expect<typeof i>().resolves.toEqualTypeOf<void>();
+      expect(i).toEqualTypeOf<TaskInstance<void>>();
+      expect(i.value).toEqualTypeOf<void | null>();
+      expect(i).resolves.toEqualTypeOf<void>();
 
       // @ts-expect-error
       get({ tp }, 'tp').perform();
@@ -683,19 +683,19 @@ module('unit tests', () => {
 
     {
       let tp = task(function * (foo: boolean, bar?: number) { return 'foo' });
-      expect<typeof tp>().toEqualTypeOf<TaskProperty<string, [boolean, number?]>>();
+      expect(tp).toEqualTypeOf<TaskProperty<string, [boolean, number?]>>();
 
       let t = get({ tp }, 'tp');
-      expect<typeof t>().toEqualTypeOf<Task<string, [boolean, number?]>>();
-      expect<typeof t.perform>().toBeCallableWith(true);
-      expect<typeof t.perform>().toBeCallableWith(false, 5);
-      expect<typeof t.perform>().parameters.toEqualTypeOf<[boolean, number?]>();
-      expect<typeof t.perform>().returns.toEqualTypeOf<TaskInstance<string>>();
+      expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
+      expect(t.perform).toBeCallableWith(true);
+      expect(t.perform).toBeCallableWith(false, 5);
+      expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<string>>();
 
       let i = get({ tp }, 'tp').perform(false, 5);
-      expect<typeof i>().toEqualTypeOf<TaskInstance<string>>();
-      expect<typeof i.value>().toEqualTypeOf<string | null>();
-      expect<typeof i>().resolves.toEqualTypeOf<string>();
+      expect(i).toEqualTypeOf<TaskInstance<string>>();
+      expect(i.value).toEqualTypeOf<string | null>();
+      expect(i).resolves.toEqualTypeOf<string>();
 
       // @ts-expect-error
       get({ tp }, 'tp').perform();
@@ -712,18 +712,18 @@ module('unit tests', () => {
 
     {
       let tp = task({ *perform() {} });
-      expect<typeof tp>().toEqualTypeOf<TaskProperty<void, []>>();
+      expect(tp).toEqualTypeOf<TaskProperty<void, []>>();
 
       let t = get({ tp }, 'tp');
-      expect<typeof t>().toEqualTypeOf<Task<void, []>>();
-      expect<typeof t.perform>().toBeCallableWith();
-      expect<typeof t.perform>().parameters.toEqualTypeOf<[]>();
-      expect<typeof t.perform>().returns.toEqualTypeOf<TaskInstance<void>>();
+      expect(t).toEqualTypeOf<Task<void, []>>();
+      expect(t.perform).toBeCallableWith();
+      expect(t.perform).parameters.toEqualTypeOf<[]>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<void>>();
 
       let i = get({ tp }, 'tp').perform();
-      expect<typeof i>().toEqualTypeOf<TaskInstance<void>>();
-      expect<typeof i.value>().toEqualTypeOf<void | null>();
-      expect<typeof i>().resolves.toEqualTypeOf<void>();
+      expect(i).toEqualTypeOf<TaskInstance<void>>();
+      expect(i.value).toEqualTypeOf<void | null>();
+      expect(i).resolves.toEqualTypeOf<void>();
 
       // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
@@ -731,18 +731,18 @@ module('unit tests', () => {
 
     {
       let tp = task({ *perform() { return 'foo' } });
-      expect<typeof tp>().toEqualTypeOf<TaskProperty<string, []>>();
+      expect(tp).toEqualTypeOf<TaskProperty<string, []>>();
 
       let t = get({ tp }, 'tp');
-      expect<typeof t>().toEqualTypeOf<Task<string, []>>();
-      expect<typeof t.perform>().toBeCallableWith();
-      expect<typeof t.perform>().parameters.toEqualTypeOf<[]>();
-      expect<typeof t.perform>().returns.toEqualTypeOf<TaskInstance<string>>();
+      expect(t).toEqualTypeOf<Task<string, []>>();
+      expect(t.perform).toBeCallableWith();
+      expect(t.perform).parameters.toEqualTypeOf<[]>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<string>>();
 
       let i = get({ tp }, 'tp').perform();
-      expect<typeof i>().toEqualTypeOf<TaskInstance<string>>();
-      expect<typeof i.value>().toEqualTypeOf<string | null>();
-      expect<typeof i>().resolves.toBeString();
+      expect(i).toEqualTypeOf<TaskInstance<string>>();
+      expect(i.value).toEqualTypeOf<string | null>();
+      expect(i).resolves.toBeString();
 
       // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
@@ -750,19 +750,19 @@ module('unit tests', () => {
 
     {
       let tp = task({ *perform(foo: boolean, bar?: number) {} });
-      expect<typeof tp>().toEqualTypeOf<TaskProperty<void, [boolean, number?]>>();
+      expect(tp).toEqualTypeOf<TaskProperty<void, [boolean, number?]>>();
 
       let t = get({ tp }, 'tp');
-      expect<typeof t>().toEqualTypeOf<Task<void, [boolean, number?]>>();
-      expect<typeof t.perform>().toBeCallableWith(true);
-      expect<typeof t.perform>().toBeCallableWith(false, 5);
-      expect<typeof t.perform>().parameters.toEqualTypeOf<[boolean, number?]>();
-      expect<typeof t.perform>().returns.toEqualTypeOf<TaskInstance<void>>();
+      expect(t).toEqualTypeOf<Task<void, [boolean, number?]>>();
+      expect(t.perform).toBeCallableWith(true);
+      expect(t.perform).toBeCallableWith(false, 5);
+      expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<void>>();
 
       let i = get({ tp }, 'tp').perform(true);
-      expect<typeof i>().toEqualTypeOf<TaskInstance<void>>();
-      expect<typeof i.value>().toEqualTypeOf<void | null>();
-      expect<typeof i>().resolves.toEqualTypeOf<void>();
+      expect(i).toEqualTypeOf<TaskInstance<void>>();
+      expect(i.value).toEqualTypeOf<void | null>();
+      expect(i).resolves.toEqualTypeOf<void>();
 
       // @ts-expect-error
       get({ tp }, 'tp').perform();
@@ -779,19 +779,19 @@ module('unit tests', () => {
 
     {
       let tp = task({ *perform(foo: boolean, bar?: number) { return 'foo' } });
-      expect<typeof tp>().toEqualTypeOf<TaskProperty<string, [boolean, number?]>>();
+      expect(tp).toEqualTypeOf<TaskProperty<string, [boolean, number?]>>();
 
       let t = get({ tp }, 'tp');
-      expect<typeof t>().toEqualTypeOf<Task<string, [boolean, number?]>>();
-      expect<typeof t.perform>().toBeCallableWith(true);
-      expect<typeof t.perform>().toBeCallableWith(false, 5);
-      expect<typeof t.perform>().parameters.toEqualTypeOf<[boolean, number?]>();
-      expect<typeof t.perform>().returns.toEqualTypeOf<TaskInstance<string>>();
+      expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
+      expect(t.perform).toBeCallableWith(true);
+      expect(t.perform).toBeCallableWith(false, 5);
+      expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<string>>();
 
       let i = get({ tp }, 'tp').perform(false, 5);
-      expect<typeof i>().toEqualTypeOf<TaskInstance<string>>();
-      expect<typeof i.value>().toEqualTypeOf<string | null>();
-      expect<typeof i>().resolves.toEqualTypeOf<string>();
+      expect(i).toEqualTypeOf<TaskInstance<string>>();
+      expect(i.value).toEqualTypeOf<string | null>();
+      expect(i).resolves.toEqualTypeOf<string>();
 
       // @ts-expect-error
       get({ tp }, 'tp').perform();
@@ -810,26 +810,26 @@ module('unit tests', () => {
   test('taskGroup', () => {
     {
       let tgp = taskGroup();
-      expect<typeof tgp>().toEqualTypeOf<TaskGroupProperty<unknown>>();
+      expect(tgp).toEqualTypeOf<TaskGroupProperty<unknown>>();
 
       let tg = get({ tgp: tgp }, 'tgp');
-      expect<typeof tg>().toEqualTypeOf<TaskGroup<unknown>>();
-      expect<typeof tg.last>().toEqualTypeOf<TaskInstance<unknown> | null>();
+      expect(tg).toEqualTypeOf<TaskGroup<unknown>>();
+      expect(tg.last).toEqualTypeOf<TaskInstance<unknown> | null>();
 
       let value = tg.last!.value;
-      expect<typeof value>().toEqualTypeOf<unknown | null>();
+      expect(value).toEqualTypeOf<unknown | null>();
     }
 
     {
       let tgp = taskGroup<string>();
-      expect<typeof tgp>().toEqualTypeOf<TaskGroupProperty<string>>();
+      expect(tgp).toEqualTypeOf<TaskGroupProperty<string>>();
 
       let tg = get({ tgp: tgp }, 'tgp');
-      expect<typeof tg>().toEqualTypeOf<TaskGroup<string>>();
-      expect<typeof tg.last>().toEqualTypeOf<TaskInstance<string> | null>();
+      expect(tg).toEqualTypeOf<TaskGroup<string>>();
+      expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
       let value = tg.last!.value;
-      expect<typeof value>().toEqualTypeOf<string | null>();
+      expect(value).toEqualTypeOf<string | null>();
     }
   });
 
@@ -860,7 +860,7 @@ module('unit tests', () => {
 
     {
       let result = await all([value]);
-      expect<typeof result[0]>().toBeString();
+      expect(result[0]).toBeString();
 
       // @ts-expect-error
       result[1];
@@ -868,8 +868,8 @@ module('unit tests', () => {
 
     {
       let result = await all([value, task]);
-      expect<typeof result[0]>().toBeString();
-      expect<typeof result[1]>().toBeBoolean();
+      expect(result[0]).toBeString();
+      expect(result[1]).toBeBoolean();
 
       // @ts-expect-error
       result[2];
@@ -877,9 +877,9 @@ module('unit tests', () => {
 
     {
       let result = await all([value, task, thenable]);
-      expect<typeof result[0]>().toBeString();
-      expect<typeof result[1]>().toBeBoolean();
-      expect<typeof result[2]>().toBeNumber();
+      expect(result[0]).toBeString();
+      expect(result[1]).toBeBoolean();
+      expect(result[2]).toBeNumber();
 
       // @ts-expect-error
       result[3];
@@ -887,10 +887,10 @@ module('unit tests', () => {
 
     {
       let result = await all([value, task, thenable, promise]);
-      expect<typeof result[0]>().toBeString();
-      expect<typeof result[1]>().toBeBoolean();
-      expect<typeof result[2]>().toBeNumber();
-      expect<typeof result[3]>().toEqualTypeOf<void>();
+      expect(result[0]).toBeString();
+      expect(result[1]).toBeBoolean();
+      expect(result[2]).toBeNumber();
+      expect(result[3]).toEqualTypeOf<void>();
 
       // @ts-expect-error
       result[4];
@@ -898,11 +898,11 @@ module('unit tests', () => {
 
     {
       let result = await all([value, task, thenable, promise, value]);
-      expect<typeof result[0]>().toBeString();
-      expect<typeof result[1]>().toBeBoolean();
-      expect<typeof result[2]>().toBeNumber();
-      expect<typeof result[3]>().toEqualTypeOf<void>();
-      expect<typeof result[4]>().toBeString();
+      expect(result[0]).toBeString();
+      expect(result[1]).toBeBoolean();
+      expect(result[2]).toBeNumber();
+      expect(result[3]).toEqualTypeOf<void>();
+      expect(result[4]).toBeString();
 
       // @ts-expect-error
       result[5];
@@ -910,12 +910,12 @@ module('unit tests', () => {
 
     {
       let result = await all([value, task, thenable, promise, value, task]);
-      expect<typeof result[0]>().toBeString();
-      expect<typeof result[1]>().toBeBoolean();
-      expect<typeof result[2]>().toBeNumber();
-      expect<typeof result[3]>().toEqualTypeOf<void>();
-      expect<typeof result[4]>().toBeString();
-      expect<typeof result[5]>().toBeBoolean();
+      expect(result[0]).toBeString();
+      expect(result[1]).toBeBoolean();
+      expect(result[2]).toBeNumber();
+      expect(result[3]).toEqualTypeOf<void>();
+      expect(result[4]).toBeString();
+      expect(result[5]).toBeBoolean();
 
       // @ts-expect-error
       result[6];
@@ -923,13 +923,13 @@ module('unit tests', () => {
 
     {
       let result = await all([value, task, thenable, promise, value, task, thenable]);
-      expect<typeof result[0]>().toBeString();
-      expect<typeof result[1]>().toBeBoolean();
-      expect<typeof result[2]>().toBeNumber();
-      expect<typeof result[3]>().toEqualTypeOf<void>();
-      expect<typeof result[4]>().toBeString();
-      expect<typeof result[5]>().toBeBoolean();
-      expect<typeof result[6]>().toBeNumber();
+      expect(result[0]).toBeString();
+      expect(result[1]).toBeBoolean();
+      expect(result[2]).toBeNumber();
+      expect(result[3]).toEqualTypeOf<void>();
+      expect(result[4]).toBeString();
+      expect(result[5]).toBeBoolean();
+      expect(result[6]).toBeNumber();
 
       // @ts-expect-error
       result[7];
@@ -937,14 +937,14 @@ module('unit tests', () => {
 
     {
       let result = await all([value, task, thenable, promise, value, task, thenable, promise]);
-      expect<typeof result[0]>().toBeString();
-      expect<typeof result[1]>().toBeBoolean();
-      expect<typeof result[2]>().toBeNumber();
-      expect<typeof result[3]>().toEqualTypeOf<void>();
-      expect<typeof result[4]>().toBeString();
-      expect<typeof result[5]>().toBeBoolean();
-      expect<typeof result[6]>().toBeNumber();
-      expect<typeof result[7]>().toEqualTypeOf<void>();
+      expect(result[0]).toBeString();
+      expect(result[1]).toBeBoolean();
+      expect(result[2]).toBeNumber();
+      expect(result[3]).toEqualTypeOf<void>();
+      expect(result[4]).toBeString();
+      expect(result[5]).toBeBoolean();
+      expect(result[6]).toBeNumber();
+      expect(result[7]).toEqualTypeOf<void>();
 
       // @ts-expect-error
       result[8];
@@ -952,15 +952,15 @@ module('unit tests', () => {
 
     {
       let result = await all([value, task, thenable, promise, value, task, thenable, promise, value]);
-      expect<typeof result[0]>().toBeString();
-      expect<typeof result[1]>().toBeBoolean();
-      expect<typeof result[2]>().toBeNumber();
-      expect<typeof result[3]>().toEqualTypeOf<void>();
-      expect<typeof result[4]>().toBeString();
-      expect<typeof result[5]>().toBeBoolean();
-      expect<typeof result[6]>().toBeNumber();
-      expect<typeof result[7]>().toEqualTypeOf<void>();
-      expect<typeof result[8]>().toBeString();
+      expect(result[0]).toBeString();
+      expect(result[1]).toBeBoolean();
+      expect(result[2]).toBeNumber();
+      expect(result[3]).toEqualTypeOf<void>();
+      expect(result[4]).toBeString();
+      expect(result[5]).toBeBoolean();
+      expect(result[6]).toBeNumber();
+      expect(result[7]).toEqualTypeOf<void>();
+      expect(result[8]).toBeString();
 
       // @ts-expect-error
       result[9];
@@ -968,16 +968,16 @@ module('unit tests', () => {
 
     {
       let result = await all([value, task, thenable, promise, value, task, thenable, promise, value, task]);
-      expect<typeof result[0]>().toBeString();
-      expect<typeof result[1]>().toBeBoolean();
-      expect<typeof result[2]>().toBeNumber();
-      expect<typeof result[3]>().toEqualTypeOf<void>();
-      expect<typeof result[4]>().toBeString();
-      expect<typeof result[5]>().toBeBoolean();
-      expect<typeof result[6]>().toBeNumber();
-      expect<typeof result[7]>().toEqualTypeOf<void>();
-      expect<typeof result[8]>().toBeString();
-      expect<typeof result[9]>().toBeBoolean();
+      expect(result[0]).toBeString();
+      expect(result[1]).toBeBoolean();
+      expect(result[2]).toBeNumber();
+      expect(result[3]).toEqualTypeOf<void>();
+      expect(result[4]).toBeString();
+      expect(result[5]).toBeBoolean();
+      expect(result[6]).toBeNumber();
+      expect(result[7]).toEqualTypeOf<void>();
+      expect(result[8]).toBeString();
+      expect(result[9]).toBeBoolean();
 
       // @ts-expect-error
       result[10];
@@ -985,17 +985,17 @@ module('unit tests', () => {
 
     {
       let result = await all([value, task, thenable, promise, value, task, thenable, promise, value, task, thenable]);
-      expect<typeof result[0]>().toBeString();
-      expect<typeof result[1]>().toBeBoolean();
-      expect<typeof result[2]>().toBeNumber();
-      expect<typeof result[3]>().toEqualTypeOf<void>();
-      expect<typeof result[4]>().toBeString();
-      expect<typeof result[5]>().toBeBoolean();
-      expect<typeof result[6]>().toBeNumber();
-      expect<typeof result[7]>().toEqualTypeOf<void>();
-      expect<typeof result[8]>().toBeString();
-      expect<typeof result[9]>().toBeBoolean();
-      expect<typeof result[10]>().toBeNumber();
+      expect(result[0]).toBeString();
+      expect(result[1]).toBeBoolean();
+      expect(result[2]).toBeNumber();
+      expect(result[3]).toEqualTypeOf<void>();
+      expect(result[4]).toBeString();
+      expect(result[5]).toBeBoolean();
+      expect(result[6]).toBeNumber();
+      expect(result[7]).toEqualTypeOf<void>();
+      expect(result[8]).toBeString();
+      expect(result[9]).toBeBoolean();
+      expect(result[10]).toBeNumber();
 
       // @ts-expect-error
       result[11];
@@ -1003,18 +1003,18 @@ module('unit tests', () => {
 
     {
       let result = await all([value, task, thenable, promise, value, task, thenable, promise, value, task, thenable, promise]);
-      expect<typeof result[0]>().toBeString();
-      expect<typeof result[1]>().toBeBoolean();
-      expect<typeof result[2]>().toBeNumber();
-      expect<typeof result[3]>().toEqualTypeOf<void>();
-      expect<typeof result[4]>().toBeString();
-      expect<typeof result[5]>().toBeBoolean();
-      expect<typeof result[6]>().toBeNumber();
-      expect<typeof result[7]>().toEqualTypeOf<void>();
-      expect<typeof result[8]>().toBeString();
-      expect<typeof result[9]>().toBeBoolean();
-      expect<typeof result[10]>().toBeNumber();
-      expect<typeof result[11]>().toEqualTypeOf<void>();
+      expect(result[0]).toBeString();
+      expect(result[1]).toBeBoolean();
+      expect(result[2]).toBeNumber();
+      expect(result[3]).toEqualTypeOf<void>();
+      expect(result[4]).toBeString();
+      expect(result[5]).toBeBoolean();
+      expect(result[6]).toBeNumber();
+      expect(result[7]).toEqualTypeOf<void>();
+      expect(result[8]).toBeString();
+      expect(result[9]).toBeBoolean();
+      expect(result[10]).toBeNumber();
+      expect(result[11]).toEqualTypeOf<void>();
 
       // @ts-expect-error
       result[12];
@@ -1050,7 +1050,7 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
 
       // @ts-expect-error
       result[1];
@@ -1058,8 +1058,8 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value, task]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[1]>().toEqualTypeOf<S<boolean>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
+      expect(result[1]).toEqualTypeOf<S<boolean>>();
 
       // @ts-expect-error
       result[2];
@@ -1067,9 +1067,9 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value, task, thenable]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[1]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[2]>().toEqualTypeOf<S<number>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
+      expect(result[1]).toEqualTypeOf<S<boolean>>();
+      expect(result[2]).toEqualTypeOf<S<number>>();
 
       // @ts-expect-error
       result[3];
@@ -1077,10 +1077,10 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value, task, thenable, promise]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[1]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[2]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[3]>().toEqualTypeOf<S<void>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
+      expect(result[1]).toEqualTypeOf<S<boolean>>();
+      expect(result[2]).toEqualTypeOf<S<number>>();
+      expect(result[3]).toEqualTypeOf<S<void>>();
 
       // @ts-expect-error
       result[4];
@@ -1088,11 +1088,11 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value, task, thenable, promise, value]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[1]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[2]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[3]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[4]>().toEqualTypeOf<S<string>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
+      expect(result[1]).toEqualTypeOf<S<boolean>>();
+      expect(result[2]).toEqualTypeOf<S<number>>();
+      expect(result[3]).toEqualTypeOf<S<void>>();
+      expect(result[4]).toEqualTypeOf<S<string>>();
 
       // @ts-expect-error
       result[5];
@@ -1100,12 +1100,12 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value, task, thenable, promise, value, task]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[1]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[2]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[3]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[4]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[5]>().toEqualTypeOf<S<boolean>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
+      expect(result[1]).toEqualTypeOf<S<boolean>>();
+      expect(result[2]).toEqualTypeOf<S<number>>();
+      expect(result[3]).toEqualTypeOf<S<void>>();
+      expect(result[4]).toEqualTypeOf<S<string>>();
+      expect(result[5]).toEqualTypeOf<S<boolean>>();
 
       // @ts-expect-error
       result[6];
@@ -1113,13 +1113,13 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value, task, thenable, promise, value, task, thenable]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[1]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[2]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[3]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[4]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[5]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[6]>().toEqualTypeOf<S<number>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
+      expect(result[1]).toEqualTypeOf<S<boolean>>();
+      expect(result[2]).toEqualTypeOf<S<number>>();
+      expect(result[3]).toEqualTypeOf<S<void>>();
+      expect(result[4]).toEqualTypeOf<S<string>>();
+      expect(result[5]).toEqualTypeOf<S<boolean>>();
+      expect(result[6]).toEqualTypeOf<S<number>>();
 
       // @ts-expect-error
       result[7];
@@ -1127,14 +1127,14 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value, task, thenable, promise, value, task, thenable, promise]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[1]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[2]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[3]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[4]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[5]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[6]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[7]>().toEqualTypeOf<S<void>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
+      expect(result[1]).toEqualTypeOf<S<boolean>>();
+      expect(result[2]).toEqualTypeOf<S<number>>();
+      expect(result[3]).toEqualTypeOf<S<void>>();
+      expect(result[4]).toEqualTypeOf<S<string>>();
+      expect(result[5]).toEqualTypeOf<S<boolean>>();
+      expect(result[6]).toEqualTypeOf<S<number>>();
+      expect(result[7]).toEqualTypeOf<S<void>>();
 
       // @ts-expect-error
       result[8];
@@ -1142,15 +1142,15 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value, task, thenable, promise, value, task, thenable, promise, value]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[1]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[2]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[3]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[4]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[5]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[6]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[7]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[8]>().toEqualTypeOf<S<string>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
+      expect(result[1]).toEqualTypeOf<S<boolean>>();
+      expect(result[2]).toEqualTypeOf<S<number>>();
+      expect(result[3]).toEqualTypeOf<S<void>>();
+      expect(result[4]).toEqualTypeOf<S<string>>();
+      expect(result[5]).toEqualTypeOf<S<boolean>>();
+      expect(result[6]).toEqualTypeOf<S<number>>();
+      expect(result[7]).toEqualTypeOf<S<void>>();
+      expect(result[8]).toEqualTypeOf<S<string>>();
 
       // @ts-expect-error
       result[9];
@@ -1158,16 +1158,16 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value, task, thenable, promise, value, task, thenable, promise, value, task]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[1]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[2]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[3]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[4]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[5]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[6]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[7]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[8]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[9]>().toEqualTypeOf<S<boolean>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
+      expect(result[1]).toEqualTypeOf<S<boolean>>();
+      expect(result[2]).toEqualTypeOf<S<number>>();
+      expect(result[3]).toEqualTypeOf<S<void>>();
+      expect(result[4]).toEqualTypeOf<S<string>>();
+      expect(result[5]).toEqualTypeOf<S<boolean>>();
+      expect(result[6]).toEqualTypeOf<S<number>>();
+      expect(result[7]).toEqualTypeOf<S<void>>();
+      expect(result[8]).toEqualTypeOf<S<string>>();
+      expect(result[9]).toEqualTypeOf<S<boolean>>();
 
       // @ts-expect-error
       result[10];
@@ -1175,17 +1175,17 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value, task, thenable, promise, value, task, thenable, promise, value, task, thenable]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[1]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[2]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[3]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[4]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[5]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[6]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[7]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[8]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[9]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[10]>().toEqualTypeOf<S<number>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
+      expect(result[1]).toEqualTypeOf<S<boolean>>();
+      expect(result[2]).toEqualTypeOf<S<number>>();
+      expect(result[3]).toEqualTypeOf<S<void>>();
+      expect(result[4]).toEqualTypeOf<S<string>>();
+      expect(result[5]).toEqualTypeOf<S<boolean>>();
+      expect(result[6]).toEqualTypeOf<S<number>>();
+      expect(result[7]).toEqualTypeOf<S<void>>();
+      expect(result[8]).toEqualTypeOf<S<string>>();
+      expect(result[9]).toEqualTypeOf<S<boolean>>();
+      expect(result[10]).toEqualTypeOf<S<number>>();
 
       // @ts-expect-error
       result[11];
@@ -1193,18 +1193,18 @@ module('unit tests', () => {
 
     {
       let result = await allSettled([value, task, thenable, promise, value, task, thenable, promise, value, task, thenable, promise]);
-      expect<typeof result[0]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[1]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[2]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[3]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[4]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[5]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[6]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[7]>().toEqualTypeOf<S<void>>();
-      expect<typeof result[8]>().toEqualTypeOf<S<string>>();
-      expect<typeof result[9]>().toEqualTypeOf<S<boolean>>();
-      expect<typeof result[10]>().toEqualTypeOf<S<number>>();
-      expect<typeof result[11]>().toEqualTypeOf<S<void>>();
+      expect(result[0]).toEqualTypeOf<S<string>>();
+      expect(result[1]).toEqualTypeOf<S<boolean>>();
+      expect(result[2]).toEqualTypeOf<S<number>>();
+      expect(result[3]).toEqualTypeOf<S<void>>();
+      expect(result[4]).toEqualTypeOf<S<string>>();
+      expect(result[5]).toEqualTypeOf<S<boolean>>();
+      expect(result[6]).toEqualTypeOf<S<number>>();
+      expect(result[7]).toEqualTypeOf<S<void>>();
+      expect(result[8]).toEqualTypeOf<S<string>>();
+      expect(result[9]).toEqualTypeOf<S<boolean>>();
+      expect(result[10]).toEqualTypeOf<S<number>>();
+      expect(result[11]).toEqualTypeOf<S<void>>();
 
       // @ts-expect-error
       result[12];
@@ -1212,12 +1212,12 @@ module('unit tests', () => {
   });
 
   test('didCancel', async () => {
-    expect<typeof didCancel>().toBeCallableWith(null);
-    expect<typeof didCancel>().toBeCallableWith(undefined);
-    expect<typeof didCancel>().toBeCallableWith({});
-    expect<typeof didCancel>().toBeCallableWith(new Error());
-    expect<typeof didCancel>().parameters.toEqualTypeOf<[unknown]>();
-    expect<typeof didCancel>().returns.toEqualTypeOf<boolean>();
+    expect(didCancel).toBeCallableWith(null);
+    expect(didCancel).toBeCallableWith(undefined);
+    expect(didCancel).toBeCallableWith({});
+    expect(didCancel).toBeCallableWith(new Error());
+    expect(didCancel).parameters.toEqualTypeOf<[unknown]>();
+    expect(didCancel).returns.toEqualTypeOf<boolean>();
 
     // @ts-expect-error
     didCancel();
@@ -1226,12 +1226,12 @@ module('unit tests', () => {
       let t!: TaskInstance<string>;
       await t;
     } catch(e) {
-      expect<typeof e>().toBeAny();
+      expect(e).toBeAny();
 
       if (didCancel(e)) {
-        expect<typeof e>().not.toBeAny();
-        expect<typeof e>().toMatchTypeOf<Error>();
-        expect<typeof e>().toMatchTypeOf<{ name: 'TaskCancelation' }>();
+        expect(e).not.toBeAny();
+        expect(e).toMatchTypeOf<Error>();
+        expect(e).toMatchTypeOf<{ name: 'TaskCancelation' }>();
       }
     }
   });
@@ -1267,7 +1267,7 @@ module('unit tests', () => {
 
     {
       let result = await hash({ value });
-      expect<typeof result.value>().toBeString();
+      expect(result.value).toBeString();
 
       // @ts-expect-error
       result.nope;
@@ -1275,8 +1275,8 @@ module('unit tests', () => {
 
     {
       let result = await hash({ value, task });
-      expect<typeof result.value>().toBeString();
-      expect<typeof result.task>().toBeBoolean();
+      expect(result.value).toBeString();
+      expect(result.task).toBeBoolean();
 
       // @ts-expect-error
       result.nope;
@@ -1284,9 +1284,9 @@ module('unit tests', () => {
 
     {
       let result = await hash({ value, task, thenable });
-      expect<typeof result.value>().toBeString();
-      expect<typeof result.task>().toBeBoolean();
-      expect<typeof result.thenable>().toBeNumber();
+      expect(result.value).toBeString();
+      expect(result.task).toBeBoolean();
+      expect(result.thenable).toBeNumber();
 
       // @ts-expect-error
       result.nope;
@@ -1294,10 +1294,10 @@ module('unit tests', () => {
 
     {
       let result = await hash({ value, task, thenable, promise });
-      expect<typeof result.value>().toBeString();
-      expect<typeof result.task>().toBeBoolean();
-      expect<typeof result.thenable>().toBeNumber();
-      expect<typeof result.promise>().toEqualTypeOf<void>();
+      expect(result.value).toBeString();
+      expect(result.task).toBeBoolean();
+      expect(result.thenable).toBeNumber();
+      expect(result.promise).toEqualTypeOf<void>();
 
       // @ts-expect-error
       result.nope;
@@ -1324,21 +1324,21 @@ module('unit tests', () => {
 
     {
       let result = await race([]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toBeNever();
+      expect(result).not.toBeAny();
+      expect(result).toBeNever();
     }
 
     {
       let result = await race([value]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toBeString();
-      expect<typeof result.length>().toBeNumber();
+      expect(result).not.toBeAny();
+      expect(result).toBeString();
+      expect(result.length).toBeNumber();
     }
 
     {
       let result = await race([value, task]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean>();
 
       // @ts-expect-error
       result.length;
@@ -1346,8 +1346,8 @@ module('unit tests', () => {
 
     {
       let result = await race([value, task, thenable]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean | number>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean | number>();
 
       // @ts-expect-error
       result.length;
@@ -1355,8 +1355,8 @@ module('unit tests', () => {
 
     {
       let result = await race([value, task, thenable, promise]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean | number | void>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean | number | void>();
 
       // @ts-expect-error
       result.length;
@@ -1364,8 +1364,8 @@ module('unit tests', () => {
 
     {
       let result = await race([value, task, thenable, promise]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean | number | void>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean | number | void>();
 
       // @ts-expect-error
       result.length;
@@ -1373,8 +1373,8 @@ module('unit tests', () => {
 
     {
       let result = await race([value, task, thenable, promise, value]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean | number | void>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean | number | void>();
 
       // @ts-expect-error
       result.length;
@@ -1382,8 +1382,8 @@ module('unit tests', () => {
 
     {
       let result = await race([value, task, thenable, promise, value, task]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean | number | void>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean | number | void>();
 
       // @ts-expect-error
       result.length;
@@ -1391,8 +1391,8 @@ module('unit tests', () => {
 
     {
       let result = await race([value, task, thenable, promise, value, task, thenable]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean | number | void>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean | number | void>();
 
       // @ts-expect-error
       result.length;
@@ -1400,8 +1400,8 @@ module('unit tests', () => {
 
     {
       let result = await race([value, task, thenable, promise, value, task, thenable, promise]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean | number | void>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean | number | void>();
 
       // @ts-expect-error
       result.length;
@@ -1409,8 +1409,8 @@ module('unit tests', () => {
 
     {
       let result = await race([value, task, thenable, promise, value, task, thenable, promise, value]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean | number | void>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean | number | void>();
 
       // @ts-expect-error
       result.length;
@@ -1418,8 +1418,8 @@ module('unit tests', () => {
 
     {
       let result = await race([value, task, thenable, promise, value, task, thenable, promise, value, task]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean | number | void>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean | number | void>();
 
       // @ts-expect-error
       result.length;
@@ -1427,8 +1427,8 @@ module('unit tests', () => {
 
     {
       let result = await race([value, task, thenable, promise, value, task, thenable, promise, value, task, thenable]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean | number | void>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean | number | void>();
 
       // @ts-expect-error
       result.length;
@@ -1436,8 +1436,8 @@ module('unit tests', () => {
 
     {
       let result = await race([value, task, thenable, promise, value, task, thenable, promise, value, task, thenable, promise]);
-      expect<typeof result>().not.toBeAny();
-      expect<typeof result>().toEqualTypeOf<string | boolean | number | void>();
+      expect(result).not.toBeAny();
+      expect(result).toEqualTypeOf<string | boolean | number | void>();
 
       // @ts-expect-error
       result.length;
@@ -1445,9 +1445,9 @@ module('unit tests', () => {
   });
 
   test('timeout', async () => {
-    expect<typeof timeout>().toBeCallableWith(500);
-    expect<typeof timeout>().parameters.toEqualTypeOf<[number]>();
-    expect<typeof timeout>().returns.toEqualTypeOf<PromiseLike<void>>();
+    expect(timeout).toBeCallableWith(500);
+    expect(timeout).parameters.toEqualTypeOf<[number]>();
+    expect(timeout).returns.toEqualTypeOf<PromiseLike<void>>();
 
     // @ts-expect-error
     timeout();
@@ -1460,14 +1460,14 @@ module('unit tests', () => {
 
     {
       let result = await timeout(500);
-      expect<typeof result>().toEqualTypeOf<void>();
+      expect(result).toEqualTypeOf<void>();
     }
   });
 
   test('rawTimeout', async () => {
-    expect<typeof rawTimeout>().toBeCallableWith(500);
-    expect<typeof rawTimeout>().parameters.toEqualTypeOf<[number]>();
-    expect<typeof rawTimeout>().returns.toEqualTypeOf<PromiseLike<void>>();
+    expect(rawTimeout).toBeCallableWith(500);
+    expect(rawTimeout).parameters.toEqualTypeOf<[number]>();
+    expect(rawTimeout).returns.toEqualTypeOf<PromiseLike<void>>();
 
     // @ts-expect-error
     rawTimeout();
@@ -1480,14 +1480,14 @@ module('unit tests', () => {
 
     {
       let result = await rawTimeout(500);
-      expect<typeof result>().toEqualTypeOf<void>();
+      expect(result).toEqualTypeOf<void>();
     }
   });
 
   test('waitForQueue', async () => {
-    expect<typeof waitForQueue>().toBeCallableWith('afterRender');
-    expect<typeof waitForQueue>().parameters.toEqualTypeOf<[string]>();
-    expect<typeof waitForQueue>().returns.toEqualTypeOf<PromiseLike<void>>();
+    expect(waitForQueue).toBeCallableWith('afterRender');
+    expect(waitForQueue).parameters.toEqualTypeOf<[string]>();
+    expect(waitForQueue).returns.toEqualTypeOf<PromiseLike<void>>();
 
     // @ts-expect-error
     waitForQueue();
@@ -1500,7 +1500,7 @@ module('unit tests', () => {
 
     {
       let result = await waitForQueue('afterRender');
-      expect<typeof result>().toEqualTypeOf<void>();
+      expect(result).toEqualTypeOf<void>();
     }
   });
 
@@ -1515,24 +1515,24 @@ module('unit tests', () => {
       removeEventListener(event: string, callback: (...args: any[]) => void): void;
     };
 
-    expect<typeof waitForEvent>().toBeCallableWith({
+    expect(waitForEvent).toBeCallableWith({
       on(event: string, callback: Function): void {},
       off(event: string, callback: Function): void {}
     }, 'foo');
-    expect<typeof waitForEvent>().toBeCallableWith({
+    expect(waitForEvent).toBeCallableWith({
       one(event: string, callback: Function): void {}
     }, 'foo');
-    expect<typeof waitForEvent>().toBeCallableWith(
+    expect(waitForEvent).toBeCallableWith(
       EmberObject.extend(Evented).create(),
       'foo'
     );
-    expect<typeof waitForEvent>().toBeCallableWith({
+    expect(waitForEvent).toBeCallableWith({
       addEventListener(event: string, callback: Function): void {},
       removeEventListener(event: string, callback: Function): void {}
     }, 'foo');
-    expect<typeof waitForEvent>().toBeCallableWith(document.body, 'click');
-    expect<typeof waitForEvent>().parameters.toEqualTypeOf<[Evented, string]>();
-    expect<typeof waitForEvent>().returns.toEqualTypeOf<PromiseLike<void>>();
+    expect(waitForEvent).toBeCallableWith(document.body, 'click');
+    expect(waitForEvent).parameters.toEqualTypeOf<[Evented, string]>();
+    expect(waitForEvent).returns.toEqualTypeOf<PromiseLike<void>>();
 
     // @ts-expect-error
     waitForEvent();
@@ -1545,7 +1545,7 @@ module('unit tests', () => {
 
     {
       let result = await waitForEvent(document.body, 'click');
-      expect<typeof result>().toEqualTypeOf<void>();
+      expect(result).toEqualTypeOf<void>();
     }
   });
 
@@ -1553,17 +1553,17 @@ module('unit tests', () => {
     let obj = { foo: 'foo' };
 
     // @ts-expect-error (it actually works – bug in expect-type?)
-    expect<typeof waitForProperty>().toBeCallableWith(obj, 'foo', 'bar');
+    expect(waitForProperty).toBeCallableWith(obj, 'foo', 'bar');
     waitForProperty(obj, 'foo', 'bar');
 
-    expect<typeof waitForProperty>().toBeCallableWith(obj, 'foo', v => v === 'bar');
+    expect(waitForProperty).toBeCallableWith(obj, 'foo', v => v === 'bar');
 
     // @ts-expect-error (it actually works – bug in expect-type?)
-    expect<typeof waitForProperty>().toBeCallableWith(obj, 'foo', (v: string) => v === 'bar');
+    expect(waitForProperty).toBeCallableWith(obj, 'foo', (v: string) => v === 'bar');
     waitForProperty(obj, 'foo', (v: string) => v === 'bar');
 
-    expect<typeof waitForProperty>().parameters.toEqualTypeOf<[object, string, (value: unknown) => boolean]>();
-    expect<typeof waitForProperty>().returns.toEqualTypeOf<PromiseLike<void>>();
+    expect(waitForProperty).parameters.toEqualTypeOf<[object, string, (value: unknown) => boolean]>();
+    expect(waitForProperty).returns.toEqualTypeOf<PromiseLike<void>>();
 
     // @ts-expect-error
     waitForProperty();
@@ -1576,30 +1576,30 @@ module('unit tests', () => {
 
     {
       let result = await waitForProperty(obj, 'foo', 'bar');
-      expect<typeof result>().toEqualTypeOf<void>();
+      expect(result).toEqualTypeOf<void>();
     }
 
     {
       let result = await waitForProperty(obj, 'foo', v => {
-        expect<typeof v>().toBeString();
+        expect(v).toBeString();
         return false;
       });
 
-      expect<typeof result>().toEqualTypeOf<void>();
+      expect(result).toEqualTypeOf<void>();
     }
   });
 
   test('forever', async () => {
-    expect<typeof forever>().toBeCallableWith();
-    expect<typeof forever>().parameters.toEqualTypeOf<[]>();
-    expect<typeof forever>().returns.toEqualTypeOf<PromiseLike<never>>();
+    expect(forever).toBeCallableWith();
+    expect(forever).parameters.toEqualTypeOf<[]>();
+    expect(forever).returns.toEqualTypeOf<PromiseLike<never>>();
 
     // @ts-expect-error
     forever('nope');
 
     {
       let result = await forever();
-      expect<typeof result>().toBeNever();
+      expect(result).toBeNever();
     }
   });
 });
@@ -1615,13 +1615,13 @@ module('integration tests', () => {
         }
 
         let fetchPromise = fetch('/api/data.json');
-        expect<typeof fetchPromise>().resolves.toEqualTypeOf<Response>();
+        expect(fetchPromise).resolves.toEqualTypeOf<Response>();
 
         let response: Response = yield fetchPromise;
-        expect<typeof response>().toEqualTypeOf<Response>();
+        expect(response).toEqualTypeOf<Response>();
 
         let safeResponse: Resolved<typeof fetchPromise> = yield fetchPromise;
-        expect<typeof safeResponse>().toEqualTypeOf<Response>();
+        expect(safeResponse).toEqualTypeOf<Response>();
 
         return 'wow';
       }).restartable(),
@@ -1629,28 +1629,28 @@ module('integration tests', () => {
       async performMyTask() {
         let myTask = this.get('myTask');
 
-        expect<typeof myTask>().not.toBeAny();
-        expect<typeof myTask>().toEqualTypeOf<Task<string, [boolean, number?]>>();
-        expect<typeof myTask.isRunning>().toBeBoolean();
-        expect<typeof myTask.last>().toEqualTypeOf<TaskInstance<string> | null>();
-        expect<typeof myTask.perform>().toBeCallableWith(true);
-        expect<typeof myTask.perform>().toBeCallableWith(false, 500);
-        expect<typeof myTask.perform>().parameters.toEqualTypeOf<[boolean, number?]>();
-        expect<typeof myTask.perform>().returns.toEqualTypeOf<TaskInstance<string>>();
+        expect(myTask).not.toBeAny();
+        expect(myTask).toEqualTypeOf<Task<string, [boolean, number?]>>();
+        expect(myTask.isRunning).toBeBoolean();
+        expect(myTask.last).toEqualTypeOf<TaskInstance<string> | null>();
+        expect(myTask.perform).toBeCallableWith(true);
+        expect(myTask.perform).toBeCallableWith(false, 500);
+        expect(myTask.perform).parameters.toEqualTypeOf<[boolean, number?]>();
+        expect(myTask.perform).returns.toEqualTypeOf<TaskInstance<string>>();
 
         let myTaskInstance = myTask.perform(true);
 
-        expect<typeof myTaskInstance>().not.toBeAny();
-        expect<typeof myTaskInstance>().toEqualTypeOf<TaskInstance<string>>();
-        expect<typeof myTaskInstance.isRunning>().toBeBoolean();
-        expect<typeof myTaskInstance.value>().toEqualTypeOf<string | null>();
-        expect<typeof myTaskInstance>().toMatchTypeOf<Promise<string>>();
+        expect(myTaskInstance).not.toBeAny();
+        expect(myTaskInstance).toEqualTypeOf<TaskInstance<string>>();
+        expect(myTaskInstance.isRunning).toBeBoolean();
+        expect(myTaskInstance.value).toEqualTypeOf<string | null>();
+        expect(myTaskInstance).toMatchTypeOf<Promise<string>>();
 
         let result = await myTaskInstance;
 
-        expect<typeof result>().not.toBeAny();
-        expect<typeof result>().toBeString();
-        expect<typeof result.length>().toBeNumber();
+        expect(result).not.toBeAny();
+        expect(result).toBeString();
+        expect(result.length).toBeNumber();
 
         // @ts-expect-error
         myTask.perform('nope');
@@ -1672,22 +1672,22 @@ module('integration tests', () => {
         *perform(immediately: boolean, ms: number = 500) {
           let self = this;
 
-          expect<typeof self>().not.toBeAny();
-          expect<typeof self.foo>().not.toBeAny();
-          expect<typeof self.foo>().toEqualTypeOf<string>();
+          expect(self).not.toBeAny();
+          expect(self.foo).not.toBeAny();
+          expect(self.foo).toEqualTypeOf<string>();
 
           if (!immediately) {
             yield timeout(ms);
           }
 
           let fetchPromise = fetch('/api/data.json');
-          expect<typeof fetchPromise>().resolves.toEqualTypeOf<Response>();
+          expect(fetchPromise).resolves.toEqualTypeOf<Response>();
 
           let response: Response = yield fetchPromise;
-          expect<typeof response>().toEqualTypeOf<Response>();
+          expect(response).toEqualTypeOf<Response>();
 
           let safeResponse: Resolved<typeof fetchPromise> = yield fetchPromise;
-          expect<typeof safeResponse>().toEqualTypeOf<Response>();
+          expect(safeResponse).toEqualTypeOf<Response>();
 
           return 'wow';
         }
@@ -1696,28 +1696,28 @@ module('integration tests', () => {
       async performMyTask() {
         let myTask = this.get('myTask');
 
-        expect<typeof myTask>().not.toBeAny();
-        expect<typeof myTask>().toEqualTypeOf<Task<string, [boolean, number?]>>();
-        expect<typeof myTask.isRunning>().toBeBoolean();
-        expect<typeof myTask.last>().toEqualTypeOf<TaskInstance<string> | null>();
-        expect<typeof myTask.perform>().toBeCallableWith(true);
-        expect<typeof myTask.perform>().toBeCallableWith(false, 500);
-        expect<typeof myTask.perform>().parameters.toEqualTypeOf<[boolean, number?]>();
-        expect<typeof myTask.perform>().returns.toEqualTypeOf<TaskInstance<string>>();
+        expect(myTask).not.toBeAny();
+        expect(myTask).toEqualTypeOf<Task<string, [boolean, number?]>>();
+        expect(myTask.isRunning).toBeBoolean();
+        expect(myTask.last).toEqualTypeOf<TaskInstance<string> | null>();
+        expect(myTask.perform).toBeCallableWith(true);
+        expect(myTask.perform).toBeCallableWith(false, 500);
+        expect(myTask.perform).parameters.toEqualTypeOf<[boolean, number?]>();
+        expect(myTask.perform).returns.toEqualTypeOf<TaskInstance<string>>();
 
         let myTaskInstance = myTask.perform(true);
 
-        expect<typeof myTaskInstance>().not.toBeAny();
-        expect<typeof myTaskInstance>().toEqualTypeOf<TaskInstance<string>>();
-        expect<typeof myTaskInstance.isRunning>().toBeBoolean();
-        expect<typeof myTaskInstance.value>().toEqualTypeOf<string | null>();
-        expect<typeof myTaskInstance>().toMatchTypeOf<Promise<string>>();
+        expect(myTaskInstance).not.toBeAny();
+        expect(myTaskInstance).toEqualTypeOf<TaskInstance<string>>();
+        expect(myTaskInstance.isRunning).toBeBoolean();
+        expect(myTaskInstance.value).toEqualTypeOf<string | null>();
+        expect(myTaskInstance).toMatchTypeOf<Promise<string>>();
 
         let result = await myTaskInstance;
 
-        expect<typeof result>().not.toBeAny();
-        expect<typeof result>().toBeString();
-        expect<typeof result.length>().toBeNumber();
+        expect(result).not.toBeAny();
+        expect(result).toBeString();
+        expect(result.length).toBeNumber();
 
         // @ts-expect-error
         myTask.perform('nope');
@@ -1746,27 +1746,27 @@ module('integration tests', () => {
         // does pass.
 
         // @ts-expect-error
-        expect<typeof self>().not.toBeAny();
+        expect(self).not.toBeAny();
 
         // @ts-expect-error:
-        expect<typeof self>().toBeAny();
+        expect(self).toBeAny();
 
         // this is probably
-        expect<typeof self.foo>().not.toBeAny();
-        expect<typeof self.foo>().toBeString();
+        expect(self.foo).not.toBeAny();
+        expect(self.foo).toBeString();
 
         if (!immediately) {
           yield timeout(ms);
         }
 
         let fetchPromise = fetch('/api/data.json');
-        expect<typeof fetchPromise>().resolves.toEqualTypeOf<Response>();
+        expect(fetchPromise).resolves.toEqualTypeOf<Response>();
 
         let response: Response = yield fetchPromise;
-        expect<typeof response>().toEqualTypeOf<Response>();
+        expect(response).toEqualTypeOf<Response>();
 
         let safeResponse: Resolved<typeof fetchPromise> = yield fetchPromise;
-        expect<typeof safeResponse>().toEqualTypeOf<Response>();
+        expect(safeResponse).toEqualTypeOf<Response>();
 
         return 'wow';
       }
@@ -1774,28 +1774,28 @@ module('integration tests', () => {
       async performMyTask() {
         let myTask = taskFor(this.myTask);
 
-        expect<typeof myTask>().not.toBeAny();
-        expect<typeof myTask>().toEqualTypeOf<Task<string, [boolean, number?]>>();
-        expect<typeof myTask.isRunning>().toBeBoolean();
-        expect<typeof myTask.last>().toEqualTypeOf<TaskInstance<string> | null>();
-        expect<typeof myTask.perform>().toBeCallableWith(true);
-        expect<typeof myTask.perform>().toBeCallableWith(false, 500);
-        expect<typeof myTask.perform>().parameters.toEqualTypeOf<[boolean, number?]>();
-        expect<typeof myTask.perform>().returns.toEqualTypeOf<TaskInstance<string>>();
+        expect(myTask).not.toBeAny();
+        expect(myTask).toEqualTypeOf<Task<string, [boolean, number?]>>();
+        expect(myTask.isRunning).toBeBoolean();
+        expect(myTask.last).toEqualTypeOf<TaskInstance<string> | null>();
+        expect(myTask.perform).toBeCallableWith(true);
+        expect(myTask.perform).toBeCallableWith(false, 500);
+        expect(myTask.perform).parameters.toEqualTypeOf<[boolean, number?]>();
+        expect(myTask.perform).returns.toEqualTypeOf<TaskInstance<string>>();
 
         let myTaskInstance = myTask.perform(true);
 
-        expect<typeof myTaskInstance>().not.toBeAny();
-        expect<typeof myTaskInstance>().toEqualTypeOf<TaskInstance<string>>();
-        expect<typeof myTaskInstance.isRunning>().toBeBoolean();
-        expect<typeof myTaskInstance.value>().toEqualTypeOf<string | null>();
-        expect<typeof myTaskInstance>().toMatchTypeOf<Promise<string>>();
+        expect(myTaskInstance).not.toBeAny();
+        expect(myTaskInstance).toEqualTypeOf<TaskInstance<string>>();
+        expect(myTaskInstance.isRunning).toBeBoolean();
+        expect(myTaskInstance.value).toEqualTypeOf<string | null>();
+        expect(myTaskInstance).toMatchTypeOf<Promise<string>>();
 
         let result = await myTaskInstance;
 
-        expect<typeof result>().not.toBeAny();
-        expect<typeof result>().toBeString();
-        expect<typeof result.length>().toBeNumber();
+        expect(result).not.toBeAny();
+        expect(result).toBeString();
+        expect(result.length).toBeNumber();
 
         // @ts-expect-error
         myTask.perform('nope');
@@ -1819,9 +1819,9 @@ module('integration tests', () => {
         *perform(immediately: boolean, ms: number = 500): TaskGenerator<string> {
           let self = this;
 
-          expect<typeof self>().not.toBeAny();
-          expect<typeof self.bar>().not.toBeAny();
-          expect<typeof self.bar>().toBeBoolean();
+          expect(self).not.toBeAny();
+          expect(self.bar).not.toBeAny();
+          expect(self.bar).toBeBoolean();
 
           // @ts-expect-error
           self.foo;
@@ -1831,13 +1831,13 @@ module('integration tests', () => {
           }
 
           let fetchPromise = fetch('/api/data.json');
-          expect<typeof fetchPromise>().resolves.toEqualTypeOf<Response>();
+          expect(fetchPromise).resolves.toEqualTypeOf<Response>();
 
           let response: Response = yield fetchPromise;
-          expect<typeof response>().toEqualTypeOf<Response>();
+          expect(response).toEqualTypeOf<Response>();
 
           let safeResponse: Resolved<typeof fetchPromise> = yield fetchPromise;
-          expect<typeof safeResponse>().toEqualTypeOf<Response>();
+          expect(safeResponse).toEqualTypeOf<Response>();
 
           return 'wow';
         }
@@ -1846,28 +1846,28 @@ module('integration tests', () => {
       async performMyTask() {
         let myTask = taskFor(this.myTask);
 
-        expect<typeof myTask>().not.toBeAny();
-        expect<typeof myTask>().toEqualTypeOf<Task<string, [boolean, number?]>>();
-        expect<typeof myTask.isRunning>().toBeBoolean();
-        expect<typeof myTask.last>().toEqualTypeOf<TaskInstance<string> | null>();
-        expect<typeof myTask.perform>().toBeCallableWith(true);
-        expect<typeof myTask.perform>().toBeCallableWith(false, 500);
-        expect<typeof myTask.perform>().parameters.toEqualTypeOf<[boolean, number?]>();
-        expect<typeof myTask.perform>().returns.toEqualTypeOf<TaskInstance<string>>();
+        expect(myTask).not.toBeAny();
+        expect(myTask).toEqualTypeOf<Task<string, [boolean, number?]>>();
+        expect(myTask.isRunning).toBeBoolean();
+        expect(myTask.last).toEqualTypeOf<TaskInstance<string> | null>();
+        expect(myTask.perform).toBeCallableWith(true);
+        expect(myTask.perform).toBeCallableWith(false, 500);
+        expect(myTask.perform).parameters.toEqualTypeOf<[boolean, number?]>();
+        expect(myTask.perform).returns.toEqualTypeOf<TaskInstance<string>>();
 
         let myTaskInstance = myTask.perform(true);
 
-        expect<typeof myTaskInstance>().not.toBeAny();
-        expect<typeof myTaskInstance>().toEqualTypeOf<TaskInstance<string>>();
-        expect<typeof myTaskInstance.isRunning>().toBeBoolean();
-        expect<typeof myTaskInstance.value>().toEqualTypeOf<string | null>();
-        expect<typeof myTaskInstance>().toMatchTypeOf<Promise<string>>();
+        expect(myTaskInstance).not.toBeAny();
+        expect(myTaskInstance).toEqualTypeOf<TaskInstance<string>>();
+        expect(myTaskInstance.isRunning).toBeBoolean();
+        expect(myTaskInstance.value).toEqualTypeOf<string | null>();
+        expect(myTaskInstance).toMatchTypeOf<Promise<string>>();
 
         let result = await myTaskInstance;
 
-        expect<typeof result>().not.toBeAny();
-        expect<typeof result>().toBeString();
-        expect<typeof result.length>().toBeNumber();
+        expect(result).not.toBeAny();
+        expect(result).toBeString();
+        expect(result.length).toBeNumber();
 
         // @ts-expect-error
         myTask.perform('nope');
