@@ -1667,11 +1667,9 @@ module('integration tests', () => {
         foo: 'foo',
 
         *perform(immediately: boolean, ms: number = 500) {
-          let self = this;
-
-          expect(self).not.toBeAny();
-          expect(self.foo).not.toBeAny();
-          expect(self.foo).toEqualTypeOf<string>();
+          expect(this).not.toBeAny();
+          expect(this.foo).not.toBeAny();
+          expect(this.foo).toEqualTypeOf<string>();
 
           if (!immediately) {
             yield timeout(ms);
@@ -1733,24 +1731,22 @@ module('integration tests', () => {
       declare foo: string;
 
       @restartableTask *myTask(immediately: boolean, ms: number = 500): TaskGenerator<string> {
-        let self = this;
-
         // We want to assert `this` is not implicitly `any`, but due `this`
         // being a weird internal type in here, neither of the following
         // assertions would pass here. But the fact that the second assertion
         // errors is a pretty good indication that it is in fact *not* `any`.
-        // In any case, asserting on `self.foo` is a more useful test, which
+        // In any case, asserting on `this.foo` is a more useful test, which
         // does pass.
 
         // @ts-expect-error
-        expect(self).not.toBeAny();
+        expect(this).not.toBeAny();
 
         // @ts-expect-error:
-        expect(self).toBeAny();
+        expect(this).toBeAny();
 
-        // this is probably
-        expect(self.foo).not.toBeAny();
-        expect(self.foo).toBeString();
+        // this is probably what we ultimately cares about
+        expect(this.foo).not.toBeAny();
+        expect(this.foo).toBeString();
 
         if (!immediately) {
           yield timeout(ms);
@@ -1814,14 +1810,12 @@ module('integration tests', () => {
         bar: true,
 
         *perform(immediately: boolean, ms: number = 500): TaskGenerator<string> {
-          let self = this;
-
-          expect(self).not.toBeAny();
-          expect(self.bar).not.toBeAny();
-          expect(self.bar).toBeBoolean();
+          expect(this).not.toBeAny();
+          expect(this.bar).not.toBeAny();
+          expect(this.bar).toBeBoolean();
 
           // @ts-expect-error
-          self.foo;
+          this.foo;
 
           if (!immediately) {
             yield timeout(ms);
