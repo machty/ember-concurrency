@@ -1,5 +1,16 @@
 # Changelog
 
+### 1.2.0
+  - Introduce official TypeScript definitions targetting the last 3 versions of
+    TypeScript. A big, big thank you to @chancancode for this heroic effort!
+    Also, a thank you to all others before who worked on previous iterations of
+    typing experiments for ember-concurrency and provided feedback. **If you were
+    using one of the community-provided solutions or other custom type definitions,
+    you will likely need to remove those and refactor to adhere to the new official
+    types. (#357)
+
+    For more information about using TypeScript with ember-concurrency, please see the new [docs page](https://ember-concurrency.com/docs/typescript)
+
 ### 1.1.7
   - Fix waitForProperty on non-EmberObject hosts (#352. Fixes #292. Thanks @andrewfan for the find!)
 
