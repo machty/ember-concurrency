@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "noEmit": true,
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "ember-concurrency": ["./addon/index.d.ts"]
+    }
+  },
+  "exclude":[
+    "node_modules",
+    "node_modules/ember-concurrency-decorators/types/ember-concurrency.d.ts",
+    "tmp",
+    "vendor",
+    ".git",
+    "dist"
+  ]
+}
