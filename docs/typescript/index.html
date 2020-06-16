@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>ember-concurrency</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%2C%22_JQUERY_INTEGRATION%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%221.2.0%2B93249185%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
+<!-- EMBER_CLI_FASTBOOT_TITLE -->
+
+    <link integrity="" rel="stylesheet" href="/assets/vendor-e754b247f0b14ad5fde0f302404dd7cb.css">
+    <link integrity="" rel="stylesheet" href="/assets/dummy-640694e3930703a2e7f6ed809d9835b0.css">
+    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+    
+  </head>
+  <body>
+    <script type="x/boundary" id="fastboot-body-start"></script><div class="ember-view" id="ember802"><div class="container navbar">
+  <div class="row">
+    <div class="ten columns">
+      <h3 style="float:left;">
+        ember-concurrency
+
+        <span style="font-size: 0.5em;">
+          (v 1.2.0)
+        </span>
+      </h3>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="/api">API</a>
+      </div>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="https://github.com/machty/ember-concurrency" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="docs row">
+    <div class="three columns">
+      <div class="side-menu">
+            <div class="toc-entry">
+                <a href="/docs/introduction" id="ember803" class="ember-view">Home</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/installation" id="ember804" class="ember-view">Installation</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Introduction
+            </div>
+            <div class="toc-entry">
+                <a href="/docs/tutorial" id="ember805" class="ember-view">Writing Code Without Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/tutorial/discussion" id="ember806" class="ember-view">Post-Mortem</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/tutorial/refactor" id="ember807" class="ember-view">Refactoring With Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Reference
+            </div>
+            <div class="toc-entry">
+                <a href="/docs/task-function-syntax" id="ember808" class="ember-view">Task Function Syntax</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/task-concurrency" id="ember809" class="ember-view">Managing Task Concurrency</a>
+            </div>
+
+
+                <div class="toc-entry toc-subentry">
+                  <a href="/docs/task-concurrency-advanced" id="ember810" class="ember-view">Advanced</a>
+                </div>
+            <div class="toc-entry">
+                <a href="/docs/cancelation" id="ember811" class="ember-view">Cancelation</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/error-vs-cancelation" id="ember812" class="ember-view">Handling Errors</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/child-tasks" id="ember813" class="ember-view">Child Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/task-groups" id="ember814" class="ember-view">Task Groups</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/derived-state" id="ember815" class="ember-view">Derived State</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/encapsulated-task" id="ember816" class="ember-view">Encapsulated Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/events" id="ember817" class="ember-view">Awaiting Events / Conditions</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/task-lifecycle-events" id="ember818" class="ember-view">Lifecycle Events</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/testing-debugging" id="ember819" class="ember-view">Testing &amp; Debugging</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/typescript" id="ember820" class="active ember-view">TypeScript</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/faq" id="ember821" class="ember-view">FAQ &amp; Fact Sheet</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Examples
+            </div>
+            <div class="toc-entry">
+                <a href="/docs/examples/loading-ui" id="ember822" class="ember-view">Loading UI</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/autocomplete" id="ember823" class="ember-view">Type-Ahead Search</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/increment-buttons" id="ember824" class="ember-view">Accelerating Increment Buttons</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/ajax-throttling" id="ember825" class="ember-view">AJAX Throttling</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/route-tasks" id="ember826" class="ember-view">Route Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a href="/docs/examples/joining-tasks" id="ember827" class="ember-view">Awaiting Multiple Child Tasks</a>
+            </div>
+
+
+<!---->      </div>
+    </div>
+    <div class="nine columns">
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a href="/docs/testing-debugging" id="ember828" class="ember-view">Testing &amp; Debugging</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a href="/docs/faq" id="ember829" class="ember-view">FAQ &amp; Fact Sheet</a>
+    </p>
+</div>
+
+
+      <a title="Edit on Github" href="https://github.com/machty/ember-concurrency/edit/master/tests/dummy/app/docs/typescript/template.hbs" id="ember830" class="github-edit ember-view"><i class="icon-pencil"></i>
+</a>
+
+      <h3>Using ember-concurrency with TypeScript</h3>
+
+<p>
+  As of version 1.2, ember-concurrency comes bundled with its own
+  <a href="https://github.com/machty/ember-concurrency/blob/master/addon/index.d.ts">
+    type definitions
+  </a>. On compatiable verions of TypeScript – currently 3.7 and 3.9,
+  it should automatically pick them up to provide type checking and
+  completion.
+</p>
+
+<p>
+  Note that old versions of
+  <a href="https://github.com/machty/ember-concurrency-decorators/">
+    ember-concurrency-decorators
+  </a> came with an incomplete set of type definitions for
+  ember-concurrency. If you are using that addon, be sure to
+  upgrade to the latest version to avoid conflicts.
+</p>
+
+<h4>Classic Ember</h4>
+
+<pre id="ember831" class="typescript ember-view">import Component from '@ember/component';
+import { task, timeout } from 'ember-concurrency';
+
+export default Component.extend({
+  myTask: task(function * (ms: number) {
+    yield timeout(ms);
+    return 'done!';
+  }),
+
+  performTask() {
+    this.get('myTask').perform(1000).then(value =&gt; {
+      console.log(value.toUpperCase());
+    });
+  }
+});
+</pre>
+
+<p>
+  In Classic Ember, everything work as expected. Note that while
+  from Ember's perspective <code>this.get()</code> is no longer
+  required, it is needed here to get the correct type.
+</p>
+
+<p>
+  From what TypeScript can see, <code>this.myTask</code> is a
+  <code>TaskProperty</code> but <code>this.get('myTask')</code>
+  "unwraps" the task property into a <code>Task</code>, allowing
+  <code>perform()</code> to be called on it, among other things.
+  This is a limitation of <code>@types/ember</code> and is true
+  for other computed properties as well.
+</p>
+
+<h4>Octane</h4>
+
+<pre id="ember832" class="typescript ember-view">import Component from '@ember/component';
+import { TaskGenerator, timeout } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
+import { taskFor } from './utils';
+
+export default class extends Component {
+  @task *myTask(ms: number): TaskGenerator&lt;string&gt; {
+    yield timeout(ms);
+    return 'done!';
+  }
+
+  performTask() {
+    taskFor(this.myTask).perform(1000).then(value =&gt; {
+      console.log(value.toUpperCase());
+    });
+  }
+}
+</pre>
+
+<p>
+  Since we are using native classes in Octane, TypeScript have
+  an easier time understanding and following our code. Normally,
+  this is a good thing, but in the case of ember-concurrency, it
+  ends up getting a bit in the way.
+</p>
+
+<p>
+  ember-concurrency's API was designed with Class Ember in mind,
+  where it could decorate a property or method and replace it
+  with a different type in the <code>.extend()</code> hook.
+</p>
+
+<p>
+  This is not allowed using TypeScript's decorators. Since
+  <code>myTask</code> is defined using as the (generator) method
+  syntax, and since methods do not have a <code>.perform()</code>
+  method on them, calling <code>this.myTask.perform()</code> will
+  result in a type error, even though it will work at runtime.
+</p>
+
+<p>
+  We could work around this by type casting the method, such as
+  <code>(this.myTask as any as Task&lt;string, number&gt;)</code>,
+  but doing this everywhere is quite verbose and error-prone.
+  Instead, we opted to encapsulate the type cast transparently in
+  a <code>taskFor</code> utility function in our example:
+</p>
+
+<pre id="ember833" class="typescript ember-view">import {
+  Task,
+  TaskFunction,
+  TaskFunctionArgs as Args,
+  TaskFunctionReturnType as Return,
+  EncapsulatedTaskDescriptor as Descriptor,
+  EncapsulatedTaskDescriptorArgs as DescriptorArgs,
+  EncapsulatedTaskDescriptorReturnType as DescriptorReturn
+} from 'ember-concurrency';
+
+type AnyTask = Task&lt;any, any[]&gt;;
+
+type AnyTaskFunction = TaskFunction&lt;any, any[]&gt;;
+type TaskFor&lt;T extends AnyTaskFunction&gt; = Task&lt;Return&lt;T&gt;, Args&lt;T&gt;&gt;;
+
+type AnyEncapsulatedTaskDescriptor = Descriptor&lt;any, any[]&gt;;
+type TaskForDescriptor&lt;T extends AnyEncapsulatedTaskDescriptor&gt; = Task&lt;DescriptorReturn&lt;T&gt;, DescriptorArgs&lt;T&gt;&gt;;
+
+export function taskFor&lt;T extends AnyTaskFunction&gt;(task: T): TaskFor&lt;T&gt;;
+export function taskFor&lt;T extends AnyEncapsulatedTaskDescriptor&gt;(task: T): TaskForDescriptor&lt;T&gt;;
+export function taskFor(task: AnyTaskFunction | AnyEncapsulatedTaskDescriptor): AnyTask {
+  return task as any;
+}
+</pre>
+
+<p>
+  In addition to the code readability improvements, this utility
+  function is also safer than the inline type cast, as it is able
+  to automatically infer the arguments and return type of the task
+  based on the task function signature.
+</p>
+
+<p>
+  The <code>taskFor</code> utility function above also works with
+  <a href="/docs/encapsulated-task">Encapsulated Tasks</a>:
+</p>
+
+<pre id="ember834" class="typescript ember-view">import Component from '@ember/component';
+import { TaskGenerator, timeout } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
+import { taskFor } from './utils';
+
+export default class extends Component {
+  @task myTask = {
+    foo: 'foo',
+
+    *perform(ms: number): TaskGenerator&lt;string&gt; {
+      console.log(this.foo); // =&gt; 'foo'
+      yield timeout(ms);
+      return 'done!';
+    }
+  }
+
+  performTask() {
+    taskFor(this.myTask).perform(1000).then(value =&gt; {
+      console.log(value.toUpperCase());
+    });
+  }
+}
+</pre>
+
+<h4>Limitations of Generator Functions in TypeScript</h4>
+
+<p>
+  In ember-concurrency, tasks are defined with generator function
+  (method) syntax. The task can <code>yield</code> any objects,
+  typically promises or other <code>TaskInstance</code>, and the
+  ember-concurrency runtime will resolve it and resume the task
+  with the resolved value when it becomes available.
+</p>
+
+<p>
+  Due to limitations in TypeScript's understanding of generator
+  functions, it is not possible to express the realtionship between
+  the left and right hand side of a <code>yield</code> expression.
+  As a result, the resulting type of a yield expression inside a
+  task function must be annotated manually:
+</p>
+
+<pre id="ember835" class="typescript ember-view">import Component from '@ember/component';
+import { TaskGenerator } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
+import { JSON, taskFor } from './utils';
+
+export default class extends Component {
+  @task *fetchData(url: string): TaskGenerator&lt;JSON&gt; {
+    let response: Response = yield fetch(url);
+    let data: JSON = yield response.json();
+    return data;
+  }
+
+  performTask() {
+    taskFor(this.fetchData).perform('/api/data.json').then(data =&gt; {
+      console.log({ data });
+    });
+  }
+}
+</pre>
+
+<p>
+  Since the <code>yield</code> expressions are typed to "return"
+  <code>any</code>, TypeScript would happily go along with any
+  type annotation and allow you to freely assign the result of the
+  <code>yield</code> expression. Therefore, it is very important
+  to ensure it matches up with reality.
+</p>
+
+<p>
+  A safer approach would be to use a utility type, like so:
+</p>
+
+<pre id="ember836" class="typescript ember-view">import Component from '@ember/component';
+import { TaskGenerator } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
+import { JSON, taskFor } from './utils';
+
+type Resolved&lt;T&gt; = T extends PromiseLike&lt;infer R&gt; ? R : T;
+
+export default class extends Component {
+  @task *fetchData(url: string): TaskGenerator&lt;JSON&gt; {
+    let fetchPromise = fetch(url);
+    let response: Resolved&lt;typeof fetchPromise&gt; = yield fetchPromise;
+
+    let dataPromise = response.json();
+    let data: Resolved&lt;typeof dataPromise&gt; = yield dataPromise;
+
+    return data;
+  }
+
+  performTask() {
+    taskFor(this.fetchData).perform('/api/data.json').then(data =&gt; {
+      console.log({ data });
+    });
+  }
+}
+</pre>
+
+<p>
+  This <code>Resolved</code> utility type will unwrap a yieldable
+  value into its resolved type. This is much safer, as it retains
+  the types realtionship between the left and right hand side of
+  the <code>yield</code> expressions.
+</p>
+
+<p>
+  A third approach to this solving this problem is to use the
+  <a href="https://github.com/chancancode/ember-concurrency-async">
+    ember-concurrency-async
+  </a> addon, which enables async method syntax for tasks:
+</p>
+
+<pre id="ember837" class="typescript ember-view">import Component from '@ember/component';
+import { task } from 'ember-concurrency-decorators';
+import { JSON, taskFor } from './utils';
+
+export default class extends Component {
+  @task async fetchData(url: string): Promise&lt;JSON&gt; {
+    let response = await fetch(url);
+    let data = await response.json();
+    return data;
+  }
+
+  performTask() {
+    taskFor(this.fetchData).perform('/api/data.json').then(data =&gt; {
+      console.log({ data });
+    });
+  }
+}
+</pre>
+
+<p>
+  <code>await</code> expressions in <code>async</code> methods
+  already has the <code>Resolved</code> semantics we are after,
+  natively built into the TypeScript compiler. Using this syntax,
+  we automatically get the correct types out-of-the-box.
+</p>
+
+<p>
+  In order for this code to type-check, we will have to include
+  a <code>.d.ts</code> file somewhere in our project to augment
+  ember-concurrency's built-in types:
+</p>
+
+<pre id="ember838" class="typescript ember-view">import { Task, task, taskGroup } from 'ember-concurrency';
+
+declare module 'ember-concurrency' {
+  export type AsyncTaskFunction&lt;T, Args extends any[]&gt; = (...args: Args) =&gt; Promise&lt;T&gt;;
+
+  export type AsyncTaskFunctionArgs&lt;T extends AsyncTaskFunction&lt;any, any[]&gt;&gt; =
+    T extends (...args: infer A) =&gt; Promise&lt;any&gt; ? A : [];
+
+  export type AsyncTaskFunctionReturnType&lt;T extends AsyncTaskFunction&lt;any, any[]&gt;&gt; =
+    T extends (...args: any[]) =&gt; Promise&lt;infer R&gt; ? R : unknown;
+
+  export interface AsyncEncapsulatedTaskDescriptor&lt;T, Args extends any[]&gt; {
+    perform(...args: Args): Promise&lt;T&gt;;
+  }
+
+  export type AsyncEncapsulatedTaskDescriptorArgs&lt;T extends AsyncEncapsulatedTaskDescriptor&lt;any, any[]&gt;&gt; =
+    T extends (...args: infer A) =&gt; Promise&lt;any&gt; ? A : [];
+
+  export type AsyncEncapsulatedTaskDescriptorReturnType&lt;T extends AsyncEncapsulatedTaskDescriptor&lt;any, any[]&gt;&gt; =
+    T extends (...args: any[]) =&gt; Promise&lt;infer R&gt; ? R : unknown;
+
+  function task&lt;T extends AsyncTaskFunction&lt;any, any[]&gt;&gt;(taskFn: T):
+    TaskProperty&lt;AsyncTaskFunctionReturnType&lt;T&gt;, AsyncTaskFunctionArgs&lt;T&gt;&gt;;
+  function task&lt;T extends AsyncEncapsulatedTaskDescriptor&lt;any, any[]&gt;&gt;(taskFn: T):
+    TaskProperty&lt;AsyncEncapsulatedTaskDescriptorReturnType&lt;T&gt;, AsyncEncapsulatedTaskDescriptorArgs&lt;T&gt;&gt;;
+
+  function taskGroup&lt;T extends AsyncTaskFunction&lt;any, any[]&gt;&gt;(taskFn: T):
+    TaskGroup&lt;AsyncTaskFunctionReturnType&lt;T&gt;&gt;;
+}
+</pre>
+
+<p>
+  This snippet imports the relevant functions and "re-opens" the
+  modules they are defined in, to add a few new utility types as
+  well as to add new overload signatures to existing functions to
+  support async task functions. For more details on this, see the
+  <a href="https://www.typescriptlang.org/docs/handbook/declaration-merging.html">
+    TypeScript handbook
+  </a>.
+</p>
+
+<p>
+  Finally, we will also have to add an overload signature to our
+  <code>taskFor</code> utility function:
+</p>
+
+<pre id="ember839" class="typescript ember-view">import {
+  Task,
+  TaskFunction,
+  AsyncTaskFunction,
+  TaskFunctionArgs as Args,
+  AsyncTaskFunctionArgs as AsyncArgs,
+  TaskFunctionReturnType as Return,
+  AsyncTaskFunctionReturnType as AsyncReturn,
+  EncapsulatedTaskDescriptor as Descriptor,
+  EncapsulatedTaskDescriptorArgs as DescriptorArgs,
+  EncapsulatedTaskDescriptorReturnType as DescriptorReturn,
+  AsyncEncapsulatedTaskDescriptor as AsyncDescriptor,
+  AsyncEncapsulatedTaskDescriptorArgs as AsyncDescriptorArgs,
+  AsyncEncapsulatedTaskDescriptorReturnType as AsyncDescriptorReturn
+} from 'ember-concurrency';
+
+type AnyTask = Task&lt;any, any[]&gt;;
+
+type AnyTaskFunction = TaskFunction&lt;any, any[]&gt;;
+type TaskFor&lt;T extends AnyTaskFunction&gt; = Task&lt;Return&lt;T&gt;, Args&lt;T&gt;&gt;;
+
+type AnyAsyncTaskFunction = AsyncTaskFunction&lt;any, any[]&gt;;
+type TaskForAsync&lt;T extends AnyAsyncTaskFunction&gt; = Task&lt;AsyncReturn&lt;T&gt;, AsyncArgs&lt;T&gt;&gt;;
+
+type AnyDescriptor = Descriptor&lt;any, any[]&gt;;
+type TaskForDescriptor&lt;T extends AnyDescriptor&gt; = Task&lt;DescriptorReturn&lt;T&gt;, DescriptorArgs&lt;T&gt;&gt;;
+
+type AnyAsyncDescriptor = AsyncDescriptor&lt;any, any[]&gt;;
+type TaskForAsyncDescriptor&lt;T extends AnyAsyncDescriptor&gt; = Task&lt;AsyncDescriptorReturn&lt;T&gt;, AsyncDescriptorArgs&lt;T&gt;&gt;;
+
+export function taskFor&lt;T extends AnyTaskFunction&gt;(task: T): TaskFor&lt;T&gt;;
+export function taskFor&lt;T extends AnyAsyncTaskFunction&gt;(task: T): TaskForAsync&lt;T&gt;;
+export function taskFor&lt;T extends AnyDescriptor&gt;(task: T): TaskForDescriptor&lt;T&gt;;
+export function taskFor&lt;T extends AnyAsyncDescriptor&gt;(task: T): TaskForAsyncDescriptor&lt;T&gt;;
+export function taskFor(task: AnyTaskFunction | AnyAsyncTaskFunction | AnyDescriptor| AnyAsyncDescriptor): AnyTask {
+  return task as any;
+}
+
+export type JSON = string | number | boolean | null | JSONArray | JSONObject;
+export interface JSONArray extends Array&lt;JSON&gt; {}
+export interface JSONObject extends Record&lt;string, JSON&gt; {}
+</pre>
+
+
+      <br> <br> <br> <br>
+
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a href="/docs/testing-debugging" id="ember840" class="ember-view">Testing &amp; Debugging</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a href="/docs/faq" id="ember841" class="ember-view">FAQ &amp; Fact Sheet</a>
+    </p>
+</div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<div id="ember842" class="ember-notify-cn ember-notify-default ember-view"><!----></div>
+</div><script type="x/boundary" id="fastboot-body-end"></script>
+
+    <script src="/assets/vendor-6a664dad25ef4439167bc559988408a1.js"></script>
+    <script src="/assets/dummy-10a23ccd5d17ab9e14b0d9299981a7fb.js"></script>
+
+    
+  </body>
+</html>
