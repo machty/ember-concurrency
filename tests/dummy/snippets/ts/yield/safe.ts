@@ -1,7 +1,8 @@
 import Component from '@ember/component';
 import { TaskGenerator } from 'ember-concurrency';
 import { task } from 'ember-concurrency-decorators';
-import { JSON, taskFor } from './utils';
+import { taskFor } from 'ember-concurrency-ts';
+import { JSON } from './utils';
 
 type Resolved<T> = T extends PromiseLike<infer R> ? R : T;
 

@@ -15,7 +15,7 @@
     ember-concurrency-decorators
   </a> came with an incomplete set of type definitions for
   ember-concurrency. If you are using that addon, be sure to
-  upgrade to the latest version to avoid conflicts.
+  upgrade to version 2.0 or above to avoid conflicts.
 </p>
 
 <h4>Classic Ember</h4>
@@ -66,11 +66,12 @@
   We could work around this by type casting the method, such as
   <code>(this.myTask as any as Task&lt;string, number&gt;)</code>,
   but doing this everywhere is quite verbose and error-prone.
-  Instead, we opted to encapsulate the type cast transparently in
-  a <code>taskFor</code> utility function in our example:
+  Instead, we opted to use the
+  <a href="https://github.com/chancancode/ember-concurrency-ts">
+    ember-concurrency-ts
+  </a> addon, which encapsulate the type cast transparently in
+  a <code>taskFor</code> utility function.
 </p>
-
-{{code-snippet name="ts/classic-vs-octane/utils.ts"}}
 
 <p>
   In addition to the code readability improvements, this utility
@@ -80,7 +81,7 @@
 </p>
 
 <p>
-  The <code>taskFor</code> utility function above also works with
+  The <code>taskFor</code> utility function also works with
   <a href="/docs/encapsulated-task">Encapsulated Tasks</a>:
 </p>
 
@@ -145,25 +146,13 @@
 
 <p>
   In order for this code to type-check, we will have to include
-  a <code>.d.ts</code> file somewhere in our project to augment
-  ember-concurrency's built-in types:
+  the following in <code>types/&lt;app name&gt;/index.d.ts</code>:
 </p>
 
-{{code-snippet name="ts/yield/ember-concurrency-async.d.ts"}}
+{{code-snippet name="ts/yield/index.d.ts"}}
 
 <p>
-  This snippet imports the relevant functions and "re-opens" the
-  modules they are defined in, to add a few new utility types as
-  well as to add new overload signatures to existing functions to
-  support async task functions. For more details on this, see the
-  <a href="https://www.typescriptlang.org/docs/handbook/declaration-merging.html">
-    TypeScript handbook
-  </a>.
+  This imports the type extensions form the addons to add a few
+  new utility types as well as to add new overload signatures to
+  existing functions to support async task functions.
 </p>
-
-<p>
-  Finally, we will also have to add an overload signature to our
-  <code>taskFor</code> utility function:
-</p>
-
-{{code-snippet name="ts/yield/utils.ts"}}
