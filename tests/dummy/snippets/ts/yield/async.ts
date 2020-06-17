@@ -1,6 +1,7 @@
 import Component from '@ember/component';
 import { task } from 'ember-concurrency-decorators';
-import { JSON, taskFor } from './utils';
+import { taskFor } from 'ember-concurrency-ts';
+import { JSON } from './utils';
 
 export default class extends Component {
   @task async fetchData(url: string): Promise<JSON> {

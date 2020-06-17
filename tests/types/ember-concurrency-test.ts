@@ -27,8 +27,8 @@ import {
   waitForQueue
 } from 'ember-concurrency';
 import { restartableTask } from 'ember-concurrency-decorators';
+import { taskFor } from 'ember-concurrency-ts';
 import { expectTypeOf as expect } from 'expect-type';
-import { taskFor } from '../dummy/snippets/ts/classic-vs-octane/utils';
 
 declare type TestCallback = () => void | Promise<void>;
 declare function module(description: string, callback: TestCallback): void;

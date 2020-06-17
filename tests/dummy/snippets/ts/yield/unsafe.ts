@@ -1,7 +1,8 @@
 import Component from '@ember/component';
 import { TaskGenerator } from 'ember-concurrency';
 import { task } from 'ember-concurrency-decorators';
-import { JSON, taskFor } from './utils';
+import { taskFor } from 'ember-concurrency-ts';
+import { JSON } from './utils';
 
 export default class extends Component {
   @task *fetchData(url: string): TaskGenerator<JSON> {

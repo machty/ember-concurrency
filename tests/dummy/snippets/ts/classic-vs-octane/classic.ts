@@ -8,6 +8,10 @@ export default Component.extend({
   }),
 
   performTask() {
+    if (this.get('myTask').isRunning) {
+      return;
+    }
+
     this.get('myTask').perform(1000).then(value => {
       console.log(value.toUpperCase());
     });
