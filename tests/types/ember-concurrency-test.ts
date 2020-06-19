@@ -2389,20 +2389,26 @@ module('integration tests', () => {
         let myTask = taskFor(this.myTask);
 
         expect(myTask).not.toBeAny();
-        expect(myTask).toEqualTypeOf<Task<string, [boolean, number?]>>();
+        expect(myTask).toMatchTypeOf<Task<string, [boolean, number?]>>();
+        expect(myTask).toEqualTypeOf<EncapsulatedTask<string, [boolean, number?], { bar: boolean }>>();
         expect(myTask.isRunning).toBeBoolean();
-        expect(myTask.last).toEqualTypeOf<TaskInstance<string> | null>();
+        expect(myTask.last).toMatchTypeOf<TaskInstance<string> | null>();
+        expect(myTask.last).toEqualTypeOf<TaskInstance<string> & { bar: boolean } | null>();
         expect(myTask.perform).toBeCallableWith(true);
         expect(myTask.perform).toBeCallableWith(false, 500);
         expect(myTask.perform).parameters.toEqualTypeOf<[boolean, number?]>();
-        expect(myTask.perform).returns.toEqualTypeOf<TaskInstance<string>>();
+        expect(myTask.perform).returns.toMatchTypeOf<TaskInstance<string>>();
+        expect(myTask.perform).returns.toEqualTypeOf<TaskInstance<string> & { bar: boolean }>();
 
         let myTaskInstance = myTask.perform(true);
 
         expect(myTaskInstance).not.toBeAny();
-        expect(myTaskInstance).toEqualTypeOf<TaskInstance<string>>();
+        expect(myTaskInstance).toMatchTypeOf<TaskInstance<string>>();
+        expect(myTaskInstance).toEqualTypeOf<TaskInstance<string> & { bar: boolean }>();
         expect(myTaskInstance.isRunning).toBeBoolean();
         expect(myTaskInstance.value).toEqualTypeOf<string | null>();
+        expect(myTaskInstance.bar).not.toBeAny();
+        expect(myTaskInstance.bar).toBeBoolean();
         expect(myTaskInstance).toMatchTypeOf<Promise<string>>();
 
         let result = await myTaskInstance;
