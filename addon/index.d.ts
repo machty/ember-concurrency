@@ -11,6 +11,12 @@ export type TaskFunctionArgs<T extends TaskFunction<any, any[]>> =
 export type TaskFunctionReturnType<T extends TaskFunction<any, any[]>> =
   T extends (...args: any[]) => TaskGenerator<infer R> ? R : unknown;
 
+export type TaskForTaskFunction<T extends TaskFunction<any, any[]>> =
+  Task<TaskFunctionReturnType<T>, TaskFunctionArgs<T>>;
+
+export type TaskInstanceForTaskFunction<T extends TaskFunction<any, any[]>> =
+  TaskInstance<TaskFunctionReturnType<T>>;
+
 export interface EncapsulatedTaskDescriptor<T, Args extends any[]> {
   perform(...args: Args): TaskGenerator<T>;
 }
@@ -21,16 +27,19 @@ export type EncapsulatedTaskDescriptorArgs<T extends EncapsulatedTaskDescriptor<
 export type EncapsulatedTaskDescriptorReturnType<T extends EncapsulatedTaskDescriptor<any, any[]>> =
   T extends { perform(...args: any[]): TaskGenerator<infer R> } ? R : unknown;
 
-/**
- * The `Task` object lives on a host Ember object (e.g.
- * a Component, Route, or Controller). You call the
- * {@linkcode Task#perform .perform()} method on this object
- * to create run individual {@linkcode TaskInstance}s,
- * and at any point, you can call the {@linkcode Task#cancelAll .cancelAll()}
- * method on this object to cancel all running or enqueued
- * {@linkcode TaskInstance}s.
- */
-export interface Task<T, Args extends any[]> extends EmberObject {
+export type EncapsulatedTaskState<T extends object> = Omit<T, 'perform' | keyof TaskInstance<any>>;
+
+export type TaskForEncapsulatedTaskDescriptor<T extends EncapsulatedTaskDescriptor<any, any[]>> =
+  EncapsulatedTask<
+    EncapsulatedTaskDescriptorReturnType<T>,
+    EncapsulatedTaskDescriptorArgs<T>,
+    EncapsulatedTaskState<T>
+  >;
+
+export type TaskInstanceForEncapsulatedTaskDescriptor<T extends EncapsulatedTaskDescriptor<any, any[]>> =
+  EncapsulatedTaskInstance<EncapsulatedTaskDescriptorReturnType<T>, EncapsulatedTaskState<T>>;
+
+interface AbstractTask<Args extends any[], T extends TaskInstance<any>> extends EmberObject {
   /**
    * `true` if any current task instances are running.
    */
@@ -54,42 +63,42 @@ export interface Task<T, Args extends any[]> extends EmberObject {
   /**
    * The most recently started task instance.
    */
-  readonly last: TaskInstance<T> | null;
+  readonly last: T | null;
 
   /**
    * The most recent task instance that is currently running.
    */
-  readonly lastRunning: TaskInstance<T> | null;
+  readonly lastRunning: T | null;
 
   /**
    * The most recently performed task instance.
    */
-  readonly lastPerformed: TaskInstance<T> | null;
+  readonly lastPerformed: T | null;
 
   /**
    * The most recent task instance that succeeded.
    */
-  readonly lastSuccessful: TaskInstance<T> | null;
+  readonly lastSuccessful: T | null;
 
   /**
    * The most recently completed task instance.
    */
-  readonly lastComplete: TaskInstance<T> | null;
+  readonly lastComplete: T | null;
 
   /**
    * The most recent task instance that errored.
    */
-  readonly lastErrored: TaskInstance<T> | null;
+  readonly lastErrored: T | null;
 
   /**
    * The most recently canceled task instance.
    */
-  readonly lastCanceled: TaskInstance<T> | null;
+  readonly lastCanceled: T | null;
 
   /**
    * The most recent task instance that is incomplete.
    */
-  readonly lastIncomplete: TaskInstance<T> | null;
+  readonly lastIncomplete: T | null;
 
   /**
    * The number of times this task has been performed.
@@ -120,8 +129,23 @@ export interface Task<T, Args extends any[]> extends EmberObject {
    *
    * @param args Arguments to pass to the task function.
    */
-  perform(...args: Args): TaskInstance<T>;
+  perform(...args: Args): T;
 }
+
+/**
+ * The `Task` object lives on a host Ember object (e.g.
+ * a Component, Route, or Controller). You call the
+ * {@linkcode Task#perform .perform()} method on this object
+ * to create run individual {@linkcode TaskInstance}s,
+ * and at any point, you can call the {@linkcode Task#cancelAll .cancelAll()}
+ * method on this object to cancel all running or enqueued
+ * {@linkcode TaskInstance}s.
+ */
+export interface Task<T, Args extends any[]>
+  extends AbstractTask<Args, TaskInstance<T>> {}
+
+export interface EncapsulatedTask<T, Args extends any[], State extends object>
+  extends AbstractTask<Args, EncapsulatedTaskInstance<T, State>> {}
 
 /**
  * "Task Groups" provide a means for applying
@@ -333,16 +357,9 @@ export interface TaskInstance<T> extends Promise<T>, EmberObject {
   finally(onfinally?: (() => void) | null): Promise<T>;
 }
 
-/**
- * A {@link TaskProperty} is the Computed Property-like object returned
- * from the {@linkcode task} function. You can call Task Modifier methods
- * on this object to configure the behavior of the {@link Task}.
- *
- * See [Managing Task Concurrency](/#/docs/task-concurrency) for an
- * overview of all the different task modifiers you can use and how
- * they impact automatic cancelation / enqueueing of task instances.
- */
-export interface TaskProperty<T, Args extends any[]> extends ComputedProperty<Task<T, Args>> {
+type EncapsulatedTaskInstance<T, State extends object> = TaskInstance<T> & EncapsulatedTaskState<State>;
+
+interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedProperty<T> {
   volatile: never;
   readOnly: never;
   property: never;
@@ -482,6 +499,21 @@ export interface TaskProperty<T, Args extends any[]> extends ComputedProperty<Ta
    */
   debug(): this;
 }
+
+/**
+ * A {@link TaskProperty} is the Computed Property-like object returned
+ * from the {@linkcode task} function. You can call Task Modifier methods
+ * on this object to configure the behavior of the {@link Task}.
+ *
+ * See [Managing Task Concurrency](/#/docs/task-concurrency) for an
+ * overview of all the different task modifiers you can use and how
+ * they impact automatic cancelation / enqueueing of task instances.
+ */
+export interface TaskProperty<T, Args extends any[]>
+  extends AbstractTaskProperty<Task<T, Args>> {}
+
+export interface EncapsulatedTaskProperty<T, Args extends any[], State extends object>
+  extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>> {}
 
 export interface TaskGroupProperty<T> extends ComputedProperty<TaskGroup<T>> {
   volatile: never;
@@ -645,7 +677,11 @@ type Settled<T> = Settlement<Resolved<T>>;
 export function task<T extends TaskFunction<any, any[]>>(taskFn: T):
   TaskProperty<TaskFunctionReturnType<T>, TaskFunctionArgs<T>>;
 export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(taskFn: T):
-  TaskProperty<EncapsulatedTaskDescriptorReturnType<T>, EncapsulatedTaskDescriptorArgs<T>>;
+  EncapsulatedTaskProperty<
+    EncapsulatedTaskDescriptorReturnType<T>,
+    EncapsulatedTaskDescriptorArgs<T>,
+    EncapsulatedTaskState<T>
+  >;
 
 /**
  * "Task Groups" provide a means for applying
