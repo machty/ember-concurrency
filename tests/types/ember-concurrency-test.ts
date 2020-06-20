@@ -112,6 +112,12 @@ module('unit tests', () => {
     expect(t.lastIncomplete).toEqualTypeOf<MyTaskInstance | null>();
     expect(t.performCount).toBeNumber();
 
+    expect(t.get).toBeCallableWith('isRunning');
+    expect(t.get('isRunning')).toBeBoolean();
+
+    // @ts-expect-error
+    t.get('nonexistentProperty');
+
     expect(t.cancelAll).toBeCallableWith();
     expect(t.cancelAll).toBeCallableWith({});
     expect(t.cancelAll).toBeCallableWith({ reason: 'why do you care' });
