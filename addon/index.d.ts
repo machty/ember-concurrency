@@ -1,3 +1,4 @@
+import EmberObject from '@ember/object';
 import ComputedProperty from '@ember/object/computed';
 
 export type TaskGenerator<T> = Generator<any, T, any>;
@@ -29,7 +30,7 @@ export type EncapsulatedTaskDescriptorReturnType<T extends EncapsulatedTaskDescr
  * method on this object to cancel all running or enqueued
  * {@linkcode TaskInstance}s.
  */
-export interface Task<T, Args extends any[]> {
+export interface Task<T, Args extends any[]> extends EmberObject {
   /**
    * `true` if any current task instances are running.
    */
