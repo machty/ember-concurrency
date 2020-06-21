@@ -235,7 +235,7 @@ export interface TaskGroup<T> {
  * because concurrency policy enforced by a
  * {@linkcode TaskProperty Task Modifier} canceled the task instance.
  */
-export interface TaskInstance<T> extends Promise<T> {
+export interface TaskInstance<T> extends Promise<T>, EmberObject {
   /**
    * If this TaskInstance runs to completion by returning a property
    * other than a rejecting promise, this property will be set
