@@ -212,6 +212,12 @@ module('unit tests', () => {
     expect(t.state).toEqualTypeOf<'dropped' | 'canceled' | 'finished' | 'running' | 'waiting'>();
     expect(t.isDropped).toBeBoolean();
 
+    expect(t.get).toBeCallableWith('value');
+    expect(t.get('value')).toEqualTypeOf<string | null>()
+
+    // @ts-expect-error
+    t.get('nonexistentProperty');
+
     expect(t.cancel).toBeCallableWith();
     expect(t.cancel).toBeCallableWith('why do you care');
     expect(t.cancel).parameters.toEqualTypeOf<[string?]>();
