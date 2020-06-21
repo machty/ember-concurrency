@@ -142,7 +142,7 @@ export interface Task<T, Args extends any[]> extends EmberObject {
  * });
  * ```
  */
-export interface TaskGroup<T> {
+export interface TaskGroup<T> extends EmberObject {
   /**
    * `true` if any current task instances are running.
    */
