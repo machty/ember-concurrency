@@ -1,3 +1,4 @@
+import EmberObject from '@ember/object';
 import ComputedProperty from '@ember/object/computed';
 
 export type TaskGenerator<T> = Generator<any, T, any>;
@@ -29,7 +30,7 @@ export type EncapsulatedTaskDescriptorReturnType<T extends EncapsulatedTaskDescr
  * method on this object to cancel all running or enqueued
  * {@linkcode TaskInstance}s.
  */
-export interface Task<T, Args extends any[]> {
+export interface Task<T, Args extends any[]> extends EmberObject {
   /**
    * `true` if any current task instances are running.
    */
@@ -141,7 +142,7 @@ export interface Task<T, Args extends any[]> {
  * });
  * ```
  */
-export interface TaskGroup<T> {
+export interface TaskGroup<T> extends EmberObject {
   /**
    * `true` if any current task instances are running.
    */
@@ -234,7 +235,7 @@ export interface TaskGroup<T> {
  * because concurrency policy enforced by a
  * {@linkcode TaskProperty Task Modifier} canceled the task instance.
  */
-export interface TaskInstance<T> extends Promise<T> {
+export interface TaskInstance<T> extends Promise<T>, EmberObject {
   /**
    * If this TaskInstance runs to completion by returning a property
    * other than a rejecting promise, this property will be set

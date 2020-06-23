@@ -112,6 +112,12 @@ module('unit tests', () => {
     expect(t.lastIncomplete).toEqualTypeOf<MyTaskInstance | null>();
     expect(t.performCount).toBeNumber();
 
+    expect(t.get).toBeCallableWith('isRunning');
+    expect(t.get('isRunning')).toBeBoolean();
+
+    // @ts-expect-error
+    t.get('nonexistentProperty');
+
     expect(t.cancelAll).toBeCallableWith();
     expect(t.cancelAll).toBeCallableWith({});
     expect(t.cancelAll).toBeCallableWith({ reason: 'why do you care' });
@@ -168,6 +174,12 @@ module('unit tests', () => {
     expect(tg.lastIncomplete).toEqualTypeOf<MyTaskInstance | null>();
     expect(tg.performCount).toBeNumber();
 
+    expect(tg.get).toBeCallableWith('isRunning');
+    expect(tg.get('isRunning')).toEqualTypeOf<boolean>()
+
+    // @ts-expect-error
+    tg.get('nonexistentProperty');
+
     expect(tg.cancelAll).toBeCallableWith();
     expect(tg.cancelAll).toBeCallableWith({});
     expect(tg.cancelAll).toBeCallableWith({ reason: 'why do you care' });
@@ -205,6 +217,12 @@ module('unit tests', () => {
     expect(t.isRunning).toBeBoolean();
     expect(t.state).toEqualTypeOf<'dropped' | 'canceled' | 'finished' | 'running' | 'waiting'>();
     expect(t.isDropped).toBeBoolean();
+
+    expect(t.get).toBeCallableWith('value');
+    expect(t.get('value')).toEqualTypeOf<string | null>()
+
+    // @ts-expect-error
+    t.get('nonexistentProperty');
 
     expect(t.cancel).toBeCallableWith();
     expect(t.cancel).toBeCallableWith('why do you care');
