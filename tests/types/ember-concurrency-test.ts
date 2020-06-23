@@ -604,7 +604,7 @@ module('unit tests', () => {
     expect(tp.on).toBeCallableWith('init');
     expect(tp.on).toBeCallableWith('init', 'didInsertElement');
     expect(tp.on).parameters.toEqualTypeOf<string[]>();
-    expect(tp.on).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.on).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.on(false);
@@ -616,7 +616,7 @@ module('unit tests', () => {
     expect(tp.cancelOn).toBeCallableWith('init');
     expect(tp.cancelOn).toBeCallableWith('init', 'didInsertElement');
     expect(tp.cancelOn).parameters.toEqualTypeOf<string[]>();
-    expect(tp.cancelOn).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.cancelOn).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.cancelOn(false);
@@ -626,35 +626,35 @@ module('unit tests', () => {
 
     expect(tp.restartable).toBeCallableWith();
     expect(tp.restartable).parameters.toEqualTypeOf<[]>();
-    expect(tp.restartable).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.restartable).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.restartable('nope');
 
     expect(tp.enqueue).toBeCallableWith();
     expect(tp.enqueue).parameters.toEqualTypeOf<[]>();
-    expect(tp.enqueue).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.enqueue).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.enqueue('nope');
 
     expect(tp.drop).toBeCallableWith();
     expect(tp.drop).parameters.toEqualTypeOf<[]>();
-    expect(tp.drop).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.drop).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.drop('nope');
 
     expect(tp.keepLatest).toBeCallableWith();
     expect(tp.keepLatest).parameters.toEqualTypeOf<[]>();
-    expect(tp.keepLatest).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.keepLatest).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.keepLatest('nope');
 
     expect(tp.maxConcurrency).toBeCallableWith(5);
     expect(tp.maxConcurrency).parameters.toEqualTypeOf<[number]>();
-    expect(tp.maxConcurrency).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.maxConcurrency).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.maxConcurrency();
@@ -664,7 +664,7 @@ module('unit tests', () => {
 
     expect(tp.group).toBeCallableWith('foo');
     expect(tp.group).parameters.toEqualTypeOf<[string]>();
-    expect(tp.group).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.group).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.group();
@@ -674,14 +674,14 @@ module('unit tests', () => {
 
     expect(tp.evented).toBeCallableWith();
     expect(tp.evented).parameters.toEqualTypeOf<[]>();
-    expect(tp.evented).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.evented).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.evented('nope');
 
     expect(tp.debug).toBeCallableWith();
     expect(tp.debug).parameters.toEqualTypeOf<[]>();
-    expect(tp.debug).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.debug).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.debug('nope');
@@ -818,7 +818,7 @@ module('unit tests', () => {
     expect(tp.on).toBeCallableWith('init');
     expect(tp.on).toBeCallableWith('init', 'didInsertElement');
     expect(tp.on).parameters.toEqualTypeOf<string[]>();
-    expect(tp.on).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.on).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.on(false);
@@ -830,7 +830,7 @@ module('unit tests', () => {
     expect(tp.cancelOn).toBeCallableWith('init');
     expect(tp.cancelOn).toBeCallableWith('init', 'didInsertElement');
     expect(tp.cancelOn).parameters.toEqualTypeOf<string[]>();
-    expect(tp.cancelOn).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.cancelOn).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.cancelOn(false);
@@ -840,35 +840,35 @@ module('unit tests', () => {
 
     expect(tp.restartable).toBeCallableWith();
     expect(tp.restartable).parameters.toEqualTypeOf<[]>();
-    expect(tp.restartable).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.restartable).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.restartable('nope');
 
     expect(tp.enqueue).toBeCallableWith();
     expect(tp.enqueue).parameters.toEqualTypeOf<[]>();
-    expect(tp.enqueue).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.enqueue).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.enqueue('nope');
 
     expect(tp.drop).toBeCallableWith();
     expect(tp.drop).parameters.toEqualTypeOf<[]>();
-    expect(tp.drop).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.drop).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.drop('nope');
 
     expect(tp.keepLatest).toBeCallableWith();
     expect(tp.keepLatest).parameters.toEqualTypeOf<[]>();
-    expect(tp.keepLatest).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.keepLatest).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.keepLatest('nope');
 
     expect(tp.maxConcurrency).toBeCallableWith(5);
     expect(tp.maxConcurrency).parameters.toEqualTypeOf<[number]>();
-    expect(tp.maxConcurrency).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.maxConcurrency).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.maxConcurrency();
@@ -878,7 +878,7 @@ module('unit tests', () => {
 
     expect(tp.group).toBeCallableWith('foo');
     expect(tp.group).parameters.toEqualTypeOf<[string]>();
-    expect(tp.group).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.group).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.group();
@@ -888,14 +888,14 @@ module('unit tests', () => {
 
     expect(tp.evented).toBeCallableWith();
     expect(tp.evented).parameters.toEqualTypeOf<[]>();
-    expect(tp.evented).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.evented).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.evented('nope');
 
     expect(tp.debug).toBeCallableWith();
     expect(tp.debug).parameters.toEqualTypeOf<[]>();
-    expect(tp.debug).returns.toEqualTypeOf<typeof tp>();
+    expect(tp.debug).returns.toEqualTypeOf(tp);
 
     // @ts-expect-error
     tp.debug('nope');
@@ -1041,35 +1041,35 @@ module('unit tests', () => {
 
     expect(tgp.restartable).toBeCallableWith();
     expect(tgp.restartable).parameters.toEqualTypeOf<[]>();
-    expect(tgp.restartable).returns.toEqualTypeOf<typeof tgp>();
+    expect(tgp.restartable).returns.toEqualTypeOf(tgp);
 
     // @ts-expect-error
     tgp.restartable('nope');
 
     expect(tgp.enqueue).toBeCallableWith();
     expect(tgp.enqueue).parameters.toEqualTypeOf<[]>();
-    expect(tgp.enqueue).returns.toEqualTypeOf<typeof tgp>();
+    expect(tgp.enqueue).returns.toEqualTypeOf(tgp);
 
     // @ts-expect-error
     tgp.enqueue('nope');
 
     expect(tgp.drop).toBeCallableWith();
     expect(tgp.drop).parameters.toEqualTypeOf<[]>();
-    expect(tgp.drop).returns.toEqualTypeOf<typeof tgp>();
+    expect(tgp.drop).returns.toEqualTypeOf(tgp);
 
     // @ts-expect-error
     tgp.drop('nope');
 
     expect(tgp.keepLatest).toBeCallableWith();
     expect(tgp.keepLatest).parameters.toEqualTypeOf<[]>();
-    expect(tgp.keepLatest).returns.toEqualTypeOf<typeof tgp>();
+    expect(tgp.keepLatest).returns.toEqualTypeOf(tgp);
 
     // @ts-expect-error
     tgp.keepLatest('nope');
 
     expect(tgp.maxConcurrency).toBeCallableWith(5);
     expect(tgp.maxConcurrency).parameters.toEqualTypeOf<[number]>();
-    expect(tgp.maxConcurrency).returns.toEqualTypeOf<typeof tgp>();
+    expect(tgp.maxConcurrency).returns.toEqualTypeOf(tgp);
 
     // @ts-expect-error
     tgp.maxConcurrency();
