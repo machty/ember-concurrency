@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.2.1
+  - Correct types for encapsulated tasks to allow accessing encapsulated task state (#362, thanks @chancancode!)
+  - Correct types to reflect that Task, TaskInstance, and TaskGroup extend EmberObject (#363, thanks @jamescdavis!)
+
 ### 1.2.0
   - Introduce official TypeScript definitions targetting the last 3 versions of
     TypeScript. A big, big thank you to @chancancode for this heroic effort!
