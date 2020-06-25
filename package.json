@@ -1,6 +1,6 @@
 {
   "name": "ember-concurrency",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Improved concurrency/async primitives for Ember.js",
   "scripts": {
     "build": "ember build",
