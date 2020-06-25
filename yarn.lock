@@ -7066,9 +7066,10 @@ ember-compatibility-helpers@^1.2.0:
     ember-cli-version-checker "^2.1.1"
     semver "^5.4.1"
 
-ember-concurrency-async@chancancode/ember-concurrency-async#encapsulated-task-v2:
-  version "0.2.0"
-  resolved "https://codeload.github.com/chancancode/ember-concurrency-async/tar.gz/55fc0880184f17e3bf0d3b93a77659aefad66762"
+ember-concurrency-async@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/ember-concurrency-async/-/ember-concurrency-async-0.2.1.tgz#7b537e31dcac654224ed1a12ad31459604edba86"
+  integrity sha512-9E0NmTZMulyEWAOoaVUBEeQYa01IpYbEydPKNnROItscYjxzHCiR+LT9diVFzetD6sVpxOIU30e5BulQj68qKw==
   dependencies:
     "@babel/helper-plugin-utils" "^7.10.1"
     "@babel/types" "^7.10.2"
@@ -7086,9 +7087,10 @@ ember-concurrency-decorators@^2.0.0:
     ember-cli-htmlbars "^4.3.1"
     ember-cli-typescript "^3.1.4"
 
-ember-concurrency-ts@chancancode/ember-concurrency-ts#encapsulated-task-v2:
-  version "0.1.0"
-  resolved "https://codeload.github.com/chancancode/ember-concurrency-ts/tar.gz/2d92ce71fef74289393017050e561e084f93256e"
+ember-concurrency-ts@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/ember-concurrency-ts/-/ember-concurrency-ts-0.1.1.tgz#93dfc00a03a149d023d1dae278921485d557a8fe"
+  integrity sha512-dUOY5gg7zFKeSEvjqY7AWNVJDXltzHIC143yEx7kddX/S/DBN8wsPsclmw1SaS0fO/O4BpzS1QQiPSUywo0LnQ==
   dependencies:
     ember-cli-babel "^7.19.0"
     ember-cli-htmlbars "^4.3.1"
