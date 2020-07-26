@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { computed } from '@ember/object';
-import { timeout, forever, rawTimeout } from './utils';
+import { timeout, forever, rawTimeout, animationFrame } from './utils';
 import { Task, TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
 import { TaskGroup, TaskGroupProperty } from './-task-group';
@@ -136,6 +136,7 @@ export function taskGroup() {
 export {
   all,
   allSettled,
+  animationFrame,
   didCancel,
   hash,
   hashSettled,

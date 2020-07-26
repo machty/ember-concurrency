@@ -759,6 +759,32 @@ export function allSettled<T extends readonly unknown[] | readonly [unknown]>(
 export function allSettled<T>(values: Iterable<T>): Promise<Array<Settled<T>>>;
 
 /**
+ * Yielding `animationFrame()` will pause a task until after the next animation
+ * frame using the native `requestAnimationFrame()` browser API.
+ *
+ * The task below, when performed, will print the time since the last loop run
+ * for every animation frame.
+ *
+ * ```js
+ * export default Component.extend({
+ *   myTask: task(function * () {
+ *     let lastNow = performance.now();
+ *     while (true) {
+ *       yield animationFrame();
+ *
+ *       let now = performance.now();
+ *       let dt = now - lastNow;
+ *       lastNow = now;
+ *
+ *       console.log(dt);
+ *     }
+ *   })
+ * });
+ * ```
+ */
+export function animationFrame(): Yieldable;
+
+/**
  * Returns true if the object passed to it is a TaskCancelation error.
  * If you call `someTask.perform().catch(...)` or otherwise treat
  * a {@linkcode TaskInstance} like a promise, you may need to

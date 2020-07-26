@@ -262,6 +262,52 @@ export function rawTimeout(ms) {
   return new RawTimeoutYieldable(ms);
 }
 
+class AnimationFrameYieldable extends Yieldable {
+  constructor() {
+    super();
+    this.timerId = null;
+  }
+
+  [yieldableSymbol](taskInstance, resumeIndex) {
+    this.timerId = requestAnimationFrame(() => {
+      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, taskInstance._result);
+    });
+  }
+
+  [cancelableSymbol]() {
+    cancelAnimationFrame(this.timerId);
+    this.timerId = null;
+  }
+}
+
+/**
+ * Yielding `animationFrame()` will pause a task until after the next animation
+ * frame using the native `requestAnimationFrame()` browser API.
+ *
+ * The task below, when performed, will print the time since the last loop run
+ * for every animation frame.
+ *
+ * ```js
+ * export default Component.extend({
+ *   myTask: task(function * () {
+ *     let lastNow = performance.now();
+ *     while (true) {
+ *       yield animationFrame();
+ *
+ *       let now = performance.now();
+ *       let dt = now - lastNow;
+ *       lastNow = now;
+ *
+ *       console.log(dt);
+ *     }
+ *   })
+ * });
+ * ```
+ */
+export function animationFrame() {
+  return new AnimationFrameYieldable();
+}
+
 export function yieldableToPromise(yieldable) {
   let def = defer();
   let thinInstance = {
