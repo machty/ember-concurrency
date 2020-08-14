@@ -1,6 +1,7 @@
 import { assert } from "@ember/debug";
 import { schedule, cancel } from "@ember/runloop";
 import { get } from "@ember/object";
+import { addObserver, removeObserver } from '@ember/object/observers';
 import {
   yieldableSymbol,
   YIELDABLE_CONTINUE,
@@ -40,6 +41,7 @@ class WaitForEventYieldable extends EmberYieldable {
     this.fn = null;
     this.didFinish = false;
     this.usesDOMEvents = false;
+    this.requiresCleanup = false;
   }
 
   [yieldableSymbol](taskInstance, resumeIndex) {
@@ -53,10 +55,13 @@ class WaitForEventYieldable extends EmberYieldable {
       // assume that we're dealing with a DOM `EventTarget`.
       this.usesDOMEvents = true;
       this.object.addEventListener(this.eventName, this.fn);
-    } else {
+    } else if (typeof this.object.one === 'function') {
       // assume that we're dealing with either `Ember.Evented` or a compatible
       // interface, like jQuery.
       this.object.one(this.eventName, this.fn);
+    } else {
+      this.requiresCleanup = true;
+      this.object.on(this.eventName, this.fn);
     }
   }
 
@@ -66,7 +71,7 @@ class WaitForEventYieldable extends EmberYieldable {
         // unfortunately this is required, because IE 11 does not support the
         // `once` option: https://caniuse.com/#feat=once-event-listener
         this.object.removeEventListener(this.eventName, this.fn);
-      } else if (!this.didFinish) {
+      } else if (!this.didFinish || this.requiresCleanup) {
         this.object.off(this.eventName, this.fn);
       }
 
@@ -101,14 +106,14 @@ class WaitForPropertyYieldable extends EmberYieldable {
     };
 
     if (!this.observerFn()) {
-      this.object.addObserver(this.key, null, this.observerFn);
+      addObserver(this.object, this.key, null, this.observerFn);
       this.observerBound = true;
     }
   }
 
   [cancelableSymbol]() {
     if (this.observerBound && this.observerFn) {
-      this.object.removeObserver(this.key, null, this.observerFn);
+      removeObserver(this.object, this.key, null, this.observerFn);
       this.observerFn = null;
     }
   }
@@ -154,13 +159,13 @@ export function waitForQueue(queueName) {
  * });
  * ```
  *
- * @param {object} object the Ember Object or jQuery selector (with ,on(), .one(), and .off())
+ * @param {object} object the Ember Object, jQuery element, or other object with .on() and .off() APIs
  *                 that the event fires from
  * @param {function} eventName the name of the event to wait for
  */
 export function waitForEvent(object, eventName) {
   assert(
-    `${object} must include Ember.Evented (or support \`.one()\` and \`.off()\`) or DOM EventTarget (or support \`addEventListener\` and  \`removeEventListener\`) to be able to use \`waitForEvent\``,
+    `${object} must include Ember.Evented (or support \`.on()\` and \`.off()\`) or DOM EventTarget (or support \`addEventListener\` and  \`removeEventListener\`) to be able to use \`waitForEvent\``,
     isEventedObject(object)
   );
   return new WaitForEventYieldable(object, eventName);

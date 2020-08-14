@@ -640,12 +640,10 @@ function buildEncapsulatedTask(taskObj, options) {
  *
  * @returns {TaskGroup}
  */
-export function taskGroup(taskFn) {
+export function taskGroup() {
   let tp = taskComputed(function(key) {
     return new TaskGroup(sharedTaskProperties(tp, this, key));
   });
-
-  tp.taskFn = taskFn;
 
   Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
 

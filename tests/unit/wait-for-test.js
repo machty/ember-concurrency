@@ -1,11 +1,42 @@
 import Evented from '@ember/object/evented';
-import EmberObject from '@ember/object';
+import EmberObject, { computed, set } from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import { task, waitForQueue, waitForEvent, waitForProperty, race } from 'ember-concurrency';
 import { alias } from '@ember/object/computed';
+import { gte } from 'ember-compatibility-helpers';
 
 const EventedObject = EmberObject.extend(Evented);
+
+const GenericEventedMixin = {
+  init() {
+    this._super(...arguments);
+    this._handlers = {};
+  },
+
+  has(eventName) {
+    return this._handlers[eventName] && this._handlers[eventName].length > 0;
+  },
+
+  trigger(eventName, data) {
+    const eventHandlers = this._handlers[eventName];
+    if (eventHandlers) {
+      eventHandlers.forEach((handler) => handler.call(this, data));
+    }
+  },
+
+  on(eventName, fn) {
+    this._handlers[eventName] = this._handlers[eventName] || [];
+    this._handlers[eventName].push(fn);
+  },
+
+  off(eventName, fn) {
+    const eventHandlers = this._handlers[eventName];
+    if (eventHandlers) {
+      this._handlers[eventName] = eventHandlers.filter((handler) => handler !== fn);
+    }
+  }
+};
 
 module('Unit: test waitForQueue and waitForEvent and waitForProperty', function() {
   test('waitForQueue works', function(assert) {
@@ -186,6 +217,64 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
     assert.notOk(taskCompleted, 'Task should not have completed');
   });
 
+  test('waitForEvent works (generic on/off interface)', function(assert) {
+    assert.expect(4);
+    let taskCompleted = false;
+    const Obj = EmberObject.extend({
+      ...GenericEventedMixin,
+
+      task: task(function*() {
+        let value = yield waitForEvent(this, 'foo');
+        assert.equal(value, 123);
+        taskCompleted = true;
+      })
+    });
+
+    let obj;
+    run(() => {
+      obj = Obj.create();
+      obj.get('task').perform();
+    });
+
+    run(() => {
+      assert.notOk(taskCompleted, 'Task should not have completed');
+      assert.ok(obj.has('foo'), 'Object has the event listener');
+      obj.trigger('foo', 123);
+    });
+
+    assert.ok(taskCompleted, 'Task should have completed');
+  });
+
+  test('canceling waitForEvent works (generic on/off interface)', function(assert) {
+    assert.expect(4);
+    let taskCompleted = false;
+    const Obj = EmberObject.extend({
+      ...GenericEventedMixin,
+
+      task: task(function*() {
+        let value = yield waitForEvent(this, 'foo');
+        assert.equal(value, 123);
+        taskCompleted = true;
+      })
+    });
+
+    let obj;
+    run(() => {
+      obj = Obj.create();
+      obj.get('task').perform();
+    });
+
+    run(() => {
+      assert.notOk(taskCompleted, 'Task should not have completed');
+      assert.ok(obj.has('foo'), 'Object has the event listener');
+      obj.get('task').cancelAll();
+      obj.trigger('foo');
+    });
+
+    assert.notOk(obj.has('foo'), 'Object does not have the event listener');
+    assert.notOk(taskCompleted, 'Task should not have completed');
+  });
+
   test('waitForProperty works', function(assert) {
     assert.expect(1);
 
@@ -312,4 +401,40 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
     run(obj, 'trigger', 'bar', 456);
     assert.equal(ev, 456);
   });
+
+  if (gte('3.10.0')) {
+    test('waitForProperty works on an ES class', function(assert) {
+      assert.expect(1);
+
+      let values = [];
+      class Obj {
+        a = 1;
+
+        @computed('a')
+        get b() {
+          return this.a;
+        }
+
+        @(task(function*() {
+          let result = yield waitForProperty(this, 'b', v => {
+            values.push(v);
+            return v == 3 ? 'done' : false;
+          });
+          values.push(`val=${result}`);
+        })) task;
+      }
+
+      let obj;
+      run(() => {
+        obj = new Obj();
+        obj.task.perform();
+      });
+
+      run(() => set(obj, 'a', 2));
+      run(() => set(obj, 'a', 3));
+      run(() => set(obj, 'a', 4));
+
+      assert.deepEqual(values, [1, 2, 3, 'val=3']);
+    });
+  }
 });
