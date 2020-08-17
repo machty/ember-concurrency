@@ -70,7 +70,7 @@ export class TaskInstanceExecutor {
 
   setState(state) {
     Object.assign(this.state, state);
-    this.taskInstance.setState(state);
+    this.taskInstance.setState(this.state);
   }
 
   proceedChecked(index, yieldResumeType, value) {
