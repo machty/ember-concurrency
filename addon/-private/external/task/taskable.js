@@ -32,7 +32,7 @@ export class Taskable {
   }
 
   _resetState() {
-    this.setProperties(DEFAULT_STATE);
+    this.setState(DEFAULT_STATE);
   }
 
   // override

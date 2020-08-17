@@ -7,7 +7,7 @@ import {
   INITIAL_STATE as INITIAL_INSTANCE_STATE
 } from "./external/task-instance/initial-state";
 
-const USE_TRACKED = gte('3.16.0');
+export const USE_TRACKED = gte('3.16.0');
 
 function trackMixin(proto, obj, key) {
   const propDesc = Object.getOwnPropertyDescriptor(proto, key);
