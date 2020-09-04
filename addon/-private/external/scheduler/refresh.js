@@ -58,7 +58,7 @@ class Refresh {
         taskInstance.cancel(desiredState.reason);
         return false;
       case TYPE_STARTED:
-        if (!taskInstance.hasStarted) {
+        if (!taskInstance.executor.state.hasStarted) {
           this.startingInstances.push(taskInstance);
           taskState.onStart(taskInstance);
         }

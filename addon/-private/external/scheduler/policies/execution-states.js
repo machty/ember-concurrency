@@ -1,4 +1,3 @@
-// TODO: change to ints?
 export const TYPE_CANCELLED = "CANCELLED";
 export const TYPE_STARTED = "STARTED";
 export const TYPE_QUEUED = "QUEUED";

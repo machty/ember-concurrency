@@ -2,7 +2,7 @@ import Ember from 'ember';
 import { defer } from 'rsvp';
 import { Environment } from "./external/environment";
 import { assert } from '@ember/debug';
-import { join, schedule } from '@ember/runloop';
+import { join, schedule, later } from '@ember/runloop';
 
 export class EmberEnvironment extends Environment {
   assert(...args) {
@@ -14,7 +14,7 @@ export class EmberEnvironment extends Environment {
   }
 
   reportUncaughtRejection(error) {
-    setTimeout(function() {
+    later(function() {
       if (Ember.onerror) {
         Ember.onerror(error);
       } else {

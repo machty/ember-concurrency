@@ -1,5 +1,9 @@
 import { set, get, setProperties } from '@ember/object';
 import { BaseTaskInstance } from './external/task-instance/base';
+import {
+  TRACKED_INITIAL_INSTANCE_STATE,
+  USE_TRACKED
+} from './tracked-state';
 
 /**
   A `TaskInstance` represent a single execution of a
@@ -20,30 +24,31 @@ import { BaseTaskInstance } from './external/task-instance/base';
   @class TaskInstance
 */
 
+const assignProperties = USE_TRACKED ? Object.assign : setProperties;
+
 export class TaskInstance extends BaseTaskInstance {
   setState(props) {
-    setProperties(this, props);
-    let state = this._recomputeState();
-    setProperties(this, {
-      isRunning: !this.isFinished,
+    let state = this._recomputeState(props);
+    assignProperties(this, {
+      ...props,
+      isRunning: !props.isFinished,
       isDropped: state === 'dropped',
       state,
     });
   }
 
-  _recomputeState() {
-    if (this.isDropped) {
+  _recomputeState(props) {
+    if (props.isDropped) {
       return 'dropped';
-    } else
-    if (this.isCanceled) {
-      if (this.hasStarted) {
+    } else if (props.isCanceled) {
+      if (props.hasStarted) {
         return 'canceled';
       } else {
         return 'dropped';
       }
-    } else if (this.isFinished) {
+    } else if (props.isFinished) {
       return 'finished';
-    } else if (this.hasStarted) {
+    } else if (props.hasStarted) {
       return 'running';
     } else {
       return 'waiting';
@@ -275,4 +280,8 @@ export class TaskInstance extends BaseTaskInstance {
   set(key, value) {
     return set(this, key, value);
   }
+}
+
+if (TRACKED_INITIAL_INSTANCE_STATE) {
+  Object.defineProperties(TaskInstance.prototype, TRACKED_INITIAL_INSTANCE_STATE);
 }
