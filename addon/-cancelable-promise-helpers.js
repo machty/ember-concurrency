@@ -28,7 +28,7 @@ export const all = (things) => {
   assert(`'all' expects an array.`, Array.isArray(things));
 
   if (things.length === 0) {
-    return things;
+    return Promise.resolve(things);
   }
 
   for (let i = 0; i < things.length; ++i) {
@@ -55,7 +55,7 @@ export const all = (things) => {
   if (isAsync) {
     return asyncAll(taskInstances);
   } else {
-    return taskInstances.map(ti => ti.value);
+    return Promise.resolve(taskInstances.map(ti => ti.value));
   }
 };
 

@@ -1387,17 +1387,15 @@ module('unit tests', () => {
     let thenable!: PromiseLike<number>;
     let promise!: Promise<void>;
 
-    expect(all([])).toEqualTypeOf(Promise.all([]));
-    expect(all([value])).toEqualTypeOf(Promise.all([value]));
-    expect(all([task])).toEqualTypeOf(Promise.all([task]));
-    expect(all([thenable])).toEqualTypeOf(Promise.all([thenable]));
-    expect(all([promise])).toEqualTypeOf(Promise.all([promise]));
+    expect(all([])).resolves.toEqualTypeOf<[]>();
+    expect(all([value])).resolves.toEqualTypeOf<[string]>();
+    expect(all([task])).resolves.toEqualTypeOf<[boolean]>();
+    expect(all([thenable])).resolves.toEqualTypeOf<[number]>();
+    expect(all([promise])).resolves.toEqualTypeOf<[void]>();
 
     expect(
       all([value, task, thenable, promise])
-    ).toEqualTypeOf(
-      Promise.all([value, task, thenable, promise])
-    );
+    ).resolves.toEqualTypeOf<[string, boolean, number, void]>();
 
     {
       let result = await all([]);
@@ -1575,19 +1573,17 @@ module('unit tests', () => {
     let thenable!: PromiseLike<number>;
     let promise!: Promise<void>;
 
-    expect(allSettled([])).toEqualTypeOf(Promise.allSettled([]));
-    expect(allSettled([value])).toEqualTypeOf(Promise.allSettled([value]));
-    expect(allSettled([task])).toEqualTypeOf(Promise.allSettled([task]));
-    expect(allSettled([thenable])).toEqualTypeOf(Promise.allSettled([thenable]));
-    expect(allSettled([promise])).toEqualTypeOf(Promise.allSettled([promise]));
+    type S<T> = { state: 'fulfilled', value: T } | { state: 'rejected', reason: any };
+
+    expect(allSettled([])).resolves.toEqualTypeOf<[]>();
+    expect(allSettled([value])).resolves.toEqualTypeOf<[S<string>]>();
+    expect(allSettled([task])).resolves.toEqualTypeOf<[S<boolean>]>();
+    expect(allSettled([thenable])).resolves.toEqualTypeOf<[S<number>]>();
+    expect(allSettled([promise])).resolves.toEqualTypeOf<[S<void>]>();
 
     expect(
       allSettled([value, task, thenable, promise])
-    ).toEqualTypeOf(
-      Promise.allSettled([value, task, thenable, promise])
-    );
-
-    type S<T> = { state: 'fulfilled', value: T } | { state: 'rejected', reason: any };
+    ).resolves.toEqualTypeOf<[S<string>, S<boolean>, S<number>, S<void>]>();
 
     {
       let result = await allSettled([]);
