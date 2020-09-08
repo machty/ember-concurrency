@@ -1,5 +1,49 @@
 # Changelog
 
+### 1.3.0
+  - Add `animationFrame` yieldable helper. Yielding `animationFrame()` will
+    pause a task until after the next animation frame using the native
+    `requestAnimationFrame()` browser API.
+
+    **Note**: ember-concurrency tasks are scheduled on the runloop, so this will
+    not cause the remainder of the task to instead run during the next animation
+    frame, but the runloop after the next animation frame.
+  - Add `hashSettled` helper for cancellation-aware implementation of RSVP's `hashSettled` (#353, thanks @kwliou!)
+  - Add missing types for `linked()` and `unlinked()` (#373)
+  - Deprecate direct usage of task with action helper and disable tests for it
+    on 3.20+.
+
+    This feature unfortunately depends on private APIs that will be removed in
+    Ember 3.25. Unfortunately, the mechanism was already removed in Ember 3.20,
+    making it impossible to support this for releases at least until recent
+    canaries where it was re-introduced with a deprecation. However, the feature
+    is rarely used, only documented in this changelog, and frequently breaks
+    whenever the private constant it depends on moves modules internally
+    throughout new versions of Ember.
+
+    It will continue to remain available for Ember < 3.20, but will not be
+    available in Ember-Concurrency 2.0, and will show a deprecation warning from
+    1.3.0 forward.
+
+    Any existing uses can be converted to using `{{perform}}` directly or
+    wrapping the task in `(perform)` before passing to `{{action}}` or `{{fn}}`
+
+    Before:
+
+    ```hbs
+    <button onClick={{action someTask}}>My button</button>
+    ```
+
+    After:
+
+    ```hbs
+    {{!-- Any of these --}}
+    <button {{on "click" (perform someTask)}}>My button</button>
+    <button onClick={{perform someTask}}>My button</button>
+    <button onClick={{action (perform someTask)}}>My button</button>
+    <button onClick={{fn (perform someTask)}}>My button</button>
+    ```
+
 ### 1.2.1
   - Correct types for encapsulated tasks to allow accessing encapsulated task state (#362, thanks @chancancode!)
   - Correct types to reflect that Task, TaskInstance, and TaskGroup extend EmberObject (#363, thanks @jamescdavis!)
