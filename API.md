@@ -39,6 +39,7 @@ used in conjunction with Tasks / TaskInstances.
 - [all](global.html#all)
 - [allSettled](global.html#allSettled)
 - [hash](global.html#hash)
+- [hashSettled](global.html#hashSettled)
 - [race](global.html#race)
 
 ## Misc

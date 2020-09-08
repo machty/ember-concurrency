@@ -60,7 +60,7 @@ export const all = (things) => {
 };
 
 /**
- * A cancelation-aware variant of [RSVP.allSettled](http://emberjs.com/api/classes/RSVP.html#method_allSettled).
+ * A cancelation-aware variant of [RSVP.allSettled](https://api.emberjs.com/ember/release/functions/rsvp/allSettled).
  * The normal version of a `RSVP.allSettled` just returns a regular, uncancelable
  * Promise. The `ember-concurrency` variant of `allSettled()` has the following
  * additional behavior:
@@ -86,17 +86,29 @@ export const allSettled = taskAwareVariantOf(RSVP, 'allSettled', identity);
 export const race = taskAwareVariantOf(Promise, 'race', identity);
 
 /**
- * A cancelation-aware variant of [RSVP.hash](http://emberjs.com/api/classes/RSVP.html#hash).
+ * A cancelation-aware variant of [RSVP.hash](https://api.emberjs.com/ember/release/functions/rsvp/hash).
  * The normal version of a `RSVP.hash` just returns a regular, uncancelable
  * Promise. The `ember-concurrency` variant of `hash()` has the following
  * additional behavior:
  *
  * - if the task that `yield`ed `hash()` is canceled, any of the
- *   {@linkcode TaskInstance}s passed in to `allSettled` will be canceled
+ *   {@linkcode TaskInstance}s passed in to `hash` will be canceled
  * - if any of the items rejects/cancels, all other cancelable items
  *   (e.g. {@linkcode TaskInstance}s) will be canceled
  */
 export const hash = taskAwareVariantOf(RSVP, 'hash', getValues);
+
+/**
+ * A cancelation-aware variant of [RSVP.hashSettled](https://api.emberjs.com/ember/release/functions/rsvp/hashSettled).
+ * The normal version of a `RSVP.hashSettled` just returns a regular, uncancelable
+ * Promise. The `ember-concurrency` variant of `hashSettled()` has the following
+ * additional behavior:
+ *
+ * - if the task that `yield`ed `hashSettled()` is canceled, any of the
+ *   {@linkcode TaskInstance}s passed in to `hashSettled` will be canceled
+ */
+export const hashSettled = taskAwareVariantOf(RSVP, 'hashSettled', getValues);
+
 
 function identity(obj) {
   return obj;

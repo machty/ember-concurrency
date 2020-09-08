@@ -4,7 +4,7 @@ import { timeout, forever, rawTimeout } from './utils';
 import { Task, TaskProperty } from './-task-property';
 import { didCancel } from './-task-instance';
 import { TaskGroup, TaskGroupProperty } from './-task-group';
-import { all, allSettled, hash, race } from './-cancelable-promise-helpers';
+import { all, allSettled, hash, hashSettled, race } from './-cancelable-promise-helpers';
 import { waitForQueue, waitForEvent, waitForProperty } from './-wait-for';
 import { resolveScheduler } from './-property-modifiers-mixin';
 import { gte } from 'ember-compatibility-helpers';
@@ -138,6 +138,7 @@ export {
   allSettled,
   didCancel,
   hash,
+  hashSettled,
   race,
   timeout,
   rawTimeout,
