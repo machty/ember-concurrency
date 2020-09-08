@@ -18,7 +18,7 @@ import {
   _ComputedProperty,
 } from './utils';
 import EncapsulatedTask from './-encapsulated-task';
-import { deprecate } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
 
 const PerformProxy = EmberObject.extend({
@@ -400,6 +400,16 @@ export const Task = EmberObject.extend(TaskStateMixin, {
   },
 
   [INVOKE](...args) {
+    let invokeMsg = `As of Ember 3.20, invoking tasks directly with action or fn helpers is no longer supported due to underlying changes in Ember. Please use the \`perform\` helper instead, or wrap the task (e.g. \`(perform ${this._propertyName})\`) before passing it to the action or fn helpers.`;
+
+    if (gte('3.20.0')) {
+      assert(invokeMsg, false);
+    } else {
+      deprecate(invokeMsg, false, {
+        until: '2.0.0',
+        id: 'ember-concurrency.custom-invoke-invokable',
+      });
+    }
     return this.perform(...args);
   },
 });
