@@ -130,6 +130,25 @@ interface AbstractTask<Args extends any[], T extends TaskInstance<any>> extends 
    * @param args Arguments to pass to the task function.
    */
   perform(...args: Args): T;
+
+  /**
+   * Flags the task as linked to the parent task's lifetime. Must be called
+   * within another task's perform function. The task will be cancelled if the
+   * parent task is canceled as well.
+   *
+   * ember-concurrency will indicate when this may be needed.
+   */
+  linked(): this;
+
+  /**
+   * Flags the task as not linked to the parent task's lifetime. Must be called
+   * within another task's perform function. The task will NOT be cancelled if the
+   * parent task is canceled.
+   *
+   * This is useful for avoiding the so-called "self-cancel loop" for tasks.
+   * ember-concurrency will indicate when this may be needed.
+   */
+  unlinked(): this;
 }
 
 /**

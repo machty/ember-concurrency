@@ -371,6 +371,20 @@ module('unit tests', () => {
 
     // @ts-expect-error
     t.perform(false, 3, 'extra');
+
+    expect(t.linked).toBeCallableWith();
+    expect(t.linked).parameters.toEqualTypeOf<[]>();
+    expect(t.linked).returns.toEqualTypeOf(t);
+
+    // @ts-expect-error
+    t.linked(null);
+
+    expect(t.unlinked).toBeCallableWith();
+    expect(t.unlinked).parameters.toEqualTypeOf<[]>();
+    expect(t.unlinked).returns.toEqualTypeOf(t);
+
+    // @ts-expect-error
+    t.unlinked(null);
   });
 
   test('EncapsulatedTask', () => {
@@ -430,6 +444,20 @@ module('unit tests', () => {
 
     // @ts-expect-error
     t.perform(false, 3, 'extra');
+
+    expect(t.linked).toBeCallableWith();
+    expect(t.linked).parameters.toEqualTypeOf<[]>();
+    expect(t.linked).returns.toEqualTypeOf(t);
+
+    // @ts-expect-error
+    t.linked(null);
+
+    expect(t.unlinked).toBeCallableWith();
+    expect(t.unlinked).parameters.toEqualTypeOf<[]>();
+    expect(t.unlinked).returns.toEqualTypeOf(t);
+
+    // @ts-expect-error
+    t.unlinked(null);
   });
 
   test('TaskGroup', () => {

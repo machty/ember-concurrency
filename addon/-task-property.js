@@ -199,6 +199,18 @@ export const Task = EmberObject.extend(TaskStateMixin, {
     return task;
   },
 
+  /**
+   * Flags the task as linked to the parent task's lifetime. Must be called
+   * within another task's perform function. The task will be cancelled if the
+   * parent task is canceled as well.
+   *
+   * ember-concurrency will indicate when this may be needed.
+   *
+   * @method linked
+   * @memberof Task
+   * @instance
+   *
+   */
   linked() {
     let taskInstance = getRunningInstance();
     if (!taskInstance) {
@@ -212,6 +224,19 @@ export const Task = EmberObject.extend(TaskStateMixin, {
     });
   },
 
+  /**
+   * Flags the task as not linked to the parent task's lifetime. Must be called
+   * within another task's perform function. The task will NOT be cancelled if the
+   * parent task is canceled.
+   *
+   * This is useful for avoiding the so-called "self-cancel loop" for tasks.
+   * ember-concurrency will indicate when this may be needed.
+   *
+   * @method unlinked
+   * @memberof Task
+   * @instance
+   *
+   */
   unlinked() {
     return PerformProxy.create({
       _task: this,
