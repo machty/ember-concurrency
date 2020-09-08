@@ -5,6 +5,7 @@ import {
   task,
   all,
   allSettled,
+  animationFrame,
   hash,
   hashSettled,
   race,
@@ -508,7 +509,7 @@ module('Unit: cancelable promises test helpers', function() {
   });
 
   test("yieldable helpers support cancelation on all manner of Yieldable-derived classes", function(assert) {
-    assert.expect(5);
+    assert.expect(6);
 
     let wrapCancelation = (yieldable, shouldBeCalled = true) => {
       let originalCancel = yieldable.__ec_cancel__.bind(yieldable);
@@ -544,12 +545,16 @@ module('Unit: cancelable promises test helpers', function() {
         let timeoutYieldable = timeout(100000);
         wrapCancelation(timeoutYieldable);
 
+        let rafYieldable = animationFrame();
+        wrapCancelation(rafYieldable);
+
         yield race([
           eventYieldable,
           propertyYieldable,
           queueYieldable,
           rawTimeoutYieldable,
           timeoutYieldable,
+          rafYieldable,
           resolve(42)
         ]);
       }).on('init')

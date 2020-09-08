@@ -24,6 +24,7 @@ import {
   TaskProperty,
   all,
   allSettled,
+  animationFrame,
   didCancel,
   forever,
   hash,
@@ -2123,6 +2124,23 @@ module('unit tests', () => {
 
     {
       let result = await rawTimeout(500);
+      expect(result).toEqualTypeOf<void>();
+    }
+  });
+
+  test('animationFrame', async () => {
+    expect(animationFrame).toBeCallableWith();
+    expect(animationFrame).parameters.toEqualTypeOf<[]>();
+    expect(animationFrame).returns.toEqualTypeOf<PromiseLike<void>>();
+
+    // @ts-expect-error
+    animationFrame('nope');
+
+    // @ts-expect-error
+    animationFrame(500, 'nope');
+
+    {
+      let result = await animationFrame();
       expect(result).toEqualTypeOf<void>();
     }
   });
