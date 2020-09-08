@@ -726,7 +726,7 @@ export function all<T extends readonly unknown[] | readonly [unknown]>(
 export function all<T>(values: Iterable<T>): Promise<Array<Resolved<T>>>;
 
 /**
- * A cancelation-aware variant of [RSVP.allSettled](http://emberjs.com/api/classes/RSVP.html#method_allSettled).
+ * A cancelation-aware variant of [RSVP.allSettled](https://api.emberjs.com/ember/release/functions/rsvp/allSettled).
  * The normal version of a `RSVP.allSettled` just returns a regular, uncancelable
  * Promise. The `ember-concurrency` variant of `allSettled()` has the following
  * additional behavior:
@@ -760,13 +760,13 @@ export function allSettled<T>(values: Iterable<T>): Promise<Array<Settled<T>>>;
 export function didCancel(error: unknown): error is TaskCancelation;
 
 /**
- * A cancelation-aware variant of [RSVP.hash](http://emberjs.com/api/classes/RSVP.html#hash).
+ * A cancelation-aware variant of [RSVP.hash](https://api.emberjs.com/ember/release/functions/rsvp/hash).
  * The normal version of a `RSVP.hash` just returns a regular, uncancelable
  * Promise. The `ember-concurrency` variant of `hash()` has the following
  * additional behavior:
  *
  * - if the task that `yield`ed `hash()` is canceled, any of the
- *   {@linkcode TaskInstance}s passed in to `allSettled` will be canceled
+ *   {@linkcode TaskInstance}s passed in to `hash` will be canceled
  * - if any of the items rejects/cancels, all other cancelable items
  *   (e.g. {@linkcode TaskInstance}s) will be canceled
  */
@@ -774,6 +774,20 @@ export function hash<T extends Record<string, unknown>>(
   values: T
 ): Promise<{ [K in keyof T]: Resolved<T[K]> }>;
 export function hash<T>(values: Record<string, T>): Promise<Record<string, Resolved<T>>>;
+
+/**
+ * A cancelation-aware variant of [RSVP.hashSettled](https://api.emberjs.com/ember/release/functions/rsvp/hashSettled).
+ * The normal version of a `RSVP.hashSettled` just returns a regular, uncancelable
+ * Promise. The `ember-concurrency` variant of `hashSettled()` has the following
+ * additional behavior:
+ *
+ * - if the task that `yield`ed `hashSettled()` is canceled, any of the
+ *   {@linkcode TaskInstance}s passed in to `hashSettled` will be canceled
+ */
+export function hashSettled<T extends Record<string, unknown>>(
+  values: T
+): Promise<{ [K in keyof T]: Settled<T[K]> }>;
+export function hashSettled<T>(values: Record<string, T>): Promise<Record<string, Settled<T>>>;
 
 /**
  * A cancelation-aware variant of [Promise.race](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race).

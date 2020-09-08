@@ -27,6 +27,7 @@ import {
   didCancel,
   forever,
   hash,
+  hashSettled,
   race,
   rawTimeout,
   task,
@@ -1842,6 +1843,76 @@ module('unit tests', () => {
       expect(result.task).toBeBoolean();
       expect(result.thenable).toBeNumber();
       expect(result.promise).toEqualTypeOf<void>();
+
+      // @ts-expect-error
+      result.nope;
+    }
+  });
+
+  test('hashSettled', async () => {
+    let value = 'foo';
+    let task!: TaskInstance<boolean>;
+    let thenable!: PromiseLike<number>;
+    let promise!: Promise<void>;
+
+    type S<T> = { state: 'fulfilled', value: T } | { state: 'rejected', reason: any };
+
+    expect(hashSettled({})).resolves.toEqualTypeOf<{}>();
+    expect(hashSettled({ value })).resolves.toEqualTypeOf<{ value: S<string> }>();
+    expect(hashSettled({ task })).resolves.toEqualTypeOf<{ task: S<boolean> }>();
+    expect(hashSettled({ thenable })).resolves.toEqualTypeOf<{ thenable: S<number> }>();
+    expect(hashSettled({ promise })).resolves.toEqualTypeOf<{ promise: S<void> }>();
+
+    expect(
+      hashSettled({ value, task, thenable, promise })
+    ).resolves.toEqualTypeOf<{
+      value: S<string>,
+      task: S<boolean>,
+      thenable: S<number>,
+      promise: S<void>
+    }>();
+
+    {
+      let result = await hashSettled({});
+
+      // @ts-expect-error
+      result.nope;
+    }
+
+
+    {
+      let result = await hashSettled({ value });
+      expect(result.value).toEqualTypeOf<S<string>>();
+
+      // @ts-expect-error
+      result.nope;
+    }
+
+    {
+      let result = await hashSettled({ value, task });
+      expect(result.value).toEqualTypeOf<S<string>>();
+      expect(result.task).toEqualTypeOf<S<boolean>>();
+
+      // @ts-expect-error
+      result.nope;
+    }
+
+    {
+      let result = await hashSettled({ value, task, thenable });
+      expect(result.value).toEqualTypeOf<S<string>>();
+      expect(result.task).toEqualTypeOf<S<boolean>>();
+      expect(result.thenable).toEqualTypeOf<S<number>>();
+
+      // @ts-expect-error
+      result.nope;
+    }
+
+    {
+      let result = await hashSettled({ value, task, thenable, promise });
+      expect(result.value).toEqualTypeOf<S<string>>();
+      expect(result.task).toEqualTypeOf<S<boolean>>();
+      expect(result.thenable).toEqualTypeOf<S<number>>();
+      expect(result.promise).toEqualTypeOf<S<void>>();
 
       // @ts-expect-error
       result.nope;
