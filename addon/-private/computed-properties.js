@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import { setOwner, getOwner } from '@ember/application';
 import EmberObject, { get, computed } from '@ember/object';
+import ComputedProperty from '@ember/object/computed';
 import { assert, deprecate } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
 import UnboundedSchedulerPolicy from './external/scheduler/policies/unbounded-policy'
@@ -8,7 +9,6 @@ import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-polic
 import DropSchedulerPolicy from './external/scheduler/policies/drop-policy'
 import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy'
 import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy'
-import { _ComputedProperty } from './utils';
 import EmberScheduler from './scheduler/ember-scheduler';
 import { addListener } from '@ember/object/events';
 import { addObserver } from '@ember/object/observers';
@@ -245,14 +245,14 @@ if (gte('3.10.0')) {
 } else {
   // Prior to the 3.10.0 refactors, we had to extend the _ComputedProperty class
   // for a classic decorator/descriptor to run correctly.
-  TaskProperty = class extends _ComputedProperty {
+  TaskProperty = class extends ComputedProperty {
     callSuperSetup() {
       if (super.setup) {
         super.setup(...arguments);
       }
     }
   };
-  TaskGroupProperty = class extends _ComputedProperty {};
+  TaskGroupProperty = class extends ComputedProperty {};
 }
 
 Object.assign(TaskGroupProperty.prototype, propertyModifiers);

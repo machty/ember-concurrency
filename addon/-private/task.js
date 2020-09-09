@@ -1,5 +1,4 @@
 import { Task as BaseTask } from "./external/task/task";
-import { INVOKE } from "./utils";
 import { TaskInstance } from './task-instance';
 import { PERFORM_TYPE_DEFAULT, TaskInstanceExecutor, PERFORM_TYPE_LINKED } from "./external/task-instance/executor";
 import { EMBER_ENVIRONMENT } from "./ember-environment";
@@ -224,10 +223,6 @@ export class Task extends BaseTask {
    * @instance
    * @readOnly
    */
-
-  [INVOKE](...args) {
-    return this.perform(...args);
-  }
 }
 
 if (TRACKED_INITIAL_TASK_STATE) {

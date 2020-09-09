@@ -1,6 +1,4 @@
-import ComputedProperty from '@ember/object/computed';
 import { later, cancel } from '@ember/runloop';
-import Ember from 'ember';
 import { EMBER_ENVIRONMENT } from "./ember-environment";
 import {
   Yieldable,
@@ -16,27 +14,6 @@ export function isEventedObject(c) {
     (typeof c.addEventListener === 'function' && typeof c.removeEventListener === 'function')
   ));
 }
-
-export let INVOKE = "__invoke_symbol__";
-
-let locations = [
-  '@ember/-internals/glimmer/index',
-  '@ember/-internals/glimmer',
-  'ember-glimmer',
-  'ember-glimmer/helpers/action',
-  'ember-htmlbars/keywords/closure-action',
-  'ember-routing-htmlbars/keywords/closure-action',
-  'ember-routing/keywords/closure-action'
-];
-
-for (let i = 0; i < locations.length; i++) {
-  if (locations[i] in Ember.__loader.registry) {
-    INVOKE = Ember.__loader.require(locations[i])['INVOKE'];
-    break;
-  }
-}
-
-export const _ComputedProperty = ComputedProperty;
 
 export class EmberYieldable extends Yieldable {
   _deferable() {
