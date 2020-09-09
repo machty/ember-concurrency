@@ -19,6 +19,33 @@ export class Task extends BaseTask {
   }
 
   /**
+   * Flags the task as linked to the parent task's lifetime. Must be called
+   * within another task's perform function. The task will be cancelled if the
+   * parent task is canceled as well.
+   *
+   * ember-concurrency will indicate when this may be needed.
+   *
+   * @method linked
+   * @memberof Task
+   * @instance
+   *
+   */
+
+  /**
+   * Flags the task as not linked to the parent task's lifetime. Must be called
+   * within another task's perform function. The task will NOT be cancelled if the
+   * parent task is canceled.
+   *
+   * This is useful for avoiding the so-called "self-cancel loop" for tasks.
+   * ember-concurrency will indicate when this may be needed.
+   *
+   * @method unlinked
+   * @memberof Task
+   * @instance
+   *
+   */
+
+  /**
    * Creates a new {@linkcode TaskInstance} and attempts to run it right away.
    * If running this task instance would increase the task's concurrency
    * to a number greater than the task's maxConcurrency, this task
