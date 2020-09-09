@@ -1,4 +1,6 @@
+import { setProperties } from '@ember/object';
 import { later, cancel } from '@ember/runloop';
+import { gte } from 'ember-compatibility-helpers';
 import { EMBER_ENVIRONMENT } from "./ember-environment";
 import {
   Yieldable,
@@ -6,6 +8,9 @@ import {
   YIELDABLE_CONTINUE,
   cancelableSymbol
 } from "./external/yieldables";
+
+export const USE_TRACKED = gte('3.16.0');
+export const assignProperties = USE_TRACKED ? Object.assign : setProperties;
 
 export function isEventedObject(c) {
   return (c && (
