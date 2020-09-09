@@ -1,4 +1,3 @@
-import { set, get } from '@ember/object';
 import { assignProperties } from './utils';
 
 export const TASKABLE_MIXIN = {
@@ -17,14 +16,6 @@ export const TASKABLE_MIXIN = {
       state: isRunning ? "running" : "idle",
     });
     assignProperties(this, derivedState);
-  },
-
-  get(key) {
-    return get(this, key);
-  },
-
-  set(key, value) {
-    return set(this, key, value);
   },
 
   onState(state, task) {

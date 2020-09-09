@@ -74,11 +74,11 @@ module("Unit: task instance", function(hooks) {
           return window.Promise.resolve(v * 2);
         })(123);
       });
-      assert.equal(ti.get("isFinished"), false);
+      assert.equal(ti.isFinished, false);
       assert.equal(ti.value, null);
 
       setTimeout(() => {
-        assert.equal(ti.get("isFinished"), true);
+        assert.equal(ti.isFinished, true);
         assert.equal(ti.value, 246);
         done();
       }, 1);
@@ -99,11 +99,11 @@ module("Unit: task instance", function(hooks) {
           return v;
         })(123);
       });
-      assert.equal(ti.get("isFinished"), false);
+      assert.equal(ti.isFinished, false);
       assert.equal(ti.value, null);
 
       setTimeout(() => {
-        assert.equal(ti.get("isFinished"), true);
+        assert.equal(ti.isFinished, true);
         assert.equal(ti.value, 492);
         done();
       }, 1);
@@ -121,11 +121,11 @@ module("Unit: task instance", function(hooks) {
           return v;
         })(123);
       });
-      assert.equal(ti.get("isFinished"), false);
+      assert.equal(ti.isFinished, false);
       assert.equal(ti.value, null);
 
       ti.then(value => {
-        assert.equal(ti.get("isFinished"), true);
+        assert.equal(ti.isFinished, true);
         assert.equal(ti.value, 492);
         assert.equal(value, 492);
         done();
@@ -190,27 +190,27 @@ module("Unit: task instance", function(hooks) {
     expectCancelation(assert, taskInstance);
 
     run(() => {
-      assert.ok(!taskInstance.get("isCanceled"));
+      assert.ok(!taskInstance.isCanceled);
 
       defer0.resolve();
       taskInstance.cancel();
-      assert.ok(!taskInstance.get("isFinished"), "task is not yet finished");
-      assert.ok(!taskInstance.get("isCanceled"), "task is not yet canceled");
-      assert.ok(!taskInstance.get("isError"));
+      assert.ok(!taskInstance.isFinished, "task is not yet finished");
+      assert.ok(!taskInstance.isCanceled, "task is not yet canceled");
+      assert.ok(!taskInstance.isError);
     });
 
     run(null, defer1.resolve, 123);
-    assert.ok(!taskInstance.get("isFinished"), "task is not yet finished");
-    assert.ok(!taskInstance.get("isCanceled"), "task is not yet canceled");
+    assert.ok(!taskInstance.isFinished, "task is not yet finished");
+    assert.ok(!taskInstance.isCanceled, "task is not yet canceled");
     run(null, defer2.resolve, 456);
-    assert.ok(taskInstance.get("isCanceled"));
-    assert.ok(!taskInstance.get("isSuccessful"));
-    assert.ok(!taskInstance.get("isError"));
+    assert.ok(taskInstance.isCanceled);
+    assert.ok(!taskInstance.isSuccessful);
+    assert.ok(!taskInstance.isError);
     run(null, defer2.resolve, 456);
-    assert.ok(taskInstance.get("isFinished"));
-    assert.ok(taskInstance.get("isCanceled"));
-    assert.ok(!taskInstance.get("isSuccessful"));
-    assert.ok(!taskInstance.get("isError"));
+    assert.ok(taskInstance.isFinished);
+    assert.ok(taskInstance.isCanceled);
+    assert.ok(!taskInstance.isSuccessful);
+    assert.ok(!taskInstance.isError);
   });
 
   test("deferred start", function(assert) {
@@ -227,12 +227,12 @@ module("Unit: task instance", function(hooks) {
       });
     });
 
-    assert.ok(!taskInstance.get("hasStarted"));
+    assert.ok(!taskInstance.hasStarted);
     run(() => {
       shouldBeRunning = true;
       taskInstance.start();
     });
-    assert.ok(taskInstance.get("hasStarted"));
+    assert.ok(taskInstance.hasStarted);
   });
 
   test("deferred start: .cancel() before .start()", function(assert) {
@@ -257,8 +257,8 @@ module("Unit: task instance", function(hooks) {
       taskInstance.cancel();
       taskInstance.start();
     });
-    assert.ok(!taskInstance.get("hasStarted"));
-    assert.ok(taskInstance.get("isCanceled"));
+    assert.ok(!taskInstance.hasStarted);
+    assert.ok(taskInstance.isCanceled);
   });
 
   test(".then() resolves with the returned value", function(assert) {
@@ -333,12 +333,12 @@ module("Unit: task instance", function(hooks) {
     });
 
     assert.ok(!caughtError);
-    assert.ok(!taskInstance.get("isFinished"));
+    assert.ok(!taskInstance.isFinished);
     run(null, defer0.resolve, 123);
-    assert.ok(!taskInstance.get("isFinished"));
+    assert.ok(!taskInstance.isFinished);
     run(null, defer1.resolve, 456);
     assert.equal(caughtError.message, "wat");
-    assert.ok(taskInstance.get("isFinished"));
+    assert.ok(taskInstance.isFinished);
   });
 
   test("unhandled yielded rejections are asyncly reported to Ember.onerror", async function(assert) {
@@ -367,8 +367,8 @@ module("Unit: task instance", function(hooks) {
       })();
     });
 
-    assert.equal(taskInstance0.get("state"), "running");
-    assert.equal(taskInstance1.get("state"), "running");
+    assert.equal(taskInstance0.state, "running");
+    assert.equal(taskInstance1.state, "running");
 
     run(null, defer.resolve, 123);
   });
@@ -389,13 +389,13 @@ module("Unit: task instance", function(hooks) {
       })();
     });
 
-    assert.equal(taskInstance0.get("state"), "running");
-    assert.equal(taskInstance1.get("state"), "running");
+    assert.equal(taskInstance0.state, "running");
+    assert.equal(taskInstance1.state, "running");
 
     run(taskInstance0, "cancel");
 
-    assert.equal(taskInstance0.get("state"), "canceled");
-    assert.equal(taskInstance1.get("state"), "canceled");
+    assert.equal(taskInstance0.state, "canceled");
+    assert.equal(taskInstance1.state, "canceled");
 
     run(null, defer.resolve, "naw");
   });
@@ -418,8 +418,8 @@ module("Unit: task instance", function(hooks) {
 
     run(taskInstance1, "cancel");
 
-    assert.equal(taskInstance0.get("state"), "canceled");
-    assert.equal(taskInstance1.get("state"), "canceled");
+    assert.equal(taskInstance0.state, "canceled");
+    assert.equal(taskInstance1.state, "canceled");
 
     run(null, defer.resolve, "naw");
   });
@@ -436,11 +436,11 @@ module("Unit: task instance", function(hooks) {
     });
 
     assert.ok(didRun);
-    assert.equal(taskInstance.get("isFinished"), true);
-    assert.equal(taskInstance.get("isCanceled"), false);
+    assert.equal(taskInstance.isFinished, true);
+    assert.equal(taskInstance.isCanceled, false);
     run(taskInstance, "cancel");
-    assert.equal(taskInstance.get("isFinished"), true);
-    assert.equal(taskInstance.get("isCanceled"), false);
+    assert.equal(taskInstance.isFinished, true);
+    assert.equal(taskInstance.isCanceled, false);
   });
 
   test("taskInstance.value is null until task instance completes successfully", function(assert) {
@@ -455,9 +455,9 @@ module("Unit: task instance", function(hooks) {
       });
     });
 
-    assert.equal(taskInstance.get("value"), null);
+    assert.equal(taskInstance.value, null);
     run(taskInstance, "start");
-    assert.equal(taskInstance.get("value"), 123);
+    assert.equal(taskInstance.value, 123);
   });
 
   test("taskInstance.error is null until task instance errors", async function(assert) {
@@ -472,12 +472,12 @@ module("Unit: task instance", function(hooks) {
       });
     });
 
-    assert.equal(taskInstance.get("error"), null);
+    assert.equal(taskInstance.error, null);
     run(taskInstance, "start");
 
     let error = await asyncError();
     assert.equal(error, "justin bailey");
-    assert.equal(taskInstance.get("error"), "justin bailey");
+    assert.equal(taskInstance.error, "justin bailey");
   });
 
   test("taskInstance.error is set when task cancels", function(assert) {
@@ -491,7 +491,7 @@ module("Unit: task instance", function(hooks) {
 
     run(taskInstance, "start");
     run(taskInstance, "cancel");
-    assert.equal(taskInstance.get("error.name"), "TaskCancelation");
+    assert.equal(taskInstance.error.name, "TaskCancelation");
   });
 
   test("taskInstance.error is set when task is dropped", function(assert) {
@@ -504,7 +504,7 @@ module("Unit: task instance", function(hooks) {
     });
 
     run(taskInstance, "cancel");
-    assert.equal(taskInstance.get("error.name"), "TaskCancelation");
+    assert.equal(taskInstance.error.name, "TaskCancelation");
   });
 
   test("taskInstance.isSuccessful is set when task fulfills", function(assert) {
@@ -518,10 +518,10 @@ module("Unit: task instance", function(hooks) {
     });
 
     run(taskInstance, "start");
-    assert.equal(taskInstance.get("isFinished"), true);
-    assert.equal(taskInstance.get("isSuccessful"), true);
-    assert.equal(taskInstance.get("isCanceled"), false);
-    assert.equal(taskInstance.get("isError"), false);
+    assert.equal(taskInstance.isFinished, true);
+    assert.equal(taskInstance.isSuccessful, true);
+    assert.equal(taskInstance.isCanceled, false);
+    assert.equal(taskInstance.isError, false);
   });
 
   test("taskInstance.isError is set when task throws an error", async function(assert) {
@@ -538,10 +538,10 @@ module("Unit: task instance", function(hooks) {
 
     run(taskInstance, "start");
 
-    assert.equal(taskInstance.get("isFinished"), true);
-    assert.equal(taskInstance.get("isSuccessful"), false);
-    assert.equal(taskInstance.get("isCanceled"), false);
-    assert.equal(taskInstance.get("isError"), true);
+    assert.equal(taskInstance.isFinished, true);
+    assert.equal(taskInstance.isSuccessful, false);
+    assert.equal(taskInstance.isCanceled, false);
+    assert.equal(taskInstance.isError, true);
 
     await asyncError();
   });
@@ -627,7 +627,7 @@ module("Unit: task instance", function(hooks) {
       })();
     });
 
-    assert.ok(taskInstance0.get("isRunning"));
+    assert.ok(taskInstance0.isRunning);
     run(taskInstance0, "cancel");
   });
 
@@ -694,7 +694,7 @@ module("Unit: task instance", function(hooks) {
     );
 
     run(null, defer.resolve);
-    assert.ok(taskInstance.get("isCanceled"));
+    assert.ok(taskInstance.isCanceled);
   });
 
   let guid = 0;

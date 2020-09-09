@@ -27,11 +27,10 @@ export default Component.extend({
       // `this` is the currently executing TaskInstance, so
       // you can also get classic TaskInstance properties
       // provided by ember-concurrency.
-      console.log(this.get('isRunning')); // => true
+      console.log(this.isRunning); // => true
 
       yield doSomeAsync();
       this.set('innerFoo', value);
     },
   })
 });
-

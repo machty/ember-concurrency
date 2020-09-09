@@ -1,4 +1,3 @@
-import { set, get } from '@ember/object';
 import { BaseTaskInstance } from './external/task-instance/base';
 import {
   TRACKED_INITIAL_INSTANCE_STATE,
@@ -271,13 +270,6 @@ export class TaskInstance extends BaseTaskInstance {
    * @return {Promise}
    */
 
-  get(key) {
-    return get(this, key);
-  }
-
-  set(key, value) {
-    return set(this, key, value);
-  }
 }
 
 if (TRACKED_INITIAL_INSTANCE_STATE) {
