@@ -28,6 +28,7 @@ Router.map(function() {
     this.route('events');
     this.route('task-lifecycle-events');
     this.route('testing-debugging');
+    this.route('typescript');
     this.route('faq');
     this.route('encapsulated-task');
     this.route('examples', function() {

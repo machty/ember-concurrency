@@ -5,7 +5,9 @@ import {
   task,
   all,
   allSettled,
+  animationFrame,
   hash,
+  hashSettled,
   race,
   rawTimeout,
   timeout,
@@ -337,6 +339,123 @@ module('Unit: cancelable promises test helpers', function() {
     assert.equal(obj.get('child.numRunning'), 0);
   });
 
+  test("hashSettled behaves like Promise.hashSettled", function(assert) {
+    assert.expect(6);
+
+    let defers = [];
+    let Obj = EmberObject.extend({
+      parent: task(function * () {
+        let task = this.get('child');
+        let allPromise = hashSettled({
+          a: task.perform(1),
+          b: task.perform(2),
+          c: task.perform(3),
+        });
+        assert.equal(typeof allPromise.then, 'function');
+        let values = yield allPromise;
+        assert.deepEqual(values, {a: { state: 'fulfilled', value: 'a' }, b: { state: 'fulfilled', value: 'b' }, c: { state: 'fulfilled', value: 'c' }});
+      }),
+
+      child: task(function * () {
+        let defer = RSVP.defer();
+        defers.push(defer);
+        let value = yield defer.promise;
+        return value;
+      }),
+    });
+
+    let obj;
+    run(() => {
+      obj = Obj.create();
+      obj.get('parent').perform();
+    });
+
+    let childTask = obj.get('child');
+    assert.equal(childTask.get('numRunning'), 3);
+    run(() => defers.shift().resolve('a'));
+    assert.equal(childTask.get('numRunning'), 2);
+    run(() => defers.shift().resolve('b'));
+    assert.equal(childTask.get('numRunning'), 1);
+    run(() => defers.shift().resolve('c'));
+    assert.equal(childTask.get('numRunning'), 0);
+  });
+
+  test("hashSettled does not cancel all other joined tasks if one of them fails", function(assert) {
+    assert.expect(9);
+
+    let defers = [];
+    let Obj = EmberObject.extend({
+      parent: task(function * () {
+        let task = this.get('child');
+        let allPromise = hashSettled({
+          a: task.perform(),
+          b: task.perform(),
+          c: task.perform(),
+        });
+        assert.equal(typeof allPromise.then, 'function');
+        let values = Object.values(yield allPromise);
+        let fulfilled = values.filter((value) => value.state === 'fulfilled');
+        let rejected = values.filter((value) => value.state !== 'fulfilled');
+        assert.deepEqual(fulfilled, [{ state: 'fulfilled', value: 'a' }, { state: 'fulfilled', value: 'c' }]);
+        assert.equal(rejected.length, 1);
+        assert.equal(rejected[0].state, 'rejected');
+        assert.equal(rejected[0].reason.message, 'wat');
+      }),
+
+      child: task(function * () {
+        let defer = RSVP.defer();
+        defers.push(defer);
+        let value = yield defer.promise;
+        return value;
+      }),
+    });
+
+    let obj;
+    run(() => {
+      obj = Obj.create();
+      obj.get('parent').perform();
+    });
+
+    let childTask = obj.get('child');
+    assert.equal(childTask.get('numRunning'), 3);
+    run(() => defers.shift().resolve('a'));
+    assert.equal(childTask.get('numRunning'), 2);
+    run(() => defers.shift().reject(new Error('wat')));
+    assert.equal(childTask.get('numRunning'), 1);
+    run(() => defers.shift().resolve('c'));
+    assert.equal(childTask.get('numRunning'), 0);
+  });
+
+  test("hashSettled cancels all joined tasks if parent task is canceled", function(assert) {
+    assert.expect(2);
+
+    let Obj = EmberObject.extend({
+      parent: task(function * () {
+        let task = this.get('child');
+        yield hashSettled({
+          a: task.perform(),
+          b: task.perform(),
+          c: task.perform(),
+        });
+      }),
+
+      child: task(function * () {
+        yield RSVP.defer().promise;
+      }),
+    });
+
+    let obj;
+    run(() => {
+      obj = Obj.create();
+      obj.get('parent').perform();
+    });
+
+    let childTask = obj.get('child');
+    assert.equal(childTask.get('numRunning'), 3);
+    run(() => obj.get('parent').cancelAll());
+    assert.equal(childTask.get('numRunning'), 0);
+  });
+
   test("race throws an assertion, if something other than an array is passed", function (assert) {
     assert.expectAssertion(() => {
       race();
@@ -390,7 +509,7 @@ module('Unit: cancelable promises test helpers', function() {
   });
 
   test("yieldable helpers support cancelation on all manner of Yieldable-derived classes", function(assert) {
-    assert.expect(5);
+    assert.expect(6);
 
     let wrapCancelation = (yieldable, shouldBeCalled = true) => {
       let originalCancel = yieldable.__ec_cancel__.bind(yieldable);
@@ -426,12 +545,16 @@ module('Unit: cancelable promises test helpers', function() {
         let timeoutYieldable = timeout(100000);
         wrapCancelation(timeoutYieldable);
 
+        let rafYieldable = animationFrame();
+        wrapCancelation(rafYieldable);
+
         yield race([
           eventYieldable,
           propertyYieldable,
           queueYieldable,
           rawTimeoutYieldable,
           timeoutYieldable,
+          rafYieldable,
           resolve(42)
         ]);
       }).on('init')

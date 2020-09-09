@@ -9,4 +9,4 @@
 <button onclick={{perform maybeNullTask}} class="maybe-null-task">Maybe Null Task</button>
 <button onclick={{action "setupTask"}} class="setup-task">Setup Task</button>
 <button onclick={{perform valueTask value="target.innerHTML"}} class="set-value-option-task">Set value option</button>
-<button onclick={{action someTask}} class="action-task">Action Task</button>
+<button onclick={{action (perform someTask)}} class="action-task">Action Task</button>

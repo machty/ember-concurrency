@@ -86,6 +86,30 @@ module.exports = async function() {
         }
       },
       {
+        name: 'ember-lts-3.12',
+        npm: {
+          devDependencies: {
+            'ember-source': '~3.12.0'
+          }
+        }
+      },
+      {
+        name: 'ember-lts-3.16',
+        npm: {
+          devDependencies: {
+            'ember-source': '~3.16.0'
+          }
+        }
+      },
+      {
+        name: 'ember-lts-3.20',
+        npm: {
+          devDependencies: {
+            'ember-source': '~3.20.0'
+          }
+        }
+      },
+      {
         name: 'ember-release',
         npm: {
           devDependencies: {
@@ -131,6 +155,24 @@ module.exports = async function() {
             '@ember/jquery': '^0.6.1'
           }
         }
+      },
+      {
+        name: 'typescript-3.7',
+        npm: {
+          devDependencies: {
+            'typescript': '~3.7.0'
+          }
+        },
+        command: 'tsc'
+      },
+      {
+        name: 'typescript-3.9',
+        npm: {
+          devDependencies: {
+            'typescript': '~3.9.0'
+          }
+        },
+        command: 'tsc'
       }
     ]
   };

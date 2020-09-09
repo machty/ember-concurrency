@@ -30,6 +30,7 @@ export default Controller.extend({
     { route: "docs.events", title: "Awaiting Events / Conditions" },
     { route: "docs.task-lifecycle-events", title: "Lifecycle Events" },
     { route: "docs.testing-debugging", title: "Testing & Debugging" },
+    { route: "docs.typescript", title: "TypeScript" },
     { route: "docs.faq", title: "FAQ & Fact Sheet" },
 
     { section: "Examples" },
