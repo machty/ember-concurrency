@@ -7,6 +7,23 @@ import { TRACKED_INITIAL_TASK_STATE } from "./tracked-state";
 import { CANCEL_KIND_LIFESPAN_END } from "./external/task-instance/cancelation";
 import { cleanupOnDestroy } from "./external/lifespan";
 
+/**
+  The `Task` object lives on a host Ember object (e.g.
+  a Component, Route, or Controller). You call the
+  {@linkcode Task#perform .perform()} method on this object
+  to create run individual {@linkcode TaskInstance}s,
+  and at any point, you can call the {@linkcode Task#cancelAll .cancelAll()}
+  method on this object to cancel all running or enqueued
+  {@linkcode TaskInstance}s.
+
+
+  <style>
+    .ignore-this--this-is-here-to-hide-constructor,
+    #Task{ display: none }
+  </style>
+
+  @class Task
+*/
 export class Task extends BaseTask {
   constructor(options) {
     super(options);
@@ -105,6 +122,10 @@ export class Task extends BaseTask {
 
   _clone() {
     return new Task(this.options);
+  }
+
+  toString() {
+    return `<Task:${this.name}>`;
   }
 
   /**
