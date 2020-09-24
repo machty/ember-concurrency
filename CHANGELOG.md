@@ -8,7 +8,7 @@
     if using a native getter to access task state, and wishing to use it
     alongside a computed property, @dependantKeyCompat will need to be used on
     the getter as expected with any other tracked-prop using getter.
-  - Remove abiliry to directly use tasks with `{{action}}` helper stuff
+  - Remove ability to directly use tasks with `{{action}}` helper stuff
     (deprecated in 1.3.0) (#374)
   - Fixes the deprecated `-task-property` module (for compatibility w/ some
     external addons). `TaskProperty` is available at the top-level.

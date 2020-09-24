@@ -121,12 +121,12 @@ different internally.
 Please accept versions liberally if you can, or use an appropriate version
 specifier for your requirements:
 
-```json
+```javascript
 {
     // ...
     "dependencies": { // Or use `peerDependencies` if appropriate
       // ...
-      "ember-concurrency": ">=1.0.0 <3", // or "^1.0.0 || ^2.0.0-beta.0"
+      "ember-concurrency": ">=1.0.0 <3", // or "^1.0.0 || ^2.0.0-beta.1"
       // ...
     },
     // ...
@@ -161,7 +161,7 @@ to protect against possible regressions.
         name: 'ember-concurrency-2.x',
         npm: {
           devDependencies: {
-            'ember-concurrency': '^2.0.0'
+            'ember-concurrency': '^2.0.0-beta.1'
           }
         }
       },
