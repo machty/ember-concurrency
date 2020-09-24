@@ -1,5 +1,23 @@
 # Changelog
 
+### 2.0.0-beta.1
+  - Port over changes from 1.1.6 through 1.3.0 (#367)
+  - Use `@tracked` underneath on Ember 3.16+ (#354)
+
+    _Note_: Within applications with both tracked & computed properties,
+    if using a native getter to access task state, and wishing to use it
+    alongside a computed property, @dependantKeyCompat will need to be used on
+    the getter as expected with any other tracked-prop using getter.
+  - Remove abiliry to directly use tasks with `{{action}}` helper stuff
+    (deprecated in 1.3.0) (#374)
+  - Fixes the deprecated `-task-property` module (for compatibility w/ some
+    external addons). `TaskProperty` is available at the top-level.
+  - Remove `get` and `set` compatibility methods from `Task`, `TaskGroup`,
+    and `TaskInstance`.
+
+  Documentation about upgrading to 2.0.0-beta.1 and other future 2.x releases in
+  general can be found in [UPGRADING-2.x.md](https://github.com/machty/ember-concurrency/blob/v2/UPGRADING-2.x.md)
+
 ### 1.3.0
   - Add `animationFrame` yieldable helper. Yielding `animationFrame()` will
     pause a task until after the next animation frame using the native
