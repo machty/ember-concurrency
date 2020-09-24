@@ -174,9 +174,8 @@ to protect against possible regressions.
 jobs:
   include:
 
-    # ... other stages
-
-    - stage: "ember-concurrency Tests"
-      env: EMBER_TRY_SCENARIO=ember-concurrency-1.x
+    # ... other configurations
+    - env: EMBER_TRY_SCENARIO=ember-canary
+    - env: EMBER_TRY_SCENARIO=ember-concurrency-1.x
     - env: EMBER_TRY_SCENARIO=ember-concurrency-2.x
 ```
