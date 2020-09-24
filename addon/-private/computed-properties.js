@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import { setOwner, getOwner } from '@ember/application';
 import EmberObject, { get, computed } from '@ember/object';
+import ComputedProperty from '@ember/object/computed';
 import { assert, deprecate } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
 import UnboundedSchedulerPolicy from './external/scheduler/policies/unbounded-policy'
@@ -8,7 +9,6 @@ import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-polic
 import DropSchedulerPolicy from './external/scheduler/policies/drop-policy'
 import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy'
 import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy'
-import { _ComputedProperty } from './utils';
 import EmberScheduler from './scheduler/ember-scheduler';
 import { addListener } from '@ember/object/events';
 import { addObserver } from '@ember/object/observers';
@@ -87,140 +87,6 @@ function assertModifiersNotMixedWithGroup(obj) {
 }
 
 /**
-  The `Task` object lives on a host Ember object (e.g.
-  a Component, Route, or Controller). You call the
-  {@linkcode Task#perform .perform()} method on this object
-  to create run individual {@linkcode TaskInstance}s,
-  and at any point, you can call the {@linkcode Task#cancelAll .cancelAll()}
-  method on this object to cancel all running or enqueued
-  {@linkcode TaskInstance}s.
-
-
-  <style>
-    .ignore-this--this-is-here-to-hide-constructor,
-    #Task{ display: none }
-  </style>
-
-  @class Task
-*/
-export const OldTask = EmberObject.extend({
-  /**
-   * This property is true if this task is NOT running, i.e. the number
-   * of currently running TaskInstances is zero.
-   *
-   * This property is useful for driving the state/style of buttons
-   * and loading UI, among other things.
-   *
-   * @memberof Task
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * This property is true if this task is running, i.e. the number
-   * of currently running TaskInstances is greater than zero.
-   *
-   * This property is useful for driving the state/style of buttons
-   * and loading UI, among other things.
-   *
-   * @memberof Task
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * EXPERIMENTAL
-   *
-   * This value describes what would happen to the TaskInstance returned
-   * from .perform() if .perform() were called right now.  Returns one of
-   * the following values:
-   *
-   * - `succeed`: new TaskInstance will start running immediately
-   * - `drop`: new TaskInstance will be dropped
-   * - `enqueue`: new TaskInstance will be enqueued for later execution
-   *
-   * @memberof Task
-   * @instance
-   * @private
-   * @readOnly
-   */
-
-  /**
-   * EXPERIMENTAL
-   *
-   * Returns true if calling .perform() right now would immediately start running
-   * the returned TaskInstance.
-   *
-   * @memberof Task
-   * @instance
-   * @private
-   * @readOnly
-   */
-
-  /**
-   * EXPERIMENTAL
-   *
-   * Returns true if calling .perform() right now would immediately cancel (drop)
-   * the returned TaskInstance.
-   *
-   * @memberof Task
-   * @instance
-   * @private
-   * @readOnly
-   */
-
-  /**
-   * EXPERIMENTAL
-   *
-   * Returns true if calling .perform() right now would enqueue the TaskInstance
-   * rather than execute immediately.
-   *
-   * @memberof Task
-   * @instance
-   * @private
-   * @readOnly
-   */
-
-  /**
-   * EXPERIMENTAL
-   *
-   * Returns true if calling .perform() right now would cause a previous task to be canceled
-   *
-   * @memberof Task
-   * @instance
-   * @private
-   * @readOnly
-   */
-
-  /**
-   * The current number of active running task instances. This
-   * number will never exceed maxConcurrency.
-   *
-   * @memberof Task
-   * @instance
-   * @readOnly
-   */
-
-  /**
-   * Cancels all running or queued `TaskInstance`s for this Task.
-   * If you're trying to cancel a specific TaskInstance (rather
-   * than all of the instances running under this task) call
-   * `.cancel()` on the specific TaskInstance.
-   *
-   * @method cancelAll
-   * @memberof Task
-   * @instance
-   */
-
-  toString() {
-    return `<Task:${this._propertyName}>`;
-  },
-
-  // _taskInstanceFactory: TaskInstance,
-
-});
-
-/**
   A {@link TaskProperty} is the Computed Property-like object returned
   from the {@linkcode task} function. You can call Task Modifier methods
   on this object to configure the behavior of the {@link Task}.
@@ -245,14 +111,14 @@ if (gte('3.10.0')) {
 } else {
   // Prior to the 3.10.0 refactors, we had to extend the _ComputedProperty class
   // for a classic decorator/descriptor to run correctly.
-  TaskProperty = class extends _ComputedProperty {
+  TaskProperty = class extends ComputedProperty {
     callSuperSetup() {
       if (super.setup) {
         super.setup(...arguments);
       }
     }
   };
-  TaskGroupProperty = class extends _ComputedProperty {};
+  TaskGroupProperty = class extends ComputedProperty {};
 }
 
 Object.assign(TaskGroupProperty.prototype, propertyModifiers);

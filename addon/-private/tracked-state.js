@@ -1,4 +1,3 @@
-import { gte } from 'ember-compatibility-helpers';
 import { tracked } from '@glimmer/tracking';
 import {
   DEFAULT_STATE as INITIAL_TASK_STATE
@@ -6,8 +5,7 @@ import {
 import {
   INITIAL_STATE as INITIAL_INSTANCE_STATE
 } from "./external/task-instance/initial-state";
-
-export const USE_TRACKED = gte('3.16.0');
+import { USE_TRACKED } from "./utils";
 
 function trackMixin(proto, obj, key) {
   const propDesc = Object.getOwnPropertyDescriptor(proto, key);

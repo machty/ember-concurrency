@@ -7,9 +7,9 @@ import { module, test } from 'qunit';
 
 module('Unit: task groups', function() {
   function assertStates(assert, task, isRunning, isQueued, isIdle, suffix) {
-    assert.equal(task.get('isRunning'), isRunning, `${task._propertyName} is ${isRunning ? '' : 'not'} running ${suffix}`);
-    assert.equal(task.get('isQueued'),  isQueued,  `${task._propertyName} is ${isQueued ? '' : 'not'} queued ${suffix}`);
-    assert.equal(task.get('isIdle'),    isIdle,    `${task._propertyName} is ${isIdle ? '' : 'not'} idle ${suffix}`);
+    assert.equal(task.isRunning, isRunning, `${task._propertyName} is ${isRunning ? '' : 'not'} running ${suffix}`);
+    assert.equal(task.isQueued,  isQueued,  `${task._propertyName} is ${isQueued ? '' : 'not'} queued ${suffix}`);
+    assert.equal(task.isIdle,    isIdle,    `${task._propertyName} is ${isIdle ? '' : 'not'} idle ${suffix}`);
   }
 
   test("task groups allow tasks to share concurrency constraints", function(assert) {
@@ -166,11 +166,11 @@ module('Unit: task groups', function() {
     let obj = Obj.create();
     let tg = obj.get('tg');
     let myTask = obj.get('myTask');
-    assert.strictEqual(tg.get('isRunning'), false);
+    assert.strictEqual(tg.isRunning, false);
     run(() => myTask.perform());
-    assert.strictEqual(tg.get('isRunning'), true);
+    assert.strictEqual(tg.isRunning, true);
     run(defer, defer.resolve);
-    assert.strictEqual(tg.get('isRunning'), false);
+    assert.strictEqual(tg.isRunning, false);
   });
 
   test("calling cancelAll on a task doesn't cancel other tasks in group", function(assert) {
@@ -198,9 +198,9 @@ module('Unit: task groups', function() {
     });
 
     function assertRunning() {
-      assert.strictEqual(tg.get('isRunning'), true);
-      assert.strictEqual(taskA.get('isRunning'), true);
-      assert.strictEqual(taskB.get('isRunning'), false);
+      assert.strictEqual(tg.isRunning, true);
+      assert.strictEqual(taskA.isRunning, true);
+      assert.strictEqual(taskB.isRunning, false);
     }
 
     assertRunning();

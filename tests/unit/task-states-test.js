@@ -44,14 +44,14 @@ module('Unit: task states', function(hooks) {
 
     run(() => {
       let t = obj.get('myTask');
-      assert.equal(t.get('isIdle'), true);
+      assert.equal(t.isIdle, true);
       t.perform();
     });
 
     run(() => {
       let t = obj.get('myTask');
-      assert.equal(t.get('isIdle'), false);
-      assert.equal(t.get('numRunning'), 1);
+      assert.equal(t.isIdle, false);
+      assert.equal(t.numRunning, 1);
       t.perform();
     });
   });
@@ -66,11 +66,11 @@ module('Unit: task states', function(hooks) {
     run(() => {
       let obj = Obj.create();
       let myTask = obj.get('myTask');
-      assert.equal(myTask.get('lastPerformed'), null);
+      assert.equal(myTask.lastPerformed, null);
       let taskInstance0 = myTask.perform();
-      assert.equal(myTask.get('lastPerformed'), taskInstance0);
+      assert.equal(myTask.lastPerformed, taskInstance0);
       let taskInstance1 = myTask.perform();
-      assert.equal(myTask.get('lastPerformed'), taskInstance1);
+      assert.equal(myTask.lastPerformed, taskInstance1);
     });
   });
 
@@ -84,12 +84,12 @@ module('Unit: task states', function(hooks) {
     run(() => {
       let obj = Obj.create();
       let doStuff = obj.get('doStuff');
-      assert.equal(doStuff.get('performCount'), 0);
+      assert.equal(doStuff.performCount, 0);
       doStuff.perform();
-      assert.equal(doStuff.get('performCount'), 1);
+      assert.equal(doStuff.performCount, 1);
       doStuff.perform();
       doStuff.perform();
-      assert.equal(doStuff.get('performCount'), 3);
+      assert.equal(doStuff.performCount, 3);
     });
   });
 
@@ -106,10 +106,10 @@ module('Unit: task states', function(hooks) {
       myTask = obj.get('myTask');
       myTask.perform();
       taskInstance1 = myTask.perform();
-      assert.equal(myTask.get('lastPerformed'), taskInstance1);
+      assert.equal(myTask.lastPerformed, taskInstance1);
     });
-    assert.equal(taskInstance1.get('error.name'), "TaskCancelation");
-    assert.equal(myTask.get('lastPerformed.error.name'), "TaskCancelation");
+    assert.equal(taskInstance1.error.name, "TaskCancelation");
+    assert.equal(myTask.lastPerformed.error.name, "TaskCancelation");
   });
 
   test(".last is set when a task starts", function(assert) {
@@ -127,16 +127,16 @@ module('Unit: task states', function(hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.get('myTask');
-      assert.equal(myTask.get('last'), null);
+      assert.equal(myTask.last, null);
       taskInstance0 = myTask.perform();
       taskInstance1 = myTask.perform();
     });
 
-    assert.equal(myTask.get('last'), taskInstance0);
+    assert.equal(myTask.last, taskInstance0);
     run(defer, 'resolve');
-    assert.equal(myTask.get('last'), taskInstance1);
+    assert.equal(myTask.last, taskInstance1);
     run(defer, 'resolve');
-    assert.equal(myTask.get('last'), taskInstance1);
+    assert.equal(myTask.last, taskInstance1);
   });
 
   test(".lastSuccessful is set when a task instance returns a value", async function(assert) {
@@ -154,19 +154,19 @@ module('Unit: task states', function(hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.get('myTask');
-      assert.equal(myTask.get('lastSuccessful'), null);
+      assert.equal(myTask.lastSuccessful, null);
       taskInstance0 = myTask.perform();
       taskInstance1 = myTask.perform();
       myTask.perform();
     });
 
-    assert.equal(myTask.get('lastSuccessful'), null);
+    assert.equal(myTask.lastSuccessful, null);
     run(defer, 'resolve');
-    assert.equal(myTask.get('lastSuccessful'), taskInstance0);
+    assert.equal(myTask.lastSuccessful, taskInstance0);
     run(defer, 'resolve');
-    assert.equal(myTask.get('lastSuccessful'), taskInstance1);
+    assert.equal(myTask.lastSuccessful, taskInstance1);
     run(defer, 'reject', 'i am error');
-    assert.equal(myTask.get('lastSuccessful'), taskInstance1, "still is taskInstance1 because taskInstance2 failed");
+    assert.equal(myTask.lastSuccessful, taskInstance1, "still is taskInstance1 because taskInstance2 failed");
     await asyncError();
   });
 
@@ -185,19 +185,19 @@ module('Unit: task states', function(hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.get('myTask');
-      assert.equal(myTask.get('lastComplete'), null);
+      assert.equal(myTask.lastComplete, null);
       taskInstance0 = myTask.perform();
       taskInstance1 = myTask.perform();
       taskInstance2 = myTask.perform();
     });
 
-    assert.equal(myTask.get('lastComplete'), null);
+    assert.equal(myTask.lastComplete, null);
     run(defer, 'resolve');
-    assert.equal(myTask.get('lastComplete'), taskInstance0);
+    assert.equal(myTask.lastComplete, taskInstance0);
     run(taskInstance1, 'cancel');
-    assert.equal(myTask.get('lastComplete'), taskInstance1);
+    assert.equal(myTask.lastComplete, taskInstance1);
     run(defer, 'reject', 'i am error');
-    assert.equal(myTask.get('lastComplete'), taskInstance2);
+    assert.equal(myTask.lastComplete, taskInstance2);
     await asyncError();
   });
 
@@ -216,19 +216,19 @@ module('Unit: task states', function(hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.get('myTask');
-      assert.equal(myTask.get('lastErrored'), null);
+      assert.equal(myTask.lastErrored, null);
       myTask.perform();
       taskInstance1 = myTask.perform();
       taskInstance2 = myTask.perform();
     });
 
-    assert.equal(myTask.get('lastErrored'), null);
+    assert.equal(myTask.lastErrored, null);
     run(defer, 'resolve');
-    assert.equal(myTask.get('lastErrored'), null);
+    assert.equal(myTask.lastErrored, null);
     run(taskInstance1, 'cancel');
-    assert.equal(myTask.get('lastErrored'), null);
+    assert.equal(myTask.lastErrored, null);
     run(defer, 'reject', 'i am error');
-    assert.equal(myTask.get('lastErrored'), taskInstance2);
+    assert.equal(myTask.lastErrored, taskInstance2);
     await asyncError();
   });
 
@@ -247,19 +247,19 @@ module('Unit: task states', function(hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.get('myTask');
-      assert.equal(myTask.get('lastCanceled'), null);
+      assert.equal(myTask.lastCanceled, null);
       myTask.perform();
       taskInstance1 = myTask.perform();
       myTask.perform();
     });
 
-    assert.equal(myTask.get('lastCanceled'), null);
+    assert.equal(myTask.lastCanceled, null);
     run(defer, 'resolve');
-    assert.equal(myTask.get('lastCanceled'), null);
+    assert.equal(myTask.lastCanceled, null);
     run(taskInstance1, 'cancel');
-    assert.equal(myTask.get('lastCanceled'), taskInstance1);
+    assert.equal(myTask.lastCanceled, taskInstance1);
     run(defer, 'reject', 'i am error');
-    assert.equal(myTask.get('lastCanceled'), taskInstance1, "still taskInstance1");
+    assert.equal(myTask.lastCanceled, taskInstance1, "still taskInstance1");
     await asyncError();
   });
 
@@ -278,19 +278,19 @@ module('Unit: task states', function(hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.get('myTask');
-      assert.equal(myTask.get('lastIncomplete'), null);
+      assert.equal(myTask.lastIncomplete, null);
       myTask.perform();
       taskInstance1 = myTask.perform();
       taskInstance2 = myTask.perform();
     });
 
-    assert.equal(myTask.get('lastIncomplete'), null);
+    assert.equal(myTask.lastIncomplete, null);
     run(defer, 'resolve');
-    assert.equal(myTask.get('lastIncomplete'), null);
+    assert.equal(myTask.lastIncomplete, null);
     run(taskInstance1, 'cancel');
-    assert.equal(myTask.get('lastIncomplete'), taskInstance1);
+    assert.equal(myTask.lastIncomplete, taskInstance1);
     run(defer, 'reject', 'i am error');
-    assert.equal(myTask.get('lastIncomplete'), taskInstance2);
+    assert.equal(myTask.lastIncomplete, taskInstance2);
     await asyncError();
   });
 });

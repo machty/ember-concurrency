@@ -1,5 +1,4 @@
-import { set, get, setProperties } from '@ember/object';
-import { USE_TRACKED } from './tracked-state';
+import { assignProperties } from './utils';
 
 export const TASKABLE_MIXIN = {
   _performCount: 0,
@@ -16,23 +15,7 @@ export const TASKABLE_MIXIN = {
       isIdle: !isRunning && !isQueued,
       state: isRunning ? "running" : "idle",
     });
-    this.setProperties(derivedState);
-  },
-
-  get(key) {
-    return get(this, key);
-  },
-
-  set(key, value) {
-    return set(this, key, value);
-  },
-
-  setProperties(props) {
-    if (USE_TRACKED) {
-      Object.assign(this, props);
-    } else {
-      setProperties(this, props);
-    }
+    assignProperties(this, derivedState);
   },
 
   onState(state, task) {

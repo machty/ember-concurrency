@@ -138,7 +138,7 @@ module('Unit: task', function(hooks) {
     });
 
     assert.deepEqual(instances.mapBy('isCanceled'), [true, true, true]);
-    assert.equal(instances[0].get('cancelReason'), "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help");
+    assert.equal(instances[0].cancelReason, "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help");
   });
 
   test("task.cancelAll normally preserves the last derived state", function(assert) {
@@ -157,10 +157,10 @@ module('Unit: task', function(hooks) {
       let task = obj.get('doStuff');
       instance = task.perform();
       return instance.then(() => {
-        assert.equal(task.get('lastSuccessful.value'), 1);
+        assert.equal(task.lastSuccessful.value, 1);
         instance = task.perform();
         task.cancelAll();
-        assert.equal(task.get('lastSuccessful.value'), 1);
+        assert.equal(task.lastSuccessful.value, 1);
       });
     });
   });
@@ -181,10 +181,10 @@ module('Unit: task', function(hooks) {
       let task = obj.get('doStuff');
       instance = task.perform();
       return instance.then(() => {
-        assert.equal(task.get('lastSuccessful.value'), 1);
+        assert.equal(task.lastSuccessful.value, 1);
         instance = task.perform();
         task.cancelAll({ resetState: true });
-        assert.ok(!task.get('lastSuccessful.value'), 'expected there to be no last successful value');
+        assert.ok(!task.lastSuccessful, 'expected there to be no last successful value');
       });
     });
   });
@@ -206,7 +206,7 @@ module('Unit: task', function(hooks) {
     });
 
     assert.deepEqual(instances.mapBy('isCanceled'), [true, true, false]);
-    assert.equal(instances[0].get('cancelReason'), "TaskInstance 'doStuff' was canceled because it belongs to a 'restartable' Task that was .perform()ed again. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help");
+    assert.equal(instances[0].cancelReason, "TaskInstance 'doStuff' was canceled because it belongs to a 'restartable' Task that was .perform()ed again. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help");
   });
 
   test("tasks can call cancelAll() on themselves", function(assert) {
@@ -367,11 +367,11 @@ module('Unit: task', function(hooks) {
     run(() => {
       obj = Obj.create();
       obj.destroy();
-      assert.equal(obj.get('myTask').perform().get('isDropped'), true);
+      assert.equal(obj.get('myTask').perform().isDropped, true);
     });
 
     run(() => {
-      assert.equal(obj.get('myTask').perform().get('isDropped'), true);
+      assert.equal(obj.get('myTask').perform().isDropped, true);
     });
   });
 

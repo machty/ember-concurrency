@@ -1,9 +1,8 @@
-import { set, get, setProperties } from '@ember/object';
 import { BaseTaskInstance } from './external/task-instance/base';
 import {
   TRACKED_INITIAL_INSTANCE_STATE,
-  USE_TRACKED
 } from './tracked-state';
+import { assignProperties } from "./utils";
 
 /**
   A `TaskInstance` represent a single execution of a
@@ -23,8 +22,6 @@ import {
 
   @class TaskInstance
 */
-
-const assignProperties = USE_TRACKED ? Object.assign : setProperties;
 
 export class TaskInstance extends BaseTaskInstance {
   setState(props) {
@@ -273,13 +270,6 @@ export class TaskInstance extends BaseTaskInstance {
    * @return {Promise}
    */
 
-  get(key) {
-    return get(this, key);
-  }
-
-  set(key, value) {
-    return set(this, key, value);
-  }
 }
 
 if (TRACKED_INITIAL_INSTANCE_STATE) {
