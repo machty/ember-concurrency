@@ -401,6 +401,13 @@ export function taskComputed(fn) {
   }
 }
 
+function isEncapsulatedTaskDef(taskObjOrClass) {
+  return typeof taskObjOrClass === "object" || (
+    typeof taskObjOrClass === "function" &&
+    typeof taskObjOrClass.prototype.perform === "function"
+  );
+}
+
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
  * is driven by a generator function. Tasks are automatically canceled
@@ -451,7 +458,7 @@ export function task(originalTaskFn) {
     tp.taskFn.displayName = `${key} (task)`;
 
     let options = sharedTaskProperties(tp, this, key);
-    if (typeof tp.taskFn === 'object') {
+    if (isEncapsulatedTaskDef(tp.taskFn)) {
       return buildEncapsulatedTask(tp.taskFn, options);
     } else {
       return buildRegularTask(tp.taskFn, options);
@@ -473,9 +480,16 @@ function buildRegularTask(taskFn, options) {
   );
 }
 
-function buildEncapsulatedTask(taskObj, options) {
+function buildEncapsulatedTask(taskObjOrClass, options) {
   let owner = getOwner(options.context);
-  let encapsulatedTask = EmberObject.extend(taskObj).create();
+  let encapsulatedTask;
+
+  if (typeof taskObjOrClass === 'object') {
+    encapsulatedTask = EmberObject.extend(taskObjOrClass).create();
+  } else {
+    encapsulatedTask = new taskObjOrClass();
+  }
+
   setOwner(encapsulatedTask, owner);
 
   return new EncapsulatedTask(
