@@ -16,17 +16,25 @@ export type TaskForTaskFunction<T extends TaskFunction<any, any[]>> =
 export type TaskInstanceForTaskFunction<T extends TaskFunction<any, any[]>> =
   TaskInstance<TaskFunctionReturnType<T>>;
 
-export interface EncapsulatedTaskDescriptor<T, Args extends any[]> {
+interface EncapsulatedTaskLike<T, Args extends any[]> {
   perform(...args: Args): TaskGenerator<T>;
 }
 
+export type EncapsulatedTaskDescriptor<T, Args extends any[]> =
+  EncapsulatedTaskLike<T, Args> | (new () => EncapsulatedTaskLike<T, Args>);
+
 export type EncapsulatedTaskDescriptorArgs<T extends EncapsulatedTaskDescriptor<any, any[]>> =
-  T extends { perform(...args: infer A): TaskGenerator<any> } ? A : [];
+  T extends EncapsulatedTaskDescriptor<any, infer A> ? A : [];
 
 export type EncapsulatedTaskDescriptorReturnType<T extends EncapsulatedTaskDescriptor<any, any[]>> =
-  T extends { perform(...args: any[]): TaskGenerator<infer R> } ? R : unknown;
+  T extends EncapsulatedTaskDescriptor<infer R, any[]> ? R : unknown;
 
-export type EncapsulatedTaskState<T extends object> = Omit<T, 'perform' | keyof TaskInstance<any>>;
+type EncapsulatedTaskStateProps<T> = Omit<T, keyof EncapsulatedTaskLike<T, any[]> | keyof TaskInstance<any>>;
+
+export type EncapsulatedTaskState<T> =
+  T extends (new () => infer R)
+  ? EncapsulatedTaskStateProps<R>
+  : (T extends object ? EncapsulatedTaskStateProps<T> : unknown);
 
 export type TaskForEncapsulatedTaskDescriptor<T extends EncapsulatedTaskDescriptor<any, any[]>> =
   EncapsulatedTask<

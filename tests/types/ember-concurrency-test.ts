@@ -167,10 +167,10 @@ module('unit tests', () => {
   });
 
   test('EncapsulatedTaskDescriptor', () => {
-    expect<EncapsulatedTaskDescriptor<void, []>>().toEqualTypeOf<{ perform(): TaskGenerator<void> }>();
-    expect<EncapsulatedTaskDescriptor<string, []>>().toEqualTypeOf<{ perform(): TaskGenerator<string> }>();
-    expect<EncapsulatedTaskDescriptor<void, [boolean, number?]>>().toEqualTypeOf<{ perform(foo: boolean, bar?: number): TaskGenerator<void> }>();
-    expect<EncapsulatedTaskDescriptor<string, [boolean, number?]>>().toEqualTypeOf<{ perform(foo: boolean, bar?: number): TaskGenerator<string> }>();
+    expect<EncapsulatedTaskDescriptor<void, []>>().toEqualTypeOf<{ perform(): TaskGenerator<void> } | { new (): { perform(): TaskGenerator<void> } }>();
+    expect<EncapsulatedTaskDescriptor<string, []>>().toEqualTypeOf<{ perform(): TaskGenerator<string> } | { new(): { perform(): TaskGenerator<string> } }>();
+    expect<EncapsulatedTaskDescriptor<void, [boolean, number?]>>().toEqualTypeOf<{ perform(foo: boolean, bar?: number): TaskGenerator<void> } | { new (): { perform(foo: boolean, bar?: number): TaskGenerator<void> } }>();
+    expect<EncapsulatedTaskDescriptor<string, [boolean, number?]>>().toEqualTypeOf<{ perform(foo: boolean, bar?: number): TaskGenerator<string> } | { new (): { perform(foo: boolean, bar?: number): TaskGenerator<string> } }>();
   });
 
   test('EncapsulatedTaskDescriptorArgs', () => {
@@ -242,6 +242,36 @@ module('unit tests', () => {
 
     {
       let d = { foo: 'foo', value: 123, *perform() { return 'foo' } };
+      expect<EncapsulatedTaskState<typeof d>>().toEqualTypeOf<{ foo: string }>();
+    }
+
+    {
+      let d = class {};
+      expect<EncapsulatedTaskState<typeof d>>().toEqualTypeOf<{}>();
+    }
+
+    {
+      let d = class { foo = 'foo'; };
+      expect<EncapsulatedTaskState<typeof d>>().toEqualTypeOf<{ foo: string }>();
+    }
+
+    {
+      let d = class { foo ='foo'; value = 123; };
+      expect<EncapsulatedTaskState<typeof d>>().toEqualTypeOf<{ foo: string }>();
+    }
+
+    {
+      let d = class { *perform() {} };
+      expect<EncapsulatedTaskState<typeof d>>().toEqualTypeOf<{}>();
+    }
+
+    {
+      let d = class { foo = 'foo'; *perform() { return 'foo' } };
+      expect<EncapsulatedTaskState<typeof d>>().toEqualTypeOf<{ foo: string }>();
+    }
+
+    {
+      let d = class { foo = 'foo'; value = 123; *perform() { return 'foo' } };
       expect<EncapsulatedTaskState<typeof d>>().toEqualTypeOf<{ foo: string }>();
     }
   });
@@ -1368,6 +1398,129 @@ module('unit tests', () => {
       // @ts-expect-error
       get({ tp }, 'tp').perform(false, 5, 'nope');
     }
+
+    {
+      let tp = task(class { foo = 'foo'; *perform() {} });
+      expect(tp).toMatchTypeOf<TaskProperty<void, []>>();
+      expect(tp).toEqualTypeOf<EncapsulatedTaskProperty<void, [], { foo: string }>>();
+
+      let t = get({ tp }, 'tp');
+      expect(t).toMatchTypeOf<Task<void, []>>();
+      expect(t).toEqualTypeOf<EncapsulatedTask<void, [], { foo: string }>>();
+      expect(t.perform).toBeCallableWith();
+      expect(t.perform).parameters.toEqualTypeOf<[]>();
+      expect(t.perform).returns.toMatchTypeOf<TaskInstance<void>>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<void> & { foo: string }>();
+
+      let i = get({ tp }, 'tp').perform();
+      expect(i).toMatchTypeOf<TaskInstance<void>>();
+      expect(i).toEqualTypeOf<TaskInstance<void> & { foo: string }>();
+      expect(i.value).toEqualTypeOf<void | null>();
+      expect(i).resolves.toEqualTypeOf<void>();
+      expect(i.foo).not.toBeAny();
+      expect(i.foo).toBeString();
+
+      // @ts-expect-error
+      get({ tp }, 'tp').perform('nope');
+    }
+
+    {
+      let tp = task(class { foo = 'foo'; *perform() { return 'foo' } });
+      expect(tp).toMatchTypeOf<TaskProperty<string, []>>();
+      expect(tp).toEqualTypeOf<EncapsulatedTaskProperty<string, [], { foo: string }>>();
+
+      let t = get({ tp }, 'tp');
+      expect(t).toMatchTypeOf<Task<string, []>>();
+      expect(t).toEqualTypeOf<EncapsulatedTask<string, [], { foo: string }>>();
+      expect(t.perform).toBeCallableWith();
+      expect(t.perform).parameters.toEqualTypeOf<[]>();
+      expect(t.perform).returns.toMatchTypeOf<TaskInstance<string>>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<string> & { foo: string }>();
+
+      let i = get({ tp }, 'tp').perform();
+      expect(i).toMatchTypeOf<TaskInstance<string>>();
+      expect(i).toEqualTypeOf<TaskInstance<string> & { foo: string }>();
+      expect(i.value).toEqualTypeOf<string | null>();
+      expect(i).resolves.toBeString();
+      expect(i.foo).not.toBeAny();
+      expect(i.foo).toBeString();
+
+      // @ts-expect-error
+      get({ tp }, 'tp').perform('nope');
+    }
+
+    {
+      let tp = task(class { foo = 'foo'; *perform(foo: boolean, bar?: number) {} });
+      expect(tp).toMatchTypeOf<TaskProperty<void, [boolean, number?]>>();
+      expect(tp).toEqualTypeOf<EncapsulatedTaskProperty<void, [boolean, number?], { foo: string }>>();
+
+      let t = get({ tp }, 'tp');
+      expect(t).toMatchTypeOf<Task<void, [boolean, number?]>>();
+      expect(t).toEqualTypeOf<EncapsulatedTask<void, [boolean, number?], { foo: string }>>();
+      expect(t.perform).toBeCallableWith(true);
+      expect(t.perform).toBeCallableWith(false, 5);
+      expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
+      expect(t.perform).returns.toMatchTypeOf<TaskInstance<void>>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<void> & { foo: string }>();
+
+      let i = get({ tp }, 'tp').perform(true);
+      expect(i).toMatchTypeOf<TaskInstance<void>>();
+      expect(i).toEqualTypeOf<TaskInstance<void> & { foo: string }>();
+      expect(i.value).toEqualTypeOf<void | null>();
+      expect(i).resolves.toEqualTypeOf<void>();
+      expect(i.foo).not.toBeAny();
+      expect(i.foo).toBeString();
+
+      // @ts-expect-error
+      get({ tp }, 'tp').perform();
+
+      // @ts-expect-error
+      get({ tp }, 'tp').perform('nope');
+
+      // @ts-expect-error
+      get({ tp }, 'tp').perform(true, 'nope');
+
+      // @ts-expect-error
+      get({ tp }, 'tp').perform(false, 5, 'nope');
+    }
+
+    {
+      let tp = task(class {
+        foo = 'foo';
+        *perform(foo: boolean, bar?: number) { return 'foo' }
+      });
+      expect(tp).toMatchTypeOf<TaskProperty<string, [boolean, number?]>>();
+      expect(tp).toEqualTypeOf<EncapsulatedTaskProperty<string, [boolean, number?], { foo: string }>>();
+
+      let t = get({ tp }, 'tp');
+      expect(t).toMatchTypeOf<Task<string, [boolean, number?]>>();
+      expect(t).toEqualTypeOf<EncapsulatedTask<string, [boolean, number?], { foo: string }>>();
+      expect(t.perform).toBeCallableWith(true);
+      expect(t.perform).toBeCallableWith(false, 5);
+      expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
+      expect(t.perform).returns.toMatchTypeOf<TaskInstance<string>>();
+      expect(t.perform).returns.toEqualTypeOf<TaskInstance<string> & { foo: string }>();
+
+      let i = get({ tp }, 'tp').perform(false, 5);
+      expect(i).toMatchTypeOf<TaskInstance<string>>();
+      expect(i).toEqualTypeOf<TaskInstance<string> & { foo: string }>();
+      expect(i.value).toEqualTypeOf<string | null>();
+      expect(i).resolves.toEqualTypeOf<string>();
+      expect(i.foo).not.toBeAny();
+      expect(i.foo).toBeString();
+
+      // @ts-expect-error
+      get({ tp }, 'tp').perform();
+
+      // @ts-expect-error
+      get({ tp }, 'tp').perform('nope');
+
+      // @ts-expect-error
+      get({ tp }, 'tp').perform(true, 'nope');
+
+      // @ts-expect-error
+      get({ tp }, 'tp').perform(false, 5, 'nope');
+    }
   });
 
   test('taskGroup', () => {
@@ -2304,7 +2457,7 @@ module('integration tests', () => {
     });
   });
 
-  test('classic ember (encpsulated task)', () => {
+  test('classic ember (encapsulated task)', () => {
     ClassicComponent.extend({
       myTask: task({
         foo: 'foo',
