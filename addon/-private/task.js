@@ -5,7 +5,10 @@ import { EMBER_ENVIRONMENT } from "./ember-environment";
 import { TASKABLE_MIXIN } from "./taskable-mixin";
 import { TRACKED_INITIAL_TASK_STATE } from "./tracked-state";
 import { CANCEL_KIND_LIFESPAN_END } from "./external/task-instance/cancelation";
-import { cleanupOnDestroy } from "./external/lifespan";
+import {
+  isDestroying,
+  registerDestructor
+} from '@ember/destroyable';
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -28,10 +31,14 @@ export class Task extends BaseTask {
   constructor(options) {
     super(options);
 
-    cleanupOnDestroy(this.context, this, 'willDestroy', 'cancelAll', {
-      reason: 'the object it lives on was destroyed or unrendered',
-      cancelRequestKind: CANCEL_KIND_LIFESPAN_END,
-    });
+    if (!isDestroying(this.context)) {
+      registerDestructor(this.context, () => {
+        this.cancelAll({
+          reason: 'the object it lives on was destroyed or unrendered',
+          cancelRequestKind: CANCEL_KIND_LIFESPAN_END,
+        });
+      });
+    }
   }
 
   /**
@@ -104,7 +111,7 @@ export class Task extends BaseTask {
       linkedObject._expectsLinkedYield = true;
     }
 
-    if (this.context.isDestroying) {
+    if (isDestroying(this.context)) {
       // TODO: express this in terms of lifetimes; a task linked to
       // a dead lifetime should immediately cancel.
       taskInstance.cancel();
