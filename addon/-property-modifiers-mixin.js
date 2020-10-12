@@ -16,6 +16,7 @@ export const propertyModifiers = {
   _hasUsedModifier: false,
   _hasSetBufferPolicy: false,
   _hasEnabledEvents: false,
+  _trackAllTaskInstances: false,
 
   restartable() {
     return setBufferPolicy(this, cancelOngoingTasksPolicy);
@@ -36,6 +37,13 @@ export const propertyModifiers = {
   maxConcurrency(n) {
     this._hasUsedModifier = true;
     this._maxConcurrency = n;
+    assertModifiersNotMixedWithGroup(this);
+    return this;
+  },
+
+  trackAllTaskInstances() {
+    this._hasUsedModifier = true;
+    this._trackAllTaskInstances = true;
     assertModifiersNotMixedWithGroup(this);
     return this;
   },
@@ -82,7 +90,8 @@ export function resolveScheduler(propertyObj, obj, TaskGroup) {
   } else {
     return Scheduler.create({
       bufferPolicy: propertyObj._bufferPolicy,
-      maxConcurrency: propertyObj._maxConcurrency
+      maxConcurrency: propertyObj._maxConcurrency,
+      trackAllTaskInstances: propertyObj._trackAllTaskInstances
     });
   }
 }
