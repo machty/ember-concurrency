@@ -10,6 +10,9 @@ Router.map(function() {
   this.route('docs', function() {
     this.route('introduction');
     this.route('installation');
+    this.route('testimonials', function() {
+      this.route('show', { path: ':slug' });
+    });
     this.route('writing-tasks');
 
     this.route('tutorial', function() {

@@ -1,0 +1,70 @@
+<h2>Testimonials</h2>
+
+<div class="row">
+  <a href={{testimonialApi.createUrl}} class="button">
+    Create New Testimonial
+  </a>
+</div>
+
+<div class="row">
+  {{#if previousPage}}
+    <p class="u-pull-left">
+      {{#link-to "docs.testimonials" (query-params page=previousPage)}}
+        &lt; Previous
+      {{/link-to}}
+    </p>
+  {{/if}}
+
+  {{#if nextPage}}
+    <p class="u-pull-right">
+      {{#link-to "docs.testimonials" (query-params page=nextPage)}}
+        Next &gt;
+      {{/link-to}}
+    </p>
+  {{/if}}
+</div>
+
+<div class="row">
+  {{#if isLoading}}
+    <div class="u-full-width centered">
+      Loading more testimonials&hellip; {{loading-spinner}}
+    </div>
+  {{/if}}
+
+  {{#if error}}
+    <div class="u-full-width centered">
+      {{error}}
+    </div>
+  {{/if}}
+</div>
+
+<div class="row">
+  {{#each testimonials as |testimonial|}}
+    {{testimonial-box
+        class="u-full-width"
+        testimonial=testimonial
+        onClick=(action "showTestimonial" testimonial)}}
+  {{else unless isLoading}}
+    <div class="u-full-width centered">
+      Be the first to <a href={{testimonialApi.createUrl}}>add a testimonial</a>.
+    </div>
+  {{/each}}
+</div>
+
+<div class="row">
+  {{#if previousPage}}
+    <p class="u-pull-left">
+      {{#link-to "docs.testimonials" (query-params page=previousPage)}}
+        &lt; Previous
+      {{/link-to}}
+    </p>
+  {{/if}}
+
+  {{#if nextPage}}
+    <p class="u-pull-right">
+      {{#link-to "docs.testimonials" (query-params page=nextPage)}}
+        Next &gt;
+      {{/link-to}}
+    </p>
+  {{/if}}
+</div>

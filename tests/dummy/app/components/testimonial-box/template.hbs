@@ -1,0 +1,21 @@
+<div class="testimonial-header">
+  <span class="testimonial-title">
+    {{testimonial.title}}
+  </span>
+</div>
+
+<p class="testimonial-byline">
+  <span class="testimonial-author">
+    By {{testimonial.author}}
+  </span>
+  <time class="testimonial-date" datetime={{testimonial.date}}>
+    {{testimonial.relativeDate}}
+  </time>
+</p>
+
+<div class="testimonial-content">
+  {{testimonial.excerpt}}
+  {{#if testimonial.hasMore}}
+    <p><a>Read more</a></p>
+  {{/if}}
+</div>

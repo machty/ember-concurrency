@@ -227,3 +227,34 @@ th, td {
 .loading-spinner {
   display: inline-block;
 }
+
+.testimonial-box {
+  border-radius: 8px;
+  border: 1px solid #000;
+  cursor: pointer;
+  margin: 10px auto;
+  padding: 10px;
+  text-align: center;
+  transition: box-shadow 0.2s ease;
+  width: 80%;
+
+  .testimonial-header {
+    font-size: 1.4em;
+  }
+
+  .testimonial-byline {
+    font-size: 0.8em;
+  }
+
+  .testimonial-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    box-shadow: 4px 4px 4px #ccc;
+  }
+
+  &:active {
+    box-shadow: none;
+  }
+}
