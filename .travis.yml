@@ -60,6 +60,7 @@ jobs:
     - env: EMBER_TRY_SCENARIO=ember-beta
     - env: EMBER_TRY_SCENARIO=ember-canary
     - env: EMBER_TRY_SCENARIO=ember-default-with-jquery
+    - env: EMBER_TRY_SCENARIO=embroider-tests
     - env: EMBER_TRY_SCENARIO=typescript-3.7
       before_script: find tests/types -type f -name '*.ts' | xargs sed -i 's/@ts-expect-error/@ts-ignore/g'
     - env: EMBER_TRY_SCENARIO=typescript-3.9

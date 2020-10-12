@@ -37,13 +37,25 @@ module.exports = function(defaults) {
   });
 
   /*
-    This build file specifes the options for the dummy test app of this
+    This build file specifies the options for the dummy test app of this
     addon, located in `/tests/dummy`
     This build file does *not* influence how the addon or the app using it
     behave. You most likely want to be modifying `./index.js` or app's build file
   */
 
   app.import('vendor/dummy-deps/rx.js');
+
+  if ('@embroider/webpack' in app.dependencies()) {
+    const { Webpack } = require('@embroider/webpack'); // eslint-disable-line
+    return require('@embroider/compat') // eslint-disable-line
+      .compatBuild(app, Webpack, {
+        packagerOptions: {
+          webpackConfig: {
+            devtool: false,
+          },
+        },
+      });
+  }
 
   return app.toTree();
 };
