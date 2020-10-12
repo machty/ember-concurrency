@@ -52,6 +52,29 @@
 
 {{concurrency-graph task=keepLatestTask3}}
 
+<h3>Using <code>.enqueueWithPriority(sortFunc)</code></h3>
+
+<p>
+  The <code>enqueueWithPriority</code> modifier acts like <code>enqueue</code>
+  but allows you to provide a sort function which sorts the enqueued tasks
+  so that they are run in priority order. Whenever a task finishes the
+  next task to start running is chosen by the <code>sortFunc</code> passed to
+  <code>enqueueWithPriority</code>
+</p>
+
+<p>
+  In these examples we simply sort by the perform time descending so that
+  the most recently performed task is chosen to run next.
+</p>
+
+<h4>.enqueueWithPriority() with default maxConcurrency(1)</h4>
+
+{{concurrency-graph task=priorityTask}}
+
+<h4>.enqueueWithPriority() with maxConcurrency(3)</h4>
+
+{{concurrency-graph task=priorityTask3}}
+
 <p>
   <em>
     Thanks to <a href="https://github.com/ef4">Edward Faulkner</a> for providing

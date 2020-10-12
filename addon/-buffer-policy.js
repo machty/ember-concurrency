@@ -24,6 +24,17 @@ export const enqueueTasksPolicy = {
   }
 };
 
+export const enqueueWithPriorityPolicy = {
+  requiresUnboundedConcurrency: true,
+  schedule(scheduler) {
+    scheduler.queuedTaskInstances.sort(this.sortFunc);
+    saturateActiveQueue(scheduler);
+  },
+  getNextPerformStatus(scheduler) {
+    return numPerformSlots(scheduler) > 0 ? 'succeed' : 'enqueue';
+  }
+};
+
 export const dropQueuedTasksPolicy = {
   cancelReason: `it belongs to a 'drop' Task that was already running`,
   schedule(scheduler) {

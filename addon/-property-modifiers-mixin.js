@@ -3,6 +3,7 @@ import { get } from '@ember/object';
 import Scheduler from './-scheduler';
 import {
   enqueueTasksPolicy,
+  enqueueWithPriorityPolicy,
   dropQueuedTasksPolicy,
   cancelOngoingTasksPolicy,
   dropButKeepLatestPolicy
@@ -23,6 +24,10 @@ export const propertyModifiers = {
 
   enqueue() {
     return setBufferPolicy(this, enqueueTasksPolicy);
+  },
+
+  enqueueWithPriority(sortFunc) {
+    return setBufferPolicy(this, Object.assign({ sortFunc }, enqueueWithPriorityPolicy));
   },
 
   drop() {
