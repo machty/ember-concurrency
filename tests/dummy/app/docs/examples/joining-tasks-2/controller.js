@@ -15,7 +15,7 @@ export default Controller.extend({
     let childTasks = [];
 
     for (let id = 0; id < 5; ++id) {
-      childTasks.push(this.get('child').perform(id));
+      childTasks.push(this.child.perform(id));
     }
 
     this.set('childTasks', childTasks);

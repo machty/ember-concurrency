@@ -21,17 +21,17 @@ export default Controller.extend({
 
   actions: {
     performTask() {
-      let task = this.get('myTask');
+      let task = this.myTask;
       let taskInstance = task.perform();
       this.set('mostRecent', taskInstance);
     },
 
     cancelAll() {
-      this.get('myTask').cancelAll();
+      this.myTask.cancelAll();
     },
 
     cancelMostRecent() {
-      this.get('mostRecent').cancel();
+      this.mostRecent.cancel();
     },
   }
 });

@@ -19,7 +19,7 @@ export default Component.extend({
       // to a task and then run it with .perform(), but
       // ideally you should just invoke myTask directly
       // from the template using the `perform` helper.
-      this.get('myTask').perform(msg);
+      this.myTask.perform(msg);
     },
     triggerFoo(msg) {
       this.trigger('foo', msg);

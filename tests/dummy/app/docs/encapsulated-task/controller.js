@@ -11,7 +11,7 @@ export default Controller.extend({
     url: null,
 
     stateText: computed('progress', function() {
-      let progress = this.get('progress');
+      let progress = this.progress;
       if (progress < 49) {
         return "Just started..."
       } else if (progress < 100) {

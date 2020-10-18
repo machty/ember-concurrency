@@ -8,7 +8,7 @@ export default Controller.extend({
   myTask: task({
     fun: service(),
     *perform() {
-      let value = yield this.get('subtask').perform();
+      let value = yield this.subtask.perform();
       return `${this.get('fun.foo')}-${value}`;
     },
 

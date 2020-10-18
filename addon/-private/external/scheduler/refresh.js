@@ -1,4 +1,8 @@
-import { TYPE_STARTED, TYPE_QUEUED, TYPE_CANCELLED } from "./policies/execution-states"
+import {
+  TYPE_STARTED,
+  TYPE_QUEUED,
+  TYPE_CANCELLED
+} from "./policies/execution-states"
 
 class Refresh {
   constructor(schedulerPolicy, stateTracker, taskInstances) {

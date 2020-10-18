@@ -5,8 +5,8 @@ export default TutorialComponent.extend({
   result: null,
   actions: {
     findStores() {
-      let geolocation = this.get('geolocation');
-      let store = this.get('store');
+      let geolocation = this.geolocation;
+      let store = this.store;
 
       geolocation.getCoords()
         .then(coords => store.getNearbyStores(coords))

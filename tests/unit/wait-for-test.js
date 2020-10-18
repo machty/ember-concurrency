@@ -2,7 +2,13 @@ import Evented from '@ember/object/evented';
 import EmberObject, { computed, set } from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
-import { task, waitForQueue, waitForEvent, waitForProperty, race } from 'ember-concurrency';
+import {
+  task,
+  waitForQueue,
+  waitForEvent,
+  waitForProperty,
+  race
+} from 'ember-concurrency';
 import { alias } from '@ember/object/computed';
 import { gte } from 'ember-compatibility-helpers';
 

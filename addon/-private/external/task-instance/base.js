@@ -1,6 +1,9 @@
 import { INITIAL_STATE } from "./initial-state";
 import { yieldableSymbol } from '../yieldables';
-import { CancelRequest, CANCEL_KIND_EXPLICIT } from './cancelation';
+import {
+  CancelRequest,
+  CANCEL_KIND_EXPLICIT
+} from './cancelation';
 const EXPLICIT_CANCEL_REASON = ".cancel() was explicitly called";
 
 export class BaseTaskInstance {

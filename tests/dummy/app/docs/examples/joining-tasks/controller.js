@@ -24,7 +24,7 @@ export default Controller.extend({
     for (let id = 0; id < 5; ++id) {
       let tracker = ProgressTracker.create({ id });
       trackers.push(tracker);
-      childTasks.push(this.get('child').perform(tracker));
+      childTasks.push(this.child.perform(tracker));
     }
 
     this.set('trackers', trackers);

@@ -6,8 +6,8 @@ import { task } from 'ember-concurrency';
 export default TutorialComponent.extend({
   result: null,
   findStores: task(function * () {
-    let geolocation = this.get('geolocation');
-    let store = this.get('store');
+    let geolocation = this.geolocation;
+    let store = this.store;
 
     let coords = yield geolocation.getCoords();
     let result = yield store.getNearbyStores(coords);

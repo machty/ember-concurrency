@@ -14,7 +14,7 @@ export default Component.extend({
   scrambledText: null,
 // BEGIN-SNIPPET caps-marquee
   marqueeLoop: task(function * () {
-    let text = this.get('text');
+    let text = this.text;
     while (true) {
       this.set('formattedText', text);
       yield timeout(1500);

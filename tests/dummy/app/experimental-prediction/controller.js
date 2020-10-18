@@ -23,13 +23,13 @@ export default Controller.extend({
 
   tasks: computed(function() {
     return [
-      this.get('defaultTask'),
-      this.get('restartableTask'),
-      this.get('enqueuedTask'),
-      this.get('droppingTask'),
-      this.get('restartableTask3'),
-      this.get('enqueuedTask3'),
-      this.get('droppingTask3'),
+      this.defaultTask,
+      this.restartableTask,
+      this.enqueuedTask,
+      this.droppingTask,
+      this.restartableTask3,
+      this.enqueuedTask3,
+      this.droppingTask3,
     ];
   })
 });

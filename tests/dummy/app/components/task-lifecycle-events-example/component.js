@@ -18,7 +18,7 @@ function loopingAjaxTask(id) {
   return task(function * () {
     while (true) {
       try {
-        yield this.get('ajaxTask').perform(id);
+        yield this.ajaxTask.perform(id);
       } catch(e) {
         // Ignoring AJAX failures because we're being naughty.
       }

@@ -6,7 +6,7 @@ function loopingAjaxTask(id, color) {
   return task(function * () {
     while (true) {
       this.log(color, `Task ${id}: making AJAX request`);
-      yield this.get('ajaxTask').perform();
+      yield this.ajaxTask.perform();
       this.log(color, `Task ${id}: Done, sleeping.`);
       yield timeout(2000);
     }

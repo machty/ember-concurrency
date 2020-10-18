@@ -11,7 +11,7 @@ module('Unit: task error handling', function() {
     let childDefer;
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        yield this.get('child').perform();
+        yield this.child.perform();
       }),
 
       child: task(function * () {
@@ -37,7 +37,7 @@ module('Unit: task error handling', function() {
     let childDefer;
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        yield this.get('child').perform();
+        yield this.child.perform();
       }).restartable(),
 
       child: task(function * () {
@@ -63,7 +63,7 @@ module('Unit: task error handling', function() {
     let childDefer;
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        yield this.get('child').perform();
+        yield this.child.perform();
       }).drop(),
 
       child: task(function * () {

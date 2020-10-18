@@ -22,12 +22,12 @@ export default Component.extend({
 
   tasks: computed(function() {
     return [
-      this.get('changeDiapers'),
-      this.get('doDishes'),
-      this.get('mowTheLawn'),
-      this.get('playGames'),
-      this.get('dance'),
-      this.get('sing'),
+      this.changeDiapers,
+      this.doDishes,
+      this.mowTheLawn,
+      this.playGames,
+      this.dance,
+      this.sing,
     ];
   }),
 });

@@ -24,7 +24,7 @@ module('Unit: cancelable promises test helpers', function() {
     let defers = [];
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         let allPromise = all([
           task.perform(),
           task.perform(),
@@ -65,7 +65,7 @@ module('Unit: cancelable promises test helpers', function() {
     let defers = [];
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         try {
           yield all([
             task.perform(),
@@ -101,7 +101,7 @@ module('Unit: cancelable promises test helpers', function() {
 
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         yield all([
           task.perform(),
           task.perform(),
@@ -141,7 +141,7 @@ module('Unit: cancelable promises test helpers', function() {
     let defers = [];
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         let allPromise = allSettled([
           task.perform(),
           task.perform(),
@@ -182,7 +182,7 @@ module('Unit: cancelable promises test helpers', function() {
     let defers = [];
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         let allPromise = allSettled([
           task.perform(),
           task.perform(),
@@ -227,7 +227,7 @@ module('Unit: cancelable promises test helpers', function() {
 
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         yield allSettled([
           task.perform(),
           task.perform(),
@@ -266,7 +266,7 @@ module('Unit: cancelable promises test helpers', function() {
 
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         let v = yield hash({
           a: task.perform(1),
           b: task.perform(2),
@@ -290,7 +290,7 @@ module('Unit: cancelable promises test helpers', function() {
 
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         yield hash({
           a: task.perform(),
           b: task.perform(),
@@ -317,7 +317,7 @@ module('Unit: cancelable promises test helpers', function() {
 
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         yield hash({
           a: task.perform(),
           b: task.perform(),
@@ -345,7 +345,7 @@ module('Unit: cancelable promises test helpers', function() {
     let defers = [];
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         let allPromise = hashSettled({
           a: task.perform(1),
           b: task.perform(2),
@@ -386,7 +386,7 @@ module('Unit: cancelable promises test helpers', function() {
     let defers = [];
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         let allPromise = hashSettled({
           a: task.perform(),
           b: task.perform(),
@@ -431,7 +431,7 @@ module('Unit: cancelable promises test helpers', function() {
 
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         yield hashSettled({
           a: task.perform(),
           b: task.perform(),
@@ -470,7 +470,7 @@ module('Unit: cancelable promises test helpers', function() {
 
     let Obj = EmberObject.extend({
       parent: task(function * () {
-        let task = this.get('child');
+        let task = this.child;
         let v = yield hash({
           a: task.perform(1),
           b: null,

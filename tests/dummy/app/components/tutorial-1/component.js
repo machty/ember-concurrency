@@ -6,8 +6,8 @@ export default TutorialComponent.extend({
   isFindingStores: false, // ++
   actions: {
     findStores() {
-      let geolocation = this.get('geolocation');
-      let store = this.get('store');
+      let geolocation = this.geolocation;
+      let store = this.store;
 
       this.set('isFindingStores', true); // ++
       geolocation.getCoords()

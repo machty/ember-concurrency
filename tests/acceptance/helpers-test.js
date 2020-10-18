@@ -1,11 +1,9 @@
 import { click, visit, currentURL } from '@ember/test-helpers';
-import { find } from '@ember/test-helpers';
 import Ember from 'ember';
 import { setupApplicationTest } from 'ember-qunit';
 import { module, test } from 'qunit';
 
 let originalAssert = Ember.assert;
-
 module('Acceptance | helpers', function(hooks) {
   setupApplicationTest(hooks)
 
@@ -19,9 +17,9 @@ module('Acceptance | helpers', function(hooks) {
     assert.equal(currentURL(), '/helpers-test');
 
     await click('.perform-task');
-    assert.equal(find('.task-status').textContent, '1-2-3-4');
+    assert.dom('.task-status').hasText('1-2-3-4');
     await click('.cancel-task');
-    assert.equal(find('.task-status').textContent, 'canceled');
+    assert.dom('.task-status').hasText('canceled');
   });
 
   test('setting value="..." should behave like closure actions and rewrite event arg', async function(assert) {
@@ -49,6 +47,6 @@ module('Acceptance | helpers', function(hooks) {
     await click('.setup-task');
     await click('.maybe-null-task');
     assert.deepEqual(assertArgs, []);
-    assert.equal(find('.task-status').textContent, 'someTask');
+    assert.dom('.task-status').hasText('someTask');
   });
 });

@@ -215,7 +215,7 @@ module('Unit: task', function(hooks) {
 
     let Obj = EmberObject.extend(Evented, {
       doStuff: task(function * () {
-        this.get('doStuff').cancelAll();
+        this.doStuff.cancelAll();
         return 123;
       }),
     });
@@ -252,7 +252,7 @@ module('Unit: task', function(hooks) {
       foo: 0,
 
       observingTask: task(function * () {
-        values.push(this.get('foo'));
+        values.push(this.foo);
       }).observes('foo'),
     });
 
@@ -288,8 +288,8 @@ module('Unit: task', function(hooks) {
       bar: 0,
 
       observingTask: task(function * () {
-        values.push(this.get('foo'));
-        values.push(this.get('bar'));
+        values.push(this.foo);
+        values.push(this.bar);
       }).observes('foo', 'bar'),
     });
 
@@ -326,11 +326,11 @@ module('Unit: task', function(hooks) {
     let Obj = EmberObject.extend({
       foo: 0,
       bar: computed('foo', function() {
-        return this.get('foo');
+        return this.foo;
       }),
 
       observingTask: task(function * () {
-        values.push(this.get('bar'));
+        values.push(this.bar);
       }).observes('bar').on('init'),
     });
 
@@ -407,7 +407,7 @@ module('Unit: task', function(hooks) {
 
     let Obj = EmberObject.extend({
       a: task(function * () {
-        yield this.get('b').perform();
+        yield this.b.perform();
 
         // Not sure how to test this in an automated fashion;
         // when we tweak scheduler logic, we can check that stack
@@ -417,10 +417,10 @@ module('Unit: task', function(hooks) {
         // debugger;
       }),
       b: task(function * () {
-        yield this.get('c').perform();
+        yield this.c.perform();
       }),
       c: task(function * () {
-        yield this.get('d').perform();
+        yield this.d.perform();
       }),
       d: task(function * () { }),
     });
@@ -493,7 +493,7 @@ module('Unit: task', function(hooks) {
 
     let Obj = EmberObject.extend({
       a: task(function * () {
-        yield this.get('b').unlinked().perform();
+        yield this.b.unlinked().perform();
       }),
       b: task(function * () {
         yield defer().promise;
@@ -541,7 +541,7 @@ module('Unit: task', function(hooks) {
 
     let Obj = EmberObject.extend({
       a: task(function * () {
-        this.get('b').linked().perform();
+        this.b.linked().perform();
       }),
       b: task(function * () { }),
     });

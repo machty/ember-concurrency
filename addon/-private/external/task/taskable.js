@@ -1,5 +1,8 @@
 import { DEFAULT_STATE } from './default-state';
-import { CancelRequest, CANCEL_KIND_EXPLICIT } from '../task-instance/cancelation';
+import {
+  CancelRequest,
+  CANCEL_KIND_EXPLICIT
+} from '../task-instance/cancelation';
 
 let guidId = 0;
 function makeGuid() {

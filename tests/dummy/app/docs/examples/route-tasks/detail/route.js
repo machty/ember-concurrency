@@ -8,16 +8,16 @@ export default Route.extend({
 
   setupController(controller, model) {
     this._super(...arguments);
-    this.get('pollServerForChanges').perform(model.id);
+    this.pollServerForChanges.perform(model.id);
   },
 
   resetController() {
     this._super(...arguments);
-    this.get('pollServerForChanges').cancelAll();
+    this.pollServerForChanges.cancelAll();
   },
 
   pollServerForChanges: task(function * (id) {
-    let notify = this.get('notify');
+    let notify = this.notify;
     yield timeout(500);
     try {
       notify.info(`Thing ${id}: Starting to poll for changes`);

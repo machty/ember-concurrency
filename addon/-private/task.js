@@ -1,6 +1,10 @@
 import { Task as BaseTask } from "./external/task/task";
 import { TaskInstance } from './task-instance';
-import { PERFORM_TYPE_DEFAULT, TaskInstanceExecutor, PERFORM_TYPE_LINKED } from "./external/task-instance/executor";
+import {
+  PERFORM_TYPE_DEFAULT,
+  TaskInstanceExecutor,
+  PERFORM_TYPE_LINKED
+} from "./external/task-instance/executor";
 import { EMBER_ENVIRONMENT } from "./ember-environment";
 import { TASKABLE_MIXIN } from "./taskable-mixin";
 import { TRACKED_INITIAL_TASK_STATE } from "./tracked-state";

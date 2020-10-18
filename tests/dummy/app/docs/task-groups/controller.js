@@ -18,9 +18,9 @@ export default Controller.extend({
 
   tasks: computed(function() {
     return [
-      this.get('mowLawn'),
-      this.get('doDishes'),
-      this.get('changeDiapers'),
+      this.mowLawn,
+      this.doDishes,
+      this.changeDiapers,
     ];
   }),
 });
