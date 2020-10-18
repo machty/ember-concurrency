@@ -11,7 +11,7 @@
     "test:all": "ember try:each"
   },
   "engines": {
-    "node": "8.* || >= 10.*"
+    "node": "10.* || >= 12"
   },
   "types": "./addon/index.d.ts",
   "devDependencies": {
@@ -89,19 +89,15 @@
   },
   "dependencies": {
     "@glimmer/tracking": "^1.0.0",
-    "broccoli-file-creator": "^2.1.1",
     "ember-cli-babel": "^7.7.3",
     "ember-compatibility-helpers": "^1.2.0",
-    "ember-maybe-import-regenerator": "^0.1.6"
-  },
-  "resolutions": {
-    "ip-regex": "^2.1.0"
+    "ember-destroyable-polyfill": "^2.0.2"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config",
     "demoURL": "http://ember-concurrency.com/",
     "versionCompatibility": {
-      "ember": ">=1.13.0"
+      "ember": ">=3.8.0"
     }
   },
   "volta": {

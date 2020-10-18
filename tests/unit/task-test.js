@@ -8,6 +8,7 @@ import Ember from 'ember';
 import { task, timeout, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
 import { gte } from 'ember-compatibility-helpers';
+import { destroy } from '@ember/destroyable';
 
 const originalLog = console.log;
 const originalWarn = console.warn;
@@ -99,7 +100,7 @@ module('Unit: task', function(hooks) {
     });
 
     later(() => {
-      obj.destroy();
+      destroy(obj);
       start();
     });
   });
@@ -115,7 +116,7 @@ module('Unit: task', function(hooks) {
 
     let obj = run(() => Obj.create());
     assert.ok(obj.get('doStuff.isRunning'));
-    run(() => obj.destroy());
+    run(() => destroy(obj));
     assert.ok(!obj.get('doStuff.isRunning'));
   });
 
@@ -366,7 +367,7 @@ module('Unit: task', function(hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.destroy();
+      destroy(obj);
       assert.equal(obj.get('myTask').perform().isDropped, true);
     });
 
@@ -448,7 +449,7 @@ module('Unit: task', function(hooks) {
     run(() => {
       let obj = Obj.create();
       obj.get('a').perform();
-      obj.destroy();
+      destroy(obj);
     });
 
     assert.deepEqual(logs, [
@@ -477,7 +478,7 @@ module('Unit: task', function(hooks) {
     run(() => {
       let obj = Obj.create();
       obj.get('a').perform();
-      obj.destroy();
+      destroy(obj);
     });
 
     assert.deepEqual(logs, [
@@ -605,14 +606,12 @@ module('Unit: task', function(hooks) {
         @(task(function* () {
           throw new Error("shouldn't get here");
         })) task;
-
-        get isDestroyed() { return true; }
-        get isDestroying() { return true; }
       }
 
       let obj;
       run(() => {
         obj = new Obj();
+        destroy(obj);
         assert.equal(obj.task.perform().isDropped, true);
       });
 
@@ -634,17 +633,7 @@ module('Unit: task', function(hooks) {
         })) doStuff;
 
         constructor() {
-          this._isDestroying = false;
-          this._isDestroyed = false;
           this.doStuff.perform();
-        }
-
-        get isDestroyed() { return this._isDestroyed; }
-        get isDestroying() { return this._isDestroying; }
-
-        willDestroy() {
-          this._isDestroying = true;
-          this._isDestroyed = true;
         }
       }
 
@@ -654,7 +643,7 @@ module('Unit: task', function(hooks) {
       });
 
       later(() => {
-        obj.willDestroy();
+        destroy(obj);
         start();
       });
     });

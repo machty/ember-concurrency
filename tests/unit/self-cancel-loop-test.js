@@ -5,6 +5,7 @@ import EmberObject from '@ember/object';
 import Ember from 'ember';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
+import { destroy } from '@ember/destroyable';
 
 const originalWarn = console.warn;
 
@@ -48,7 +49,7 @@ module('Unit: self-cancel loops', function(hooks) {
     });
 
     run(() => {
-      destroyedParent.destroy();
+      destroy(destroyedParent);
       canceledParent.get('a').cancelAll();
     });
 
@@ -65,7 +66,7 @@ module('Unit: self-cancel loops', function(hooks) {
       destroyedParent.get('c').perform();
     });
 
-    run(() => { destroyedParent.destroy(); });
+    run(() => { destroy(destroyedParent); });
     assert.equal(warnings.length, 0);
   });
 });
