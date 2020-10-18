@@ -6,7 +6,7 @@ const browsers = [
   'last 1 Safari versions'
 ];
 
-const isCI = !!process.env.CI && process.env.EMBER_TRY_SCENARIO !== "ember-canary-dev-browser";
+const isCI = Boolean(process.env.CI);
 const isProduction = process.env.EMBER_ENV === 'production';
 
 if (isCI || isProduction) {
