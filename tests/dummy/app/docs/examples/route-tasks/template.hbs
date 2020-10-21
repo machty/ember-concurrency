@@ -22,11 +22,11 @@
 </p>
 
 <ul>
-  {{#each ids as |id|}}
+  {{#each this.ids as |id|}}
     <li>
-      {{#link-to "docs.examples.route-tasks.detail" id}}
+      <LinkTo @route="docs.examples.route-tasks.detail" @model={{id}}>
         Thing {{id}}
-      {{/link-to}}
+      </LinkTo>
     </li>
   {{/each}}
 </ul>
@@ -54,4 +54,4 @@
   </li>
 </ul>
 
-{{code-snippet name="detail-route.js"}}
+<CodeSnippet @name="detail-route.js" />

@@ -1,7 +1,7 @@
-<button {{action "startTask"}}>task.perform()</button>
-<button {{action "restart"}}>Clear Timeline</button>
-{{#if task.isRunning}}
-  <button {{action "cancelAll" target=task}}>Cancel All</button>
+<button type="button" {{action "startTask"}}>task.perform()</button>
+<button type="button" {{action "restart"}}>Clear Timeline</button>
+{{#if @task.isRunning}}
+  <button type="button" {{on "click" (cancel-all @task)}}>Cancel All</button>
 {{/if}}
 
 <style type="text/css">
@@ -12,22 +12,22 @@
 </style>
 
 <svg style="width: 100%; padding: 5px;" {{! template-lint-disable no-inline-styles }}>
-  {{#each trackers as |tracker|}}
+  {{#each this.trackers as |tracker|}}
     <g height="20px">
-      {{#with (pick-from colors tracker.id) as |color|}}
+      {{#with (pick-from this.colors tracker.id) as |color|}}
         {{#if tracker.hasStarted}}
-          <rect x="{{scale (subtract tracker.startTime lowerLimit) lowerLimit upperLimit}}%"
-                y={{pick-from labelHeights tracker.id}}
+          <rect x="{{scale (subtract tracker.startTime this.lowerLimit) this.lowerLimit this.upperLimit}}%"
+                y={{pick-from this.labelHeights tracker.id}}
                 height="20px"
-                width="{{scale (width tracker.startTime tracker.endTime upperLimit) lowerLimit upperLimit}}%"
+                width="{{scale (width tracker.startTime tracker.endTime this.upperLimit) this.lowerLimit this.upperLimit}}%"
                 stroke="black"
                 fill={{color}}
                 fill-opacity="0.3" />
         {{/if}}
 
-        {{#with (scale (subtract tracker.performTime lowerLimit) lowerLimit upperLimit) as |x|}}
+        {{#with (scale (subtract tracker.performTime this.lowerLimit) this.lowerLimit this.upperLimit) as |x|}}
           <text x="{{sum 0.5 x}}%"
-                y={{sum 15 (pick-from labelHeights tracker.id)}}
+                y={{sum 15 (pick-from this.labelHeights tracker.id)}}
                 font-family="Raleway"
                 fill={{color}}
                 font-size="14"
@@ -35,7 +35,7 @@
                 font-style={{if tracker.startTime "normal" "italic"}} >
             {{tracker.state}}
           </text>
-          {{#with (pick-from labelHeights tracker.id) as |y|}}
+          {{#with (pick-from this.labelHeights tracker.id) as |y|}}
             <line x1="{{x}}%" y1={{y}} x2="{{x}}%" y2={{sum 20 y}} stroke={{color}} />
           {{/with}}
         {{/with}}
@@ -43,7 +43,7 @@
     </g>
   {{/each}}
 
-  {{#with (scale timeElapsed lowerLimit upperLimit) as |x|}}
+  {{#with (scale this.timeElapsed this.lowerLimit this.upperLimit) as |x|}}
     <line x1="{{x}}%" y1="0" x2="{{x}}%" y2="100" stroke="black" />
   {{/with}}
 </svg>

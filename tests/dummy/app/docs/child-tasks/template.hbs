@@ -11,16 +11,16 @@
 <h4>Example</h4>
 
 {{! BEGIN-SNIPPET child-tasks-template }}
-<h5>{{status}}</h5>
+<h5>{{this.status}}</h5>
 
 <ul>
-  <li>Parent Task:     {{parentTask.state}}</li>
-  <li>Child Task:      {{childTask.state}}</li>
-  <li>Grandchild Task: {{grandchildTask.state}}</li>
+  <li>Parent Task:     {{this.parentTask.state}}</li>
+  <li>Child Task:      {{this.childTask.state}}</li>
+  <li>Grandchild Task: {{this.grandchildTask.state}}</li>
 </ul>
 
-<button onclick={{perform parentTask}}>
-  {{#if parentTask.isRunning}}
+<button onclick={{perform this.parentTask}} type="button">
+  {{#if this.parentTask.isRunning}}
     Restart Parent Task
   {{else}}
     Perform Parent Task
@@ -28,6 +28,5 @@
 </button>
 {{! END-SNIPPET }}
 
-{{code-snippet name="child-tasks.js"}}
-{{code-snippet name="child-tasks-template.hbs"}}
-
+<CodeSnippet @name="child-tasks.js" />
+<CodeSnippet @name="child-tasks-template.hbs" />

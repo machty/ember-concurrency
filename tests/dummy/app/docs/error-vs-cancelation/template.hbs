@@ -12,7 +12,7 @@
 </ol>
 
 <p>
-  The {{link-to "Task Function Syntax docs" "docs.task-function-syntax"}}
+  The <LinkTo @route="docs.task-function-syntax">Task Function Syntax docs</LinkTo>
   demonstrates how you can use standard JavaScript <code>try/catch</code> blocks
   to catch exceptions thrown when you yield a rejecting promise, but
   what about cancelation? Are cancelations considered exceptions/errors, or something else?
@@ -41,7 +41,7 @@
   <em>
     * While <code>finally</code> blocks are nice for cleanup logic, make
     sure you're leveraging the power of
-    {{link-to "Task Modifiers" "docs.task-concurrency"}} and <code>.isRunning / .isIdle</code>
+    <LinkTo @route="docs.task-concurrency">Task Modifiers</LinkTo> and <code>.isRunning / .isIdle</code>
     task properties as much as possible so that you're not manually re-implementing
     a lot of the implicit state that ember-concurrency provides you for free, e.g.
     you should avoid manually toggling the visibility of a loading spinner within
@@ -61,22 +61,22 @@
 </p>
 
 {{! BEGIN-SNIPPET error-vs-cancelation-template }}
-<button onclick={{perform myTask false}}>
+<button onclick={{perform this.myTask false}} type="button">
   Run to Completion
 </button>
 
-<button onclick={{perform myTask true}}>
+<button onclick={{perform this.myTask true}} type="button">
   Throw an Error
 </button>
 
 <ul>
-  <li>Task State: {{myTask.state}}</li>
-  <li>Completions: {{numCompletions}}</li>
-  <li>Errors: {{numErrors}}</li>
-  <li>Finally block runs: {{numFinallys}}</li>
+  <li>Task State: {{this.myTask.state}}</li>
+  <li>Completions: {{this.numCompletions}}</li>
+  <li>Errors: {{this.numErrors}}</li>
+  <li>Finally block runs: {{this.numFinallys}}</li>
 </ul>
 
 {{! END-SNIPPET }}
 
-{{code-snippet name="error-vs-cancelation-template.hbs"}}
-{{code-snippet name="error-vs-cancelation.js"}}
+<CodeSnippet @name="error-vs-cancelation-template.hbs" />
+<CodeSnippet @name="error-vs-cancelation.js" />

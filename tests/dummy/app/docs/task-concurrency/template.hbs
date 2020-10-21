@@ -27,7 +27,7 @@
   different task modifiers applied:
 </p>
 
-{{code-snippet name="shared-tasks.js"}}
+<CodeSnippet @name="shared-tasks.js" />
 
 <h5 id="default">Default Behavior: Tasks Run Concurrently</h5>
 
@@ -36,7 +36,7 @@
   the lifetimes of each task overlap, and each task runs to completion.
 </p>
 
-{{concurrency-graph task=defaultTask}}
+<ConcurrencyGraph @task={{this.defaultTask}} />
 
 
 <h4 id="restartable">restartable</h4>
@@ -51,13 +51,13 @@
 
 <p>
   <em>
-    Check out {{link-to "Debounced Auto-Search" "docs.examples.autocomplete"}} for
+    Check out <LinkTo @route="docs.examples.autocomplete">Debounced Auto-Search</LinkTo> for
     a practical example of restartable
   </em>
 </p>
 
 
-{{concurrency-graph task=restartableTask}}
+<ConcurrencyGraph @task={{this.restartableTask}} />
 
 <h4 id="enqueue">enqueue</h4>
 
@@ -68,7 +68,7 @@
   tasks are canceled either.
 </p>
 
-{{concurrency-graph task=enqueuedTask}}
+<ConcurrencyGraph @task={{this.enqueuedTask}} />
 
 
 <h4 id="drop">drop</h4>
@@ -80,12 +80,12 @@
 
 <p>
   <em>
-    Check out the {{link-to "Loading UI" "docs.examples.loading-ui"}} example for a common
+    Check out the <LinkTo @route="docs.examples.loading-ui">Loading UI</LinkTo> example for a common
     use case for <code>.drop()</code>
   </em>
 </p>
 
-{{concurrency-graph task=droppingTask}}
+<ConcurrencyGraph @task={{this.droppingTask}} />
 
 
 <h4 id="keepLatest">keepLatest</h4>
@@ -103,4 +103,4 @@
   </em>
 </p>
 
-{{concurrency-graph task=keepLatestTask}}
+<ConcurrencyGraph @task={{this.keepLatestTask}} />

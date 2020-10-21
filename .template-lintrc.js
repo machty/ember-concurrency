@@ -1,5 +1,9 @@
 'use strict';
 
 module.exports = {
-  extends: 'octane'
+  extends: 'octane',
+
+  rules: {
+    'no-action': false
+  }
 };

@@ -21,7 +21,7 @@
   <code>perform()</code>s.
 </p>
 
-{{code-snippet name="shared-tasks-concurrent.js"}}
+<CodeSnippet @name="shared-tasks-concurrent.js" />
 
 <h4>restartable with .maxConcurrency(3)</h4>
 
@@ -29,7 +29,7 @@
   When concurrency exceeds maxConcurrency, the oldest running task is canceled.
 </p>
 
-{{concurrency-graph task=restartableTask3}}
+<ConcurrencyGraph @task={{this.restartableTask3}} />
 
 <p>
   <em>
@@ -42,15 +42,15 @@
 
 <h4>enqueue with .maxConcurrency(3)</h4>
 
-{{concurrency-graph task=enqueuedTask3}}
+<ConcurrencyGraph @task={{this.enqueuedTask3}} />
 
 <h4>drop with .maxConcurrency(3)</h4>
 
-{{concurrency-graph task=droppingTask3}}
+<ConcurrencyGraph @task={{this.droppingTask3}} />
 
 <h4>.keepLatest() with .maxConcurrency(3)</h4>
 
-{{concurrency-graph task=keepLatestTask3}}
+<ConcurrencyGraph @task={{this.keepLatestTask3}} />
 
 <p>
   <em>

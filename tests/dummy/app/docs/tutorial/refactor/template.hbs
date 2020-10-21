@@ -11,10 +11,8 @@
   started with before (which only uses core Ember APIs):
 </p>
 
-{{code-template-toggle
-    codeSnippet="better-syntax-1.js"
-    templateSnippet="better-syntax-1.hbs"}}
-{{tutorial-0}}
+<CodeTemplateToggle @codeSnippet="better-syntax-1.js" @templateSnippet="better-syntax-1.hbs" />
+<Tutorial-0 />
 
 <h4>Version 1: Bare Minimum Implementation (with Tasks)</h4>
 
@@ -22,10 +20,8 @@
   Now let's build the same thing with ember-concurrency tasks:
 </p>
 
-{{code-template-toggle
-    codeSnippet="better-syntax-7.js"
-    templateSnippet="better-syntax-7.hbs"}}
-{{tutorial-6}}
+<CodeTemplateToggle @codeSnippet="better-syntax-7.js" @templateSnippet="better-syntax-7.hbs" />
+<Tutorial-6 />
 
 <p>
   Let's take a moment to point out everything that has changed:
@@ -49,7 +45,7 @@
 </p>
 
 <p>
-  {{link-to "We'll get into much greater detail" "docs.task-function-syntax"}}
+  <LinkTo @route="docs.task-function-syntax">We'll get into much greater detail</LinkTo>
   about how this syntax is used, but for now, the most important thing to understand
   is that when you <code>yield</code> a promise, the task will pause until that promise fulfills,
   and then continue executing with the resolved value of that promise.
@@ -66,11 +62,8 @@
   need to make a change to the template code; the JavaScript can stay the same:
 </p>
 
-{{code-template-toggle
-    codeSnippet="better-syntax-8.js"
-    templateSnippet="better-syntax-8.hbs"
-    showCode=false}}
-{{tutorial-7}}
+<CodeTemplateToggle @codeSnippet="better-syntax-8.js" @templateSnippet="better-syntax-8.hbs" @showCode={{false}} />
+<Tutorial-7 />
 
 <h4>Version 3: Preventing Concurrency (with Tasks)</h4>
 
@@ -83,16 +76,14 @@
 <p>
   Rather than putting an <code>if</code> guard at the start of the task,
   the ember-concurrency way to prevent concurrency is to apply a
-  {{link-to "Task Modifier" "docs.task-concurrency"}} to the task.
+  <LinkTo @route="docs.task-concurrency">Task Modifier</LinkTo> to the task.
   The one we want to use is the <code>.drop()</code> modifier, which prevents
   concurrency by "dropping" any attempt to perform the task while it is
   already running.
 </p>
 
-{{code-template-toggle
-    codeSnippet="better-syntax-9.js"
-    templateSnippet="better-syntax-9.hbs"}}
-{{tutorial-8}}
+<CodeTemplateToggle @codeSnippet="better-syntax-9.js" @templateSnippet="better-syntax-9.hbs" />
+<Tutorial-8 />
 
 <p>
   Now when you button mash "Find Nearby Stores", you no longer get the weird
@@ -141,22 +132,14 @@
   JavaScript:
 </p>
 
-{{code-template-toggle
-    codeSnippet="better-syntax-10.js"
-    templateSnippet="better-syntax-6.js"
-    toggleDescription="diff"
-}}
+<CodeTemplateToggle @codeSnippet="better-syntax-10.js" @templateSnippet="better-syntax-6.js" @toggleDescription="diff" />
 
 <p>
   <br>
   Template:
 </p>
 
-{{code-template-toggle
-    codeSnippet="better-syntax-10.hbs"
-    templateSnippet="better-syntax-6.hbs"
-    toggleDescription="diff"
-    }}
+<CodeTemplateToggle @codeSnippet="better-syntax-10.hbs" @templateSnippet="better-syntax-6.hbs" @toggleDescription="diff" />
 
 <br>
 <h3>Conclusion</h3>

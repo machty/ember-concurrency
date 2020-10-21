@@ -11,13 +11,13 @@
 
 <p>
   In the below example, we refactor the
-  {{link-to "AJAX throttling example" "docs.examples.ajax-throttling"}} to use
+  <LinkTo @route="docs.examples.ajax-throttling">AJAX throttling example</LinkTo> to use
   task events for logging of the <code>ajaxTask</code>'s state changes, instead
   of doing it manually in the looping task itself.
 </p>
 
 <h3>Live Example</h3>
 
-{{task-lifecycle-events-example}}
+<TaskLifecycleEventsExample />
 
-{{code-snippet name="task-lifecycle-events.js"}}
+<CodeSnippet @name="task-lifecycle-events.js" />

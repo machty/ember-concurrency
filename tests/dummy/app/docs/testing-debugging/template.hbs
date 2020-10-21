@@ -25,7 +25,7 @@
   Consider the following (common) pattern for polling a server for changes:
 </p>
 
-{{code-snippet name="poll-loop.js"}}
+<CodeSnippet @name="poll-loop.js" />
 
 <p>
   The above example uses ember-concurrency tasks; to demonstrate that these
@@ -33,7 +33,7 @@
   logic might be written without ember-concurrency:
 </p>
 
-{{code-snippet name="poll-loop-classic.js"}}
+<CodeSnippet @name="poll-loop-classic.js" />
 
 <p>
   Both of these cases involve a "poll loop": on every iteration, do something asynchronous,
@@ -58,7 +58,7 @@
 
 <h5>Insert <code>Ember.testing</code> checks in your code</h5>
 
-{{code-snippet name="poll-loop-break-1.js"}}
+<CodeSnippet @name="poll-loop-break-1.js" />
 
 <p>
   This is sufficient when it's satisfactory to just test a single

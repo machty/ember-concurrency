@@ -1,15 +1,15 @@
 <div class="tutorial-example">
 
   {{! BEGIN-SNIPPET better-syntax-3 }}
-  <button onclick={{action "findStores"}}>
+  <button onclick={{action "findStores"}} type="button">
     Find Nearby Stores
-    {{#if isFindingStores}}
-      {{loading-spinner}}
+    {{#if this.isFindingStores}}
+      <LoadingSpinner />
     {{/if}}
   </button>
 
-  {{#if result}}
-    {{#each result.stores as |s|}}
+  {{#if this.result}}
+    {{#each this.result.stores as |s|}}
       <li>
         <strong>{{s.name}}</strong>:
         {{s.distance}} miles away

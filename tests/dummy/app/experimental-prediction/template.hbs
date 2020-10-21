@@ -17,7 +17,7 @@
     into more reasonable APIs/patterns to expose to the user.
   </p>
 
-  {{#each tasks as |task|}}
+  {{#each this.tasks as |task|}}
     <h4>{{task.name}}, maxConcurrency={{task._maxConcurrency}}</h4>
     <ul>
       <li>isRunning: {{caps-bool task.isRunning}}</li>
@@ -28,7 +28,6 @@
       <li>performWillEnqueue: {{caps-bool task.performWillEnqueue}}</li>
       <li>performWillCancelPrevious: {{caps-bool task.performWillCancelPrevious}}</li>
     </ul>
-    {{concurrency-graph task=task}}
+    <ConcurrencyGraph @task={{task}} />
   {{/each}}
 </div>
-

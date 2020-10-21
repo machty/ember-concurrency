@@ -20,7 +20,7 @@
 
 <h3>Live Example</h3>
 
-<h4>Shared Task: {{sharedTask.state}}</h4>
+<h4>Shared Task: {{this.sharedTask.state}}</h4>
 
 <p>
   The following buttons use the <code>.isIdle</code> property of Task
@@ -37,8 +37,8 @@
 
 {{! BEGIN-SNIPPET decorating-tasks-template-isIdle }}
 <p>
-  {{#each tasks as |task|}}
-    <button {{action task.perform}} class={{if task.isIdle "button-primary"}}>
+  {{#each this.tasks as |task|}}
+    <button class={{if task.isIdle "button-primary"}} type="button" {{perform task}}>
       {{task.name}}
     </button>
   {{/each}}
@@ -59,14 +59,14 @@
 
 {{! BEGIN-SNIPPET decorating-tasks-template-performWillSucceed }}
 <p>
-  {{#each tasks as |task|}}
-    <button {{action task.perform}} class={{if task.performWillSucceed "button-primary"}}>
+  {{#each this.tasks as |task|}}
+    <button class={{if task.performWillSucceed "button-primary"}} type="button" {{perform task}}>
       {{task.name}}
     </button>
   {{/each}}
 </p>
 {{! END-SNIPPET }}
 
-{{code-snippet name="decorating-tasks.js"}}
-{{code-snippet name="decorating-tasks-template-isIdle.hbs"}}
-{{code-snippet name="decorating-tasks-template-performWillSucceed.hbs"}}
+<CodeSnippet @name="decorating-tasks.js" />
+<CodeSnippet @name="decorating-tasks-template-isIdle.hbs" />
+<CodeSnippet @name="decorating-tasks-template-performWillSucceed.hbs" />

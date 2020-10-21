@@ -2,12 +2,12 @@
   {{! template-lint-disable block-indentation }}
 
   {{! BEGIN-SNIPPET better-syntax-7 }}
-  <button onclick={{perform findStores}}> {{! ++ }}
+  <button onclick={{perform this.findStores}} type="button"> {{! ++ }}
     Find Nearby Stores
   </button>
 
-  {{#if result}}
-    {{#each result.stores as |s|}}
+  {{#if this.result}}
+    {{#each this.result.stores as |s|}}
       <li>
         <strong>{{s.name}}</strong>:
         {{s.distance}} miles away

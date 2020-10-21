@@ -120,24 +120,24 @@
 <h3>Live Example</h3>
 
 <p>
-  {{input type="checkbox" checked=showLessCommon}} Show less common properties
+  <Input @type="checkbox" @checked={{this.showLessCommon}} /> Show less common properties
 </p>
 
-{{#each tasks as |taskName|}}
+{{#each this.tasks as |taskName|}}
   {{#with (get this taskName) as |task|}}
     <h5>{{task.name}} (performCount={{task.performCount}} concurrency={{task.concurrency}})</h5>
 
     <p>
       <button onclick={{perform task false}}
-        class={{if task.isIdle "button-primary"}}>
+        class={{if task.isIdle "button-primary"}} type="button">
         Run to Completion
       </button>
       <button onclick={{perform task true}}
-        class={{if task.isIdle "button-primary"}}>
+        class={{if task.isIdle "button-primary"}} type="button">
         Run until Error
       </button>
       <button onclick={{cancel-all task}}
-        class={{if task.isRunning "button-primary"}}>
+        class={{if task.isRunning "button-primary"}} type="button">
         Cancel
       </button>
     </p>
@@ -153,7 +153,7 @@
         </tr>
       </thead>
       <tbody>
-        {{#each taskProperties as |tp|}}
+        {{#each this.taskProperties as |tp|}}
           <tr>
             <td>
               <strong>myTask.{{tp}}</strong>

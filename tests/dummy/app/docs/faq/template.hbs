@@ -3,7 +3,7 @@
 <h4>Why am I seeing TaskCancelation errors in my logs?</h4>
 
 <p>
-  See {{link-to "this link" "docs.task-cancelation-help"}}.
+  See <LinkTo @route="docs.task-cancelation-help">this link</LinkTo>.
 </p>
 
 <h4>Does ember-concurrency work with older browsers?</h4>
@@ -44,7 +44,7 @@
 
 <ul>
   <li>
-    {{link-to "Docs: implicit vs explicit cancelation" "docs.cancelation"}}
+    <LinkTo @route="docs.cancelation">Docs: implicit vs explicit cancelation</LinkTo>
   </li>
   <li>
     <a href="https://github.com/machty/ember-concurrency/issues/98">
@@ -63,7 +63,7 @@
     can be canceled implicitly when all subscribers have unsubscribed, or explicitly
     by calling <code>.dispose()</code> (though this approach is frowned up in favor
     of explicitly specifying when an observable should terminate -- e.g. via <code>takeUntil()</code>).
-    {{link-to "Tasks can be canceled" "docs.cancelation"}} implicitly (via 1. host object destruction, 2. the
+    <LinkTo @route="docs.cancelation">Tasks can be canceled</LinkTo> implicitly (via 1. host object destruction, 2. the
     <code>.restartable()</code> task modifier) or explicitly (via <code>.cancel() / .cancelAll()</code>), though,
     like Observables, the implicit approach is preferable.
   </li>
@@ -72,7 +72,7 @@
     Observables can emit multiple values over time. Tasks don't really "emit" values,
     but can <code>.set()</code> values on the object the task lives on so that those
     values can be easily displayed in the template. Tasks also expose the value / error
-    returned from the task function (see {{link-to "Derived State" "docs.derived-state"}}),
+    returned from the task function (see <LinkTo @route="docs.derived-state">Derived State</LinkTo>),
     which are preferable to <code>.set()</code>s where possible.
   </li>
   <li>
@@ -94,7 +94,7 @@
     marble represents a discrete event emitted. Tasks don't emit multiple values,
     and instead make a greater emphasis on the concept of task/object lifespans, hence
     are more easily visualized as
-    {{link-to "possibly overlapping blocks" "docs.task-concurrency"}} over time.
+    <LinkTo @route="docs.task-concurrency">possibly overlapping blocks</LinkTo> over time.
   </li>
   <li>
     <strong>Readability</strong>

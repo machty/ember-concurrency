@@ -1,29 +1,29 @@
 <p>
   {{! BEGIN-SNIPPET start-task-example-template }}
-  <button {{action "performTask" "one"}}>
+  <button type="button" {{action "performTask" "one"}}>
     1. task.perform(...)
   </button>
 
-  <button onclick={{perform myTask "two"}}>
+  <button onclick={{perform this.myTask "two"}} type="button">
     2. (perform taskName)
   </button>
 
-  <button {{action "triggerFoo" "three"}}>
+  <button type="button" {{action "triggerFoo" "three"}}>
     3. .on('foo')
   </button>
 
   <input type="checkbox"
-        onchange={{perform myTask value="target.checked"}}>
+        onchange={{perform this.myTask value="target.checked"}}>
   4. Checkbox
   {{! END-SNIPPET }}
 </p>
 
-<h4>Status: {{status}}</h4>
+<h4>Status: {{this.status}}</h4>
 
 <h5>JavaScript</h5>
 
-{{code-snippet name="start-task-example.js"}}
+<CodeSnippet @name="start-task-example.js" />
 
 <h5>Template</h5>
 
-{{code-snippet name="start-task-example-template.hbs"}}
+<CodeSnippet @name="start-task-example-template.hbs" />

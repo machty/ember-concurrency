@@ -25,18 +25,18 @@
   starts 3 tasks after canceling the previous ones.
 </p>
 
-<h5>Status: {{status}}</h5>
+<h5>Status: {{this.status}}</h5>
 
 {{! BEGIN-SNIPPET joining-tasks-template }}
 <p>
-  <button onclick={{perform parent "all"}}>all()</button>
-  <button onclick={{perform parent "race"}}>race()</button>
+  <button onclick={{perform this.parent "all"}} type="button">all()</button>
+  <button onclick={{perform this.parent "race"}} type="button">race()</button>
 </p>
 {{! END-SNIPPET }}
 
-{{#each trackers as |tracker|}}
+{{#each this.trackers as |tracker|}}
   <div class="progress-outer">
-    <div class="progress-inner" style={{progress-style tracker.percent tracker.id colors}} {{! template-lint-disable no-inline-styles }}>
+    <div class="progress-inner" style={{progress-style tracker.percent tracker.id this.colors}} {{! template-lint-disable no-inline-styles }}>
       Progress: {{tracker.percent}}%
       {{#if tracker.word}}
         Word: {{tracker.word}}
@@ -45,5 +45,5 @@
   </div>
 {{/each}}
 
-{{code-snippet name="joining-tasks.js"}}
-{{code-snippet name="joining-tasks-template.hbs"}}
+<CodeSnippet @name="joining-tasks.js" />
+<CodeSnippet @name="joining-tasks-template.hbs" />

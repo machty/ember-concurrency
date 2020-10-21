@@ -1,9 +1,9 @@
-<div class="code-template-toggle-section {{if showCode "hidden"}}">
-  {{code-snippet name=templateSnippet}}
+<div class="code-template-toggle-section {{if this.showCode "hidden"}}">
+  <CodeSnippet @name={{@templateSnippet}} />
 </div>
-<div class="code-template-toggle-section {{if showCode "" "hidden"}}">
-  {{code-snippet name=codeSnippet}}
+<div class="code-template-toggle-section {{if this.showCode "" "hidden"}}">
+  <CodeSnippet @name={{@codeSnippet}} />
 </div>
 <span role="button" class="button code-template-toggle-button" onclick={{action "toggle"}}>
-  {{toggleDescription}}
+  {{@toggleDescription}}
 </span>
