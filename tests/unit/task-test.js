@@ -4,6 +4,7 @@ import { A } from '@ember/array';
 import Evented from '@ember/object/evented';
 import { run, later } from '@ember/runloop';
 import EmberObject, { computed } from '@ember/object';
+import { settled } from '@ember/test-helpers';
 import Ember from 'ember';
 import { task, timeout, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
@@ -244,7 +245,7 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  test(".observes re-performs the task every time the observed property changes in a coalesced manner", function(assert) {
+  test(".observes re-performs the task every time the observed property changes in a coalesced manner", async function(assert) {
     assert.expect(2);
 
     let values = [];
@@ -256,30 +257,26 @@ module('Unit: task', function(hooks) {
       }).observes('foo'),
     });
 
-    let obj;
-    run(() => {
-      obj = Obj.create();
-    });
+    let obj = Obj.create();
+    await settled();
 
-    run(() => {
-      obj.set('foo', 1);
-      obj.set('foo', 2);
-      obj.set('foo', 3);
-    });
+    obj.set('foo', 1);
+    obj.set('foo', 2);
+    obj.set('foo', 3);
+    await settled();
 
     assert.deepEqual(values, [3]);
     values = [];
 
-    run(() => {
-      obj.set('foo', 4);
-      obj.set('foo', 5);
-      obj.set('foo', 6);
-    });
+    obj.set('foo', 4);
+    obj.set('foo', 5);
+    obj.set('foo', 6);
+    await settled();
 
     assert.deepEqual(values, [6]);
   });
 
-  test(".observes coalesces even with multiple properties", function(assert) {
+  test(".observes coalesces even with multiple properties", async function(assert) {
     assert.expect(2);
 
     let values = [];
@@ -293,33 +290,28 @@ module('Unit: task', function(hooks) {
       }).observes('foo', 'bar'),
     });
 
-    let obj;
-    run(() => {
-      obj = Obj.create();
-    });
+    let obj = Obj.create();
 
-    run(() => {
-      obj.set('foo', 1);
-      obj.set('foo', 2);
-      obj.set('bar', 1);
-      obj.set('bar', 2);
-    });
+    obj.set('foo', 1);
+    obj.set('foo', 2);
+    obj.set('bar', 1);
+    obj.set('bar', 2);
+    await settled();
 
     assert.deepEqual(values, [2,2]);
     values = [];
 
-    run(() => {
-      obj.set('foo', 3);
-      obj.set('foo', 4);
-      obj.set('bar', 3);
-      obj.set('bar', 4);
-    });
+    obj.set('foo', 3);
+    obj.set('foo', 4);
+    obj.set('bar', 3);
+    obj.set('bar', 4);
+    await settled();
 
     assert.deepEqual(values, [4,4]);
   });
 
 
-  test(".observes has the same lazy/live semantics as normal Ember.observer(...).on('init')", function(assert) {
+  test(".observes has the same lazy/live semantics as normal Ember.observer(...).on('init')", async function(assert) {
     assert.expect(2);
 
     let values = [];
@@ -334,23 +326,18 @@ module('Unit: task', function(hooks) {
       }).observes('bar').on('init'),
     });
 
-    let obj;
-    run(() => {
-      obj = Obj.create();
-    });
+    let obj = Obj.create();
 
-    run(() => {
-      obj.set('foo', 1);
-      obj.set('foo', 2);
-    });
+    obj.set('foo', 1);
+    obj.set('foo', 2);
+    await settled();
 
     assert.deepEqual(values, [0,2]);
     values = [];
 
-    run(() => {
-      obj.set('foo', 3);
-      obj.set('foo', 4);
-    });
+    obj.set('foo', 3);
+    obj.set('foo', 4);
+    await settled();
 
     assert.deepEqual(values, [4]);
   });
