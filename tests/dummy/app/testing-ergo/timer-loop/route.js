@@ -3,7 +3,7 @@ import { task, timeout } from 'ember-concurrency';
 
 export default Route.extend({
   setupController() {
-    this.get('loopingTask').perform();
+    this.loopingTask.perform();
   },
   loopingTask: task(function * () {
     while(true) {

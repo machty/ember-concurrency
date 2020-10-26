@@ -2,7 +2,7 @@
   <div class="docs row">
     <div class="three columns">
       <div class="side-menu">
-        {{#each tableOfContents as |entry|}}
+        {{#each this.tableOfContents as |entry|}}
           {{#if entry.section}}
             <div class="toc-section-title">
               {{entry.section}}
@@ -10,7 +10,7 @@
           {{else}}
             <div class="toc-entry">
               {{#if entry.route}}
-                {{#link-to entry.route}}{{entry.title}}{{/link-to}}
+                <LinkTo @route={{entry.route}}>{{entry.title}}</LinkTo>
               {{else}}
                 {{entry.title}}
               {{/if}}
@@ -20,7 +20,7 @@
             {{#if entry.children}}
               {{#each entry.children as |child|}}
                 <div class="toc-entry toc-subentry">
-                  {{#link-to child.route}}{{child.title}}{{/link-to}}
+                  <LinkTo @route={{child.route}}>{{child.title}}</LinkTo>
                 </div>
               {{/each}}
             {{/if}}
@@ -29,14 +29,14 @@
       </div>
     </div>
     <div class="nine columns">
-      {{nav-header nextTopic=nextTopic prevTopic=prevTopic}}
-      {{github-edit}}
+      <NavHeader @nextTopic={{this.nextTopic}} @prevTopic={{this.prevTopic}} />
+      <GithubEdit />
 
       {{outlet}}
 
       <br> <br> <br> <br>
 
-      {{nav-header nextTopic=nextTopic prevTopic=prevTopic}}
+      <NavHeader @nextTopic={{this.nextTopic}} @prevTopic={{this.prevTopic}} />
     </div>
   </div>
 </div>

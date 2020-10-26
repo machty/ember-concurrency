@@ -29,43 +29,43 @@
   properties and anything else supported by classic Ember objects.
 </p>
 
-{{code-snippet name="encapsulated-task.js"}}
+<CodeSnippet @name="encapsulated-task.js" />
 
 <h3>Live Example</h3>
 
 <p>
   This example demonstrates how to use encapsulated tasks to
   model file uploads. It keeps all of the upload state <em>within</em>
-  each TaskInstance, and uses {{link-to "Derived State" "docs.derived-state"}}
+  each TaskInstance, and uses <LinkTo @route="docs.derived-state">Derived State</LinkTo>
   to expose the values set within the encapsulated tasks.
 </p>
 
 {{! BEGIN-SNIPPET encapsulated-task-template }}
 <p>
-  <button onclick={{perform uploadFile makeRandomUrl}}>
+  <button onclick={{perform this.uploadFile this.makeRandomUrl}} type="button">
     Start Upload
   </button>
 </p>
 
-<h5>Queued Uploads: {{uploadFile.numQueued}}</h5>
+<h5>Queued Uploads: {{this.uploadFile.numQueued}}</h5>
 
-{{#with uploadFile.last as |encapsTask|}}
+{{#with this.uploadFile.last as |encapsTask|}}
   <h5>
     Uploading to {{encapsTask.url}} ({{encapsTask.stateText}}):
     {{encapsTask.progress}}%
   </h5>
 {{/with}}
 
-{{#if uploadFile.lastSuccessful}}
+{{#if this.uploadFile.lastSuccessful}}
   <h5 style="color: green;" {{! template-lint-disable no-inline-styles }}>
     <strong>
-      Upload to {{uploadFile.lastSuccessful.url}}:
-      {{uploadFile.lastSuccessful.value}}
+      Upload to {{this.uploadFile.lastSuccessful.url}}:
+      {{this.uploadFile.lastSuccessful.value}}
     </strong>
   </h5>
 {{/if}}
 
 {{! END-SNIPPET }}
 
-{{code-snippet name="encapsulated-task-controller.js"}}
-{{code-snippet name="encapsulated-task-template.hbs"}}
+<CodeSnippet @name="encapsulated-task-controller.js" />
+<CodeSnippet @name="encapsulated-task-template.hbs" />

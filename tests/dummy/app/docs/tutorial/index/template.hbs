@@ -48,10 +48,8 @@
   in the template.
 </p>
 
-{{code-template-toggle
-    codeSnippet="better-syntax-1.js"
-    templateSnippet="better-syntax-1.hbs"}}
-{{tutorial-0}}
+<CodeTemplateToggle @codeSnippet="better-syntax-1.js" @templateSnippet="better-syntax-1.hbs" />
+<Tutorial-0 />
 
 <p>
   This first implementation <em>works</em>, but it's not really production-ready.
@@ -73,10 +71,8 @@
   </em>
 </p>
 
-{{code-template-toggle
-    codeSnippet="better-syntax-2.js"
-    templateSnippet="better-syntax-2.hbs"}}
-{{tutorial-1}}
+<CodeTemplateToggle @codeSnippet="better-syntax-2.js" @templateSnippet="better-syntax-2.hbs" />
+<Tutorial-1 />
 
 <p>
   This is certainly an improvement, but strange things start to happen if you
@@ -97,10 +93,8 @@
   <code>isFindingStores</code> is true, and return early if so.
 </p>
 
-{{code-template-toggle
-    codeSnippet="better-syntax-3.js"
-    templateSnippet="better-syntax-3.hbs"}}
-{{tutorial-2}}
+<CodeTemplateToggle @codeSnippet="better-syntax-3.js" @templateSnippet="better-syntax-3.hbs" />
+<Tutorial-2 />
 
 <p>
   Now it is safe to tap the "Find Nearby Stores" button. Are we done?
@@ -118,7 +112,7 @@
   You can
   actually verify that this happening by opening your browser's
   web inspector, clicking "Find Nearby Stores" from the example
-  above, and then quickly clicking {{link-to "this link" "docs.introduction"}}
+  above, and then quickly clicking <LinkTo @route="docs.introduction">this link</LinkTo>
   before the store results have come back.
 </p>
 
@@ -138,14 +132,12 @@
   defensive programming to our promise callback as follows:
 </p>
 
-{{code-template-toggle
-    codeSnippet="better-syntax-4.js"
-    templateSnippet="better-syntax-4.hbs"}}
-{{tutorial-3}}
+<CodeTemplateToggle @codeSnippet="better-syntax-4.js" @templateSnippet="better-syntax-4.hbs" />
+<Tutorial-3 />
 
 <p>
   Now if you click "Find Nearby Stores" and
-  {{link-to "navigate elsewhere" "docs.introduction"}}, you won't see
+  <LinkTo @route="docs.introduction">navigate elsewhere</LinkTo>, you won't see
   that pesky error.
 </p>
 
@@ -178,10 +170,8 @@
   means we have to duplicate our <code>isDestroyed</code> check.
 </p>
 
-{{code-template-toggle
-    codeSnippet="better-syntax-5.js"
-    templateSnippet="better-syntax-5.hbs"}}
-{{tutorial-4}}
+<CodeTemplateToggle @codeSnippet="better-syntax-5.js" @templateSnippet="better-syntax-5.hbs" />
+<Tutorial-4 />
 
 <p>
   And there you have it: a reasonably-production ready implementation

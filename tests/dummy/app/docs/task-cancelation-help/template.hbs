@@ -18,7 +18,7 @@
   Here is an example that demonstrates the issue:
 </p>
 
-{{code-snippet name="task-cancelation-example-1.js"}}
+<CodeSnippet @name="task-cancelation-example-1.js" />
 
 <p>
   In this example, the <code>fetchResults</code> action performs
@@ -37,7 +37,7 @@
   if so:
 </p>
 
-{{code-snippet name="task-cancelation-example-2.js"}}
+<CodeSnippet @name="task-cancelation-example-2.js" />
 
 <p>
   But this is exactly the kind of cluttered, defensive programming
@@ -51,7 +51,7 @@
   built-in robust support for cancelation:
 </p>
 
-{{code-snippet name="task-cancelation-example-3.js"}}
+<CodeSnippet @name="task-cancelation-example-3.js" />
 
 <p>
   And in your templates, you'd replace any instance of
@@ -66,6 +66,6 @@
 
 <p>
   For more information, see
-  {{link-to "Cancelation" "docs.cancelation"}} and
-  {{link-to "Handling Errors" "docs.error-vs-cancelation"}}.
+  <LinkTo @route="docs.cancelation">Cancelation</LinkTo> and
+  <LinkTo @route="docs.error-vs-cancelation">Handling Errors</LinkTo>.
 </p>

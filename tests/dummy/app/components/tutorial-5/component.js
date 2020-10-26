@@ -8,8 +8,8 @@ export default TutorialComponent.extend({
     findStores() {
       if (this.isFindingStores) { return; }
 
-      let geolocation = this.get('geolocation');
-      let store = this.get('store');
+      let geolocation = this.geolocation;
+      let store = this.store;
 
       this.set('isFindingStores', true);
       geolocation.getCoords()

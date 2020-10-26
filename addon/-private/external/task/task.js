@@ -1,5 +1,9 @@
 import { Taskable } from "./taskable";
-import { PERFORM_TYPE_LINKED, PERFORM_TYPE_UNLINKED, getRunningInstance } from "../task-instance/executor";
+import {
+  PERFORM_TYPE_LINKED,
+  PERFORM_TYPE_UNLINKED,
+  getRunningInstance
+} from "../task-instance/executor";
 
 class TaskLinkProxy {
   constructor(task, performType, linkedObject) {

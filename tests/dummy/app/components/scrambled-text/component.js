@@ -21,7 +21,7 @@ export default Component.extend({
   scrambledText: null,
 // BEGIN-SNIPPET scrambled-text
   startScrambling: task(function * () {
-    let text = this.get('text');
+    let text = this.text;
     while (true) {
       let pauseTime = 140;
       while (pauseTime > 5) {

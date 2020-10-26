@@ -8,7 +8,7 @@ export default Controller.extend({
   parentTask: task(function * () {
     this.set('status', "1. Parent: one moment...");
     yield timeout(1000);
-    let value = yield this.get('childTask').perform();
+    let value = yield this.childTask.perform();
     this.set('status', `5. Parent: child says "${value}"`);
     yield timeout(1000);
     this.set('status', "6. Done!");
@@ -17,7 +17,7 @@ export default Controller.extend({
   childTask: task(function * () {
     this.set('status', "2. Child: one moment...");
     yield timeout(1000);
-    let value = yield this.get('grandchildTask').perform();
+    let value = yield this.grandchildTask.perform();
     this.set('status', `4. Child: grandchild says "${value}"`);
     yield timeout(1000);
     return "What's up";

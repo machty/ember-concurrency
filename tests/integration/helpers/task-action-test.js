@@ -21,7 +21,7 @@ module('Integration | Helper | task action', function(hooks) {
 
     this.owner.register('component:inner-component', Component.extend({
       click() {
-        return this.get('curriedTask').perform(4,5,6).then(v => {
+        return this.curriedTask.perform(4,5,6).then(v => {
           assert.equal(v, 999);
         });
       }

@@ -44,7 +44,7 @@ export default Controller.extend({
 
   flatContents: computed(function(){
     var flattened = [];
-    this.get('tableOfContents').forEach(function(entry) {
+    this.tableOfContents.forEach(function(entry) {
       flattened.push(entry);
       if (entry.children){
         flattened = flattened.concat(entry.children);
@@ -54,7 +54,7 @@ export default Controller.extend({
   }),
 
   currentIndex: computed('router.currentRouteName', 'flatContents', function(){
-    var contents = this.get('flatContents'),
+    var contents = this.flatContents,
         current = this.get('router.currentRouteName'),
         bestMatch,
         entry;
@@ -79,10 +79,10 @@ export default Controller.extend({
   }),
 
   findNext(inc) {
-    let currentIndex = this.get('currentIndex');
+    let currentIndex = this.currentIndex;
     if (typeof(currentIndex) === "undefined") { return; }
 
-    let contents = this.get('flatContents');
+    let contents = this.flatContents;
     for (let i = currentIndex + inc; i >= 0 && i < contents.length; i += inc) {
       let value = contents[i];
       if (value.route) {

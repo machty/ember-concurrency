@@ -1,8 +1,15 @@
 import Evented from '@ember/object/evented';
 import EmberObject, { computed, set } from '@ember/object';
 import { run } from '@ember/runloop';
+import { settled } from '@ember/test-helpers';
 import { module, test } from 'qunit';
-import { task, waitForQueue, waitForEvent, waitForProperty, race } from 'ember-concurrency';
+import {
+  task,
+  waitForQueue,
+  waitForEvent,
+  waitForProperty,
+  race
+} from 'ember-concurrency';
 import { alias } from '@ember/object/computed';
 import { gte } from 'ember-compatibility-helpers';
 
@@ -275,7 +282,7 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
     assert.notOk(taskCompleted, 'Task should not have completed');
   });
 
-  test('waitForProperty works', function(assert) {
+  test('waitForProperty works', async function(assert) {
     assert.expect(1);
 
     let values = [];
@@ -292,20 +299,22 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
       })
     });
 
-    let obj;
-    run(() => {
-      obj = Obj.create();
-      obj.get('task').perform();
-    });
+    let obj = Obj.create();
+    obj.get('task').perform();
 
-    run(obj, 'set', 'a', 2);
-    run(obj, 'set', 'a', 3);
-    run(obj, 'set', 'a', 4);
+    obj.set('a', 2);
+    await settled();
+
+    obj.set('a', 3);
+    await settled();
+
+    obj.set('a', 4);
+    await settled();
 
     assert.deepEqual(values, [1, 2, 3, 'val=3']);
   });
 
-  test('waitForProperty works with immediately truthy predicates', function(assert) {
+  test('waitForProperty works with immediately truthy predicates', async function(assert) {
     assert.expect(1);
 
     const Obj = EmberObject.extend({
@@ -317,13 +326,13 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
       })
     });
 
-    run(() => {
-      let obj = Obj.create();
-      obj.get('task').perform();
-    });
+    let obj = Obj.create();
+    obj.get('task').perform();
+
+    await settled();
   });
 
-  test("waitForProperty's default predicate checks for truthiness", function(assert) {
+  test("waitForProperty's default predicate checks for truthiness", async function(assert) {
     assert.expect(2);
 
     const Obj = EmberObject.extend({
@@ -334,20 +343,22 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
       })
     });
 
-    let obj;
-    run(() => {
-      obj = Obj.create();
-      obj.get('task').perform();
-    });
+    let obj = Obj.create();
+    obj.get('task').perform();
 
-    run(obj, 'set', 'a', false);
-    run(obj, 'set', 'a', null);
+    obj.set('a', false);
+    await settled();
+
+    obj.set('a', null);
+    await settled();
     assert.ok(obj.get('task.isRunning'));
-    run(obj, 'set', 'a', 'hey');
+
+    obj.set('a', 'hey');
+    await settled();
     assert.ok(!obj.get('task.isRunning'));
   });
 
-  test("passing a non-function value to waitForProperty will cause it to wait until the property equals that value", function(assert) {
+  test("passing a non-function value to waitForProperty will cause it to wait until the property equals that value", async function(assert) {
     assert.expect(4);
 
     let state = 'null';
@@ -362,21 +373,28 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
       })
     });
 
-    let obj;
-    run(() => {
-      obj = Obj.create();
-      obj.get('task').perform();
-    });
+    let obj  = Obj.create();
+    obj.get('task').perform();
 
-    run(obj, 'set', 'a', 1);
-    run(obj, 'set', 'a', 2);
+    obj.set('a', 1);
+    await settled();
+
+    obj.set('a', 2);
+    await settled();
     assert.equal(state, 'waiting for a===3');
-    run(obj, 'set', 'a', 3);
+
+    obj.set('a', 3);
+    await settled();
     assert.equal(state, 'waiting for a===null');
-    run(obj, 'set', 'a', 0);
-    run(obj, 'set', 'a', false);
+
+    obj.set('a', 0);
+    await settled();
+    obj.set('a', false);
+    await settled();
     assert.equal(state, 'waiting for a===null');
-    run(obj, 'set', 'a', null);
+
+    obj.set('a', null);
+    await settled();
     assert.ok(obj.get('task.isIdle'));
   });
 
@@ -403,7 +421,7 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
   });
 
   if (gte('3.10.0')) {
-    test('waitForProperty works on an ES class', function(assert) {
+    test('waitForProperty works on an ES class', async function(assert) {
       assert.expect(1);
 
       let values = [];
@@ -424,15 +442,17 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
         })) task;
       }
 
-      let obj;
-      run(() => {
-        obj = new Obj();
-        obj.task.perform();
-      });
+      let obj = new Obj();
+      obj.task.perform();
 
-      run(() => set(obj, 'a', 2));
-      run(() => set(obj, 'a', 3));
-      run(() => set(obj, 'a', 4));
+      set(obj, 'a', 2);
+      await settled();
+
+      set(obj, 'a', 3);
+      await settled();
+
+      set(obj, 'a', 4);
+      await settled();
 
       assert.deepEqual(values, [1, 2, 3, 'val=3']);
     });

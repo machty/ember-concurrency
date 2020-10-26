@@ -14,13 +14,13 @@ export default Controller.extend({
 
   taskGroups: computed(function () {
     return [
-      this.get('everything'),
-      this.get('everythingDropped'),
-      this.get('everythingEnqueue'),
-      this.get('everythingRestart'),
-      this.get('everythingDropped3'),
-      this.get('everythingEnqueue3'),
-      this.get('everythingRestart3'),
+      this.everything,
+      this.everythingDropped,
+      this.everythingEnqueue,
+      this.everythingRestart,
+      this.everythingDropped3,
+      this.everythingEnqueue3,
+      this.everythingRestart3,
     ];
   }),
 });

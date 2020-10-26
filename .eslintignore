@@ -21,3 +21,6 @@
 
 # snippets
 /tests/dummy/snippets/
+
+# jsdoc assets
+/tests/dummy/public/

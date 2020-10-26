@@ -65,20 +65,20 @@
 
 {{!BEGIN-SNIPPET waitForEvent}}
 <h4>
-  domEvent: (x={{domEvent.offsetX}}, y={{domEvent.offsetX}})
+  domEvent: (x={{this.domEvent.offsetX}}, y={{this.domEvent.offsetX}})
 </h4>
 
 <h4>
-  jqueryEvent: (x={{jQueryEvent.offsetX}}, y={{jQueryEvent.offsetX}})
+  jqueryEvent: (x={{this.jQueryEvent.offsetX}}, y={{this.jQueryEvent.offsetX}})
 </h4>
 
 <h4>
-  emberEvent: (v={{emberEvent.v}})
+  emberEvent: (v={{this.emberEvent.v}})
 </h4>
 {{!END-SNIPPET}}
 
-{{code-snippet name="waitForEvent.js"}}
-{{code-snippet name="waitForEvent.hbs"}}
+<CodeSnippet @name="waitForEvent.js" />
+<CodeSnippet @name="waitForEvent.hbs" />
 
 <h3>Example with Derived State</h3>
 
@@ -94,7 +94,7 @@
 
 {{!BEGIN-SNIPPET waitForEvent-derived-state}}
 <h4>
-  {{#if waiter.isRunning}}
+  {{#if this.waiter.isRunning}}
     Please click somewhere...
   {{else}}
     Thanks!
@@ -102,8 +102,8 @@
 </h4>
 {{!END-SNIPPET}}
 
-{{code-snippet name="waitForEvent-derived-state.js"}}
-{{code-snippet name="waitForEvent-derived-state.hbs"}}
+<CodeSnippet @name="waitForEvent-derived-state.js" />
+<CodeSnippet @name="waitForEvent-derived-state.hbs" />
 
 <h3>Waiting for a condition / property</h3>
 
@@ -115,14 +115,14 @@
 </p>
 
 {{!BEGIN-SNIPPET waitForProperty}}
-<button onclick={{perform startAll}}>
+<button onclick={{perform this.startAll}} type="button">
   Start
 </button>
 
 <h5>
-  State: {{state}}
+  State: {{this.state}}
 </h5>
 {{!END-SNIPPET}}
 
-{{code-snippet name="waitForProperty.js"}}
-{{code-snippet name="waitForProperty.hbs"}}
+<CodeSnippet @name="waitForProperty.js" />
+<CodeSnippet @name="waitForProperty.hbs" />

@@ -1,5 +1,5 @@
 <ul>
-  {{#each logs as |log|}}
+  {{#each this.logs as |log|}}
     <li style={{color log.color}} {{! template-lint-disable no-inline-styles }}>{{log.message}}</li>
   {{/each}}
 </ul>

@@ -29,14 +29,14 @@ export default Component.extend({
   nextId: 0,
 
   lowerLimit: computed('trackers.[]', function() {
-    let trackers = this.get('trackers');
+    let trackers = this.trackers;
     if (!trackers) { return 0; }
     let v = Math.min(...trackers.mapBy('performTime'));
     return v;
   }),
 
   upperLimit: computed('timeElapsed', function() {
-    let timeElapsed = this.get('timeElapsed');
+    let timeElapsed = this.timeElapsed;
     return Math.max(10000, timeElapsed);
   }),
 
@@ -58,7 +58,7 @@ export default Component.extend({
   restart: on('init', function () {
     this.nextId = 0;
     this.set('trackers', A());
-    this.get('ticker').cancelAll();
+    this.ticker.cancelAll();
     this.set('timeElapsed', 0);
     this.startTime = 0;
   }),
@@ -79,12 +79,12 @@ export default Component.extend({
         },
       });
 
-      let task = this.get('task');
+      let task = this.task;
       let taskInstance = task.perform(tracker);
       tracker.set('taskInstance', taskInstance);
 
-      this.get('trackers').pushObject(tracker);
-      this.get('ticker').perform();
+      this.trackers.pushObject(tracker);
+      this.ticker.perform();
     },
 
     restart() {
@@ -92,5 +92,3 @@ export default Component.extend({
     }
   }
 });
-
-

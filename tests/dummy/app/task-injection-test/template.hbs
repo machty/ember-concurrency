@@ -1,6 +1,5 @@
 <h1>Task injection test</h1>
 
-<button onclick={{perform myTask}} data-test-selector="perform-task-w-injection-button">clickme</button>
+<button onclick={{perform this.myTask}} data-test-selector="perform-task-w-injection-button" type="button">clickme</button>
 
-<p data-test-selector="perform-task-result">{{myTask.last.value}}</p>
-
+<p data-test-selector="perform-task-result">{{this.myTask.last.value}}</p>

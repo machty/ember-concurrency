@@ -24,9 +24,9 @@ export default Controller.extend({
 
   tasks: computed(function() {
     return [
-      this.get('halfSecond'),
-      this.get('oneSecond'),
-      this.get('twoSeconds')
+      this.halfSecond,
+      this.oneSecond,
+      this.twoSeconds
     ];
   }),
 });

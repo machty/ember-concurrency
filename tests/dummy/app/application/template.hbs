@@ -5,7 +5,7 @@
         ember-concurrency
 
         <span style="font-size: 0.5em;" {{! template-lint-disable no-inline-styles }}>
-          (v {{addonVersion}})
+          (v {{this.addonVersion}})
         </span>
       </h3>
     </div>
@@ -16,7 +16,7 @@
     </div>
     <div class="one columns">
       <div class="nav-bar-link-outer">
-        <a href="https://github.com/machty/ember-concurrency" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/machty/ember-concurrency" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
     </div>
   </div>
@@ -24,4 +24,4 @@
 
 {{outlet}}
 
-{{ember-notify}}
+<EmberNotify />

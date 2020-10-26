@@ -31,7 +31,7 @@ export default Controller.extend({
 
   actions: {
     setupTask() {
-      this.set('maybeNullTask', this.get('someTask'));
+      this.set('maybeNullTask', this.someTask);
     }
   }
 });

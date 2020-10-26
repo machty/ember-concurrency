@@ -9,12 +9,12 @@
 
 {{! BEGIN-SNIPPET encapsulated-task-fun-template }}
 <p>
-  <button onclick={{perform doStuff}}>
+  <button onclick={{perform this.doStuff}} type="button">
     Do Stuff
   </button>
 </p>
 
-{{#with doStuff.last as |t|}}
+{{#with this.doStuff.last as |t|}}
   <h5>value: {{t.value}}</h5>
   <h5>foo:   {{t.foo.last.value}}</h5>
   <h5>bar:   {{t.bar.last.value}}</h5>
@@ -22,6 +22,5 @@
 {{/with}}
 {{! END-SNIPPET }}
 
-{{code-snippet name="encapsulated-task-fun-controller.js"}}
-{{code-snippet name="encapsulated-task-fun-template.hbs"}}
-
+<CodeSnippet @name="encapsulated-task-fun-controller.js" />
+<CodeSnippet @name="encapsulated-task-fun-template.hbs" />

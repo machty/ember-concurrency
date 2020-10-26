@@ -1,5 +1,10 @@
 import { timeout } from './-private/utils';
-import { TaskProperty, TaskGroupProperty, task, taskGroup } from './-private/computed-properties';
+import {
+  TaskProperty,
+  TaskGroupProperty,
+  task,
+  taskGroup
+} from './-private/computed-properties';
 import { default as TaskInstance } from './-private/task-instance';
 import {
   all,
@@ -8,9 +13,17 @@ import {
   hashSettled,
   race
 } from './-private/cancelable-promise-helpers';
-import { waitForQueue, waitForEvent, waitForProperty } from './-private/wait-for';
+import {
+  waitForQueue,
+  waitForEvent,
+  waitForProperty
+} from './-private/wait-for';
 import { didCancel } from "./-private/external/task-instance/cancelation";
-import { animationFrame, forever, rawTimeout } from './-private/external/yieldables';
+import {
+  animationFrame,
+  forever,
+  rawTimeout
+} from './-private/external/yieldables';
 import { Task } from './-private/task';
 import { TaskGroup } from './-private/task-group';
 

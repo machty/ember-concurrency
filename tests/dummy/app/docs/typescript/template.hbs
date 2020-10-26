@@ -20,7 +20,7 @@
 
 <h4>Classic Ember</h4>
 
-{{code-snippet name="ts/classic-vs-octane/classic.ts"}}
+<CodeSnippet @name="ts/classic-vs-octane/classic.ts" />
 
 <p>
   In Classic Ember, everything work as expected. Note that while
@@ -39,7 +39,7 @@
 
 <h4>Octane</h4>
 
-{{code-snippet name="ts/classic-vs-octane/octane.ts"}}
+<CodeSnippet @name="ts/classic-vs-octane/octane.ts" />
 
 <p>
   Since we are using native classes in Octane, TypeScript have
@@ -85,7 +85,7 @@
   <a href="/docs/encapsulated-task">Encapsulated Tasks</a>:
 </p>
 
-{{code-snippet name="ts/classic-vs-octane/octane-encapsulated.ts"}}
+<CodeSnippet @name="ts/classic-vs-octane/octane-encapsulated.ts" />
 
 <h4>Limitations of Generator Functions in TypeScript</h4>
 
@@ -105,7 +105,7 @@
   task function must be annotated manually:
 </p>
 
-{{code-snippet name="ts/yield/unsafe.ts"}}
+<CodeSnippet @name="ts/yield/unsafe.ts" />
 
 <p>
   Since the <code>yield</code> expressions are typed to "return"
@@ -119,7 +119,7 @@
   A safer approach would be to use a utility type, like so:
 </p>
 
-{{code-snippet name="ts/yield/safe.ts"}}
+<CodeSnippet @name="ts/yield/safe.ts" />
 
 <p>
   This <code>Resolved</code> utility type will unwrap a yieldable
@@ -135,7 +135,7 @@
   </a> addon, which enables async method syntax for tasks:
 </p>
 
-{{code-snippet name="ts/yield/async.ts"}}
+<CodeSnippet @name="ts/yield/async.ts" />
 
 <p>
   <code>await</code> expressions in <code>async</code> methods
@@ -149,7 +149,7 @@
   the following in <code>types/&lt;app name&gt;/index.d.ts</code>:
 </p>
 
-{{code-snippet name="ts/yield/index.d.ts"}}
+<CodeSnippet @name="ts/yield/index.d.ts" />
 
 <p>
   This imports the type extensions form the addons to add a few

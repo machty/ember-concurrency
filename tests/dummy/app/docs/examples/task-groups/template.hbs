@@ -2,7 +2,7 @@
 
 <p>
   To constrain the concurrency of a single task,
-  you use {{link-to "Task Modifiers" "docs.task-concurrency"}},
+  you use <LinkTo @route="docs.task-concurrency">Task Modifiers</LinkTo>,
   but what if you want to ensure that
   two (or more) separate tasks don't run at the same time?
   In these cases, you use <strong>Task Groups</strong>:
@@ -11,7 +11,7 @@
 <ol>
   <li>Declare a task group via <code>nameOfGroup: taskGroup()</code></li>
   <li>
-    Apply any desired {{link-to "Task Modifiers" "docs.task-concurrency"}}
+    Apply any desired <LinkTo @route="docs.task-concurrency">Task Modifiers</LinkTo>
     to that task group (just as you would with a normal task).
   </li>
   <li>
@@ -52,11 +52,11 @@
   The following examples demonstrate nested task groups
 </p>
 
-{{code-snippet name="task-groups.js"}}
-{{code-snippet name="task-group-component.js"}}
+<CodeSnippet @name="task-groups.js" />
+<CodeSnippet @name="task-group-component.js" />
 
 {{! BEGIN-SNIPPET task-groups-template }}
-{{#each taskGroups as |group|}}
-  {{task-group-example taskGroup=group}}
+{{#each this.taskGroups as |group|}}
+  <TaskGroupExample @taskGroup={{group}} />
 {{/each}}
 {{! END-SNIPPET }}

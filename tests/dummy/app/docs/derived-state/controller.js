@@ -38,8 +38,8 @@ export default Controller.extend({
 
   taskProperties: computed('showLessCommon', function() {
     return [
-      ...this.get('commonTaskProperties'),
-      ...(this.get('showLessCommon') ? this.get('lessCommonTaskProperties') : [])
+      ...this.commonTaskProperties,
+      ...(this.showLessCommon ? this.lessCommonTaskProperties : [])
     ];
   }),
 
