@@ -1,14 +1,13 @@
 import Controller from '@ember/controller';
-import { task, timeout } from 'ember-concurrency';
+import { dropTask, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET loading-ui-controller
-export default Controller.extend({
-  askQuestion: task(function * () {
+export default class LoadingUIController extends Controller {
+  result = null;
+
+  @dropTask *askQuestion() {
     yield timeout(1000);
     this.set('result', Math.random());
-  }).drop(),
-
-  result: null,
-});
+  }
+}
 // END-SNIPPET
-

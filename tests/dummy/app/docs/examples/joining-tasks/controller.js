@@ -13,11 +13,13 @@ const ProgressTracker = EmberObject.extend({
   word: null,
 });
 
-export default Controller.extend({
-  status: "Waiting...",
-  trackers: null,
+export default class JoiningTasksController extends Controller {
+  colors = [ '#ff8888', '#88ff88', '#8888ff' ];
+  status = "Waiting...";
+  trackers = null;
 
-  parent: task(function * (methodName) {
+  @task({ restartable: true })
+  *parent(methodName) {
     let allOrRace = methods[methodName];
     let trackers = [], childTasks = [];
 
@@ -31,9 +33,10 @@ export default Controller.extend({
     this.set('status', "Waiting for child tasks to complete...");
     let words = yield allOrRace(childTasks);
     this.set('status', `Done: ${makeArray(words).join(', ')}`);
-  }).restartable(),
+  }
 
-  child: task(function * (tracker) {
+  @task({ enqueue: true, maxConcurrency: 3 })
+  *child(tracker) {
     let percent = 0;
     while (percent < 100) {
       yield timeout(Math.random() * 100 + 100);
@@ -43,9 +46,6 @@ export default Controller.extend({
     let word = randomWord();
     tracker.set('word', word);
     return word;
-  }).enqueue().maxConcurrency(3),
-
-  colors: [ '#ff8888', '#88ff88', '#8888ff' ],
-});
+  }
+}
 // END-SNIPPET
-

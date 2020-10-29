@@ -1,4 +1,4 @@
 <p>
-  <button onclick={{perform this.myTask}} type="button">Perform myTask</button>
+  <button {{on "click" (perform this.myTask)}} type="button">Perform myTask</button>
   {{this.status}}
 </p>

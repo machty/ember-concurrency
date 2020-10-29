@@ -1,5 +1,5 @@
-<button type="button" {{action "startTask"}}>task.perform()</button>
-<button type="button" {{action "restart"}}>Clear Timeline</button>
+<button type="button" {{on "click" this.startTask}}>task.perform()</button>
+<button type="button" {{on "click" this.restart}}>Clear Timeline</button>
 {{#if @task.isRunning}}
   <button type="button" {{on "click" (cancel-all @task)}}>Cancel All</button>
 {{/if}}
@@ -14,7 +14,7 @@
 <svg style="width: 100%; padding: 5px;" {{! template-lint-disable no-inline-styles }}>
   {{#each this.trackers as |tracker|}}
     <g height="20px">
-      {{#with (pick-from this.colors tracker.id) as |color|}}
+      {{#let (pick-from this.colors tracker.id) as |color|}}
         {{#if tracker.hasStarted}}
           <rect x="{{scale (subtract tracker.startTime this.lowerLimit) this.lowerLimit this.upperLimit}}%"
                 y={{pick-from this.labelHeights tracker.id}}
@@ -25,7 +25,7 @@
                 fill-opacity="0.3" />
         {{/if}}
 
-        {{#with (scale (subtract tracker.performTime this.lowerLimit) this.lowerLimit this.upperLimit) as |x|}}
+        {{#let (scale (subtract tracker.performTime this.lowerLimit) this.lowerLimit this.upperLimit) as |x|}}
           <text x="{{sum 0.5 x}}%"
                 y={{sum 15 (pick-from this.labelHeights tracker.id)}}
                 font-family="Raleway"
@@ -35,15 +35,15 @@
                 font-style={{if tracker.startTime "normal" "italic"}} >
             {{tracker.state}}
           </text>
-          {{#with (pick-from this.labelHeights tracker.id) as |y|}}
+          {{#let (pick-from this.labelHeights tracker.id) as |y|}}
             <line x1="{{x}}%" y1={{y}} x2="{{x}}%" y2={{sum 20 y}} stroke={{color}} />
-          {{/with}}
-        {{/with}}
-      {{/with}}
+          {{/let}}
+        {{/let}}
+      {{/let}}
     </g>
   {{/each}}
 
-  {{#with (scale this.timeElapsed this.lowerLimit this.upperLimit) as |x|}}
+  {{#let (scale this.timeElapsed this.lowerLimit this.upperLimit) as |x|}}
     <line x1="{{x}}%" y1="0" x2="{{x}}%" y2="100" stroke="black" />
-  {{/with}}
+  {{/let}}
 </svg>

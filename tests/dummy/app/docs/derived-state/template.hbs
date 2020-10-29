@@ -124,19 +124,19 @@
 </p>
 
 {{#each this.tasks as |taskName|}}
-  {{#with (get this taskName) as |task|}}
+  {{#let (get this taskName) as |task|}}
     <h5>{{task.name}} (performCount={{task.performCount}} concurrency={{task.concurrency}})</h5>
 
     <p>
-      <button onclick={{perform task false}}
+      <button {{on "click" (perform task false)}}
         class={{if task.isIdle "button-primary"}} type="button">
         Run to Completion
       </button>
-      <button onclick={{perform task true}}
+      <button {{on "click" (perform task true)}}
         class={{if task.isIdle "button-primary"}} type="button">
         Run until Error
       </button>
-      <button onclick={{cancel-all task}}
+      <button {{on "click" (cancel-all task)}}
         class={{if task.isRunning "button-primary"}} type="button">
         Cancel
       </button>
@@ -159,29 +159,29 @@
               <strong>myTask.{{tp}}</strong>
             </td>
             <td>
-              {{#with (get task (concat tp ".value")) as |v|}}
+              {{#let (get task (concat tp ".value")) as |v|}}
                 <div class="completion-status completion-success">{{v}}</div>
-              {{/with}}
+              {{/let}}
             </td>
             <td>
-              {{#with (get task (concat tp ".error")) as |v|}}
+              {{#let (get task (concat tp ".error")) as |v|}}
                 <div class="completion-status completion-error">{{v}}</div>
-              {{/with}}
+              {{/let}}
             </td>
             <td>
-              {{#with (get task (concat tp ".isSuccessful")) as |v|}}
+              {{#let (get task (concat tp ".isSuccessful")) as |v|}}
                 {{v}}
-              {{/with}}
+              {{/let}}
             </td>
             <td>
-              {{#with (get task (concat tp ".isError")) as |v|}}
+              {{#let (get task (concat tp ".isError")) as |v|}}
                 {{v}}
-              {{/with}}
+              {{/let}}
             </td>
           </tr>
         {{/each}}
       </tbody>
     </table>
     <br>
-  {{/with}}
+  {{/let}}
 {{/each}}

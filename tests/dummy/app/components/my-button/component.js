@@ -1,8 +1,7 @@
 import Component from '@ember/component';
-
 import { didCancel } from 'ember-concurrency';
 
-export default Component.extend({
+export default class MyButtonComponent extends Component {
   click() {
     let val = this.attrs.action(3, 4);
     if (!val) { return; }
@@ -16,5 +15,4 @@ export default Component.extend({
       }
     });
   }
-});
-
+}

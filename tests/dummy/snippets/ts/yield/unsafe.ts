@@ -1,6 +1,5 @@
 import Component from '@ember/component';
-import { TaskGenerator } from 'ember-concurrency';
-import { task } from 'ember-concurrency-decorators';
+import { TaskGenerator, task } from 'ember-concurrency';
 import { taskFor } from 'ember-concurrency-ts';
 import { JSON } from './utils';
 

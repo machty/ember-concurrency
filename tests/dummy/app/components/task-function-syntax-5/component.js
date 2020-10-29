@@ -1,13 +1,11 @@
 // BEGIN-SNIPPET task-function-syntax-5
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { computed } from '@ember/object';
 import { task } from 'ember-concurrency';
 
 export default class MyOctaneComponent extends Component {
   @tracked status = null
 
-  @computed('pickRandomNumbers.last.value')
   get favoriteNumbers() {
     if (this.pickRandomNumbers.last) {
       return this.pickRandomNumbers.last.value

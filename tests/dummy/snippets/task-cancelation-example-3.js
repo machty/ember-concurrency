@@ -1,13 +1,14 @@
 import Component from '@ember/component';
-export default Component.extend({
-  queryServer: task(function * () {
+import { task, timeout } from 'ember-concurrency';
+
+export default class TaskCancelationExampleComponent extends Component {
+  @task *queryServer() {
     yield timeout(10000);
     return 123;
-  }),
+  }
 
-  fetchResults: task(function * () {
+  @task *fetchResults() {
     let results = yield this.get('queryServer').perform();
     this.set('results', results);
-  }),
-});
-
+  }
+}

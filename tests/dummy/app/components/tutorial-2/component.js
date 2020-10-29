@@ -1,26 +1,26 @@
 import TutorialComponent from '../shared-tutorial/component';
 
 // BEGIN-SNIPPET better-syntax-3
-export default TutorialComponent.extend({
-  result: null,
-  isFindingStores: false,
-  actions: {
-    findStores() {
-      if (this.isFindingStores) { return; } // ++
+import { action } from '@ember/object';
 
-      let geolocation = this.geolocation;
-      let store = this.store;
+export default class Tutorial2 extends TutorialComponent {
+  result = null;
+  isFindingStores = false;
 
-      this.set('isFindingStores', true);
-      geolocation.getCoords()
-        .then(coords => store.getNearbyStores(coords))
-        .then(result => {
-          this.set('result', result);
-          this.set('isFindingStores', false);
-        });
-    }
-  },
-});
+  @action
+  async findStores() {
+    if (this.isFindingStores) { return; } // ++
+
+    let geolocation = this.geolocation;
+    let store = this.store;
+
+    this.set('isFindingStores', true);
+
+    let coords = await geolocation.getCoords()
+    let result = await store.getNearbyStores(coords);
+
+    this.set('result', result);
+    this.set('isFindingStores', false);
+  }
+}
 // END-SNIPPET
-
-

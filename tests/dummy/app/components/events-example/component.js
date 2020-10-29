@@ -1,83 +1,86 @@
 import Evented from '@ember/object/evented';
 import Component from '@ember/component';
 import $ from 'jquery';
-import {
-  task,
-  waitForEvent,
-  waitForProperty,
-  timeout
-} from 'ember-concurrency';
+import { task, timeout, waitForEvent, waitForProperty } from 'ember-concurrency';
 
-export default Component.extend(Evented, {
+export default class EventsExampleComponent extends Component.extend(Evented) {
 // BEGIN-SNIPPET waitForEvent
-  domEvent: null,
-  domEventLoop: task(function * () {
+  domEvent = null;
+  @task *domEventLoop() {
     while(true) {
       let event = yield waitForEvent(document.body, 'click');
       this.set('domEvent', event);
       this.trigger('fooEvent', { v: Math.random() });
     }
-  }).on('didInsertElement'),
+  }
 
-  jQueryEvent: null,
-  jQueryEventLoop: task(function * () {
+  jQueryEvent = null;
+  @task *jQueryEventLoop() {
     let $body = $('body');
     while(true) {
       let event = yield waitForEvent($body, 'click');
       this.set('jQueryEvent', event);
     }
-  }).on('didInsertElement'),
+  }
 
-  emberEvent: null,
-  emberEventedLoop: task(function * () {
+  emberEvent = null;
+  @task *emberEventedLoop() {
     while(true) {
       let event = yield waitForEvent(this, 'fooEvent');
       this.set('emberEvent', event);
     }
-  }).on('didInsertElement'),
+  }
+
+  didInsertElement() {
+    super.didInsertElement(...arguments);
+    this.domEventLoop.perform();
+    this.jQueryEventLoop.perform();
+    this.emberEventedLoop.perform();
+    this.waiterLoop.perform();
+  }
 // END-SNIPPET
 
 
 // BEGIN-SNIPPET waitForEvent-derived-state
-  waiterLoop: task(function * () {
+  @task *waiterLoop() {
     while(true) {
       yield this.waiter.perform();
       yield timeout(1500);
     }
-  }).on('didInsertElement'),
+  }
 
-  waiter: task(function * () {
+  @task *waiter() {
     let event = yield waitForEvent(document.body, 'click');
     return event;
-  }),
+  }
 // END-SNIPPET
 
 // BEGIN-SNIPPET waitForProperty
-  startAll: task(function * () {
+  @task *startAll() {
     this.set('bazValue', 1);
     this.set('state', "Start.");
     this.foo.perform();
     this.bar.perform();
     this.baz.perform();
-  }),
+  }
 
-  foo: task(function * () {
+  @task *foo() {
     yield timeout(500);
-  }),
+  }
 
-  bar: task(function * () {
+  @task *bar() {
     yield waitForProperty(this, 'foo.isIdle');
     this.set('state', `${this.state} Foo is idle.`);
     yield timeout(500);
     this.set('bazValue', 42);
     this.set('state', `${this.state} Bar.`);
-  }),
+  }
 
-  bazValue: 1,
-  baz: task(function * () {
+  bazValue = 1;
+  @task *baz() {
     let val = yield waitForProperty(this, 'bazValue', (v) => v % 2 === 0);
     yield timeout(500);
     this.set('state', `${this.state} Baz got even value ${val}.`);
-  }),
+  }
 // END-SNIPPET
-});
+}

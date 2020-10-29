@@ -8,12 +8,14 @@ function capitalizeAt(text, i) {
   return before + capsLetter + after;
 }
 
-export default Component.extend({
-  tagName: '',
-  text: null,
-  scrambledText: null,
+export default class CapsMarqueeComponent extends Component {
+  tagName = '';
+  text = null;
+  scrambledText = null;
+
 // BEGIN-SNIPPET caps-marquee
-  marqueeLoop: task(function * () {
+  @task({ on: 'init' })
+  *marqueeLoop() {
     let text = this.text;
     while (true) {
       this.set('formattedText', text);
@@ -23,7 +25,6 @@ export default Component.extend({
         yield timeout(50);
       }
     }
-  }).on('init'),
+  }
 // END-SNIPPET
-});
-
+}

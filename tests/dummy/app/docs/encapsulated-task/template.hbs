@@ -42,7 +42,7 @@
 
 {{! BEGIN-SNIPPET encapsulated-task-template }}
 <p>
-  <button onclick={{perform this.uploadFile this.makeRandomUrl}} type="button">
+  <button {{on "click" (perform this.uploadFile this.makeRandomUrl)}} type="button">
     Start Upload
   </button>
 </p>

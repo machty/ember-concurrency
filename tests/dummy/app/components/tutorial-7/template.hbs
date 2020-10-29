@@ -1,7 +1,7 @@
 <div class="tutorial-example">
 
   {{! BEGIN-SNIPPET better-syntax-8 }}
-  <button onclick={{perform this.findStores}} type="button">
+  <button {{on "click" (perform this.findStores)}} type="button">
     Find Nearby Stores
     {{#if this.findStores.isRunning}}
       {{! ++ }}

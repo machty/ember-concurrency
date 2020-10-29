@@ -1,6 +1,5 @@
 import Service from '@ember/service';
 
-export default Service.extend({
-  foo: 123
-});
-
+export default class FunService extends Service {
+  foo = 123;
+}

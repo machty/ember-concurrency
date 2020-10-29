@@ -1,11 +1,10 @@
-import { schedule } from '@ember/runloop';
 import Component from '@ember/component';
+import { action } from '@ember/object';
+import { schedule } from '@ember/runloop';
 
-export default Component.extend({
-  classNames: ["code-template-toggle"],
-  toggleDescription: "Toggle JS / Template",
-
-  showCode: true,
+export default class CodeTemplateToggleComponent extends Component {
+  toggleDescription = "Toggle JS / Template";
+  showCode = true;
 
   didInsertElement() {
     schedule('afterRender', null, () => {
@@ -14,13 +13,12 @@ export default Component.extend({
         {
           return el.offsetHeight;
         }));
-      this.element.style.height = `${maxHeight}px`;
+      this.element.querySelector(".code-template-toggle").style.height = `${maxHeight}px`;
     });
-  },
-
-  actions: {
-    toggle() {
-      this.toggleProperty('showCode');
-    }
   }
-});
+
+  @action
+  toggle() {
+    this.toggleProperty('showCode');
+  }
+}

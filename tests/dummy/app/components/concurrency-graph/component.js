@@ -1,11 +1,9 @@
 import { oneWay } from '@ember/object/computed';
 import { A } from '@ember/array';
-import { on } from '@ember/object/evented';
-import RSVP from 'rsvp';
 import Component from '@ember/component';
 import { capitalize } from '@ember/string';
-import EmberObject, { computed } from '@ember/object';
-import { task } from 'ember-concurrency';
+import EmberObject, { action, computed } from '@ember/object';
+import { animationFrame, task } from 'ember-concurrency';
 
 let Tracker = EmberObject.extend({
   id: null,
@@ -21,74 +19,73 @@ let Tracker = EmberObject.extend({
   hasStarted: false,
 });
 
-export default Component.extend({
-  task: null,
-  trackers: null,
-  timeElapsed: 0,
-  startTime: null,
-  nextId: 0,
+export default class ConcurrencyGraphComponent extends Component {
+  task = null;
+  trackers = null;
+  timeElapsed = 0;
+  startTime = null;
+  nextId = 0;
 
-  lowerLimit: computed('trackers.[]', function() {
+  colors = [ 'red', 'green', 'blue' ];
+  labelHeights = [ 0, 20, 40, 60, 80, 100 ];
+
+  didInsertElement() {
+    super.didInsertElement(...arguments);
+    this.restart();
+  }
+
+  @computed('trackers.[]')
+  get lowerLimit() {
     let trackers = this.trackers;
     if (!trackers) { return 0; }
     let v = Math.min(...trackers.mapBy('performTime'));
     return v;
-  }),
+  }
 
-  upperLimit: computed('timeElapsed', function() {
+  @computed('timeElapsed')
+  get upperLimit() {
     let timeElapsed = this.timeElapsed;
     return Math.max(10000, timeElapsed);
-  }),
+  }
 
-  colors: [ 'red', 'green', 'blue' ],
-
-  labelHeights: [ 0, 20, 40, 60, 80, 100 ],
-
-  ticker: task(function * () {
+  @(task(function * () {
     while (true) {
       let now = +new Date();
       this.set('timeElapsed', now - this.startTime);
-
-      let defer = RSVP.defer();
-      window.requestAnimationFrame(defer.resolve);
-      yield defer.promise;
+      yield animationFrame();
     }
-  }).drop(),
+  }).drop()) ticker;
 
-  restart: on('init', function () {
+  @action
+  restart() {
     this.nextId = 0;
     this.set('trackers', A());
     this.ticker.cancelAll();
     this.set('timeElapsed', 0);
     this.startTime = 0;
-  }),
-
-  actions: {
-    startTask() {
-      this.startTime = this.startTime || +new Date();
-      let tracker = Tracker.create({
-        id: this.nextId++,
-        performTime: this.timeElapsed,
-        comp: this,
-        start: () => {
-          tracker.set('hasStarted', true);
-          tracker.set('startTime', this.timeElapsed || 1);
-        },
-        end: () => {
-          tracker.set('endTime', this.timeElapsed);
-        },
-      });
-
-      let task = this.task;
-      let taskInstance = task.perform(tracker);
-      tracker.set('taskInstance', taskInstance);
-
-      this.trackers.pushObject(tracker);
-      this.ticker.perform();
-    },
-
-    restart() {
-      this.restart();
-    }
   }
-});
+
+  @action
+  startTask() {
+    this.startTime = this.startTime || +new Date();
+    let tracker = Tracker.create({
+      id: this.nextId++,
+      performTime: this.timeElapsed,
+      comp: this,
+      start: () => {
+        tracker.set('hasStarted', true);
+        tracker.set('startTime', this.timeElapsed || 1);
+      },
+      end: () => {
+        tracker.set('endTime', this.timeElapsed);
+      },
+    });
+
+    let task = this.task;
+    let taskInstance = task.perform(tracker);
+    tracker.set('taskInstance', taskInstance);
+
+    this.trackers.pushObject(tracker);
+    this.ticker.perform();
+  }
+}

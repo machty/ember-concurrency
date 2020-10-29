@@ -32,7 +32,8 @@
   that even though you no longer see exceptions in the console, you still need to
   clean up / stop / cancel some operation on a long lived object in response
   to a Component being destroyed. There are Component lifecycle hooks
-  like <code>willDestroyElement</code> that you can use for these kinds of things,
+  like <code>willDestroyElement</code> or element modifiers like
+  <code>will-destroy</code> that you can use for these kinds of things,
   but then you still end up with the same amount of code, but now it's smeared
   between Component and Controller.
 </p>

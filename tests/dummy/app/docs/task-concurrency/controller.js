@@ -12,12 +12,11 @@ function * SHARED_TASK_FN(tracker) {
 }
 
 // BEGIN-SNIPPET shared-tasks
-export default Controller.extend({
-  defaultTask:     task(SHARED_TASK_FN),
-  restartableTask: task(SHARED_TASK_FN).restartable(),
-  enqueuedTask:    task(SHARED_TASK_FN).enqueue(),
-  droppingTask:    task(SHARED_TASK_FN).drop(),
-  keepLatestTask:  task(SHARED_TASK_FN).keepLatest(),
-});
+export default class SharedTasksController extends Controller {
+  @task defaultTask = SHARED_TASK_FN;
+  @task({ restartable: true }) restartableTask = SHARED_TASK_FN;
+  @task({ enqueue: true }) enqueuedTask = SHARED_TASK_FN;
+  @task({ drop: true }) droppingTask = SHARED_TASK_FN;
+  @task({ keepLatest: true }) keepLatestTask = SHARED_TASK_FN;
+}
 // END-SNIPPET
-

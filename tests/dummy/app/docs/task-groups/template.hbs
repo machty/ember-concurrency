@@ -37,7 +37,7 @@
 {{! BEGIN-SNIPPET task-groups-template }}
 {{#each this.tasks as |task|}}
   <button class={{if task.isIdle "clickable"}}
-          onclick={{perform task}} type="button">
+          {{on "click" (perform task)}} type="button">
     {{task.name}}
   </button>
 {{/each}}
@@ -46,9 +46,9 @@
 
 <h5>
   Most Recent Chore:
-  {{#with this.chores.last as |taskInstance|}}
+  {{#let this.chores.last as |taskInstance|}}
     {{taskInstance.task.name}} ({{taskInstance.state}})
-  {{/with}}
+  {{/let}}
 </h5>
 {{! END-SNIPPET }}
 

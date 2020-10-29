@@ -1,5 +1,6 @@
 import { A } from '@ember/array';
 import Component from '@ember/component';
+import { action } from '@ember/object';
 import { timeout } from 'ember-concurrency';
 
 const PREFIXES = [
@@ -24,8 +25,8 @@ function randomFrom(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-let store = {
-  getNearbyStores() {
+class Store {
+  async getNearbyStores() {
     let num = 3; //Math.floor(Math.random() * 2) + 5;
     let stores = [];
     for (let i = 0; i < num; ++i) {
@@ -38,40 +39,35 @@ let store = {
       });
     }
 
-    return timeout(800).then(() => ({ stores }));
+    await timeout(800)
+    return { stores };
   }
-};
+}
 
-let geolocation = {
-  getCoords() {
-    return timeout(800).then(() => ({
+class Geolocation {
+  async getCoords() {
+    await timeout(800);
+
+    return {
       lat: Math.random * 60,
       long: Math.random * 60,
-    }));
+    };
   }
-};
+}
 
-export default Component.extend({
-  init() {
-    this._super();
-    this.set('logs', A());
-    this.set('formData', {
-      user: "machty",
-      amount: "9.99",
-    });
-  },
-  logs: null,
-  formData: null,
+export default class SharedTutorialComponent extends Component {
+  logs = A();
+  formData = {
+    user: "machty",
+    amount: "9.99",
+  };
+  showTemplate = false;
 
-  showTemplate: false,
+  geolocation = new Geolocation();
+  store = new Store();
 
-  geolocation,
-  store,
-
-  actions: {
-    toggleTemplate() {
-      this.toggleProperty('showTemplate');
-    }
+  @action
+  toggleTemplate() {
+    this.toggleProperty('showTemplate');
   }
-});
-
+}

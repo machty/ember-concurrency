@@ -1,17 +1,18 @@
 import { task } from 'ember-concurrency';
 
-export default Component.extend({
-  outerFoo: 123,
-  regularTask: task(function * (value) {
+export default class EncapsulatedTaskComponent extends Component {
+  outerFoo = 123;
+
+  @task *regularTask(value) {
     // this is a classic/regular ember-concurrency task,
     // which has direct access to the host object that it
     // lives on via `this`
     console.log(this.outerFoo); // => 123
     yield doSomeAsync();
     this.set('outerFoo', value);
-  }),
+  }
 
-  encapsulatedTask: task({
+  @task encapsulatedTask = {
     innerFoo: 456,
 
     // this `*perform() {}` syntax is valid JavaScript shorthand
@@ -32,5 +33,5 @@ export default Component.extend({
       yield doSomeAsync();
       this.set('innerFoo', value);
     },
-  })
-});
+  }
+}

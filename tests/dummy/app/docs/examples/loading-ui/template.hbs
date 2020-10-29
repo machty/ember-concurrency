@@ -29,7 +29,7 @@
 <p>
   {{! BEGIN-SNIPPET ask-button }}
   <button class={{if this.askQuestion.isIdle "button-primary"}}
-    onclick={{perform this.askQuestion}} type="button">
+    {{on "click" (perform this.askQuestion)}} type="button">
     {{#if this.askQuestion.isIdle}}
       Ask
     {{else}}

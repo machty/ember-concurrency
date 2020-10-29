@@ -1,19 +1,19 @@
 import TutorialComponent from '../shared-tutorial/component';
 
+// BEGIN-SNIPPET better-syntax-10
 import { task } from 'ember-concurrency';
 
-// BEGIN-SNIPPET better-syntax-10
-export default TutorialComponent.extend({
-  result: null,
-  findStores: task(function * () {
+export default class Tutorial9 extends TutorialComponent {
+  result = null;
+
+  @task({ drop: true })
+  *findStores() {
     let geolocation = this.geolocation;
     let store = this.store;
 
     let coords = yield geolocation.getCoords();
     let result = yield store.getNearbyStores(coords);
     this.set('result', result);
-  }).drop(),
-});
+  }
+}
 // END-SNIPPET
-
-

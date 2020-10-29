@@ -1,4 +1,4 @@
-import { computed } from '@ember/object';
+import { action, computed } from '@ember/object';
 import Controller from '@ember/controller';
 import { task, timeout } from 'ember-concurrency';
 import { randomWord } from 'dummy/utils';
@@ -21,45 +21,44 @@ function * sharedFn(shouldError) {
 
 
 // BEGIN-SNIPPET completion-state-controller
-export default Controller.extend({
-  doStuff:            task(sharedFn),
-  doStuffDrop:        task(sharedFn).drop(),
-  doStuffEnqueue:     task(sharedFn).enqueue(),
-  doStuffRestartable: task(sharedFn).restartable(),
+export default class DerivedStateController extends Controller {
+  @task doStuff = sharedFn;
+  @task({ drop: true }) doStuffDrop = sharedFn;
+  @task({ enqueue: true }) doStuffEnqueue = sharedFn;
+  @task({ restartable: true }) doStuffRestartable = sharedFn;
 
-  showLessCommon: false,
+  showLessCommon = false;
 
-  tasks: [
+  tasks = [
     "doStuff",
     "doStuffDrop",
     "doStuffEnqueue",
     "doStuffRestartable",
-  ],
+  ];
 
-  taskProperties: computed('showLessCommon', function() {
+  @computed('showLessCommon')
+  get taskProperties() {
     return [
       ...this.commonTaskProperties,
       ...(this.showLessCommon ? this.lessCommonTaskProperties : [])
     ];
-  }),
+  }
 
-  commonTaskProperties: [
+  commonTaskProperties = [
     "last",
     "lastSuccessful",
     "lastErrored",
-  ],
+  ];
 
-  lessCommonTaskProperties: [
+  lessCommonTaskProperties = [
     "lastComplete",
     "lastPerformed",
     "lastIncomplete",
     "lastCanceled",
-  ],
+  ];
 
-  actions: {
-    performAll() {
-    }
+  @action
+  performAll() {
   }
-});
+}
 // END-SNIPPET
-

@@ -12,11 +12,17 @@ function * SHARED_TASK_FN(tracker) {
 }
 
 // BEGIN-SNIPPET shared-tasks-concurrent
-export default Controller.extend({
-  restartableTask3: task(SHARED_TASK_FN).maxConcurrency(3).restartable(),
-  enqueuedTask3:    task(SHARED_TASK_FN).maxConcurrency(3).enqueue(),
-  droppingTask3:    task(SHARED_TASK_FN).maxConcurrency(3).drop(),
-  keepLatestTask3:  task(SHARED_TASK_FN).maxConcurrency(3).keepLatest(),
-});
-// END-SNIPPET
+export default class SharedTasksAdvancedController extends Controller {
+  @task({ maxConcurrency: 3, restartable: true })
+  restartableTask3 = SHARED_TASK_FN;
 
+  @task({ maxConcurrency: 3, enqueue: true })
+  enqueuedTask3 = SHARED_TASK_FN;
+
+  @task({ maxConcurrency: 3, drop: true })
+  droppingTask3 = SHARED_TASK_FN;
+
+  @task({ maxConcurrency: 3, keepLatest: true })
+  keepLatestTask3 = SHARED_TASK_FN;
+}
+// END-SNIPPET

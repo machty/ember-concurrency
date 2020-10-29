@@ -1,6 +1,5 @@
 import Component from '@ember/component';
 
-export default Component.extend({
-  tagName: '',
-});
-
+export default class NavHeaderComponent extends Component {
+  tagName = '';
+}

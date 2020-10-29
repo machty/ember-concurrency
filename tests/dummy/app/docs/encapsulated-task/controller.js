@@ -5,8 +5,8 @@ import { randomWord } from 'dummy/utils';
 // BEGIN-SNIPPET encapsulated-task-controller
 import { task, timeout } from 'ember-concurrency';
 
-export default Controller.extend({
-  uploadFile: task({
+export default class EncapsulatedTaskController extends Controller {
+  @task({ enqueue: true}) uploadFile = {
     progress: 0,
     url: null,
 
@@ -32,11 +32,10 @@ export default Controller.extend({
 
       return "(upload result data)";
     },
-  }).enqueue(),
+  }
 
   makeRandomUrl() {
     return `https://www.${randomWord()}.edu`;
   }
-});
+}
 // END-SNIPPET
-

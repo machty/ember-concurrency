@@ -1,22 +1,22 @@
 import { inject as service } from '@ember/service';
 import Route from '@ember/routing/route';
-import { task, timeout } from 'ember-concurrency';
+import { restartableTask, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET detail-route
-export default Route.extend({
-  notify: service('notify'),
+export default class RouteTasksDetailRoute extends Route {
+  @service notify;
 
   setupController(controller, model) {
-    this._super(...arguments);
+    super.setupController(...arguments);
     this.pollServerForChanges.perform(model.id);
-  },
+  }
 
   resetController() {
-    this._super(...arguments);
+    super.resetController(...arguments);
     this.pollServerForChanges.cancelAll();
-  },
+  }
 
-  pollServerForChanges: task(function * (id) {
+  @restartableTask *pollServerForChanges(id) {
     let notify = this.notify;
     yield timeout(500);
     try {
@@ -28,6 +28,6 @@ export default Route.extend({
     } finally {
       notify.warning(`Thing ${id}: No longer polling for changes`);
     }
-  }).restartable()
-});
+  }
+}
 // END-SNIPPET
