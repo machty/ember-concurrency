@@ -34,12 +34,12 @@
 </p>
 {{! END-SNIPPET }}
 
-{{#each this.trackers as |tracker|}}
+{{#each this.childTasks as |ti|}}
   <div class="progress-outer">
-    <div class="progress-inner" style={{progress-style tracker.percent tracker.id this.colors}} {{! template-lint-disable no-inline-styles }}>
-      Progress: {{tracker.percent}}%
-      {{#if tracker.word}}
-        Word: {{tracker.word}}
+    <div class="progress-inner" style={{progress-style ti.percent ti.id this.colors}} {{! template-lint-disable no-inline-styles }}>
+      Progress: {{ti.percent}}%
+      {{#if ti.value}}
+        Word: {{ti.value}}
       {{/if}}
     </div>
   </div>

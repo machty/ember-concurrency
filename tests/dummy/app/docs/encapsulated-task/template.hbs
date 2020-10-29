@@ -49,12 +49,12 @@
 
 <h5>Queued Uploads: {{this.uploadFile.numQueued}}</h5>
 
-{{#with this.uploadFile.last as |encapsTask|}}
+{{#let this.uploadFile.last as |encapsTask|}}
   <h5>
     Uploading to {{encapsTask.url}} ({{encapsTask.stateText}}):
     {{encapsTask.progress}}%
   </h5>
-{{/with}}
+{{/let}}
 
 {{#if this.uploadFile.lastSuccessful}}
   <h5 style="color: green;" {{! template-lint-disable no-inline-styles }}>
