@@ -31,6 +31,31 @@ module('Unit: EncapsulatedTask', function() {
     run(defer, 'resolve');
   });
 
+  test("tasks can have their state accessed", async function(assert) {
+    assert.expect(2);
+
+    let defer;
+    let Obj = EmberObject.extend({
+      myTask: task({
+        someProp: false,
+
+        *perform() {
+          defer = RSVP.defer();
+          yield defer.promise;
+          this.set('someProp', true);
+        }
+      }),
+    });
+
+    let obj = Obj.create();
+    const taskInstance = obj.get('myTask').perform(1,2,3);
+    assert.equal(taskInstance.someProp, false);
+
+    defer.resolve();
+    await taskInstance;
+    assert.equal(taskInstance.someProp, true);
+  });
+
   if (gte('3.10.0')) {
     test("encapsulated tasks work with native ES classes and decorators", function(assert) {
       assert.expect(2);

@@ -1,3 +1,9 @@
+import { setOwner, getOwner } from '@ember/application';
+import EmberObject, { get } from '@ember/object';
+import {
+  isDestroying,
+  registerDestructor
+} from '@ember/destroyable';
 import { Task as BaseTask } from "./external/task/task";
 import { TaskInstance } from './task-instance';
 import {
@@ -9,10 +15,6 @@ import { EMBER_ENVIRONMENT } from "./ember-environment";
 import { TASKABLE_MIXIN } from "./taskable-mixin";
 import { TRACKED_INITIAL_TASK_STATE } from "./tracked-state";
 import { CANCEL_KIND_LIFESPAN_END } from "./external/task-instance/cancelation";
-import {
-  isDestroying,
-  registerDestructor
-} from '@ember/destroyable';
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -97,19 +99,11 @@ export class Task extends BaseTask {
 
   _performShared(args, performType, linkedObject) {
     let fullArgs = this._curryArgs ? [...this._curryArgs, ...args] : args;
-    let generatorFactory = () => this.generatorFactory(fullArgs);
-
-    let taskInstance = new TaskInstance({
-      task: this,
-      args: fullArgs,
-      executor: new TaskInstanceExecutor({
-        generatorFactory,
-        env: EMBER_ENVIRONMENT,
-        debug: this.debug,
-      }),
+    let taskInstance = this._taskInstanceFactory(
+      fullArgs,
       performType,
-      hasEnabledEvents: this.hasEnabledEvents,
-    });
+      linkedObject
+    );
 
     if (performType === PERFORM_TYPE_LINKED) {
       linkedObject._expectsLinkedYield = true;
@@ -122,6 +116,23 @@ export class Task extends BaseTask {
     }
 
     this.scheduler.perform(taskInstance);
+    return taskInstance;
+  }
+
+  _taskInstanceFactory(args, performType) {
+    let generatorFactory = () => this.generatorFactory(args);
+    let taskInstance = new TaskInstance({
+      task: this,
+      args,
+      executor: new TaskInstanceExecutor({
+        generatorFactory,
+        env: EMBER_ENVIRONMENT,
+        debug: this.debug,
+      }),
+      performType,
+      hasEnabledEvents: this.hasEnabledEvents,
+    });
+
     return taskInstance;
   }
 
@@ -263,4 +274,50 @@ if (TRACKED_INITIAL_TASK_STATE) {
 
 Object.assign(Task.prototype, TASKABLE_MIXIN);
 
-export class EncapsulatedTask extends Task {}
+export class EncapsulatedTask extends Task {
+  constructor(options) {
+    super(options);
+    this.taskObj = options.taskObj;
+    this._encapsulatedTaskStates = new WeakMap();
+  }
+
+  _taskInstanceFactory(args, performType) {
+    let owner = getOwner(this.context);
+    let encapsulatedTaskImpl = EmberObject.extend(this.taskObj).create();
+    setOwner(encapsulatedTaskImpl, owner);
+
+    let generatorFactory = () => encapsulatedTaskImpl.perform.apply(encapsulatedTaskImpl, args);
+    let taskInstance = new TaskInstance({
+      task: this,
+      args,
+      executor: new TaskInstanceExecutor({
+        generatorFactory,
+        env: EMBER_ENVIRONMENT,
+        debug: this.debug,
+      }),
+      performType,
+      hasEnabledEvents: this.hasEnabledEvents,
+    });
+
+    this._encapsulatedTaskStates.set(taskInstance, encapsulatedTaskImpl);
+
+    return taskInstance;
+  }
+
+  _performShared(args, performType, linkedObject) {
+    let taskInstance = super._performShared(args, performType, linkedObject);
+    let encapsulatedTaskImpl = this._encapsulatedTaskStates.get(taskInstance);
+
+    return new Proxy(taskInstance, {
+      get(obj, prop) {
+        return prop in obj ? obj[prop] : get(encapsulatedTaskImpl, prop.toString());
+      },
+      has(obj, prop) {
+        return prop in obj || prop in encapsulatedTaskImpl;
+      },
+      ownKeys(obj) {
+        return Reflect.ownKeys(obj).concat(Reflect.ownKeys(encapsulatedTaskImpl));
+      }
+    });
+  }
+}
