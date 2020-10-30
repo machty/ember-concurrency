@@ -49,4 +49,5 @@ Object.assign(Taskable.prototype, {
   isRunning: false,
   isQueued: false,
   isIdle: true,
+  state: 'idle'
 });

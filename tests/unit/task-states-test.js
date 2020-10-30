@@ -8,8 +8,8 @@ import { makeAsyncError } from '../helpers/helpers';
 module('Unit: task states', function(hooks) {
   let asyncError = makeAsyncError(hooks);
 
-  test("isIdle basic", function(assert) {
-    assert.expect(3);
+  test("state basic", function(assert) {
+    assert.expect(11);
 
     let Obj = EmberObject.extend({
       myTask: task(function * () {})
@@ -18,42 +18,62 @@ module('Unit: task states', function(hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      assert.equal(obj.get('myTask.isIdle'), true);
-      obj.get('myTask').perform();
-      assert.equal(obj.get('myTask.isIdle'), false);
+      assert.equal(obj.myTask.isIdle, true);
+      assert.equal(obj.myTask.isRunning, false);
+      assert.equal(obj.myTask.state, 'idle');
+      assert.equal(obj.myTask.performCount, 0);
+      obj.myTask.perform();
+      assert.equal(obj.myTask.isIdle, false);
+      assert.equal(obj.myTask.isRunning, true);
+      assert.equal(obj.myTask.state, 'running');
+      assert.equal(obj.myTask.performCount, 1);
     });
-    assert.equal(obj.get('myTask.isIdle'), true);
+    assert.equal(obj.myTask.isIdle, true);
+    assert.equal(obj.myTask.isRunning, false);
+    assert.equal(obj.myTask.state, 'idle');
   });
 
-  test("isIdle is false when task is blocked on a yield", function(assert) {
-    assert.expect(3);
+  test("state when task is blocked on a yield", function(assert) {
+    assert.expect(15);
 
-    let defers = [];
     let Obj = EmberObject.extend({
       myTask: task(function * () {
-        let defer = RSVP.defer();
-        defers.push(defer);
-        yield defer.promise;
+        yield forever;
       })
     });
 
-    let obj;
+    let obj, t;
     run(() => {
       obj = Obj.create();
+      t = obj.myTask;
     });
 
     run(() => {
-      let t = obj.get('myTask');
       assert.equal(t.isIdle, true);
+      assert.equal(t.isRunning, false);
+      assert.equal(t.isQueued, false);
+      assert.equal(t.state, 'idle');
+      assert.equal(t.performCount, 0);
       t.perform();
     });
 
     run(() => {
       let t = obj.get('myTask');
       assert.equal(t.isIdle, false);
+      assert.equal(t.isRunning, true);
+      assert.equal(t.state, 'running');
       assert.equal(t.numRunning, 1);
+      assert.equal(t.performCount, 1);
       t.perform();
     });
+
+    assert.equal(t.isIdle, false);
+    assert.equal(t.isRunning, true);
+    assert.equal(t.state, 'running');
+    assert.equal(t.numRunning, 2);
+    assert.equal(t.performCount, 2);
+
+    t.cancelAll();
   });
 
   test(".lastPerformed is set when task.perform is called", function(assert) {

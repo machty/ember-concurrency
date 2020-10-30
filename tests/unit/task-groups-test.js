@@ -10,10 +10,11 @@ module('Unit: task groups', function() {
     assert.equal(task.isRunning, isRunning, `${task._propertyName} is ${isRunning ? '' : 'not'} running ${suffix}`);
     assert.equal(task.isQueued,  isQueued,  `${task._propertyName} is ${isQueued ? '' : 'not'} queued ${suffix}`);
     assert.equal(task.isIdle,    isIdle,    `${task._propertyName} is ${isIdle ? '' : 'not'} idle ${suffix}`);
+    assert.equal(task.state, isRunning ? 'running' : 'idle', `${task._propertyName} state is '${isRunning ? 'running' : 'idle'}' ${suffix}`)
   }
 
   test("task groups allow tasks to share concurrency constraints", function(assert) {
-    assert.expect(48);
+    assert.expect(63);
 
     let deferA, deferB;
     let Obj = EmberObject.extend({
@@ -115,7 +116,7 @@ module('Unit: task groups', function() {
   }
 
   test("enqueued task groups can be canceled", function(assert) {
-    assert.expect(18);
+    assert.expect(24);
 
     let [taskA, taskB, tg] = sharedTaskGroupSetup(taskGroup().enqueue());
     let suffix = "after first run loop";
@@ -133,7 +134,7 @@ module('Unit: task groups', function() {
   });
 
   test("unmodified task groups can be canceled", function(assert) {
-    assert.expect(18);
+    assert.expect(24);
 
     let [taskA, taskB, tg] = sharedTaskGroupSetup(taskGroup());
     let suffix = "after first run loop";
@@ -212,7 +213,7 @@ module('Unit: task groups', function() {
 
   if (gte('3.10.0')) {
     test("ES class syntax with decorators works with task groups", function(assert) {
-      assert.expect(9);
+      assert.expect(12);
 
       let deferA, deferB;
       class FakeGlimmerComponent {

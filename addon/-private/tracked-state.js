@@ -33,6 +33,7 @@ if (USE_TRACKED) {
     isRunning: false,
     isQueued: false,
     isIdle: true,
+    state: 'idle'
   }, TRACKED_INITIAL_TASK_STATE);
 
   TRACKED_INITIAL_INSTANCE_STATE = applyTracked(INITIAL_INSTANCE_STATE, {});
