@@ -1,5 +1,5 @@
 import { setOwner, getOwner } from '@ember/application';
-import EmberObject from '@ember/object';
+import EmberObject, { get } from '@ember/object';
 import {
   isDestroying,
   registerDestructor
@@ -310,7 +310,7 @@ export class EncapsulatedTask extends Task {
 
     return new Proxy(taskInstance, {
       get(obj, prop) {
-        return prop in obj ? obj[prop] : encapsulatedTaskImpl[prop];
+        return prop in obj ? obj[prop] : get(encapsulatedTaskImpl, prop.toString());
       },
       has(obj, prop) {
         return prop in obj || prop in encapsulatedTaskImpl;
