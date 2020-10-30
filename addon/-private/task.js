@@ -1,5 +1,5 @@
 import { setOwner, getOwner } from '@ember/application';
-import EmberObject, { get } from '@ember/object';
+import EmberObject from '@ember/object';
 import {
   isDestroying,
   registerDestructor
@@ -278,6 +278,7 @@ export class EncapsulatedTask extends Task {
   constructor(options) {
     super(options);
     this.taskObj = options.taskObj;
+    this._encapsulatedTaskStates = new WeakMap();
   }
 
   _taskInstanceFactory(args, performType) {
@@ -298,15 +299,24 @@ export class EncapsulatedTask extends Task {
       hasEnabledEvents: this.hasEnabledEvents,
     });
 
+    this._encapsulatedTaskStates.set(taskInstance, encapsulatedTaskImpl);
+
+    return taskInstance;
+  }
+
+  _performShared(args, performType, linkedObject) {
+    let taskInstance = super._performShared(args, performType, linkedObject);
+    let encapsulatedTaskImpl = this._encapsulatedTaskStates.get(taskInstance);
+
     return new Proxy(taskInstance, {
       get(obj, prop) {
-        return prop in obj ? obj[prop] : get(encapsulatedTaskImpl, prop.toString());
+        return prop in obj ? obj[prop] : encapsulatedTaskImpl[prop];
       },
-      enumerate(obj) {
-        return obj.keys() + encapsulatedTaskImpl.keys();
+      has(obj, prop) {
+        return prop in obj || prop in encapsulatedTaskImpl;
       },
       ownKeys(obj) {
-        return obj.keys() + encapsulatedTaskImpl.keys();
+        return Reflect.ownKeys(obj).concat(Reflect.ownKeys(encapsulatedTaskImpl));
       }
     });
   }
