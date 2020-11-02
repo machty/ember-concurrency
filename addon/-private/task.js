@@ -279,6 +279,7 @@ export class EncapsulatedTask extends Task {
     super(options);
     this.taskObj = options.taskObj;
     this._encapsulatedTaskStates = new WeakMap();
+    this._encapsulatedTaskInstanceProxies = new WeakMap();
   }
 
   _taskInstanceFactory(args, performType) {
@@ -301,23 +302,58 @@ export class EncapsulatedTask extends Task {
 
     this._encapsulatedTaskStates.set(taskInstance, encapsulatedTaskImpl);
 
-    return taskInstance;
+    return this._wrappedEncapsulatedTaskInstance(taskInstance);
   }
 
-  _performShared(args, performType, linkedObject) {
-    let taskInstance = super._performShared(args, performType, linkedObject);
-    let encapsulatedTaskImpl = this._encapsulatedTaskStates.get(taskInstance);
+  _wrappedEncapsulatedTaskInstance(taskInstance) {
+    if (!taskInstance) {
+      return null;
+    }
 
-    return new Proxy(taskInstance, {
-      get(obj, prop) {
-        return prop in obj ? obj[prop] : get(encapsulatedTaskImpl, prop.toString());
-      },
-      has(obj, prop) {
-        return prop in obj || prop in encapsulatedTaskImpl;
-      },
-      ownKeys(obj) {
-        return Reflect.ownKeys(obj).concat(Reflect.ownKeys(encapsulatedTaskImpl));
-      }
-    });
+    let _encapsulatedTaskInstanceProxies = this._encapsulatedTaskInstanceProxies;
+    let proxy = _encapsulatedTaskInstanceProxies.get(taskInstance);
+
+    if (!proxy) {
+      let encapsulatedTaskImpl = this._encapsulatedTaskStates.get(taskInstance);
+
+      proxy = new Proxy(taskInstance, {
+        get(obj, prop) {
+          return prop in obj ? obj[prop] : get(encapsulatedTaskImpl, prop.toString());
+        },
+        has(obj, prop) {
+          return prop in obj || prop in encapsulatedTaskImpl;
+        },
+        ownKeys(obj) {
+          return Reflect.ownKeys(obj).concat(Reflect.ownKeys(encapsulatedTaskImpl));
+        },
+        defineProperty(obj, prop, descriptor) {
+          // Ember < 3.16 uses a WeakMap for value storage, keyed to the proxy.
+          // We need to ensure that when we use setProperties to update it, and
+          // it creates Meta, that it uses the proxy to key, otherwise we'll
+          // have two different values stores in Meta, one which won't render.
+          let proxy = _encapsulatedTaskInstanceProxies.get(taskInstance);
+          if (proxy) {
+            if (descriptor.get) {
+              descriptor.get = descriptor.get.bind(proxy);
+            } else if (proxy && descriptor.set) {
+              descriptor.set = descriptor.set.bind(proxy);
+            }
+          }
+
+          return prop in obj
+            ? Reflect.defineProperty(obj, prop, descriptor)
+            : Reflect.defineProperty(encapsulatedTaskImpl, prop, descriptor);
+        },
+        getOwnPropertyDescriptor(obj, prop) {
+          return prop in obj
+            ? Reflect.getOwnPropertyDescriptor(obj, prop)
+            : Reflect.getOwnPropertyDescriptor(encapsulatedTaskImpl, prop);
+        }
+      });
+
+      _encapsulatedTaskInstanceProxies.set(taskInstance, proxy);
+    }
+
+    return proxy;
   }
 }
