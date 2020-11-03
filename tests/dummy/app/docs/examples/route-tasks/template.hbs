@@ -49,8 +49,8 @@
     performs the task, any prior instances are canceled.
   </li>
   <li>
-    We use <code>.cancelOn('deactivate')</code> to make sure the task cancels
-    when the user leaves the route.
+    We use <code>cancelAll</code> in the route's <code>resetController</code>
+    hook to make sure the task cancels when the user leaves the route.
   </li>
 </ul>
 
