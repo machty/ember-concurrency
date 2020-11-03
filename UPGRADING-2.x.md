@@ -105,7 +105,17 @@ After:
 <button onClick={{fn (perform someTask)}}>My button</button>
 ```
 
-## Notes to addon maintainers
+## Notices
+
+### Browser Compatibility
+
+Modern evergreen browsers are supported, with Firefox and Chrome being tested in
+CI. Other browsers, such as Safari, Edge, and IE 11 should work fine as well,
+though the latter may require transpilation or polyfills via your
+`config/targets.js` or babel configuration. In particular, native ES classes,
+`WeakMap`, and `Proxy` are used.
+
+### Notes to addon maintainers
 
 If your addon depends directly or indirectly on ember-concurrency, you can likely
 make some minor modifications to support both ember-concurrency 1.x and
@@ -116,7 +126,7 @@ might take some time to upgrade to support the latest.
 ember-concurrency 1.x and 2.x are more-or-less the same API, while being _very_
 different internally.
 
-### package.json
+#### package.json
 
 Please accept versions liberally if you can, or use an appropriate version
 specifier for your requirements:
@@ -133,14 +143,14 @@ specifier for your requirements:
 }
 ```
 
-### Accessing task state
+#### Accessing task state
 
 If your addon must support versions of Ember < 3.1, ember-concurrency state will
 not be available via `.get` on the Task, TaskGroup, and TaskInstance directly.
 Instead, you should access the state using `Ember.get`, which will work for both
 1.x and 2.x. Template usage remains the same for both.
 
-### Testing
+#### Testing
 
 If you intend to support both versions, please add ember-try scenarios for both
 to protect against possible regressions.

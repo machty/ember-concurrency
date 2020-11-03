@@ -1,5 +1,26 @@
 # Changelog
 
+### 2.0.0-beta.2
+  - Migrate task lifetimes to `@ember/destroyable` underneath, rather than
+    patching `willDestroy` (#377).
+
+    **Potentially breaking**: this drops support for Node 8 and Ember < 3.8 LTS
+  - Ensure encapsulated task state can be accessed on the TaskInstance (#381, #383)
+
+    _Note_: this uses `Proxy` and `WeakMap`, which may need to be polyfilled on
+    IE 11.
+  - Make sure task/group-level `state` field is tracked (#382)
+  - Drop unused `broccoli-file-creator` and `ember-maybe-import-regenerator`
+    dependencies.
+
+    _Note on `ember-maybe-import-regenerator`_: This was originally added back when
+    generator support in browsers was far lower and Babel 5 and 6 were used. The
+    addon does nothing for Babel 7, which is used for `ember-concurrency` these
+    days. Tweaking `config/targets.js` or adding the regenerator Babel plugin to
+    your babel config can be done instead if the regenerator runtime is needed
+    to transpile generators for older browsers.
+  - [dev] Upgrade Ember-CLI to 3.22 (#380)
+
 ### 2.0.0-beta.1
   - Port over changes from 1.1.6 through 1.3.0 (#367)
   - Use `@tracked` underneath on Ember 3.16+ (#354)
