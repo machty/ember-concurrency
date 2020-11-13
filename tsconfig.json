@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "noEmit": true,
     "strict": true,

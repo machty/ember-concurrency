@@ -31,6 +31,7 @@ import {
   hashSettled,
   race,
   rawTimeout,
+  restartableTask,
   task,
   taskGroup,
   timeout,
@@ -38,7 +39,6 @@ import {
   waitForProperty,
   waitForQueue
 } from 'ember-concurrency';
-import { restartableTask } from 'ember-concurrency-decorators';
 import { taskFor } from 'ember-concurrency-ts';
 import { expectTypeOf as expect } from 'expect-type';
 
@@ -2378,6 +2378,20 @@ module('integration tests', () => {
   test('octane', () => {
     class MyComponent extends GlimmerComponent {
       declare foo: string;
+
+      @task({ restartable: true }) restartable = function*() {};
+      @task({ enqueue: true }) enqueue = function*() {};
+      @task({ drop: true }) drop = function*() {};
+      @task({ keepLatest: true }) keepLatest = function*() {};
+      @task({ evented: true }) evented = function*() {};
+      @task({ debug: true }) debug = function*() {};
+
+      // Note: these options work even when strictFunctionTypes is enabled, but
+      // turning it on in this repo breaks other things in addon/index.d.ts
+      @task({ on: 'hi' }) on = function*() {};
+      @task({ cancelOn: 'bye' }) cancelOn = function*() {};
+      @task({ maxConcurrency: 1 }) maxConcurrency = function*() {};
+      @task({ group: 'foo' }) group = function*() {};
 
       @restartableTask *myTask(immediately: boolean, ms: number = 500): TaskGenerator<string> {
         // We want to assert `this` is not implicitly `any`, but due `this`

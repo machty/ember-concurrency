@@ -1,3 +1,14 @@
+export {
+  restartableTask,
+  dropTask,
+  keepLatestTask,
+  enqueueTask,
+  restartableTaskGroup,
+  dropTaskGroup,
+  keepLatestTaskGroup,
+  enqueueTaskGroup
+} from 'ember-concurrency-decorators';
+
 import ComputedProperty from '@ember/object/computed';
 
 export type TaskGenerator<T> = Generator<any, T, any>;
@@ -648,6 +659,73 @@ type Settlement<T> = { state: 'fulfilled', value: T } | { state: 'rejected', rea
 
 type Settled<T> = Settlement<Resolved<T>>;
 
+// Decorator option types from ember-concurrency-decorators
+type OptionsFor<T extends object> = {
+  [K in OptionKeysFor<T>]?: OptionTypeFor<T, T[K]>;
+};
+
+type OptionKeysFor<T extends object> = {
+  [K in keyof T]: OptionKeyFor<T, K, T[K]>;
+}[keyof T];
+
+type OptionKeyFor<T, K, F> = F extends (...args: any[]) => T ? K : never;
+
+type OptionTypeFor<T, F> = F extends (...args: infer Args) => T
+  ? Args[0] extends undefined
+    ? true
+    : Args[0]
+  : never;
+
+type TaskOptions = OptionsFor<TaskProperty<unknown, unknown[]>>;
+
+type TaskGroupOptions = OptionsFor<TaskGroupProperty<unknown>>;
+
+/**
+ * A Task is a cancelable, restartable, asynchronous operation that
+ * is driven by a generator function. Tasks are automatically canceled
+ * when the object they live on is destroyed (e.g. a Component
+ * is unrendered).
+ *
+ * Turns the decorated generator function into a task.
+ *
+ * Optionally takes a hash of options that will be applied as modifiers to the
+ * task. For instance `maxConcurrency`, `on`, `group` or `keepLatest`.
+ *
+ * By default, tasks have no concurrency constraints
+ * (multiple instances of a task can be running at the same time)
+ * but much of a power of tasks lies in proper usage of Task Modifiers
+ * that you can apply to a task.
+ *
+ * You can also define an
+ * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * by decorating an object that defines a `perform` generator
+ * method.
+ *
+ * ```js
+ * import Component from '@glimmer/component';
+ * import { task } from 'ember-concurrency';
+ *
+ * class MyComponent extends Component {
+ *   @task
+ *   *plainTask() {}
+ *
+ *   @task({ maxConcurrency: 5, keepLatest: true, cancelOn: 'click' })
+ *   *taskWithModifiers() {}
+ * }
+ * ```
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {TaskProperty}
+ */
+export function task<T extends TaskOptions>(baseOptions?: T):
+  MethodDecorator & PropertyDecorator;
+export function task<T>(
+  target: Object,
+  propertyKey: string,
+  descriptor?: TypedPropertyDescriptor<T>
+): TypedPropertyDescriptor<T> | void;
+
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
  * is driven by a generator function. Tasks are automatically canceled
@@ -700,6 +778,45 @@ export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(taskFn: T
     EncapsulatedTaskDescriptorArgs<T>,
     EncapsulatedTaskState<T>
   >;
+
+/**
+ * "Task Groups" provide a means for applying
+ * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
+ * as part of a group task, modifiers like `drop: true` or `restartable: true`
+ * will no longer affect the individual `Task`. Instead those
+ * modifiers can be applied to the entire group.
+ *
+ * Turns the decorated property into a task group.
+ *
+ * Optionally takes a hash of options that will be applied as modifiers to the
+ * task group. For instance `maxConcurrency` or `keepLatest`.
+ *
+ * ```js
+ * import Component from '@glimmer/component';
+ * import { task, taskGroup } from 'ember-concurrency';
+ *
+ * class MyComponent extends Component {
+ *   @taskGroup({ maxConcurrency: 5 }) chores;
+ *
+ *   @task({ group: 'chores' })
+ *   *mowLawn() {}
+ *
+ *   @task({ group: 'chores' })
+ *   *doDishes() {}
+ * }
+ * ```
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {TaskGroupProperty}
+ */
+export function taskGroup<T extends TaskGroupOptions>(baseOptions: T):
+  MethodDecorator & PropertyDecorator;
+export function taskGroup<T>(
+  target: Object,
+  propertyKey: string,
+  descriptor?: TypedPropertyDescriptor<T>
+): TypedPropertyDescriptor<T> | void;
 
 /**
  * "Task Groups" provide a means for applying

@@ -4,7 +4,7 @@ import {
   TaskGroupProperty,
   task,
   taskGroup
-} from './-private/computed-properties';
+} from './-private/task-properties';
 import { default as TaskInstance } from './-private/task-instance';
 import {
   all,
@@ -26,6 +26,18 @@ import {
 } from './-private/external/yieldables';
 import { Task } from './-private/task';
 import { TaskGroup } from './-private/task-group';
+
+// Re-export e-c-d, until we merge it.
+export {
+  restartableTask,
+  dropTask,
+  keepLatestTask,
+  enqueueTask,
+  restartableTaskGroup,
+  dropTaskGroup,
+  keepLatestTaskGroup,
+  enqueueTaskGroup
+} from 'ember-concurrency-decorators';
 
 export {
   task,

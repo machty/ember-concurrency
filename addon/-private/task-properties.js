@@ -14,6 +14,10 @@ import { addObserver } from '@ember/object/observers';
 import { Task, EncapsulatedTask } from './task';
 import { TaskGroup } from './task-group';
 import { scheduleOnce } from '@ember/runloop';
+import {
+  task as taskDecorator,
+  taskGroup as taskGroupDecorator
+} from 'ember-concurrency-decorators';
 
 let handlerCounter = 0;
 
@@ -83,6 +87,21 @@ function setBufferPolicy(obj, policy) {
 
 function assertModifiersNotMixedWithGroup(obj) {
   assert(`ember-concurrency does not currently support using both .group() with other task modifiers (e.g. drop(), enqueue(), restartable())`, !obj._hasUsedModifier || !obj._taskGroupPath);
+}
+
+function isDecoratorOptions(possibleOptions) {
+  if (!possibleOptions) { return false; }
+  if (typeof possibleOptions === "function") { return false; }
+
+  if (
+    typeof possibleOptions === "object" &&
+    'perform' in possibleOptions &&
+    typeof possibleOptions.perform === "function"
+  ) {
+    return false;
+  }
+
+  return Object.getPrototypeOf(possibleOptions) === Object.prototype;
 }
 
 /**
@@ -445,23 +464,27 @@ export function taskComputed(fn) {
  * @param {function} generatorFunction the generator function backing the task.
  * @returns {TaskProperty}
  */
-export function task(originalTaskFn) {
-  let tp = taskComputed(function(key) {
-    tp.taskFn.displayName = `${key} (task)`;
+export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
+  if (isDecoratorOptions(taskFnOrProtoOrDecoratorOptions) || (key && descriptor)) {
+    return taskDecorator(...arguments);
+  } else {
+    let tp = taskComputed(function(key) {
+      tp.taskFn.displayName = `${key} (task)`;
 
-    let options = sharedTaskProperties(tp, this, key);
-    if (typeof tp.taskFn === 'object') {
-      return buildEncapsulatedTask(tp.taskFn, options);
-    } else {
-      return buildRegularTask(tp.taskFn, options);
-    }
-  });
+      let options = sharedTaskProperties(tp, this, key);
+      if (typeof tp.taskFn === 'object') {
+        return buildEncapsulatedTask(tp.taskFn, options);
+      } else {
+        return buildRegularTask(tp.taskFn, options);
+      }
+    });
 
-  tp.taskFn = originalTaskFn;
+    tp.taskFn = taskFnOrProtoOrDecoratorOptions;
 
-  Object.setPrototypeOf(tp, TaskProperty.prototype);
+    Object.setPrototypeOf(tp, TaskProperty.prototype);
 
-  return tp;
+    return tp;
+  }
 }
 
 function buildRegularTask(taskFn, options) {
@@ -497,14 +520,18 @@ function buildEncapsulatedTask(taskObj, options) {
  *
  * @returns {TaskGroup}
  */
-export function taskGroup() {
-  let tp = taskComputed(function(key) {
-    return new TaskGroup(sharedTaskProperties(tp, this, key));
-  });
+export function taskGroup(possibleDecoratorOptions, key, descriptor) {
+  if (isDecoratorOptions(possibleDecoratorOptions) || (key && descriptor)) {
+    return taskGroupDecorator(...arguments);
+  } else {
+    let tp = taskComputed(function(key) {
+      return new TaskGroup(sharedTaskProperties(tp, this, key));
+    });
 
-  Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
+    Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
 
-  return tp;
+    return tp;
+  }
 }
 
 function sharedTaskProperties(taskProperty, context, key) {
@@ -513,6 +540,10 @@ function sharedTaskProperties(taskProperty, context, key) {
 
   if (taskProperty._taskGroupPath) {
     group = get(context, taskProperty._taskGroupPath);
+    assert(
+      `ember-concurrency: Expected group '${taskProperty._taskGroupPath}' to be defined but was not found.`,
+      group instanceof TaskGroup
+    );
     scheduler = group.scheduler;
   } else {
     let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);
