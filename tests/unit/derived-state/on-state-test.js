@@ -94,7 +94,7 @@ module('Unit: task states - onState', function() {
 
     let fn = function * () { yield forever };
     let changes = [];
-    let onState = (_, task) => changes.push(task._propertyName);
+    let onState = (_, task) => changes.push(task.name);
 
     let Obj = EmberObject.extend({
       a: task(fn).group('gg1').onState(onState),

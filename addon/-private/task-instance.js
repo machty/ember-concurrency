@@ -74,7 +74,7 @@ export class TaskInstance extends BaseTaskInstance {
 
   getName() {
     if (!this.name) {
-      this.name = (this.task && this.task._propertyName) || "<unknown>";
+      this.name = (this.task && this.task.name) || "<unknown>";
     }
     return this.name;
   }
@@ -96,7 +96,7 @@ export class TaskInstance extends BaseTaskInstance {
     let taskInstance = this;
     let task = taskInstance.task;
     let host = task.context;
-    let eventNamespace = task && task._propertyName;
+    let eventNamespace = task && task.name;
 
     if (host && host.trigger && eventNamespace) {
       let [eventType, ...args] = allArgs;

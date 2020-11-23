@@ -7,10 +7,10 @@ import { decoratorTest } from '../helpers/helpers';
 
 module('Unit: task groups', function() {
   function assertStates(assert, task, isRunning, isQueued, isIdle, suffix) {
-    assert.equal(task.isRunning, isRunning, `${task._propertyName} is ${isRunning ? '' : 'not'} running ${suffix}`);
-    assert.equal(task.isQueued,  isQueued,  `${task._propertyName} is ${isQueued ? '' : 'not'} queued ${suffix}`);
-    assert.equal(task.isIdle,    isIdle,    `${task._propertyName} is ${isIdle ? '' : 'not'} idle ${suffix}`);
-    assert.equal(task.state, isRunning ? 'running' : 'idle', `${task._propertyName} state is '${isRunning ? 'running' : 'idle'}' ${suffix}`)
+    assert.equal(task.isRunning, isRunning, `${task.name} is ${isRunning ? '' : 'not'} running ${suffix}`);
+    assert.equal(task.isQueued,  isQueued,  `${task.name} is ${isQueued ? '' : 'not'} queued ${suffix}`);
+    assert.equal(task.isIdle,    isIdle,    `${task.name} is ${isIdle ? '' : 'not'} idle ${suffix}`);
+    assert.equal(task.state, isRunning ? 'running' : 'idle', `${task.name} state is '${isRunning ? 'running' : 'idle'}' ${suffix}`)
   }
 
   test("task groups allow tasks to share concurrency constraints", function(assert) {

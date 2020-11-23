@@ -1,93 +1,65 @@
 import Ember from 'ember';
 import { get, computed } from '@ember/object';
 import ComputedProperty from '@ember/object/computed';
-import { assert, deprecate } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
-import UnboundedSchedulerPolicy from './external/scheduler/policies/unbounded-policy'
 import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy'
 import DropSchedulerPolicy from './external/scheduler/policies/drop-policy'
 import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy'
 import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy'
-import EmberScheduler from './scheduler/ember-scheduler';
 import { addListener } from '@ember/object/events';
 import { addObserver } from '@ember/object/observers';
-import { Task, EncapsulatedTask } from './task';
-import { TaskGroup } from './task-group';
+import { TaskFactory, TaskGroupFactory } from './task-factory';
 import { scheduleOnce } from '@ember/runloop';
-import {
-  task as taskDecorator,
-  taskGroup as taskGroupDecorator
-} from 'ember-concurrency-decorators';
 
+let taskFactorySymbol = "__ec_task_factory";
 let handlerCounter = 0;
 
 export const propertyModifiers = {
-  _schedulerPolicyClass: UnboundedSchedulerPolicy,
-  _maxConcurrency: null,
-  _taskGroupPath: null,
-  _hasUsedModifier: false,
-  _hasSetBufferPolicy: false,
-  _hasEnabledEvents: false,
-
   restartable() {
-    return setBufferPolicy(this, RestartableSchedulerPolicy);
+    this[taskFactorySymbol].setBufferPolicy(RestartableSchedulerPolicy);
+    return this;
   },
 
   enqueue() {
-    return setBufferPolicy(this, EnqueueSchedulerPolicy);
+    this[taskFactorySymbol].setBufferPolicy(EnqueueSchedulerPolicy);
+    return this;
   },
 
   drop() {
-    return setBufferPolicy(this, DropSchedulerPolicy);
+    this[taskFactorySymbol].setBufferPolicy(DropSchedulerPolicy);
+    return this;
   },
 
   keepLatest() {
-    return setBufferPolicy(this, KeepLatestSchedulerPolicy);
+    this[taskFactorySymbol].setBufferPolicy(KeepLatestSchedulerPolicy);
+    return this;
   },
 
   maxConcurrency(n) {
-    this._hasUsedModifier = true;
-    this._maxConcurrency = n;
-    assertModifiersNotMixedWithGroup(this);
+    this[taskFactorySymbol].setMaxConcurrency(n);
     return this;
   },
 
   group(taskGroupPath) {
-    this._taskGroupPath = taskGroupPath;
-    assertModifiersNotMixedWithGroup(this);
+    this[taskFactorySymbol].setGroup(taskGroupPath);
     return this;
   },
 
   evented() {
-    this._hasEnabledEvents = true;
+    this[taskFactorySymbol].setEvented(true);
     return this;
   },
 
   debug() {
-    this._debug = true;
+    this[taskFactorySymbol].setDebug(true);
     return this;
   },
 
   onState(callback) {
-    this._onStateCallback = callback;
+    this[taskFactorySymbol].setOnState(callback);
     return this;
-  },
-
-  _onStateCallback: (state, taskable) => taskable.setState(state),
+  }
 };
-
-function setBufferPolicy(obj, policy) {
-  obj._hasSetBufferPolicy = true;
-  obj._hasUsedModifier = true;
-  obj._schedulerPolicyClass = policy;
-  assertModifiersNotMixedWithGroup(obj);
-
-  return obj;
-}
-
-function assertModifiersNotMixedWithGroup(obj) {
-  assert(`ember-concurrency does not currently support using both .group() with other task modifiers (e.g. drop(), enqueue(), restartable())`, !obj._hasUsedModifier || !obj._taskGroupPath);
-}
 
 function isDecoratorOptions(possibleOptions) {
   if (!possibleOptions) { return false; }
@@ -350,24 +322,6 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    * @memberof TaskProperty
    * @instance
    */
-
-  perform() {
-    deprecate(
-      `[DEPRECATED] An ember-concurrency task property was not set on its object via 'defineProperty'.
-              You probably used 'set(obj, "myTask", task(function* () { ... }) )'.
-              Unfortunately due to this we can't tell you the name of the task.`,
-      false,
-      {
-        id: 'ember-meta.descriptor-on-object',
-        until: '3.5.0',
-        url:
-          'https://emberjs.com/deprecations/v3.x#toc_use-defineProperty-to-define-computed-properties',
-      }
-    );
-    throw new Error(
-      "An ember-concurrency task property was not set on its object via 'defineProperty'. See deprecation warning for details."
-    );
-  },
 });
 function registerOnPrototype(
   addListenerOrObserver,
@@ -416,6 +370,90 @@ export function taskComputed(fn) {
     return cp;
   } else {
     return computed(fn);
+  }
+}
+
+function taskFromPropertyDescriptor(target, key, descriptor, params = []) {
+  let { initializer, get, value } = descriptor;
+  let taskFn;
+
+  if (initializer) {
+    taskFn = initializer.call(undefined);
+  } else if (get) {
+    taskFn = get.call(undefined);
+  } else if (value) {
+    taskFn = value;
+  }
+
+  taskFn.displayName = `${key} (task)`;
+
+  let tasks = new WeakMap();
+  let options = params[0] || {};
+  let factory = new TaskFactory(target, key, taskFn, options);
+
+  return {
+    get() {
+      let task = tasks.get(this);
+
+      if (!task) {
+        task = factory.createTask(this);
+        tasks.set(this, task);
+      }
+
+      return task;
+    }
+  }
+}
+
+function taskGroupPropertyDescriptor(target, key, _descriptor, params = []) {
+  let taskGroups = new WeakMap();
+  let options = params[0] || {};
+  let factory = new TaskGroupFactory(target, key, null, options);
+
+  return {
+    get() {
+      let task = taskGroups.get(this);
+
+      if (!task) {
+        task = factory.createTaskGroup(this);
+        taskGroups.set(this, task);
+      }
+
+      return task;
+    }
+  }
+}
+
+// Cribbed from @ember-decorators
+export function isFieldDescriptor(possibleDesc) {
+  let [target, key, desc] = possibleDesc;
+
+  return (
+    possibleDesc.length === 3 &&
+    typeof target === 'object' &&
+    target !== null &&
+    typeof key === 'string' &&
+    ((typeof desc === 'object' &&
+      desc !== null &&
+      'enumerable' in desc &&
+      'configurable' in desc) ||
+      desc === undefined) // TS compatibility
+  );
+}
+
+export function taskDecorator(...params) {
+  if (isFieldDescriptor(params)) {
+    return taskFromPropertyDescriptor(...params);
+  } else {
+    return (...desc) => taskFromPropertyDescriptor(...desc, params);
+  }
+}
+
+export function taskGroupDecorator(...params) {
+  if (isFieldDescriptor(params)) {
+    return taskGroupPropertyDescriptor(...params);
+  } else {
+    return (...desc) => taskGroupPropertyDescriptor(...desc, params);
   }
 }
 
@@ -469,34 +507,18 @@ export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
     return taskDecorator(...arguments);
   } else {
     let tp = taskComputed(function(key) {
-      tp.taskFn.displayName = `${key} (task)`;
-
-      let options = sharedTaskProperties(tp, this, key);
-      if (typeof tp.taskFn === 'object') {
-        return buildEncapsulatedTask(tp.taskFn, options);
-      } else {
-        return buildRegularTask(tp.taskFn, options);
-      }
+      tp[taskFactorySymbol].setName(key);
+      tp[taskFactorySymbol].setTaskDefinition(tp.taskFn);
+      return tp[taskFactorySymbol].createTask(this);
     });
 
     tp.taskFn = taskFnOrProtoOrDecoratorOptions;
+    tp[taskFactorySymbol] = new TaskFactory(tp, "<unknown>");
 
     Object.setPrototypeOf(tp, TaskProperty.prototype);
 
     return tp;
   }
-}
-
-function buildRegularTask(taskFn, options) {
-  return new Task(
-    Object.assign({
-      generatorFactory: (args) => taskFn.apply(options.context, args),
-    }, options)
-  );
-}
-
-function buildEncapsulatedTask(taskObj, options) {
-  return new EncapsulatedTask(Object.assign({ taskObj }, options));
 }
 
 /**
@@ -525,39 +547,14 @@ export function taskGroup(possibleDecoratorOptions, key, descriptor) {
     return taskGroupDecorator(...arguments);
   } else {
     let tp = taskComputed(function(key) {
-      return new TaskGroup(sharedTaskProperties(tp, this, key));
+      tp[taskFactorySymbol].setName(key);
+      return tp[taskFactorySymbol].createTaskGroup(this);
     });
+
+    tp[taskFactorySymbol] = new TaskGroupFactory(tp, null);
 
     Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
 
     return tp;
   }
-}
-
-function sharedTaskProperties(taskProperty, context, key) {
-  let group, scheduler;
-  let onStateCallback = taskProperty._onStateCallback;
-
-  if (taskProperty._taskGroupPath) {
-    group = get(context, taskProperty._taskGroupPath);
-    assert(
-      `ember-concurrency: Expected group '${taskProperty._taskGroupPath}' to be defined but was not found.`,
-      group instanceof TaskGroup
-    );
-    scheduler = group.scheduler;
-  } else {
-    let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);
-    scheduler = new EmberScheduler(schedulerPolicy, onStateCallback);
-  }
-
-  return {
-    context,
-    debug: taskProperty._debug,
-    _propertyName: key,
-    name: key,
-    group,
-    scheduler,
-    hasEnabledEvents: taskProperty._hasEnabledEvents,
-    onStateCallback,
-  };
 }
