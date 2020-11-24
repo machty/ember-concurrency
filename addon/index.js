@@ -26,35 +26,43 @@ import {
 } from './-private/external/yieldables';
 import { Task } from './-private/task';
 import { TaskGroup } from './-private/task-group';
-
-// Re-export e-c-d, until we merge it.
-export {
-  restartableTask,
+import {
   dropTask,
-  keepLatestTask,
-  enqueueTask,
-  restartableTaskGroup,
   dropTaskGroup,
+  enqueueTask,
+  enqueueTaskGroup,
+  lastValue,
+  keepLatestTask,
   keepLatestTaskGroup,
-  enqueueTaskGroup
-} from 'ember-concurrency-decorators';
+  restartableTask,
+  restartableTaskGroup
+} from './-private/task-decorators';
 
 export {
-  task,
-  taskGroup,
   all,
   allSettled,
   animationFrame,
   didCancel,
+  dropTask,
+  dropTaskGroup,
+  enqueueTask,
+  enqueueTaskGroup,
+  forever,
   hash,
   hashSettled,
+  keepLatestTask,
+  keepLatestTaskGroup,
+  lastValue,
   race,
-  timeout,
   rawTimeout,
+  restartableTask,
+  restartableTaskGroup,
+  task,
+  taskGroup,
+  timeout,
   waitForQueue,
   waitForEvent,
   waitForProperty,
-  forever,
   Task,
   TaskProperty,
   TaskInstance,

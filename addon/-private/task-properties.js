@@ -1,18 +1,18 @@
 import Ember from 'ember';
-import { get, computed } from '@ember/object';
+import { computed } from '@ember/object';
 import ComputedProperty from '@ember/object/computed';
 import { gte } from 'ember-compatibility-helpers';
 import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy'
 import DropSchedulerPolicy from './external/scheduler/policies/drop-policy'
 import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy'
 import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy'
-import { addListener } from '@ember/object/events';
-import { addObserver } from '@ember/object/observers';
+import {
+  task as taskDecorator,
+  taskGroup as taskGroupDecorator
+} from './task-decorators';
 import { TaskFactory, TaskGroupFactory } from './task-factory';
-import { scheduleOnce } from '@ember/runloop';
 
 let taskFactorySymbol = "__ec_task_factory";
-let handlerCounter = 0;
 
 export const propertyModifiers = {
   restartable() {
@@ -113,35 +113,13 @@ if (gte('3.10.0')) {
 
 Object.assign(TaskGroupProperty.prototype, propertyModifiers);
 Object.assign(TaskProperty.prototype, propertyModifiers, {
-  setup(proto, taskName) {
+  setup(proto, key) {
     if (this.callSuperSetup) {
       this.callSuperSetup(...arguments);
     }
 
-    registerOnPrototype(
-      addListener,
-      proto,
-      this.eventNames,
-      taskName,
-      'perform',
-      false
-    );
-    registerOnPrototype(
-      addListener,
-      proto,
-      this.cancelEventNames,
-      taskName,
-      'cancelAll',
-      false
-    );
-    registerOnPrototype(
-      addObserver,
-      proto,
-      this._observes,
-      taskName,
-      'perform',
-      true
-    );
+    this[taskFactorySymbol].setName(key);
+    this[taskFactorySymbol]._setupEmberKVO(proto);
   },
 
   /**
@@ -176,8 +154,7 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    * @instance
    */
   on() {
-    this.eventNames = this.eventNames || [];
-    this.eventNames.push.apply(this.eventNames, arguments);
+    this[taskFactorySymbol].addPerformEvents(...arguments);
     return this;
   },
 
@@ -194,13 +171,22 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    * @instance
    */
   cancelOn() {
-    this.cancelEventNames = this.cancelEventNames || [];
-    this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
+    this[taskFactorySymbol].addCancelEvents(...arguments);
     return this;
   },
 
-  observes(...properties) {
-    this._observes = properties;
+  /**
+   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
+   * but instead will cause the task to be performed if any of the
+   * specified properties on the parent object change.
+   *
+   * @method observes
+   * @memberof TaskProperty
+   * @param {String} keys*
+   * @instance
+   */
+  observes() {
+    this[taskFactorySymbol].addObserverKeys(...arguments);
     return this;
   },
 
@@ -323,36 +309,6 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    * @instance
    */
 });
-function registerOnPrototype(
-  addListenerOrObserver,
-  proto,
-  names,
-  taskName,
-  taskMethod,
-  once
-) {
-  if (names) {
-    for (let i = 0; i < names.length; ++i) {
-      let name = names[i];
-
-      let handlerName = `__ember_concurrency_handler_${handlerCounter++}`;
-      proto[handlerName] = makeTaskCallback(taskName, taskMethod, once);
-      addListenerOrObserver(proto, name, null, handlerName);
-    }
-  }
-}
-
-function makeTaskCallback(taskName, method, once) {
-  return function() {
-    let task = get(this, taskName);
-
-    if (once) {
-      scheduleOnce('actions', task, method, ...arguments);
-    } else {
-      task[method].apply(task, arguments);
-    }
-  };
-}
 
 const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
 export function taskComputed(fn) {
@@ -370,90 +326,6 @@ export function taskComputed(fn) {
     return cp;
   } else {
     return computed(fn);
-  }
-}
-
-function taskFromPropertyDescriptor(target, key, descriptor, params = []) {
-  let { initializer, get, value } = descriptor;
-  let taskFn;
-
-  if (initializer) {
-    taskFn = initializer.call(undefined);
-  } else if (get) {
-    taskFn = get.call(undefined);
-  } else if (value) {
-    taskFn = value;
-  }
-
-  taskFn.displayName = `${key} (task)`;
-
-  let tasks = new WeakMap();
-  let options = params[0] || {};
-  let factory = new TaskFactory(target, key, taskFn, options);
-
-  return {
-    get() {
-      let task = tasks.get(this);
-
-      if (!task) {
-        task = factory.createTask(this);
-        tasks.set(this, task);
-      }
-
-      return task;
-    }
-  }
-}
-
-function taskGroupPropertyDescriptor(target, key, _descriptor, params = []) {
-  let taskGroups = new WeakMap();
-  let options = params[0] || {};
-  let factory = new TaskGroupFactory(target, key, null, options);
-
-  return {
-    get() {
-      let task = taskGroups.get(this);
-
-      if (!task) {
-        task = factory.createTaskGroup(this);
-        taskGroups.set(this, task);
-      }
-
-      return task;
-    }
-  }
-}
-
-// Cribbed from @ember-decorators
-export function isFieldDescriptor(possibleDesc) {
-  let [target, key, desc] = possibleDesc;
-
-  return (
-    possibleDesc.length === 3 &&
-    typeof target === 'object' &&
-    target !== null &&
-    typeof key === 'string' &&
-    ((typeof desc === 'object' &&
-      desc !== null &&
-      'enumerable' in desc &&
-      'configurable' in desc) ||
-      desc === undefined) // TS compatibility
-  );
-}
-
-export function taskDecorator(...params) {
-  if (isFieldDescriptor(params)) {
-    return taskFromPropertyDescriptor(...params);
-  } else {
-    return (...desc) => taskFromPropertyDescriptor(...desc, params);
-  }
-}
-
-export function taskGroupDecorator(...params) {
-  if (isFieldDescriptor(params)) {
-    return taskGroupPropertyDescriptor(...params);
-  } else {
-    return (...desc) => taskGroupPropertyDescriptor(...desc, params);
   }
 }
 
@@ -506,14 +378,13 @@ export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
   if (isDecoratorOptions(taskFnOrProtoOrDecoratorOptions) || (key && descriptor)) {
     return taskDecorator(...arguments);
   } else {
-    let tp = taskComputed(function(key) {
-      tp[taskFactorySymbol].setName(key);
+    let tp = taskComputed(function() {
       tp[taskFactorySymbol].setTaskDefinition(tp.taskFn);
       return tp[taskFactorySymbol].createTask(this);
     });
 
     tp.taskFn = taskFnOrProtoOrDecoratorOptions;
-    tp[taskFactorySymbol] = new TaskFactory(tp, "<unknown>");
+    tp[taskFactorySymbol] = new TaskFactory();
 
     Object.setPrototypeOf(tp, TaskProperty.prototype);
 
@@ -551,7 +422,7 @@ export function taskGroup(possibleDecoratorOptions, key, descriptor) {
       return tp[taskFactorySymbol].createTaskGroup(this);
     });
 
-    tp[taskFactorySymbol] = new TaskGroupFactory(tp, null);
+    tp[taskFactorySymbol] = new TaskGroupFactory();
 
     Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
 

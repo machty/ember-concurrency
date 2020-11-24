@@ -2377,7 +2377,8 @@ module('integration tests', () => {
 
   test('octane', () => {
     class MyComponent extends GlimmerComponent {
-      declare foo: string;
+      @taskGroup
+      foo!: TaskGroup<any>;
 
       @task({ restartable: true }) restartable = function*() {};
       @task({ enqueue: true }) enqueue = function*() {};
@@ -2409,7 +2410,7 @@ module('integration tests', () => {
 
         // this is probably what we ultimately cares about
         expect(this.foo).not.toBeAny();
-        expect(this.foo).toBeString();
+        expect(this.foo).toEqualTypeOf<TaskGroup<any>>();
 
         if (!immediately) {
           yield timeout(ms);
