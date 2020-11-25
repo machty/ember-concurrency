@@ -130,7 +130,7 @@ export function animationFrame() {
 /**
  *
  * Yielding `forever` will pause a task indefinitely until
- * it is cancelled (i.e. via host object destruction, .restartable(),
+ * it is cancelled (i.e. via host object destruction, the restartable modifier,
  * or manual cancellation).
  *
  * This is often useful in cases involving animation: if you're

@@ -64,7 +64,7 @@
     by calling <code>.dispose()</code> (though this approach is frowned up in favor
     of explicitly specifying when an observable should terminate -- e.g. via <code>takeUntil()</code>).
     <LinkTo @route="docs.cancelation">Tasks can be canceled</LinkTo> implicitly (via 1. host object destruction, 2. the
-    <code>.restartable()</code> task modifier) or explicitly (via <code>.cancel() / .cancelAll()</code>), though,
+    <code>restartable</code> task modifier) or explicitly (via <code>.cancel() / .cancelAll()</code>), though,
     like Observables, the implicit approach is preferable.
   </li>
   <li>

@@ -42,7 +42,7 @@
 <h4 id="restartable">restartable</h4>
 
 <p>
-  The <code>.restartable()</code> modifier ensures that only one instance
+  The <code>restartable</code> modifier ensures that only one instance
   of a task is running by canceling any currently-running tasks and starting
   a new task instance immediately. Note how there is no task overlap,
   and how currently running tasks get canceled
@@ -62,7 +62,7 @@
 <h4 id="enqueue">enqueue</h4>
 
 <p>
-  The <code>.enqueue()</code> modifier ensures that only one instance
+  The <code>enqueue</code> modifier ensures that only one instance
   of a task is running by maintaining a queue of pending tasks and
   running them sequentially. Note how there is no task overlap, but no
   tasks are canceled either.
@@ -74,14 +74,14 @@
 <h4 id="drop">drop</h4>
 
 <p>
-  The <code>.drop()</code> modifier drops tasks that are <code>.perform()</code>ed
+  The <code>drop</code> modifier drops tasks that are <code>.perform()</code>ed
   while another is already running. Dropped tasks' functions are never even called.
 </p>
 
 <p>
   <em>
     Check out the <LinkTo @route="docs.examples.loading-ui">Loading UI</LinkTo> example for a common
-    use case for <code>.drop()</code>
+    use case for <code>drop</code>
   </em>
 </p>
 
@@ -91,7 +91,7 @@
 <h4 id="keepLatest">keepLatest</h4>
 
 <p>
-  The <code>.keepLatest()</code> will drop all but the most recent intermediate <code>.perform()</code>,
+  The <code>keepLatest</code> will drop all but the most recent intermediate <code>.perform()</code>,
   which is enqueued to run later.
 </p>
 

@@ -168,20 +168,20 @@ export interface EncapsulatedTask<T, Args extends any[], State extends object>
 /**
  * "Task Groups" provide a means for applying
  * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
- * as part of a group task, modifiers like `drop()` or `restartable()`
+ * as part of a group task, modifiers like `drop` or `restartable`
  * will no longer affect the individual `Task`. Instead those
  * modifiers can be applied to the entire group.
  *
  * ```js
  * import { task, taskGroup } from 'ember-concurrency';
  *
- * export default Controller.extend({
- *   chores: taskGroup().drop(),
+ * export default class MyController extends Controller {
+ *   @taskGroup({ drop: true }) chores;
  *
- *   mowLawn:       task(taskFn).group('chores'),
- *   doDishes:      task(taskFn).group('chores'),
- *   changeDiapers: task(taskFn).group('chores')
- * });
+ *   @task({ group: 'chores' }) mowLawn = taskFn;
+ *   @task({ group: 'chores' }) doDishes = taskFn;
+ *   @task({ group: 'chores' }) changeDiapers = taskFn;
+ * }
  * ```
  */
 export interface TaskGroup<T> {
@@ -332,7 +332,7 @@ export interface TaskInstance<T> extends Promise<T> {
    * - `"running"`: task instance is currently running (returns true even if
    *     is paused on a yielded promise)
    * - `"waiting"`: task instance hasn't begun running yet (usually
-   *     because the task is using the {@linkcode TaskProperty#enqueue .enqueue()}
+   *     because the task is using the {@linkcode TaskProperty#enqueue enqueue}
    *     task modifier)
    *
    * The animated timeline examples on the [Task Concurrency](/#/docs/task-concurrency)
@@ -344,7 +344,7 @@ export interface TaskInstance<T> extends Promise<T> {
    * True if the TaskInstance was canceled before it could
    * ever start running. For example, calling
    * {@linkcode Task#perform .perform()} twice on a
-   * task with the {@linkcode TaskProperty#drop .drop()} modifier applied
+   * task with the {@linkcode TaskProperty#drop .drop} modifier applied
    * will result in the second task instance being dropped.
    */
   readonly isDropped: boolean;
@@ -461,9 +461,9 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
    * to run at the same time. By default, with no task modifiers
    * applied, this number is Infinity (there is no limit
    * to the number of tasks that can run at the same time).
-   * {@linkcode TaskProperty#restartable .restartable()},
-   * {@linkcode TaskProperty#enqueue .enqueue()}, and
-   * {@linkcode TaskProperty#drop .drop()} set the default
+   * {@linkcode TaskProperty#restartable restartable},
+   * {@linkcode TaskProperty#enqueue enqueue}, and
+   * {@linkcode TaskProperty#drop drop} set the default
    * maxConcurrency to 1, but you can override this value
    * to set the maximum number of concurrently running tasks
    * to a number greater than 1.
@@ -598,9 +598,9 @@ export interface TaskGroupProperty<T> extends ComputedProperty<TaskGroup<T>> {
    * By default, with no task modifiers applied, this number
    * is Infinity (there is no limit to the number of tasks
    * that can run at the same time).
-   * {@linkcode TaskGroupProperty#restartable .restartable()},
-   * {@linkcode TaskGroupProperty#enqueue .enqueue()}, and
-   * {@linkcode TaskGroupProperty#drop .drop()} set the
+   * {@linkcode TaskGroupProperty#restartable .restartable},
+   * {@linkcode TaskGroupProperty#enqueue .enqueue}, and
+   * {@linkcode TaskGroupProperty#drop .drop} set the
    * default maxConcurrency to 1, but you can override this
    * value to set the maximum number of concurrently running
    * tasks to a number greater than 1.
@@ -951,7 +951,7 @@ export function restartableTask(
 /**
  * "Task Groups" provide a means for applying
  * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
- * as part of a group task, modifiers like `drop: true` or `restartable: true`
+ * as part of a group task, modifiers like `drop` or `restartable`
  * will no longer affect the individual `Task`. Instead those
  * modifiers can be applied to the entire group.
  *
@@ -1061,7 +1061,7 @@ export function restartableTaskGroup<T>(
 /**
  * "Task Groups" provide a means for applying
  * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
- * as part of a group task, modifiers like `drop()` or `restartable()`
+ * as part of a group task, modifiers like `drop` or `restartable`
  * will no longer affect the individual `Task`. Instead those
  * modifiers can be applied to the entire group.
  *
@@ -1361,7 +1361,7 @@ export function waitForProperty<O extends object, K extends keyof O>(
 /**
  *
  * Yielding `forever` will pause a task indefinitely until
- * it is cancelled (i.e. via host object destruction, .restartable(),
+ * it is cancelled (i.e. via host object destruction, the restartable modifier,
  * or manual cancellation).
  *
  * This is often useful in cases involving animation: if you're

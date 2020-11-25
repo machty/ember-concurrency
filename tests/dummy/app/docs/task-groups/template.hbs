@@ -17,7 +17,7 @@
 
 <p>
   Once you define a task as part of a task group, you can no longer use
-  other task modifiers like <code>drop()</code> or <code>restartable()</code>
+  other task modifiers like <code>drop</code> or <code>restartable</code>
   on that task; instead, just apply those task modifiers to the task group property instead,
   as demonstrated in the example below.
 </p>
@@ -25,7 +25,7 @@
 <h4>Example</h4>
 
 <p>
-  In this example, we group related "chores" tasks and by using the <code>.drop()</code>
+  In this example, we group related "chores" tasks and by using the <code>drop</code>
   modifier on the <code>taskGroup</code> property we ensure that only one
   chore task runs at a time. In addition to preventing concurrency between multiple
   tasks, this example also demonstrates how having access to both the
