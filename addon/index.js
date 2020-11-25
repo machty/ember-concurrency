@@ -4,7 +4,7 @@ import {
   TaskGroupProperty,
   task,
   taskGroup
-} from './-private/computed-properties';
+} from './-private/task-properties';
 import { default as TaskInstance } from './-private/task-instance';
 import {
   all,
@@ -26,23 +26,43 @@ import {
 } from './-private/external/yieldables';
 import { Task } from './-private/task';
 import { TaskGroup } from './-private/task-group';
+import {
+  dropTask,
+  dropTaskGroup,
+  enqueueTask,
+  enqueueTaskGroup,
+  lastValue,
+  keepLatestTask,
+  keepLatestTaskGroup,
+  restartableTask,
+  restartableTaskGroup
+} from './-private/task-decorators';
 
 export {
-  task,
-  taskGroup,
   all,
   allSettled,
   animationFrame,
   didCancel,
+  dropTask,
+  dropTaskGroup,
+  enqueueTask,
+  enqueueTaskGroup,
+  forever,
   hash,
   hashSettled,
+  keepLatestTask,
+  keepLatestTaskGroup,
+  lastValue,
   race,
-  timeout,
   rawTimeout,
+  restartableTask,
+  restartableTaskGroup,
+  task,
+  taskGroup,
+  timeout,
   waitForQueue,
   waitForEvent,
   waitForProperty,
-  forever,
   Task,
   TaskProperty,
   TaskInstance,

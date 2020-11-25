@@ -4,7 +4,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { later } from '@ember/runloop';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import { task, taskGroup, timeout } from 'ember-concurrency';
+import { restartableTask, task, taskGroup, timeout } from 'ember-concurrency';
 import { gte } from 'ember-compatibility-helpers';
 
 module('Integration | tracked use', function(hooks) {
@@ -33,10 +33,10 @@ module('Integration | tracked use', function(hooks) {
             return null;
           }
 
-          @(task(function*() {
+          @restartableTask *exampleTask() {
             yield timeout(1000);
             return 'done';
-          }).restartable()) exampleTask;
+          }
         }
       );
 
@@ -75,12 +75,13 @@ module('Integration | tracked use', function(hooks) {
             return null;
           }
 
-          @(taskGroup().restartable()) exampleGroup;
+          @taskGroup({ restartable: true }) exampleGroup;
 
-          @(task(function*() {
+          @task({ group: 'exampleGroup' })
+          *exampleTask() {
             yield timeout(1000);
             return 'done';
-          }).group('exampleGroup')) exampleTask;
+          }
         }
       );
 

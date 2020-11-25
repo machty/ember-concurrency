@@ -1,88 +1,79 @@
 import Ember from 'ember';
-import { get, computed } from '@ember/object';
+import { computed } from '@ember/object';
 import ComputedProperty from '@ember/object/computed';
-import { assert, deprecate } from '@ember/debug';
 import { gte } from 'ember-compatibility-helpers';
-import UnboundedSchedulerPolicy from './external/scheduler/policies/unbounded-policy'
 import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy'
 import DropSchedulerPolicy from './external/scheduler/policies/drop-policy'
 import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy'
 import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy'
-import EmberScheduler from './scheduler/ember-scheduler';
-import { addListener } from '@ember/object/events';
-import { addObserver } from '@ember/object/observers';
-import { Task, EncapsulatedTask } from './task';
-import { TaskGroup } from './task-group';
-import { scheduleOnce } from '@ember/runloop';
+import {
+  task as taskDecorator,
+  taskGroup as taskGroupDecorator
+} from './task-decorators';
+import { TaskFactory, TaskGroupFactory } from './task-factory';
 
-let handlerCounter = 0;
+let taskFactorySymbol = "__ec_task_factory";
 
 export const propertyModifiers = {
-  _schedulerPolicyClass: UnboundedSchedulerPolicy,
-  _maxConcurrency: null,
-  _taskGroupPath: null,
-  _hasUsedModifier: false,
-  _hasSetBufferPolicy: false,
-  _hasEnabledEvents: false,
-
   restartable() {
-    return setBufferPolicy(this, RestartableSchedulerPolicy);
+    this[taskFactorySymbol].setBufferPolicy(RestartableSchedulerPolicy);
+    return this;
   },
 
   enqueue() {
-    return setBufferPolicy(this, EnqueueSchedulerPolicy);
+    this[taskFactorySymbol].setBufferPolicy(EnqueueSchedulerPolicy);
+    return this;
   },
 
   drop() {
-    return setBufferPolicy(this, DropSchedulerPolicy);
+    this[taskFactorySymbol].setBufferPolicy(DropSchedulerPolicy);
+    return this;
   },
 
   keepLatest() {
-    return setBufferPolicy(this, KeepLatestSchedulerPolicy);
+    this[taskFactorySymbol].setBufferPolicy(KeepLatestSchedulerPolicy);
+    return this;
   },
 
   maxConcurrency(n) {
-    this._hasUsedModifier = true;
-    this._maxConcurrency = n;
-    assertModifiersNotMixedWithGroup(this);
+    this[taskFactorySymbol].setMaxConcurrency(n);
     return this;
   },
 
   group(taskGroupPath) {
-    this._taskGroupPath = taskGroupPath;
-    assertModifiersNotMixedWithGroup(this);
+    this[taskFactorySymbol].setGroup(taskGroupPath);
     return this;
   },
 
   evented() {
-    this._hasEnabledEvents = true;
+    this[taskFactorySymbol].setEvented(true);
     return this;
   },
 
   debug() {
-    this._debug = true;
+    this[taskFactorySymbol].setDebug(true);
     return this;
   },
 
   onState(callback) {
-    this._onStateCallback = callback;
+    this[taskFactorySymbol].setOnState(callback);
     return this;
-  },
-
-  _onStateCallback: (state, taskable) => taskable.setState(state),
+  }
 };
 
-function setBufferPolicy(obj, policy) {
-  obj._hasSetBufferPolicy = true;
-  obj._hasUsedModifier = true;
-  obj._schedulerPolicyClass = policy;
-  assertModifiersNotMixedWithGroup(obj);
+function isDecoratorOptions(possibleOptions) {
+  if (!possibleOptions) { return false; }
+  if (typeof possibleOptions === "function") { return false; }
 
-  return obj;
-}
+  if (
+    typeof possibleOptions === "object" &&
+    'perform' in possibleOptions &&
+    typeof possibleOptions.perform === "function"
+  ) {
+    return false;
+  }
 
-function assertModifiersNotMixedWithGroup(obj) {
-  assert(`ember-concurrency does not currently support using both .group() with other task modifiers (e.g. drop(), enqueue(), restartable())`, !obj._hasUsedModifier || !obj._taskGroupPath);
+  return Object.getPrototypeOf(possibleOptions) === Object.prototype;
 }
 
 /**
@@ -122,35 +113,13 @@ if (gte('3.10.0')) {
 
 Object.assign(TaskGroupProperty.prototype, propertyModifiers);
 Object.assign(TaskProperty.prototype, propertyModifiers, {
-  setup(proto, taskName) {
+  setup(proto, key) {
     if (this.callSuperSetup) {
       this.callSuperSetup(...arguments);
     }
 
-    registerOnPrototype(
-      addListener,
-      proto,
-      this.eventNames,
-      taskName,
-      'perform',
-      false
-    );
-    registerOnPrototype(
-      addListener,
-      proto,
-      this.cancelEventNames,
-      taskName,
-      'cancelAll',
-      false
-    );
-    registerOnPrototype(
-      addObserver,
-      proto,
-      this._observes,
-      taskName,
-      'perform',
-      true
-    );
+    this[taskFactorySymbol].setName(key);
+    this[taskFactorySymbol]._setupEmberKVO(proto);
   },
 
   /**
@@ -185,8 +154,7 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    * @instance
    */
   on() {
-    this.eventNames = this.eventNames || [];
-    this.eventNames.push.apply(this.eventNames, arguments);
+    this[taskFactorySymbol].addPerformEvents(...arguments);
     return this;
   },
 
@@ -203,13 +171,22 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    * @instance
    */
   cancelOn() {
-    this.cancelEventNames = this.cancelEventNames || [];
-    this.cancelEventNames.push.apply(this.cancelEventNames, arguments);
+    this[taskFactorySymbol].addCancelEvents(...arguments);
     return this;
   },
 
-  observes(...properties) {
-    this._observes = properties;
+  /**
+   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
+   * but instead will cause the task to be performed if any of the
+   * specified properties on the parent object change.
+   *
+   * @method observes
+   * @memberof TaskProperty
+   * @param {String} keys*
+   * @instance
+   */
+  observes() {
+    this[taskFactorySymbol].addObserverKeys(...arguments);
     return this;
   },
 
@@ -331,55 +308,7 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    * @memberof TaskProperty
    * @instance
    */
-
-  perform() {
-    deprecate(
-      `[DEPRECATED] An ember-concurrency task property was not set on its object via 'defineProperty'.
-              You probably used 'set(obj, "myTask", task(function* () { ... }) )'.
-              Unfortunately due to this we can't tell you the name of the task.`,
-      false,
-      {
-        id: 'ember-meta.descriptor-on-object',
-        until: '3.5.0',
-        url:
-          'https://emberjs.com/deprecations/v3.x#toc_use-defineProperty-to-define-computed-properties',
-      }
-    );
-    throw new Error(
-      "An ember-concurrency task property was not set on its object via 'defineProperty'. See deprecation warning for details."
-    );
-  },
 });
-function registerOnPrototype(
-  addListenerOrObserver,
-  proto,
-  names,
-  taskName,
-  taskMethod,
-  once
-) {
-  if (names) {
-    for (let i = 0; i < names.length; ++i) {
-      let name = names[i];
-
-      let handlerName = `__ember_concurrency_handler_${handlerCounter++}`;
-      proto[handlerName] = makeTaskCallback(taskName, taskMethod, once);
-      addListenerOrObserver(proto, name, null, handlerName);
-    }
-  }
-}
-
-function makeTaskCallback(taskName, method, once) {
-  return function() {
-    let task = get(this, taskName);
-
-    if (once) {
-      scheduleOnce('actions', task, method, ...arguments);
-    } else {
-      task[method].apply(task, arguments);
-    }
-  };
-}
 
 const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
 export function taskComputed(fn) {
@@ -445,35 +374,22 @@ export function taskComputed(fn) {
  * @param {function} generatorFunction the generator function backing the task.
  * @returns {TaskProperty}
  */
-export function task(originalTaskFn) {
-  let tp = taskComputed(function(key) {
-    tp.taskFn.displayName = `${key} (task)`;
+export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
+  if (isDecoratorOptions(taskFnOrProtoOrDecoratorOptions) || (key && descriptor)) {
+    return taskDecorator(...arguments);
+  } else {
+    let tp = taskComputed(function() {
+      tp[taskFactorySymbol].setTaskDefinition(tp.taskFn);
+      return tp[taskFactorySymbol].createTask(this);
+    });
 
-    let options = sharedTaskProperties(tp, this, key);
-    if (typeof tp.taskFn === 'object') {
-      return buildEncapsulatedTask(tp.taskFn, options);
-    } else {
-      return buildRegularTask(tp.taskFn, options);
-    }
-  });
+    tp.taskFn = taskFnOrProtoOrDecoratorOptions;
+    tp[taskFactorySymbol] = new TaskFactory();
 
-  tp.taskFn = originalTaskFn;
+    Object.setPrototypeOf(tp, TaskProperty.prototype);
 
-  Object.setPrototypeOf(tp, TaskProperty.prototype);
-
-  return tp;
-}
-
-function buildRegularTask(taskFn, options) {
-  return new Task(
-    Object.assign({
-      generatorFactory: (args) => taskFn.apply(options.context, args),
-    }, options)
-  );
-}
-
-function buildEncapsulatedTask(taskObj, options) {
-  return new EncapsulatedTask(Object.assign({ taskObj }, options));
+    return tp;
+  }
 }
 
 /**
@@ -497,36 +413,19 @@ function buildEncapsulatedTask(taskObj, options) {
  *
  * @returns {TaskGroup}
  */
-export function taskGroup() {
-  let tp = taskComputed(function(key) {
-    return new TaskGroup(sharedTaskProperties(tp, this, key));
-  });
-
-  Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
-
-  return tp;
-}
-
-function sharedTaskProperties(taskProperty, context, key) {
-  let group, scheduler;
-  let onStateCallback = taskProperty._onStateCallback;
-
-  if (taskProperty._taskGroupPath) {
-    group = get(context, taskProperty._taskGroupPath);
-    scheduler = group.scheduler;
+export function taskGroup(possibleDecoratorOptions, key, descriptor) {
+  if (isDecoratorOptions(possibleDecoratorOptions) || (key && descriptor)) {
+    return taskGroupDecorator(...arguments);
   } else {
-    let schedulerPolicy = new taskProperty._schedulerPolicyClass(taskProperty._maxConcurrency);
-    scheduler = new EmberScheduler(schedulerPolicy, onStateCallback);
-  }
+    let tp = taskComputed(function(key) {
+      tp[taskFactorySymbol].setName(key);
+      return tp[taskFactorySymbol].createTaskGroup(this);
+    });
 
-  return {
-    context,
-    debug: taskProperty._debug,
-    _propertyName: key,
-    name: key,
-    group,
-    scheduler,
-    hasEnabledEvents: taskProperty._hasEnabledEvents,
-    onStateCallback,
-  };
+    tp[taskFactorySymbol] = new TaskGroupFactory();
+
+    Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
+
+    return tp;
+  }
 }

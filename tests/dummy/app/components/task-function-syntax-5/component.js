@@ -16,7 +16,7 @@ export default class MyOctaneComponent extends Component {
     return [];
   }
 
-  @(task(function * () {
+  @task *pickRandomNumbers() {
     let nums = [];
     for (let i = 0; i < 3; i++) {
       nums.push(Math.floor(Math.random() * 10));
@@ -25,6 +25,6 @@ export default class MyOctaneComponent extends Component {
     this.status = `My favorite numbers: ${nums.join(', ')}`;
 
     return nums;
-  })) pickRandomNumbers;
+  }
 }
 // END-SNIPPET

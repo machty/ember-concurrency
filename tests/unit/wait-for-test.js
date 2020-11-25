@@ -11,7 +11,7 @@ import {
   race
 } from 'ember-concurrency';
 import { alias } from '@ember/object/computed';
-import { gte } from 'ember-compatibility-helpers';
+import { decoratorTest } from '../helpers/helpers';
 
 const EventedObject = EmberObject.extend(Evented);
 
@@ -420,41 +420,39 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
     assert.equal(ev, 456);
   });
 
-  if (gte('3.10.0')) {
-    test('waitForProperty works on an ES class', async function(assert) {
-      assert.expect(1);
+  decoratorTest('waitForProperty works on an ES class', async function(assert) {
+    assert.expect(1);
 
-      let values = [];
-      class Obj {
-        a = 1;
+    let values = [];
+    class Obj {
+      a = 1;
 
-        @computed('a')
-        get b() {
-          return this.a;
-        }
-
-        @(task(function*() {
-          let result = yield waitForProperty(this, 'b', v => {
-            values.push(v);
-            return v == 3 ? 'done' : false;
-          });
-          values.push(`val=${result}`);
-        })) task;
+      @computed('a')
+      get b() {
+        return this.a;
       }
 
-      let obj = new Obj();
-      obj.task.perform();
+      @task *task() {
+        let result = yield waitForProperty(this, 'b', v => {
+          values.push(v);
+          return v == 3 ? 'done' : false;
+        });
+        values.push(`val=${result}`);
+      }
+    }
 
-      set(obj, 'a', 2);
-      await settled();
+    let obj = new Obj();
+    obj.task.perform();
 
-      set(obj, 'a', 3);
-      await settled();
+    set(obj, 'a', 2);
+    await settled();
 
-      set(obj, 'a', 4);
-      await settled();
+    set(obj, 'a', 3);
+    await settled();
 
-      assert.deepEqual(values, [1, 2, 3, 'val=3']);
-    });
-  }
+    set(obj, 'a', 4);
+    await settled();
+
+    assert.deepEqual(values, [1, 2, 3, 'val=3']);
+  });
 });

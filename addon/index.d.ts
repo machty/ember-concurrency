@@ -421,6 +421,13 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
   cancelOn(...eventNames: string[]): this;
 
   /**
+   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
+   * but instead will cause the task to be performed if any of the
+   * specified properties on the parent object change.
+   */
+  observes(...keys: string[]): this;
+
+  /**
    * Configures the task to cancel old currently task instances
    * to make room for a new one to perform. Sets default
    * maxConcurrency to 1.
@@ -648,6 +655,82 @@ type Settlement<T> = { state: 'fulfilled', value: T } | { state: 'rejected', rea
 
 type Settled<T> = Settlement<Resolved<T>>;
 
+// Decorator option types from ember-concurrency-decorators
+type OptionsFor<T extends object> = {
+  [K in OptionKeysFor<T>]?: OptionTypeFor<T, T[K]>;
+};
+
+type OptionKeysFor<T extends object> = {
+  [K in keyof T]: OptionKeyFor<T, K, T[K]>;
+}[keyof T];
+
+type OptionKeyFor<T, K, F> = F extends (...args: any[]) => T ? K : never;
+
+type OptionTypeFor<T, F> = F extends (...args: infer Args) => T
+  ? Args[0] extends undefined
+    ? true
+    : Args[0]
+  : never;
+
+type TaskOptions = OptionsFor<TaskProperty<unknown, unknown[]>>;
+type TaskGroupOptions = OptionsFor<TaskGroupProperty<unknown>>;
+
+type MethodOrPropertyDecoratorWithParams<
+  Params extends unknown[]
+> = MethodDecorator &
+  PropertyDecorator &
+  ((...params: Params) => MethodDecorator & PropertyDecorator);
+
+/**
+ * A Task is a cancelable, restartable, asynchronous operation that
+ * is driven by a generator function. Tasks are automatically canceled
+ * when the object they live on is destroyed (e.g. a Component
+ * is unrendered).
+ *
+ * Turns the decorated generator function into a task.
+ *
+ * Optionally takes a hash of options that will be applied as modifiers to the
+ * task. For instance `maxConcurrency`, `on`, `group` or `keepLatest`.
+ *
+ * By default, tasks have no concurrency constraints
+ * (multiple instances of a task can be running at the same time)
+ * but much of a power of tasks lies in proper usage of Task Modifiers
+ * that you can apply to a task.
+ *
+ * You can also define an
+ * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * by decorating an object that defines a `perform` generator
+ * method.
+ *
+ * ```js
+ * import Component from '@glimmer/component';
+ * import { task } from 'ember-concurrency';
+ *
+ * class MyComponent extends Component {
+ *   @task
+ *   *plainTask() {}
+ *
+ *   @task({ maxConcurrency: 5, keepLatest: true, cancelOn: 'click' })
+ *   *taskWithModifiers() {}
+ * }
+ * ```
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {Task}
+ */
+export function task<T extends TaskOptions>(baseOptions?: T):
+  MethodOrPropertyDecoratorWithParams<[T]>;
+export function task<T>(
+  target: Object,
+  propertyKey: string,
+  descriptor: TypedPropertyDescriptor<T>
+): TypedPropertyDescriptor<T>;
+export function task(
+  target: Object,
+  propertyKey: string
+): void;
+
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
  * is driven by a generator function. Tasks are automatically canceled
@@ -700,6 +783,280 @@ export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(taskFn: T
     EncapsulatedTaskDescriptorArgs<T>,
     EncapsulatedTaskState<T>
   >;
+
+/**
+ * Turns the decorated generator function into a task and applies the
+ * `drop` modifier.
+ *
+ * Optionally takes a hash of options that will be applied as modifiers to the
+ * task. For instance `maxConcurrency`, `on`, or `group`.
+ *
+ * You can also define an
+ * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * by decorating an object that defines a `perform` generator
+ * method.
+ *
+ * ```js
+ * import Component from '@glimmer/component';
+ * import { task, dropTask } from 'ember-concurrency';
+ *
+ * class MyComponent extends Component {
+ *   @task
+ *   *plainTask() {}
+ *
+ *   @dropTask({ cancelOn: 'click' })
+ *   *myDropTask() {}
+ * }
+ * ```
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {Task}
+ */
+export function dropTask<T extends TaskOptions>(baseOptions?: T):
+  MethodOrPropertyDecoratorWithParams<[T]>;
+export function dropTask<T>(
+  target: Object,
+  propertyKey: string,
+  descriptor: TypedPropertyDescriptor<T>
+): TypedPropertyDescriptor<T>;
+export function dropTask(
+  target: Object,
+  propertyKey: string
+): void;
+
+/**
+ * Turns the decorated generator function into a task and applies the
+ * `enqueue` modifier.
+ *
+ * Optionally takes a hash of options that will be applied as modifiers to the
+ * task. For instance `maxConcurrency`, `on`, or `group`.
+ *
+ * You can also define an
+ * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * by decorating an object that defines a `perform` generator
+ * method.
+ *
+ * ```js
+ * import Component from '@glimmer/component';
+ * import { task, enqueueTask } from 'ember-concurrency';
+ *
+ * class MyComponent extends Component {
+ *   @task
+ *   *plainTask() {}
+ *
+ *   @enqueueTask({ cancelOn: 'click' })
+ *   *myEnqueueTask() {}
+ * }
+ * ```
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {Task}
+ */
+export function enqueueTask<T extends TaskOptions>(baseOptions?: T):
+  MethodOrPropertyDecoratorWithParams<[T]>;
+export function enqueueTask<T>(
+  target: Object,
+  propertyKey: string,
+  descriptor: TypedPropertyDescriptor<T>
+): TypedPropertyDescriptor<T>;
+export function enqueueTask(
+  target: Object,
+  propertyKey: string
+): void;
+
+/**
+ * Turns the decorated generator function into a task and applies the
+ * `keepLatest` modifier.
+ *
+ * Optionally takes a hash of options that will be applied as modifiers to the
+ * task. For instance `maxConcurrency`, `on`, or `group`.
+ *
+ * You can also define an
+ * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * by decorating an object that defines a `perform` generator
+ * method.
+ *
+ * ```js
+ * import Component from '@glimmer/component';
+ * import { task, keepLatestTask } from 'ember-concurrency';
+ *
+ * class MyComponent extends Component {
+ *   @task
+ *   *plainTask() {}
+ *
+ *   @keepLatestTask({ cancelOn: 'click' })
+ *   *myKeepLatestTask() {}
+ * }
+ * ```
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {Task}
+ */
+export function keepLatestTask<T extends TaskOptions>(baseOptions?: T):
+  MethodOrPropertyDecoratorWithParams<[T]>;
+export function keepLatestTask<T>(
+  target: Object,
+  propertyKey: string,
+  descriptor: TypedPropertyDescriptor<T>
+): TypedPropertyDescriptor<T>;
+export function keepLatestTask(
+  target: Object,
+  propertyKey: string
+): void;
+
+/**
+ * Turns the decorated generator function into a task and applies the
+ * `restartable` modifier.
+ *
+ * Optionally takes a hash of options that will be applied as modifiers to the
+ * task. For instance `maxConcurrency`, `on`, or `group`.
+ *
+ * You can also define an
+ * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * by decorating an object that defines a `perform` generator
+ * method.
+ *
+ * ```js
+ * import Component from '@glimmer/component';
+ * import { task, restartableTask } from 'ember-concurrency';
+ *
+ * class MyComponent extends Component {
+ *   @task
+ *   *plainTask() {}
+ *
+ *   @restartableTask({ cancelOn: 'click' })
+ *   *myRestartableTask() {}
+ * }
+ * ```
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {Task}
+ */
+export function restartableTask<T extends TaskOptions>(baseOptions?: T):
+  MethodOrPropertyDecoratorWithParams<[T]>;
+export function restartableTask<T>(
+  target: Object,
+  propertyKey: string,
+  descriptor: TypedPropertyDescriptor<T>
+): TypedPropertyDescriptor<T>;
+export function restartableTask(
+  target: Object,
+  propertyKey: string
+): void;
+
+/**
+ * "Task Groups" provide a means for applying
+ * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
+ * as part of a group task, modifiers like `drop: true` or `restartable: true`
+ * will no longer affect the individual `Task`. Instead those
+ * modifiers can be applied to the entire group.
+ *
+ * Turns the decorated property into a task group.
+ *
+ * Optionally takes a hash of options that will be applied as modifiers to the
+ * task group. For instance `maxConcurrency` or `keepLatest`.
+ *
+ * ```js
+ * import Component from '@glimmer/component';
+ * import { task, taskGroup } from 'ember-concurrency';
+ *
+ * class MyComponent extends Component {
+ *   @taskGroup({ maxConcurrency: 5 }) chores;
+ *
+ *   @task({ group: 'chores' })
+ *   *mowLawn() {}
+ *
+ *   @task({ group: 'chores' })
+ *   *doDishes() {}
+ * }
+ * ```
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {TaskGroup}
+ */
+export function taskGroup<T extends TaskGroupOptions>(baseOptions: T):
+  PropertyDecorator;
+export function taskGroup<T>(
+  target: Object,
+  propertyKey: string
+): void;
+
+/**
+ * Turns the decorated property into a task group and applies the
+ * `drop` modifier.
+ *
+ * Optionally takes a hash of further options that will be applied as modifiers
+ * to the task group.
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {TaskGroup}
+ */
+export function dropTaskGroup<T extends TaskGroupOptions>(baseOptions: T):
+  PropertyDecorator;
+export function dropTaskGroup(
+  target: Object,
+  propertyKey: string
+): void;
+
+/**
+ * Turns the decorated property into a task group and applies the
+ * `enqueue` modifier.
+ *
+ * Optionally takes a hash of further options that will be applied as modifiers
+ * to the task group.
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {TaskGroup}
+ */
+export function enqueueTaskGroup<T extends TaskGroupOptions>(baseOptions: T):
+  PropertyDecorator;
+export function enqueueTaskGroup<T>(
+  target: Object,
+  propertyKey: string
+): void;
+
+/**
+ * Turns the decorated property into a task group and applies the
+ * `keepLatest` modifier.
+ *
+ * Optionally takes a hash of further options that will be applied as modifiers
+ * to the task group.
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {TaskGroup}
+ */
+export function keepLatestTaskGroup<T extends TaskGroupOptions>(baseOptions: T):
+  PropertyDecorator;
+export function keepLatestGroup<T>(
+  target: Object,
+  propertyKey: string
+): void;
+
+/**
+ * Turns the decorated property into a task group and applies the
+ * `restartable` modifier.
+ *
+ * Optionally takes a hash of further options that will be applied as modifiers
+ * to the task group.
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {TaskGroup}
+ */
+export function restartableTaskGroup<T extends TaskGroupOptions>(baseOptions: T):
+  PropertyDecorator;
+export function restartableTaskGroup<T>(
+  target: Object,
+  propertyKey: string
+): void;
 
 /**
  * "Task Groups" provide a means for applying
