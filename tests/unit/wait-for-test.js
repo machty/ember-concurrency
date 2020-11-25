@@ -432,13 +432,13 @@ module('Unit: test waitForQueue and waitForEvent and waitForProperty', function(
         return this.a;
       }
 
-      @(task(function*() {
+      @task *task() {
         let result = yield waitForProperty(this, 'b', v => {
           values.push(v);
           return v == 3 ? 'done' : false;
         });
         values.push(`val=${result}`);
-      })) task;
+      }
     }
 
     let obj = new Obj();
