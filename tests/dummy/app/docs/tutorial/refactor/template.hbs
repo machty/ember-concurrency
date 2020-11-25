@@ -38,8 +38,8 @@
 </p>
 
 <p>
-  Lastly, instead of using a Promise chain of <code>.then()</code> callbacks,
-  we use the
+  Lastly, instead of using an <code>async</code> function with <code>await</code>
+  calls, we use the
   <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">Generator Function Syntax</a>
   and the <code>yield</code> keyword.
 </p>
@@ -47,8 +47,13 @@
 <p>
   <LinkTo @route="docs.task-function-syntax">We'll get into much greater detail</LinkTo>
   about how this syntax is used, but for now, the most important thing to understand
-  is that when you <code>yield</code> a promise, the task will pause until that promise fulfills,
-  and then continue executing with the resolved value of that promise.
+  is that when you <code>yield</code> a promise or async function, the task will
+  pause until that promise or async function fulfills,
+  and then continue executing with the resolved value of that promise or async function.
+
+  Semantically, it is roughly the same as using <code>await</code>, but using
+  generator functions allows controlling the execution in a way that using
+  native, browser-managed <code>async/await</code> does not.
 </p>
 
 <p>Let's press onward with the refactor:</p>
@@ -100,10 +105,11 @@
   Good news! Our code is already safe because ember-concurrency automatically
   cancels tasks when their host object (e.g. a Component) is destroyed.
   In our example, if the <code>findStores</code> task is paused
-  at the unresolved <code>getNearbyStores</code> promise right when the user navigates
-  away, the component will be destroyed and the <code>findStores</code> task will
-  stop right where it is and will never hit the line of code with the <code>this.set()</code>,
-  thus avoiding the <code>"set on destroyed object"</code> error.
+  at the unresolved <code>getNearbyStores</code> <code>await</code> call right
+  when the user navigates away, the component will be destroyed and the
+  <code>findStores</code> task will stop right where it is and will never hit
+  the line of code with the <code>this.set()</code>, thus avoiding the
+  <code>"set on destroyed object"</code> error.
 </p>
 
 <p>
@@ -112,15 +118,15 @@
   makes cancelation possible.
 </p>
 
-<h4>Version 5: Handle Promise Rejection (with Tasks)</h4>
+<h4>Version 5: Handle Promise Rejection/Async Exceptions (with Tasks)</h4>
 
 <p>
-  Will a promise rejection put our task into an unrecoverable state?
+  Will a promise rejection/async exception put our task into an unrecoverable state?
 </p>
 
 <p>
   It turns out that, again, we don't need to change any code; if either
-  <code>getCoords</code> or <code>getNearbyStores</code> returned a rejecting promise,
+  <code>getCoords</code> or <code>getNearbyStores</code> throw an exception,
   the <code>findStores</code> task would stop execution where the error occurred, bubble
   the exception to the console (so that error reporters can catch it), but from there on
   the task can be immediately performed / retried again. So, we don't need to change any code.

@@ -9,20 +9,29 @@
 <h4>Does ember-concurrency work with older browsers?</h4>
 
 <p>
-  Yes. The <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">ES6 Generator Function syntax</a>
+  In general, yes, but they're not offically supported or tested on.
+  The <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">ES6 Generator Function syntax</a>
   that ember-concurrency relies on is automatically transpiled using Babel
   and <a href="https://github.com/facebook/regenerator">regenerator</a>, so
-  it'll work on all browsers supported by Ember.
+  it'll work on all browsers supported by Ember. You may need to experiment with
+  your <code>config/targets.js</code> and/or ember-cli-babel settings to include
+  the regenerator runtime.
+
+  ember-concurrency v2.0.0 uses <code>WeakMap</code> for implementing decorators
+  and encapsulated tasks, so certain older browsers may require polyfills.
+
+  Encapsulated tasks also use `Proxy`, which may not be polyfillable, so this
+  feature may not be available.
 </p>
 
 <h4>How do ember-concurrency Tasks compare to...</h4>
 
-<h5>Promises?</h5>
+<h5>Promises and Async functions?</h5>
 
 <p>
-  Promises aren't cancelable, and as of 12/2016, there is no active TC39 specification
-  under development for adding cancelation to promises.
-  EC Tasks, in contrast, are cancelable.
+  Async functions are just syntax sugar for Promises. Promises aren't cancelable,
+  and as of November 2020, there is no active TC39 specification under development
+  for adding cancelation to promises. Tasks, in contrast, are cancelable.
 </p>
 
 <p>
@@ -55,7 +64,6 @@
 
 <h5>Observables?</h5>
 
-
 <ul>
   <li>
     <strong>Cancelability</strong>
@@ -83,7 +91,7 @@
     and composable as possible so that developers can build almost anything on top of
     them to model just about any domain logic under the sun. So, in a sense,
     Observables can be considered more composable (compositional?) than Tasks,
-    which, by the time they exist, are bound to the lifetime of the Ember Object
+    which, by the time they exist, are bound to the lifetime of the object
     they live on, which constrains how and where Tasks can be used, but this tradeoff
     is deliberate and enables some of the patterns described below.
   </li>
@@ -111,7 +119,7 @@
     of the generator function syntax that ember-concurrency tasks use,
     2) the fact that tasks expose a lot of commonplace derivable state that you'd
     otherwise have to split out / filter / merge yourself using observables
-    (e.g. <code>.isIdle / .isRunning / .concurrency</code>) and 3)
+    (e.g. <code>.isIdle / .isRunning / .numRunning</code>) and 3)
     it's often easier to model domain state as bindable values rather than
     discrete events.
   </li>

@@ -34,17 +34,17 @@
     <code>isIdle</code>: the opposite of <code>isRunning</code>
   </li>
   <li>
-    <em><code>performCount</code></em>: The number of times the task has been performed
+    <code>performCount</code>: The number of times the task has been performed
   </li>
   <li>
-    <em><code>concurrency</code></em>: an integer representing the number of currently
+    <code>numRunning</code>: an integer representing the number of currently
     running task instances. If you're using a task modifier like
     <code>drop/enqueue/restartable</code> (without specifying <code>maxConcurrency</code>)
     this number will never be greater than 1. This property is mostly useful for
     debugging.
   </li>
   <li>
-    <em><code>state</code></em>: a string description of the task's state; can
+    <code>state</code>: a string description of the task's state; can
     either by "running" or "idle". Useful for debugging.
   </li>
 </ul>
@@ -125,7 +125,7 @@
 
 {{#each this.tasks as |taskName|}}
   {{#let (get this taskName) as |task|}}
-    <h5>{{task.name}} (performCount={{task.performCount}} concurrency={{task.concurrency}})</h5>
+    <h5>{{task.name}} (performCount={{task.performCount}} numRunning={{task.numRunning}})</h5>
 
     <p>
       <button {{on "click" (perform task false)}}

@@ -20,7 +20,7 @@
   The example below can be started (or restarted) using either
   <code>all()</code> to wait for all child tasks to run to completion,
   or <code>race()</code> to wait for the first. Note that how, in both cases,
-  <code>.maxConcurrency(3)</code> ensures that only 3 progress tasks
+  <code>maxConcurrency: 3</code> ensures that only 3 progress tasks
   run at a time, but if you restart the task while it's running, it immediately
   starts 3 tasks after canceling the previous ones.
 </p>

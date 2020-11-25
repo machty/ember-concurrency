@@ -8,10 +8,10 @@
 </p>
 
 <ol>
-  <li>Define the task group property, e.g. <code>nameOfGroup: taskGroup()</code></li>
+  <li>Define the task group property, e.g. <code>@taskGroup nameOfGroup;</code></li>
   <li>
-    For each task in the group, use <code>.group()</code> to associate
-    the task with the group, e.g. <code>myTask: task(...).group('nameOfGroup')</code>
+    For each task in the group, use <code>@task({ group: ... })</code> to associate
+    the task with the group, e.g. <code>@task({ group: 'nameOfGroup' }) *myTask() { /* ... */}</code>
   </li>
 </ol>
 

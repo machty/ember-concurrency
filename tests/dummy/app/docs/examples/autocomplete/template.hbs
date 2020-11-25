@@ -13,8 +13,8 @@
     with a <code>yield timeout(250)</code> at the beginning of the task.
   </li>
   <li>
-    XHR cancelation: if the user starts typing while a prior XHR request
-    is underway, that XHR request will be canceled to save network resources
+    Fetch cancelation: if the user starts typing while a prior fetch request
+    is underway, that fetch request will be canceled to save network resources
     (this is accomplished via the <LinkTo @route="docs.error-vs-cancelation">try / finally cancelation pattern</LinkTo>).
   </li>
   <li>

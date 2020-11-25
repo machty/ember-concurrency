@@ -66,30 +66,38 @@
 
 <p>
   The behavior of yielding promises within task generator functions
-  is designed to closely follow the behavior of the proposed
+  is designed to closely follow the behavior of
   <a href="https://github.com/tc39/ecmascript-asyncawait">async/await</a>
   syntax, but instead of <code>async function</code>, you use
   <code>function *</code>, and instead of <code>await</code>, you
   use <code>yield</code>.
 </p>
 
-<h4>ES Native Class Use (Ember 3.10+ and Ember Octane)</h4>
+<h4>Classic Ember use (prior to Ember 3.10+ or non-Ember Octane)</h4>
 
 <p>
-  As of Ember 3.10, <code>task()</code> can be used as a decorator, allowing use
-  with native ES classes, such as Glimmer components. The usage remains much the
-  same, but the syntax is slightly different.
+  The decorator syntax and use with native classes is only fully supported when
+  using Ember 3.10+, but <code>task()</code> can still be used with the Classic Ember
+  object model too. The Classic Ember usage remains much the same as the decorator
+  usage, but the syntax is slightly different.
 </p>
 
 <p>
-  Note as well, the use of the <code>@computed</code> decorator on the native ES
-  getter <code>favoriteNumbers</code>. This is required for updates to be
+  Modifiers are called as functions off the <code>task()</code>. e.g. calling
+  <code>restartable()</code> on the task is the same as using
+  <code>@task({ restartable: true })</code> when using decorators.
+</p>
+
+<p>
+  Note as well, the use of <code>computed</code> use for the
+  <code>favoriteNumbers</code> property. This is required for updates to be
   reflected in the UI, if you were to use it within the template.
 </p>
 
 <CodeSnippet @name="task-function-syntax-5.js" />
 
 <p>
-  As decorators in ECMAScript mature through the TC39, improvements will be made
-  to the decorator experience with ember-concurrency.
+  Support for the Classic Ember object model will be retained throughout
+  ember-concurrency 2.x, but will be dropped in favor of supporting only native
+  classes in the future.
 </p>

@@ -1,4 +1,4 @@
-<h3>Using <code>.maxConcurrency(N)</code></h3>
+<h3>Using <code>maxConcurrency: N</code></h3>
 
 <p>
   The examples on the previous page limit the concurrency of a task to 1 &mdash; only
@@ -10,20 +10,20 @@
   There are some cases, however, when you might want to limit
   the number of concurrently running task instances to a number greater
   than 1.  In such cases, you can use the task modifier
-  <code>.maxConcurrency(n)</code> to opt into a specific maximum
+  <code>maxConcurrency: n</code> to opt into a specific maximum
   concurrency other than 1.
 </p>
 
 <p>
   The examples below use the same task modifiers as the ones on the previous
-  page, but with <code>.maxConcurrency(3)</code> applied to them: they each
+  page, but with <code>maxConcurrency: 3</code> applied to them: they each
   allow 3 running instances before enqueuing, canceling, or dropping
   <code>perform()</code>s.
 </p>
 
 <CodeSnippet @name="shared-tasks-concurrent.js" />
 
-<h4>restartable with .maxConcurrency(3)</h4>
+<h4>restartable with <code>maxConcurrency: 3</code></h4>
 
 <p>
   When concurrency exceeds maxConcurrency, the oldest running task is canceled.
@@ -35,7 +35,7 @@
   <em>
     TODO: while restartable is an excellent name when maxConcurrency
     is 1, it poorly describes the behavior for values greater than 1.
-    A better name in this case might be .sliding(), as in sliding buffer.
+    A better name in this case might be "sliding", as in sliding buffer.
   </em>
 </p>
 

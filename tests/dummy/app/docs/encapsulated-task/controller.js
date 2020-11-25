@@ -6,7 +6,7 @@ import { randomWord } from 'dummy/utils';
 import { task, timeout } from 'ember-concurrency';
 
 export default class EncapsulatedTaskController extends Controller {
-  @task({ enqueue: true}) uploadFile = {
+  @task({ enqueue: true }) uploadFile = {
     progress: 0,
     url: null,
 
