@@ -9,18 +9,22 @@
 <h4>Does ember-concurrency work with older browsers?</h4>
 
 <p>
-  In general, yes, but they're not offically supported or tested on.
+  In general, yes, but they're not offically supported or tested on, so your
+  mileage may vary.
   The <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">ES6 Generator Function syntax</a>
-  that ember-concurrency relies on is automatically transpiled using Babel
-  and <a href="https://github.com/facebook/regenerator">regenerator</a>, so
-  it'll work on all browsers supported by Ember. You may need to experiment with
-  your <code>config/targets.js</code> and/or ember-cli-babel settings to include
-  the regenerator runtime.
-
+  that ember-concurrency relies on can be automatically transpiled using Babel
+  and <a href="https://github.com/facebook/regenerator">regenerator</a>. You may
+  need to experiment with your <code>config/targets.js</code> and/or
+  ember-cli-babel settings to include the regenerator runtime and proper
+  transpilation for your needs.
+</p>
+<p>
   ember-concurrency v2.0.0 uses <code>WeakMap</code> for implementing decorators
-  and encapsulated tasks, so certain older browsers may require polyfills.
-
-  Encapsulated tasks also use `Proxy`, which may not be polyfillable, so this
+  and encapsulated tasks, so certain older browsers may require polyfills to use
+  these features.
+</p>
+<p>
+  Encapsulated tasks also use <code>Proxy</code>, which may not be polyfillable, so this
   feature may not be available.
 </p>
 
