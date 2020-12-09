@@ -10,7 +10,7 @@
 <p>
   This tutorial (and ember-concurrency itself) assumes that you have
   reasonable familiarity with Ember's core APIs, particularly surrounding
-  Components, templates, actions, and Promises.
+  Components, templates, actions, Promises, and the use of <code>async/await</code>.
 </p>
 
 <p>
@@ -32,7 +32,9 @@
   <em>
     This is basically the same example demonstrated in the
     <a href="https://youtu.be/VEzVDOmY-dc?t=123">EmberConf 2017 ember-concurrency talk</a>;
-    take a look if you prefer a video alternative to this tutorial.
+    take a look if you prefer a video alternative to this tutorial. Please note,
+    though, that the coding style has since changed with Ember Octane. The
+    examples below have been updated to reflect the newer syntax.
   </em>
 </p>
 
@@ -40,8 +42,8 @@
 
 <p>
   We'll start off a bare-bones implementation of the feature: within
-  an action called <code>findStores</code>, we'll create a Promise
-  chain that fetches the coordinates from a geolocation service
+  an action called <code>findStores</code>, we'll create an async function that
+  fetches the coordinates from a geolocation service
   and passes those coordinates to a store's <code>getNearbyStores</code>
   method, which eventually gives us an array of stores that we stash
   on the <code>result</code> property so that the stores can be displayed
@@ -145,12 +147,12 @@
   Now, are we done?
 </p>
 
-<h4>Version 5: Handle Promise Rejection</h4>
+<h4>Version 5: Handle Promise/Async Function Rejection</h4>
 
 <p>
   You might have noticed that we don't have any error handling if
   either the <code>getCoords</code> or <code>getNearbyStores</code>
-  promises reject with an error.
+  <code>await</code> calls throw an error.
 </p>
 
 <p>
@@ -158,13 +160,13 @@
   an error banner or popup to indicate that something went wrong (and we are),
   the least we could do is make sure that our code gracefully
   recovers from such an error and doesn't wind up in a bad state.
-  As it stands, if one of those promises rejected,
+  As it stands, if one of those <code>await</code> calls raises an error,
   <code>isFindingStores</code> would be stuck to <code>true</code>, and
   there'd be no way to try fetching again.
 </p>
 
 <p>
-  Let's use a <code>finally()</code> handler to make sure that
+  Let's use a <code>finally</code> block to make sure that
   <code>isFindingStores</code> always gets set to <code>false</code>,
   regardless of success or failure. Unfortunately, this also
   means we have to duplicate our <code>isDestroyed</code> check.

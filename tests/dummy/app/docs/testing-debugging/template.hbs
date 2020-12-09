@@ -114,8 +114,8 @@
 
 <p>
   Sometimes it's not obvious why a Task was canceled; in these cases you
-  can use the <code>.debug()</code> Task Modifier on a specific task e.g.
-  <code>nameOfTask: task(...).debug()</code>,
+  can use the <code>debug</code> Task Modifier on a specific task e.g.
+  <code>@task({ debug: true }) *nameOfTask { /* ... */ }</code>,
   which will provide some logging about the task's lifecycle, e.g.
   <code>TaskInstance 'nameOfTask' was canceled because the object it lives on was destroyed or unrendered </code>.
 </p>

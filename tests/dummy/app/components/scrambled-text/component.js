@@ -15,12 +15,14 @@ function scramble(word) {
   return a.join("");
 }
 
-export default Component.extend({
-  tagName: '',
-  text: null,
-  scrambledText: null,
+export default class ScrambledTextComponent extends Component {
+  tagName = '';
+  text = null;
+  scrambledText = null;
+
 // BEGIN-SNIPPET scrambled-text
-  startScrambling: task(function * () {
+  @task({ on: 'init' })
+  *startScrambling() {
     let text = this.text;
     while (true) {
       let pauseTime = 140;
@@ -32,8 +34,6 @@ export default Component.extend({
       this.set('scrambledText', text);
       yield timeout(1500);
     }
-  }).on('init'),
+  }
 // END-SNIPPET
-});
-
-
+}

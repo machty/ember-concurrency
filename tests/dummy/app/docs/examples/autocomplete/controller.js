@@ -1,12 +1,11 @@
-import $ from 'jquery';
 import { isBlank } from '@ember/utils';
 import Controller from '@ember/controller';
-import { task, timeout } from 'ember-concurrency';
+import { restartableTask, task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET debounced-search-with-cancelation
 const DEBOUNCE_MS = 250;
-export default Controller.extend({
-  searchRepo: task(function * (term) {
+export default class AutocompleteController extends Controller {
+  @restartableTask *searchRepo(term) {
     if (isBlank(term)) { return []; }
 
     // Pause here for DEBOUNCE_MS milliseconds. Because this
@@ -23,25 +22,26 @@ export default Controller.extend({
     // is aborted (open the inspector and see for yourself :)
     let json = yield this.getJSON.perform(url);
     return json.items.slice(0, 10);
-  }).restartable(),
+  }
 
-  getJSON: task(function * (url) {
-    let xhr;
+  @task *getJSON(url) {
+    let controller = new AbortController();
+    let signal = controller.signal;
+
     try {
-      xhr = $.getJSON(url);
-      let result = yield xhr.promise();
+      let response = yield fetch(url, { signal });
+      let result = yield response.json();
       return result;
 
       // NOTE: could also write this as
-      // return yield xhr;
+      // return yield fetch(url, { signal }).then((response) => response.json());
       //
       // either way, the important thing is to yield before returning
       // so that the `finally` block doesn't run until after the
       // promise resolves (or the task is canceled).
     } finally {
-      xhr.abort();
+      controller.abort();
     }
-  }),
-});
+  }
+}
 // END-SNIPPET
-

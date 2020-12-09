@@ -236,9 +236,9 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    * to run at the same time. By default, with no task modifiers
    * applied, this number is Infinity (there is no limit
    * to the number of tasks that can run at the same time).
-   * {@linkcode TaskProperty#restartable .restartable()},
-   * {@linkcode TaskProperty#enqueue .enqueue()}, and
-   * {@linkcode TaskProperty#drop .drop()} set the default
+   * {@linkcode TaskProperty#restartable .restartable},
+   * {@linkcode TaskProperty#enqueue .enqueue}, and
+   * {@linkcode TaskProperty#drop .drop} set the default
    * maxConcurrency to 1, but you can override this value
    * to set the maximum number of concurrently running tasks
    * to a number greater than 1.
@@ -395,20 +395,20 @@ export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
 /**
  * "Task Groups" provide a means for applying
  * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
- * as part of a group task, modifiers like `drop()` or `restartable()`
+ * as part of a group task, modifiers like `drop` or `restartable`
  * will no longer affect the individual `Task`. Instead those
  * modifiers can be applied to the entire group.
  *
  * ```js
  * import { task, taskGroup } from 'ember-concurrency';
  *
- * export default Controller.extend({
- *   chores: taskGroup().drop(),
+ * export default class MyController extends Controller {
+ *   @taskGroup({ drop: true }) chores;
  *
- *   mowLawn:       task(taskFn).group('chores'),
- *   doDishes:      task(taskFn).group('chores'),
- *   changeDiapers: task(taskFn).group('chores')
- * });
+ *   @task({ group: 'chores' }) mowLawn = taskFn;
+ *   @task({ group: 'chores' }) doDishes = taskFn;
+ *   @task({ group: 'chores' }) changeDiapers = taskFn;
+ * }
  * ```
  *
  * @returns {TaskGroup}

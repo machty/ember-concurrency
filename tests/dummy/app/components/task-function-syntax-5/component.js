@@ -1,30 +1,24 @@
 // BEGIN-SNIPPET task-function-syntax-5
-import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
+import Component from '@ember/component';
 import { computed } from '@ember/object';
 import { task } from 'ember-concurrency';
 
-export default class MyOctaneComponent extends Component {
-  @tracked status = null
+export default Component.extend({
+  status: null,
 
-  @computed('pickRandomNumbers.last.value')
-  get favoriteNumbers() {
-    if (this.pickRandomNumbers.last) {
-      return this.pickRandomNumbers.last.value
-    }
+  favoriteNumbers: computed('pickRandomNumbers.last.value', function() {
+    return this.get('pickRandomNumbers.last.value') || [];
+  }),
 
-    return [];
-  }
-
-  @task *pickRandomNumbers() {
+  pickRandomNumbers: task(function () {
     let nums = [];
     for (let i = 0; i < 3; i++) {
       nums.push(Math.floor(Math.random() * 10));
     }
 
-    this.status = `My favorite numbers: ${nums.join(', ')}`;
+    this.set('status', `My favorite numbers: ${nums.join(', ')}`);
 
     return nums;
-  }
-}
+  }).restartable()
+});
 // END-SNIPPET

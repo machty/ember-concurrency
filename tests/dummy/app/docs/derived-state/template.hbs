@@ -34,17 +34,17 @@
     <code>isIdle</code>: the opposite of <code>isRunning</code>
   </li>
   <li>
-    <em><code>performCount</code></em>: The number of times the task has been performed
+    <code>performCount</code>: The number of times the task has been performed
   </li>
   <li>
-    <em><code>concurrency</code></em>: an integer representing the number of currently
+    <code>numRunning</code>: an integer representing the number of currently
     running task instances. If you're using a task modifier like
     <code>drop/enqueue/restartable</code> (without specifying <code>maxConcurrency</code>)
     this number will never be greater than 1. This property is mostly useful for
     debugging.
   </li>
   <li>
-    <em><code>state</code></em>: a string description of the task's state; can
+    <code>state</code>: a string description of the task's state; can
     either by "running" or "idle". Useful for debugging.
   </li>
 </ul>
@@ -124,19 +124,19 @@
 </p>
 
 {{#each this.tasks as |taskName|}}
-  {{#with (get this taskName) as |task|}}
-    <h5>{{task.name}} (performCount={{task.performCount}} concurrency={{task.concurrency}})</h5>
+  {{#let (get this taskName) as |task|}}
+    <h5>{{task.name}} (performCount={{task.performCount}} numRunning={{task.numRunning}})</h5>
 
     <p>
-      <button onclick={{perform task false}}
+      <button {{on "click" (perform task false)}}
         class={{if task.isIdle "button-primary"}} type="button">
         Run to Completion
       </button>
-      <button onclick={{perform task true}}
+      <button {{on "click" (perform task true)}}
         class={{if task.isIdle "button-primary"}} type="button">
         Run until Error
       </button>
-      <button onclick={{cancel-all task}}
+      <button {{on "click" (cancel-all task)}}
         class={{if task.isRunning "button-primary"}} type="button">
         Cancel
       </button>
@@ -159,29 +159,29 @@
               <strong>myTask.{{tp}}</strong>
             </td>
             <td>
-              {{#with (get task (concat tp ".value")) as |v|}}
+              {{#let (get task (concat tp ".value")) as |v|}}
                 <div class="completion-status completion-success">{{v}}</div>
-              {{/with}}
+              {{/let}}
             </td>
             <td>
-              {{#with (get task (concat tp ".error")) as |v|}}
+              {{#let (get task (concat tp ".error")) as |v|}}
                 <div class="completion-status completion-error">{{v}}</div>
-              {{/with}}
+              {{/let}}
             </td>
             <td>
-              {{#with (get task (concat tp ".isSuccessful")) as |v|}}
+              {{#let (get task (concat tp ".isSuccessful")) as |v|}}
                 {{v}}
-              {{/with}}
+              {{/let}}
             </td>
             <td>
-              {{#with (get task (concat tp ".isError")) as |v|}}
+              {{#let (get task (concat tp ".isError")) as |v|}}
                 {{v}}
-              {{/with}}
+              {{/let}}
             </td>
           </tr>
         {{/each}}
       </tbody>
     </table>
     <br>
-  {{/with}}
+  {{/let}}
 {{/each}}

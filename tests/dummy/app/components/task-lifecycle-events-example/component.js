@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import { on } from '@ember/object/evented';
+import { addListener, removeListener } from '@ember/object/events';
 import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET task-lifecycle-events
@@ -15,7 +15,7 @@ const COLORS = [
 ];
 
 function loopingAjaxTask(id) {
-  return task(function * () {
+  return function * () {
     while (true) {
       try {
         yield this.ajaxTask.perform(id);
@@ -24,11 +24,30 @@ function loopingAjaxTask(id) {
       }
       yield timeout(2000);
     }
-  }).on('init');
+  }
 }
 
-export default Component.extend({
-  ajaxTask: task(function * () {
+export default class TaskLifecycleEventsExample extends Component {
+  logs = [];
+
+  constructor() {
+    super(...arguments);
+
+    addListener(this, 'ajaxTask:started', this, this.ajaxTaskStarted);
+    addListener(this, 'ajaxTask:succeeded', this, this.ajaxTaskSucceeded);
+    addListener(this, 'ajaxTask:errored', this, this.ajaxTaskErrored);
+  }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+
+    removeListener(this, 'ajaxTask:started', this, this.ajaxTaskStarted);
+    removeListener(this, 'ajaxTask:succeeded', this, this.ajaxTaskSucceeded);
+    removeListener(this, 'ajaxTask:errored', this, this.ajaxTaskErrored);
+  }
+
+  @task({ enqueue: true, maxConcurrency: 3, evented: true })
+  *ajaxTask() {
     // simulate slow AJAX
     const ms = 2000 + 2000 * Math.random();
     yield timeout(ms);
@@ -37,39 +56,36 @@ export default Component.extend({
       throw new Error("Unexpected matrix glitch");
     }
     return {};
-  }).enqueue().maxConcurrency(3).evented(),
+  }
 
-  ajaxTaskStarted: on('ajaxTask:started', function(taskInstance) {
+  ajaxTaskStarted(taskInstance) {
     const [id] = taskInstance.args;
     this.log(COLORS[id], `Task ${id}: making AJAX request`);
-  }),
+  }
 
-  ajaxTaskSucceeded: on('ajaxTask:succeeded', function(taskInstance) {
+  ajaxTaskSucceeded(taskInstance) {
     const [id] = taskInstance.args;
     this.log(COLORS[id], `Task ${id}: AJAX done`);
-  }),
+  }
 
-  ajaxTaskErrored: on('ajaxTask:errored', function(taskInstance, error) {
+  ajaxTaskErrored(taskInstance, error) {
     const [id] = taskInstance.args;
     this.log(COLORS[id], `Task ${id}: AJAX failed because of '${error.message}'`);
-  }),
+  }
 
-  task0: loopingAjaxTask(0),
-  task1: loopingAjaxTask(1),
-  task2: loopingAjaxTask(2),
-  task3: loopingAjaxTask(3),
-  task4: loopingAjaxTask(4),
-  task5: loopingAjaxTask(5),
-  task6: loopingAjaxTask(6),
-  task7: loopingAjaxTask(7),
+  @task({ on: 'init' }) task0 = loopingAjaxTask(0);
+  @task({ on: 'init' }) task1 = loopingAjaxTask(1);
+  @task({ on: 'init' }) task2 = loopingAjaxTask(2);
+  @task({ on: 'init' }) task3 = loopingAjaxTask(3);
+  @task({ on: 'init' }) task4 = loopingAjaxTask(4);
+  @task({ on: 'init' }) task5 = loopingAjaxTask(5);
+  @task({ on: 'init' }) task6 = loopingAjaxTask(6);
+  @task({ on: 'init' }) task7 = loopingAjaxTask(7);
 
   log(color, message) {
-    let logs = this.logs || [];
+    let logs = this.logs;
     logs.push({ color, message });
     this.set('logs', logs.slice(-7));
-  },
-
-  logs: null,
-});
+  }
+}
 // END-SNIPPET
-

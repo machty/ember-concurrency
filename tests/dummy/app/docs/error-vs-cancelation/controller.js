@@ -1,13 +1,13 @@
 import Controller from '@ember/controller';
-import { task, timeout } from 'ember-concurrency';
+import { restartableTask, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET error-vs-cancelation
-export default Controller.extend({
-  numCompletions: 0,
-  numErrors: 0,
-  numFinallys: 0,
+export default class ErrorVsCancelationController extends Controller {
+  numCompletions = 0;
+  numErrors = 0;
+  numFinallys = 0;
 
-  myTask: task(function * (doError) {
+  @restartableTask *myTask(doError) {
     try {
       yield timeout(1000);
       if (doError) {
@@ -19,7 +19,6 @@ export default Controller.extend({
       this.incrementProperty('numFinallys');
     }
     this.incrementProperty('numCompletions');
-  }).restartable(),
-});
+  }
+}
 // END-SNIPPET
-

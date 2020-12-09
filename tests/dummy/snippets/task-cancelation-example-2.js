@@ -1,23 +1,23 @@
 import Component from '@ember/component';
-import { task, timeout, didCancel } from 'ember-concurrency';
+import { action } from '@ember/object';
+import { didCancel, task, timeout } from 'ember-concurrency';
 
-export default Component.extend({
-  queryServer: task(function * () {
+export default class TaskCancelationExampleComponent extends Component {
+  @task *queryServer() {
     yield timeout(10000);
     return 123;
-  }),
+  }
 
-  actions: {
-    fetchResults() {
-      this.get('queryServer').perform().then((results) => {
-        this.set('results', results);
-      }).catch((e) => {
-        if (!didCancel(e)) {
-          // re-throw the non-cancelation error
-          throw e;
-        }
-      });
+  @action
+  async fetchResults() {
+    try {
+      let results = await this.get('queryServer').perform();
+      this.set('results', results);
+    } catch(e) {
+      if (!didCancel(e)) {
+        // re-throw the non-cancelation error
+        throw e;
+      }
     }
   }
-});
-
+}

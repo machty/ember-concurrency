@@ -1,28 +1,24 @@
-import { computed } from '@ember/object';
 import Controller from '@ember/controller';
-import { timeout } from 'ember-concurrency';
+import { task, taskGroup, timeout } from 'ember-concurrency';
 
 function * taskFn() {
   yield timeout(1500);
 }
 
 // BEGIN-SNIPPET task-groups
-import { task, taskGroup } from 'ember-concurrency';
+export default class TaskGroupsController extends Controller {
+  @taskGroup({ drop: true }) chores;
 
-export default Controller.extend({
-  chores: taskGroup().drop(),
+  @task({ group: 'chores' }) mowLawn = taskFn;
+  @task({ group: 'chores' }) doDishes = taskFn;
+  @task({ group: 'chores' }) changeDiapers = taskFn;
 
-  mowLawn:       task(taskFn).group('chores'),
-  doDishes:      task(taskFn).group('chores'),
-  changeDiapers: task(taskFn).group('chores'),
-
-  tasks: computed(function() {
+  get tasks() {
     return [
       this.mowLawn,
       this.doDishes,
       this.changeDiapers,
     ];
-  }),
-});
+  }
+}
 // END-SNIPPET
-

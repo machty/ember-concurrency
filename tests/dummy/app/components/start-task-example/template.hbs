@@ -1,19 +1,18 @@
 <p>
   {{! BEGIN-SNIPPET start-task-example-template }}
-  <button type="button" {{action "performTask" "one"}}>
+  <button type="button" {{on "click" this.performTask "one"}}>
     1. task.perform(...)
   </button>
 
-  <button onclick={{perform this.myTask "two"}} type="button">
+  <button type="button" {{on "click" (perform this.myTask "two")}}>
     2. (perform taskName)
   </button>
 
-  <button type="button" {{action "triggerFoo" "three"}}>
+  <button type="button" {{on "click" this.triggerFoo "three"}}>
     3. .on('foo')
   </button>
 
-  <input type="checkbox"
-        onchange={{perform this.myTask value="target.checked"}}>
+  <input type="checkbox" {{on "change" (perform this.myTask value="target.checked")}}>
   4. Checkbox
   {{! END-SNIPPET }}
 </p>

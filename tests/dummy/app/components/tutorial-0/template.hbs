@@ -1,7 +1,7 @@
 <div class="tutorial-example">
 
   {{! BEGIN-SNIPPET better-syntax-1 }}
-  <button onclick={{action "findStores"}} type="button">
+  <button {{on "click" this.findStores}} type="button">
     Find Nearby Stores
   </button>
 

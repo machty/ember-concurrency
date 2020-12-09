@@ -1,21 +1,20 @@
 import TutorialComponent from '../shared-tutorial/component';
 
 // BEGIN-SNIPPET better-syntax-1
-export default TutorialComponent.extend({
-  result: null,
-  actions: {
-    findStores() {
-      let geolocation = this.geolocation;
-      let store = this.store;
+import { action } from '@ember/object';
 
-      geolocation.getCoords()
-        .then(coords => store.getNearbyStores(coords))
-        .then(result => {
-          this.set('result', result);
-        });
-    }
-  },
-});
+export default class Tutorial0 extends TutorialComponent {
+  result = null;
+
+  @action
+  async findStores() {
+    let geolocation = this.geolocation;
+    let store = this.store;
+
+    let coords = await geolocation.getCoords()
+    let result = await store.getNearbyStores(coords);
+
+    this.set('result', result);
+  }
+}
 // END-SNIPPET
-
-

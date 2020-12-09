@@ -39,20 +39,20 @@
 {{! BEGIN-SNIPPET cancelation-template }}
 <h5>Running tasks: {{this.count}}</h5>
 
-<button type="button" {{action "performTask"}}>Perform Task</button>
+<button type="button" {{on "click" this.performTask}}>Perform Task</button>
 {{#if this.count}}
-  <button type="button" {{action "cancelAll"}}>Cancel All</button>
+  <button type="button" {{on "click" this.cancelAll}}>Cancel All</button>
 {{/if}}
 {{#if this.mostRecent.isRunning}}
-  <button type="button" {{action "cancelMostRecent"}}>Cancel Most Recent</button>
+  <button type="button" {{on "click" this.cancelMostRecent}}>Cancel Most Recent</button>
 {{/if}}
 {{! END-SNIPPET }}
 
 <p>
   <em>
-    Tip: You can also use the <code>.concurrency</code> property to get
+    Tip: You can also use the <code>.numRunning</code> property to get
     the current number of running task instances for a given task,
-    e.g. <code>\{{myTask.concurrency}}</code>: {{this.myTask.concurrency}}
+    e.g. <code>\{{myTask.numRunning}}</code>: {{this.myTask.numRunning}}
   </em>
 </p>
 

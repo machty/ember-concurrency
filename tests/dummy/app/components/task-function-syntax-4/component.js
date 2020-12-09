@@ -1,11 +1,11 @@
 import Component from '@ember/component';
 import { task, timeout } from 'ember-concurrency';
 
-export default Component.extend({
-  status: null,
+export default class TaskFunctionSyntaxComponent4 extends Component {
+  status = null;
 
 // BEGIN-SNIPPET task-function-syntax-4
-  myTask: task(function * () {
+  @task *myTask() {
     this.set('status', `Thinking...`);
     try {
       yield timeout(1000).then(() => {
@@ -15,7 +15,6 @@ export default Component.extend({
     } catch(e) {
       this.set('status', `Caught value: ${e}`);
     }
-  }),
+  }
 // END-SNIPPET
-});
-
+}

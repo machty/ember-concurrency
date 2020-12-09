@@ -2,64 +2,65 @@ import Controller from '@ember/controller';
 import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 
-export default Controller.extend({
-  router: service(),
+export const TABLE_OF_CONTENTS = [
+  { route: "docs.introduction", title: "Home" },
+  { route: "docs.installation", title: "Installation" },
 
-  tableOfContents: [
-    { route: "docs.introduction", title: "Home" },
-    { route: "docs.installation", title: "Installation" },
+  { section: "Introduction" },
+  { route: "docs.tutorial.index", title: "Writing Code Without Tasks" },
+  { route: "docs.tutorial.discussion", title: "Post-Mortem" },
+  { route: "docs.tutorial.refactor", title: "Refactoring With Tasks" },
 
-    { section: "Introduction" },
-    { route: "docs.tutorial.index", title: "Writing Code Without Tasks" },
-    { route: "docs.tutorial.discussion", title: "Post-Mortem" },
-    { route: "docs.tutorial.refactor", title: "Refactoring With Tasks" },
+  { section: "Reference" },
+  { route: "docs.task-function-syntax", title: "Task Function Syntax" },
+  { route: "docs.task-concurrency", title: "Managing Task Concurrency",
+    children: [
+      { route: "docs.task-concurrency-advanced", title: "Advanced" },
+    ]
+  },
+  { route: "docs.cancelation", title: "Cancelation", },
+  { route: "docs.error-vs-cancelation", title: "Handling Errors" },
+  { route: "docs.child-tasks", title: "Child Tasks" },
+  { route: "docs.task-groups", title: "Task Groups" },
+  { route: "docs.derived-state", title: "Derived State" },
+  { route: "docs.encapsulated-task", title: "Encapsulated Tasks" },
+  { route: "docs.events", title: "Awaiting Events / Conditions" },
+  { route: "docs.task-lifecycle-events", title: "Lifecycle Events" },
+  { route: "docs.testing-debugging", title: "Testing & Debugging" },
+  { route: "docs.typescript", title: "TypeScript" },
+  { route: "docs.faq", title: "FAQ & Fact Sheet" },
 
-    { section: "Reference" },
-    { route: "docs.task-function-syntax", title: "Task Function Syntax" },
-    { route: "docs.task-concurrency", title: "Managing Task Concurrency",
-      children: [
-        { route: "docs.task-concurrency-advanced", title: "Advanced" },
-      ]
-    },
-    { route: "docs.cancelation", title: "Cancelation", },
-    { route: "docs.error-vs-cancelation", title: "Handling Errors" },
-    { route: "docs.child-tasks", title: "Child Tasks" },
-    { route: "docs.task-groups", title: "Task Groups" },
-    { route: "docs.derived-state", title: "Derived State" },
-    { route: "docs.encapsulated-task", title: "Encapsulated Tasks" },
-    { route: "docs.events", title: "Awaiting Events / Conditions" },
-    { route: "docs.task-lifecycle-events", title: "Lifecycle Events" },
-    { route: "docs.testing-debugging", title: "Testing & Debugging" },
-    { route: "docs.typescript", title: "TypeScript" },
-    { route: "docs.faq", title: "FAQ & Fact Sheet" },
+  { section: "Examples" },
+  { route: "docs.examples.loading-ui", title: "Loading UI" },
+  { route: "docs.examples.autocomplete", title: "Type-Ahead Search" },
+  { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" },
+  { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" },
+  { route: "docs.examples.route-tasks", title: "Route Tasks" },
+  { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" },
+];
 
-    { section: "Examples" },
-    { route: "docs.examples.loading-ui", title: "Loading UI" },
-    { route: "docs.examples.autocomplete", title: "Type-Ahead Search" },
-    { route: "docs.examples.increment-buttons", title: "Accelerating Increment Buttons" },
-    { route: "docs.examples.ajax-throttling", title: "AJAX Throttling" },
-    { route: "docs.examples.route-tasks", title: "Route Tasks" },
-    { route: "docs.examples.joining-tasks", title: "Awaiting Multiple Child Tasks" },
-  ],
+export const FLATTENED_TABLE_OF_CONTENTS = TABLE_OF_CONTENTS.reduce((flattened, entry) => {
+  flattened.push(entry);
+  if (entry.children){
+    flattened = flattened.concat(entry.children);
+  }
 
-  flatContents: computed(function(){
-    var flattened = [];
-    this.tableOfContents.forEach(function(entry) {
-      flattened.push(entry);
-      if (entry.children){
-        flattened = flattened.concat(entry.children);
-      }
-    });
-    return flattened;
-  }),
+  return flattened;
+}, []);
 
-  currentIndex: computed('router.currentRouteName', 'flatContents', function(){
-    var contents = this.flatContents,
-        current = this.get('router.currentRouteName'),
+export default class DocsController extends Controller {
+  @service router;
+
+  tableOfContents = TABLE_OF_CONTENTS;
+
+  @computed('router.currentRouteName')
+  get currentIndex() {
+    let contents = FLATTENED_TABLE_OF_CONTENTS,
+        current = this.router.currentRouteName,
         bestMatch,
         entry;
 
-    for (var i=0; i<contents.length; i++) {
+    for (let i = 0; i < contents.length; i++) {
       entry = contents[i];
       if (entry.route && new RegExp('^' + entry.route.replace(/\./g, '\\.')).test(current)) {
         if (typeof(bestMatch) === 'undefined' || contents[bestMatch].route.length < entry.route.length) {
@@ -68,26 +69,28 @@ export default Controller.extend({
       }
     }
     return bestMatch;
-  }),
+  }
 
-  nextTopic: computed('currentIndex', 'flatContents', function(){
+  @computed('currentIndex', 'flatContents')
+  get nextTopic() {
     return this.findNext(+1);
-  }),
+  }
 
-  prevTopic: computed('currentIndex', 'flatContents', function(){
+  @computed('currentIndex', 'flatContents')
+  get prevTopic() {
     return this.findNext(-1);
-  }),
+  }
 
   findNext(inc) {
     let currentIndex = this.currentIndex;
     if (typeof(currentIndex) === "undefined") { return; }
 
-    let contents = this.flatContents;
+    let contents = FLATTENED_TABLE_OF_CONTENTS;
     for (let i = currentIndex + inc; i >= 0 && i < contents.length; i += inc) {
       let value = contents[i];
       if (value.route) {
         return value;
       }
     }
-  },
-});
+  }
+}

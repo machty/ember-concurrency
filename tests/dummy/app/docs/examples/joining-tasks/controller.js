@@ -1,51 +1,45 @@
 import { makeArray } from '@ember/array';
 import Controller from '@ember/controller';
-import EmberObject from '@ember/object';
 import { randomWord } from 'dummy/utils';
 
 // BEGIN-SNIPPET joining-tasks
 import { task, timeout, all, race } from 'ember-concurrency';
 const methods = { all, race };
 
-const ProgressTracker = EmberObject.extend({
-  id: null,
-  percent: 0,
-  word: null,
-});
+export default class JoiningTasksController extends Controller {
+  childTasks = null;
+  colors = [ '#ff8888', '#88ff88', '#8888ff' ];
+  status = "Waiting...";
 
-export default Controller.extend({
-  status: "Waiting...",
-  trackers: null,
-
-  parent: task(function * (methodName) {
+  @task({ restartable: true })
+  *parent(methodName) {
     let allOrRace = methods[methodName];
-    let trackers = [], childTasks = [];
+    let childTasks = [];
 
     for (let id = 0; id < 5; ++id) {
-      let tracker = ProgressTracker.create({ id });
-      trackers.push(tracker);
-      childTasks.push(this.child.perform(tracker));
+      childTasks.push(this.child.perform(id));
     }
 
-    this.set('trackers', trackers);
+    this.set('childTasks', childTasks);
     this.set('status', "Waiting for child tasks to complete...");
     let words = yield allOrRace(childTasks);
     this.set('status', `Done: ${makeArray(words).join(', ')}`);
-  }).restartable(),
+  }
 
-  child: task(function * (tracker) {
-    let percent = 0;
-    while (percent < 100) {
-      yield timeout(Math.random() * 100 + 100);
-      percent = Math.min(100, Math.floor(percent + Math.random() * 20));
-      tracker.set('percent', percent);
-    }
-    let word = randomWord();
-    tracker.set('word', word);
-    return word;
-  }).enqueue().maxConcurrency(3),
+  @task({ enqueue: true, maxConcurrency: 3 })
+  child = {
+    percent: 0,
+    id: null,
 
-  colors: [ '#ff8888', '#88ff88', '#8888ff' ],
-});
+    *perform(id) {
+      this.set('id', id);
+      while (this.percent < 100) {
+        yield timeout(Math.random() * 100 + 100);
+        let newPercent = Math.min(100, Math.floor(this.percent + Math.random() * 20));
+        this.set('percent', newPercent);
+      }
+      return randomWord();
+    },
+  };
+}
 // END-SNIPPET
-

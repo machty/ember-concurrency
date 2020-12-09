@@ -1,13 +1,13 @@
 <h3>Errors vs Cancelation</h3>
 
 <p>
-  When you <code>yield</code> a promise,
+  When you <code>yield</code> a promise or async function call,
   your task function will pause execution until one of three things happens:
 </p>
 
 <ol>
-  <li>The promise fulfills, and your task will continue executing from that point.</li>
-  <li>The promise rejects, and your task will automatically `throw` an error from that point.</li>
+  <li>The promise fulfills/async function returns, and your task will continue executing from that point.</li>
+  <li>The promise rejects/async function throws, and your task will automatically `throw` an error from that point.</li>
   <li>Something causes the task to be canceled, which has the behavior described below.</li>
 </ol>
 
@@ -61,11 +61,11 @@
 </p>
 
 {{! BEGIN-SNIPPET error-vs-cancelation-template }}
-<button onclick={{perform this.myTask false}} type="button">
+<button {{on "click" (perform this.myTask false)}} type="button">
   Run to Completion
 </button>
 
-<button onclick={{perform this.myTask true}} type="button">
+<button {{on "click" (perform this.myTask true)}} type="button">
   Throw an Error
 </button>
 

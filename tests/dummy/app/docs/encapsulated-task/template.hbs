@@ -1,8 +1,9 @@
 <h3>Encapsulated Tasks</h3>
 
 <p>
-  Normally, you define tasks by passing a generator function to <code>task(...)</code>.
-  Often though, you want to be able to expose additional state of the task,
+  Normally, you define tasks by decorating a generator function like
+  <code>@task *myGeneratorFn() { /* ... */ }</code>.
+  Occasionally, you may want to be able to expose additional state of the task,
   e.g. you might want to show the percentage progress of an <code>uploadFile</code> task,
   but unless you're using the techniques described below there's no good
   place to expose that data to the template other than to set some properties
@@ -22,11 +23,10 @@
 </p>
 
 <p>
-  To create an encapsulated task, pass an object (instead of a generator function)
-  to the <code>task()</code>
-  constructor that defines a <code>perform</code> generator function. The
-  object can also contain initial values for task state, as well as computed
-  properties and anything else supported by classic Ember objects.
+  To create an encapsulated task, decorate an object (instead of a generator function)
+  with the <code>@task</code> decorator that defines a <code>perform</code>
+  generator function. The object can also contain initial values for task state,
+  as well as computed properties and anything else supported by classic Ember objects.
 </p>
 
 <CodeSnippet @name="encapsulated-task.js" />
@@ -42,19 +42,19 @@
 
 {{! BEGIN-SNIPPET encapsulated-task-template }}
 <p>
-  <button onclick={{perform this.uploadFile this.makeRandomUrl}} type="button">
+  <button {{on "click" (perform this.uploadFile this.makeRandomUrl)}} type="button">
     Start Upload
   </button>
 </p>
 
 <h5>Queued Uploads: {{this.uploadFile.numQueued}}</h5>
 
-{{#with this.uploadFile.last as |encapsTask|}}
+{{#let this.uploadFile.last as |encapsTask|}}
   <h5>
     Uploading to {{encapsTask.url}} ({{encapsTask.stateText}}):
     {{encapsTask.progress}}%
   </h5>
-{{/with}}
+{{/let}}
 
 {{#if this.uploadFile.lastSuccessful}}
   <h5 style="color: green;" {{! template-lint-disable no-inline-styles }}>

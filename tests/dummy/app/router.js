@@ -41,10 +41,6 @@ Router.map(function() {
         this.route('detail', { path: ':id' });
       });
       this.route('joining-tasks');
-      this.route('joining-tasks-2');
-      this.route('decorating-tasks');
-      this.route('task-groups');
-      this.route('encapsulated-task-fun');
     });
     this.route('task-cancelation-help');
     this.route('404', { path: '*path' });

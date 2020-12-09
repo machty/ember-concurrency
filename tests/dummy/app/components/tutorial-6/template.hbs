@@ -2,7 +2,7 @@
   {{! template-lint-disable block-indentation }}
 
   {{! BEGIN-SNIPPET better-syntax-7 }}
-  <button onclick={{perform this.findStores}} type="button"> {{! ++ }}
+  <button {{on "click" (perform this.findStores)}} type="button"> {{! ++ }}
     Find Nearby Stores
   </button>
 

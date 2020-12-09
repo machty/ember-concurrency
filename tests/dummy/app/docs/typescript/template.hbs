@@ -9,53 +9,25 @@
   completion.
 </p>
 
-<p>
-  Note that old versions of
-  <a href="https://github.com/machty/ember-concurrency-decorators/">
-    ember-concurrency-decorators
-  </a> came with an incomplete set of type definitions for
-  ember-concurrency. If you are using that addon, be sure to
-  upgrade to version 2.0 or above to avoid conflicts.
-</p>
-
-<h4>Classic Ember</h4>
-
-<CodeSnippet @name="ts/classic-vs-octane/classic.ts" />
-
-<p>
-  In Classic Ember, everything work as expected. Note that while
-  from Ember's perspective <code>this.get()</code> is no longer
-  required, it is needed here to get the correct type.
-</p>
-
-<p>
-  From what TypeScript can see, <code>this.myTask</code> is a
-  <code>TaskProperty</code> but <code>this.get('myTask')</code>
-  "unwraps" the task property into a <code>Task</code>, allowing
-  <code>perform()</code> to be called on it, among other things.
-  This is a limitation of <code>@types/ember</code> and is true
-  for other computed properties as well.
-</p>
-
 <h4>Octane</h4>
 
 <CodeSnippet @name="ts/classic-vs-octane/octane.ts" />
 
 <p>
-  Since we are using native classes in Octane, TypeScript have
+  Since we are using native classes in Octane, TypeScript has
   an easier time understanding and following our code. Normally,
   this is a good thing, but in the case of ember-concurrency, it
   ends up getting a bit in the way.
 </p>
 
 <p>
-  ember-concurrency's API was designed with Class Ember in mind,
+  ember-concurrency's API was designed with Classic Ember in mind,
   where it could decorate a property or method and replace it
   with a different type in the <code>.extend()</code> hook.
 </p>
 
 <p>
-  This is not allowed using TypeScript's decorators. Since
+  This is not allowed using TypeScript's decorators implementation. Since
   <code>myTask</code> is defined using as the (generator) method
   syntax, and since methods do not have a <code>.perform()</code>
   method on them, calling <code>this.myTask.perform()</code> will
@@ -87,6 +59,25 @@
 
 <CodeSnippet @name="ts/classic-vs-octane/octane-encapsulated.ts" />
 
+<h4>Classic Ember</h4>
+
+<CodeSnippet @name="ts/classic-vs-octane/classic.ts" />
+
+<p>
+  In Classic Ember, everything works as expected. Note that while
+  from Ember's perspective <code>this.get()</code> is no longer
+  required, it is needed here to get the correct type.
+</p>
+
+<p>
+  From what TypeScript can see, <code>this.myTask</code> is a
+  <code>TaskProperty</code> but <code>this.get('myTask')</code>
+  "unwraps" the task property into a <code>Task</code>, allowing
+  <code>perform()</code> to be called on it, among other things.
+  This is a limitation of <code>@types/ember</code> and is true
+  for other computed properties as well.
+</p>
+
 <h4>Limitations of Generator Functions in TypeScript</h4>
 
 <p>
@@ -99,7 +90,7 @@
 
 <p>
   Due to limitations in TypeScript's understanding of generator
-  functions, it is not possible to express the realtionship between
+  functions, it is not possible to express the relationship between
   the left and right hand side of a <code>yield</code> expression.
   As a result, the resulting type of a yield expression inside a
   task function must be annotated manually:
@@ -124,7 +115,7 @@
 <p>
   This <code>Resolved</code> utility type will unwrap a yieldable
   value into its resolved type. This is much safer, as it retains
-  the types realtionship between the left and right hand side of
+  the types relationship between the left and right hand side of
   the <code>yield</code> expressions.
 </p>
 
@@ -139,7 +130,7 @@
 
 <p>
   <code>await</code> expressions in <code>async</code> methods
-  already has the <code>Resolved</code> semantics we are after,
+  already have the <code>Resolved</code> semantics we are after,
   natively built into the TypeScript compiler. Using this syntax,
   we automatically get the correct types out-of-the-box.
 </p>

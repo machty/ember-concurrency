@@ -1,37 +1,37 @@
-import { defer } from 'rsvp';
 import Controller from '@ember/controller';
-import { task } from 'ember-concurrency';
+import { action } from '@ember/object';
+import { forever, task } from 'ember-concurrency';
 
-export default Controller.extend({
-  status: null,
-  myTask: task(function * (...args) {
+export default class HelpersTestController extends Controller {
+  maybeNullTask = null;
+  status = null;
+
+  @task *myTask(...args) {
     try {
       this.set('status', args.join('-'));
-      yield defer().promise;
+      yield forever;
     } finally {
       this.set('status', 'canceled');
     }
-  }),
+  }
 
-  valueTask: task(function * (value) {
+  @task *valueTask(value) {
     let expected = "Set value option";
     if (value !== expected) {
       throw new Error(`value !== ${expected}`);
     }
-  }),
-
-  returnValue: task(function * () {
-    return 10;
-  }),
-
-  maybeNullTask: null,
-  someTask: task(function * () {
-    this.set('status', 'someTask');
-  }),
-
-  actions: {
-    setupTask() {
-      this.set('maybeNullTask', this.someTask);
-    }
   }
-});
+
+  @task *returnValue() {
+    return 10;
+  }
+
+  @task *someTask() {
+    this.set('status', 'someTask');
+  }
+
+  @action
+  setupTask() {
+    this.set('maybeNullTask', this.someTask);
+  }
+}

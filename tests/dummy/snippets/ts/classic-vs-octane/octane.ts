@@ -1,6 +1,5 @@
 import Component from '@ember/component';
-import { TaskGenerator, timeout } from 'ember-concurrency';
-import { task } from 'ember-concurrency-decorators';
+import { TaskGenerator, task, timeout } from 'ember-concurrency';
 import { taskFor } from 'ember-concurrency-ts';
 export default class extends Component {
   @task *myTask(ms: number): TaskGenerator<string> {

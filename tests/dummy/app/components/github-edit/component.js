@@ -7,9 +7,9 @@ export default Component.extend({
   classNames: 'github-edit',
   attributeBindings: ['href', 'title'],
 
-  routing: service('-routing'),
-  href: computed('routing.currentPath', function() {
-    let path = this.get('routing.currentPath');
+  router: service(),
+  href: computed('router.currentRouteName', function() {
+    let path = this.get('router.currentRouteName');
     if (!path) {
       // `routing` doesn't exist for old ember versions via ember-try
       return;
@@ -19,4 +19,3 @@ export default Component.extend({
   }),
   title: "Edit on Github",
 });
-

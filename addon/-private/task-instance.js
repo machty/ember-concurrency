@@ -114,7 +114,7 @@ export class TaskInstance extends BaseTaskInstance {
    * - `"running"`: task instance is currently running (returns true even if
    *     is paused on a yielded promise)
    * - `"waiting"`: task instance hasn't begun running yet (usually
-   *     because the task is using the {@linkcode TaskProperty#enqueue .enqueue()}
+   *     because the task is using the {@linkcode TaskProperty#enqueue enqueue}
    *     task modifier)
    *
    * The animated timeline examples on the [Task Concurrency](/#/docs/task-concurrency)
@@ -130,7 +130,7 @@ export class TaskInstance extends BaseTaskInstance {
    * True if the TaskInstance was canceled before it could
    * ever start running. For example, calling
    * {@linkcode Task#perform .perform()} twice on a
-   * task with the {@linkcode TaskProperty#drop .drop()} modifier applied
+   * task with the {@linkcode TaskProperty#drop drop} modifier applied
    * will result in the second task instance being dropped.
    *
    * @name isDropped

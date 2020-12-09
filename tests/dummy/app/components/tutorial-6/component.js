@@ -3,18 +3,16 @@ import TutorialComponent from '../shared-tutorial/component';
 // BEGIN-SNIPPET better-syntax-7
 import { task } from 'ember-concurrency';
 
-export default TutorialComponent.extend({
-  result: null,
+export default class Tutorial6 extends TutorialComponent {
+  result = null;
 
-  findStores: task(function * () {
+  @task *findStores() {
     let geolocation = this.geolocation;
     let store = this.store;
 
     let coords = yield geolocation.getCoords();
     let result = yield store.getNearbyStores(coords);
     this.set('result', result);
-  }),
-});
+  }
+}
 // END-SNIPPET
-
-

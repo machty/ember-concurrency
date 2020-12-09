@@ -3,7 +3,7 @@
 <p>
   Limiting the number of simultaneous AJAX requests
   (or the number of any kind of global, shared resource)
-  can be accomplished using the <code>.maxConcurrency()</code> task modifier.
+  can be accomplished using the <code>maxConcurrency</code> task modifier.
 </p>
 
 <p>
@@ -11,7 +11,7 @@
   concurrently running tasks that each, within an infinite loop,
   make (fake) AJAX requests. We've wrapped the code that actually
   performs the (fake) AJAX request in a task, and we've annotated
-  that task with <code>.maxConcurrency(3)</code> to ensure that
+  that task with <code>@task({ maxConcurrency: 3 })</code> to ensure that
   no more than 3 AJAX requests can be run at a time (so that
   we don't overload the browser).
 </p>
@@ -21,4 +21,3 @@
 <AjaxThrottlingExample />
 
 <CodeSnippet @name="ajax-throttling.js" />
-
