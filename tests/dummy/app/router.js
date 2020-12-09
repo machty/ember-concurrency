@@ -18,8 +18,10 @@ Router.map(function() {
     });
 
     this.route('task-function-syntax');
+    this.route('task-decorators');
     this.route('task-concurrency');
     this.route('task-concurrency-advanced');
+
     this.route('cancelation');
     this.route('error-vs-cancelation');
     this.route('child-tasks');

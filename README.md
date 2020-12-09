@@ -19,11 +19,6 @@ found [here](http://ember-concurrency.com).
 
     ember install ember-concurrency
 
-If you're using a version of `ember-concurrency` older than 0.7.5,
-you'll also need to run:
-
-    ember install ember-maybe-import-regenerator
-
 ## Documentation
 
 The [ember-concurrency documentation site](http://ember-concurrency.com) is an ember-cli app
@@ -42,11 +37,11 @@ approach).
 
 See the [Contributing](CONTRIBUTING.md) guide for details.
 
-[build-status-img]: https://travis-ci.org/machty/ember-concurrency.svg?branch=master
-[build-status-link]: https://travis-ci.org/machty/ember-concurrency
+[build-status-img]: https://travis-ci.com/machty/ember-concurrency.svg?branch=master
+[build-status-link]: https://travis-ci.com/machty/ember-concurrency
 [npm-badge-img]: https://badge.fury.io/js/ember-concurrency.svg
 [npm-badge-link]: http://badge.fury.io/js/ember-concurrency
 [ember-observer-badge]: http://emberobserver.com/badges/ember-concurrency.svg
 [ember-observer-url]: http://emberobserver.com/addons/ember-concurrency
-[ember-version]: https://img.shields.io/badge/Ember-2.4%2B-brightgreen.svg
+[ember-version]: https://img.shields.io/badge/Ember-3.8+-brightgreen.svg
 [twiddle-starter]: https://ember-twiddle.com/b2b0c016f4df24261381487b60c707f3?numColumns=2&openFiles=templates.application.hbs%2Ctemplates.application.hbs
