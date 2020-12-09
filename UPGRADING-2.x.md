@@ -10,6 +10,32 @@ semantic changes to the operation of the addon.
 
 ## Changes
 
+### Decorators from `ember-concurrency-decorators` are built-in
+
+This provides built-in support for the "nice" decorator syntax based on the
+decorators implemented at ember-concurrency-decorators. Many thanks to
+@buschtoens for years of stewardship of that addon, and important contributions
+from @chancancode for TypeScript support, and others in the community to get it
+to a place where it's seen wide adoption in the world of Ember Octane,
+TypeScript, and native ES classes.
+
+The "ugly" decorators (e.g. (@(task(function* () { ... }).drop()) will remain
+available by virtue of coming "for free" with the computed-based TaskProperty
+implementation (necessary to support the classic EmberObject model for task
+hosts), but are deprecated to be removed in favor of these "nice" decorators
+at some point in the future.
+
+To migrate, simply replace `ember-concurrency-decorators` imports with `ember-concurrency`.
+
+```diff
+- import { restartableTask, task } from 'ember-concurrency-decorators';
++ import { restartableTask, task } from 'ember-concurrency';
+```
+
+Use of the computed property-based `task(function* () {})` for Ember Classic
+objects remains available and unchanged, however the docs will now use native
+classes and decorators for most examples.
+
 ### Task, TaskGroup, and TaskInstance no longer extend `EmberObject`
 
 This mostly impacts the TypeScript type definitions, and use with older styles of
@@ -113,7 +139,9 @@ Modern evergreen browsers are supported, with Firefox and Chrome being tested in
 CI. Other browsers, such as Safari, Edge, and IE 11 should work fine as well,
 though the latter may require transpilation or polyfills via your
 `config/targets.js` or babel configuration. In particular, native ES classes,
-`WeakMap`, and `Proxy` are used.
+`WeakMap`, and `Proxy` are used. However, `Proxy` may not be polyfillable, but is
+only required for encapsulated tasks. If you do not use this feature, you can
+likely still use ember-concurrency with older browsers.
 
 ### Notes to addon maintainers
 
@@ -126,6 +154,11 @@ might take some time to upgrade to support the latest.
 ember-concurrency 1.x and 2.x are more-or-less the same API, while being _very_
 different internally.
 
+If you use decorators via `ember-concurrency-decorators` and wish to support
+both ember-concurrency 1.x and 2.x, you must keep using
+`ember-concurrency-decorators` and not use the "nice" decorators built-in to
+`ember-concurrency` 2.x, as they will not work under 1.x
+
 #### package.json
 
 Please accept versions liberally if you can, or use an appropriate version
@@ -136,7 +169,7 @@ specifier for your requirements:
     // ...
     "dependencies": { // Or use `peerDependencies` if appropriate
       // ...
-      "ember-concurrency": ">=1.0.0 <3", // or "^1.0.0 || ^2.0.0-beta.1"
+      "ember-concurrency": "^1.0.0 || ^2.0.0-beta.1",
       // ...
     },
     // ...
