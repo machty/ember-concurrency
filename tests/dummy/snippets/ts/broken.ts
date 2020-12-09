@@ -7,6 +7,7 @@ export default class Foo {
   }
 
   executeTheTask() {
+    // @ts-ignore
     this.doStuff.perform();
   }
 }
