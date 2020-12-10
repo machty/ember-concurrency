@@ -124,3 +124,29 @@
   To enable lifecycle logging on ALL ember-concurrency tasks, you can enable the <code>DEBUG_TASKS</code>
   flag on <code>EmberENV</code> in your project's <code>config/environment.js</code> file.
 </p>
+
+<h4>Strange errors when using as documented</h4>
+
+<p>
+  Check the <LinkTo @route="docs.installation">requirements</LinkTo> to see what
+  you need to install.
+</p>
+
+<p>
+  If you are sure that you fulfilled the requirements correctly, but are still
+  experiencing weird errors, install
+  <a href="https://github.com/salsify/ember-cli-dependency-lint" rel="noreferrer noopener"><code>ember-cli-dependency-lint</code></a>
+  to ensure that you are not accidentally including outdated versions of
+  <code>ember-concurrency</code> as a transitive dependency. You may need to file
+  an issue with the relevant dependency to update their ember-concurrency dependency
+  range. Alternatively, you might resort to using something like Yarn resolutions
+  to enforce your application's version of ember-concurrency, but this depends on
+  how its being used by the dependency.
+</p>
+
+<p>
+  If it's still not working after that, please reach out on the
+  <code>#e-concurrency</code> channel on the
+  <a href="https://discord.gg/zT3asNS" rel="noreferrer noopener">Ember Community Discord server</a> or file
+  a <a href="https://github.com/machty/ember-concurrency/issues/new" rel="noreferrer noopener">new issue</a>.
+</p>

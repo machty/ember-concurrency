@@ -12,7 +12,12 @@ export const TABLE_OF_CONTENTS = [
   { route: "docs.tutorial.refactor", title: "Refactoring With Tasks" },
 
   { section: "Reference" },
-  { route: "docs.task-function-syntax", title: "Task Function Syntax" },
+  { route: "docs.task-function-syntax", title: "Task Function Syntax",
+    children: [
+      { route: "docs.task-decorators", title: "Decorators" },
+      { route: "docs.typescript", title: "TypeScript" },
+    ]
+  },
   { route: "docs.task-concurrency", title: "Managing Task Concurrency",
     children: [
       { route: "docs.task-concurrency-advanced", title: "Advanced" },
@@ -27,7 +32,6 @@ export const TABLE_OF_CONTENTS = [
   { route: "docs.events", title: "Awaiting Events / Conditions" },
   { route: "docs.task-lifecycle-events", title: "Lifecycle Events" },
   { route: "docs.testing-debugging", title: "Testing & Debugging" },
-  { route: "docs.typescript", title: "TypeScript" },
   { route: "docs.faq", title: "FAQ & Fact Sheet" },
 
   { section: "Examples" },
