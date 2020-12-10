@@ -131,6 +131,31 @@ After:
 <button onClick={{fn (perform someTask)}}>My button</button>
 ```
 
+## Known Issues
+
+### Increase in bundle size
+
+It has been found that ember-concurrency 2.x is a bit larger than 1.3.x in terms of
+bundled size at build time. There are a number of reasons for this, but we'll be
+looking at reducing that over time. For an idea on how much of an increase, here's
+some results from ember-cli-bundle-analyzer:
+
+**ember-concurrency 1.3.0:**
+  * Raw, uncompressed, unminified: 99.46 kB
+  * Gzip, minified: 8.5 kB
+
+**ember-concurrency 1.3.0 + ember-concurrency-decorators 2.0.1:**
+  * Raw, uncompressed, unminified: 110.03 kB
+  * Gzip, minified: 9.17 kB
+
+**ember-concurrency 2.0.0 dev (around rc.1):**
+  * Raw, uncompressed, unminified: 124.46 kB
+  * Gzip, minified: 13.71 kB
+
+Given the above, you might expect around a 4kB of increase (gzip) from 2.x (not accounting
+for app code, which may increase further for decorator usage via Babel if not currently
+using decorators.)
+
 ## Notices
 
 ### Browser Compatibility
