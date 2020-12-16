@@ -182,7 +182,8 @@ different internally.
 If you use decorators via `ember-concurrency-decorators` and wish to support
 both ember-concurrency 1.x and 2.x, you must keep using
 `ember-concurrency-decorators` and not use the "nice" decorators built-in to
-`ember-concurrency` 2.x, as they will not work under 1.x
+`ember-concurrency` 2.x, as they will not work under 1.x. However, please make
+sure you use `ember-concurrency-decorators@^2.0.3` or higher.
 
 #### package.json
 
@@ -194,7 +195,7 @@ specifier for your requirements:
     // ...
     "dependencies": { // Or use `peerDependencies` if appropriate
       // ...
-      "ember-concurrency": "^1.0.0 || ^2.0.0-beta.1",
+      "ember-concurrency": "^1.0.0 || ^2.0.0-rc.1",
       // ...
     },
     // ...
@@ -229,7 +230,7 @@ to protect against possible regressions.
         name: 'ember-concurrency-2.x',
         npm: {
           dependencies: {
-            'ember-concurrency': '^2.0.0-beta.1'
+            'ember-concurrency': '^2.0.0-rc.1'
           }
         }
       },
