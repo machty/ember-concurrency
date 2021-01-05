@@ -238,7 +238,7 @@ to protect against possible regressions.
 ```
 
 ```yml
-# .travis.yml
+# .travis.yml or equivalent for GitHub Actions, CircleCI, etc.
 jobs:
   include:
 
