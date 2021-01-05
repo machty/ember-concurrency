@@ -1,26 +1,33 @@
-import UnboundedSchedulerPolicy from './external/scheduler/policies/unbounded-policy';
-import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
-import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
-import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy';
-import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy';
+import UnboundedSchedulerPolicy from "./external/scheduler/policies/unbounded-policy";
+import EnqueueSchedulerPolicy from "./external/scheduler/policies/enqueued-policy";
+import DropSchedulerPolicy from "./external/scheduler/policies/drop-policy";
+import KeepLatestSchedulerPolicy from "./external/scheduler/policies/keep-latest-policy";
+import RestartableSchedulerPolicy from "./external/scheduler/policies/restartable-policy";
 
-import { assert } from '@ember/debug';
-import { get } from '@ember/object';
-import { addListener } from '@ember/object/events';
-import { addObserver } from '@ember/object/observers';
-import { scheduleOnce } from '@ember/runloop';
-import { Task, EncapsulatedTask } from './task';
-import { TaskGroup } from './task-group';
-import EmberScheduler from './scheduler/ember-scheduler';
+import { assert } from "@ember/debug";
+import { get } from "@ember/object";
+import { addListener } from "@ember/object/events";
+import { addObserver } from "@ember/object/observers";
+import { scheduleOnce } from "@ember/runloop";
+import { Task, EncapsulatedTask } from "./task";
+import { TaskProperty } from "./task-properties";
+import { TaskGroup } from "./task-group";
+import EmberScheduler from "./scheduler/ember-scheduler";
 
 let handlerCounter = 0;
 
 function assertModifiersNotMixedWithGroup(obj) {
-  assert(`ember-concurrency does not currently support using both 'group' with other task modifiers (e.g. 'drop', 'enqueue', 'restartable')`, !obj._hasUsedModifier || !obj._taskGroupPath);
+  assert(
+    `ember-concurrency does not currently support using both 'group' with other task modifiers (e.g. 'drop', 'enqueue', 'restartable')`,
+    !obj._hasUsedModifier || !obj._taskGroupPath
+  );
 }
 
 function assertUnsetBufferPolicy(obj) {
-  assert(`Cannot set multiple buffer policies on a task or task group. ${obj._schedulerPolicyClass} has already been set for task or task group '${obj.name}'`, !obj._hasSetBufferPolicy);
+  assert(
+    `Cannot set multiple buffer policies on a task or task group. ${obj._schedulerPolicyClass} has already been set for task or task group '${obj.name}'`,
+    !obj._hasSetBufferPolicy
+  );
 }
 
 function registerOnPrototype(
@@ -43,16 +50,38 @@ function registerOnPrototype(
 }
 
 function makeTaskCallback(taskName, method, once) {
-  return function() {
+  return function () {
     let task = get(this, taskName);
 
     if (once) {
-      scheduleOnce('actions', task, method, ...arguments);
+      scheduleOnce("actions", task, method, ...arguments);
     } else {
       task[method].apply(task, arguments);
     }
   };
 }
+
+const ensureArray = (possibleArr) =>
+  Array.isArray(possibleArr) ? possibleArr : [possibleArr];
+
+const optionRegistry = {
+  cancelOn: (factory, eventNames) =>
+    factory.addCancelEvents(...ensureArray(eventNames)),
+  enqueue: (factory) => factory.setBufferPolicy(EnqueueSchedulerPolicy),
+  evented: (factory) => factory.setEvented(true),
+  debug: (factory) => factory.setDebug(true),
+  drop: (factory) => factory.setBufferPolicy(DropSchedulerPolicy),
+  group: (factory, groupName) => factory.setGroup(groupName),
+  keepLatest: (factory) => factory.setBufferPolicy(KeepLatestSchedulerPolicy),
+  maxConcurrency: (factory, maxConcurrency) =>
+    factory.setMaxConcurrency(maxConcurrency),
+  observes: (factory, propertyPaths) =>
+    factory.addObserverKeys(...ensureArray(propertyPaths)),
+  on: (factory, eventNames) =>
+    factory.addPerformEvents(...ensureArray(eventNames)),
+  onState: (factory, onStateCallback) => factory.setOnState(onStateCallback),
+  restartable: (factory) => factory.setBufferPolicy(RestartableSchedulerPolicy),
+};
 
 export class TaskFactory {
   _cancelEventNames = [];
@@ -75,18 +104,25 @@ export class TaskFactory {
   }
 
   createTask(context) {
-    assert(`Cannot create task if a task definition is not provided as generator function or encapsulated task.`, this.taskDefinition);
+    assert(
+      `Cannot create task if a task definition is not provided as generator function or encapsulated task.`,
+      this.taskDefinition
+    );
     let options = this._sharedTaskProperties(context);
 
-    if (typeof this.taskDefinition === 'object') {
+    if (typeof this.taskDefinition === "object") {
       return new EncapsulatedTask(
         Object.assign({ taskObj: this.taskDefinition }, options)
       );
     } else {
       return new Task(
-        Object.assign({
-          generatorFactory: (args) => this.taskDefinition.apply(context, args),
-        }, options)
+        Object.assign(
+          {
+            generatorFactory: (args) =>
+              this.taskDefinition.apply(context, args),
+          },
+          options
+        )
       );
     }
   }
@@ -127,7 +163,10 @@ export class TaskFactory {
   }
 
   setMaxConcurrency(maxConcurrency) {
-    assert(`maxConcurrency must be an integer (Task '${this.name}')`, Number.isInteger(maxConcurrency));
+    assert(
+      `maxConcurrency must be an integer (Task '${this.name}')`,
+      Number.isInteger(maxConcurrency)
+    );
     this._hasUsedModifier = true;
     this._maxConcurrency = maxConcurrency;
     assertModifiersNotMixedWithGroup(this);
@@ -153,71 +192,26 @@ export class TaskFactory {
   setTaskDefinition(taskDefinition) {
     assert(
       `Task definition must be a generator function or encapsulated task.`,
-      typeof taskDefinition === "function" || (
-        typeof taskDefinition === "object" &&
-        typeof taskDefinition.perform === "function"
-      )
+      typeof taskDefinition === "function" ||
+        (typeof taskDefinition === "object" &&
+          typeof taskDefinition.perform === "function")
     );
     this.taskDefinition = taskDefinition;
     return this;
   }
 
   _processOptions(options) {
-    // TODO: Turn this into some kind of pipeline...
-
-    if (options.restartable) {
-      this.setBufferPolicy(RestartableSchedulerPolicy);
-    }
-
-    if (options.enqueue) {
-      this.setBufferPolicy(EnqueueSchedulerPolicy);
-    }
-
-    if (options.drop) {
-      this.setBufferPolicy(DropSchedulerPolicy);
-    }
-
-    if (options.keepLatest) {
-      this.setBufferPolicy(KeepLatestSchedulerPolicy);
-    }
-
-    if (options.maxConcurrency) {
-      this.setMaxConcurrency(options.maxConcurrency);
-    }
-
-    if (options.group) {
-      this.setGroup(options.group);
-    }
-
-    if (options.evented) {
-      this.setEvented(true);
-    }
-
-    if (options.debug) {
-      this.setDebug(true);
-    }
-
-    if (options.onState) {
-      this.setOnState(options.onState);
-    }
-
-    if (options.on) {
-      let onKeys = Array.isArray(options.on) ? options.on : [options.on];
-      this.addPerformEvents(...onKeys);
-    }
-
-    if (options.cancelOn) {
-      let cancelOnKeys = Array.isArray(options.cancelOn)
-        ? options.cancelOn
-        : [options.cancelOn];
-      this.addCancelEvents(...cancelOnKeys);
-    }
-
-    if (options.observes) {
-      let observesKeys = Array.isArray(options.observes)
-        ? options.observes
-        : [options.observes];
-      this.addObserverKeys(...observesKeys);
+    for (let key of Object.keys(options)) {
+      let value = options[key];
+      if (optionRegistry[key]) {
+        optionRegistry[key].call(null, this, value);
+      } else if (typeof TaskProperty.prototype[key] === "function") {
+        // Shim for compatibility with user-defined TaskProperty prototype
+        // extensions. To be removed when replaced with proper public API.
+        TaskProperty.prototype[key].call(this, value);
+      } else {
+        assert(`Task option '${key}' is not recognized as a supported option.`, false);
+      }
     }
   }
 
@@ -229,7 +223,7 @@ export class TaskFactory {
       proto,
       this._eventNames,
       this.name,
-      'perform',
+      "perform",
       false
     );
     registerOnPrototype(
@@ -237,7 +231,7 @@ export class TaskFactory {
       proto,
       this._cancelEventNames,
       this.name,
-      'cancelAll',
+      "cancelAll",
       false
     );
     registerOnPrototype(
@@ -245,7 +239,7 @@ export class TaskFactory {
       proto,
       this._observes,
       this.name,
-      'perform',
+      "perform",
       true
     );
   }
@@ -262,7 +256,9 @@ export class TaskFactory {
       );
       scheduler = group.scheduler;
     } else {
-      let schedulerPolicy = new this._schedulerPolicyClass(this._maxConcurrency);
+      let schedulerPolicy = new this._schedulerPolicyClass(
+        this._maxConcurrency
+      );
       scheduler = new EmberScheduler(schedulerPolicy, onStateCallback);
     }
 
@@ -276,11 +272,24 @@ export class TaskFactory {
       onStateCallback,
     };
   }
+
+  // Provided for compatibility with ember-concurrency TaskProperty extension
+  // methods
+  get taskFn() {
+    return this.taskDefinition;
+  }
+
+  set taskFn(fn) {
+    this.setTaskDefinition(fn);
+  }
 }
 
 export class TaskGroupFactory extends TaskFactory {
   createTaskGroup(context) {
-    assert(`A task definition is not expected for a task group.`, !this.taskDefinition);
+    assert(
+      `A task definition is not expected for a task group.`,
+      !this.taskDefinition
+    );
     let options = this._sharedTaskProperties(context);
 
     return new TaskGroup(options);
