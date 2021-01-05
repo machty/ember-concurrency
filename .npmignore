@@ -13,6 +13,7 @@
 /.eslintignore
 /.eslintrc.js
 /.git/
+/.github/
 /.gitignore
 /.template-lintrc.js
 /.travis.yml

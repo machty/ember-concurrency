@@ -37,8 +37,8 @@ approach).
 
 See the [Contributing](CONTRIBUTING.md) guide for details.
 
-[build-status-img]: https://travis-ci.com/machty/ember-concurrency.svg?branch=master
-[build-status-link]: https://travis-ci.com/machty/ember-concurrency
+[build-status-img]: https://github.com/machty/ember-concurrency/workflows/CI/badge.svg
+[build-status-link]: https://github.com/machty/ember-concurrency
 [npm-badge-img]: https://badge.fury.io/js/ember-concurrency.svg
 [npm-badge-link]: http://badge.fury.io/js/ember-concurrency
 [ember-observer-badge]: http://emberobserver.com/badges/ember-concurrency.svg
