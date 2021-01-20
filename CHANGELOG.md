@@ -1,5 +1,13 @@
 # Changelog
 
+### 2.0.0-rc.2
+  - Make `Task#cancelAll` and `TaskInstance#cancel` awaitable (#396). See
+    [topic in UPGRADING-2.x.md](https://github.com/machty/ember-concurrency/blob/v2/UPGRADING-2.x.md#taskcancelall-and-taskinstancecancel-returns-a-promise) for more info.
+  - Fix `TaskProperty` extension methods not working with built-in decorators
+    (e.g. `ember-concurrency-retryable`, `ember-concurrency-test-waiters`, etc.)
+  - [dev] Add test for interop w/ ember-concurrency-decorators
+  - [dev] Migrate CI to GitHub Actions (#393)
+
 ### 2.0.0-rc.1
   - Implement decorators from `ember-concurrency-decorators`. The "nice" decorators
     from `ember-concurrency-decorators` are now built-in to ember-concurrency, without
