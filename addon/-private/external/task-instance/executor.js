@@ -58,7 +58,8 @@ export class TaskInstanceExecutor {
 
   cancel(cancelRequest) {
     if (!this.requestCancel(cancelRequest)) {
-      return;
+      cancelRequest.finalize();
+      return cancelRequest.promise;
     }
 
     if (this.state.hasStarted) {
@@ -66,6 +67,8 @@ export class TaskInstanceExecutor {
     } else {
       this.finalizeWithCancel();
     }
+
+    return this.cancelRequest.promise;
   }
 
   setState(state) {
@@ -399,6 +402,8 @@ export class TaskInstanceExecutor {
       error,
       cancelReason
     });
+
+    this.cancelRequest.finalize();
   }
 
   debugEnabled() {

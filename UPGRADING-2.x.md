@@ -71,6 +71,40 @@ This is probably the most **breaking** change. It may be more apparent with
 `ember-mocha`, as it does not have the same ability as `ember-qunit` with
 regard to detecting async leakage in tests.
 
+### `Task#cancelAll` and `TaskInstance#cancel` returns a Promise
+
+As cancelation is asynchronous and reliably scheduled now, the behavior has
+changed slightly. This may affect use-cases where something executed immediately
+after cancelation depends on the cancelation of the task (e.g. calling `perform`
+again after calling `cancelAll` on a task w/ `maxConcurrency` of `1`). However,
+consuming applications can now reliably schedule subsequent operations that may
+depend on cancelation to finish by awaiting the value of the promise returned by
+the cancelation methods on `Task` and `TaskInstance`, `cancelAll` and `cancel`,
+respectively.
+
+For example,
+
+```javascript
+@dropTask *myTask() {
+  while(1) {
+   console.log("hello!");
+   yield timeout(1000);
+  }
+}
+
+@task *restartMyTask() {
+  // Note the `yield`. This could also be an `await` or `then`, if done
+  // outside of tasks
+  yield this.myTask.cancelAll();
+
+  // Without being able to `yield` on `cancelAll` above, the cancelation
+  // wouldn't be guaranteed to have taken place before this is called,
+  // resulting in `perform` no-oping and dropping the task and myTask would
+  // not restart
+  this.myTask.perform();
+}
+```
+
 ## Deprecations
 
 ### Sub-module imports
