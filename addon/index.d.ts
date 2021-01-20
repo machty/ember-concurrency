@@ -117,7 +117,7 @@ interface AbstractTask<Args extends any[], T extends TaskInstance<any>> {
    *   (`last*` and `performCount` properties will be set to initial
    *   values). Defaults to false.
    */
-  cancelAll(options?: { reason?: string, resetState?: boolean }): void;
+  cancelAll(options?: { reason?: string, resetState?: boolean }): Promise<void>;
 
   /**
    * Creates a new {@linkcode TaskInstance} and attempts to run it right away.
@@ -263,7 +263,7 @@ export interface TaskGroup<T> {
    *   (`last*` and `performCount` properties will be set to initial
    *   values). Defaults to false.
    */
-  cancelAll(options?: { reason?: string, resetState?: boolean }): void;
+  cancelAll(options?: { reason?: string, resetState?: boolean }): Promise<void>;
 }
 
 /**
@@ -355,7 +355,7 @@ export interface TaskInstance<T> extends Promise<T> {
    *
    * @param cancelReason Defaults to `".cancel() was explicitly called"`.
    */
-  cancel(cancelReason?: string): void;
+  cancel(cancelReason?: string): Promise<void>;
 
   /**
    * Returns a promise that resolves with the value returned

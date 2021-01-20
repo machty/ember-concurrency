@@ -121,7 +121,7 @@ module('Unit: task', function(hooks) {
     assert.ok(!obj.get('doStuff.isRunning'));
   });
 
-  test("task.cancelAll cancels all running task instances", function(assert) {
+  test("task.cancelAll cancels all running task instances", async function(assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend(Evented, {
@@ -131,19 +131,16 @@ module('Unit: task', function(hooks) {
       }),
     });
 
-    let instances;
-    run(() => {
-      let obj = Obj.create();
-      let task = obj.get('doStuff');
-      instances = A([ task.perform(), task.perform(), task.perform() ]);
-      task.cancelAll();
-    });
+    let obj = Obj.create();
+    let taskObj = obj.get('doStuff');
+    let instances = A([ taskObj.perform(), taskObj.perform(), taskObj.perform() ]);
+    await taskObj.cancelAll();
 
     assert.deepEqual(instances.mapBy('isCanceled'), [true, true, true]);
     assert.equal(instances[0].cancelReason, "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help");
   });
 
-  test("task.cancelAll normally preserves the last derived state", function(assert) {
+  test("task.cancelAll normally preserves the last derived state", async function(assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend(Evented, {
@@ -153,21 +150,19 @@ module('Unit: task', function(hooks) {
       }),
     });
 
-    let instance;
-    return run(() => {
-      let obj = Obj.create();
-      let task = obj.get('doStuff');
-      instance = task.perform();
-      return instance.then(() => {
-        assert.equal(task.lastSuccessful.value, 1);
-        instance = task.perform();
-        task.cancelAll();
-        assert.equal(task.lastSuccessful.value, 1);
-      });
-    });
+    let obj = Obj.create();
+    let taskObj = obj.get('doStuff');
+    await taskObj.perform();
+
+    assert.equal(taskObj.lastSuccessful.value, 1);
+
+    taskObj.perform();
+    await taskObj.cancelAll();
+
+    assert.equal(taskObj.lastSuccessful.value, 1);
   });
 
-  test("task.cancelAll({ resetState: true }) resets derived state", function(assert) {
+  test("task.cancelAll({ resetState: true }) resets derived state", async function(assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend(Evented, {
@@ -177,18 +172,16 @@ module('Unit: task', function(hooks) {
       }),
     });
 
-    let instance;
-    return run(() => {
-      let obj = Obj.create();
-      let task = obj.get('doStuff');
-      instance = task.perform();
-      return instance.then(() => {
-        assert.equal(task.lastSuccessful.value, 1);
-        instance = task.perform();
-        task.cancelAll({ resetState: true });
-        assert.ok(!task.lastSuccessful, 'expected there to be no last successful value');
-      });
-    });
+    let obj = Obj.create();
+    let taskObj = obj.get('doStuff');
+    await taskObj.perform();
+
+    assert.equal(taskObj.lastSuccessful.value, 1);
+
+    taskObj.perform();
+    await taskObj.cancelAll({ resetState: true });
+
+    assert.ok(!taskObj.lastSuccessful, 'expected there to be no last successful value');
   });
 
   test("cancelation due to task modifier supplies useful message", function(assert) {

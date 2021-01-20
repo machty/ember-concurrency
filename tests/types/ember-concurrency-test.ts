@@ -343,7 +343,7 @@ module('unit tests', () => {
     expect(t.cancelAll).toBeCallableWith({ resetState: true });
     expect(t.cancelAll).toBeCallableWith({ reason: 'why do you care', resetState: true });
     expect(t.cancelAll).parameters.toEqualTypeOf<[{ reason?: string, resetState?: boolean }?]>();
-    expect(t.cancelAll).returns.toEqualTypeOf<void>();
+    expect(t.cancelAll).returns.toEqualTypeOf<Promise<void>>();
 
     // @ts-expect-error
     t.cancelAll(null);
@@ -416,7 +416,7 @@ module('unit tests', () => {
     expect(t.cancelAll).toBeCallableWith({ resetState: true });
     expect(t.cancelAll).toBeCallableWith({ reason: 'why do you care', resetState: true });
     expect(t.cancelAll).parameters.toEqualTypeOf<[{ reason?: string, resetState?: boolean }?]>();
-    expect(t.cancelAll).returns.toEqualTypeOf<void>();
+    expect(t.cancelAll).returns.toEqualTypeOf<Promise<void>>();
 
     // @ts-expect-error
     t.cancelAll(null);
@@ -487,7 +487,7 @@ module('unit tests', () => {
     expect(tg.cancelAll).toBeCallableWith({ resetState: true });
     expect(tg.cancelAll).toBeCallableWith({ reason: 'why do you care', resetState: true });
     expect(tg.cancelAll).parameters.toEqualTypeOf<[{ reason?: string, resetState?: boolean }?]>();
-    expect(tg.cancelAll).returns.toEqualTypeOf<void>();
+    expect(tg.cancelAll).returns.toEqualTypeOf<Promise<void>>();
 
     // @ts-expect-error
     tg.cancelAll(null);
@@ -523,7 +523,7 @@ module('unit tests', () => {
     expect(t.cancel).toBeCallableWith();
     expect(t.cancel).toBeCallableWith('why do you care');
     expect(t.cancel).parameters.toEqualTypeOf<[string?]>();
-    expect(t.cancel).returns.toEqualTypeOf<void>();
+    expect(t.cancel).returns.toEqualTypeOf<Promise<void>>();
 
     expect(t).toMatchTypeOf<Promise<string>>();
     expect(t).resolves.toBeString();

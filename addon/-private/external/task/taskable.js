@@ -22,12 +22,12 @@ export class Taskable {
     }
   }
 
-  cancelAll(options) {
+  async cancelAll(options) {
     let { reason, cancelRequestKind, resetState } = options || {};
     reason = reason || ".cancelAll() was explicitly called on the Task";
 
     let cancelRequest = new CancelRequest(cancelRequestKind || CANCEL_KIND_EXPLICIT, reason);
-    this.scheduler.cancelAll(this.guid, cancelRequest);
+    await this.scheduler.cancelAll(this.guid, cancelRequest);
 
     if (resetState) {
       this._resetState();

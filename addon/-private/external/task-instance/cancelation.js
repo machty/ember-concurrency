@@ -32,5 +32,8 @@ export class CancelRequest {
   constructor(kind, reason) {
     this.kind = kind;
     this.reason = reason;
+    this.promise = new Promise((resolve) => {
+      this.finalize = resolve;
+    });
   }
 }

@@ -23,12 +23,14 @@ class Scheduler {
     this.taskInstances = [];
   }
 
-  cancelAll(guid, cancelRequest) {
-    this.taskInstances.forEach(taskInstance => {
+  async cancelAll(guid, cancelRequest) {
+    let cancelations = this.taskInstances.map(taskInstance => {
       if (taskInstance.task.guids[guid]) {
         taskInstance.executor.cancel(cancelRequest);
       }
-    });
+    }).filter(cancelation => !!cancelation);
+
+    await Promise.all(cancelations);
   }
 
   perform(taskInstance) {
