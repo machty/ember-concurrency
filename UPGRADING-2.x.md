@@ -282,3 +282,21 @@ jobs:
     - env: EMBER_TRY_SCENARIO=ember-concurrency-1.x
     - env: EMBER_TRY_SCENARIO=ember-concurrency-2.x
 ```
+
+## FAQ
+
+### Something is broken even though I made sure to do the above updates!
+
+First, make sure that ember-concurrency 2.0.0 or higher is the version that is
+being loaded and used by your application. It's often the case that an addon
+might be pinned to an older version and is pulling that in and it's being used
+instead. Check `yarn why ember-concurrency` to see how the versions are being
+resolved, if you're a `yarn` user. For npm, use whatever available equivalents.
+
+You may need to contact the maintainer of another addon to get them to release
+a version with support for ember-concurrency 2.0.0 (point them to this guide!)
+or you might be able to workaround it with Yarn resolutions, as the APIs are
+largely compatible between the two versions.
+
+If you've verified the proper version of ember-concurrency is being loaded and
+you still are seeing the issue, please reach out on Discord or open an issue here.
