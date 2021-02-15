@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>JSDoc: Source: utils.js</title>
 
-    <script src="scripts/prettify/prettify-64a3aaa7c9fa74679fffd055f5efc009.js"> </script>
-    <script src="scripts/prettify/lang-css-832f10d8f02ff19ce70effb7021df50f.js"> </script>
+    <script src="scripts/prettify/prettify-ac8c9277b05c42436cc08385614bed9c.js"> </script>
+    <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -26,10 +26,19 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { later, cancel } from '@ember/runloop';
-import { defer } from 'rsvp';
-import ComputedProperty from '@ember/object/computed';
-import Ember from 'ember';
+            <pre class="prettyprint source linenums"><code>import { setProperties } from '@ember/object';
+import { later, cancel } from '@ember/runloop';
+import { gte } from 'ember-compatibility-helpers';
+import { EMBER_ENVIRONMENT } from "./ember-environment";
+import {
+  Yieldable,
+  yieldableSymbol,
+  YIELDABLE_CONTINUE,
+  cancelableSymbol
+} from "./external/yieldables";
+
+export const USE_TRACKED = gte('3.16.0');
+export const assignProperties = USE_TRACKED ? Object.assign : setProperties;
 
 export function isEventedObject(c) {
   return (c &amp;&amp; (
@@ -39,109 +48,13 @@ export function isEventedObject(c) {
   ));
 }
 
-export class Arguments {
-  constructor(args, defer) {
-    this.args = args;
-    this.defer = defer;
-  }
-  resolve(value) {
-    if (this.defer) {
-      this.defer.resolve(value);
-    }
+export class EmberYieldable extends Yieldable {
+  _deferable() {
+    return EMBER_ENVIRONMENT.defer();
   }
 }
 
-export let objectAssign = Object.assign || function objectAssign(target) {
-  'use strict';
-  if (target == null) {
-    throw new TypeError('Cannot convert undefined or null to object');
-  }
-
-  target = Object(target);
-  for (var index = 1; index &lt; arguments.length; index++) {
-    var source = arguments[index];
-    if (source != null) {
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-  }
-  return target;
-};
-
-export function _cleanupOnDestroy(owner, object, cleanupMethodName, ...args) {
-  // TODO: find a non-mutate-y, non-hacky way of doing this.
-
-  if (!owner.willDestroy)
-  {
-    // we're running in non Ember object (possibly in a test mock)
-    return;
-  }
-
-  if (!owner.willDestroy.__ember_processes_destroyers__) {
-    let oldWillDestroy = owner.willDestroy;
-    let disposers = [];
-
-    owner.willDestroy = function() {
-      for (let i = 0, l = disposers.length; i &lt; l; i ++) {
-        disposers[i]();
-      }
-      oldWillDestroy.apply(owner, arguments);
-    };
-    owner.willDestroy.__ember_processes_destroyers__ = disposers;
-  }
-
-  owner.willDestroy.__ember_processes_destroyers__.push(() => {
-    object[cleanupMethodName](...args);
-  });
-}
-
-export let INVOKE = "__invoke_symbol__";
-
-let locations = [
-  '@ember/-internals/glimmer/index',
-  '@ember/-internals/glimmer',
-  'ember-glimmer',
-  'ember-glimmer/helpers/action',
-  'ember-htmlbars/keywords/closure-action',
-  'ember-routing-htmlbars/keywords/closure-action',
-  'ember-routing/keywords/closure-action'
-];
-
-for (let i = 0; i &lt; locations.length; i++) {
-  if (locations[i] in Ember.__loader.registry) {
-    INVOKE = Ember.__loader.require(locations[i])['INVOKE'];
-    break;
-  }
-}
-
-// TODO: Symbol polyfill?
-export const cancelableSymbol = "__ec_cancel__";
-export const yieldableSymbol = "__ec_yieldable__";
-export const YIELDABLE_CONTINUE = "next";
-export const YIELDABLE_THROW = "throw";
-export const YIELDABLE_RETURN = "return";
-export const YIELDABLE_CANCEL = "cancel";
-
-export const _ComputedProperty = ComputedProperty;
-
-export class Yieldable {
-  constructor() {
-    this[yieldableSymbol] = this[yieldableSymbol].bind(this);
-    this[cancelableSymbol] = this[cancelableSymbol].bind(this);
-  }
-
-  then(...args) {
-    return yieldableToPromise(this).then(...args);
-  }
-
-  [yieldableSymbol]() {}
-  [cancelableSymbol]() {}
-}
-
-class TimeoutYieldable extends Yieldable {
+class TimeoutYieldable extends EmberYieldable {
   constructor(ms) {
     super();
     this.ms = ms;
@@ -174,14 +87,14 @@ class TimeoutYieldable extends Yieldable {
  * console every second.
  *
  * ```js
- * export default Component.extend({
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   &amp;#64;task *myTask() {
  *     while (true) {
  *       console.log("Hello!");
  *       yield timeout(1000);
  *     }
- *   })
- * });
+ *   }
+ * }
  * ```
  *
  * @param {number} ms - the amount of time to sleep before resuming
@@ -191,121 +104,9 @@ export function timeout(ms) {
   return new TimeoutYieldable(ms);
 }
 
-/**
- *
- * Yielding `forever` will pause a task indefinitely until
- * it is cancelled (i.e. via host object destruction, .restartable(),
- * or manual cancellation).
- *
- * This is often useful in cases involving animation: if you're
- * using Liquid Fire, or some other animation scheme, sometimes you'll
- * notice buttons visibly reverting to their inactive states during
- * a route transition. By yielding `forever` in a Component task that drives a
- * button's active state, you can keep a task indefinitely running
- * until the animation runs to completion.
- *
- * NOTE: Liquid Fire also includes a useful `waitUntilIdle()` method
- * on the `liquid-fire-transitions` service that you can use in a lot
- * of these cases, but it won't cover cases of asynchrony that are
- * unrelated to animation, in which case `forever` might be better suited
- * to your needs.
- *
- * ```js
- * import { task, forever } from 'ember-concurrency';
- *
- * export default Component.extend({
- *   myService: service(),
- *   myTask: task(function * () {
- *     yield this.myService.doSomethingThatCausesATransition();
- *     yield forever;
- *   })
- * });
- * ```
- */
-
-class ForeverYieldable extends Yieldable {
-  [yieldableSymbol]() {}
-  [cancelableSymbol]() {}
-}
-
-
-export const forever = new ForeverYieldable();
-
-export class RawValue {
-  constructor(value) {
-    this.value = value;
-  }
-}
-
-export function raw(value) {
-  return new RawValue(value);
-}
-
-class RawTimeoutYieldable extends Yieldable {
-  constructor(ms) {
-    super();
-    this.ms = ms;
-    this.timerId = null;
-  }
-
-  [yieldableSymbol](taskInstance, resumeIndex) {
-    this.timerId = setTimeout(() => {
-      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, taskInstance._result);
-    }, this.ms);
-  }
-
-  [cancelableSymbol]() {
-    clearTimeout(this.timerId);
-    this.timerId = null;
-  }
-}
-
-/**
- *
- * Yielding `rawTimeout(ms)` will pause a task for the duration
- * of time passed in, in milliseconds.
- *
- * The timeout will use the native `setTimeout()` browser API,
- * instead of the Ember runloop, which means that test helpers
- * will *not* wait for it to complete.
- *
- * The task below, when performed, will print a message to the
- * console every second.
- *
- * ```js
- * export default Component.extend({
- *   myTask: task(function * () {
- *     while (true) {
- *       console.log("Hello!");
- *       yield rawTimeout(1000);
- *     }
- *   })
- * });
- * ```
- *
- * @param {number} ms - the amount of time to sleep before resuming
- *   the task, in milliseconds
- */
-export function rawTimeout(ms) {
-  return new RawTimeoutYieldable(ms);
-}
-
-export function yieldableToPromise(yieldable) {
-  let def = defer();
-  let thinInstance = {
-    proceed(_index, resumeType, value) {
-      if (resumeType == YIELDABLE_CONTINUE || resumeType == YIELDABLE_RETURN) {
-        def.resolve(value);
-      } else {
-        def.reject(value);
-      }
-    }
-  };
-
-  let maybeDisposer = yieldable[yieldableSymbol](thinInstance, 0);
-  def.promise[cancelableSymbol] = maybeDisposer || yieldable[cancelableSymbol];
-
-  return def.promise;
+export function deprecatePrivateModule(moduleName) {
+  // eslint-disable-next-line no-console
+  console.warn(`an Ember addon is importing a private ember-concurrency module '${moduleName}' that has moved`);
 }
 </code></pre>
         </article>
@@ -317,16 +118,16 @@ export function yieldableToPromise(yieldable) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ForeverYieldable.html">ForeverYieldable</a></li><li><a href="Task.html">Task</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskGroupProperty.html">TaskGroupProperty</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Events</h3><ul><li><a href="TaskInstance.html#event:TASK_NAME:canceled">TASK_NAME:canceled</a></li><li><a href="TaskInstance.html#event:TASK_NAME:errored">TASK_NAME:errored</a></li><li><a href="TaskInstance.html#event:TASK_NAME:started">TASK_NAME:started</a></li><li><a href="TaskInstance.html#event:TASK_NAME:succeeded">TASK_NAME:succeeded</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jun 17 2020 16:53:37 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Mon Feb 15 2021 12:37:21 GMT-0600 (Central Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
-<script src="scripts/linenumber-f3e4ed3ea1889035f621251805c13f8a.js"> </script>
+<script src="scripts/linenumber-bc32f8413602d59b0d893a8e704de17b.js"> </script>
 </body>
 </html>

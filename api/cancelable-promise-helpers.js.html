@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: -cancelable-promise-helpers.js</title>
+    <title>JSDoc: Source: cancelable-promise-helpers.js</title>
 
-    <script src="scripts/prettify/prettify-64a3aaa7c9fa74679fffd055f5efc009.js"> </script>
-    <script src="scripts/prettify/lang-css-832f10d8f02ff19ce70effb7021df50f.js"> </script>
+    <script src="scripts/prettify/prettify-ac8c9277b05c42436cc08385614bed9c.js"> </script>
+    <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: -cancelable-promise-helpers.js</h1>
+    <h1 class="page-title">Source: cancelable-promise-helpers.js</h1>
 
     
 
@@ -28,14 +28,8 @@
         <article>
             <pre class="prettyprint source linenums"><code>import { assert } from '@ember/debug';
 import RSVP, { Promise } from 'rsvp';
-import TaskInstance from './-task-instance';
-import { cancelableSymbol, yieldableSymbol } from './utils';
-
-const asyncAll = taskAwareVariantOf(Promise, 'all', identity);
-
-function * resolver(value) {
-  return value;
-}
+import { TaskInstance } from './task-instance';
+import { cancelableSymbol } from './external/yieldables';
 
 /**
  * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
@@ -51,44 +45,10 @@ function * resolver(value) {
  *
  * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
-export const all = (things) => {
-  // Extra assertion here to circumvent the `things.length` short circuit.
-  assert(`'all' expects an array.`, Array.isArray(things));
-
-  if (things.length === 0) {
-    return things;
-  }
-
-  for (let i = 0; i &lt; things.length; ++i) {
-    let t = things[i];
-    if(!(t &amp;&amp; t[yieldableSymbol])) {
-      return asyncAll(things);
-    }
-  }
-
-  let isAsync = false;
-  let taskInstances = things.map(thing => {
-    let ti = TaskInstance.create({
-      // TODO: consider simpler iterator than full on generator fn?
-      fn: resolver,
-      args: [thing],
-    })._start();
-
-    if (ti._completionState !== 1) {
-      isAsync = true;
-    }
-    return ti;
-  });
-
-  if (isAsync) {
-    return asyncAll(taskInstances);
-  } else {
-    return taskInstances.map(ti => ti.value);
-  }
-};
+export const all = taskAwareVariantOf(RSVP.Promise, 'all', identity);
 
 /**
- * A cancelation-aware variant of [RSVP.allSettled](http://emberjs.com/api/classes/RSVP.html#method_allSettled).
+ * A cancelation-aware variant of [RSVP.allSettled](https://api.emberjs.com/ember/release/functions/rsvp/allSettled).
  * The normal version of a `RSVP.allSettled` just returns a regular, uncancelable
  * Promise. The `ember-concurrency` variant of `allSettled()` has the following
  * additional behavior:
@@ -114,17 +74,29 @@ export const allSettled = taskAwareVariantOf(RSVP, 'allSettled', identity);
 export const race = taskAwareVariantOf(Promise, 'race', identity);
 
 /**
- * A cancelation-aware variant of [RSVP.hash](http://emberjs.com/api/classes/RSVP.html#hash).
+ * A cancelation-aware variant of [RSVP.hash](https://api.emberjs.com/ember/release/functions/rsvp/hash).
  * The normal version of a `RSVP.hash` just returns a regular, uncancelable
  * Promise. The `ember-concurrency` variant of `hash()` has the following
  * additional behavior:
  *
  * - if the task that `yield`ed `hash()` is canceled, any of the
- *   {@linkcode TaskInstance}s passed in to `allSettled` will be canceled
+ *   {@linkcode TaskInstance}s passed in to `hash` will be canceled
  * - if any of the items rejects/cancels, all other cancelable items
  *   (e.g. {@linkcode TaskInstance}s) will be canceled
  */
 export const hash = taskAwareVariantOf(RSVP, 'hash', getValues);
+
+/**
+ * A cancelation-aware variant of [RSVP.hashSettled](https://api.emberjs.com/ember/release/functions/rsvp/hashSettled).
+ * The normal version of a `RSVP.hashSettled` just returns a regular, uncancelable
+ * Promise. The `ember-concurrency` variant of `hashSettled()` has the following
+ * additional behavior:
+ *
+ * - if the task that `yield`ed `hashSettled()` is canceled, any of the
+ *   {@linkcode TaskInstance}s passed in to `hashSettled` will be canceled
+ */
+export const hashSettled = taskAwareVariantOf(RSVP, 'hashSettled', getValues);
+
 
 function identity(obj) {
   return obj;
@@ -172,16 +144,16 @@ function taskAwareVariantOf(obj, method, getItems) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ForeverYieldable.html">ForeverYieldable</a></li><li><a href="Task.html">Task</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskGroupProperty.html">TaskGroupProperty</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Events</h3><ul><li><a href="TaskInstance.html#event:TASK_NAME:canceled">TASK_NAME:canceled</a></li><li><a href="TaskInstance.html#event:TASK_NAME:errored">TASK_NAME:errored</a></li><li><a href="TaskInstance.html#event:TASK_NAME:started">TASK_NAME:started</a></li><li><a href="TaskInstance.html#event:TASK_NAME:succeeded">TASK_NAME:succeeded</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jun 17 2020 16:53:37 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Mon Feb 15 2021 12:37:21 GMT-0600 (Central Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
-<script src="scripts/linenumber-f3e4ed3ea1889035f621251805c13f8a.js"> </script>
+<script src="scripts/linenumber-bc32f8413602d59b0d893a8e704de17b.js"> </script>
 </body>
 </html>

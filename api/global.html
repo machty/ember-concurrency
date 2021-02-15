@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>JSDoc: Global</title>
 
-    <script src="scripts/prettify/prettify-64a3aaa7c9fa74679fffd055f5efc009.js"> </script>
-    <script src="scripts/prettify/lang-css-832f10d8f02ff19ce70effb7021df50f.js"> </script>
+    <script src="scripts/prettify/prettify-ac8c9277b05c42436cc08385614bed9c.js"> </script>
+    <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -153,7 +153,7 @@ be automatically canceled.</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cancelable-promise-helpers.js.html">-cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line26">line 26</a>
+        <a href="cancelable-promise-helpers.js.html">cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line20">line 20</a>
     </li></ul></dd>
     
 
@@ -177,7 +177,7 @@ be automatically canceled.</li>
 
 
 <div class="description">
-    <p>A cancelation-aware variant of <a href="http://emberjs.com/api/classes/RSVP.html#method_allSettled">RSVP.allSettled</a>.
+    <p>A cancelation-aware variant of <a href="https://api.emberjs.com/ember/release/functions/rsvp/allSettled">RSVP.allSettled</a>.
 The normal version of a <code>RSVP.allSettled</code> just returns a regular, uncancelable
 Promise. The <code>ember-concurrency</code> variant of <code>allSettled()</code> has the following
 additional behavior:</p>
@@ -222,7 +222,91 @@ additional behavior:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cancelable-promise-helpers.js.html">-cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line71">line 71</a>
+        <a href="cancelable-promise-helpers.js.html">cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line31">line 31</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="forever"><span class="type-signature">(constant) </span>forever<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Yielding <code>forever</code> will pause a task indefinitely until
+it is cancelled (i.e. via host object destruction, the restartable modifier,
+or manual cancellation).</p>
+<p>This is often useful in cases involving animation: if you're
+using Liquid Fire, or some other animation scheme, sometimes you'll
+notice buttons visibly reverting to their inactive states during
+a route transition. By yielding <code>forever</code> in a Component task that drives a
+button's active state, you can keep a task indefinitely running
+until the animation runs to completion.</p>
+<p>NOTE: Liquid Fire also includes a useful <code>waitUntilIdle()</code> method
+on the <code>liquid-fire-transitions</code> service that you can use in a lot
+of these cases, but it won't cover cases of asynchrony that are
+unrelated to animation, in which case <code>forever</code> might be better suited
+to your needs.</p>
+<pre class="prettyprint source lang-js"><code>import { task, forever } from 'ember-concurrency';
+export default class MyComponent extends Component {
+  &#64;service myService;
+  &#64;task *myTask() {
+    yield this.myService.doSomethingThatCausesATransition();
+    yield forever;
+  }
+}
+</code></pre>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line160">line 160</a>
     </li></ul></dd>
     
 
@@ -246,13 +330,13 @@ additional behavior:</p>
 
 
 <div class="description">
-    <p>A cancelation-aware variant of <a href="http://emberjs.com/api/classes/RSVP.html#hash">RSVP.hash</a>.
+    <p>A cancelation-aware variant of <a href="https://api.emberjs.com/ember/release/functions/rsvp/hash">RSVP.hash</a>.
 The normal version of a <code>RSVP.hash</code> just returns a regular, uncancelable
 Promise. The <code>ember-concurrency</code> variant of <code>hash()</code> has the following
 additional behavior:</p>
 <ul>
 <li>if the task that <code>yield</code>ed <code>hash()</code> is canceled, any of the
-<a href="TaskInstance.html"><code>TaskInstance</code></a>s passed in to <code>allSettled</code> will be canceled</li>
+<a href="TaskInstance.html"><code>TaskInstance</code></a>s passed in to <code>hash</code> will be canceled</li>
 <li>if any of the items rejects/cancels, all other cancelable items
 (e.g. <a href="TaskInstance.html"><code>TaskInstance</code></a>s) will be canceled</li>
 </ul>
@@ -293,7 +377,76 @@ additional behavior:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cancelable-promise-helpers.js.html">-cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line99">line 99</a>
+        <a href="cancelable-promise-helpers.js.html">cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line59">line 59</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="hashSettled"><span class="type-signature">(constant) </span>hashSettled<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>A cancelation-aware variant of <a href="https://api.emberjs.com/ember/release/functions/rsvp/hashSettled">RSVP.hashSettled</a>.
+The normal version of a <code>RSVP.hashSettled</code> just returns a regular, uncancelable
+Promise. The <code>ember-concurrency</code> variant of <code>hashSettled()</code> has the following
+additional behavior:</p>
+<ul>
+<li>if the task that <code>yield</code>ed <code>hashSettled()</code> is canceled, any of the
+<a href="TaskInstance.html"><code>TaskInstance</code></a>s passed in to <code>hashSettled</code> will be canceled</li>
+</ul>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="cancelable-promise-helpers.js.html">cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line70">line 70</a>
     </li></ul></dd>
     
 
@@ -365,7 +518,7 @@ or cancelation), any of the <a href="TaskInstance.html"><code>TaskInstance</code
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cancelable-promise-helpers.js.html">-cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line86">line 86</a>
+        <a href="cancelable-promise-helpers.js.html">cancelable-promise-helpers.js</a>, <a href="cancelable-promise-helpers.js.html#line46">line 46</a>
     </li></ul></dd>
     
 
@@ -393,6 +546,112 @@ or cancelation), any of the <a href="TaskInstance.html"><code>TaskInstance</code
     
 
     
+    <h4 class="name" id="animationFrame"><span class="type-signature"></span>animationFrame<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Yielding <code>animationFrame()</code> will pause a task until after the next animation
+frame using the native <code>requestAnimationFrame()</code> browser API.</p>
+<p>The task below, when performed, will print the time since the last loop run
+for every animation frame.</p>
+<pre class="prettyprint source lang-js"><code>export default class MyComponent extends Component {
+  &#64;task *myTask() {
+    let lastNow = performance.now();
+    while (true) {
+      yield animationFrame();
+
+      let now = performance.now();
+      let dt = now - lastNow;
+      lastNow = now;
+
+      console.log(dt);
+    }
+  }
+}
+</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line126">line 126</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="didCancel"><span class="type-signature"></span>didCancel<span class="signature">(error)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
     
 
@@ -408,7 +667,7 @@ handle the cancelation of a TaskInstance differently from
 other kinds of errors it might throw, and you can use this
 convenience function to distinguish cancelation from errors.</p>
 <pre class="prettyprint source lang-js"><code>click() {
-  this.get('myTask').perform().catch(e => {
+  this.myTask.perform().catch(e => {
     if (!didCancel(e)) { throw e; }
   });
 }
@@ -505,7 +764,7 @@ convenience function to distinguish cancelation from errors.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-instance.js.html">-task-instance.js</a>, <a href="task-instance.js.html#line66">line 66</a>
+        <a href="external_task-instance_cancelation.js.html">external/task-instance/cancelation.js</a>, <a href="external_task-instance_cancelation.js.html#line22">line 22</a>
     </li></ul></dd>
     
 
@@ -574,14 +833,14 @@ instead of the Ember runloop, which means that test helpers
 will <em>not</em> wait for it to complete.</p>
 <p>The task below, when performed, will print a message to the
 console every second.</p>
-<pre class="prettyprint source lang-js"><code>export default Component.extend({
-  myTask: task(function * () {
+<pre class="prettyprint source lang-js"><code>export default class MyComponent extends Component {
+  &#64;task *myTask() {
     while (true) {
       console.log(&quot;Hello!&quot;);
       yield rawTimeout(1000);
     }
-  })
-});
+  }
+}
 </code></pre>
 </div>
 
@@ -676,7 +935,7 @@ the task, in milliseconds</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line261">line 261</a>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line198">line 198</a>
     </li></ul></dd>
     
 
@@ -712,7 +971,7 @@ the task, in milliseconds</p></td>
     
 
     
-    <h4 class="name" id="task"><span class="type-signature"></span>task<span class="signature">(taskFn)</span><span class="type-signature"> &rarr; {<a href="TaskProperty.html">TaskProperty</a>}</span></h4>
+    <h4 class="name" id="task"><span class="type-signature"></span>task<span class="signature">(generatorFunction)</span><span class="type-signature"> &rarr; {<a href="TaskProperty.html">TaskProperty</a>}</span></h4>
     
 
     
@@ -731,9 +990,9 @@ that they (like the proposed ES7 async-await syntax) can
 be used to elegantly express asynchronous, cancelable
 operations.</p>
 <p>You can also define an
-<a href="/docs/encapsulated-task">Encapsulated Task</a>
+<a href="/#/docs/encapsulated-task">Encapsulated Task</a>
 by passing in an object that defined a <code>perform</code> generator
-method.</p>
+function property.</p>
 <p>The following Component defines a task called <code>myTask</code> that,
 when performed, prints a message to the console, sleeps for 1 second,
 prints a final message to the console, and then completes.</p>
@@ -787,16 +1046,13 @@ that you can apply to a task.</p>
 
         <tr>
             
-                <td class="name"><code>taskFn</code></td>
+                <td class="name"><code>generatorFunction</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">function</span>
-|
-
-<span class="param-type">object</span>
 
 
             
@@ -806,7 +1062,7 @@ that you can apply to a task.</p>
 
             
 
-            <td class="description last"><p>A generator function backing the task or an encapsulated task descriptor object with a <code>perform</code> generator method.</p></td>
+            <td class="description last"><p>the generator function backing the task.</p></td>
         </tr>
 
     
@@ -847,7 +1103,7 @@ that you can apply to a task.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line77">line 77</a>
+        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line377">line 377</a>
     </li></ul></dd>
     
 
@@ -901,7 +1157,7 @@ that you can apply to a task.</p>
     
 
     
-    <h4 class="name" id="taskGroup"><span class="type-signature"></span>taskGroup<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="TaskGroupProperty.html">TaskGroupProperty</a>}</span></h4>
+    <h4 class="name" id="taskGroup"><span class="type-signature"></span>taskGroup<span class="signature">()</span><span class="type-signature"> &rarr; {TaskGroup}</span></h4>
     
 
     
@@ -911,19 +1167,12 @@ that you can apply to a task.</p>
 <div class="description">
     <p>&quot;Task Groups&quot; provide a means for applying
 task modifiers to groups of tasks. Once a <a href="Task.html"><code>Task</code></a> is declared
-as part of a group task, modifiers like <code>drop()</code> or <code>restartable()</code>
+as part of a group task, modifiers like <code>drop</code> or <code>restartable</code>
 will no longer affect the individual <code>Task</code>. Instead those
 modifiers can be applied to the entire group.</p>
 <pre class="prettyprint source lang-js"><code>import { task, taskGroup } from 'ember-concurrency';
 
-export default Controller.extend({
-  chores: taskGroup().drop(),
-
-  mowLawn:       task(taskFn).group('chores'),
-  doDishes:      task(taskFn).group('chores'),
-  changeDiapers: task(taskFn).group('chores')
-});
-</code></pre>
+export default class MyController extends Controller {</code></pre>
 </div>
 
 
@@ -967,7 +1216,7 @@ export default Controller.extend({
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line120">line 120</a>
+        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line416">line 416</a>
     </li></ul></dd>
     
 
@@ -1003,7 +1252,7 @@ export default Controller.extend({
     </dt>
     <dd>
         
-<span class="param-type"><a href="TaskGroupProperty.html">TaskGroupProperty</a></span>
+<span class="param-type">TaskGroup</span>
 
 
     </dd>
@@ -1037,14 +1286,14 @@ continuing with the test. See <code>rawTimeout()</code> if you need
 different behavior.</p>
 <p>The task below, when performed, will print a message to the
 console every second.</p>
-<pre class="prettyprint source lang-js"><code>export default Component.extend({
-  myTask: task(function * () {
+<pre class="prettyprint source lang-js"><code>export default class MyComponent extends Component {
+  &#64;task *myTask() {
     while (true) {
       console.log(&quot;Hello!&quot;);
       yield timeout(1000);
     }
-  })
-});
+  }
+}
 </code></pre>
 </div>
 
@@ -1139,7 +1388,7 @@ the task, in milliseconds</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line162">line 162</a>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line75">line 75</a>
     </li></ul></dd>
     
 
@@ -1187,8 +1436,8 @@ the task, in milliseconds</p></td>
 can either be a jQuery event or an Ember.Evented event (or any event system
 where the object supports <code>.on()</code> <code>.one()</code> and <code>.off()</code>).</p>
 <pre class="prettyprint source lang-js"><code>import { task, waitForEvent } from 'ember-concurrency';
-export default Component.extend({
-  myTask: task(function * () {
+export default class MyComponent extends Component {
+  &#64;task *myTask() {
     console.log(&quot;Please click anywhere..&quot;);
     let clickEvent = yield waitForEvent($('body'), 'click');
     console.log(&quot;Got event&quot;, clickEvent);
@@ -1197,8 +1446,8 @@ export default Component.extend({
     console.log(&quot;Got foo event&quot;, emberEvent);
 
     // somewhere else: component.trigger('foo', { value: 123 });
-  })
-});
+  }
+}
 </code></pre>
 </div>
 
@@ -1316,7 +1565,7 @@ that the event fires from</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="wait-for.js.html">-wait-for.js</a>, <a href="wait-for.js.html#line168">line 168</a>
+        <a href="wait-for.js.html">wait-for.js</a>, <a href="wait-for.js.html#line166">line 166</a>
     </li></ul></dd>
     
 
@@ -1373,24 +1622,24 @@ You can also pass in a non-Function value in place of the callback,
 in which case the task will continue executing when the property's
 value becomes the value that you passed in.</p>
 <pre class="prettyprint source lang-js"><code>import { task, waitForProperty } from 'ember-concurrency';
-export default Component.extend({
-  foo: 0,
+export default class MyComponent extends Component {
+  &#64;tracked foo = 0;
 
-  myTask: task(function * () {
+  &#64;task *myTask() {
     console.log(&quot;Waiting for `foo` to become 5&quot;);
 
     yield waitForProperty(this, 'foo', v => v === 5);
     // alternatively: yield waitForProperty(this, 'foo', 5);
 
-    // somewhere else: this.set('foo', 5)
+    // somewhere else: this.foo = 5;
 
     console.log(&quot;`foo` is 5!&quot;);
 
     // wait for another task to be idle before running:
     yield waitForProperty(this, 'otherTask.isIdle');
     console.log(&quot;otherTask is idle!&quot;);
-  })
-});
+  }
+}
 </code></pre>
 </div>
 
@@ -1533,7 +1782,7 @@ needs to equal before the task will continue running</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="wait-for.js.html">-wait-for.js</a>, <a href="wait-for.js.html#line216">line 216</a>
+        <a href="wait-for.js.html">wait-for.js</a>, <a href="wait-for.js.html#line217">line 217</a>
     </li></ul></dd>
     
 
@@ -1579,12 +1828,12 @@ needs to equal before the task will continue running</p></td>
 <div class="description">
     <p>Use <code>waitForQueue</code> to pause the task until a certain run loop queue is reached.</p>
 <pre class="prettyprint source lang-js"><code>import { task, waitForQueue } from 'ember-concurrency';
-export default Component.extend({
-  myTask: task(function * () {
+export default class MyComponent extends Component {
+  &#64;task *myTask() {
     yield waitForQueue('afterRender');
     console.log(&quot;now we're in the afterRender queue&quot;);
-  })
-});
+  }
+}
 </code></pre>
 </div>
 
@@ -1678,7 +1927,7 @@ export default Component.extend({
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="wait-for.js.html">-wait-for.js</a>, <a href="wait-for.js.html#line139">line 139</a>
+        <a href="wait-for.js.html">wait-for.js</a>, <a href="wait-for.js.html#line137">line 137</a>
     </li></ul></dd>
     
 
@@ -1724,16 +1973,16 @@ export default Component.extend({
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ForeverYieldable.html">ForeverYieldable</a></li><li><a href="Task.html">Task</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskGroupProperty.html">TaskGroupProperty</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Events</h3><ul><li><a href="TaskInstance.html#event:TASK_NAME:canceled">TASK_NAME:canceled</a></li><li><a href="TaskInstance.html#event:TASK_NAME:errored">TASK_NAME:errored</a></li><li><a href="TaskInstance.html#event:TASK_NAME:started">TASK_NAME:started</a></li><li><a href="TaskInstance.html#event:TASK_NAME:succeeded">TASK_NAME:succeeded</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jun 17 2020 16:53:37 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Mon Feb 15 2021 12:37:21 GMT-0600 (Central Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
-<script src="scripts/linenumber-f3e4ed3ea1889035f621251805c13f8a.js"> </script>
+<script src="scripts/linenumber-bc32f8413602d59b0d893a8e704de17b.js"> </script>
 </body>
 </html>
