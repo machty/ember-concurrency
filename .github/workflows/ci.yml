@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - v1
       - v2
       # npm version tags
       - /^v\d+.\d+.\d+(?:-(?:alpha|beta|rc)\.\d+)?/

@@ -132,7 +132,7 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    * when the host object is initialized.
    *
    * ```js
-   * export default Ember.Component.extend({
+   * export default Component.extend({
    *   pollForUpdates: task(function * () {
    *     // ... this runs when the Component is first created
    *     // because we specified .on('init')

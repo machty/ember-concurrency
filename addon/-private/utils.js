@@ -59,14 +59,14 @@ class TimeoutYieldable extends EmberYieldable {
  * console every second.
  *
  * ```js
- * export default Component.extend({
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   &#64;task *myTask() {
  *     while (true) {
  *       console.log("Hello!");
  *       yield timeout(1000);
  *     }
- *   })
- * });
+ *   }
+ * }
  * ```
  *
  * @param {number} ms - the amount of time to sleep before resuming

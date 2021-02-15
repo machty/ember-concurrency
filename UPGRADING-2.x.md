@@ -10,6 +10,20 @@ semantic changes to the operation of the addon.
 
 ## Changes
 
+### Drops support for Ember < 3.8 and Node 8
+
+ember-concurrency 2.0.0 drops support for many older Ember and Node versions.
+Usage with 3.8 LTS and up ensures ember-concurrency can depend on the same Ember
+runloop semantics (e.g. running on the microtask queue), while still providing a
+broad level of compatibility with existing apps.
+
+In some cases, polyfills will be needed for Ember 3.8, for example when using
+decorators. See [config/ember-try.js](config/ember-try.js) for the `ember-lts-3.8`
+scenario.
+
+ember-concurrency 1.x is still available for those apps needing support back to
+Ember 2.4 LTS.
+
 ### Decorators from `ember-concurrency-decorators` are built-in
 
 This provides built-in support for the "nice" decorator syntax based on the
@@ -81,6 +95,10 @@ consuming applications can now reliably schedule subsequent operations that may
 depend on cancelation to finish by awaiting the value of the promise returned by
 the cancelation methods on `Task` and `TaskInstance`, `cancelAll` and `cancel`,
 respectively.
+
+It should be noted that when calling `cancelAll` with `{ resetState: true }`, the
+state reset does not take effect immediately, as it did in e-c 1.x, but happens
+on cancelation finalization, making it important to `await` calls to `cancelAll`.
 
 For example,
 
@@ -282,3 +300,21 @@ jobs:
     - env: EMBER_TRY_SCENARIO=ember-concurrency-1.x
     - env: EMBER_TRY_SCENARIO=ember-concurrency-2.x
 ```
+
+## FAQ
+
+### Something is broken even though I made sure to do the above updates!
+
+First, make sure that ember-concurrency 2.0.0 or higher is the version that is
+being loaded and used by your application. It's often the case that an addon
+might be pinned to an older version and is pulling that in and it's being used
+instead. Check `yarn why ember-concurrency` to see how the versions are being
+resolved, if you're a `yarn` user. For npm, use whatever available equivalents.
+
+You may need to contact the maintainer of another addon to get them to release
+a version with support for ember-concurrency 2.0.0 (point them to this guide!)
+or you might be able to workaround it with Yarn resolutions, as the APIs are
+largely compatible between the two versions.
+
+If you've verified the proper version of ember-concurrency is being loaded and
+you still are seeing the issue, please reach out on Discord or open an issue here.

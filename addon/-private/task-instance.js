@@ -154,7 +154,7 @@ export class TaskInstance extends BaseTaskInstance {
    * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
    *
    * ```js
-   * export default Ember.Component.extend({
+   * export default Component.extend({
    *   doSomething: task(function * () {
    *     // ... does something
    *   }),
@@ -175,7 +175,7 @@ export class TaskInstance extends BaseTaskInstance {
    * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
    *
    * ```js
-   * export default Ember.Component.extend({
+   * export default Component.extend({
    *   doSomething: task(function * () {
    *     // ... does something
    *   }),
@@ -197,7 +197,7 @@ export class TaskInstance extends BaseTaskInstance {
    * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
    *
    * ```js
-   * export default Ember.Component.extend({
+   * export default Component.extend({
    *   doSomething: task(function * () {
    *     // ... does something
    *   }),
@@ -219,7 +219,7 @@ export class TaskInstance extends BaseTaskInstance {
    * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
    *
    * ```js
-   * export default Ember.Component.extend({
+   * export default Component.extend({
    *   doSomething: task(function * () {
    *     // ... does something
    *   }),
