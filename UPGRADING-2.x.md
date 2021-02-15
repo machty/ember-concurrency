@@ -10,6 +10,20 @@ semantic changes to the operation of the addon.
 
 ## Changes
 
+### Drops support for Ember < 3.8 and Node 8
+
+ember-concurrency 2.0.0 drops support for many older Ember and Node versions.
+Usage with 3.8 LTS and up ensures ember-concurrency can depend on the same Ember
+runloop semantics (e.g. running on the microtask queue), while still providing a
+broad level of compatibility with existing apps.
+
+In some cases, polyfills will be needed for Ember 3.8, for example when using
+decorators. See [config/ember-try.js](config/ember-try.js) for the `ember-lts-3.8`
+scenario.
+
+ember-concurrency 1.x is still available for those apps needing support back to
+Ember 2.4 LTS.
+
 ### Decorators from `ember-concurrency-decorators` are built-in
 
 This provides built-in support for the "nice" decorator syntax based on the
