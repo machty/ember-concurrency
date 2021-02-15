@@ -96,6 +96,10 @@ depend on cancelation to finish by awaiting the value of the promise returned by
 the cancelation methods on `Task` and `TaskInstance`, `cancelAll` and `cancel`,
 respectively.
 
+It should be noted that when calling `cancelAll` with `{ resetState: true }`, the
+state reset does not take effect immediately, as it did in e-c 1.x, but happens
+on cancelation finalization, making it important to `await` calls to `cancelAll`.
+
 For example,
 
 ```javascript
