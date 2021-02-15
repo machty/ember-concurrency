@@ -124,12 +124,12 @@ class WaitForPropertyYieldable extends EmberYieldable {
  *
  * ```js
  * import { task, waitForQueue } from 'ember-concurrency';
- * export default Component.extend({
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   &#64;task *myTask() {
  *     yield waitForQueue('afterRender');
  *     console.log("now we're in the afterRender queue");
- *   })
- * });
+ *   }
+ * }
  * ```
  *
  * @param {string} queueName the name of the Ember run loop queue
@@ -145,8 +145,8 @@ export function waitForQueue(queueName) {
  *
  * ```js
  * import { task, waitForEvent } from 'ember-concurrency';
- * export default Component.extend({
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   &#64;task *myTask() {
  *     console.log("Please click anywhere..");
  *     let clickEvent = yield waitForEvent($('body'), 'click');
  *     console.log("Got event", clickEvent);
@@ -155,8 +155,8 @@ export function waitForQueue(queueName) {
  *     console.log("Got foo event", emberEvent);
  *
  *     // somewhere else: component.trigger('foo', { value: 123 });
- *   })
- * });
+ *   }
+ * }
  * ```
  *
  * @param {object} object the Ember Object, jQuery element, or other object with .on() and .off() APIs
@@ -187,24 +187,24 @@ export function waitForEvent(object, eventName) {
  *
  * ```js
  * import { task, waitForProperty } from 'ember-concurrency';
- * export default Component.extend({
- *   foo: 0,
+ * export default class MyComponent extends Component {
+ *   &#64;tracked foo = 0;
  *
- *   myTask: task(function * () {
+ *   &#64;task *myTask() {
  *     console.log("Waiting for `foo` to become 5");
  *
  *     yield waitForProperty(this, 'foo', v => v === 5);
  *     // alternatively: yield waitForProperty(this, 'foo', 5);
  *
- *     // somewhere else: this.set('foo', 5)
+ *     // somewhere else: this.foo = 5;
  *
  *     console.log("`foo` is 5!");
  *
  *     // wait for another task to be idle before running:
  *     yield waitForProperty(this, 'otherTask.isIdle');
  *     console.log("otherTask is idle!");
- *   })
- * });
+ *   }
+ * }
  * ```
  *
  * @param {object} object an object (most likely an Ember Object)

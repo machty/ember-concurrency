@@ -6,15 +6,24 @@ most of the time, you'll only be using the `task` and `timeout`
 imports, e.g.:
 
 ```js
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
 
-export default Component.extend({
-  loopingTask: task(function * () {
+export default class MyCompontent extends Component {
+  @tracked num;
+
+  constructor() {
+    super(...arguments);
+    this.loopingTask.perform();
+  }
+
+  @task *loopingTask() {
     while (true) {
-      this.set('num', Math.random());
+      this.num = Math.random();
       yield timeout(100);
     }
-  }).on('init')
+  }
 });
 ```
 
@@ -44,6 +53,9 @@ used in conjunction with Tasks / TaskInstances.
 
 ## Misc
 
+- [animationFrame](global.html#animationFrame)
+- [didCancel](global.html#didCancel)
+- [forever](global.html#forever)
+- [rawTimeout](global.html#rawTimeout)
 - [waitForEvent](global.html#waitForEvent)
 - [waitForQueue](global.html#waitForQueue)
-

@@ -393,7 +393,7 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
    * when the host object is initialized.
    *
    * ```js
-   * export default Ember.Component.extend({
+   * export default Component.extend({
    *   pollForUpdates: task(function * () {
    *     // ... this runs when the Component is first created
    *     // because we specified .on('init')
@@ -1122,8 +1122,8 @@ export function allSettled<T>(values: Iterable<T>): Promise<Array<Settled<T>>>;
  * for every animation frame.
  *
  * ```js
- * export default Component.extend({
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   @task *myTask() {
  *     let lastNow = performance.now();
  *     while (true) {
  *       yield animationFrame();
@@ -1134,8 +1134,8 @@ export function allSettled<T>(values: Iterable<T>): Promise<Array<Settled<T>>>;
  *
  *       console.log(dt);
  *     }
- *   })
- * });
+ *   }
+ * }
  * ```
  */
 export function animationFrame(): Yieldable;
@@ -1219,14 +1219,14 @@ export function race<T>(values: Iterable<T>): Promise<Resolved<T>>;
  * console every second.
  *
  * ```js
- * export default Component.extend({
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   @task *myTask() {
  *     while (true) {
  *       console.log("Hello!");
  *       yield timeout(1000);
  *     }
- *   })
- * });
+ *   }
+ * }
  * ```
  *
  * @param ms The amount of time to sleep before resuming
@@ -1246,14 +1246,14 @@ export function timeout(ms: number): Yieldable;
  * console every second.
  *
  * ```js
- * export default Component.extend({
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   @task *myTask() {
  *     while (true) {
  *       console.log("Hello!");
  *       yield rawTimeout(1000);
  *     }
- *   })
- * });
+ *   }
+ * }
  * ```
  *
  * @param ms The amount of time to sleep before resuming
@@ -1380,13 +1380,14 @@ export function waitForProperty<O extends object, K extends keyof O>(
  * ```js
  * import { task, forever } from 'ember-concurrency';
  *
- * export default Component.extend({
- *   myService: service(),
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   @service myService;
+ *
+ *   @task *myTask() {
  *     yield this.myService.doSomethingThatCausesATransition();
  *     yield forever;
- *   })
- * });
+ *   }
+ * }
  * ```
  */
 export function forever(): Yieldable<never>;

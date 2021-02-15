@@ -107,8 +107,8 @@ class RawTimeoutYieldable extends Yieldable {
  * for every animation frame.
  *
  * ```js
- * export default Component.extend({
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   &#64;task *myTask() {
  *     let lastNow = performance.now();
  *     while (true) {
  *       yield animationFrame();
@@ -119,8 +119,8 @@ class RawTimeoutYieldable extends Yieldable {
  *
  *       console.log(dt);
  *     }
- *   })
- * });
+ *   }
+ * }
  * ```
  */
 export function animationFrame() {
@@ -148,14 +148,13 @@ export function animationFrame() {
  *
  * ```js
  * import { task, forever } from 'ember-concurrency';
- *
- * export default Component.extend({
- *   myService: service(),
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   &#64;service myService;
+ *   &#64;task *myTask() {
  *     yield this.myService.doSomethingThatCausesATransition();
  *     yield forever;
- *   })
- * });
+ *   }
+ * }
  * ```
  */
 export const forever = new ForeverYieldable();
@@ -183,14 +182,14 @@ export function raw(value) {
  * console every second.
  *
  * ```js
- * export default Component.extend({
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   &#64;task *myTask() {
  *     while (true) {
  *       console.log("Hello!");
  *       yield rawTimeout(1000);
  *     }
- *   })
- * });
+ *   }
+ * }
  * ```
  *
  * @param {number} ms - the amount of time to sleep before resuming
