@@ -6,7 +6,6 @@ import {
   YIELDABLE_THROW,
   YIELDABLE_RETURN,
   YIELDABLE_CANCEL,
-  RawValue,
   cancelableSymbol
 } from '../yieldables';
 
@@ -231,11 +230,6 @@ export class TaskInstanceExecutor {
     let yieldedValue = stepResult.value;
     if (!yieldedValue) {
       this.proceedWithSimpleValue(yieldedValue);
-      return;
-    }
-
-    if (yieldedValue instanceof RawValue) {
-      this.proceedWithSimpleValue(yieldedValue.value);
       return;
     }
 
