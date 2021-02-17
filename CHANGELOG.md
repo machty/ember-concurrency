@@ -1,5 +1,13 @@
 # Changelog
 
+### 2.0.1
+  - Prevent synchronous errors in cancelable promise helpers from being
+    rethrown asynchronously later (#402, fixes #400. thanks @Turbo87 for flagging!)
+  - Restore access to host context from encapsulated tasks (#401)
+
+### 2.0.0
+  - No substantive changes from 2.0.0-rc.2
+
 ### 2.0.0-rc.2
   - Make `Task#cancelAll` and `TaskInstance#cancel` awaitable (#396). See
     [topic in UPGRADING-2.x.md](https://github.com/machty/ember-concurrency/blob/v2/UPGRADING-2.x.md#taskcancelall-and-taskinstancecancel-returns-a-promise) for more info.
