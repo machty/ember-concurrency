@@ -6,7 +6,7 @@ import { module, test } from 'qunit';
 import { decoratorTest } from '../helpers/helpers';
 
 module('Unit: EncapsulatedTask', function() {
-  test("tasks can be specified via a pojos with perform methods", function(assert) {
+  test("encapsulated tasks can be specified via a pojos with perform methods", function(assert) {
     assert.expect(2);
 
     let defer;
@@ -31,7 +31,7 @@ module('Unit: EncapsulatedTask', function() {
     run(defer, 'resolve');
   });
 
-  test("tasks can have their state accessed", async function(assert) {
+  test("encapsulated tasks can have their state accessed", async function(assert) {
     assert.expect(2);
 
     let defer;
@@ -54,6 +54,32 @@ module('Unit: EncapsulatedTask', function() {
     defer.resolve();
     await taskInstance;
     assert.equal(taskInstance.someProp, true);
+  });
+
+  test("encapsulated tasks can access host context", async function(assert) {
+    assert.expect(1);
+
+    let defer;
+    let Obj = EmberObject.extend({
+      mySecretValue: "pickle",
+
+      myTask: task({
+        someProp: false,
+
+        *perform() {
+          defer = RSVP.defer();
+          yield defer.promise;
+          return this.context.mySecretValue;
+        }
+      }),
+    });
+
+    let obj = Obj.create();
+    const taskInstance = obj.get('myTask').perform();
+
+    defer.resolve();
+    const value = await taskInstance;
+    assert.equal(value, "pickle");
   });
 
   decoratorTest("encapsulated tasks work with native ES classes and decorators", function(assert) {
