@@ -159,16 +159,6 @@ export function animationFrame() {
  */
 export const forever = new ForeverYieldable();
 
-export class RawValue {
-  constructor(value) {
-    this.value = value;
-  }
-}
-
-export function raw(value) {
-  return new RawValue(value);
-}
-
 /**
  *
  * Yielding `rawTimeout(ms)` will pause a task for the duration
