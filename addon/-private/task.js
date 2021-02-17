@@ -284,7 +284,9 @@ export class EncapsulatedTask extends Task {
 
   _taskInstanceFactory(args, performType) {
     let owner = getOwner(this.context);
-    let encapsulatedTaskImpl = EmberObject.extend(this.taskObj).create();
+    let encapsulatedTaskImpl = EmberObject.extend(this.taskObj).create({
+      context: this.context
+    });
     setOwner(encapsulatedTaskImpl, owner);
 
     let generatorFactory = () => encapsulatedTaskImpl.perform.apply(encapsulatedTaskImpl, args);
