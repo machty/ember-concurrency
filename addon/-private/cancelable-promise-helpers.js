@@ -82,6 +82,16 @@ function taskAwareVariantOf(obj, method, getItems) {
   return function(thing) {
     let items = getItems(thing);
     assert(`'${method}' expects an array.`, Array.isArray(items));
+
+    items.forEach((it) => {
+      // Mark TaskInstances, including those that performed synchronously and
+      // have finished already, as having their errors handled, as if they had
+      // been then'd, which this is emulating.
+      if (it && it instanceof TaskInstance) {
+        it.executor.asyncErrorsHandled = true;
+      }
+    });
+
     let defer = RSVP.defer();
 
     obj[method](thing).then(defer.resolve, defer.reject);

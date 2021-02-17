@@ -126,6 +126,27 @@ module('Unit: cancelable promises test helpers', function() {
     assert.equal(childTask.numRunning, 0);
   });
 
+  test("all doesn't asynchronously rethrow synchronous errors from child tasks", async function(assert) {
+    assert.expect(1);
+
+    let Obj = EmberObject.extend({
+      parent: task(function * () {
+        try {
+          yield all([this.child.perform()]);
+        } catch (e) {
+          assert.equal(e.message, 'boom');
+        }
+      }),
+
+      child: task(function * () {
+        throw new Error('boom');
+      }),
+    });
+
+    let obj = Obj.create();
+    await obj.get('parent').perform();
+  });
+
   test("all throws an assertion, if something other than an array is passed", function (assert) {
     assert.expectAssertion(() => {
       all();
@@ -252,6 +273,38 @@ module('Unit: cancelable promises test helpers', function() {
     assert.equal(childTask.numRunning, 0);
   });
 
+  test("allSettled doesn't asynchronously rethrow synchronous errors from child tasks", async function(assert) {
+    assert.expect(4);
+
+    let Obj = EmberObject.extend({
+      parent: task(function * () {
+        const promise = allSettled([
+          this.child.perform(),
+          this.throws.perform()
+        ]);
+        let values = yield promise;
+        let fulfilled = values.filter((value) => value.state === 'fulfilled');
+        let rejected = values.filter((value) => value.state !== 'fulfilled');
+        assert.deepEqual(fulfilled, [{ state: 'fulfilled', value: 'ok!' }]);
+        assert.equal(rejected.length, 1);
+        assert.equal(rejected[0].state, 'rejected');
+        assert.equal(rejected[0].reason.message, "boom");
+      }),
+
+      child: task(function * () {
+        yield timeout(1);
+        return 'ok!';
+      }),
+
+      throws: task(function * () {
+        throw new Error('boom');
+      }),
+    });
+
+    let obj = Obj.create();
+    await obj.get('parent').perform();
+  });
+
   test("allSettled throws an assertion, if something other than an array is passed", function (assert) {
     assert.expectAssertion(() => {
       allSettled();
@@ -337,6 +390,32 @@ module('Unit: cancelable promises test helpers', function() {
     assert.equal(obj.get('child.numRunning'), 3);
     run(obj.get('parent'), 'cancelAll');
     assert.equal(obj.get('child.numRunning'), 0);
+  });
+
+  test("hash doesn't asynchronously rethrow synchronous errors from child tasks", async function(assert) {
+    assert.expect(1);
+
+    let Obj = EmberObject.extend({
+      parent: task(function * () {
+        try {
+          yield hash({
+            a: this.child.perform(),
+            b: this.throws.perform()
+          });
+        } catch (e) {
+          assert.equal(e.message, 'boom');
+        }
+      }),
+
+      child: task(function * () { return RSVP.defer().promise; }),
+
+      throws: task(function * () {
+        throw new Error('boom');
+      }),
+    });
+
+    let obj = Obj.create();
+    await obj.get('parent').perform();
   });
 
   test("hashSettled behaves like Promise.hashSettled", function(assert) {
@@ -454,6 +533,38 @@ module('Unit: cancelable promises test helpers', function() {
     assert.equal(childTask.numRunning, 3);
     run(() => obj.get('parent').cancelAll());
     assert.equal(childTask.numRunning, 0);
+  });
+
+  test("hashSettled doesn't asynchronously rethrow synchronous errors from child tasks", async function(assert) {
+    assert.expect(4);
+
+    let Obj = EmberObject.extend({
+      parent: task(function * () {
+        const promise = hashSettled({
+          a: this.child.perform(),
+          b: this.throws.perform()
+        });
+        let values = Object.values(yield promise);
+        let fulfilled = values.filter((value) => value.state === 'fulfilled');
+        let rejected = values.filter((value) => value.state !== 'fulfilled');
+        assert.deepEqual(fulfilled, [{ state: 'fulfilled', value: 'ok!' }]);
+        assert.equal(rejected.length, 1);
+        assert.equal(rejected[0].state, 'rejected');
+        assert.equal(rejected[0].reason.message, "boom");
+      }),
+
+      child: task(function * () {
+        yield timeout(1);
+        return 'ok!';
+      }),
+
+      throws: task(function * () {
+        throw new Error('boom');
+      }),
+    });
+
+    let obj = Obj.create();
+    await obj.get('parent').perform();
   });
 
   test("race throws an assertion, if something other than an array is passed", function (assert) {
