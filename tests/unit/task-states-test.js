@@ -313,4 +313,43 @@ module('Unit: task states', function(hooks) {
     assert.equal(myTask.lastIncomplete, taskInstance2);
     await asyncError();
   });
+
+  test('.lastRunning resets one-by-one as tasks are completed, successfully or not', async function(assert) {
+    assert.expect(12);
+
+    let Obj = EmberObject.extend({
+      myTask: task(function * (defer) {
+        return yield defer.promise;
+      })
+    });
+
+    const obj = Obj.create();
+
+    const defer1 = RSVP.defer();
+    const taskInstance1 = obj.myTask.perform(defer1);
+
+    assert.strictEqual(obj.myTask.isRunning, true);
+    assert.strictEqual(obj.myTask.numRunning, 1);
+    assert.strictEqual(obj.myTask.lastRunning, taskInstance1, 'lastRunning is taskInstance1 when its the only running');
+
+    const defer2 = RSVP.defer();
+    const taskInstance2 = obj.myTask.perform(defer2);
+
+    assert.strictEqual(obj.myTask.isRunning, true);
+    assert.strictEqual(obj.myTask.numRunning, 2);
+    assert.strictEqual(obj.myTask.lastRunning, taskInstance2, 'lastRunning is taskInstance2 when its the latest running');
+
+    run(defer2, 'resolve');
+
+    assert.strictEqual(obj.myTask.isRunning, true);
+    assert.strictEqual(obj.myTask.numRunning, 1);
+    assert.strictEqual(obj.myTask.lastRunning, taskInstance1, 'lastRunning is taskInstance1 when taskInstance2 has stopped');
+
+    run(defer1, 'reject', 'big wrench');
+
+    assert.strictEqual(obj.myTask.isRunning, false, 'isRunning is false when tasks finished running');
+    assert.strictEqual(obj.myTask.numRunning, 0, 'numRunning is 0 when tasks finished running');
+    assert.strictEqual(obj.myTask.lastRunning, null, 'lastRunning is null when tasks finished running');
+    await asyncError();
+  });
 });
