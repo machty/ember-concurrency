@@ -40,6 +40,7 @@ module('Unit: task states - onState', function() {
 
     assert.equal(states.length, 1);
     assert.deepEqual(states.pop(), {
+      lastRunning: null,
       lastCanceled: taskInstance,
       lastComplete: taskInstance,
       lastIncomplete: taskInstance,
