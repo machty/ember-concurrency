@@ -1391,3 +1391,30 @@ export function waitForProperty<O extends object, K extends keyof O>(
  * ```
  */
 export function forever(): Yieldable<never>;
+
+/**
+ * This decorator allows you to alias a property to the result of a task.
+ * You can also provide a default value to use before the task has completed.
+ *
+ * ```js
+ * import Component from '@glimmer/component';
+ * import { task, lastValue } from 'ember-concurrency';
+ *
+ * export default class ExampleComponent extends Component {
+ *   @task
+ *   someTask = function*() {
+ *     // ...
+ *   };
+ *
+ *   @lastValue('someTask')
+ *   someTaskValue;
+ *
+ *   @lastValue('someTask')
+ *   someTaskValueWithDefault = 'A default value';
+ * }
+ * ```
+ *
+ * @function
+ * @param {string} taskName the name of the task to read a value from
+ */
+export function lastValue(taskName: string): PropertyDecorator;
