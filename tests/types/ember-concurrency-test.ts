@@ -37,7 +37,8 @@ import {
   timeout,
   waitForEvent,
   waitForProperty,
-  waitForQueue
+  waitForQueue,
+  lastValue
 } from 'ember-concurrency';
 import { taskFor } from 'ember-concurrency-ts';
 import { expectTypeOf as expect } from 'expect-type';
@@ -2394,6 +2395,8 @@ module('integration tests', () => {
       @task({ maxConcurrency: 1 }) maxConcurrency = function*() {};
       @task({ group: 'foo' }) group = function*() {};
 
+      @lastValue('myTask') myTaskValue = 'or some default';
+
       @restartableTask *myTask(immediately: boolean, ms: number = 500): TaskGenerator<string> {
         // We want to assert `this` is not implicitly `any`, but due `this`
         // being a weird internal type in here, neither of the following
@@ -2453,6 +2456,10 @@ module('integration tests', () => {
         expect(result).not.toBeAny();
         expect(result).toBeString();
         expect(result.length).toBeNumber();
+
+        expect(this.myTaskValue).not.toBeAny();
+        expect(this.myTaskValue).toBeString();
+        expect(this.myTaskValue.length).toBeNumber();
 
         // @ts-expect-error
         myTask.perform('nope');
