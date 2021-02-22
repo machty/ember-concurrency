@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.0.2
+  - Ensure `lastRunning` resets one-by-one as tasks are completed, successfully
+    or not. (Fixes #403)
+  - Expose `lastValue` decorator in TS definitions (Fixes #406)
+
 ### 2.0.1
   - Prevent synchronous errors in cancelable promise helpers from being
     rethrown asynchronously later (#402, fixes #400. thanks @Turbo87 for flagging!)
