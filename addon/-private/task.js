@@ -25,13 +25,8 @@ import { CANCEL_KIND_LIFESPAN_END } from "./external/task-instance/cancelation";
   method on this object to cancel all running or enqueued
   {@linkcode TaskInstance}s.
 
-
-  <style>
-    .ignore-this--this-is-here-to-hide-constructor,
-    #Task{ display: none }
-  </style>
-
   @class Task
+  @hideconstructor
 */
 export class Task extends BaseTask {
   constructor(options) {
@@ -90,6 +85,25 @@ export class Task extends BaseTask {
    * @fires TaskInstance#TASK_NAME:succeeded
    * @fires TaskInstance#TASK_NAME:errored
    * @fires TaskInstance#TASK_NAME:canceled
+   *
+   */
+
+  /**
+   * Cancels all running or queued `TaskInstance`s for this Task.
+   * If you're trying to cancel a specific TaskInstance (rather
+   * than all of the instances running under this task) call
+   * `.cancel()` on the specific TaskInstance.
+   *
+   * @method cancelAll
+   * @memberof Task
+   * @param options.reason A descriptive reason the task was
+   *   cancelled. Defaults to `".cancelAll() was explicitly called
+   *   on the Task"`.
+   * @param options.resetState If true, will clear the task state
+   *   (`last*` and `performCount` properties will be set to initial
+   *   values). Defaults to false.
+   * @instance
+   * @async
    *
    */
 

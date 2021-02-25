@@ -335,7 +335,7 @@ export interface TaskInstance<T> extends Promise<T> {
    *     because the task is using the {@linkcode TaskProperty#enqueue enqueue}
    *     task modifier)
    *
-   * The animated timeline examples on the [Task Concurrency](/#/docs/task-concurrency)
+   * The animated timeline examples on the [Task Concurrency](/docs/task-concurrency)
    * docs page make use of this property.
    */
   readonly state: 'dropped' | 'canceled' | 'finished' | 'running' | 'waiting';
@@ -407,7 +407,7 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
    * });
    * ```
    *
-   * [See the Writing Tasks Docs for more info](/#/docs/writing-tasks)
+   * [See the Writing Tasks Docs for more info](/docs/writing-tasks)
    */
   on(...eventNames: string[]): this;
 
@@ -416,7 +416,7 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
    * but instead will cause the task to be canceled if any of the
    * specified events fire on the parent object.
    *
-   * [See the Live Example](/#/docs/examples/route-tasks/1)
+   * [See the Live Example](/docs/examples/route-tasks/1)
    */
   cancelOn(...eventNames: string[]): this;
 
@@ -432,7 +432,7 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
    * to make room for a new one to perform. Sets default
    * maxConcurrency to 1.
    *
-   * [See the Live Example](/#/docs/examples/route-tasks/1)
+   * [See the Live Example](/docs/examples/route-tasks/1)
    */
   restartable(): this;
 
@@ -468,7 +468,7 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
    * to set the maximum number of concurrently running tasks
    * to a number greater than 1.
    *
-   * [See the AJAX Throttling example](/#/docs/examples/ajax-throttling)
+   * [See the AJAX Throttling example](/docs/examples/ajax-throttling)
    *
    * The example below uses a task with `maxConcurrency(3)` to limit
    * the number of concurrent AJAX requests (for anyone using this task)
@@ -492,7 +492,7 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
    * Adds this task to a TaskGroup so that concurrency constraints
    * can be shared between multiple tasks.
    *
-   * [See the Task Group docs for more information](/#/docs/task-groups)
+   * [See the Task Group docs for more information](/docs/task-groups)
    *
    * @param groupPath A path to the TaskGroup property.
    */
@@ -530,7 +530,7 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
  * from the {@linkcode task} function. You can call Task Modifier methods
  * on this object to configure the behavior of the {@link Task}.
  *
- * See [Managing Task Concurrency](/#/docs/task-concurrency) for an
+ * See [Managing Task Concurrency](/docs/task-concurrency) for an
  * overview of all the different task modifiers you can use and how
  * they impact automatic cancelation / enqueueing of task instances.
  */
@@ -551,7 +551,7 @@ export interface TaskGroupProperty<T> extends ComputedProperty<TaskGroup<T>> {
    * instances to make room for a new one to perform. Sets
    * default maxConcurrency to 1.
    *
-   * [See the Live Example](/#/docs/examples/route-tasks/1)
+   * [See the Live Example](/docs/examples/route-tasks/1)
    *
    * @method restartable
    * @memberof TaskGroupProperty
@@ -605,7 +605,7 @@ export interface TaskGroupProperty<T> extends ComputedProperty<TaskGroup<T>> {
    * value to set the maximum number of concurrently running
    * tasks to a number greater than 1.
    *
-   * [See the AJAX Throttling example](/#/docs/examples/ajax-throttling)
+   * [See the AJAX Throttling example](/docs/examples/ajax-throttling)
    *
    * The example below uses a task group with `maxConcurrency(3)`
    * to limit the number of concurrent AJAX requests (for anyone

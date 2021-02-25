@@ -16,7 +16,7 @@ This project uses `yarn` as a package manager. If you're adding a new dependency
 
 ### Running Tests
 
-* `yarn test:all` (Runs `ember try:each` to test your addon against multiple Ember versions)
+* `yarn test:ember-compatibility` (Runs `ember try:each` to test your addon against multiple Ember versions)
 * `ember test`
 * `ember test --server`
 
@@ -29,6 +29,5 @@ For more information on using ember-cli, visit [http://www.ember-cli.com/](http:
 ### Generate Docs
 
 TODO: use build pipeline.
-* `npm install -g jsdoc`
-* From addon root directory `./builddocs.sh`
+* From addon root directory `yarn docs:build`
 * View built docs in `tests/dummy/public/api`
