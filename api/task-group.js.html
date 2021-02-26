@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: -task-group.js</title>
+    <title>JSDoc: Source: task-group.js</title>
 
-    <script src="scripts/prettify/prettify-64a3aaa7c9fa74679fffd055f5efc009.js"> </script>
-    <script src="scripts/prettify/lang-css-832f10d8f02ff19ce70effb7021df50f.js"> </script>
+    <script src="scripts/prettify/prettify-ac8c9277b05c42436cc08385614bed9c.js"> </script>
+    <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: -task-group.js</h1>
+    <h1 class="page-title">Source: task-group.js</h1>
 
     
 
@@ -26,42 +26,31 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { or, bool } from '@ember/object/computed';
-import EmberObject from '@ember/object';
-import { objectAssign, _ComputedProperty } from './utils';
-import TaskStateMixin from './-task-state-mixin';
-import { propertyModifiers } from './-property-modifiers-mixin';
-import { gte } from 'ember-compatibility-helpers';
+            <pre class="prettyprint source linenums"><code>import { TaskGroup as TaskGroupBase } from "./external/task/task-group";
+import { TASKABLE_MIXIN } from "./taskable-mixin";
+import { TRACKED_INITIAL_TASK_STATE } from "./tracked-state";
 
-/**
- * "Task Groups" provide a means for applying
- * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
- * as part of a group task, modifiers like `drop()` or `restartable()`
- * will no longer affect the individual `Task`. Instead those
- * modifiers can be applied to the entire group.
- *
- * ```js
- * import { task, taskGroup } from 'ember-concurrency';
- *
- * export default Controller.extend({
- *   chores: taskGroup().drop(),
- *
- *   mowLawn:       task(taskFn).group('chores'),
- *   doDishes:      task(taskFn).group('chores'),
- *   changeDiapers: task(taskFn).group('chores')
- * });
- * ```
- *
- *
- * &lt;style>
- *   .ignore-this--this-is-here-to-hide-constructor,
- *   #TaskGroup{ display: none }
- * &lt;/style>
- *
- * @class TaskGroup
- */
-export const TaskGroup = EmberObject.extend(TaskStateMixin, {
+export class TaskGroup extends TaskGroupBase {
   /**
+   * Cancels all running or queued `TaskInstance`s for this task group.
+   * If you're trying to cancel a specific TaskInstance (rather
+   * than all of the instances running under this task group) call
+   * `.cancel()` on the specific TaskInstance.
+   *
+   * @method cancelAll
+   * @memberof TaskGroup
+   * @param options.reason A descriptive reason the task group was
+   *   cancelled. Defaults to `".cancelAll() was explicitly called
+   *   on the Task"`.
+   * @param options.resetState If true, will clear the task group state
+   *   (`last*` and `performCount` properties will be set to initial
+   *   values). Defaults to false.
+   * @instance
+   * @async
+   *
+   */
+
+     /**
    * `true` if any current task instances are running.
    *
    * @memberof TaskGroup
@@ -80,7 +69,7 @@ export const TaskGroup = EmberObject.extend(TaskStateMixin, {
    */
 
   /**
-   * `true` if the task group is not in the running or queued state.
+   * `true` if the task is not in the running or queued state.
    *
    * @memberof TaskGroup
    * @member {boolean} isIdle
@@ -89,7 +78,7 @@ export const TaskGroup = EmberObject.extend(TaskStateMixin, {
    */
 
   /**
-   * The current state of the task group: `"running"`, `"queued"` or `"idle"`.
+   * The current state of the task: `"running"`, `"queued"` or `"idle"`.
    *
    * @memberof TaskGroup
    * @member {string} state
@@ -170,159 +159,20 @@ export const TaskGroup = EmberObject.extend(TaskStateMixin, {
    */
 
   /**
-   * The number of times this task group has been performed.
+   * The number of times this task has been performed.
    *
    * @memberof TaskGroup
    * @member {number} performCount
    * @instance
    * @readOnly
    */
-
-  /**
-   * Cancels all running or queued `TaskInstance`s for this task group.
-   * If you're trying to cancel a specific TaskInstance (rather
-   * than all of the instances running under this task group) call
-   * `.cancel()` on the specific TaskInstance.
-   *
-   * @method cancelAll
-   * @memberof TaskGroup
-   * @param {Object} [options]
-   * @param {string} [options.reason=.cancelAll() was explicitly called on the Task] - a descriptive reason the task group was cancelled
-   * @param {boolean} [options.resetState] - if true, will clear the task group state (`last*` and `performCount` properties will be set to initial values)
-   * @instance
-   */
-
-  isTaskGroup: true,
-
-  toString() {
-    return `&lt;TaskGroup:${this._propertyName}>`;
-  },
-
-  _numRunningOrNumQueued: or('numRunning', 'numQueued'),
-  isRunning: bool('_numRunningOrNumQueued'),
-  isQueued: false,
-});
-
-/**
- * "Task Groups" provide a means for applying
- * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
- * as part of a group task, modifiers like `drop()` or `restartable()`
- * will no longer affect the individual `Task`. Instead those
- * modifiers can be applied to the entire group.
- *
- * ```js
- * import { task, taskGroup } from 'ember-concurrency';
- *
- * export default Controller.extend({
- *   chores: taskGroup().drop(),
- *
- *   mowLawn:       task(taskFn).group('chores'),
- *   doDishes:      task(taskFn).group('chores'),
- *   changeDiapers: task(taskFn).group('chores')
- * });
- * ```
- *
- *
- * &lt;style>
- *   .ignore-this--this-is-here-to-hide-constructor,
- *   #TaskGroupProperty{ display: none }
- * &lt;/style>
- *
- * @class TaskGroupProperty
- */
-export let TaskGroupProperty;
-
-if (gte('3.10.0-alpha.1')) {
-  TaskGroupProperty = class {};
-} else {
-  TaskGroupProperty = class extends _ComputedProperty {};
 }
 
-/**
- * Configures the task group to cancel old currently task
- * instances to make room for a new one to perform. Sets
- * default maxConcurrency to 1.
- *
- * [See the Live Example](/#/docs/examples/route-tasks/1)
- *
- * @method restartable
- * @memberof TaskGroupProperty
- * @instance
- */
+if (TRACKED_INITIAL_TASK_STATE) {
+  Object.defineProperties(TaskGroup.prototype, TRACKED_INITIAL_TASK_STATE);
+}
 
-/**
- * Configures the task group to run task instances
- * one-at-a-time in the order they were `.perform()`ed.
- * Sets default maxConcurrency to 1.
- *
- * @method enqueue
- * @memberof TaskGroupProperty
- * @instance
- */
-
-/**
- * Configures the task group to immediately cancel (i.e.
- * drop) any task instances performed when the task group
- * is already running at maxConcurrency. Sets default
- * maxConcurrency to 1.
- *
- * @method drop
- * @memberof TaskGroupProperty
- * @instance
- */
-
-/**
- * Configures the task group to drop all but the most
- * recently performed {@linkcode TaskInstance }.
- *
- * @method keepLatest
- * @memberof TaskGroupProperty
- * @instance
- */
-
-/**
- * Sets the maximum number of task instances that are
- * allowed to run in this task group at the same time.
- * By default, with no task modifiers applied, this number
- * is Infinity (there is no limit to the number of tasks
- * that can run at the same time).
- * {@linkcode TaskGroupProperty#restartable .restartable()},
- * {@linkcode TaskGroupProperty#enqueue .enqueue()}, and
- * {@linkcode TaskGroupProperty#drop .drop()} set the
- * default maxConcurrency to 1, but you can override this
- * value to set the maximum number of concurrently running
- * tasks to a number greater than 1.
- *
- * [See the AJAX Throttling example](/#/docs/examples/ajax-throttling)
- *
- * The example below uses a task group with `maxConcurrency(3)`
- * to limit the number of concurrent AJAX requests (for anyone
- * using tasks in this group) to 3.
- *
- * ```js
- * ajax: taskGroup().maxConcurrency(3),
- *
- * doSomeAjax: task(function * (url) {
- *   return Ember.$.getJSON(url).promise();
- * }).group('ajax'),
- *
- * doSomeAjax: task(function * (url) {
- *   return Ember.$.getJSON(url).promise();
- * }).group('ajax'),
- *
- * elsewhere() {
- *   this.get('doSomeAjax').perform("http://www.example.com/json");
- * },
- * ```
- *
- * @method maxConcurrency
- * @memberof TaskGroupProperty
- * @param {Number} n The maximum number of concurrently running tasks
- * @instance
- */
-
-
-objectAssign(TaskGroupProperty.prototype, propertyModifiers);
+Object.assign(TaskGroup.prototype, TASKABLE_MIXIN);
 </code></pre>
         </article>
     </section>
@@ -333,16 +183,16 @@ objectAssign(TaskGroupProperty.prototype, propertyModifiers);
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ForeverYieldable.html">ForeverYieldable</a></li><li><a href="Task.html">Task</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskGroupProperty.html">TaskGroupProperty</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Events</h3><ul><li><a href="TaskInstance.html#event:TASK_NAME:canceled">TASK_NAME:canceled</a></li><li><a href="TaskInstance.html#event:TASK_NAME:errored">TASK_NAME:errored</a></li><li><a href="TaskInstance.html#event:TASK_NAME:started">TASK_NAME:started</a></li><li><a href="TaskInstance.html#event:TASK_NAME:succeeded">TASK_NAME:succeeded</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jun 17 2020 16:53:37 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Feb 25 2021 21:02:33 GMT-0600 (Central Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
-<script src="scripts/linenumber-f3e4ed3ea1889035f621251805c13f8a.js"> </script>
+<script src="scripts/linenumber-bc32f8413602d59b0d893a8e704de17b.js"> </script>
 </body>
 </html>
