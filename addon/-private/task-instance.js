@@ -15,12 +15,8 @@ import { assignProperties } from "./utils";
   because concurrency policy enforced by a
   {@linkcode TaskProperty Task Modifier} canceled the task instance.
 
-  <style>
-    .ignore-this--this-is-here-to-hide-constructor,
-    #TaskInstance { display: none }
-  </style>
-
   @class TaskInstance
+  @hideconstructor
 */
 
 export class TaskInstance extends BaseTaskInstance {
@@ -117,7 +113,7 @@ export class TaskInstance extends BaseTaskInstance {
    *     because the task is using the {@linkcode TaskProperty#enqueue enqueue}
    *     task modifier)
    *
-   * The animated timeline examples on the [Task Concurrency](/#/docs/task-concurrency)
+   * The animated timeline examples on the [Task Concurrency](/docs/task-concurrency)
    * docs page make use of this property.
    *
    * @name state
@@ -242,6 +238,7 @@ export class TaskInstance extends BaseTaskInstance {
    * @method cancel
    * @memberof TaskInstance
    * @instance
+   * @async
    */
 
   /**

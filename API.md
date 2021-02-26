@@ -27,6 +27,22 @@ export default class MyCompontent extends Component {
 });
 ```
 
+## Task Decorators
+
+You can find a description of all the Task Decorators
+under the [global API docs](global.html).
+
+- [task](global.html#task)
+- [restartableTask](global.html#restartableTask)
+- [enqueueTask](global.html#enqueueTask)
+- [drop](global.html#dropTask)
+- [keepLatest](global.html#keepLatestTask)
+- [taskGroup](global.html#taskGroup)
+- [restartableTaskGroup](global.html#restartableTaskGroup)
+- [enqueueTaskGroup](global.html#enqueueTaskGroup)
+- [dropGroup](global.html#dropTaskGroup)
+- [keepLatestGroup](global.html#keepLatestTaskGroup)
+
 ## Task Modifiers
 
 You can find a description of all the Task Modifiers
