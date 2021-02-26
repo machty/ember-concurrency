@@ -150,7 +150,7 @@ export const lastValue = decoratorWithParams((target, key, descriptor, [taskName
  * method.
  *
  * ```js
- * import Component from '@glimmer/component';
+ * import Component from '@ember/component';
  * import { task } from 'ember-concurrency';
  *
  * class MyComponent extends Component {
@@ -164,7 +164,7 @@ export const lastValue = decoratorWithParams((target, key, descriptor, [taskName
  *
  * @function
  * @param {object?} [options={}] Task modifier options
- * @param {string|string[]} [options.cancelOn] Events to cancel task on
+ * @param {string|string[]} [options.cancelOn] Events to cancel task on. Applies only to `&#64;ember/component`
  * @param {boolean} [options.enqueue] Sets `enqueue` modifier on task if `true`
  * @param {boolean} [options.evented] Enables [task lifecycle events](/docs/task-lifecycle-events) for this Task, if `true`
  * @param {boolean} [options.debug] Enables task debugging if `true`
@@ -173,7 +173,7 @@ export const lastValue = decoratorWithParams((target, key, descriptor, [taskName
  * @param {boolean} [options.keepLatest] Sets `keepLatest` modifier on task if `true`
  * @param {number} [options.maxConcurrency] Sets the maximum number of running task instances for the task
  * @param {string|string[]} [options.observes] Properties to watch and cause task to be performed when they change
- * @param {string|string[]} [options.on] Events to perform task on
+ * @param {string|string[]} [options.on] Events to perform task on. Applies only to `&#64;ember/component`
  * @param {function?} [options.onState] Callback to use for state tracking. May be set to `null` to disable state tracking.
  * @param {boolean} [options.restartable] Sets `restartable` modifier on task if `true`
  * @return {Task}
@@ -193,7 +193,7 @@ export const task = createDecorator(taskFromPropertyDescriptor);
  * method.
  *
  * ```js
- * import Component from '@glimmer/component';
+ * import Component from '@ember/component';
  * import { task, dropTask } from 'ember-concurrency';
  *
  * class MyComponent extends Component {
@@ -227,7 +227,7 @@ export const dropTask = createDecorator(
  * method.
  *
  * ```js
- * import Component from '@glimmer/component';
+ * import Component from '@ember/component';
  * import { task, enqueueTask } from 'ember-concurrency';
  *
  * class MyComponent extends Component {
@@ -261,7 +261,7 @@ export const enqueueTask = createDecorator(
  * method.
  *
  * ```js
- * import Component from '@glimmer/component';
+ * import Component from '@ember/component';
  * import { task, keepLatestTask } from 'ember-concurrency';
  *
  * class MyComponent extends Component {
@@ -295,7 +295,7 @@ export const keepLatestTask = createDecorator(
  * method.
  *
  * ```js
- * import Component from '@glimmer/component';
+ * import Component from '@ember/component';
  * import { task, restartableTask } from 'ember-concurrency';
  *
  * class MyComponent extends Component {

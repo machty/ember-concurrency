@@ -797,7 +797,7 @@ export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(taskFn: T
  * method.
  *
  * ```js
- * import Component from '@glimmer/component';
+ * import Component from '@ember/component';
  * import { task, dropTask } from 'ember-concurrency';
  *
  * class MyComponent extends Component {
@@ -838,7 +838,7 @@ export function dropTask(
  * method.
  *
  * ```js
- * import Component from '@glimmer/component';
+ * import Component from '@ember/component';
  * import { task, enqueueTask } from 'ember-concurrency';
  *
  * class MyComponent extends Component {
@@ -879,7 +879,7 @@ export function enqueueTask(
  * method.
  *
  * ```js
- * import Component from '@glimmer/component';
+ * import Component from '@ember/component';
  * import { task, keepLatestTask } from 'ember-concurrency';
  *
  * class MyComponent extends Component {
@@ -920,7 +920,7 @@ export function keepLatestTask(
  * method.
  *
  * ```js
- * import Component from '@glimmer/component';
+ * import Component from '@ember/component';
  * import { task, restartableTask } from 'ember-concurrency';
  *
  * class MyComponent extends Component {
