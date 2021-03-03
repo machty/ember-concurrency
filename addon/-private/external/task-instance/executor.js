@@ -6,13 +6,13 @@ import {
   YIELDABLE_THROW,
   YIELDABLE_RETURN,
   YIELDABLE_CANCEL,
-  cancelableSymbol
-} from '../yieldables';
+  cancelableSymbol,
+} from "../yieldables";
 
 import {
   COMPLETION_SUCCESS,
   COMPLETION_ERROR,
-  COMPLETION_CANCEL
+  COMPLETION_CANCEL,
 } from "./completion-states";
 import {
   CancelRequest,
@@ -20,7 +20,7 @@ import {
   CANCEL_KIND_LIFESPAN_END,
   CANCEL_KIND_PARENT_CANCEL,
   didCancel,
-  TASK_CANCELATION_NAME
+  TASK_CANCELATION_NAME,
 } from "./cancelation";
 
 export const PERFORM_TYPE_DEFAULT = "PERFORM_TYPE_DEFAULT";
@@ -191,10 +191,10 @@ export class TaskInstanceExecutor {
   handleYieldedUnknownThenable(thenable) {
     let resumeIndex = this.index;
     thenable.then(
-      value => {
+      (value) => {
         this.proceedChecked(resumeIndex, YIELDABLE_CONTINUE, value);
       },
-      error => {
+      (error) => {
         this.proceedChecked(resumeIndex, YIELDABLE_THROW, error);
       }
     );
@@ -270,7 +270,7 @@ export class TaskInstanceExecutor {
       return;
     }
     this.disposers = [];
-    disposers.forEach(disposer => disposer());
+    disposers.forEach((disposer) => disposer());
   }
 
   /**
@@ -320,7 +320,7 @@ export class TaskInstanceExecutor {
   }
 
   runFinalizeCallbacks() {
-    this.finalizeCallbacks.forEach(cb => cb());
+    this.finalizeCallbacks.forEach((cb) => cb());
     this.finalizeCallbacks = [];
     this.maybeResolveDefer();
     this.maybeThrowUnhandledTaskErrorLater();
@@ -341,7 +341,11 @@ export class TaskInstanceExecutor {
       this.state.completionState === COMPLETION_ERROR &&
       !didCancel(this.state.error)
     ) {
+      debugger;
+
       this.env.async(() => {
+        debugger;
+
         if (!this.asyncErrorsHandled) {
           this.env.reportUncaughtRejection(this.state.error);
         }
@@ -394,7 +398,7 @@ export class TaskInstanceExecutor {
       isCanceled: true,
       completionState: COMPLETION_CANCEL,
       error,
-      cancelReason
+      cancelReason,
     });
 
     this.cancelRequest.finalize();
@@ -464,11 +468,7 @@ export class TaskInstanceExecutor {
     this.onFinalize(() => {
       let completionState = this.state.completionState;
       if (completionState === COMPLETION_SUCCESS) {
-        parent.proceed(
-          resumeIndex,
-          YIELDABLE_CONTINUE,
-          this.state.value
-        );
+        parent.proceed(resumeIndex, YIELDABLE_CONTINUE, this.state.value);
       } else if (completionState === COMPLETION_ERROR) {
         parent.proceed(resumeIndex, YIELDABLE_THROW, this.state.error);
       } else if (completionState === COMPLETION_CANCEL) {

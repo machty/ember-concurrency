@@ -1,4 +1,4 @@
-import { run } from '@ember/runloop';
+import { run, join } from '@ember/runloop';
 import { defer } from 'rsvp';
 import EmberObject from '@ember/object';
 import { task } from 'ember-concurrency';
@@ -30,6 +30,33 @@ module('Unit: task error handling', function() {
       obj.get('parent').cancelAll();
     });
   });
+
+  test('synchronous errors are caught asynchronously', function(assert) {
+    assert.expect(1);
+
+    let Obj = EmberObject.extend({
+      throwError: task(function * () {
+        throw new Error('This error should be caught')
+      }),
+    });
+
+    let obj;
+    run(()=> {
+      join(() => {
+        obj = Obj.create();
+
+        obj.throwError.perform().catch(e => {
+          debugger;
+
+          assert.equal(
+            e.message,
+            'This error should be caught',
+            'The thrown error was caught'
+          );
+        })
+      });
+    })
+  })
 
   test("parent task canceled by restartable policy: no errors", function(assert) {
     assert.expect(1);
