@@ -3,6 +3,9 @@ import config from 'dummy/config/environment';
 import { setApplication } from '@ember/test-helpers';
 import { QUnitAdapter, start } from 'ember-qunit';
 import QUnit from 'qunit';
+import { setup as setupQUnitDom } from 'qunit-dom';
+
+setupQUnitDom(QUnit.assert);
 
 QUnit.config.testTimeout = 5000;
 
