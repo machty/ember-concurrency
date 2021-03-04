@@ -20,6 +20,7 @@ class TaskLinkProxy {
 export class Task extends Taskable {
   constructor(options) {
     super(options);
+    this.generatorFactory = options.generatorFactory;
     this.perform = this._perform.bind(this);
   }
 

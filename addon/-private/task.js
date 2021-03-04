@@ -158,7 +158,16 @@ export class Task extends BaseTask {
   }
 
   _clone() {
-    return new Task(this.options);
+    return new Task({
+      context: this.context,
+      debug: this.debug,
+      generatorFactory: this.generatorFactory,
+      group: this.group,
+      hasEnabledEvents: this.hasEnabledEvents,
+      name: this.name,
+      onStateCallback: this.onStateCallback,
+      scheduler: this.scheduler
+    });
   }
 
   toString() {
