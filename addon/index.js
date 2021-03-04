@@ -5,7 +5,7 @@ import {
   task,
   taskGroup
 } from './-private/task-properties';
-import { default as TaskInstance } from './-private/task-instance';
+import { TaskInstance } from './-private/task-instance';
 import {
   all,
   allSettled,
