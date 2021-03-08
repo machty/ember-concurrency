@@ -1,4 +1,5 @@
 export const cancelableSymbol = "__ec_cancel__";
+export const instanceSymbol = "__ec_instance__";
 export const yieldableSymbol = "__ec_yieldable__";
 export const YIELDABLE_CONTINUE = "next";
 export const YIELDABLE_THROW = "throw";
@@ -9,6 +10,49 @@ export class Yieldable {
   constructor() {
     this[yieldableSymbol] = this[yieldableSymbol].bind(this);
     this[cancelableSymbol] = this[cancelableSymbol].bind(this);
+    this._resumeIndex = null;
+  }
+
+  onYield() {}
+  onDispose() {}
+
+  cancel() {
+    let taskInstance = this[instanceSymbol];
+    taskInstance.proceed.call(
+      taskInstance,
+      this._resumeIndex,
+      YIELDABLE_CANCEL
+    );
+  }
+
+  continue(value) {
+    let taskInstance = this[instanceSymbol];
+    taskInstance.proceed.call(
+      taskInstance,
+      this._resumeIndex,
+      YIELDABLE_CONTINUE,
+      value
+    );
+  }
+
+  return(value) {
+    let taskInstance = this[instanceSymbol];
+    taskInstance.proceed.call(
+      taskInstance,
+      this._resumeIndex,
+      YIELDABLE_RETURN,
+      value
+    );
+  }
+
+  throw(error) {
+    let taskInstance = this[instanceSymbol];
+    taskInstance.proceed.call(
+      taskInstance,
+      this._resumeIndex,
+      YIELDABLE_THROW,
+      error
+    );
   }
 
   _deferable() {
@@ -53,8 +97,16 @@ export class Yieldable {
     return this._toPromise().finally(...args);
   }
 
-  [yieldableSymbol]() {}
-  [cancelableSymbol]() {}
+  [yieldableSymbol](taskInstance, resumeIndex) {
+    this[instanceSymbol] = taskInstance;
+    this._resumeIndex = resumeIndex;
+    this.onYield(taskInstance);
+  }
+
+  [cancelableSymbol]() {
+    this.onDispose();
+    this[instanceSymbol] = null;
+  }
 }
 
 class AnimationFrameYieldable extends Yieldable {
@@ -63,21 +115,20 @@ class AnimationFrameYieldable extends Yieldable {
     this.timerId = null;
   }
 
-  [yieldableSymbol](taskInstance, resumeIndex) {
-    this.timerId = requestAnimationFrame(() => {
-      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, taskInstance._result);
-    });
+  onYield() {
+    this.timerId = requestAnimationFrame(() => this.continue());
   }
 
-  [cancelableSymbol]() {
+  onDispose() {
     cancelAnimationFrame(this.timerId);
     this.timerId = null;
   }
 }
 
 class ForeverYieldable extends Yieldable {
-  [yieldableSymbol]() {}
-  [cancelableSymbol]() {}
+  [yieldableSymbol]() {
+    // Singleton. Don't want to keep a taskInstance reference.
+  }
 }
 
 class RawTimeoutYieldable extends Yieldable {
@@ -87,13 +138,11 @@ class RawTimeoutYieldable extends Yieldable {
     this.timerId = null;
   }
 
-  [yieldableSymbol](taskInstance, resumeIndex) {
-    this.timerId = setTimeout(() => {
-      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, taskInstance._result);
-    }, this.ms);
+  onYield() {
+    this.timerId = setTimeout(() => this.continue(), this.ms);
   }
 
-  [cancelableSymbol]() {
+  onDispose() {
     clearTimeout(this.timerId);
     this.timerId = null;
   }

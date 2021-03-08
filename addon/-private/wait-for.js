@@ -2,12 +2,6 @@ import { assert } from "@ember/debug";
 import { schedule, cancel } from "@ember/runloop";
 import { get } from "@ember/object";
 import { addObserver, removeObserver } from '@ember/object/observers';
-import {
-  yieldableSymbol,
-  YIELDABLE_CONTINUE,
-  YIELDABLE_THROW,
-  cancelableSymbol
-} from "./external/yieldables";
 import { EmberYieldable, isEventedObject } from './utils';
 
 class WaitForQueueYieldable extends EmberYieldable {
@@ -17,17 +11,15 @@ class WaitForQueueYieldable extends EmberYieldable {
     this.timerId = null;
   }
 
-  [yieldableSymbol](taskInstance, resumeIndex) {
+  onYield() {
     try {
-      this.timerId = schedule(this.queueName, () => {
-        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, null);
-      });
+      this.timerId = schedule(this.queueName, () => this.continue());
     } catch(error) {
-      taskInstance.proceed(resumeIndex, YIELDABLE_THROW, error);
+      this.throw(error);
     }
   }
 
-  [cancelableSymbol]() {
+  onDispose() {
     cancel(this.timerId);
     this.timerId = null;
   }
@@ -44,11 +36,11 @@ class WaitForEventYieldable extends EmberYieldable {
     this.requiresCleanup = false;
   }
 
-  [yieldableSymbol](taskInstance, resumeIndex) {
+  onYield() {
     this.fn = (event) => {
       this.didFinish = true;
-      this[cancelableSymbol]();
-      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, event);
+      this.onDispose();
+      this.continue(event);
     };
 
     if (typeof this.object.addEventListener === "function") {
@@ -65,7 +57,7 @@ class WaitForEventYieldable extends EmberYieldable {
     }
   }
 
-  [cancelableSymbol]() {
+  onDispose() {
     if (this.fn) {
       if (this.usesDOMEvents) {
         // unfortunately this is required, because IE 11 does not support the
@@ -77,6 +69,7 @@ class WaitForEventYieldable extends EmberYieldable {
 
       this.fn = null;
     }
+    this.object = null;
   }
 }
 
@@ -95,12 +88,12 @@ class WaitForPropertyYieldable extends EmberYieldable {
     this.observerBound = false;
   }
 
-  [yieldableSymbol](taskInstance, resumeIndex) {
+  onYield() {
     this.observerFn = () => {
       let value = get(this.object, this.key);
       let predicateValue = this.predicateCallback(value);
       if (predicateValue) {
-        taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, value);
+        this.continue(value);
         return true;
       }
     };
@@ -111,11 +104,12 @@ class WaitForPropertyYieldable extends EmberYieldable {
     }
   }
 
-  [cancelableSymbol]() {
+  onDispose() {
     if (this.observerBound && this.observerFn) {
       removeObserver(this.object, this.key, null, this.observerFn);
       this.observerFn = null;
     }
+    this.object = null;
   }
 }
 
