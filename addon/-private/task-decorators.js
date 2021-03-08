@@ -1,5 +1,5 @@
 import { computed, get } from '@ember/object';
-import { TaskFactory, TaskGroupFactory } from './task-factory';
+import { TaskFactory } from './task-factory';
 import { USE_TRACKED } from './utils';
 
 function taskFromPropertyDescriptor(target, key, descriptor, params = []) {
@@ -38,7 +38,7 @@ function taskFromPropertyDescriptor(target, key, descriptor, params = []) {
 function taskGroupPropertyDescriptor(target, key, _descriptor, params = []) {
   let taskGroups = new WeakMap();
   let options = params[0] || {};
-  let factory = new TaskGroupFactory(key, null, options);
+  let factory = new TaskFactory(key, null, options);
 
   return {
     get() {

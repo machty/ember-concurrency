@@ -10,7 +10,7 @@ import {
   task as taskDecorator,
   taskGroup as taskGroupDecorator,
 } from './task-decorators';
-import { TaskFactory, TaskGroupFactory } from './task-factory';
+import { TaskFactory } from './task-factory';
 
 let taskFactorySymbol = '__ec_task_factory';
 
@@ -431,7 +431,7 @@ export function taskGroup(possibleDecoratorOptions, key, descriptor) {
       return tp[taskFactorySymbol].createTaskGroup(this);
     });
 
-    tp[taskFactorySymbol] = new TaskGroupFactory();
+    tp[taskFactorySymbol] = new TaskFactory();
 
     Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
 
