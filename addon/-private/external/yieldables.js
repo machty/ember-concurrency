@@ -25,7 +25,7 @@ export class Yieldable {
     );
   }
 
-  continue(value) {
+  next(value) {
     let taskInstance = this[instanceSymbol];
     taskInstance.proceed.call(
       taskInstance,
@@ -116,7 +116,7 @@ class AnimationFrameYieldable extends Yieldable {
   }
 
   onYield() {
-    this.timerId = requestAnimationFrame(() => this.continue());
+    this.timerId = requestAnimationFrame(() => this.next());
   }
 
   onDispose() {
@@ -139,7 +139,7 @@ class RawTimeoutYieldable extends Yieldable {
   }
 
   onYield() {
-    this.timerId = setTimeout(() => this.continue(), this.ms);
+    this.timerId = setTimeout(() => this.next(), this.ms);
   }
 
   onDispose() {

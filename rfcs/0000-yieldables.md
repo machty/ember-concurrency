@@ -95,7 +95,7 @@ import { task, Yieldable } from 'ember-concurrency';
 
 class IdleCallbackYieldable extends Yieldable {
   onYield() {
-    this.callbackId = requestIdleCallback(() => this.continue());
+    this.callbackId = requestIdleCallback(() => this.next());
   }
 
   onDispose() {

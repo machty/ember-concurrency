@@ -13,7 +13,7 @@ class WaitForQueueYieldable extends EmberYieldable {
 
   onYield() {
     try {
-      this.timerId = schedule(this.queueName, () => this.continue());
+      this.timerId = schedule(this.queueName, () => this.next());
     } catch(error) {
       this.throw(error);
     }
@@ -40,7 +40,7 @@ class WaitForEventYieldable extends EmberYieldable {
     this.fn = (event) => {
       this.didFinish = true;
       this.onDispose();
-      this.continue(event);
+      this.next(event);
     };
 
     if (typeof this.object.addEventListener === "function") {
@@ -93,7 +93,7 @@ class WaitForPropertyYieldable extends EmberYieldable {
       let value = get(this.object, this.key);
       let predicateValue = this.predicateCallback(value);
       if (predicateValue) {
-        this.continue(value);
+        this.next(value);
         return true;
       }
     };

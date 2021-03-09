@@ -29,7 +29,7 @@ class TimeoutYieldable extends EmberYieldable {
   }
 
   onYield() {
-    this.timerId = later(() => this.continue(), this.ms);
+    this.timerId = later(() => this.next(), this.ms);
   }
 
   onDispose() {
