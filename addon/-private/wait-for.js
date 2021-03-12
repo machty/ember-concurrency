@@ -8,20 +8,18 @@ class WaitForQueueYieldable extends EmberYieldable {
   constructor(queueName) {
     super();
     this.queueName = queueName;
-    this.timerId = null;
   }
 
-  onYield() {
+  onYield(taskInstance) {
+    let timerId;
+
     try {
-      this.timerId = schedule(this.queueName, () => this.next());
+      timerId = schedule(this.queueName, () => this.next(taskInstance));
     } catch(error) {
-      this.throw(error);
+      this.throw(taskInstance, error);
     }
-  }
 
-  onDispose() {
-    cancel(this.timerId);
-    this.timerId = null;
+    return () => cancel(timerId);
   }
 }
 
@@ -30,46 +28,42 @@ class WaitForEventYieldable extends EmberYieldable {
     super();
     this.object = object;
     this.eventName = eventName;
-    this.fn = null;
-    this.didFinish = false;
     this.usesDOMEvents = false;
-    this.requiresCleanup = false;
   }
 
-  onYield() {
-    this.fn = (event) => {
-      this.didFinish = true;
-      this.onDispose();
-      this.next(event);
-    };
-
+  on(callback) {
     if (typeof this.object.addEventListener === "function") {
       // assume that we're dealing with a DOM `EventTarget`.
       this.usesDOMEvents = true;
-      this.object.addEventListener(this.eventName, this.fn);
-    } else if (typeof this.object.one === 'function') {
-      // assume that we're dealing with either `Ember.Evented` or a compatible
-      // interface, like jQuery.
-      this.object.one(this.eventName, this.fn);
+      this.object.addEventListener(this.eventName, callback);
     } else {
-      this.requiresCleanup = true;
-      this.object.on(this.eventName, this.fn);
+      this.object.on(this.eventName, callback);
     }
   }
 
-  onDispose() {
-    if (this.fn) {
-      if (this.usesDOMEvents) {
-        // unfortunately this is required, because IE 11 does not support the
-        // `once` option: https://caniuse.com/#feat=once-event-listener
-        this.object.removeEventListener(this.eventName, this.fn);
-      } else if (!this.didFinish || this.requiresCleanup) {
-        this.object.off(this.eventName, this.fn);
-      }
-
-      this.fn = null;
+  off(callback) {
+    if (this.usesDOMEvents) {
+      this.object.removeEventListener(this.eventName, callback);
+    } else {
+      this.object.off(this.eventName, callback);
     }
-    this.object = null;
+  }
+
+  onYield(taskInstance) {
+    let fn = null;
+    let disposer = () => {
+      fn && this.off(fn);
+      fn = null;
+    };
+
+    fn = (event) => {
+      disposer();
+      this.next(taskInstance, event);
+    };
+
+    this.on(fn);
+
+    return disposer;
   }
 }
 
@@ -84,32 +78,29 @@ class WaitForPropertyYieldable extends EmberYieldable {
     } else {
       this.predicateCallback = v => v === predicateCallback;
     }
-
-    this.observerBound = false;
   }
 
-  onYield() {
-    this.observerFn = () => {
+  onYield(taskInstance) {
+    let observerBound = false;
+    let observerFn = () => {
       let value = get(this.object, this.key);
       let predicateValue = this.predicateCallback(value);
       if (predicateValue) {
-        this.next(value);
+        this.next(taskInstance, value);
         return true;
       }
     };
 
-    if (!this.observerFn()) {
-      addObserver(this.object, this.key, null, this.observerFn);
-      this.observerBound = true;
+    if (!observerFn()) {
+      addObserver(this.object, this.key, null, observerFn);
+      observerBound = true;
     }
-  }
 
-  onDispose() {
-    if (this.observerBound && this.observerFn) {
-      removeObserver(this.object, this.key, null, this.observerFn);
-      this.observerFn = null;
+    return () => {
+      if (observerBound && observerFn) {
+        removeObserver(this.object, this.key, null, observerFn);
+      }
     }
-    this.object = null;
   }
 }
 

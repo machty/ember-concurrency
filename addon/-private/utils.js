@@ -25,16 +25,12 @@ class TimeoutYieldable extends EmberYieldable {
   constructor(ms) {
     super();
     this.ms = ms;
-    this.timerId = null;
   }
 
-  onYield() {
-    this.timerId = later(() => this.next(), this.ms);
-  }
+  onYield(taskInstance) {
+    let timerId = later(() => this.next(taskInstance), this.ms);
 
-  onDispose() {
-    cancel(this.timerId);
-    this.timerId = null;
+    return () => cancel(timerId);
   }
 }
 

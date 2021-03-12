@@ -1,59 +1,96 @@
 export const cancelableSymbol = "__ec_cancel__";
-export const instanceSymbol = "__ec_instance__";
+export const instanceStatesSymbol = "__ec_instance_states__";
 export const yieldableSymbol = "__ec_yieldable__";
 export const YIELDABLE_CONTINUE = "next";
 export const YIELDABLE_THROW = "throw";
 export const YIELDABLE_RETURN = "return";
 export const YIELDABLE_CANCEL = "cancel";
 
-export class Yieldable {
-  constructor() {
-    this[yieldableSymbol] = this[yieldableSymbol].bind(this);
-    this[cancelableSymbol] = this[cancelableSymbol].bind(this);
-    this._resumeIndex = null;
+class YieldableState {
+  constructor(taskInstance, resumeIndex) {
+    this.taskInstance = taskInstance;
+    this.resumeIndex = resumeIndex;
   }
 
-  onYield() {}
-  onDispose() {}
-
   cancel() {
-    let taskInstance = this[instanceSymbol];
+    let taskInstance = this.taskInstance;
     taskInstance.proceed.call(
       taskInstance,
-      this._resumeIndex,
+      this.resumeIndex,
       YIELDABLE_CANCEL
     );
   }
 
   next(value) {
-    let taskInstance = this[instanceSymbol];
+    let taskInstance = this.taskInstance;
     taskInstance.proceed.call(
       taskInstance,
-      this._resumeIndex,
+      this.resumeIndex,
       YIELDABLE_CONTINUE,
       value
     );
   }
 
   return(value) {
-    let taskInstance = this[instanceSymbol];
+    let taskInstance = this.taskInstance;
     taskInstance.proceed.call(
       taskInstance,
-      this._resumeIndex,
+      this.resumeIndex,
       YIELDABLE_RETURN,
       value
     );
   }
 
   throw(error) {
-    let taskInstance = this[instanceSymbol];
+    let taskInstance = this.taskInstance;
     taskInstance.proceed.call(
       taskInstance,
-      this._resumeIndex,
+      this.resumeIndex,
       YIELDABLE_THROW,
       error
     );
   }
+}
+
+export class Yieldable {
+  constructor() {
+    this[yieldableSymbol] = this[yieldableSymbol].bind(this);
+    this[instanceStatesSymbol] = new WeakMap();
+  }
+
+  cancel(taskInstance) {
+    let state = this[instanceStatesSymbol].get(taskInstance);
+
+    if (state) {
+      state.cancel();
+    }
+  }
+
+  next(taskInstance, value) {
+    let state = this[instanceStatesSymbol].get(taskInstance);
+
+    if (state) {
+      state.next(value);
+    }
+  }
+
+  return(taskInstance, value) {
+    let state = this[instanceStatesSymbol].get(taskInstance);
+
+    if (state) {
+      state.return(value);
+    }
+  }
+
+  throw(taskInstance, error) {
+    let state = this[instanceStatesSymbol].get(taskInstance);
+
+    if (state) {
+      state.throw(error);
+    }
+  }
+
+  onYield() {}
 
   _deferable() {
     let def = { resolve: undefined, reject: undefined };
@@ -80,7 +117,7 @@ export class Yieldable {
     };
 
     let maybeDisposer = this[yieldableSymbol](thinInstance, 0);
-    def.promise[cancelableSymbol] = maybeDisposer || this[cancelableSymbol];
+    def.promise[cancelableSymbol] = maybeDisposer;
 
     return def.promise;
   }
@@ -98,53 +135,35 @@ export class Yieldable {
   }
 
   [yieldableSymbol](taskInstance, resumeIndex) {
-    this[instanceSymbol] = taskInstance;
-    this._resumeIndex = resumeIndex;
-    this.onYield(taskInstance);
-  }
+    let state = new YieldableState(taskInstance, resumeIndex);
+    this[instanceStatesSymbol].set(taskInstance, state);
 
-  [cancelableSymbol]() {
-    this.onDispose();
-    this[instanceSymbol] = null;
+    return this.onYield(taskInstance);
   }
 }
 
 class AnimationFrameYieldable extends Yieldable {
-  constructor() {
-    super();
-    this.timerId = null;
-  }
+  onYield(taskInstance) {
+    let timerId = requestAnimationFrame(() => this.next(taskInstance));
 
-  onYield() {
-    this.timerId = requestAnimationFrame(() => this.next());
-  }
-
-  onDispose() {
-    cancelAnimationFrame(this.timerId);
-    this.timerId = null;
+    return () => cancelAnimationFrame(timerId);
   }
 }
 
 class ForeverYieldable extends Yieldable {
-  [yieldableSymbol]() {
-    // Singleton. Don't want to keep a taskInstance reference.
-  }
+  onYield() {}
 }
 
 class RawTimeoutYieldable extends Yieldable {
   constructor(ms) {
     super();
     this.ms = ms;
-    this.timerId = null;
   }
 
-  onYield() {
-    this.timerId = setTimeout(() => this.next(), this.ms);
-  }
+  onYield(taskInstance) {
+    let timerId = setTimeout(() => this.next(taskInstance), this.ms);
 
-  onDispose() {
-    clearTimeout(this.timerId);
-    this.timerId = null;
+    return () => clearTimeout(timerId);
   }
 }
 

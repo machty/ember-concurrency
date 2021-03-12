@@ -62,26 +62,28 @@ class Yieldable {
   constructor(arg1, arg2, arg3, ...) {
     super(...arguments);
     // User setup logic would go here. If the yieldable took arguments, they
-    // could be store in the Yieldable here
+    // could be stored in the Yieldable here
   }
 
   onYield(taskInstance) {
     // This is where most user code would go, defining what happens when the
     // task encounters `yield myYieldable`.
 
-    // The user would have three methods they can call within here:
-    // * this.next(value) - would could cause the yield to return with an
-    //   optional value, and continue executing the task instance
-    // * this.return(value) - would short-cirsuit task execution and have it
-    //   return with an optional value.
-    // * this.throw(error) - would raise a given error within the task instance
-    //   and halt execution
-  }
+    // taskInstance is the TaskInstance yielding to the yieldable
 
-  onDispose() {
-    // Custom dispose logic goes here. Would be called if task was canceled or
-    // upon completion. Things like `cancelTimeout`, timer cleanup, or property
-    // resets might happen here.
+    // The user would have three methods they can call within here:
+    // * this.next(taskInstance, value) - would could cause the taskInstance to
+    //   yield with an optional value, and continue executing
+    // * this.return(taskInstance, value) - would short-cirsuit task execution and have it
+    //   return with an optional value.
+    // * this.throw(taskInstance, error) - would raise a given error within the
+    //   given task instance and halt execution
+
+    return () => {
+      // Custom dispose logic goes here. Would be called if task was canceled or
+      // upon completion. Things like `cancelTimeout`, timer cleanup, or property
+      // resets might happen here.
+    }
   }
 }
 ```
@@ -94,33 +96,34 @@ import Component from '@glimmer/component';
 import { task, Yieldable } from 'ember-concurrency';
 
 class IdleCallbackYieldable extends Yieldable {
-  onYield() {
-    this.callbackId = requestIdleCallback(() => this.next());
-  }
+  onYield(taskInstance) {
+    let callbackId = requestIdleCallback(() => this.next(taskInstance));
 
-  onDispose() {
-    cancelIdleCallback(this.callbackId);
-    this.callbackId = null;
+    return () => cancelIdleCallback(callbackId);
   }
 }
 
-function idleCallback() {
-  return new IdleCallbackYieldable();
-}
+const idleCallback = () => new IdleCallbackYieldable();
 
 class MyComponent extends Component {
   @task *backgroundTask() {
-    yield idleCallback();
+    while (1) {
+      yield idleCallback();
 
-    const data = this.complicatedNumberCrunching();
-    yield this.sendData(data);
+      const data = this.complicatedNumberCrunching();
+      yield this.sendData(data);
+    }
   }
 }
 ```
 
-In general, `Yieldable` instances **should not** be reused across calls, and
-thus care should be taken to ensure that users create a function, like `idleCallback`
-above, to provide a new instance on every call.
+In general, `Yieldable` instances **should** be reusable across calls, and
+thus care should be taken to ensure that teardown is provided and state not
+intended to be shared across calls stay inside `onYield`.
+
+`Yieldable` will also provide automatic Promise-casting with the same semantics
+it has today: it will not be linked to a task instance and any subsequent
+continuations will continue as a regular Promise.
 
 ## How we teach this
 
@@ -164,11 +167,12 @@ explains how it ties in with cancelation/teardown, etc.
 > This section could also include prior art, that is, how other frameworks in the
 > same domain have solved this problem.
 
-It might be possible to provide a more functional approach, with a disposer being
-returned by the function (many yieldables were first implemented this way), but
-this complicates or precludes certain use cases. However, I think a functional
-approach would remain available later. See Ember helpers and modifiers as an
-example that allows both functional and class-based implementations.
+For the implementation of `onYield`, I considered having `next`, `throw`,
+`return` and `cancel` provided as a parameters. However, this felt like too many
+parameters. It would, however, have the benefit of not requiring passing
+`taskInstance` or using `this` when passing control back to the task instance,
+which would be nice, but we're already passing `taskInstance` (for good reason,
+there's useful state on there.) and it's not a huge burden.
 
 ## Unresolved questions
 
