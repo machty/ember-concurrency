@@ -25,6 +25,10 @@ module.exports = function(defaults) {
 
     babel: babelOptions,
 
+    autoImport: {
+      forbidEval: true,
+    },
+
     'ember-cli-babel': {
       includePolyfill: process.env.EMBER_ENV === 'production'
     },
