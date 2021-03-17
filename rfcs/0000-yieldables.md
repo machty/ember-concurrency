@@ -57,27 +57,35 @@ how to hand control back to the task.
 
 The API proposed is fairly simple:
 
-```javascript
-class Yieldable {
-  constructor(arg1, arg2, arg3, ...) {
-    super(...arguments);
+```typescript
+class YieldableState {
+  // Return yielded TaskInstance. Useful for introspection on instance state.
+  getTaskInstance(): TaskInstance<any>;
+
+  // Cancel the yielded TaskInstance.
+  cancel(): void;
+
+  // Cause the TaskInstance to return from its yield with an optional value,
+  // and continue executing
+  next(value: any): void;
+
+  // Short-cirsuit TaskInstance execution and have it return with an optional
+  // value.
+  return(value: any): void;
+
+  // Raise a given error within the given task instance and halt execution
+  throw(error: Error): void;
+}
+
+abstract class Yieldable {
+  constructor(...args) {
     // User setup logic would go here. If the yieldable took arguments, they
     // could be stored in the Yieldable here
   }
 
-  onYield(taskInstance) {
+  onYield(state: YieldableState): Function<void> {
     // This is where most user code would go, defining what happens when the
     // task encounters `yield myYieldable`.
-
-    // taskInstance is the TaskInstance yielding to the yieldable
-
-    // The user would have three methods they can call within here:
-    // * this.next(taskInstance, value) - would could cause the taskInstance to
-    //   yield with an optional value, and continue executing
-    // * this.return(taskInstance, value) - would short-cirsuit task execution and have it
-    //   return with an optional value.
-    // * this.throw(taskInstance, error) - would raise a given error within the
-    //   given task instance and halt execution
 
     return () => {
       // Custom dispose logic goes here. Would be called if task was canceled or
@@ -96,8 +104,8 @@ import Component from '@glimmer/component';
 import { task, Yieldable } from 'ember-concurrency';
 
 class IdleCallbackYieldable extends Yieldable {
-  onYield(taskInstance) {
-    let callbackId = requestIdleCallback(() => this.next(taskInstance));
+  onYield(state) {
+    let callbackId = requestIdleCallback(() => state.next());
 
     return () => cancelIdleCallback(callbackId);
   }
@@ -169,10 +177,7 @@ explains how it ties in with cancelation/teardown, etc.
 
 For the implementation of `onYield`, I considered having `next`, `throw`,
 `return` and `cancel` provided as a parameters. However, this felt like too many
-parameters. It would, however, have the benefit of not requiring passing
-`taskInstance` or using `this` when passing control back to the task instance,
-which would be nice, but we're already passing `taskInstance` (for good reason,
-there's useful state on there.) and it's not a huge burden.
+parameters.
 
 ## Unresolved questions
 

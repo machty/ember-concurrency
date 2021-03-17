@@ -1,5 +1,4 @@
 export const cancelableSymbol = "__ec_cancel__";
-export const instanceStatesSymbol = "__ec_instance_states__";
 export const yieldableSymbol = "__ec_yieldable__";
 export const YIELDABLE_CONTINUE = "next";
 export const YIELDABLE_THROW = "throw";
@@ -8,44 +7,48 @@ export const YIELDABLE_CANCEL = "cancel";
 
 class YieldableState {
   constructor(taskInstance, resumeIndex) {
-    this.taskInstance = taskInstance;
-    this.resumeIndex = resumeIndex;
+    this._taskInstance = taskInstance;
+    this._resumeIndex = resumeIndex;
+  }
+
+  getTaskInstance() {
+    return this._taskInstance;
   }
 
   cancel() {
-    let taskInstance = this.taskInstance;
+    let taskInstance = this._taskInstance;
     taskInstance.proceed.call(
       taskInstance,
-      this.resumeIndex,
+      this._resumeIndex,
       YIELDABLE_CANCEL
     );
   }
 
   next(value) {
-    let taskInstance = this.taskInstance;
+    let taskInstance = this._taskInstance;
     taskInstance.proceed.call(
       taskInstance,
-      this.resumeIndex,
+      this._resumeIndex,
       YIELDABLE_CONTINUE,
       value
     );
   }
 
   return(value) {
-    let taskInstance = this.taskInstance;
+    let taskInstance = this._taskInstance;
     taskInstance.proceed.call(
       taskInstance,
-      this.resumeIndex,
+      this._resumeIndex,
       YIELDABLE_RETURN,
       value
     );
   }
 
   throw(error) {
-    let taskInstance = this.taskInstance;
+    let taskInstance = this._taskInstance;
     taskInstance.proceed.call(
       taskInstance,
-      this.resumeIndex,
+      this._resumeIndex,
       YIELDABLE_THROW,
       error
     );
@@ -55,39 +58,6 @@ class YieldableState {
 export class Yieldable {
   constructor() {
     this[yieldableSymbol] = this[yieldableSymbol].bind(this);
-    this[instanceStatesSymbol] = new WeakMap();
-  }
-
-  cancel(taskInstance) {
-    let state = this[instanceStatesSymbol].get(taskInstance);
-
-    if (state) {
-      state.cancel();
-    }
-  }
-
-  next(taskInstance, value) {
-    let state = this[instanceStatesSymbol].get(taskInstance);
-
-    if (state) {
-      state.next(value);
-    }
-  }
-
-  return(taskInstance, value) {
-    let state = this[instanceStatesSymbol].get(taskInstance);
-
-    if (state) {
-      state.return(value);
-    }
-  }
-
-  throw(taskInstance, error) {
-    let state = this[instanceStatesSymbol].get(taskInstance);
-
-    if (state) {
-      state.throw(error);
-    }
   }
 
   onYield() {}
@@ -136,15 +106,14 @@ export class Yieldable {
 
   [yieldableSymbol](taskInstance, resumeIndex) {
     let state = new YieldableState(taskInstance, resumeIndex);
-    this[instanceStatesSymbol].set(taskInstance, state);
 
-    return this.onYield(taskInstance);
+    return this.onYield(state);
   }
 }
 
 class AnimationFrameYieldable extends Yieldable {
-  onYield(taskInstance) {
-    let timerId = requestAnimationFrame(() => this.next(taskInstance));
+  onYield(state) {
+    let timerId = requestAnimationFrame(() => state.next());
 
     return () => cancelAnimationFrame(timerId);
   }
@@ -160,8 +129,8 @@ class RawTimeoutYieldable extends Yieldable {
     this.ms = ms;
   }
 
-  onYield(taskInstance) {
-    let timerId = setTimeout(() => this.next(taskInstance), this.ms);
+  onYield(state) {
+    let timerId = setTimeout(() => state.next(), this.ms);
 
     return () => clearTimeout(timerId);
   }

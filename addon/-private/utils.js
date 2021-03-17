@@ -27,8 +27,8 @@ class TimeoutYieldable extends EmberYieldable {
     this.ms = ms;
   }
 
-  onYield(taskInstance) {
-    let timerId = later(() => this.next(taskInstance), this.ms);
+  onYield(state) {
+    let timerId = later(() => state.next(), this.ms);
 
     return () => cancel(timerId);
   }

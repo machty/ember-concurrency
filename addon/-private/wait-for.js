@@ -10,13 +10,13 @@ class WaitForQueueYieldable extends EmberYieldable {
     this.queueName = queueName;
   }
 
-  onYield(taskInstance) {
+  onYield(state) {
     let timerId;
 
     try {
-      timerId = schedule(this.queueName, () => this.next(taskInstance));
+      timerId = schedule(this.queueName, () => state.next());
     } catch(error) {
-      this.throw(taskInstance, error);
+      state.throw(error);
     }
 
     return () => cancel(timerId);
@@ -49,7 +49,7 @@ class WaitForEventYieldable extends EmberYieldable {
     }
   }
 
-  onYield(taskInstance) {
+  onYield(state) {
     let fn = null;
     let disposer = () => {
       fn && this.off(fn);
@@ -58,7 +58,7 @@ class WaitForEventYieldable extends EmberYieldable {
 
     fn = (event) => {
       disposer();
-      this.next(taskInstance, event);
+      state.next(event);
     };
 
     this.on(fn);
@@ -80,13 +80,13 @@ class WaitForPropertyYieldable extends EmberYieldable {
     }
   }
 
-  onYield(taskInstance) {
+  onYield(state) {
     let observerBound = false;
     let observerFn = () => {
       let value = get(this.object, this.key);
       let predicateValue = this.predicateCallback(value);
       if (predicateValue) {
-        this.next(taskInstance, value);
+        state.next(value);
         return true;
       }
     };
