@@ -60,7 +60,7 @@
     "ember-resolver": "^8.0.2",
     "ember-router-service-polyfill": "^1.0.3",
     "ember-sinon": "^2.1.0",
-    "ember-source": "~3.22.0",
+    "ember-source": "~3.25.0",
     "ember-source-channel-url": "^3.0.0",
     "ember-template-lint": "^2.14.0",
     "ember-try": "^1.4.0",
