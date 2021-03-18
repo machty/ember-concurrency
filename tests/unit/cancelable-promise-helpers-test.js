@@ -624,8 +624,8 @@ module('Unit: cancelable promises test helpers', function() {
 
     let wrapCancelation = (yieldable, shouldBeCalled = true) => {
       let originalOnYield = yieldable.onYield.bind(yieldable);
-      yieldable.onYield = () => {
-        let disposer = originalOnYield();
+      yieldable.onYield = (...args) => {
+        let disposer = originalOnYield(...args);
         disposer();
         assert.ok(shouldBeCalled);
       };
