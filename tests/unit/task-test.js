@@ -9,7 +9,6 @@ import Ember from 'ember';
 import { task, timeout, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
 import { destroy } from '@ember/destroyable';
-import sinon from 'sinon'
 import { decoratorTest } from '../helpers/helpers';
 
 const originalLog = console.log;
@@ -628,16 +627,16 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  decoratorTest("sinon stub promise that fails", async function (assert) {
+  decoratorTest("replacing a promise that fails", async function (assert) {
     assert.expect(1);
 
     class Obj {
-      async sinonPromise() {
+      async somePromise() {
         console.log('Do some work')
       }
 
       @task *doStuff() {
-        yield this.sinonPromise()
+        yield this.somePromise()
       }
 
       async tryDoStuff() {
@@ -650,21 +649,21 @@ module('Unit: task', function(hooks) {
     }
 
     const obj = new Obj();
-    sinon.stub(obj, 'sinonPromise').rejects('An error')
+    obj.somePromise = () => Promise.reject(new Error('An Error'))
     await obj.tryDoStuff()
     assert.ok(true)
   })
 
-  decoratorTest("sinon stub promise that passes", async function (assert) {
+  decoratorTest("replacing a promise that passes", async function (assert) {
     assert.expect(1);
 
     class Obj {
-      async sinonPromise() {
+      async somePromise() {
         console.log('Do some work')
       }
 
       @task *doStuff() {
-        yield this.sinonPromise()
+        yield this.somePromise()
       }
 
       async tryDoStuff() {
@@ -675,7 +674,7 @@ module('Unit: task', function(hooks) {
     }
 
     const obj = new Obj();
-    sinon.stub(obj, 'sinonPromise').rejects('An error')
+    obj.somePromise = () => Promise.reject(new Error('An Error'))
     await obj.tryDoStuff()
     assert.ok(true)
   })
