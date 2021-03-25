@@ -4,7 +4,7 @@ Start Date: 2021-03-07
 Release Date: Unreleased
 Release Versions:
   ember-concurrency: vX.Y.Z
-RFC PR: 
+RFC PR: https://github.com/machty/ember-concurrency/pull/413
 ---
 
 <!--- 

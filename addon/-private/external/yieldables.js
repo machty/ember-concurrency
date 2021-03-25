@@ -5,16 +5,34 @@ export const YIELDABLE_THROW = "throw";
 export const YIELDABLE_RETURN = "return";
 export const YIELDABLE_CANCEL = "cancel";
 
+/**
+ * @class YieldableState
+ * @hideconstructor
+ */
 class YieldableState {
   constructor(taskInstance, resumeIndex) {
     this._taskInstance = taskInstance;
     this._resumeIndex = resumeIndex;
   }
 
+  /**
+   * Return yielded TaskInstance. Useful for introspection on instance state.
+   * @method getTaskInstance
+   * @memberof YieldableState
+   * @public
+   * @instance
+   */
   getTaskInstance() {
     return this._taskInstance;
   }
 
+  /**
+   * Cancel the yielded TaskInstance.
+   * @method cancel
+   * @memberof YieldableState
+   * @public
+   * @instance
+   */
   cancel() {
     let taskInstance = this._taskInstance;
     taskInstance.proceed.call(
@@ -24,6 +42,15 @@ class YieldableState {
     );
   }
 
+  /**
+   * Cause the TaskInstance to return from its yield with an optional value,
+   * and continue executing.
+   * @method next
+   * @memberof YieldableState
+   * @param value
+   * @public
+   * @instance
+   */
   next(value) {
     let taskInstance = this._taskInstance;
     taskInstance.proceed.call(
@@ -34,6 +61,15 @@ class YieldableState {
     );
   }
 
+  /**
+   * Short-circuit TaskInstance execution and have it return with an optional
+   * value.
+   * @method return
+   * @memberof YieldableState
+   * @param value
+   * @public
+   * @instance
+   */
   return(value) {
     let taskInstance = this._taskInstance;
     taskInstance.proceed.call(
@@ -44,6 +80,14 @@ class YieldableState {
     );
   }
 
+  /**
+   * Raise a given error within the given task instance and halt execution
+   * @method throw
+   * @memberof YieldableState
+   * @param error
+   * @public
+   * @instance
+   */
   throw(error) {
     let taskInstance = this._taskInstance;
     taskInstance.proceed.call(
@@ -55,11 +99,73 @@ class YieldableState {
   }
 }
 
+/**
+ * Yieldables are a primitive for building safe, cancelation-aware ways to
+ * instrument and introspect the runtime of a task. Many Yieldables are built-in
+ * to ember-concurrency today, such as `timeout`, `animationFrame`, and
+ * `rawTimeout`.
+ *
+ * For example, if I wanted to implement a yieldable for `requestIdleCallback`,
+ * I could do the following:
+ *
+ * ```javascript
+ * import Component from '@glimmer/component';
+ * import { task, Yieldable } from 'ember-concurrency';
+ *
+ * class IdleCallbackYieldable extends Yieldable {
+ *   onYield(state) {
+ *     let callbackId = requestIdleCallback(() => state.next());
+ *
+ *     return () => cancelIdleCallback(callbackId);
+ *   }
+ * }
+ *
+ * const idleCallback = () => new IdleCallbackYieldable();
+ *
+ * class MyComponent extends Component {
+ *   &#64;task *backgroundTask() {
+ *     while (1) {
+ *       yield idleCallback();
+ *
+ *       const data = this.complicatedNumberCrunching();
+ *       yield this.sendData(data);
+ *     }
+ *   }
+ * }
+ * ```
+ *
+ * In general, `Yieldable` instances **should** be reusable across calls, and thus
+ * care should be taken to ensure that teardown is provided and state not
+ * intended to be shared across calls stay inside `onYield`.
+ *
+ * `Yieldable` also provides automatic Promise-casting.
+ *
+ * <style>
+ *   .ignore-this--this-is-here-to-hide-constructor,
+ *   #Yieldable { display: none }
+ * </style>
+ *
+ * @class Yieldable
+ */
 export class Yieldable {
   constructor() {
     this[yieldableSymbol] = this[yieldableSymbol].bind(this);
   }
 
+  /**
+   * Defines what happens when the task encounters `yield myYieldable` and returns
+   * a disposer function that handles any cleanup.
+   *
+   * The state parameter is provided by the runtime, and provides operations for
+   * interacting with the yielding task instance and advancing, returning,
+   * throwing, or canceling its execution.
+   *
+   * @method onYield
+   * @memberof Yieldable
+   * @param {YieldableState} state
+   * @instance
+   * @public
+   */
   onYield() {}
 
   _deferable() {
@@ -92,14 +198,36 @@ export class Yieldable {
     return def.promise;
   }
 
+  /**
+   * Returns a promise that resolves with the value yielded back to or returned
+   * to the yielded task, or rejects with either the exception thrown from the
+   * Yieldable, or an error with a `.name` property with value `"TaskCancelation"`.
+   *
+   * @method then
+   * @memberof Yieldable
+   * @instance
+   * @return {Promise}
+   */
   then(...args) {
     return this._toPromise().then(...args);
   }
 
+  /**
+   * @method catch
+   * @memberof Yieldable
+   * @instance
+   * @return {Promise}
+   */
   catch(...args) {
     return this._toPromise().catch(...args);
   }
 
+  /**
+   * @method finally
+   * @memberof Yieldable
+   * @instance
+   * @return {Promise}
+   */
   finally(...args) {
     return this._toPromise().finally(...args);
   }
