@@ -1,5 +1,12 @@
 # Changelog
 
+### 2.0.3
+  - Remove runloop binding for `perform` and `cancel-all` helpers, preventing proper
+    instrumentation. (#414, fixes #409)
+  - Fix incorrect import for deprecated private `task-instance` module alias (#411, thanks @mydea!)
+  - [dev] Upgrade qunit to v5 (#410, thanks @alexlafroscia)
+  - [docs] Fix missing jsdoc documentation (#407)
+
 ### 2.0.2
   - Ensure `lastRunning` resets one-by-one as tasks are completed, successfully
     or not. (Fixes #403)

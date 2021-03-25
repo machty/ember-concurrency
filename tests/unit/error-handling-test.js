@@ -31,6 +31,28 @@ module('Unit: task error handling', function() {
     });
   });
 
+  test('synchronous errors can be caught asynchronously', function(assert) {
+    assert.expect(1);
+
+    let Obj = EmberObject.extend({
+      throwError: task(function * () {
+        throw new Error('This error should be caught')
+      }),
+    });
+
+    run(()=> {
+      let obj = Obj.create();
+
+      obj.throwError.perform().catch(e => {
+        assert.equal(
+          e.message,
+          'This error should be caught',
+          'The thrown error was caught'
+        );
+      });
+    });
+  });
+
   test("parent task canceled by restartable policy: no errors", function(assert) {
     assert.expect(1);
 
