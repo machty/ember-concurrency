@@ -74,16 +74,16 @@ class YieldableState {
   return(value: any): void;
 
   // Raise a given error within the given task instance and halt execution
-  throw(error: Error): void;
+  throw(error: any): void;
 }
 
-abstract class Yieldable {
+abstract class Yieldable<T> implements PromiseLike<T> {
   constructor(...args) {
     // User setup logic would go here. If the yieldable took arguments, they
     // could be stored in the Yieldable here
   }
 
-  onYield(state: YieldableState): Function<void> {
+  onYield(state: YieldableState): () => void {
     // This is where most user code would go, defining what happens when the
     // task encounters `yield myYieldable`.
 

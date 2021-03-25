@@ -38,7 +38,8 @@ import {
   waitForEvent,
   waitForProperty,
   waitForQueue,
-  lastValue
+  lastValue,
+  Yieldable
 } from 'ember-concurrency';
 import { taskFor } from 'ember-concurrency-ts';
 import { expectTypeOf as expect } from 'expect-type';
@@ -2077,7 +2078,7 @@ module('unit tests', () => {
   test('timeout', async () => {
     expect(timeout).toBeCallableWith(500);
     expect(timeout).parameters.toEqualTypeOf<[number]>();
-    expect(timeout).returns.toEqualTypeOf<PromiseLike<void>>();
+    expect(timeout).returns.toEqualTypeOf<Yieldable<void>>();
 
     // @ts-expect-error
     timeout();
@@ -2097,7 +2098,7 @@ module('unit tests', () => {
   test('rawTimeout', async () => {
     expect(rawTimeout).toBeCallableWith(500);
     expect(rawTimeout).parameters.toEqualTypeOf<[number]>();
-    expect(rawTimeout).returns.toEqualTypeOf<PromiseLike<void>>();
+    expect(rawTimeout).returns.toEqualTypeOf<Yieldable<void>>();
 
     // @ts-expect-error
     rawTimeout();
@@ -2117,7 +2118,7 @@ module('unit tests', () => {
   test('animationFrame', async () => {
     expect(animationFrame).toBeCallableWith();
     expect(animationFrame).parameters.toEqualTypeOf<[]>();
-    expect(animationFrame).returns.toEqualTypeOf<PromiseLike<void>>();
+    expect(animationFrame).returns.toEqualTypeOf<Yieldable<void>>();
 
     // @ts-expect-error
     animationFrame('nope');
@@ -2134,7 +2135,7 @@ module('unit tests', () => {
   test('waitForQueue', async () => {
     expect(waitForQueue).toBeCallableWith('afterRender');
     expect(waitForQueue).parameters.toEqualTypeOf<[string]>();
-    expect(waitForQueue).returns.toEqualTypeOf<PromiseLike<void>>();
+    expect(waitForQueue).returns.toEqualTypeOf<Yieldable<void>>();
 
     // @ts-expect-error
     waitForQueue();
@@ -2179,7 +2180,7 @@ module('unit tests', () => {
     }, 'foo');
     expect(waitForEvent).toBeCallableWith(document.body, 'click');
     expect(waitForEvent).parameters.toEqualTypeOf<[Evented, string]>();
-    expect(waitForEvent).returns.toEqualTypeOf<PromiseLike<void>>();
+    expect(waitForEvent).returns.toEqualTypeOf<Yieldable<void>>();
 
     // @ts-expect-error
     waitForEvent();
@@ -2204,7 +2205,7 @@ module('unit tests', () => {
     expect(waitForProperty).toBeCallableWith(obj, 'foo', (v: string) => v === 'bar');
 
     expect(waitForProperty).parameters.toEqualTypeOf<[object, string | number | symbol, unknown]>();
-    expect(waitForProperty).returns.toEqualTypeOf<PromiseLike<void>>();
+    expect(waitForProperty).returns.toEqualTypeOf<Yieldable<void>>();
 
     // @ts-expect-error
     waitForProperty();
@@ -2233,7 +2234,7 @@ module('unit tests', () => {
   test('forever', async () => {
     expect(forever).toBeCallableWith();
     expect(forever).parameters.toEqualTypeOf<[]>();
-    expect(forever).returns.toEqualTypeOf<PromiseLike<never>>();
+    expect(forever).returns.toEqualTypeOf<Yieldable<never>>();
 
     // @ts-expect-error
     forever('nope');
