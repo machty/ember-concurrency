@@ -2,12 +2,7 @@ import { setProperties } from '@ember/object';
 import { later, cancel } from '@ember/runloop';
 import { gte } from 'ember-compatibility-helpers';
 import { EMBER_ENVIRONMENT } from "./ember-environment";
-import {
-  Yieldable,
-  yieldableSymbol,
-  YIELDABLE_CONTINUE,
-  cancelableSymbol
-} from "./external/yieldables";
+import { Yieldable } from "./external/yieldables";
 
 export const USE_TRACKED = gte('3.16.0');
 export const assignProperties = USE_TRACKED ? Object.assign : setProperties;
@@ -30,18 +25,12 @@ class TimeoutYieldable extends EmberYieldable {
   constructor(ms) {
     super();
     this.ms = ms;
-    this.timerId = null;
   }
 
-  [yieldableSymbol](taskInstance, resumeIndex) {
-    this.timerId = later(() => {
-      taskInstance.proceed(resumeIndex, YIELDABLE_CONTINUE, taskInstance._result);
-    }, this.ms);
-  }
+  onYield(state) {
+    let timerId = later(() => state.next(), this.ms);
 
-  [cancelableSymbol]() {
-    cancel(this.timerId);
-    this.timerId = null;
+    return () => cancel(timerId);
   }
 }
 

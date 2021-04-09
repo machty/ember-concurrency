@@ -25,8 +25,12 @@ import { CANCEL_KIND_LIFESPAN_END } from "./external/task-instance/cancelation";
   method on this object to cancel all running or enqueued
   {@linkcode TaskInstance}s.
 
+  <style>
+    .ignore-this--this-is-here-to-hide-constructor,
+    #Task { display: none }
+  </style>
+
   @class Task
-  @hideconstructor
 */
 export class Task extends BaseTask {
   constructor(options) {

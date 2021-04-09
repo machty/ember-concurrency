@@ -15,8 +15,12 @@ import { assignProperties } from "./utils";
   because concurrency policy enforced by a
   {@linkcode TaskProperty Task Modifier} canceled the task instance.
 
+  <style>
+    .ignore-this--this-is-here-to-hide-constructor,
+    #TaskInstance { display: none }
+  </style>
+
   @class TaskInstance
-  @hideconstructor
 */
 
 export class TaskInstance extends BaseTaskInstance {

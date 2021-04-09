@@ -637,7 +637,67 @@ export interface TaskGroupProperty<T> extends ComputedProperty<TaskGroup<T>> {
 
 export type TaskCancelation = Error & { name: 'TaskCancelation' };
 
-export type Yieldable<T = void> = PromiseLike<T>;
+export interface YieldableState {
+  /**
+   * Return yielded TaskInstance. Useful for introspection on instance state.
+   * @method getTaskInstance
+   * @memberof YieldableState
+   */
+  getTaskInstance(): TaskInstance<any>;
+
+  /**
+   * Cancel the yielded TaskInstance.
+   * @method cancel
+   * @memberof YieldableState
+   */
+  cancel(): void;
+
+  /**
+   * Cause the TaskInstance to return from its yield with an optional value,
+   * and continue executing.
+   * @method next
+   * @param value
+   */
+  next(value : any): void;
+
+  /**
+   * Short-cirsuit TaskInstance execution and have it return with an optional
+   * value.
+   * @param value
+   */
+  return(value: any): void;
+
+  /**
+   * Raise a given error within the given task instance and halt execution
+   * @param error
+   */
+  throw(error: any): void;
+}
+
+export abstract class Yieldable<T> implements PromiseLike<T> {
+  /**
+   * Defines what happens when the task encounters `yield myYieldable` and returns
+   * a disposer function that handles any cleanup.
+   *
+   * The state parameter is provided by the runtime, and provides operations for
+   * interacting with the yielding task instance and advancing, returning,
+   * throwing, or canceling its execution.
+   *
+   * @param {YieldableState} state
+   */
+  abstract onYield(state: YieldableState): () => void;
+
+  then<TResult1 = T, TResult2 = never>(
+    onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
+  ): Promise<TResult1 | TResult2>;
+
+  catch<TResult = never>(
+    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null
+  ): Promise<T | TResult>;
+
+  finally(onfinally?: (() => void) | null): Promise<T>;
+}
 
 type Evented = {
   on(event: string, callback: (...args: any[]) => void): void;
@@ -1138,7 +1198,7 @@ export function allSettled<T>(values: Iterable<T>): Promise<Array<Settled<T>>>;
  * }
  * ```
  */
-export function animationFrame(): Yieldable;
+export function animationFrame(): Yieldable<void>;
 
 /**
  * Returns true if the object passed to it is a TaskCancelation error.
@@ -1232,7 +1292,7 @@ export function race<T>(values: Iterable<T>): Promise<Resolved<T>>;
  * @param ms The amount of time to sleep before resuming
  *   the task, in milliseconds.
  */
-export function timeout(ms: number): Yieldable;
+export function timeout(ms: number): Yieldable<void>;
 
 /**
  * Yielding `rawTimeout(ms)` will pause a task for the duration
@@ -1259,7 +1319,7 @@ export function timeout(ms: number): Yieldable;
  * @param ms The amount of time to sleep before resuming
  *   the task, in milliseconds.
  */
-export function rawTimeout(ms: number): Yieldable;
+export function rawTimeout(ms: number): Yieldable<void>;
 
 /**
  * Use `waitForQueue` to pause the task until a certain run loop queue is reached.
@@ -1276,7 +1336,7 @@ export function rawTimeout(ms: number): Yieldable;
  *
  * @param queueName The name of the Ember run loop queue.
  */
-export function waitForQueue(queueName: string): Yieldable;
+export function waitForQueue(queueName: string): Yieldable<void>;
 
 /**
  * Use `waitForEvent` to pause the task until an event is fired. The event
@@ -1303,7 +1363,7 @@ export function waitForQueue(queueName: string): Yieldable;
  *   that the event fires from.
  * @param eventName The name of the event to wait for.
  */
-export function waitForEvent(object: Evented, eventName: string): Yieldable;
+export function waitForEvent(object: Evented, eventName: string): Yieldable<void>;
 
 /**
  * Use `waitForProperty` to pause the task until a property on an object
@@ -1350,13 +1410,13 @@ export function waitForEvent(object: Evented, eventName: string): Yieldable;
  */
 export function waitForProperty<O extends object, K extends keyof O>(
   object: O, key: K, callbackOrValue: (value: O[K]) => boolean
-): Yieldable;
+): Yieldable<void>;
 export function waitForProperty(
   object: object, key: string, callbackOrValue: (value: unknown) => boolean
-): Yieldable;
+): Yieldable<void>;
 export function waitForProperty<O extends object, K extends keyof O>(
   object: O, key: K, callbackOrValue: O[K]
-): Yieldable;
+): Yieldable<void>;
 
 /**
  *
