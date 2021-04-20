@@ -5,13 +5,14 @@ import {
 } from "../../task-instance/completion-states";
 
 class RefreshState {
-  constructor(taskable) {
+  constructor(taskable, tag) {
     this.taskable = taskable;
     this.group = taskable.group;
     this.numRunning = 0;
     this.numQueued = 0;
     this.numPerformedInc = 0;
     this.attrs = {};
+    this.tag = tag;
   }
 
   onCompletion(taskInstance) {

@@ -2,7 +2,9 @@ import {
   TYPE_STARTED,
   TYPE_QUEUED,
   TYPE_CANCELLED
-} from "./policies/execution-states"
+} from "./policies/execution-states";
+
+let LAST_APPLIED_TAG = 0;
 
 class Refresh {
   constructor(schedulerPolicy, stateTracker, taskInstances) {
@@ -83,6 +85,10 @@ class Refresh {
       return;
     }
 
+    if (state.tag < LAST_APPLIED_TAG) {
+      return;
+    }
+
     let props = Object.assign({
       numRunning: state.numRunning,
       numQueued: state.numQueued,
@@ -90,6 +96,8 @@ class Refresh {
     }, state.attrs);
 
     taskable.onState(props, taskable);
+
+    LAST_APPLIED_TAG = state.tag;
   }
 }
 

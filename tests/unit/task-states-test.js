@@ -1,7 +1,7 @@
 import RSVP from 'rsvp';
 import { run } from '@ember/runloop';
 import EmberObject from '@ember/object';
-import { task, forever } from 'ember-concurrency';
+import { task, rawTimeout, timeout, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
 import { makeAsyncError } from '../helpers/helpers';
 
@@ -31,6 +31,41 @@ module('Unit: task states', function(hooks) {
     assert.equal(obj.myTask.isIdle, true);
     assert.equal(obj.myTask.isRunning, false);
     assert.equal(obj.myTask.state, 'idle');
+  });
+
+  test("state resets properly on early return", async function(assert) {
+    assert.expect(8);
+
+    let Obj = EmberObject.extend({
+      myTask: task(function * (input) {
+        if (!input || input === "") {
+          return input;
+        }
+
+        yield timeout(250);
+
+        return "bam";
+      }).restartable()
+    });
+
+    let obj = Obj.create();
+    assert.equal(obj.myTask.isIdle, true);
+    assert.equal(obj.myTask.isRunning, false);
+    assert.equal(obj.myTask.state, 'idle');
+    assert.equal(obj.myTask.performCount, 0);
+
+    obj.myTask.perform("h");
+    await rawTimeout(100);
+    obj.myTask.perform("he");
+    await rawTimeout(100);
+    obj.myTask.perform("h");
+    await rawTimeout(100);
+    await obj.myTask.perform("");
+
+    assert.equal(obj.myTask.isIdle, true);
+    assert.equal(obj.myTask.isRunning, false);
+    assert.equal(obj.myTask.state, 'idle');
+    assert.equal(obj.myTask.performCount, 4);
   });
 
   test("state when task is blocked on a yield", function(assert) {

@@ -1,15 +1,18 @@
 import RefreshState from "./state";
 
+let CURRENT_TAG = 0;
+
 class StateTracker {
   constructor() {
-    this.states = {};
+    this.states = new Map();
   }
 
   stateFor(taskable) {
     let guid = taskable.guid;
-    let taskState = this.states[guid];
+    let taskState = this.states.get(guid);
     if (!taskState) {
-      taskState = this.states[guid] = new RefreshState(taskable);
+      taskState = new RefreshState(taskable, ++CURRENT_TAG);
+      this.states.set(guid, taskState);
     }
     return taskState;
   }
@@ -35,7 +38,7 @@ class StateTracker {
   }
 
   forEachState(callback) {
-    Object.keys(this.states).forEach(k => callback(this.states[k]));
+    this.states.forEach(state => callback(state));
   }
 }
 
