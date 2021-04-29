@@ -1,6 +1,6 @@
 import RefreshState from "./state";
 
-let CURRENT_TAG = 0;
+const CURRENT_REFRESH_TAGS = new Map();
 
 class StateTracker {
   constructor() {
@@ -11,8 +11,10 @@ class StateTracker {
     let guid = taskable.guid;
     let taskState = this.states.get(guid);
     if (!taskState) {
-      taskState = new RefreshState(taskable, ++CURRENT_TAG);
+      let currentTag = CURRENT_REFRESH_TAGS.has(guid) ? CURRENT_REFRESH_TAGS.get(guid) : 0;
+      taskState = new RefreshState(taskable, ++currentTag);
       this.states.set(guid, taskState);
+      CURRENT_REFRESH_TAGS.set(guid, currentTag);
     }
     return taskState;
   }
