@@ -4,7 +4,7 @@ import {
   TYPE_CANCELLED
 } from "./policies/execution-states";
 
-let LAST_APPLIED_TAG = 0;
+const LAST_APPLIED_TAGS = new Map();
 
 class Refresh {
   constructor(schedulerPolicy, stateTracker, taskInstances) {
@@ -85,7 +85,9 @@ class Refresh {
       return;
     }
 
-    if (state.tag < LAST_APPLIED_TAG) {
+    const { guid } = taskable;
+
+    if (LAST_APPLIED_TAGS.has(guid) && state.tag < LAST_APPLIED_TAGS.get(guid)) {
       return;
     }
 
@@ -97,7 +99,7 @@ class Refresh {
 
     taskable.onState(props, taskable);
 
-    LAST_APPLIED_TAG = state.tag;
+    LAST_APPLIED_TAGS.set(guid, state.tag);
   }
 }
 
