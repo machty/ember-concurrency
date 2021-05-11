@@ -1,7 +1,7 @@
 import { assert } from '@ember/debug';
 import RSVP, { Promise } from 'rsvp';
 import { TaskInstance } from './task-instance';
-import { cancelableSymbol } from './external/yieldables';
+import { cancelableSymbol, Yieldable } from './external/yieldables';
 
 /**
  * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
@@ -78,23 +78,47 @@ function getValues(obj) {
   return Object.keys(obj).map(k => obj[k]);
 }
 
-function taskAwareVariantOf(obj, method, getItems) {
-  return function(thing) {
-    let items = getItems(thing);
-    assert(`'${method}' expects an array.`, Array.isArray(items));
-
-    items.forEach((it) => {
+function castForPromiseHelper(castable) {
+  if (castable) {
+    if (castable instanceof TaskInstance) {
       // Mark TaskInstances, including those that performed synchronously and
       // have finished already, as having their errors handled, as if they had
       // been then'd, which this is emulating.
-      if (it && it instanceof TaskInstance) {
-        it.executor.asyncErrorsHandled = true;
-      }
+      castable.executor.asyncErrorsHandled = true;
+    } else if (castable instanceof Yieldable) {
+      // Cast to promise
+      return castable._toPromise();
+    }
+  }
+
+  return castable;
+}
+
+function castAwaitables(arrOrHash, callback) {
+  if (Array.isArray(arrOrHash)) {
+    return arrOrHash.map(callback);
+  } else if (typeof arrOrHash === "object" && arrOrHash !== null) {
+    let obj = {};
+    Object.keys(arrOrHash).forEach((key) => {
+      obj[key] = callback(arrOrHash[key]);
     });
+    return obj;
+  } else {
+    // :shruggie:
+    return arrOrHash;
+  }
+}
+
+function taskAwareVariantOf(obj, method, getItems) {
+  return function(awaitable) {
+    let awaitables = castAwaitables(awaitable, castForPromiseHelper);
+
+    let items = getItems(awaitables);
+    assert(`'${method}' expects an array.`, Array.isArray(items));
 
     let defer = RSVP.defer();
 
-    obj[method](thing).then(defer.resolve, defer.reject);
+    obj[method](awaitables).then(defer.resolve, defer.reject);
 
     let hasCancelled = false;
     let cancelAll = () => {
