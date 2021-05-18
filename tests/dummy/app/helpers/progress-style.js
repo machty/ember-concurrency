@@ -1,5 +1,5 @@
 import { helper } from '@ember/component/helper';
-import { htmlSafe } from '@ember/string';
+import { htmlSafe } from '@ember/template';
 
 export function progressStyleHelper([percent, id, colors]/*, hash*/) {
   let color = colors[id % colors.length];
@@ -7,4 +7,3 @@ export function progressStyleHelper([percent, id, colors]/*, hash*/) {
 }
 
 export default helper(progressStyleHelper);
-
