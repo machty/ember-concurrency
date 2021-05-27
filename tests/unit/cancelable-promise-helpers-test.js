@@ -1,6 +1,7 @@
 import { run } from '@ember/runloop';
 import RSVP, { resolve } from 'rsvp';
 import EmberObject from '@ember/object';
+import { isSettled } from '@ember/test-helpers';
 import {
   task,
   all,
@@ -16,8 +17,11 @@ import {
   waitForQueue
 } from 'ember-concurrency';
 import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
-module('Unit: cancelable promises test helpers', function() {
+module('Unit: cancelable promises test helpers', function(hooks) {
+  setupTest(hooks);
+
   test("all behaves like Promise.all", function(assert) {
     assert.expect(6);
 
@@ -619,15 +623,17 @@ module('Unit: cancelable promises test helpers', function() {
     });
   });
 
-  test("yieldable helpers support cancelation on all manner of Yieldable-derived classes", function(assert) {
-    assert.expect(6);
+  test("yieldable helpers support cancelation on all manner of Yieldable-derived classes", async function(assert) {
+    assert.expect(9);
 
     let wrapCancelation = (yieldable, shouldBeCalled = true) => {
       let originalOnYield = yieldable.onYield.bind(yieldable);
       yieldable.onYield = (...args) => {
         let disposer = originalOnYield(...args);
-        disposer();
-        assert.ok(shouldBeCalled);
+        return function() {
+          disposer();
+          assert.ok(shouldBeCalled);
+        };
       };
     }
 
@@ -660,7 +666,7 @@ module('Unit: cancelable promises test helpers', function() {
         let rafYieldable = animationFrame();
         wrapCancelation(rafYieldable);
 
-        yield race([
+        yield all([
           eventYieldable,
           propertyYieldable,
           queueYieldable,
@@ -669,11 +675,21 @@ module('Unit: cancelable promises test helpers', function() {
           rafYieldable,
           resolve(42)
         ]);
-      }).on('init')
+      })
     });
 
+    let obj;
+
     run(() => {
-      Obj.create();
+      obj = Obj.create();
+      obj.someTask.perform();
     });
+
+    assert.ok(obj.someTask.isRunning, 'expected to be running');
+
+    await obj.someTask.cancelAll();
+
+    assert.ok(!obj.someTask.isRunning, 'expected not to be running');
+    assert.ok(isSettled(), 'expected to be settled');
   });
 });
