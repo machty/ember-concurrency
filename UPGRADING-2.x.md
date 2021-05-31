@@ -183,6 +183,14 @@ After:
 <button onClick={{fn (perform someTask)}}>My button</button>
 ```
 
+### chained.property.use with `@lastValue` decorator (issue [#420](https://github.com/machty/ember-concurrency/issues/420))
+
+If using `ember-concurrency-decorators`, you might have relied on its use of
+`Ember.get`'s property chaining semantics to read tasks nested inside other
+properties or services on the component. With the `@lastValue` decorator
+implemented in ember-concurrency v2, `@lastValue` no longer uses `Ember.get`
+underneath and does not implement support for chained property lookups.
+
 ## Known Issues
 
 ### Increase in bundle size
