@@ -1,0 +1,53 @@
+<h2>Yieldables</h2>
+
+<p>
+  Starting with ember-concurrency v2.1.0, Yieldables are a new addition to the
+  public API to provide a way to instrument TaskInstances. The API provides a
+  safe mechanism to implement custom waiters, hooks, introspection, and other
+  operations in a task definition, from application code.
+</p>
+
+<p>
+  There are many great uses for yieldables, and indeed many of them are already
+  built-in to ember-concurrency today. Yieldables like
+  <a href="/api/global.html#animationFrame"><code>animationFrame</code></a>,
+  <a href="/api/global.html#timeout"><code>timeout</code></a>, and
+  <a href="/api/global.html#rawTimeout"><code>rawTimeout</code></a> provide safe,
+  cancelation-aware ways to delay execution of a task. Cancelable Promise
+  helpers like <a href="/api/global.html#all"><code>all</code></a>, and
+  <a href="/api/global.html#hashSettled"><code>hashSettled</code></a> are too a
+  form of yieldable.
+</p>
+
+<p>
+  While there are many built-in forms that provide cancelation-aware wrappers around
+  common browser APIs, you can also define domain-specific yieldables for use
+  within your application or complementary addons. This allows you to implement
+  behavior that would be inappropriate for inclusion in ember-concurrency itself.
+</p>
+
+<h3>Defining a new yieldable</h3>
+
+<p>
+  Let's suppose you want to create a Task-aware, cancelable wrapper for the
+  <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback"><code>requestIdleCallback</code></a>
+  browser API, in order to write tasks that pause until the browser has time to
+  execute some lower-priority tasks.
+</p>
+
+<CodeSnippet @name="yieldable-req-idle-cb.js" />
+
+<p>
+  Now that we have a yieldable defined, we can import and use it in any tasks
+  that we wish.
+</p>
+
+<CodeSnippet @name="yieldable-req-idle-cb-task.js" />
+
+<h3>More about Yieldables</h3>
+
+<p>
+  The behavior and implementation of yieldables are defined further in
+  the <a href="https://github.com/machty/ember-concurrency/blob/master/rfcs/0001-yieldables.md">Yieldables RFC</a>.
+  Additionally, the API for <code>Yieldable</code> is documented <a href="/api/Yieldable.html">here</a>.
+</p>
