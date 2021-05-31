@@ -1,5 +1,13 @@
 # Changelog
 
+### 2.1.0
+  - Implemented a public API for [Yieldables](https://ember-concurrency.com/docs/yieldables),
+    a new way to instrument TaskInstances by providing a safe mechanism to
+    implement custom waiters, hooks, introspection, and other operations from
+    application code. (#413)
+  - Avoid applying task state updates out of order (#423, #426, fixes #422)
+  - [docs] Document that `@lastValue` does not support chained property access (#429)
+
 ### 2.0.3
   - Remove runloop binding for `perform` and `cancel-all` helpers, preventing proper
     instrumentation. (#414, fixes #409)

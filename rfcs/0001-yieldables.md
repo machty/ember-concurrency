@@ -1,9 +1,9 @@
 ---
 Stage: Accepted
 Start Date: 2021-03-07
-Release Date: Unreleased
+Release Date: 2021-05-31
 Release Versions:
-  ember-concurrency: vX.Y.Z
+  ember-concurrency: v2.1.0
 RFC PR: https://github.com/machty/ember-concurrency/pull/413
 ---
 
