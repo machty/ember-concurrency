@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Task</title>
+    <title>JSDoc: Class: YieldableState</title>
 
     <script src="scripts/prettify/prettify-ac8c9277b05c42436cc08385614bed9c.js"> </script>
     <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Task</h1>
+    <h1 class="page-title">Class: YieldableState</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Task<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>YieldableState</h2>
         
     
 </header>
@@ -38,29 +38,7 @@
     
         
 
-    
 
-    
-    <h4 class="name" id="Task"><span class="type-signature"></span>new Task<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>The <code>Task</code> object lives on a host Ember object (e.g.
-a Component, Route, or Controller). You call the
-<a href="Task.html#perform"><code>.perform()</code></a> method on this object
-to create run individual <a href="TaskInstance.html"><code>TaskInstance</code></a>s,
-and at any point, you can call the <a href="Task.html#cancelAll"><code>.cancelAll()</code></a>
-method on this object to cancel all running or enqueued
-<a href="TaskInstance.html"><code>TaskInstance</code></a>s.</p>
-  <style>
-    .ignore-this--this-is-here-to-hide-constructor,
-    #Task { display: none }
-  </style>
-</div>
 
 
 
@@ -103,7 +81,7 @@ method on this object to cancel all running or enqueued
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task.js.html">task.js</a>, <a href="task.js.html#line19">line 19</a>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line8">line 8</a>
     </li></ul></dd>
     
 
@@ -159,7 +137,7 @@ method on this object to cancel all running or enqueued
     
 
     
-    <h4 class="name" id="cancelAll"><span class="type-signature">(async) </span>cancelAll<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="cancel"><span class="type-signature"></span>cancel<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -167,10 +145,184 @@ method on this object to cancel all running or enqueued
 
 
 <div class="description">
-    <p>Cancels all running or queued <code>TaskInstance</code>s for this Task.
-If you're trying to cancel a specific TaskInstance (rather
-than all of the instances running under this task) call
-<code>.cancel()</code> on the specific TaskInstance.</p>
+    <p>Cancel the yielded TaskInstance.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line29">line 29</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getTaskInstance"><span class="type-signature"></span>getTaskInstance<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Return yielded TaskInstance. Useful for introspection on instance state.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line18">line 18</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="next"><span class="type-signature"></span>next<span class="signature">(value)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Cause the TaskInstance to return from its yield with an optional value,
+and continue executing.</p>
 </div>
 
 
@@ -206,7 +358,7 @@ than all of the instances running under this task) call
 
         <tr>
             
-                <td class="name"><code>options.reason</code></td>
+                <td class="name"><code>value</code></td>
             
 
             <td class="type">
@@ -217,28 +369,7 @@ than all of the instances running under this task) call
 
             
 
-            <td class="description last"><p>A descriptive reason the task was
-cancelled. Defaults to <code>&quot;.cancelAll() was explicitly called   on the Task&quot;</code>.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options.resetState</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>If true, will clear the task state
-(<code>last*</code> and <code>performCount</code> properties will be set to initial
-values). Defaults to false.</p></td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -279,7 +410,7 @@ values). Defaults to false.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task.js.html">task.js</a>, <a href="task.js.html#line95">line 95</a>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line45">line 45</a>
     </li></ul></dd>
     
 
@@ -315,7 +446,7 @@ values). Defaults to false.</p></td>
     
 
     
-    <h4 class="name" id="linked"><span class="type-signature"></span>linked<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="return"><span class="type-signature"></span>return<span class="signature">(value)</span><span class="type-signature"></span></h4>
     
 
     
@@ -323,102 +454,8 @@ values). Defaults to false.</p></td>
 
 
 <div class="description">
-    <p>Flags the task as linked to the parent task's lifetime. Must be called
-within another task's perform function. The task will be cancelled if the
-parent task is canceled as well.</p>
-<p>ember-concurrency will indicate when this may be needed.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task.js.html">task.js</a>, <a href="task.js.html#line49">line 49</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="perform"><span class="type-signature"></span>perform<span class="signature">(arg*)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Creates a new <a href="TaskInstance.html"><code>TaskInstance</code></a> and attempts to run it right away.
-If running this task instance would increase the task's concurrency
-to a number greater than the task's maxConcurrency, this task
-instance might be immediately canceled (dropped), or enqueued
-to run at later time, after the currently running task(s) have finished.</p>
+    <p>Short-circuit TaskInstance execution and have it return with an optional
+value.</p>
 </div>
 
 
@@ -454,15 +491,10 @@ to run at later time, after the currently running task(s) have finished.</p>
 
         <tr>
             
-                <td class="name"><code>arg*</code></td>
+                <td class="name"><code>value</code></td>
             
 
             <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
             
             </td>
 
@@ -470,7 +502,7 @@ to run at later time, after the currently running task(s) have finished.</p>
 
             
 
-            <td class="description last"><p>args to pass to the task function</p></td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -511,7 +543,7 @@ to run at later time, after the currently running task(s) have finished.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task.js.html">task.js</a>, <a href="task.js.html#line76">line 76</a>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line64">line 64</a>
     </li></ul></dd>
     
 
@@ -525,17 +557,6 @@ to run at later time, after the currently running task(s) have finished.</p>
 
 
 
-
-<h5>Fires:</h5>
-<ul>
-    <li>TaskInstance#event:TASK_NAME:started</li>
-
-    <li>TaskInstance#event:TASK_NAME:succeeded</li>
-
-    <li>TaskInstance#event:TASK_NAME:errored</li>
-
-    <li>TaskInstance#event:TASK_NAME:canceled</li>
-</ul>
 
 
 
@@ -558,7 +579,7 @@ to run at later time, after the currently running task(s) have finished.</p>
     
 
     
-    <h4 class="name" id="unlinked"><span class="type-signature"></span>unlinked<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="throw"><span class="type-signature"></span>throw<span class="signature">(error)</span><span class="type-signature"></span></h4>
     
 
     
@@ -566,11 +587,7 @@ to run at later time, after the currently running task(s) have finished.</p>
 
 
 <div class="description">
-    <p>Flags the task as not linked to the parent task's lifetime. Must be called
-within another task's perform function. The task will NOT be cancelled if the
-parent task is canceled.</p>
-<p>This is useful for avoiding the so-called &quot;self-cancel loop&quot; for tasks.
-ember-concurrency will indicate when this may be needed.</p>
+    <p>Raise a given error within the given task instance and halt execution</p>
 </div>
 
 
@@ -579,6 +596,50 @@ ember-concurrency will indicate when this may be needed.</p>
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -614,7 +675,7 @@ ember-concurrency will indicate when this may be needed.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task.js.html">task.js</a>, <a href="task.js.html#line62">line 62</a>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line83">line 83</a>
     </li></ul></dd>
     
 

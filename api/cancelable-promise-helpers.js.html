@@ -29,7 +29,7 @@
             <pre class="prettyprint source linenums"><code>import { assert } from '@ember/debug';
 import RSVP, { Promise } from 'rsvp';
 import { TaskInstance } from './task-instance';
-import { cancelableSymbol } from './external/yieldables';
+import { cancelableSymbol, Yieldable } from './external/yieldables';
 
 /**
  * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
@@ -106,23 +106,47 @@ function getValues(obj) {
   return Object.keys(obj).map(k => obj[k]);
 }
 
-function taskAwareVariantOf(obj, method, getItems) {
-  return function(thing) {
-    let items = getItems(thing);
-    assert(`'${method}' expects an array.`, Array.isArray(items));
-
-    items.forEach((it) => {
+function castForPromiseHelper(castable) {
+  if (castable) {
+    if (castable instanceof TaskInstance) {
       // Mark TaskInstances, including those that performed synchronously and
       // have finished already, as having their errors handled, as if they had
       // been then'd, which this is emulating.
-      if (it &amp;&amp; it instanceof TaskInstance) {
-        it.executor.asyncErrorsHandled = true;
-      }
+      castable.executor.asyncErrorsHandled = true;
+    } else if (castable instanceof Yieldable) {
+      // Cast to promise
+      return castable._toPromise();
+    }
+  }
+
+  return castable;
+}
+
+function castAwaitables(arrOrHash, callback) {
+  if (Array.isArray(arrOrHash)) {
+    return arrOrHash.map(callback);
+  } else if (typeof arrOrHash === "object" &amp;&amp; arrOrHash !== null) {
+    let obj = {};
+    Object.keys(arrOrHash).forEach((key) => {
+      obj[key] = callback(arrOrHash[key]);
     });
+    return obj;
+  } else {
+    // :shruggie:
+    return arrOrHash;
+  }
+}
+
+function taskAwareVariantOf(obj, method, getItems) {
+  return function(awaitable) {
+    let awaitables = castAwaitables(awaitable, castForPromiseHelper);
+
+    let items = getItems(awaitables);
+    assert(`'${method}' expects an array.`, Array.isArray(items));
 
     let defer = RSVP.defer();
 
-    obj[method](thing).then(defer.resolve, defer.reject);
+    obj[method](awaitables).then(defer.resolve, defer.reject);
 
     let hasCancelled = false;
     let cancelAll = () => {
@@ -154,13 +178,13 @@ function taskAwareVariantOf(obj, method, getItems) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Feb 25 2021 21:02:33 GMT-0600 (Central Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jun 01 2021 11:20:05 GMT-0500 (Central Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
