@@ -38,9 +38,9 @@ module('Integration | no render breaking', function (hooks) {
       );
 
       await render(hbs`
-        {{#macroIf (macroDependencySatisfies "ember-source" ">= 3.15.0")}}
+        {{#if (macroCondition (macroDependencySatisfies "ember-source" ">= 3.15.0"))}}
           <ECTest {{autofocus}} />
-        {{/macroIf}}
+        {{/if}}
       `);
       assert.ok(true, 'Renders');
     });
