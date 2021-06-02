@@ -626,4 +626,56 @@ module('Unit: task', function(hooks) {
       start();
     });
   });
+
+  decoratorTest("replacing a promise that fails", async function (assert) {
+    assert.expect(1);
+
+    class Obj {
+      async somePromise() {
+        console.log('Do some work')
+      }
+
+      @task *doStuff() {
+        yield this.somePromise()
+      }
+
+      async tryDoStuff() {
+        try {
+          await this.doStuff.perform()
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    const obj = new Obj();
+    obj.somePromise = () => Promise.reject(new Error('An Error'))
+    await obj.tryDoStuff()
+    assert.ok(true)
+  })
+
+  decoratorTest("replacing a promise that passes", async function (assert) {
+    assert.expect(1);
+
+    class Obj {
+      async somePromise() {
+        console.log('Do some work')
+      }
+
+      @task *doStuff() {
+        yield this.somePromise()
+      }
+
+      async tryDoStuff() {
+        return this.doStuff.perform().catch((error) => {
+          console.log(error);
+        })
+      }
+    }
+
+    const obj = new Obj();
+    obj.somePromise = () => Promise.reject(new Error('An Error'))
+    await obj.tryDoStuff()
+    assert.ok(true)
+  })
 });
