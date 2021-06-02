@@ -1,4 +1,4 @@
-import { COMPLETION_PENDING } from "./completion-states";
+import { COMPLETION_PENDING } from './completion-states';
 
 export const INITIAL_STATE = {
   completionState: COMPLETION_PENDING,

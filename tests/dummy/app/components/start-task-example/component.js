@@ -7,7 +7,7 @@ export default class StartTaskExampleComponent extends Component {
   status = null;
 
   @task({ on: ['init', 'foo'] })
-  *myTask(msg = "init") {
+  *myTask(msg = 'init') {
     let status = `myTask.perform(${msg})...`;
     this.set('status', status);
 

@@ -3,7 +3,7 @@ import config from '../config/environment';
 
 const versionRegExp = /\d+[.]\d+[.]\d+(?:-(?:alpha|beta|rc)\.\d+)?/;
 const {
-  APP: { version }
+  APP: { version },
 } = config;
 
 export default class ApplicationController extends Controller {

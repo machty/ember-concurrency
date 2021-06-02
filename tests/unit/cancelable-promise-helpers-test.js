@@ -14,32 +14,28 @@ import {
   timeout,
   waitForEvent,
   waitForProperty,
-  waitForQueue
+  waitForQueue,
 } from 'ember-concurrency';
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 
-module('Unit: cancelable promises test helpers', function(hooks) {
+module('Unit: cancelable promises test helpers', function (hooks) {
   setupTest(hooks);
 
-  test("all behaves like Promise.all", function(assert) {
+  test('all behaves like Promise.all', function (assert) {
     assert.expect(6);
 
     let defers = [];
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
-        let allPromise = all([
-          task.perform(),
-          task.perform(),
-          task.perform(),
-        ]);
+        let allPromise = all([task.perform(), task.perform(), task.perform()]);
         assert.equal(typeof allPromise.then, 'function');
         let values = yield allPromise;
         assert.deepEqual(values, ['a', 'b', 'c']);
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         let defer = RSVP.defer();
         defers.push(defer);
         let value = yield defer.promise;
@@ -63,25 +59,21 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     assert.equal(childTask.numRunning, 0);
   });
 
-  test("all cancels all other joined tasks if one of them fails", function(assert) {
+  test('all cancels all other joined tasks if one of them fails', function (assert) {
     assert.expect(3);
 
     let defers = [];
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
         try {
-          yield all([
-            task.perform(),
-            task.perform(),
-            task.perform(),
-          ]);
-        } catch(e) {
+          yield all([task.perform(), task.perform(), task.perform()]);
+        } catch (e) {
           assert.equal(e.wat, 'lol');
         }
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         let defer = RSVP.defer();
         defers.push(defer);
         yield defer.promise;
@@ -100,20 +92,16 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     assert.equal(childTask.numRunning, 0);
   });
 
-  test("all cancels all joined tasks if parent task is canceled", function(assert) {
+  test('all cancels all joined tasks if parent task is canceled', function (assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
-        yield all([
-          task.perform(),
-          task.perform(),
-          task.perform(),
-        ]);
+        yield all([task.perform(), task.perform(), task.perform()]);
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         yield RSVP.defer().promise;
       }),
     });
@@ -130,11 +118,11 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     assert.equal(childTask.numRunning, 0);
   });
 
-  test("all doesn't asynchronously rethrow synchronous errors from child tasks", async function(assert) {
+  test("all doesn't asynchronously rethrow synchronous errors from child tasks", async function (assert) {
     assert.expect(1);
 
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         try {
           yield all([this.child.perform()]);
         } catch (e) {
@@ -142,7 +130,7 @@ module('Unit: cancelable promises test helpers', function(hooks) {
         }
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         throw new Error('boom');
       }),
     });
@@ -151,7 +139,7 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     await obj.get('parent').perform();
   });
 
-  test("all throws an assertion, if something other than an array is passed", function (assert) {
+  test('all throws an assertion, if something other than an array is passed', function (assert) {
     assert.expectAssertion(() => {
       all();
     }, /'all' expects an array/);
@@ -160,12 +148,12 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     }, /'all' expects an array/);
   });
 
-  test("allSettled behaves like Promise.allSettled", function(assert) {
+  test('allSettled behaves like Promise.allSettled', function (assert) {
     assert.expect(6);
 
     let defers = [];
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
         let allPromise = allSettled([
           task.perform(),
@@ -174,10 +162,14 @@ module('Unit: cancelable promises test helpers', function(hooks) {
         ]);
         assert.equal(typeof allPromise.then, 'function');
         let values = yield allPromise;
-        assert.deepEqual(values, [{ state: 'fulfilled', value: 'a' }, { state: 'fulfilled', value: 'b' }, { state: 'fulfilled', value: 'c' }]);
+        assert.deepEqual(values, [
+          { state: 'fulfilled', value: 'a' },
+          { state: 'fulfilled', value: 'b' },
+          { state: 'fulfilled', value: 'c' },
+        ]);
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         let defer = RSVP.defer();
         defers.push(defer);
         let value = yield defer.promise;
@@ -201,12 +193,12 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     assert.equal(childTask.numRunning, 0);
   });
 
-  test("allSettled does not cancel all other joined tasks if one of them fails", function(assert) {
+  test('allSettled does not cancel all other joined tasks if one of them fails', function (assert) {
     assert.expect(9);
 
     let defers = [];
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
         let allPromise = allSettled([
           task.perform(),
@@ -217,13 +209,16 @@ module('Unit: cancelable promises test helpers', function(hooks) {
         let values = yield allPromise;
         let fulfilled = values.filter((value) => value.state === 'fulfilled');
         let rejected = values.filter((value) => value.state !== 'fulfilled');
-        assert.deepEqual(fulfilled, [{ state: 'fulfilled', value: 'a' }, { state: 'fulfilled', value: 'c' }]);
+        assert.deepEqual(fulfilled, [
+          { state: 'fulfilled', value: 'a' },
+          { state: 'fulfilled', value: 'c' },
+        ]);
         assert.equal(rejected.length, 1);
         assert.equal(rejected[0].state, 'rejected');
         assert.equal(rejected[0].reason.message, 'wat');
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         let defer = RSVP.defer();
         defers.push(defer);
         let value = yield defer.promise;
@@ -247,20 +242,16 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     assert.equal(childTask.numRunning, 0);
   });
 
-  test("allSettled cancels all joined tasks if parent task is canceled", function(assert) {
+  test('allSettled cancels all joined tasks if parent task is canceled', function (assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
-        yield allSettled([
-          task.perform(),
-          task.perform(),
-          task.perform(),
-        ]);
+        yield allSettled([task.perform(), task.perform(), task.perform()]);
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         yield RSVP.defer().promise;
       }),
     });
@@ -277,14 +268,14 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     assert.equal(childTask.numRunning, 0);
   });
 
-  test("allSettled doesn't asynchronously rethrow synchronous errors from child tasks", async function(assert) {
+  test("allSettled doesn't asynchronously rethrow synchronous errors from child tasks", async function (assert) {
     assert.expect(4);
 
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         const promise = allSettled([
           this.child.perform(),
-          this.throws.perform()
+          this.throws.perform(),
         ]);
         let values = yield promise;
         let fulfilled = values.filter((value) => value.state === 'fulfilled');
@@ -292,15 +283,15 @@ module('Unit: cancelable promises test helpers', function(hooks) {
         assert.deepEqual(fulfilled, [{ state: 'fulfilled', value: 'ok!' }]);
         assert.equal(rejected.length, 1);
         assert.equal(rejected[0].state, 'rejected');
-        assert.equal(rejected[0].reason.message, "boom");
+        assert.equal(rejected[0].reason.message, 'boom');
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         yield timeout(1);
         return 'ok!';
       }),
 
-      throws: task(function * () {
+      throws: task(function* () {
         throw new Error('boom');
       }),
     });
@@ -309,7 +300,7 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     await obj.get('parent').perform();
   });
 
-  test("allSettled throws an assertion, if something other than an array is passed", function (assert) {
+  test('allSettled throws an assertion, if something other than an array is passed', function (assert) {
     assert.expectAssertion(() => {
       allSettled();
     }, /'allSettled' expects an array/);
@@ -318,21 +309,23 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     }, /'allSettled' expects an array/);
   });
 
-  test("hash", function(assert) {
+  test('hash', function (assert) {
     assert.expect(1);
 
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
         let v = yield hash({
           a: task.perform(1),
           b: task.perform(2),
           c: task.perform(3),
         });
-        assert.deepEqual(v, { a: 1, b: 2, c: 3});
+        assert.deepEqual(v, { a: 1, b: 2, c: 3 });
       }),
 
-      child: task(function * (v) { return v; }),
+      child: task(function* (v) {
+        return v;
+      }),
     });
 
     let obj;
@@ -342,21 +335,23 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     });
   });
 
-  test("hash cancels the others if one fails", function(assert) {
+  test('hash cancels the others if one fails', function (assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
         yield hash({
           a: task.perform(),
           b: task.perform(),
           c: task.perform(),
         });
-        assert.ok(false, "should not get here");
+        assert.ok(false, 'should not get here');
       }),
 
-      child: task(function * () { return RSVP.defer().promise; }),
+      child: task(function* () {
+        return RSVP.defer().promise;
+      }),
     });
 
     let obj;
@@ -369,21 +364,23 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     assert.equal(obj.get('child.numRunning'), 0);
   });
 
-  test("hash cancels children if parent is canceled", function(assert) {
+  test('hash cancels children if parent is canceled', function (assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
         yield hash({
           a: task.perform(),
           b: task.perform(),
           c: task.perform(),
         });
-        assert.ok(false, "should not get here");
+        assert.ok(false, 'should not get here');
       }),
 
-      child: task(function * () { return RSVP.defer().promise; }),
+      child: task(function* () {
+        return RSVP.defer().promise;
+      }),
     });
 
     let obj;
@@ -396,24 +393,26 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     assert.equal(obj.get('child.numRunning'), 0);
   });
 
-  test("hash doesn't asynchronously rethrow synchronous errors from child tasks", async function(assert) {
+  test("hash doesn't asynchronously rethrow synchronous errors from child tasks", async function (assert) {
     assert.expect(1);
 
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         try {
           yield hash({
             a: this.child.perform(),
-            b: this.throws.perform()
+            b: this.throws.perform(),
           });
         } catch (e) {
           assert.equal(e.message, 'boom');
         }
       }),
 
-      child: task(function * () { return RSVP.defer().promise; }),
+      child: task(function* () {
+        return RSVP.defer().promise;
+      }),
 
-      throws: task(function * () {
+      throws: task(function* () {
         throw new Error('boom');
       }),
     });
@@ -422,12 +421,12 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     await obj.get('parent').perform();
   });
 
-  test("hashSettled behaves like Promise.hashSettled", function(assert) {
+  test('hashSettled behaves like Promise.hashSettled', function (assert) {
     assert.expect(6);
 
     let defers = [];
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
         let allPromise = hashSettled({
           a: task.perform(1),
@@ -436,10 +435,14 @@ module('Unit: cancelable promises test helpers', function(hooks) {
         });
         assert.equal(typeof allPromise.then, 'function');
         let values = yield allPromise;
-        assert.deepEqual(values, {a: { state: 'fulfilled', value: 'a' }, b: { state: 'fulfilled', value: 'b' }, c: { state: 'fulfilled', value: 'c' }});
+        assert.deepEqual(values, {
+          a: { state: 'fulfilled', value: 'a' },
+          b: { state: 'fulfilled', value: 'b' },
+          c: { state: 'fulfilled', value: 'c' },
+        });
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         let defer = RSVP.defer();
         defers.push(defer);
         let value = yield defer.promise;
@@ -463,12 +466,12 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     assert.equal(childTask.numRunning, 0);
   });
 
-  test("hashSettled does not cancel all other joined tasks if one of them fails", function(assert) {
+  test('hashSettled does not cancel all other joined tasks if one of them fails', function (assert) {
     assert.expect(9);
 
     let defers = [];
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
         let allPromise = hashSettled({
           a: task.perform(),
@@ -479,13 +482,16 @@ module('Unit: cancelable promises test helpers', function(hooks) {
         let values = Object.values(yield allPromise);
         let fulfilled = values.filter((value) => value.state === 'fulfilled');
         let rejected = values.filter((value) => value.state !== 'fulfilled');
-        assert.deepEqual(fulfilled, [{ state: 'fulfilled', value: 'a' }, { state: 'fulfilled', value: 'c' }]);
+        assert.deepEqual(fulfilled, [
+          { state: 'fulfilled', value: 'a' },
+          { state: 'fulfilled', value: 'c' },
+        ]);
         assert.equal(rejected.length, 1);
         assert.equal(rejected[0].state, 'rejected');
         assert.equal(rejected[0].reason.message, 'wat');
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         let defer = RSVP.defer();
         defers.push(defer);
         let value = yield defer.promise;
@@ -509,11 +515,11 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     assert.equal(childTask.numRunning, 0);
   });
 
-  test("hashSettled cancels all joined tasks if parent task is canceled", function(assert) {
+  test('hashSettled cancels all joined tasks if parent task is canceled', function (assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
         yield hashSettled({
           a: task.perform(),
@@ -522,7 +528,7 @@ module('Unit: cancelable promises test helpers', function(hooks) {
         });
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         yield RSVP.defer().promise;
       }),
     });
@@ -539,14 +545,14 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     assert.equal(childTask.numRunning, 0);
   });
 
-  test("hashSettled doesn't asynchronously rethrow synchronous errors from child tasks", async function(assert) {
+  test("hashSettled doesn't asynchronously rethrow synchronous errors from child tasks", async function (assert) {
     assert.expect(4);
 
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         const promise = hashSettled({
           a: this.child.perform(),
-          b: this.throws.perform()
+          b: this.throws.perform(),
         });
         let values = Object.values(yield promise);
         let fulfilled = values.filter((value) => value.state === 'fulfilled');
@@ -554,15 +560,15 @@ module('Unit: cancelable promises test helpers', function(hooks) {
         assert.deepEqual(fulfilled, [{ state: 'fulfilled', value: 'ok!' }]);
         assert.equal(rejected.length, 1);
         assert.equal(rejected[0].state, 'rejected');
-        assert.equal(rejected[0].reason.message, "boom");
+        assert.equal(rejected[0].reason.message, 'boom');
       }),
 
-      child: task(function * () {
+      child: task(function* () {
         yield timeout(1);
         return 'ok!';
       }),
 
-      throws: task(function * () {
+      throws: task(function* () {
         throw new Error('boom');
       }),
     });
@@ -571,7 +577,7 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     await obj.get('parent').perform();
   });
 
-  test("race throws an assertion, if something other than an array is passed", function (assert) {
+  test('race throws an assertion, if something other than an array is passed', function (assert) {
     assert.expectAssertion(() => {
       race();
     }, /'race' expects an array/);
@@ -580,21 +586,23 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     }, /'race' expects an array/);
   });
 
-  test("yieldable helpers work with null/undefined values", function(assert) {
+  test('yieldable helpers work with null/undefined values', function (assert) {
     assert.expect(1);
 
     let Obj = EmberObject.extend({
-      parent: task(function * () {
+      parent: task(function* () {
         let task = this.child;
         let v = yield hash({
           a: task.perform(1),
           b: null,
-          c: undefined
+          c: undefined,
         });
         assert.deepEqual(v, { a: 1, b: null, c: undefined });
       }),
 
-      child: task(function * (v) { return v; }),
+      child: task(function* (v) {
+        return v;
+      }),
     });
 
     let obj;
@@ -604,7 +612,7 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     });
   });
 
-  test("yieldable helpers support to cancel promises with __ec_cancel__", function(assert) {
+  test('yieldable helpers support to cancel promises with __ec_cancel__', function (assert) {
     assert.expect(1);
 
     let promise = new RSVP.defer().promise;
@@ -613,9 +621,9 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     };
 
     let Obj = EmberObject.extend({
-      _checkValueOrTimeOutAfterOneSec: task(function * () {
+      _checkValueOrTimeOutAfterOneSec: task(function* () {
         yield race([promise, resolve()]);
-      }).on('init')
+      }).on('init'),
     });
 
     run(() => {
@@ -623,31 +631,31 @@ module('Unit: cancelable promises test helpers', function(hooks) {
     });
   });
 
-  test("yieldable helpers support cancelation on all manner of Yieldable-derived classes", async function(assert) {
+  test('yieldable helpers support cancelation on all manner of Yieldable-derived classes', async function (assert) {
     assert.expect(9);
 
     let wrapCancelation = (yieldable, shouldBeCalled = true) => {
       let originalOnYield = yieldable.onYield.bind(yieldable);
       yieldable.onYield = (...args) => {
         let disposer = originalOnYield(...args);
-        return function() {
+        return function () {
           disposer();
           assert.ok(shouldBeCalled);
         };
       };
-    }
+    };
 
     let fakeNode = {
       // eslint-disable-next-line no-unused-vars
       addEventListener(_eventName, _fn) {},
       // eslint-disable-next-line no-unused-vars
-      removeEventListener(_eventName, _fn) {}
+      removeEventListener(_eventName, _fn) {},
     };
 
     let Obj = EmberObject.extend({
       a: 12,
 
-      someTask: task(function * () {
+      someTask: task(function* () {
         let eventYieldable = waitForEvent(fakeNode, 'never');
         wrapCancelation(eventYieldable);
 
@@ -673,9 +681,9 @@ module('Unit: cancelable promises test helpers', function(hooks) {
           rawTimeoutYieldable,
           timeoutYieldable,
           rafYieldable,
-          resolve(42)
+          resolve(42),
         ]);
-      })
+      }),
     });
 
     let obj;

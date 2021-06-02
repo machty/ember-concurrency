@@ -6,4 +6,3 @@ export function performHelper(args, hash) {
 }
 
 export default helper(performHelper);
-

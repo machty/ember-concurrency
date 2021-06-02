@@ -23,9 +23,9 @@ export class GeneratorState {
       } else {
         return new GeneratorStepResult(value, false, false);
       }
-    } catch(e) {
+    } catch (e) {
       return this.finalize(e, true);
-    } 
+    }
   }
 
   getIterator() {

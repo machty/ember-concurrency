@@ -1,8 +1,8 @@
 import {
   TYPE_STARTED,
   TYPE_QUEUED,
-  TYPE_CANCELLED
-} from "./policies/execution-states";
+  TYPE_CANCELLED,
+} from './policies/execution-states';
 
 const LAST_APPLIED_TAGS = new Map();
 
@@ -15,22 +15,24 @@ class Refresh {
   }
 
   process() {
-    let [taskInstances, numRunning, numQueued] = this.filterFinishedTaskInstances();
+    let [taskInstances, numRunning, numQueued] =
+      this.filterFinishedTaskInstances();
     let reducer = this.schedulerPolicy.makeReducer(numRunning, numQueued);
 
-    let finalTaskInstances = taskInstances.filter(taskInstance => {
+    let finalTaskInstances = taskInstances.filter((taskInstance) => {
       return this.setTaskInstanceExecutionState(taskInstance, reducer.step());
     });
 
-    this.stateTracker.computeFinalStates(state => this.applyState(state));
-    this.startingInstances.forEach(taskInstance => taskInstance.start());
+    this.stateTracker.computeFinalStates((state) => this.applyState(state));
+    this.startingInstances.forEach((taskInstance) => taskInstance.start());
 
     return finalTaskInstances;
   }
 
   filterFinishedTaskInstances() {
-    let numRunning = 0, numQueued = 0;
-    let taskInstances = this.initialTaskInstances.filter(taskInstance => {
+    let numRunning = 0,
+      numQueued = 0;
+    let taskInstances = this.initialTaskInstances.filter((taskInstance) => {
       let taskState = this.stateTracker.stateFor(taskInstance.task);
       let executorState = taskInstance.executor.state;
 
@@ -87,15 +89,21 @@ class Refresh {
 
     const { guid } = taskable;
 
-    if (LAST_APPLIED_TAGS.has(guid) && state.tag < LAST_APPLIED_TAGS.get(guid)) {
+    if (
+      LAST_APPLIED_TAGS.has(guid) &&
+      state.tag < LAST_APPLIED_TAGS.get(guid)
+    ) {
       return;
     }
 
-    let props = Object.assign({
-      numRunning: state.numRunning,
-      numQueued: state.numQueued,
-      numPerformedInc: state.numPerformedInc,
-    }, state.attrs);
+    let props = Object.assign(
+      {
+        numRunning: state.numRunning,
+        numQueued: state.numQueued,
+        numPerformedInc: state.numPerformedInc,
+      },
+      state.attrs
+    );
 
     taskable.onState(props, taskable);
 

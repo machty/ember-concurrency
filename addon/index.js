@@ -3,7 +3,7 @@ import {
   TaskProperty,
   TaskGroupProperty,
   task,
-  taskGroup
+  taskGroup,
 } from './-private/task-properties';
 import { TaskInstance } from './-private/task-instance';
 import {
@@ -11,18 +11,18 @@ import {
   allSettled,
   hash,
   hashSettled,
-  race
+  race,
 } from './-private/cancelable-promise-helpers';
 import {
   waitForQueue,
   waitForEvent,
-  waitForProperty
+  waitForProperty,
 } from './-private/wait-for';
-import { didCancel } from "./-private/external/task-instance/cancelation";
+import { didCancel } from './-private/external/task-instance/cancelation';
 import {
   animationFrame,
   forever,
-  rawTimeout
+  rawTimeout,
 } from './-private/external/yieldables';
 import { Task } from './-private/task';
 import { TaskGroup } from './-private/task-group';
@@ -35,7 +35,7 @@ import {
   keepLatestTask,
   keepLatestTaskGroup,
   restartableTask,
-  restartableTaskGroup
+  restartableTaskGroup,
 } from './-private/task-decorators';
 
 export {
@@ -68,5 +68,5 @@ export {
   TaskInstance,
   TaskGroup,
   TaskGroupProperty,
-  Yieldable
+  Yieldable,
 };

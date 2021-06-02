@@ -4,21 +4,21 @@ import { action } from '@ember/object';
 import { timeout } from 'ember-concurrency';
 
 const PREFIXES = [
-  "Tomster",
-  "Glimmer",
-  "Transclusion",
-  "Zoey",
-  "Flux",
-  "Reducer",
+  'Tomster',
+  'Glimmer',
+  'Transclusion',
+  'Zoey',
+  'Flux',
+  'Reducer',
 ];
 
 const SUFFIXES = [
-  "Mart",
-  " Central",
-  "s ᴙ Us",
-  "beds n stuff",
-  "potle",
-  " Donuts",
+  'Mart',
+  ' Central',
+  's ᴙ Us',
+  'beds n stuff',
+  'potle',
+  ' Donuts',
 ];
 
 function randomFrom(array) {
@@ -39,7 +39,7 @@ class Store {
       });
     }
 
-    await timeout(800)
+    await timeout(800);
     return { stores };
   }
 }
@@ -58,8 +58,8 @@ class Geolocation {
 export default class SharedTutorialComponent extends Component {
   logs = A();
   formData = {
-    user: "machty",
-    amount: "9.99",
+    user: 'machty',
+    amount: '9.99',
   };
   showTemplate = false;
 

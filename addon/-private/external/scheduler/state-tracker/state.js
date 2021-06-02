@@ -1,8 +1,8 @@
 import {
   COMPLETION_SUCCESS,
   COMPLETION_ERROR,
-  COMPLETION_CANCEL
-} from "../../task-instance/completion-states";
+  COMPLETION_CANCEL,
+} from '../../task-instance/completion-states';
 
 class RefreshState {
   constructor(taskable, tag) {
@@ -21,12 +21,10 @@ class RefreshState {
     this.attrs.lastComplete = taskInstance;
     if (state === COMPLETION_SUCCESS) {
       this.attrs.lastSuccessful = taskInstance;
-    }
-    else {
+    } else {
       if (state === COMPLETION_ERROR) {
         this.attrs.lastErrored = taskInstance;
-      }
-      else if (state === COMPLETION_CANCEL) {
+      } else if (state === COMPLETION_CANCEL) {
         this.attrs.lastCanceled = taskInstance;
       }
       this.attrs.lastIncomplete = taskInstance;

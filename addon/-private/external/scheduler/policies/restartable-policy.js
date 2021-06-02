@@ -1,5 +1,5 @@
-import BoundedPolicy from "./bounded-policy";
-import { STARTED, makeCancelState } from "./execution-states";
+import BoundedPolicy from './bounded-policy';
+import { STARTED, makeCancelState } from './execution-states';
 
 const CANCELLED = makeCancelState(
   `it belongs to a 'restartable' Task that was .perform()ed again`

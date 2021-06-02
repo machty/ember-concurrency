@@ -5,11 +5,10 @@ export default Route.extend({
   setupController() {
     this.loopingTask.perform();
   },
-  loopingTask: task(function * () {
-    while(true) {
+  loopingTask: task(function* () {
+    while (true) {
       this.controller.incrementProperty('foo');
       yield timeout(200);
     }
   }),
 });
-

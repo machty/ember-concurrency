@@ -6,13 +6,13 @@ export default class Router extends EmberRouter {
   rootURL = config.rootURL;
 }
 
-Router.map(function() {
-  this.route('docs', function() {
+Router.map(function () {
+  this.route('docs', function () {
     this.route('introduction');
     this.route('installation');
     this.route('writing-tasks');
 
-    this.route('tutorial', function() {
+    this.route('tutorial', function () {
       this.route('discussion');
       this.route('refactor');
     });
@@ -34,13 +34,13 @@ Router.map(function() {
     this.route('typescript');
     this.route('faq');
     this.route('encapsulated-task');
-    this.route('examples', function() {
+    this.route('examples', function () {
       this.route('increment-buttons');
       this.route('loading-ui');
       this.route('autocomplete');
       this.route('task-concurrency');
       this.route('ajax-throttling');
-      this.route('route-tasks', function() {
+      this.route('route-tasks', function () {
         this.route('detail', { path: ':id' });
       });
       this.route('joining-tasks');
@@ -51,7 +51,7 @@ Router.map(function() {
   this.route('experimental-prediction');
   this.route('helpers-test');
   this.route('deprecation-test');
-  this.route('testing-ergo', function() {
+  this.route('testing-ergo', function () {
     this.route('foo');
     this.route('foo-settimeout');
     this.route('slow');

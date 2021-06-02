@@ -10,14 +10,14 @@ export default class EncapsulatedTaskController extends Controller {
     progress: 0,
     url: null,
 
-    stateText: computed('progress', function() {
+    stateText: computed('progress', function () {
       let progress = this.progress;
       if (progress < 49) {
-        return "Just started..."
+        return 'Just started...';
       } else if (progress < 100) {
-        return "Halfway there..."
+        return 'Halfway there...';
       } else {
-        return "Done!"
+        return 'Done!';
       }
     }),
 
@@ -30,9 +30,9 @@ export default class EncapsulatedTaskController extends Controller {
         this.set('progress', Math.min(100, newProgress));
       }
 
-      return "(upload result data)";
+      return '(upload result data)';
     },
-  }
+  };
 
   makeRandomUrl() {
     return `https://www.${randomWord()}.edu`;

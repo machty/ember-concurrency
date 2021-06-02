@@ -6,7 +6,9 @@ import { restartableTask, task, timeout } from 'ember-concurrency';
 const DEBOUNCE_MS = 250;
 export default class AutocompleteController extends Controller {
   @restartableTask *searchRepo(term) {
-    if (isBlank(term)) { return []; }
+    if (isBlank(term)) {
+      return [];
+    }
 
     // Pause here for DEBOUNCE_MS milliseconds. Because this
     // task is `restartable`, if the user starts typing again,

@@ -1,20 +1,17 @@
 import { setOwner, getOwner } from '@ember/application';
 import EmberObject, { get } from '@ember/object';
-import {
-  isDestroying,
-  registerDestructor
-} from '@ember/destroyable';
-import { Task as BaseTask } from "./external/task/task";
+import { isDestroying, registerDestructor } from '@ember/destroyable';
+import { Task as BaseTask } from './external/task/task';
 import { TaskInstance } from './task-instance';
 import {
   PERFORM_TYPE_DEFAULT,
   TaskInstanceExecutor,
-  PERFORM_TYPE_LINKED
-} from "./external/task-instance/executor";
-import { EMBER_ENVIRONMENT } from "./ember-environment";
-import { TASKABLE_MIXIN } from "./taskable-mixin";
-import { TRACKED_INITIAL_TASK_STATE } from "./tracked-state";
-import { CANCEL_KIND_LIFESPAN_END } from "./external/task-instance/cancelation";
+  PERFORM_TYPE_LINKED,
+} from './external/task-instance/executor';
+import { EMBER_ENVIRONMENT } from './ember-environment';
+import { TASKABLE_MIXIN } from './taskable-mixin';
+import { TRACKED_INITIAL_TASK_STATE } from './tracked-state';
+import { CANCEL_KIND_LIFESPAN_END } from './external/task-instance/cancelation';
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -303,11 +300,12 @@ export class EncapsulatedTask extends Task {
   _taskInstanceFactory(args, performType) {
     let owner = getOwner(this.context);
     let encapsulatedTaskImpl = EmberObject.extend(this.taskObj).create({
-      context: this.context
+      context: this.context,
     });
     setOwner(encapsulatedTaskImpl, owner);
 
-    let generatorFactory = () => encapsulatedTaskImpl.perform.apply(encapsulatedTaskImpl, args);
+    let generatorFactory = () =>
+      encapsulatedTaskImpl.perform.apply(encapsulatedTaskImpl, args);
     let taskInstance = new TaskInstance({
       task: this,
       args,
@@ -330,7 +328,8 @@ export class EncapsulatedTask extends Task {
       return null;
     }
 
-    let _encapsulatedTaskInstanceProxies = this._encapsulatedTaskInstanceProxies;
+    let _encapsulatedTaskInstanceProxies =
+      this._encapsulatedTaskInstanceProxies;
     let proxy = _encapsulatedTaskInstanceProxies.get(taskInstance);
 
     if (!proxy) {
@@ -338,13 +337,17 @@ export class EncapsulatedTask extends Task {
 
       proxy = new Proxy(taskInstance, {
         get(obj, prop) {
-          return prop in obj ? obj[prop] : get(encapsulatedTaskImpl, prop.toString());
+          return prop in obj
+            ? obj[prop]
+            : get(encapsulatedTaskImpl, prop.toString());
         },
         has(obj, prop) {
           return prop in obj || prop in encapsulatedTaskImpl;
         },
         ownKeys(obj) {
-          return Reflect.ownKeys(obj).concat(Reflect.ownKeys(encapsulatedTaskImpl));
+          return Reflect.ownKeys(obj).concat(
+            Reflect.ownKeys(encapsulatedTaskImpl)
+          );
         },
         defineProperty(obj, prop, descriptor) {
           // Ember < 3.16 uses a WeakMap for value storage, keyed to the proxy.
@@ -368,7 +371,7 @@ export class EncapsulatedTask extends Task {
           return prop in obj
             ? Reflect.getOwnPropertyDescriptor(obj, prop)
             : Reflect.getOwnPropertyDescriptor(encapsulatedTaskImpl, prop);
-        }
+        },
       });
 
       _encapsulatedTaskInstanceProxies.set(taskInstance, proxy);

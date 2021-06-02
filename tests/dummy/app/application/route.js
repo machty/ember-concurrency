@@ -7,9 +7,9 @@ export default class ApplicationRoute extends Route {
   @service router;
 
   beforeModel() {
-    if (ENV.environment !== "test" && !this.get('fastboot.isFastBoot')) {
+    if (ENV.environment !== 'test' && !this.get('fastboot.isFastBoot')) {
       this.router.on('didTransition', () => {
-        window.scrollTo(0,0);
+        window.scrollTo(0, 0);
       });
     }
   }

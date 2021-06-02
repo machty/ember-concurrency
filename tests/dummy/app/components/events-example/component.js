@@ -1,13 +1,18 @@
 import Evented from '@ember/object/evented';
 import Component from '@ember/component';
 import $ from 'jquery';
-import { task, timeout, waitForEvent, waitForProperty } from 'ember-concurrency';
+import {
+  task,
+  timeout,
+  waitForEvent,
+  waitForProperty,
+} from 'ember-concurrency';
 
 export default class EventsExampleComponent extends Component.extend(Evented) {
-// BEGIN-SNIPPET waitForEvent
+  // BEGIN-SNIPPET waitForEvent
   domEvent = null;
   @task *domEventLoop() {
-    while(true) {
+    while (true) {
       let event = yield waitForEvent(document.body, 'click');
       this.set('domEvent', event);
       this.trigger('fooEvent', { v: Math.random() });
@@ -17,7 +22,7 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
   jQueryEvent = null;
   @task *jQueryEventLoop() {
     let $body = $('body');
-    while(true) {
+    while (true) {
       let event = yield waitForEvent($body, 'click');
       this.set('jQueryEvent', event);
     }
@@ -25,7 +30,7 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
 
   emberEvent = null;
   @task *emberEventedLoop() {
-    while(true) {
+    while (true) {
       let event = yield waitForEvent(this, 'fooEvent');
       this.set('emberEvent', event);
     }
@@ -38,12 +43,11 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
     this.emberEventedLoop.perform();
     this.waiterLoop.perform();
   }
-// END-SNIPPET
+  // END-SNIPPET
 
-
-// BEGIN-SNIPPET waitForEvent-derived-state
+  // BEGIN-SNIPPET waitForEvent-derived-state
   @task *waiterLoop() {
-    while(true) {
+    while (true) {
       yield this.waiter.perform();
       yield timeout(1500);
     }
@@ -53,12 +57,12 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
     let event = yield waitForEvent(document.body, 'click');
     return event;
   }
-// END-SNIPPET
+  // END-SNIPPET
 
-// BEGIN-SNIPPET waitForProperty
+  // BEGIN-SNIPPET waitForProperty
   @task *startAll() {
     this.set('bazValue', 1);
-    this.set('state', "Start.");
+    this.set('state', 'Start.');
     this.foo.perform();
     this.bar.perform();
     this.baz.perform();
@@ -82,5 +86,5 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
     yield timeout(500);
     this.set('state', `${this.state} Baz got even value ${val}.`);
   }
-// END-SNIPPET
+  // END-SNIPPET
 }

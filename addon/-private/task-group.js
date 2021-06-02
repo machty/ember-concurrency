@@ -1,6 +1,6 @@
-import { TaskGroup as TaskGroupBase } from "./external/task/task-group";
-import { TASKABLE_MIXIN } from "./taskable-mixin";
-import { TRACKED_INITIAL_TASK_STATE } from "./tracked-state";
+import { TaskGroup as TaskGroupBase } from './external/task/task-group';
+import { TASKABLE_MIXIN } from './taskable-mixin';
+import { TRACKED_INITIAL_TASK_STATE } from './tracked-state';
 
 export class TaskGroup extends TaskGroupBase {
   /**
@@ -21,8 +21,7 @@ export class TaskGroup extends TaskGroupBase {
    * @async
    *
    */
-
-     /**
+  /**
    * `true` if any current task instances are running.
    *
    * @memberof TaskGroup
@@ -30,7 +29,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * `true` if any future task instances are queued.
    *
@@ -39,7 +37,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * `true` if the task is not in the running or queued state.
    *
@@ -48,7 +45,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The current state of the task: `"running"`, `"queued"` or `"idle"`.
    *
@@ -57,7 +53,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recently started task instance.
    *
@@ -66,7 +61,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recent task instance that is currently running.
    *
@@ -75,7 +69,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recently performed task instance.
    *
@@ -84,7 +77,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recent task instance that succeeded.
    *
@@ -93,7 +85,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recently completed task instance.
    *
@@ -102,7 +93,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recent task instance that errored.
    *
@@ -111,7 +101,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recently canceled task instance.
    *
@@ -120,7 +109,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recent task instance that is incomplete.
    *
@@ -129,7 +117,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The number of times this task has been performed.
    *

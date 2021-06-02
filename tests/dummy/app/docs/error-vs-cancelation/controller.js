@@ -11,9 +11,9 @@ export default class ErrorVsCancelationController extends Controller {
     try {
       yield timeout(1000);
       if (doError) {
-        throw new Error("Boom");
+        throw new Error('Boom');
       }
-    } catch(e) {
+    } catch (e) {
       this.incrementProperty('numErrors');
     } finally {
       this.incrementProperty('numFinallys');

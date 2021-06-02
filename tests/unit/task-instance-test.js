@@ -1,16 +1,16 @@
-import RSVP, { resolve, reject } from "rsvp";
-import { run } from "@ember/runloop";
-import { TaskInstance } from "ember-concurrency/-private/task-instance";
-import { didCancel } from "ember-concurrency";
-import { module, test } from "qunit";
-import { makeAsyncError } from "../helpers/helpers";
-import { TaskInstanceExecutor } from "ember-concurrency/-private/external/task-instance/executor";
-import { EMBER_ENVIRONMENT } from "ember-concurrency/-private/ember-environment";
+import RSVP, { resolve, reject } from 'rsvp';
+import { run } from '@ember/runloop';
+import { TaskInstance } from 'ember-concurrency/-private/task-instance';
+import { didCancel } from 'ember-concurrency';
+import { module, test } from 'qunit';
+import { makeAsyncError } from '../helpers/helpers';
+import { TaskInstanceExecutor } from 'ember-concurrency/-private/external/task-instance/executor';
+import { EMBER_ENVIRONMENT } from 'ember-concurrency/-private/ember-environment';
 
-module("Unit: task instance", function(hooks) {
+module('Unit: task instance', function (hooks) {
   let asyncError = makeAsyncError(hooks);
 
-  test("basics", function(assert) {
+  test('basics', function (assert) {
     assert.expect(2);
 
     let context = {};
@@ -25,17 +25,17 @@ module("Unit: task instance", function(hooks) {
           assert.deepEqual(args, [1, 2, 3]);
         },
         args: [1, 2, 3],
-        context
+        context,
       }).start();
     });
   });
 
-  test("task instances run synchronously", function(assert) {
+  test('task instances run synchronously', function (assert) {
     assert.expect(3);
     let ti;
     run(() => {
       let isSync = true;
-      ti = wrap(function*(v) {
+      ti = wrap(function* (v) {
         assert.ok(isSync);
         return v;
       })(123);
@@ -45,14 +45,14 @@ module("Unit: task instance", function(hooks) {
     assert.equal(ti.value, 123);
   });
 
-  test("task instance hierarchies run synchronously", function(assert) {
+  test('task instance hierarchies run synchronously', function (assert) {
     assert.expect(3);
 
     let ti;
     run(() => {
       let isSync = true;
-      ti = wrap(function*(v) {
-        return wrap(function*(a) {
+      ti = wrap(function* (v) {
+        return wrap(function* (a) {
           assert.ok(isSync);
           return a * 2;
         })(v);
@@ -64,13 +64,13 @@ module("Unit: task instance", function(hooks) {
   });
 
   if (window.Promise) {
-    test("window.Promise: returning a promise immediately", function(assert) {
+    test('window.Promise: returning a promise immediately', function (assert) {
       assert.expect(4);
 
       let done = assert.async();
       let ti;
       run(() => {
-        ti = wrap(function*(v) {
+        ti = wrap(function* (v) {
           return window.Promise.resolve(v * 2);
         })(123);
       });
@@ -84,13 +84,13 @@ module("Unit: task instance", function(hooks) {
       }, 1);
     });
 
-    test("window.Promise: yielding many in a row", function(assert) {
+    test('window.Promise: yielding many in a row', function (assert) {
       assert.expect(7);
 
       let done = assert.async();
       let ti;
       run(() => {
-        ti = wrap(function*(v) {
+        ti = wrap(function* (v) {
           assert.ok(run.currentRunLoop);
           v = yield window.Promise.resolve(v * 2);
           assert.ok(run.currentRunLoop);
@@ -109,13 +109,13 @@ module("Unit: task instance", function(hooks) {
       }, 1);
     });
 
-    test("window.Promise: taskInstance.then()", function(assert) {
+    test('window.Promise: taskInstance.then()', function (assert) {
       assert.expect(5);
 
       let done = assert.async();
       let ti;
       run(() => {
-        ti = wrap(function*(v) {
+        ti = wrap(function* (v) {
           v = yield window.Promise.resolve(v * 2);
           v = yield window.Promise.resolve(v * 2);
           return v;
@@ -124,7 +124,7 @@ module("Unit: task instance", function(hooks) {
       assert.equal(ti.isFinished, false);
       assert.equal(ti.value, null);
 
-      ti.then(value => {
+      ti.then((value) => {
         assert.equal(ti.isFinished, true);
         assert.equal(ti.value, 492);
         assert.equal(value, 492);
@@ -133,12 +133,12 @@ module("Unit: task instance", function(hooks) {
     });
   }
 
-  test("blocks on async yields", function(assert) {
+  test('blocks on async yields', function (assert) {
     assert.expect(1);
 
     let defer;
     run(() => {
-      wrap(function*() {
+      wrap(function* () {
         defer = RSVP.defer();
         let value = yield defer.promise;
         assert.equal(value, 123);
@@ -151,13 +151,13 @@ module("Unit: task instance", function(hooks) {
   function expectCancelation(assert, promise, message) {
     promise.then(
       () => {
-        assert.ok(false, "promise should have rejected");
+        assert.ok(false, 'promise should have rejected');
       },
-      e => {
+      (e) => {
         assert.equal(
           e.name,
-          "TaskCancelation",
-          "promise rejection is a cancelation"
+          'TaskCancelation',
+          'promise rejection is a cancelation'
         );
         if (message) {
           assert.equal(e.message, message);
@@ -166,16 +166,16 @@ module("Unit: task instance", function(hooks) {
     );
   }
 
-  test("cancelation: yields in finally block", function(assert) {
+  test('cancelation: yields in finally block', function (assert) {
     assert.expect(16);
 
     let defer0, defer1, defer2;
     let taskInstance = run(() => {
-      return wrap(function*() {
+      return wrap(function* () {
         try {
           defer0 = RSVP.defer();
           yield defer0.promise;
-          assert.ok(false, "should not get here");
+          assert.ok(false, 'should not get here');
         } finally {
           defer1 = RSVP.defer();
           let result = yield defer1.promise;
@@ -194,14 +194,14 @@ module("Unit: task instance", function(hooks) {
 
       defer0.resolve();
       taskInstance.cancel();
-      assert.ok(!taskInstance.isFinished, "task is not yet finished");
-      assert.ok(!taskInstance.isCanceled, "task is not yet canceled");
+      assert.ok(!taskInstance.isFinished, 'task is not yet finished');
+      assert.ok(!taskInstance.isCanceled, 'task is not yet canceled');
       assert.ok(!taskInstance.isError);
     });
 
     run(null, defer1.resolve, 123);
-    assert.ok(!taskInstance.isFinished, "task is not yet finished");
-    assert.ok(!taskInstance.isCanceled, "task is not yet canceled");
+    assert.ok(!taskInstance.isFinished, 'task is not yet finished');
+    assert.ok(!taskInstance.isCanceled, 'task is not yet canceled');
     run(null, defer2.resolve, 456);
     assert.ok(taskInstance.isCanceled);
     assert.ok(!taskInstance.isSuccessful);
@@ -213,7 +213,7 @@ module("Unit: task instance", function(hooks) {
     assert.ok(!taskInstance.isError);
   });
 
-  test("deferred start", function(assert) {
+  test('deferred start', function (assert) {
     assert.expect(4);
 
     let shouldBeRunning = false;
@@ -223,7 +223,7 @@ module("Unit: task instance", function(hooks) {
           assert.ok(shouldBeRunning);
           assert.deepEqual(args, [1, 2, 3]);
         },
-        args: [1, 2, 3]
+        args: [1, 2, 3],
       });
     });
 
@@ -235,15 +235,15 @@ module("Unit: task instance", function(hooks) {
     assert.ok(taskInstance.hasStarted);
   });
 
-  test("deferred start: .cancel() before .start()", function(assert) {
+  test('deferred start: .cancel() before .start()', function (assert) {
     assert.expect(4);
 
     let taskInstance = run(() => {
       return makeTaskInstance({
         *fn() {
-          assert.ok(false, "should not get here");
+          assert.ok(false, 'should not get here');
         },
-        args: []
+        args: [],
       });
     });
 
@@ -261,63 +261,63 @@ module("Unit: task instance", function(hooks) {
     assert.ok(taskInstance.isCanceled);
   });
 
-  test(".then() resolves with the returned value", function(assert) {
+  test('.then() resolves with the returned value', function (assert) {
     assert.expect(1);
 
     run(() => {
-      wrap(function*() {
+      wrap(function* () {
         return 123;
-      })().then(v => {
+      })().then((v) => {
         assert.equal(v, 123);
       });
     });
   });
 
-  test("returning promises resolves the promise", function(assert) {
+  test('returning promises resolves the promise', function (assert) {
     assert.expect(1);
 
     run(() => {
-      wrap(function*() {
+      wrap(function* () {
         return resolve(123);
-      })().then(v => {
+      })().then((v) => {
         assert.equal(v, 123);
       });
     });
   });
 
-  test("returning rejecting promise rejects TaskInstance's promise", function(assert) {
+  test("returning rejecting promise rejects TaskInstance's promise", function (assert) {
     assert.expect(1);
 
     run(() => {
-      wrap(function*() {
+      wrap(function* () {
         return reject(123);
-      })().then(null, v => {
+      })().then(null, (v) => {
         assert.equal(v, 123);
       });
     });
   });
 
-  test("don't use the most recent yield as a return value if there's no explicit return", function(assert) {
+  test("don't use the most recent yield as a return value if there's no explicit return", function (assert) {
     assert.expect(1);
     run(() => {
-      wrap(function*() {
+      wrap(function* () {
         yield 5;
-      })().then(v => {
+      })().then((v) => {
         assert.equal(v, undefined);
       });
     });
   });
 
-  test("exception handling", async function(assert) {
+  test('exception handling', async function (assert) {
     assert.expect(7);
 
     let defer0, defer1;
     let taskInstance;
     let caughtError;
     run(() => {
-      taskInstance = wrap(function*() {
+      taskInstance = wrap(function* () {
         try {
-          throw new Error("wat");
+          throw new Error('wat');
         } finally {
           defer0 = RSVP.defer();
           let val = yield defer0.promise;
@@ -327,7 +327,7 @@ module("Unit: task instance", function(hooks) {
           assert.equal(val, 456);
         }
       })();
-      taskInstance.catch(e => {
+      taskInstance.catch((e) => {
         caughtError = e;
       });
     });
@@ -337,27 +337,27 @@ module("Unit: task instance", function(hooks) {
     run(null, defer0.resolve, 123);
     assert.ok(!taskInstance.isFinished);
     run(null, defer1.resolve, 456);
-    assert.equal(caughtError.message, "wat");
+    assert.equal(caughtError.message, 'wat');
     assert.ok(taskInstance.isFinished);
   });
 
-  test("unhandled yielded rejections are asyncly reported to Ember.onerror", async function(assert) {
+  test('unhandled yielded rejections are asyncly reported to Ember.onerror', async function (assert) {
     assert.expect(1);
     run(() => {
-      wrap(function*() {
-        yield reject("wat");
+      wrap(function* () {
+        yield reject('wat');
       })();
     });
-    assert.deepEqual(await asyncError(), "wat");
+    assert.deepEqual(await asyncError(), 'wat');
   });
 
-  test("yielding to other tasks", function(assert) {
+  test('yielding to other tasks', function (assert) {
     assert.expect(3);
 
     let taskInstance0, taskInstance1, defer;
     run(() => {
-      taskInstance0 = wrap(function*() {
-        taskInstance1 = wrap(function*() {
+      taskInstance0 = wrap(function* () {
+        taskInstance1 = wrap(function* () {
           defer = RSVP.defer();
           let value = yield defer.promise;
           return value;
@@ -367,19 +367,19 @@ module("Unit: task instance", function(hooks) {
       })();
     });
 
-    assert.equal(taskInstance0.state, "running");
-    assert.equal(taskInstance1.state, "running");
+    assert.equal(taskInstance0.state, 'running');
+    assert.equal(taskInstance1.state, 'running');
 
     run(null, defer.resolve, 123);
   });
 
-  test("yielding to other tasks: parent task gets canceled", function(assert) {
+  test('yielding to other tasks: parent task gets canceled', function (assert) {
     assert.expect(4);
 
     let taskInstance0, taskInstance1, defer;
     run(() => {
-      taskInstance0 = wrap(function*() {
-        taskInstance1 = wrap(function*() {
+      taskInstance0 = wrap(function* () {
+        taskInstance1 = wrap(function* () {
           defer = RSVP.defer();
           let value = yield defer.promise;
           return value;
@@ -389,24 +389,24 @@ module("Unit: task instance", function(hooks) {
       })();
     });
 
-    assert.equal(taskInstance0.state, "running");
-    assert.equal(taskInstance1.state, "running");
+    assert.equal(taskInstance0.state, 'running');
+    assert.equal(taskInstance1.state, 'running');
 
-    run(taskInstance0, "cancel");
+    run(taskInstance0, 'cancel');
 
-    assert.equal(taskInstance0.state, "canceled");
-    assert.equal(taskInstance1.state, "canceled");
+    assert.equal(taskInstance0.state, 'canceled');
+    assert.equal(taskInstance1.state, 'canceled');
 
-    run(null, defer.resolve, "naw");
+    run(null, defer.resolve, 'naw');
   });
 
-  test("yielding to other tasks: child task gets canceled", async function(assert) {
+  test('yielding to other tasks: child task gets canceled', async function (assert) {
     assert.expect(2);
 
     let taskInstance0, taskInstance1, defer;
     run(() => {
-      taskInstance0 = wrap(function*() {
-        taskInstance1 = wrap(function*() {
+      taskInstance0 = wrap(function* () {
+        taskInstance1 = wrap(function* () {
           defer = RSVP.defer();
           let value = yield defer.promise;
           return value;
@@ -416,21 +416,21 @@ module("Unit: task instance", function(hooks) {
       })();
     });
 
-    run(taskInstance1, "cancel");
+    run(taskInstance1, 'cancel');
 
-    assert.equal(taskInstance0.state, "canceled");
-    assert.equal(taskInstance1.state, "canceled");
+    assert.equal(taskInstance0.state, 'canceled');
+    assert.equal(taskInstance1.state, 'canceled');
 
-    run(null, defer.resolve, "naw");
+    run(null, defer.resolve, 'naw');
   });
 
-  test("canceling a finished task shouldn't mark it as canceled", function(assert) {
+  test("canceling a finished task shouldn't mark it as canceled", function (assert) {
     assert.expect(5);
 
     let taskInstance,
       didRun = false;
     run(() => {
-      taskInstance = wrap(function*() {
+      taskInstance = wrap(function* () {
         didRun = true;
       })();
     });
@@ -438,12 +438,12 @@ module("Unit: task instance", function(hooks) {
     assert.ok(didRun);
     assert.equal(taskInstance.isFinished, true);
     assert.equal(taskInstance.isCanceled, false);
-    run(taskInstance, "cancel");
+    run(taskInstance, 'cancel');
     assert.equal(taskInstance.isFinished, true);
     assert.equal(taskInstance.isCanceled, false);
   });
 
-  test("taskInstance.value is null until task instance completes successfully", function(assert) {
+  test('taskInstance.value is null until task instance completes successfully', function (assert) {
     assert.expect(2);
 
     let taskInstance = run(() => {
@@ -451,92 +451,92 @@ module("Unit: task instance", function(hooks) {
         *fn() {
           return 123;
         },
-        args: []
+        args: [],
       });
     });
 
     assert.equal(taskInstance.value, null);
-    run(taskInstance, "start");
+    run(taskInstance, 'start');
     assert.equal(taskInstance.value, 123);
   });
 
-  test("taskInstance.error is null until task instance errors", async function(assert) {
+  test('taskInstance.error is null until task instance errors', async function (assert) {
     assert.expect(3);
 
     let taskInstance = run(() => {
       return makeTaskInstance({
         *fn() {
-          throw "justin bailey";
+          throw 'justin bailey';
         },
-        args: []
+        args: [],
       });
     });
 
     assert.equal(taskInstance.error, null);
-    run(taskInstance, "start");
+    run(taskInstance, 'start');
 
     let error = await asyncError();
-    assert.equal(error, "justin bailey");
-    assert.equal(taskInstance.error, "justin bailey");
+    assert.equal(error, 'justin bailey');
+    assert.equal(taskInstance.error, 'justin bailey');
   });
 
-  test("taskInstance.error is set when task cancels", function(assert) {
+  test('taskInstance.error is set when task cancels', function (assert) {
     assert.expect(1);
 
     let taskInstance = run(() => {
-      return wrap(function*() {
+      return wrap(function* () {
         yield RSVP.defer().promise;
       })();
     });
 
-    run(taskInstance, "start");
-    run(taskInstance, "cancel");
-    assert.equal(taskInstance.error.name, "TaskCancelation");
+    run(taskInstance, 'start');
+    run(taskInstance, 'cancel');
+    assert.equal(taskInstance.error.name, 'TaskCancelation');
   });
 
-  test("taskInstance.error is set when task is dropped", function(assert) {
+  test('taskInstance.error is set when task is dropped', function (assert) {
     assert.expect(1);
 
     let taskInstance = run(() => {
-      return wrap(function*() {
+      return wrap(function* () {
         yield RSVP.defer().promise;
       })();
     });
 
-    run(taskInstance, "cancel");
-    assert.equal(taskInstance.error.name, "TaskCancelation");
+    run(taskInstance, 'cancel');
+    assert.equal(taskInstance.error.name, 'TaskCancelation');
   });
 
-  test("taskInstance.isSuccessful is set when task fulfills", function(assert) {
+  test('taskInstance.isSuccessful is set when task fulfills', function (assert) {
     assert.expect(4);
 
     let taskInstance = run(() => {
       return makeTaskInstance({
         *fn() {},
-        args: []
+        args: [],
       });
     });
 
-    run(taskInstance, "start");
+    run(taskInstance, 'start');
     assert.equal(taskInstance.isFinished, true);
     assert.equal(taskInstance.isSuccessful, true);
     assert.equal(taskInstance.isCanceled, false);
     assert.equal(taskInstance.isError, false);
   });
 
-  test("taskInstance.isError is set when task throws an error", async function(assert) {
+  test('taskInstance.isError is set when task throws an error', async function (assert) {
     assert.expect(4);
 
     let taskInstance = run(() => {
       return makeTaskInstance({
         *fn() {
-          throw "wat";
+          throw 'wat';
         },
-        args: []
+        args: [],
       });
     });
 
-    run(taskInstance, "start");
+    run(taskInstance, 'start');
 
     assert.equal(taskInstance.isFinished, true);
     assert.equal(taskInstance.isSuccessful, false);
@@ -546,80 +546,80 @@ module("Unit: task instance", function(hooks) {
     await asyncError();
   });
 
-  test("tasks can catch rejecting promises, preventing their errors from bubbling", function(assert) {
+  test('tasks can catch rejecting promises, preventing their errors from bubbling', function (assert) {
     assert.expect(1);
 
     run(() => {
-      wrap(function*() {
+      wrap(function* () {
         try {
-          yield reject("wat");
+          yield reject('wat');
         } catch (e) {
-          assert.equal(e, "wat");
+          assert.equal(e, 'wat');
         }
       })();
     });
   });
 
-  test("if a parent task catches a child task that throws, it prevents the error from bubbling", function(assert) {
+  test('if a parent task catches a child task that throws, it prevents the error from bubbling', function (assert) {
     assert.expect(1);
 
     run(() => {
-      wrap(function*() {
-        let taskInstance1 = wrap(function*() {
-          throw "wat";
+      wrap(function* () {
+        let taskInstance1 = wrap(function* () {
+          throw 'wat';
         })();
         try {
           yield taskInstance1;
         } catch (e) {
-          assert.equal(e, "wat");
+          assert.equal(e, 'wat');
         }
       })();
     });
   });
 
-  test("if a parent task catches a child task that returns a rejecting promise, it prevents the error from bubbling", function(assert) {
+  test('if a parent task catches a child task that returns a rejecting promise, it prevents the error from bubbling', function (assert) {
     assert.expect(1);
 
     run(() => {
-      wrap(function*() {
-        let taskInstance1 = wrap(function*() {
-          return reject("wat");
+      wrap(function* () {
+        let taskInstance1 = wrap(function* () {
+          return reject('wat');
         })();
 
         try {
           yield taskInstance1;
         } catch (e) {
-          assert.equal(e, "wat");
+          assert.equal(e, 'wat');
         }
       })();
     });
   });
 
-  test("in a hierarchy of child task performs, a bubbling exception should only print to console once", async function(assert) {
+  test('in a hierarchy of child task performs, a bubbling exception should only print to console once', async function (assert) {
     assert.expect(1);
 
     run(() => {
-      wrap(function*() {
-        yield wrap(function*() {
-          yield wrap(function*() {
-            return reject("wat");
+      wrap(function* () {
+        yield wrap(function* () {
+          yield wrap(function* () {
+            return reject('wat');
           })();
         })();
       })();
     });
 
     let error = await asyncError();
-    assert.equal(error, "wat");
+    assert.equal(error, 'wat');
   });
 
-  test("in a hierarchy of child task performs, a bubbling cancel should not be considered an error", function(assert) {
+  test('in a hierarchy of child task performs, a bubbling cancel should not be considered an error', function (assert) {
     assert.expect(1);
 
     let taskInstance0;
     run(() => {
-      wrap(function*() {
-        yield wrap(function*() {
-          taskInstance0 = wrap(function*() {
+      wrap(function* () {
+        yield wrap(function* () {
+          taskInstance0 = wrap(function* () {
             return RSVP.defer().promise;
           })();
           yield taskInstance0;
@@ -628,45 +628,45 @@ module("Unit: task instance", function(hooks) {
     });
 
     assert.ok(taskInstance0.isRunning);
-    run(taskInstance0, "cancel");
+    run(taskInstance0, 'cancel');
   });
 
-  test("task cancelation should skip over catch blocks within task functions", function(assert) {
+  test('task cancelation should skip over catch blocks within task functions', function (assert) {
     assert.expect(1);
 
     let taskInstance0;
     run(() => {
-      wrap(function*() {
+      wrap(function* () {
         try {
-          yield wrap(function*() {
+          yield wrap(function* () {
             try {
-              taskInstance0 = wrap(function*() {
+              taskInstance0 = wrap(function* () {
                 try {
                   yield RSVP.defer().promise;
-                  assert.ok(false, "one");
+                  assert.ok(false, 'one');
                 } catch (e) {
-                  assert.ok(false, "one catch");
+                  assert.ok(false, 'one catch');
                 }
               })();
               yield taskInstance0;
-              assert.ok(false, "two");
+              assert.ok(false, 'two');
             } catch (e) {
-              assert.ok(false, "two catch");
+              assert.ok(false, 'two catch');
             }
           })();
-          assert.ok(false, "three");
+          assert.ok(false, 'three');
         } catch (e) {
-          assert.ok(false, "three catch");
+          assert.ok(false, 'three catch');
         }
-      })().catch(e => {
-        assert.equal(e.name, "TaskCancelation");
+      })().catch((e) => {
+        assert.equal(e.name, 'TaskCancelation');
       });
     });
 
-    run(taskInstance0, "cancel");
+    run(taskInstance0, 'cancel');
   });
 
-  test("canceling a task instance should be async", function(assert) {
+  test('canceling a task instance should be async', function (assert) {
     assert.expect(2);
 
     let defer;
@@ -677,7 +677,7 @@ module("Unit: task instance", function(hooks) {
           yield defer.promise;
           taskInstance.cancel();
           return 123;
-        }
+        },
       }).start();
     });
 
@@ -685,10 +685,10 @@ module("Unit: task instance", function(hooks) {
       () => {
         assert.ok(false);
       },
-      e => {
+      (e) => {
         assert.ok(
           didCancel(e),
-          "canceling a task instance right before it returns is still considered a cancelation"
+          'canceling a task instance right before it returns is still considered a cancelation'
         );
       }
     );
@@ -703,12 +703,12 @@ module("Unit: task instance", function(hooks) {
     let stubTask = { guid: `ec_${guid++}`, context };
     let executor = new TaskInstanceExecutor({
       generatorFactory: () => fn.apply(context, args),
-      env: EMBER_ENVIRONMENT
+      env: EMBER_ENVIRONMENT,
     });
     return new TaskInstance({
       task: stubTask,
       args: args,
-      executor
+      executor,
     });
   }
 

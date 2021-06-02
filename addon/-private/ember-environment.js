@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { defer } from 'rsvp';
-import { Environment } from "./external/environment";
+import { Environment } from './external/environment';
 import { assert } from '@ember/debug';
 import { join, next, once } from '@ember/runloop';
 
@@ -14,7 +14,7 @@ export class EmberEnvironment extends Environment {
   }
 
   reportUncaughtRejection(error) {
-    next(null, function() {
+    next(null, function () {
       if (Ember.onerror) {
         Ember.onerror(error);
       } else {

@@ -1,6 +1,6 @@
-import { assert } from "@ember/debug";
-import { schedule, cancel } from "@ember/runloop";
-import { get } from "@ember/object";
+import { assert } from '@ember/debug';
+import { schedule, cancel } from '@ember/runloop';
+import { get } from '@ember/object';
 import { addObserver, removeObserver } from '@ember/object/observers';
 import { EmberYieldable, isEventedObject } from './utils';
 
@@ -15,7 +15,7 @@ class WaitForQueueYieldable extends EmberYieldable {
 
     try {
       timerId = schedule(this.queueName, () => state.next());
-    } catch(error) {
+    } catch (error) {
       state.throw(error);
     }
 
@@ -32,7 +32,7 @@ class WaitForEventYieldable extends EmberYieldable {
   }
 
   on(callback) {
-    if (typeof this.object.addEventListener === "function") {
+    if (typeof this.object.addEventListener === 'function') {
       // assume that we're dealing with a DOM `EventTarget`.
       this.usesDOMEvents = true;
       this.object.addEventListener(this.eventName, callback);
@@ -73,10 +73,10 @@ class WaitForPropertyYieldable extends EmberYieldable {
     this.object = object;
     this.key = key;
 
-    if (typeof predicateCallback === "function") {
+    if (typeof predicateCallback === 'function') {
       this.predicateCallback = predicateCallback;
     } else {
-      this.predicateCallback = v => v === predicateCallback;
+      this.predicateCallback = (v) => v === predicateCallback;
     }
   }
 
@@ -100,7 +100,7 @@ class WaitForPropertyYieldable extends EmberYieldable {
       if (observerBound && observerFn) {
         removeObserver(this.object, this.key, null, observerFn);
       }
-    }
+    };
   }
 }
 

@@ -1,7 +1,9 @@
-import BoundedPolicy from "./bounded-policy";
-import { makeCancelState, STARTED } from "./execution-states";
+import BoundedPolicy from './bounded-policy';
+import { makeCancelState, STARTED } from './execution-states';
 
-const CANCELLED = makeCancelState(`it belongs to a 'drop' Task that was already running`);
+const CANCELLED = makeCancelState(
+  `it belongs to a 'drop' Task that was already running`
+);
 
 class DropReducer {
   constructor(remainingSlots) {

@@ -13,7 +13,7 @@ let Tracker = EmberObject.extend({
   comp: null,
   taskInstance: null,
   isCanceled: oneWay('taskInstance.isCanceled'),
-  state: computed('taskInstance.state', function() {
+  state: computed('taskInstance.state', function () {
     return capitalize(this.get('taskInstance.state'));
   }),
   hasStarted: false,
@@ -26,8 +26,8 @@ export default class ConcurrencyGraphComponent extends Component {
   startTime = null;
   nextId = 0;
 
-  colors = [ 'red', 'green', 'blue' ];
-  labelHeights = [ 0, 20, 40, 60, 80, 100 ];
+  colors = ['red', 'green', 'blue'];
+  labelHeights = [0, 20, 40, 60, 80, 100];
 
   didInsertElement() {
     super.didInsertElement(...arguments);
@@ -37,7 +37,9 @@ export default class ConcurrencyGraphComponent extends Component {
   @computed('trackers.[]')
   get lowerLimit() {
     let trackers = this.trackers;
-    if (!trackers) { return 0; }
+    if (!trackers) {
+      return 0;
+    }
     let v = Math.min(...trackers.mapBy('performTime'));
     return v;
   }

@@ -1,18 +1,20 @@
 import { setProperties } from '@ember/object';
 import { later, cancel } from '@ember/runloop';
 import { gte } from 'ember-compatibility-helpers';
-import { EMBER_ENVIRONMENT } from "./ember-environment";
-import { Yieldable } from "./external/yieldables";
+import { EMBER_ENVIRONMENT } from './ember-environment';
+import { Yieldable } from './external/yieldables';
 
 export const USE_TRACKED = gte('3.16.0');
 export const assignProperties = USE_TRACKED ? Object.assign : setProperties;
 
 export function isEventedObject(c) {
-  return (c && (
-    (typeof c.one === 'function' && typeof c.off === 'function') ||
-    (typeof c.on === 'function' && typeof c.off === 'function') ||
-    (typeof c.addEventListener === 'function' && typeof c.removeEventListener === 'function')
-  ));
+  return (
+    c &&
+    ((typeof c.one === 'function' && typeof c.off === 'function') ||
+      (typeof c.on === 'function' && typeof c.off === 'function') ||
+      (typeof c.addEventListener === 'function' &&
+        typeof c.removeEventListener === 'function'))
+  );
 }
 
 export class EmberYieldable extends Yieldable {
@@ -67,5 +69,7 @@ export function timeout(ms) {
 
 export function deprecatePrivateModule(moduleName) {
   // eslint-disable-next-line no-console
-  console.warn(`an Ember addon is importing a private ember-concurrency module '${moduleName}' that has moved`);
+  console.warn(
+    `an Ember addon is importing a private ember-concurrency module '${moduleName}' that has moved`
+  );
 }

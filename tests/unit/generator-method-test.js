@@ -5,12 +5,12 @@ import {
   restartableTask,
   dropTask,
   keepLatestTask,
-  enqueueTask
+  enqueueTask,
 } from 'ember-concurrency';
 import { decoratorTest } from '../helpers/helpers';
 
-module('Unit | generator method', function() {
-  decoratorTest('Basic decorators functionality', function(assert) {
+module('Unit | generator method', function () {
+  decoratorTest('Basic decorators functionality', function (assert) {
     assert.expect(5);
 
     class TestSubject {

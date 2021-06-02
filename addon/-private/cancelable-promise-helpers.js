@@ -69,13 +69,12 @@ export const hash = taskAwareVariantOf(RSVP, 'hash', getValues);
  */
 export const hashSettled = taskAwareVariantOf(RSVP, 'hashSettled', getValues);
 
-
 function identity(obj) {
   return obj;
 }
 
 function getValues(obj) {
-  return Object.keys(obj).map(k => obj[k]);
+  return Object.keys(obj).map((k) => obj[k]);
 }
 
 function castForPromiseHelper(castable) {
@@ -97,7 +96,7 @@ function castForPromiseHelper(castable) {
 function castAwaitables(arrOrHash, callback) {
   if (Array.isArray(arrOrHash)) {
     return arrOrHash.map(callback);
-  } else if (typeof arrOrHash === "object" && arrOrHash !== null) {
+  } else if (typeof arrOrHash === 'object' && arrOrHash !== null) {
     let obj = {};
     Object.keys(arrOrHash).forEach((key) => {
       obj[key] = callback(arrOrHash[key]);
@@ -110,7 +109,7 @@ function castAwaitables(arrOrHash, callback) {
 }
 
 function taskAwareVariantOf(obj, method, getItems) {
-  return function(awaitable) {
+  return function (awaitable) {
     let awaitables = castAwaitables(awaitable, castForPromiseHelper);
 
     let items = getItems(awaitables);
@@ -122,9 +121,11 @@ function taskAwareVariantOf(obj, method, getItems) {
 
     let hasCancelled = false;
     let cancelAll = () => {
-      if (hasCancelled) { return; }
+      if (hasCancelled) {
+        return;
+      }
       hasCancelled = true;
-      items.forEach(it => {
+      items.forEach((it) => {
         if (it) {
           if (it instanceof TaskInstance) {
             it.cancel();

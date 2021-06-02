@@ -11,20 +11,20 @@ const COLORS = [
   '#20B2AA',
   '#FF1493',
   '#228B22',
-  '#DAA520'
+  '#DAA520',
 ];
 
 function loopingAjaxTask(id) {
-  return function * () {
+  return function* () {
     while (true) {
       try {
         yield this.ajaxTask.perform(id);
-      } catch(e) {
+      } catch (e) {
         // Ignoring AJAX failures because we're being naughty.
       }
       yield timeout(2000);
     }
-  }
+  };
 }
 
 export default class TaskLifecycleEventsExample extends Component {
@@ -53,7 +53,7 @@ export default class TaskLifecycleEventsExample extends Component {
     yield timeout(ms);
 
     if (parseInt(ms) % 7 === 0) {
-      throw new Error("Unexpected matrix glitch");
+      throw new Error('Unexpected matrix glitch');
     }
     return {};
   }
@@ -70,7 +70,10 @@ export default class TaskLifecycleEventsExample extends Component {
 
   ajaxTaskErrored(taskInstance, error) {
     const [id] = taskInstance.args;
-    this.log(COLORS[id], `Task ${id}: AJAX failed because of '${error.message}'`);
+    this.log(
+      COLORS[id],
+      `Task ${id}: AJAX failed because of '${error.message}'`
+    );
   }
 
   @task({ on: 'init' }) task0 = loopingAjaxTask(0);

@@ -1,18 +1,18 @@
-import UnboundedSchedulerPolicy from "./external/scheduler/policies/unbounded-policy";
-import EnqueueSchedulerPolicy from "./external/scheduler/policies/enqueued-policy";
-import DropSchedulerPolicy from "./external/scheduler/policies/drop-policy";
-import KeepLatestSchedulerPolicy from "./external/scheduler/policies/keep-latest-policy";
-import RestartableSchedulerPolicy from "./external/scheduler/policies/restartable-policy";
+import UnboundedSchedulerPolicy from './external/scheduler/policies/unbounded-policy';
+import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
+import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
+import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy';
+import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy';
 
-import { assert } from "@ember/debug";
-import { get } from "@ember/object";
-import { addListener } from "@ember/object/events";
-import { addObserver } from "@ember/object/observers";
-import { scheduleOnce } from "@ember/runloop";
-import { Task, EncapsulatedTask } from "./task";
-import { TaskProperty } from "./task-properties";
-import { TaskGroup } from "./task-group";
-import EmberScheduler from "./scheduler/ember-scheduler";
+import { assert } from '@ember/debug';
+import { get } from '@ember/object';
+import { addListener } from '@ember/object/events';
+import { addObserver } from '@ember/object/observers';
+import { scheduleOnce } from '@ember/runloop';
+import { Task, EncapsulatedTask } from './task';
+import { TaskProperty } from './task-properties';
+import { TaskGroup } from './task-group';
+import EmberScheduler from './scheduler/ember-scheduler';
 
 let handlerCounter = 0;
 
@@ -54,7 +54,7 @@ function makeTaskCallback(taskName, method, once) {
     let task = get(this, taskName);
 
     if (once) {
-      scheduleOnce("actions", task, method, ...arguments);
+      scheduleOnce('actions', task, method, ...arguments);
     } else {
       task[method].apply(task, arguments);
     }
@@ -96,7 +96,7 @@ export class TaskFactory {
   _schedulerPolicyClass = UnboundedSchedulerPolicy;
   _taskGroupPath = null;
 
-  constructor(name = "<unknown>", taskDefinition = null, options = {}) {
+  constructor(name = '<unknown>', taskDefinition = null, options = {}) {
     this.name = name;
     this.taskDefinition = taskDefinition;
 
@@ -110,7 +110,7 @@ export class TaskFactory {
     );
     let options = this._sharedTaskProperties(context);
 
-    if (typeof this.taskDefinition === "object") {
+    if (typeof this.taskDefinition === 'object') {
       return new EncapsulatedTask(
         Object.assign({ taskObj: this.taskDefinition }, options)
       );
@@ -192,9 +192,9 @@ export class TaskFactory {
   setTaskDefinition(taskDefinition) {
     assert(
       `Task definition must be a generator function or encapsulated task.`,
-      typeof taskDefinition === "function" ||
-        (typeof taskDefinition === "object" &&
-          typeof taskDefinition.perform === "function")
+      typeof taskDefinition === 'function' ||
+        (typeof taskDefinition === 'object' &&
+          typeof taskDefinition.perform === 'function')
     );
     this.taskDefinition = taskDefinition;
     return this;
@@ -205,12 +205,15 @@ export class TaskFactory {
       let value = options[key];
       if (optionRegistry[key]) {
         optionRegistry[key].call(null, this, value);
-      } else if (typeof TaskProperty.prototype[key] === "function") {
+      } else if (typeof TaskProperty.prototype[key] === 'function') {
         // Shim for compatibility with user-defined TaskProperty prototype
         // extensions. To be removed when replaced with proper public API.
         TaskProperty.prototype[key].call(this, value);
       } else {
-        assert(`Task option '${key}' is not recognized as a supported option.`, false);
+        assert(
+          `Task option '${key}' is not recognized as a supported option.`,
+          false
+        );
       }
     }
   }
@@ -223,7 +226,7 @@ export class TaskFactory {
       proto,
       this._eventNames,
       this.name,
-      "perform",
+      'perform',
       false
     );
     registerOnPrototype(
@@ -231,7 +234,7 @@ export class TaskFactory {
       proto,
       this._cancelEventNames,
       this.name,
-      "cancelAll",
+      'cancelAll',
       false
     );
     registerOnPrototype(
@@ -239,7 +242,7 @@ export class TaskFactory {
       proto,
       this._observes,
       this.name,
-      "perform",
+      'perform',
       true
     );
   }

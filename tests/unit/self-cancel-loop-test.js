@@ -9,13 +9,13 @@ import { destroy } from '@ember/destroyable';
 
 const originalWarn = console.warn;
 
-module('Unit: self-cancel loops', function(hooks) {
-  hooks.afterEach(function() {
+module('Unit: self-cancel loops', function (hooks) {
+  hooks.afterEach(function () {
     console.warn = originalWarn;
     Ember.ENV.DEBUG_TASKS = false;
   });
 
-  test("a warning is logged when a non-link-specified cross object parent->child cancelation occurs due to parent object's destruction", function(assert) {
+  test("a warning is logged when a non-link-specified cross object parent->child cancelation occurs due to parent object's destruction", function (assert) {
     assert.expect(2);
 
     let warnings = [];
@@ -24,15 +24,15 @@ module('Unit: self-cancel loops', function(hooks) {
     };
 
     let Obj = EmberObject.extend({
-      a: task(function * () {
+      a: task(function* () {
         yield this.get('child.b').perform();
       }),
 
-      b: task(function * () {
+      b: task(function* () {
         yield defer().promise;
       }),
 
-      c: task(function * () {
+      c: task(function* () {
         yield this.get('child.b').linked().perform();
       }),
 
@@ -55,8 +55,8 @@ module('Unit: self-cancel loops', function(hooks) {
 
     assert.deepEqual(warnings, [
       [
-        "ember-concurrency detected a potentially hazardous \"self-cancel loop\" between parent task `a` and child task `b`. If you want child task `b` to be canceled when parent task `a` is canceled, please change `.perform()` to `.linked().perform()`. If you want child task `b` to keep running after parent task `a` is canceled, change it to `.unlinked().perform()`"
-      ]
+        'ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task `a` and child task `b`. If you want child task `b` to be canceled when parent task `a` is canceled, please change `.perform()` to `.linked().perform()`. If you want child task `b` to keep running after parent task `a` is canceled, change it to `.unlinked().perform()`',
+      ],
     ]);
     warnings.length = 0;
 
@@ -66,7 +66,9 @@ module('Unit: self-cancel loops', function(hooks) {
       destroyedParent.get('c').perform();
     });
 
-    run(() => { destroy(destroyedParent); });
+    run(() => {
+      destroy(destroyedParent);
+    });
     assert.equal(warnings.length, 0);
   });
 });
