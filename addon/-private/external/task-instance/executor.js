@@ -1,5 +1,5 @@
-import { GeneratorState } from "../generator-state";
-import { INITIAL_STATE } from "./initial-state";
+import { GeneratorState } from '../generator-state';
+import { INITIAL_STATE } from './initial-state';
 import {
   yieldableSymbol,
   YIELDABLE_CONTINUE,
@@ -7,13 +7,13 @@ import {
   YIELDABLE_RETURN,
   YIELDABLE_CANCEL,
   cancelableSymbol,
-} from "../yieldables";
+} from '../yieldables';
 
 import {
   COMPLETION_SUCCESS,
   COMPLETION_ERROR,
   COMPLETION_CANCEL,
-} from "./completion-states";
+} from './completion-states';
 import {
   CancelRequest,
   CANCEL_KIND_YIELDABLE_CANCEL,
@@ -21,11 +21,11 @@ import {
   CANCEL_KIND_PARENT_CANCEL,
   didCancel,
   TASK_CANCELATION_NAME,
-} from "./cancelation";
+} from './cancelation';
 
-export const PERFORM_TYPE_DEFAULT = "PERFORM_TYPE_DEFAULT";
-export const PERFORM_TYPE_UNLINKED = "PERFORM_TYPE_UNLINKED";
-export const PERFORM_TYPE_LINKED = "PERFORM_TYPE_LINKED";
+export const PERFORM_TYPE_DEFAULT = 'PERFORM_TYPE_DEFAULT';
+export const PERFORM_TYPE_UNLINKED = 'PERFORM_TYPE_UNLINKED';
+export const PERFORM_TYPE_LINKED = 'PERFORM_TYPE_LINKED';
 
 const CANCEL_RETURN_VALUE_SENTINEL = {};
 let TASK_INSTANCE_STACK = [];
@@ -237,7 +237,7 @@ export class TaskInstanceExecutor {
 
     if (yieldedValue[yieldableSymbol]) {
       this.invokeYieldable(yieldedValue);
-    } else if (typeof yieldedValue.then === "function") {
+    } else if (typeof yieldedValue.then === 'function') {
       this.handleYieldedUnknownThenable(yieldedValue);
     } else {
       this.proceedWithSimpleValue(yieldedValue);
@@ -249,7 +249,7 @@ export class TaskInstanceExecutor {
   }
 
   addDisposer(maybeDisposer) {
-    if (typeof maybeDisposer !== "function") {
+    if (typeof maybeDisposer !== 'function') {
       return;
     }
 
@@ -290,7 +290,7 @@ export class TaskInstanceExecutor {
       if (!value || value.performType !== PERFORM_TYPE_LINKED) {
         // eslint-disable-next-line no-console
         console.warn(
-          "You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency)."
+          'You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency).'
         );
       }
       this._expectsLinkedYield = false;

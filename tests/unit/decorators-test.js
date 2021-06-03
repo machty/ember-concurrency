@@ -1,17 +1,17 @@
-import { module } from "qunit";
-import { run } from "@ember/runloop";
-import { setOwner } from "@ember/application";
+import { module } from 'qunit';
+import { run } from '@ember/runloop';
+import { setOwner } from '@ember/application';
 import {
   task,
   restartableTask,
   dropTask,
   keepLatestTask,
   enqueueTask,
-} from "ember-concurrency";
+} from 'ember-concurrency';
 import { decoratorTest } from '../helpers/helpers';
 
-module("Unit | decorators", function () {
-  decoratorTest("Basic decorators functionality", function (assert) {
+module('Unit | decorators', function () {
+  decoratorTest('Basic decorators functionality', function (assert) {
     assert.expect(5);
 
     class TestSubject {
@@ -65,7 +65,7 @@ module("Unit | decorators", function () {
     assert.equal(subject.d.last.value, 34);
   });
 
-  decoratorTest("Encapsulated tasks", function (assert) {
+  decoratorTest('Encapsulated tasks', function (assert) {
     assert.expect(1);
 
     class TestSubject {

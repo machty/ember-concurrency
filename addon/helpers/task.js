@@ -5,4 +5,3 @@ function taskHelper([task, ...args]) {
 }
 
 export default helper(taskHelper);
-

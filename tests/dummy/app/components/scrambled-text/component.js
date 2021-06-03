@@ -3,16 +3,16 @@ import { task, timeout } from 'ember-concurrency';
 
 // from http://stackoverflow.com/a/3943985/914123
 function scramble(word) {
-  var a = word.split(""),
-  n = a.length;
+  var a = word.split(''),
+    n = a.length;
 
-  for(var i = n - 1; i > 0; i--) {
+  for (var i = n - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
     var tmp = a[i];
     a[i] = a[j];
     a[j] = tmp;
   }
-  return a.join("");
+  return a.join('');
 }
 
 export default class ScrambledTextComponent extends Component {
@@ -20,7 +20,7 @@ export default class ScrambledTextComponent extends Component {
   text = null;
   scrambledText = null;
 
-// BEGIN-SNIPPET scrambled-text
+  // BEGIN-SNIPPET scrambled-text
   @task({ on: 'init' })
   *startScrambling() {
     let text = this.text;
@@ -35,5 +35,5 @@ export default class ScrambledTextComponent extends Component {
       yield timeout(1500);
     }
   }
-// END-SNIPPET
+  // END-SNIPPET
 }

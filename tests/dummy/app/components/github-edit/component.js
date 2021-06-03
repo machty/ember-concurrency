@@ -8,7 +8,7 @@ export default Component.extend({
   attributeBindings: ['href', 'title'],
 
   router: service(),
-  href: computed('router.currentRouteName', function() {
+  href: computed('router.currentRouteName', function () {
     let path = this.get('router.currentRouteName');
     if (!path) {
       // `routing` doesn't exist for old ember versions via ember-try
@@ -17,5 +17,5 @@ export default Component.extend({
     path = path.replace(/\./g, '/');
     return `https://github.com/machty/ember-concurrency/edit/master/tests/dummy/app/${path}/template.hbs`;
   }),
-  title: "Edit on Github",
+  title: 'Edit on Github',
 });

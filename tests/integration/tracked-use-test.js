@@ -7,11 +7,11 @@ import hbs from 'htmlbars-inline-precompile';
 import { restartableTask, task, taskGroup, timeout } from 'ember-concurrency';
 import { gte } from 'ember-compatibility-helpers';
 
-module('Integration | tracked use', function(hooks) {
+module('Integration | tracked use', function (hooks) {
   setupRenderingTest(hooks);
 
   if (gte('3.16.0')) {
-    test('Issue #343 | Task: tracked use with getter', async function(assert) {
+    test('Issue #343 | Task: tracked use with getter', async function (assert) {
       assert.expect(2);
       const done = assert.async();
 
@@ -53,7 +53,7 @@ module('Integration | tracked use', function(hooks) {
       }, 1500);
     });
 
-    test('Issue #343 | TaskGroup: tracked use with getter', async function(assert) {
+    test('Issue #343 | TaskGroup: tracked use with getter', async function (assert) {
       assert.expect(2);
       const done = assert.async();
 

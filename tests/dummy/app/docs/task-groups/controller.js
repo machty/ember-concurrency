@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { task, taskGroup, timeout } from 'ember-concurrency';
 
-function * taskFn() {
+function* taskFn() {
   yield timeout(1500);
 }
 
@@ -14,11 +14,7 @@ export default class TaskGroupsController extends Controller {
   @task({ group: 'chores' }) changeDiapers = taskFn;
 
   get tasks() {
-    return [
-      this.mowLawn,
-      this.doDishes,
-      this.changeDiapers,
-    ];
+    return [this.mowLawn, this.doDishes, this.changeDiapers];
   }
 }
 // END-SNIPPET

@@ -1,9 +1,9 @@
-import { Taskable } from "./taskable";
+import { Taskable } from './taskable';
 import {
   PERFORM_TYPE_LINKED,
   PERFORM_TYPE_UNLINKED,
-  getRunningInstance
-} from "../task-instance/executor";
+  getRunningInstance,
+} from '../task-instance/executor';
 
 class TaskLinkProxy {
   constructor(task, performType, linkedObject) {
@@ -13,17 +13,13 @@ class TaskLinkProxy {
   }
 
   perform(...args) {
-    return this.task._performShared(
-      args,
-      this.performType,
-      this.linkedObject
-    );
+    return this.task._performShared(args, this.performType, this.linkedObject);
   }
 }
 
 export class Task extends Taskable {
   constructor(options) {
-    super(options)
+    super(options);
     this.perform = this._perform.bind(this);
   }
 

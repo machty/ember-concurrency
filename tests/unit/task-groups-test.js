@@ -5,27 +5,43 @@ import { task, taskGroup, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
 import { decoratorTest } from '../helpers/helpers';
 
-module('Unit: task groups', function() {
+module('Unit: task groups', function () {
   function assertStates(assert, task, isRunning, isQueued, isIdle, suffix) {
-    assert.equal(task.isRunning, isRunning, `${task.name} is ${isRunning ? '' : 'not'} running ${suffix}`);
-    assert.equal(task.isQueued,  isQueued,  `${task.name} is ${isQueued ? '' : 'not'} queued ${suffix}`);
-    assert.equal(task.isIdle,    isIdle,    `${task.name} is ${isIdle ? '' : 'not'} idle ${suffix}`);
-    assert.equal(task.state, isRunning ? 'running' : 'idle', `${task.name} state is '${isRunning ? 'running' : 'idle'}' ${suffix}`)
+    assert.equal(
+      task.isRunning,
+      isRunning,
+      `${task.name} is ${isRunning ? '' : 'not'} running ${suffix}`
+    );
+    assert.equal(
+      task.isQueued,
+      isQueued,
+      `${task.name} is ${isQueued ? '' : 'not'} queued ${suffix}`
+    );
+    assert.equal(
+      task.isIdle,
+      isIdle,
+      `${task.name} is ${isIdle ? '' : 'not'} idle ${suffix}`
+    );
+    assert.equal(
+      task.state,
+      isRunning ? 'running' : 'idle',
+      `${task.name} state is '${isRunning ? 'running' : 'idle'}' ${suffix}`
+    );
   }
 
-  test("task groups allow tasks to share concurrency constraints", function(assert) {
+  test('task groups allow tasks to share concurrency constraints', function (assert) {
     assert.expect(63);
 
     let deferA, deferB;
     let Obj = EmberObject.extend({
       tg: taskGroup().enqueue(),
 
-      taskA: task(function * () {
+      taskA: task(function* () {
         deferA = RSVP.defer();
         yield deferA.promise;
       }).group('tg'),
 
-      taskB: task(function * () {
+      taskB: task(function* () {
         deferB = RSVP.defer();
         yield deferB.promise;
       }).group('tg'),
@@ -38,23 +54,23 @@ module('Unit: task groups', function() {
       taskA = obj.get('taskA');
       taskB = obj.get('taskB');
 
-      suffix = "before anything has been performed";
-      assertStates(assert, tg,    false, false, true, suffix);
+      suffix = 'before anything has been performed';
+      assertStates(assert, tg, false, false, true, suffix);
       assertStates(assert, taskA, false, false, true, suffix);
       assertStates(assert, taskB, false, false, true, suffix);
 
       taskA.perform();
     });
 
-    suffix = "after taskA is performed";
-    assertStates(assert, tg,    true, false, false, suffix);
+    suffix = 'after taskA is performed';
+    assertStates(assert, tg, true, false, false, suffix);
     assertStates(assert, taskA, true, false, false, suffix);
     assertStates(assert, taskB, false, false, true, suffix);
 
     run(taskB, 'perform');
 
-    suffix = "after taskB is performed, but before taskA is finished";
-    assertStates(assert, tg,    true, true, false, suffix);
+    suffix = 'after taskB is performed, but before taskA is finished';
+    assertStates(assert, tg, true, true, false, suffix);
     assertStates(assert, taskA, true, false, false, suffix);
     assertStates(assert, taskB, false, true, false, suffix); // this is expecting it NOT to be idle
     assert.ok(deferA);
@@ -62,26 +78,26 @@ module('Unit: task groups', function() {
 
     run(deferA, deferA.resolve);
 
-    suffix = "after taskA has finished";
-    assertStates(assert, tg,    true, false, false, suffix);
+    suffix = 'after taskA has finished';
+    assertStates(assert, tg, true, false, false, suffix);
     assertStates(assert, taskA, false, false, true, suffix);
     assertStates(assert, taskB, true, false, false, suffix);
     assert.ok(deferB);
 
     run(deferB, deferB.resolve);
 
-    suffix = "after taskB has finished";
-    assertStates(assert, tg,    false, false, true, suffix);
+    suffix = 'after taskB has finished';
+    assertStates(assert, tg, false, false, true, suffix);
     assertStates(assert, taskA, false, false, true, suffix);
     assertStates(assert, taskB, false, false, true, suffix);
   });
 
-  test("task groups enforce that only one member runs at a time", function(assert) {
+  test('task groups enforce that only one member runs at a time', function (assert) {
     assert.expect(1);
 
     let Obj = EmberObject.extend({
       tg: taskGroup(),
-      taskA: task(function * () {}).group('tg')
+      taskA: task(function* () {}).group('tg'),
     });
 
     run(() => {
@@ -93,11 +109,11 @@ module('Unit: task groups', function() {
     let Obj = EmberObject.extend({
       tg: taskGroupProperty,
 
-      taskA: task(function * () {
+      taskA: task(function* () {
         yield forever;
       }).group('tg'),
 
-      taskB: task(function * () {
+      taskB: task(function* () {
         yield forever;
       }).group('tg'),
     });
@@ -115,43 +131,43 @@ module('Unit: task groups', function() {
     return [taskA, taskB, tg];
   }
 
-  test("enqueued task groups can be canceled", function(assert) {
+  test('enqueued task groups can be canceled', function (assert) {
     assert.expect(24);
 
     let [taskA, taskB, tg] = sharedTaskGroupSetup(taskGroup().enqueue());
-    let suffix = "after first run loop";
+    let suffix = 'after first run loop';
 
-    assertStates(assert, tg,    true, true, false, suffix);
+    assertStates(assert, tg, true, true, false, suffix);
     assertStates(assert, taskA, true, false, false, suffix);
     assertStates(assert, taskB, false, true, false, suffix);
 
     run(tg, 'cancelAll');
 
-    suffix = "after tg.cancelAll()";
-    assertStates(assert, tg,    false, false, true, suffix);
+    suffix = 'after tg.cancelAll()';
+    assertStates(assert, tg, false, false, true, suffix);
     assertStates(assert, taskA, false, false, true, suffix);
     assertStates(assert, taskB, false, false, true, suffix);
   });
 
-  test("unmodified task groups can be canceled", function(assert) {
+  test('unmodified task groups can be canceled', function (assert) {
     assert.expect(24);
 
     let [taskA, taskB, tg] = sharedTaskGroupSetup(taskGroup());
-    let suffix = "after first run loop";
+    let suffix = 'after first run loop';
 
-    assertStates(assert, tg,    true, false, false, suffix);
+    assertStates(assert, tg, true, false, false, suffix);
     assertStates(assert, taskA, true, false, false, suffix);
     assertStates(assert, taskB, true, false, false, suffix);
 
     run(tg, 'cancelAll');
 
-    suffix = "after tg.cancelAll()";
-    assertStates(assert, tg,    false, false, true, suffix);
+    suffix = 'after tg.cancelAll()';
+    assertStates(assert, tg, false, false, true, suffix);
     assertStates(assert, taskA, false, false, true, suffix);
     assertStates(assert, taskB, false, false, true, suffix);
   });
 
-  test("task groups return a boolean for isRunning", function(assert) {
+  test('task groups return a boolean for isRunning', function (assert) {
     assert.expect(3);
 
     let defer = RSVP.defer();
@@ -159,9 +175,9 @@ module('Unit: task groups', function() {
     let Obj = EmberObject.extend({
       tg: taskGroup().enqueue(),
 
-      myTask: task(function * () {
+      myTask: task(function* () {
         yield defer.promise;
-      }).group('tg')
+      }).group('tg'),
     });
 
     let obj = Obj.create();
@@ -174,18 +190,18 @@ module('Unit: task groups', function() {
     assert.strictEqual(tg.isRunning, false);
   });
 
-  test("calling cancelAll on a task doesn't cancel other tasks in group", function(assert) {
+  test("calling cancelAll on a task doesn't cancel other tasks in group", function (assert) {
     assert.expect(6);
 
     let obj, taskA, taskB, tg;
     let Obj = EmberObject.extend({
       tg: taskGroup(),
 
-      taskA: task(function * () {
+      taskA: task(function* () {
         yield forever;
       }).group('tg'),
 
-      taskB: task(function * () {
+      taskB: task(function* () {
         yield forever;
       }).group('tg'),
     });
@@ -211,38 +227,41 @@ module('Unit: task groups', function() {
     assertRunning();
   });
 
-  decoratorTest("ES class syntax with decorators works with task groups", function(assert) {
-    assert.expect(12);
+  decoratorTest(
+    'ES class syntax with decorators works with task groups',
+    function (assert) {
+      assert.expect(12);
 
-    let deferA, deferB;
-    class FakeGlimmerComponent {
-      @taskGroup({ enqueue: true }) tg;
+      let deferA, deferB;
+      class FakeGlimmerComponent {
+        @taskGroup({ enqueue: true }) tg;
 
-      @task({ group: 'tg' }) *taskA() {
-        deferA = RSVP.defer();
-        yield deferA.promise;
+        @task({ group: 'tg' }) *taskA() {
+          deferA = RSVP.defer();
+          yield deferA.promise;
+        }
+
+        @task({ group: 'tg' }) *taskB() {
+          deferB = RSVP.defer();
+          yield deferB.promise;
+        }
       }
 
-      @task({ group: 'tg' }) *taskB() {
-        deferB = RSVP.defer();
-        yield deferB.promise;
-      }
+      let obj, taskA, taskB, suffix, tg;
+
+      run(() => {
+        obj = new FakeGlimmerComponent();
+        tg = obj.tg;
+        taskA = obj.taskA;
+        taskB = obj.taskB;
+
+        taskA.perform();
+      });
+
+      suffix = 'performing taskA';
+      assertStates(assert, tg, true, false, false, suffix);
+      assertStates(assert, taskA, true, false, false, suffix);
+      assertStates(assert, taskB, false, false, true, suffix);
     }
-
-    let obj, taskA, taskB, suffix, tg;
-
-    run(() => {
-      obj = new FakeGlimmerComponent();
-      tg = obj.tg;
-      taskA = obj.taskA;
-      taskB = obj.taskB;
-
-      taskA.perform();
-    });
-
-    suffix = "performing taskA";
-    assertStates(assert, tg,    true, false, false, suffix);
-    assertStates(assert, taskA, true, false, false, suffix);
-    assertStates(assert, taskB, false, false, true, suffix);
-  });
+  );
 });

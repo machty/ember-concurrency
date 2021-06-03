@@ -6,7 +6,7 @@ import { module, test } from 'qunit';
 
 function getDebugFunction(type) {
   if (gte('3.26.0')) {
-    return Ember.__loader.require("@ember/debug").getDebugFunction(type);
+    return Ember.__loader.require('@ember/debug').getDebugFunction(type);
   } else {
     return Ember[type];
   }
@@ -14,7 +14,7 @@ function getDebugFunction(type) {
 
 function setDebugFunction(type, fn) {
   if (gte('3.26.0')) {
-    Ember.__loader.require("@ember/debug").setDebugFunction(type, fn);
+    Ember.__loader.require('@ember/debug').setDebugFunction(type, fn);
   } else {
     Ember[type] = fn;
   }
@@ -22,14 +22,14 @@ function setDebugFunction(type, fn) {
 
 const originalAssert = getDebugFunction('assert');
 
-module('Acceptance | helpers', function(hooks) {
-  setupApplicationTest(hooks)
+module('Acceptance | helpers', function (hooks) {
+  setupApplicationTest(hooks);
 
-  hooks.afterEach(function() {
+  hooks.afterEach(function () {
     setDebugFunction('assert', originalAssert);
   });
 
-  test('perform and cancel-all', async function(assert) {
+  test('perform and cancel-all', async function (assert) {
     assert.expect(3);
     await visit('/helpers-test');
     assert.equal(currentURL(), '/helpers-test');
@@ -40,20 +40,23 @@ module('Acceptance | helpers', function(hooks) {
     assert.dom('.task-status').hasText('canceled');
   });
 
-  test('setting value="..." should behave like closure actions and rewrite event arg', async function(assert) {
+  test('setting value="..." should behave like closure actions and rewrite event arg', async function (assert) {
     assert.expect(0);
     await visit('/helpers-test');
     await click('.set-value-option-task');
   });
 
-  test('passing non-Tasks to (perform) helper only errors when invoked', async function(assert) {
+  test('passing non-Tasks to (perform) helper only errors when invoked', async function (assert) {
     assert.expect(2);
 
     await visit('/helpers-test');
 
     setDebugFunction('assert', function (desc, test) {
       if (!test) {
-        assert.deepEqual(desc, "The first argument passed to the `perform` helper should be a Task object (without quotes); you passed null");
+        assert.deepEqual(
+          desc,
+          'The first argument passed to the `perform` helper should be a Task object (without quotes); you passed null'
+        );
       }
     });
 

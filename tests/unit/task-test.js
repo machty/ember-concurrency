@@ -14,27 +14,27 @@ import { decoratorTest } from '../helpers/helpers';
 const originalLog = console.log;
 const originalWarn = console.warn;
 
-module('Unit: task', function(hooks) {
-  hooks.afterEach(function() {
+module('Unit: task', function (hooks) {
+  hooks.afterEach(function () {
     console.log = originalLog;
     console.warn = originalWarn;
     Ember.ENV.DEBUG_TASKS = false;
   });
 
-  test("task init", function(assert) {
+  test('task init', function (assert) {
     assert.expect(3);
 
     let Obj = EmberObject.extend({
-      oldschool: task(function * () {
+      oldschool: task(function* () {
         assert.ok(this instanceof Obj);
       }).on('init'),
 
-      newschool: task(function * () {
+      newschool: task(function* () {
         assert.ok(this instanceof Obj);
         yield 1;
         yield 1;
         yield 1;
-        assert.ok(true, "done");
+        assert.ok(true, 'done');
       }).on('init'),
     });
 
@@ -43,13 +43,13 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  test("task Evented event", function(assert) {
+  test('task Evented event', function (assert) {
     assert.expect(1);
 
     let arr = [];
     let Obj = EmberObject.extend(Evented, {
-      doStuff: task(function * (a,b,c) {
-        arr.push(a,b,c);
+      doStuff: task(function* (a, b, c) {
+        arr.push(a, b, c);
       }).on('foo'),
     });
 
@@ -59,16 +59,16 @@ module('Unit: task', function(hooks) {
       obj.trigger('foo', 4, 5, 6);
       obj.trigger('foo', 7, 8, 9);
     });
-    assert.deepEqual(arr, [1,2,3,4,5,6,7,8,9]);
+    assert.deepEqual(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
   });
 
-  test("task Evented event discontinues after destruction", function(assert) {
+  test('task Evented event discontinues after destruction', function (assert) {
     assert.expect(1);
 
     let arr = [];
     let Obj = EmberObject.extend(Evented, {
-      doStuff: task(function * (a,b,c) {
-        arr.push(a,b,c);
+      doStuff: task(function* (a, b, c) {
+        arr.push(a, b, c);
       }).on('foo'),
     });
 
@@ -79,15 +79,15 @@ module('Unit: task', function(hooks) {
     });
     run(obj, 'destroy');
     run(obj, 'trigger', 9, 9, 9);
-    assert.deepEqual(arr, [1,2,3]);
+    assert.deepEqual(arr, [1, 2, 3]);
   });
 
-  test("task discontinues after destruction when blocked on async values", function(assert) {
+  test('task discontinues after destruction when blocked on async values', function (assert) {
     let start = assert.async();
     assert.expect(1);
 
     let Obj = EmberObject.extend(Evented, {
-      doStuff: task(function * () {
+      doStuff: task(function* () {
         assert.ok(true);
         yield timeout(1000);
         assert.ok(false);
@@ -106,11 +106,11 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  test("tasks can be paused indefinitely by yielding `forever`", function(assert) {
+  test('tasks can be paused indefinitely by yielding `forever`', function (assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend(Evented, {
-      doStuff: task(function * () {
+      doStuff: task(function* () {
         yield forever;
       }).on('init'),
     });
@@ -121,30 +121,37 @@ module('Unit: task', function(hooks) {
     assert.ok(!obj.get('doStuff.isRunning'));
   });
 
-  test("task.cancelAll cancels all running task instances", async function(assert) {
+  test('task.cancelAll cancels all running task instances', async function (assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend(Evented, {
-      doStuff: task(function * () {
+      doStuff: task(function* () {
         yield timeout(1);
-        assert.ok(false, "should not get here");
+        assert.ok(false, 'should not get here');
       }),
     });
 
     let obj = Obj.create();
     let taskObj = obj.get('doStuff');
-    let instances = A([ taskObj.perform(), taskObj.perform(), taskObj.perform() ]);
+    let instances = A([
+      taskObj.perform(),
+      taskObj.perform(),
+      taskObj.perform(),
+    ]);
     await taskObj.cancelAll();
 
     assert.deepEqual(instances.mapBy('isCanceled'), [true, true, true]);
-    assert.equal(instances[0].cancelReason, "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help");
+    assert.equal(
+      instances[0].cancelReason,
+      "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
+    );
   });
 
-  test("task.cancelAll normally preserves the last derived state", async function(assert) {
+  test('task.cancelAll normally preserves the last derived state', async function (assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend(Evented, {
-      doStuff: task(function * () {
+      doStuff: task(function* () {
         yield timeout(1);
         return 1;
       }),
@@ -162,11 +169,11 @@ module('Unit: task', function(hooks) {
     assert.equal(taskObj.lastSuccessful.value, 1);
   });
 
-  test("task.cancelAll({ resetState: true }) resets derived state", async function(assert) {
+  test('task.cancelAll({ resetState: true }) resets derived state', async function (assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend(Evented, {
-      doStuff: task(function * () {
+      doStuff: task(function* () {
         yield timeout(1);
         return 1;
       }),
@@ -181,14 +188,17 @@ module('Unit: task', function(hooks) {
     taskObj.perform();
     await taskObj.cancelAll({ resetState: true });
 
-    assert.ok(!taskObj.lastSuccessful, 'expected there to be no last successful value');
+    assert.ok(
+      !taskObj.lastSuccessful,
+      'expected there to be no last successful value'
+    );
   });
 
-  test("cancelation due to task modifier supplies useful message", function(assert) {
+  test('cancelation due to task modifier supplies useful message', function (assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend(Evented, {
-      doStuff: task(function * () {
+      doStuff: task(function* () {
         yield timeout(1);
       }).restartable(),
     });
@@ -197,18 +207,21 @@ module('Unit: task', function(hooks) {
     run(() => {
       let obj = Obj.create();
       let task = obj.get('doStuff');
-      instances = A([ task.perform(), task.perform(), task.perform() ]);
+      instances = A([task.perform(), task.perform(), task.perform()]);
     });
 
     assert.deepEqual(instances.mapBy('isCanceled'), [true, true, false]);
-    assert.equal(instances[0].cancelReason, "TaskInstance 'doStuff' was canceled because it belongs to a 'restartable' Task that was .perform()ed again. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help");
+    assert.equal(
+      instances[0].cancelReason,
+      "TaskInstance 'doStuff' was canceled because it belongs to a 'restartable' Task that was .perform()ed again. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
+    );
   });
 
-  test("tasks can call cancelAll() on themselves", function(assert) {
+  test('tasks can call cancelAll() on themselves', function (assert) {
     assert.expect(1);
 
     let Obj = EmberObject.extend(Evented, {
-      doStuff: task(function * () {
+      doStuff: task(function* () {
         this.doStuff.cancelAll();
         return 123;
       }),
@@ -223,14 +236,16 @@ module('Unit: task', function(hooks) {
     assert.ok(obj.get('doStuff.last.isCanceled'));
   });
 
-  test("task().cancelOn", function(assert) {
+  test('task().cancelOn', function (assert) {
     assert.expect(0);
 
     let Obj = EmberObject.extend(Evented, {
-      doStuff: task(function * () {
+      doStuff: task(function* () {
         yield timeout(10);
-        assert.ok(false, "should not get here");
-      }).on('init').cancelOn('foo'),
+        assert.ok(false, 'should not get here');
+      })
+        .on('init')
+        .cancelOn('foo'),
     });
 
     run(() => {
@@ -238,14 +253,14 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  test(".observes re-performs the task every time the observed property changes in a coalesced manner", async function(assert) {
+  test('.observes re-performs the task every time the observed property changes in a coalesced manner', async function (assert) {
     assert.expect(2);
 
     let values = [];
     let Obj = EmberObject.extend({
       foo: 0,
 
-      observingTask: task(function * () {
+      observingTask: task(function* () {
         values.push(this.foo);
       }).observes('foo'),
     });
@@ -269,7 +284,7 @@ module('Unit: task', function(hooks) {
     assert.deepEqual(values, [6]);
   });
 
-  test(".observes coalesces even with multiple properties", async function(assert) {
+  test('.observes coalesces even with multiple properties', async function (assert) {
     assert.expect(2);
 
     let values = [];
@@ -277,7 +292,7 @@ module('Unit: task', function(hooks) {
       foo: 0,
       bar: 0,
 
-      observingTask: task(function * () {
+      observingTask: task(function* () {
         values.push(this.foo);
         values.push(this.bar);
       }).observes('foo', 'bar'),
@@ -291,7 +306,7 @@ module('Unit: task', function(hooks) {
     obj.set('bar', 2);
     await settled();
 
-    assert.deepEqual(values, [2,2]);
+    assert.deepEqual(values, [2, 2]);
     values = [];
 
     obj.set('foo', 3);
@@ -300,23 +315,24 @@ module('Unit: task', function(hooks) {
     obj.set('bar', 4);
     await settled();
 
-    assert.deepEqual(values, [4,4]);
+    assert.deepEqual(values, [4, 4]);
   });
 
-
-  test(".observes has the same lazy/live semantics as normal Ember.observer(...).on('init')", async function(assert) {
+  test(".observes has the same lazy/live semantics as normal Ember.observer(...).on('init')", async function (assert) {
     assert.expect(2);
 
     let values = [];
     let Obj = EmberObject.extend({
       foo: 0,
-      bar: computed('foo', function() {
+      bar: computed('foo', function () {
         return this.foo;
       }),
 
-      observingTask: task(function * () {
+      observingTask: task(function* () {
         values.push(this.bar);
-      }).observes('bar').on('init'),
+      })
+        .observes('bar')
+        .on('init'),
     });
 
     let obj = Obj.create();
@@ -325,7 +341,7 @@ module('Unit: task', function(hooks) {
     obj.set('foo', 2);
     await settled();
 
-    assert.deepEqual(values, [0,2]);
+    assert.deepEqual(values, [0, 2]);
     values = [];
 
     obj.set('foo', 3);
@@ -335,11 +351,11 @@ module('Unit: task', function(hooks) {
     assert.deepEqual(values, [4]);
   });
 
-  test("performing a task on a destroyed object returns an immediately-canceled taskInstance", function(assert) {
+  test('performing a task on a destroyed object returns an immediately-canceled taskInstance', function (assert) {
     assert.expect(2);
 
     let Obj = EmberObject.extend({
-      myTask: task(function * () {
+      myTask: task(function* () {
         throw new Error("shouldn't get here");
       }),
     });
@@ -356,11 +372,11 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  test("handles prototype-less object args", function(assert) {
+  test('handles prototype-less object args', function (assert) {
     assert.expect(0);
 
     let Obj = EmberObject.extend({
-      doStuff: task(function * () {})
+      doStuff: task(function* () {}),
     });
 
     run(() => {
@@ -368,13 +384,16 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  test("updates derived state synchronously", function(assert) {
+  test('updates derived state synchronously', function (assert) {
     assert.expect(1);
 
     let Obj = EmberObject.extend({
-      doStuff: task(function * () {
-        assert.ok(this.get('doStuff.isRunning'), "Expected to see self running");
-      })
+      doStuff: task(function* () {
+        assert.ok(
+          this.get('doStuff.isRunning'),
+          'Expected to see self running'
+        );
+      }),
     });
 
     run(() => {
@@ -382,11 +401,11 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  test("call stack stays within reasonable bounds", function(assert) {
+  test('call stack stays within reasonable bounds', function (assert) {
     assert.expect(1);
 
     let Obj = EmberObject.extend({
-      a: task(function * () {
+      a: task(function* () {
         yield this.b.perform();
 
         // Not sure how to test this in an automated fashion;
@@ -396,13 +415,13 @@ module('Unit: task', function(hooks) {
         // the stack to only a few frames).
         // debugger;
       }),
-      b: task(function * () {
+      b: task(function* () {
         yield this.c.perform();
       }),
-      c: task(function * () {
+      c: task(function* () {
         yield this.d.perform();
       }),
-      d: task(function * () { }),
+      d: task(function* () {}),
     });
 
     run(() => {
@@ -412,7 +431,7 @@ module('Unit: task', function(hooks) {
     assert.ok(true);
   });
 
-  test(".debug() enables basic debugging", function(assert) {
+  test('.debug() enables basic debugging', function (assert) {
     assert.expect(1);
 
     let logs = [];
@@ -421,9 +440,9 @@ module('Unit: task', function(hooks) {
     };
 
     let Obj = EmberObject.extend({
-      a: task(function * () {
+      a: task(function* () {
         yield defer().promise;
-      }).debug()
+      }).debug(),
     });
 
     run(() => {
@@ -434,12 +453,12 @@ module('Unit: task', function(hooks) {
 
     assert.deepEqual(logs, [
       [
-        "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
-      ]
+        "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help",
+      ],
     ]);
   });
 
-  test("Ember.ENV.DEBUG_TASKS=true enables basic debugging", function(assert) {
+  test('Ember.ENV.DEBUG_TASKS=true enables basic debugging', function (assert) {
     assert.expect(1);
 
     Ember.ENV.DEBUG_TASKS = true;
@@ -450,7 +469,7 @@ module('Unit: task', function(hooks) {
     };
 
     let Obj = EmberObject.extend({
-      a: task(function * () {
+      a: task(function* () {
         yield defer().promise;
       }),
     });
@@ -463,21 +482,21 @@ module('Unit: task', function(hooks) {
 
     assert.deepEqual(logs, [
       [
-        "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
-      ]
+        "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help",
+      ],
     ]);
   });
 
-  test(".unlinked().perform() detaches a child task from its parent to avoid parent->child cancelation", function(assert) {
+  test('.unlinked().perform() detaches a child task from its parent to avoid parent->child cancelation', function (assert) {
     assert.expect(4);
 
     let Obj = EmberObject.extend({
-      a: task(function * () {
+      a: task(function* () {
         yield this.b.unlinked().perform();
       }),
-      b: task(function * () {
+      b: task(function* () {
         yield defer().promise;
-      })
+      }),
     });
 
     let obj;
@@ -495,23 +514,26 @@ module('Unit: task', function(hooks) {
     assert.ok(obj.get('b.isRunning'));
   });
 
-  test(".linked() throws an error if called outside of a task", function(assert) {
+  test('.linked() throws an error if called outside of a task', function (assert) {
     assert.expect(1);
 
     let Obj = EmberObject.extend({
-      a: task(function * () { }),
+      a: task(function* () {}),
     });
 
     run(() => {
       try {
         Obj.create().get('a').linked();
-      } catch(e) {
-        assert.equal(e.message, "You can only call .linked() from within a task.");
+      } catch (e) {
+        assert.equal(
+          e.message,
+          'You can only call .linked() from within a task.'
+        );
       }
     });
   });
 
-  test(".linked() warns when not immediately yielded", function(assert) {
+  test('.linked() warns when not immediately yielded', function (assert) {
     assert.expect(1);
 
     let warnings = [];
@@ -520,10 +542,10 @@ module('Unit: task', function(hooks) {
     };
 
     let Obj = EmberObject.extend({
-      a: task(function * () {
+      a: task(function* () {
         this.b.linked().perform();
       }),
-      b: task(function * () { }),
+      b: task(function* () {}),
     });
 
     run(() => {
@@ -532,17 +554,17 @@ module('Unit: task', function(hooks) {
 
     assert.deepEqual(warnings, [
       [
-        "You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency)."
-      ]
+        'You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency).',
+      ],
     ]);
   });
 
-  test("ES5 getter syntax works", function(assert) {
+  test('ES5 getter syntax works', function (assert) {
     let Obj = EmberObject.extend({
-      es5getterSyntaxSupported: computed(function() {
-        return "yes";
+      es5getterSyntaxSupported: computed(function () {
+        return 'yes';
       }),
-      task: task(function * () {
+      task: task(function* () {
         assert.ok(true);
       }),
     });
@@ -558,7 +580,7 @@ module('Unit: task', function(hooks) {
     });
   });
 
-  decoratorTest("ES classes: syntax with decorators works", function(assert) {
+  decoratorTest('ES classes: syntax with decorators works', function (assert) {
     const done = assert.async(2);
 
     class FakeGlimmerComponent {
@@ -578,52 +600,58 @@ module('Unit: task', function(hooks) {
     later(done, 1);
   });
 
-  decoratorTest("ES classes: performing a task on a destroyed object returns an immediately-canceled taskInstance", function(assert) {
-    assert.expect(2);
+  decoratorTest(
+    'ES classes: performing a task on a destroyed object returns an immediately-canceled taskInstance',
+    function (assert) {
+      assert.expect(2);
 
-    class Obj {
-      @task *task() {
-        throw new Error("shouldn't get here");
+      class Obj {
+        @task *task() {
+          throw new Error("shouldn't get here");
+        }
       }
+
+      let obj;
+      run(() => {
+        obj = new Obj();
+        destroy(obj);
+        assert.equal(obj.task.perform().isDropped, true);
+      });
+
+      run(() => {
+        assert.equal(obj.task.perform().isDropped, true);
+      });
     }
+  );
 
-    let obj;
-    run(() => {
-      obj = new Obj();
-      destroy(obj);
-      assert.equal(obj.task.perform().isDropped, true);
-    });
+  decoratorTest(
+    'ES classes: task discontinues after destruction when blocked on async values',
+    function (assert) {
+      let start = assert.async();
+      assert.expect(1);
 
-    run(() => {
-      assert.equal(obj.task.perform().isDropped, true);
-    });
-  });
+      class Obj {
+        @task *doStuff() {
+          assert.ok(true);
+          yield timeout(1000);
+          assert.ok(false);
+          yield timeout(1000);
+        }
 
-  decoratorTest("ES classes: task discontinues after destruction when blocked on async values", function(assert) {
-    let start = assert.async();
-    assert.expect(1);
-
-    class Obj {
-      @task *doStuff() {
-        assert.ok(true);
-        yield timeout(1000);
-        assert.ok(false);
-        yield timeout(1000);
+        constructor() {
+          this.doStuff.perform();
+        }
       }
 
-      constructor() {
-        this.doStuff.perform();
-      }
+      let obj;
+      run(() => {
+        obj = new Obj();
+      });
+
+      later(() => {
+        destroy(obj);
+        start();
+      });
     }
-
-    let obj;
-    run(() => {
-      obj = new Obj();
-    });
-
-    later(() => {
-      destroy(obj);
-      start();
-    });
-  });
+  );
 });

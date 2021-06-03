@@ -1,7 +1,7 @@
 import { DEFAULT_STATE } from './default-state';
 import {
   CancelRequest,
-  CANCEL_KIND_EXPLICIT
+  CANCEL_KIND_EXPLICIT,
 } from '../task-instance/cancelation';
 
 let guidId = 0;
@@ -12,7 +12,7 @@ function makeGuid() {
 export class Taskable {
   constructor(options) {
     this.options = options;
-    Object.assign(this, options)
+    Object.assign(this, options);
 
     this.guid = makeGuid();
     this.guids = {};
@@ -24,9 +24,12 @@ export class Taskable {
 
   cancelAll(options) {
     let { reason, cancelRequestKind, resetState } = options || {};
-    reason = reason || ".cancelAll() was explicitly called on the Task";
+    reason = reason || '.cancelAll() was explicitly called on the Task';
 
-    let cancelRequest = new CancelRequest(cancelRequestKind || CANCEL_KIND_EXPLICIT, reason);
+    let cancelRequest = new CancelRequest(
+      cancelRequestKind || CANCEL_KIND_EXPLICIT,
+      reason
+    );
     return this.scheduler.cancelAll(this.guid, cancelRequest).then(() => {
       if (resetState) {
         this._resetState();
@@ -39,7 +42,7 @@ export class Taskable {
   }
 
   // override
-  setState() { }
+  setState() {}
 }
 
 Object.assign(Taskable.prototype, DEFAULT_STATE);
@@ -49,5 +52,5 @@ Object.assign(Taskable.prototype, {
   isRunning: false,
   isQueued: false,
   isIdle: true,
-  state: 'idle'
+  state: 'idle',
 });

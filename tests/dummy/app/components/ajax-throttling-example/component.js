@@ -3,14 +3,14 @@ import { enqueueTask, task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET ajax-throttling
 function loopingAjaxTask(id, color) {
-  return function * () {
+  return function* () {
     while (true) {
       this.log(color, `Task ${id}: making AJAX request`);
       yield this.ajaxTask.perform();
       this.log(color, `Task ${id}: Done, sleeping.`);
       yield timeout(2000);
     }
-  }
+  };
 }
 
 export default class AjaxThrottlingExampleComponent extends Component {

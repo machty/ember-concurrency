@@ -1,9 +1,9 @@
-export const cancelableSymbol = "__ec_cancel__";
-export const yieldableSymbol = "__ec_yieldable__";
-export const YIELDABLE_CONTINUE = "next";
-export const YIELDABLE_THROW = "throw";
-export const YIELDABLE_RETURN = "return";
-export const YIELDABLE_CANCEL = "cancel";
+export const cancelableSymbol = '__ec_cancel__';
+export const yieldableSymbol = '__ec_yieldable__';
+export const YIELDABLE_CONTINUE = 'next';
+export const YIELDABLE_THROW = 'throw';
+export const YIELDABLE_RETURN = 'return';
+export const YIELDABLE_CANCEL = 'cancel';
 
 /**
  * @class YieldableState
@@ -184,12 +184,15 @@ export class Yieldable {
 
     let thinInstance = {
       proceed(_index, resumeType, value) {
-        if (resumeType == YIELDABLE_CONTINUE || resumeType == YIELDABLE_RETURN) {
+        if (
+          resumeType == YIELDABLE_CONTINUE ||
+          resumeType == YIELDABLE_RETURN
+        ) {
           def.resolve(value);
         } else {
           def.reject(value);
         }
-      }
+      },
     };
 
     let maybeDisposer = this[yieldableSymbol](thinInstance, 0);

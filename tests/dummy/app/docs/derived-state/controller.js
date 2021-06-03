@@ -4,12 +4,12 @@ import { task, timeout } from 'ember-concurrency';
 import { randomWord } from 'dummy/utils';
 
 let i = 0;
-function * sharedFn(shouldError) {
+function* sharedFn(shouldError) {
   i++;
 
   yield timeout(1000);
 
-  let words = [ randomWord(), randomWord(), randomWord() ];
+  let words = [randomWord(), randomWord(), randomWord()];
   let wordsString = `${i}: ${words}`;
 
   if (shouldError) {
@@ -18,7 +18,6 @@ function * sharedFn(shouldError) {
     return wordsString;
   }
 }
-
 
 // BEGIN-SNIPPET completion-state-controller
 export default class DerivedStateController extends Controller {
@@ -29,36 +28,26 @@ export default class DerivedStateController extends Controller {
 
   showLessCommon = false;
 
-  tasks = [
-    "doStuff",
-    "doStuffDrop",
-    "doStuffEnqueue",
-    "doStuffRestartable",
-  ];
+  tasks = ['doStuff', 'doStuffDrop', 'doStuffEnqueue', 'doStuffRestartable'];
 
   @computed('showLessCommon')
   get taskProperties() {
     return [
       ...this.commonTaskProperties,
-      ...(this.showLessCommon ? this.lessCommonTaskProperties : [])
+      ...(this.showLessCommon ? this.lessCommonTaskProperties : []),
     ];
   }
 
-  commonTaskProperties = [
-    "last",
-    "lastSuccessful",
-    "lastErrored",
-  ];
+  commonTaskProperties = ['last', 'lastSuccessful', 'lastErrored'];
 
   lessCommonTaskProperties = [
-    "lastComplete",
-    "lastPerformed",
-    "lastIncomplete",
-    "lastCanceled",
+    'lastComplete',
+    'lastPerformed',
+    'lastIncomplete',
+    'lastCanceled',
   ];
 
   @action
-  performAll() {
-  }
+  performAll() {}
 }
 // END-SNIPPET

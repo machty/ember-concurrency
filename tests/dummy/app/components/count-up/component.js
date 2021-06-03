@@ -4,7 +4,7 @@ import { task, timeout } from 'ember-concurrency';
 export default class CountUpComponent extends Component {
   tagName = '';
   count = 0;
-// BEGIN-SNIPPET count-up
+  // BEGIN-SNIPPET count-up
   @task({ on: 'init' })
   *countUp() {
     while (true) {
@@ -12,5 +12,5 @@ export default class CountUpComponent extends Component {
       yield timeout(100);
     }
   }
-// END-SNIPPET
+  // END-SNIPPET
 }

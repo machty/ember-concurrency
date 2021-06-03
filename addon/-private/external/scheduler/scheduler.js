@@ -1,6 +1,6 @@
-import SchedulerRefresh from "./refresh"
-import StateTracker from "./state-tracker/state-tracker";
-import NullStateTracker from "./state-tracker/null-state-tracker";
+import SchedulerRefresh from './refresh';
+import StateTracker from './state-tracker/state-tracker';
+import NullStateTracker from './state-tracker/null-state-tracker';
 
 // Scheduler base class
 
@@ -24,11 +24,13 @@ class Scheduler {
   }
 
   cancelAll(guid, cancelRequest) {
-    let cancelations = this.taskInstances.map(taskInstance => {
-      if (taskInstance.task.guids[guid]) {
-        taskInstance.executor.cancel(cancelRequest);
-      }
-    }).filter(cancelation => !!cancelation);
+    let cancelations = this.taskInstances
+      .map((taskInstance) => {
+        if (taskInstance.task.guids[guid]) {
+          taskInstance.executor.cancel(cancelRequest);
+        }
+      })
+      .filter((cancelation) => !!cancelation);
 
     return Promise.all(cancelations);
   }
@@ -40,11 +42,17 @@ class Scheduler {
   }
 
   // override
-  scheduleRefresh() { }
+  scheduleRefresh() {}
 
   refresh() {
-    let stateTracker = this.stateTrackingEnabled ? new StateTracker() : new NullStateTracker();
-    let refresh = new SchedulerRefresh(this.schedulerPolicy, stateTracker, this.taskInstances);
+    let stateTracker = this.stateTrackingEnabled
+      ? new StateTracker()
+      : new NullStateTracker();
+    let refresh = new SchedulerRefresh(
+      this.schedulerPolicy,
+      stateTracker,
+      this.taskInstances
+    );
     this.taskInstances = refresh.process();
   }
 }

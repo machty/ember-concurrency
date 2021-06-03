@@ -1,4 +1,4 @@
-export const TASK_CANCELATION_NAME = "TaskCancelation";
+export const TASK_CANCELATION_NAME = 'TaskCancelation';
 
 /**
  * Returns true if the object passed to it is a TaskCancelation error.
@@ -23,10 +23,10 @@ export function didCancel(e) {
   return e && e.name === TASK_CANCELATION_NAME;
 }
 
-export const CANCEL_KIND_EXPLICIT = "explicit";
-export const CANCEL_KIND_YIELDABLE_CANCEL = "yielded";
-export const CANCEL_KIND_LIFESPAN_END = "lifespan_end";
-export const CANCEL_KIND_PARENT_CANCEL = "parent_cancel";
+export const CANCEL_KIND_EXPLICIT = 'explicit';
+export const CANCEL_KIND_YIELDABLE_CANCEL = 'yielded';
+export const CANCEL_KIND_LIFESPAN_END = 'lifespan_end';
+export const CANCEL_KIND_PARENT_CANCEL = 'parent_cancel';
 
 export class CancelRequest {
   constructor(kind, reason) {

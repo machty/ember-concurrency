@@ -2,17 +2,17 @@ import Ember from 'ember';
 import { computed } from '@ember/object';
 import ComputedProperty from '@ember/object/computed';
 import { gte } from 'ember-compatibility-helpers';
-import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy'
-import DropSchedulerPolicy from './external/scheduler/policies/drop-policy'
-import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy'
-import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy'
+import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
+import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
+import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy';
+import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy';
 import {
   task as taskDecorator,
-  taskGroup as taskGroupDecorator
+  taskGroup as taskGroupDecorator,
 } from './task-decorators';
 import { TaskFactory, TaskGroupFactory } from './task-factory';
 
-let taskFactorySymbol = "__ec_task_factory";
+let taskFactorySymbol = '__ec_task_factory';
 
 export const propertyModifiers = {
   /**
@@ -179,17 +179,21 @@ export const propertyModifiers = {
   onState(callback) {
     this[taskFactorySymbol].setOnState(callback);
     return this;
-  }
+  },
 };
 
 function isDecoratorOptions(possibleOptions) {
-  if (!possibleOptions) { return false; }
-  if (typeof possibleOptions === "function") { return false; }
+  if (!possibleOptions) {
+    return false;
+  }
+  if (typeof possibleOptions === 'function') {
+    return false;
+  }
 
   if (
-    typeof possibleOptions === "object" &&
+    typeof possibleOptions === 'object' &&
     'perform' in possibleOptions &&
-    typeof possibleOptions.perform === "function"
+    typeof possibleOptions.perform === 'function'
   ) {
     return false;
   }
@@ -315,7 +319,7 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
 const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
 export function taskComputed(fn) {
   if (gte('3.10.0')) {
-    let cp = function(proto, key) {
+    let cp = function (proto, key) {
       if (cp.setup !== undefined) {
         cp.setup(proto, key);
       }
@@ -377,10 +381,13 @@ export function taskComputed(fn) {
  * @returns {TaskProperty}
  */
 export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
-  if (isDecoratorOptions(taskFnOrProtoOrDecoratorOptions) || (key && descriptor)) {
+  if (
+    isDecoratorOptions(taskFnOrProtoOrDecoratorOptions) ||
+    (key && descriptor)
+  ) {
     return taskDecorator(...arguments);
   } else {
-    let tp = taskComputed(function() {
+    let tp = taskComputed(function () {
       tp[taskFactorySymbol].setTaskDefinition(tp.taskFn);
       return tp[taskFactorySymbol].createTask(this);
     });
@@ -419,7 +426,7 @@ export function taskGroup(possibleDecoratorOptions, key, descriptor) {
   if (isDecoratorOptions(possibleDecoratorOptions) || (key && descriptor)) {
     return taskGroupDecorator(...arguments);
   } else {
-    let tp = taskComputed(function(key) {
+    let tp = taskComputed(function (key) {
       tp[taskFactorySymbol].setName(key);
       return tp[taskFactorySymbol].createTaskGroup(this);
     });

@@ -6,7 +6,7 @@ import { task } from 'ember-concurrency';
 export default Component.extend({
   status: null,
 
-  favoriteNumbers: computed('pickRandomNumbers.last.value', function() {
+  favoriteNumbers: computed('pickRandomNumbers.last.value', function () {
     return this.get('pickRandomNumbers.last.value') || [];
   }),
 
@@ -19,6 +19,6 @@ export default Component.extend({
     this.set('status', `My favorite numbers: ${nums.join(', ')}`);
 
     return nums;
-  }).restartable()
+  }).restartable(),
 });
 // END-SNIPPET

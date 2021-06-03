@@ -20,8 +20,8 @@ function assertEventNotFired(assert, event, stub) {
   );
 }
 
-module('Unit: task events', function() {
-  test("tasks fire task instance lifecycle events on the host object (task succeeds)", function(assert) {
+module('Unit: task events', function () {
+  test('tasks fire task instance lifecycle events on the host object (task succeeds)', function (assert) {
     assert.expect(7);
 
     const startedStub = sinon.stub();
@@ -37,7 +37,7 @@ module('Unit: task events', function() {
       startedListener: on('doThings:started', startedStub),
       succeededListener: on('doThings:succeeded', succeededStub),
       canceledListener: on('doThings:canceled', canceledStub),
-      erroredListener: on('doThings:errored', erroredStub)
+      erroredListener: on('doThings:errored', erroredStub),
     });
 
     let deferred, obj, taskInstance;
@@ -60,7 +60,7 @@ module('Unit: task events', function() {
     assertEventNotFired(assert, 'errored', erroredStub);
   });
 
-  test("tasks fire task instance lifecycle events on the host object (task errors)", function(assert) {
+  test('tasks fire task instance lifecycle events on the host object (task errors)', function (assert) {
     assert.expect(8);
 
     const startedStub = sinon.stub();
@@ -76,19 +76,19 @@ module('Unit: task events', function() {
       startedListener: on('doThings:started', startedStub),
       succeededListener: on('doThings:succeeded', succeededStub),
       canceledListener: on('doThings:canceled', canceledStub),
-      erroredListener: on('doThings:errored', erroredStub)
+      erroredListener: on('doThings:errored', erroredStub),
     });
 
     let deferred, obj, taskInstance;
 
-    let error = new Error("someone unplugged the network");
+    let error = new Error('someone unplugged the network');
 
     run(() => {
       deferred = defer();
       obj = Obj.create();
       taskInstance = obj.get('doThings').perform(deferred);
       taskInstance.catch((e) => {
-        assert.equal(e.message, "someone unplugged the network");
+        assert.equal(e.message, 'someone unplugged the network');
       });
     });
 
@@ -104,7 +104,7 @@ module('Unit: task events', function() {
     assertEventNotFired(assert, 'canceled', canceledStub);
   });
 
-  test("tasks fire task instance lifecycle events on the host object (task canceled)", function(assert) {
+  test('tasks fire task instance lifecycle events on the host object (task canceled)', function (assert) {
     assert.expect(7);
 
     const startedStub = sinon.stub();
@@ -120,7 +120,7 @@ module('Unit: task events', function() {
       startedListener: on('doThings:started', startedStub),
       succeededListener: on('doThings:succeeded', succeededStub),
       canceledListener: on('doThings:canceled', canceledStub),
-      erroredListener: on('doThings:errored', erroredStub)
+      erroredListener: on('doThings:errored', erroredStub),
     });
 
     let deferred, obj, taskInstance;
@@ -138,7 +138,11 @@ module('Unit: task events', function() {
 
     run(taskInstance, 'cancel', 'I just felt like it');
 
-    assertEventFired(assert, 'canceled', canceledStub, taskInstance,
+    assertEventFired(
+      assert,
+      'canceled',
+      canceledStub,
+      taskInstance,
       "TaskInstance 'doThings' was canceled because I just felt like it. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
     );
     assertEventNotFired(assert, 'errored', erroredStub);

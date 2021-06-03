@@ -1,4 +1,4 @@
-import RefreshState from "./state";
+import RefreshState from './state';
 
 const CURRENT_REFRESH_TAGS = new Map();
 
@@ -11,7 +11,9 @@ class StateTracker {
     let guid = taskable.guid;
     let taskState = this.states.get(guid);
     if (!taskState) {
-      let currentTag = CURRENT_REFRESH_TAGS.has(guid) ? CURRENT_REFRESH_TAGS.get(guid) : 0;
+      let currentTag = CURRENT_REFRESH_TAGS.has(guid)
+        ? CURRENT_REFRESH_TAGS.get(guid)
+        : 0;
       taskState = new RefreshState(taskable, ++currentTag);
       this.states.set(guid, taskState);
       CURRENT_REFRESH_TAGS.set(guid, currentTag);
@@ -25,13 +27,13 @@ class StateTracker {
   // applying/adding to the state of any TaskGroups they belong to.
   computeFinalStates(callback) {
     this.computeRecursiveState();
-    this.forEachState(state => callback(state));
+    this.forEachState((state) => callback(state));
   }
 
   computeRecursiveState() {
-    this.forEachState(taskState => {
+    this.forEachState((taskState) => {
       let lastState = taskState;
-      taskState.recurseTaskGroups(taskGroup => {
+      taskState.recurseTaskGroups((taskGroup) => {
         let state = this.stateFor(taskGroup);
         state.applyStateFrom(lastState);
         lastState = state;
@@ -40,7 +42,7 @@ class StateTracker {
   }
 
   forEachState(callback) {
-    this.states.forEach(state => callback(state));
+    this.states.forEach((state) => callback(state));
   }
 }
 

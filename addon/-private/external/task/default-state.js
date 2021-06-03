@@ -8,7 +8,7 @@ export const DEFAULT_STATE = {
   lastErrored: null,
   lastCanceled: null,
   lastIncomplete: null,
-  performCount: 0
+  performCount: 0,
 };
 
 Object.freeze(DEFAULT_STATE);

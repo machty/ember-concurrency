@@ -1,8 +1,6 @@
 import { BaseTaskInstance } from './external/task-instance/base';
-import {
-  TRACKED_INITIAL_INSTANCE_STATE,
-} from './tracked-state';
-import { assignProperties } from "./utils";
+import { TRACKED_INITIAL_INSTANCE_STATE } from './tracked-state';
+import { assignProperties } from './utils';
 
 /**
   A `TaskInstance` represent a single execution of a
@@ -53,19 +51,19 @@ export class TaskInstance extends BaseTaskInstance {
   }
 
   onStarted() {
-    this.triggerEvent("started", this);
+    this.triggerEvent('started', this);
   }
 
   onSuccess() {
-    this.triggerEvent("succeeded", this);
+    this.triggerEvent('succeeded', this);
   }
 
   onError(error) {
-    this.triggerEvent("errored", this, error);
+    this.triggerEvent('errored', this, error);
   }
 
   onCancel(cancelReason) {
-    this.triggerEvent("canceled", this, cancelReason);
+    this.triggerEvent('canceled', this, cancelReason);
   }
 
   formatCancelReason(reason) {
@@ -74,7 +72,7 @@ export class TaskInstance extends BaseTaskInstance {
 
   getName() {
     if (!this.name) {
-      this.name = (this.task && this.task.name) || "<unknown>";
+      this.name = (this.task && this.task.name) || '<unknown>';
     }
     return this.name;
   }
@@ -270,9 +268,11 @@ export class TaskInstance extends BaseTaskInstance {
    * @instance
    * @return {Promise}
    */
-
 }
 
 if (TRACKED_INITIAL_INSTANCE_STATE) {
-  Object.defineProperties(TaskInstance.prototype, TRACKED_INITIAL_INSTANCE_STATE);
+  Object.defineProperties(
+    TaskInstance.prototype,
+    TRACKED_INITIAL_INSTANCE_STATE
+  );
 }

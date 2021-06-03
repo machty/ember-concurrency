@@ -13,7 +13,7 @@ export const TASKABLE_MIXIN = {
       isRunning,
       isQueued,
       isIdle: !isRunning && !isQueued,
-      state: isRunning ? "running" : "idle",
+      state: isRunning ? 'running' : 'idle',
     });
     assignProperties(this, derivedState);
   },

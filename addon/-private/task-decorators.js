@@ -31,8 +31,8 @@ function taskFromPropertyDescriptor(target, key, descriptor, params = []) {
       }
 
       return task;
-    }
-  }
+    },
+  };
 }
 
 function taskGroupPropertyDescriptor(target, key, _descriptor, params = []) {
@@ -50,8 +50,8 @@ function taskGroupPropertyDescriptor(target, key, _descriptor, params = []) {
       }
 
       return task;
-    }
-  }
+    },
+  };
 }
 
 // Cribbed from @ember-decorators/utils
@@ -72,13 +72,13 @@ function isFieldDescriptor(possibleDesc) {
 }
 
 function decoratorWithParams(descriptorFn) {
-  return function(...params) {
+  return function (...params) {
     if (isFieldDescriptor(params)) {
       return descriptorFn(...params);
     } else {
       return (...desc) => descriptorFn(...desc, params);
     }
-  }
+  };
 }
 
 function createDecorator(fn, baseOptions = {}) {
@@ -89,17 +89,33 @@ function createDecorator(fn, baseOptions = {}) {
   });
 }
 
-export const lastValue = decoratorWithParams((target, key, descriptor, [taskName] = []) => {
-  const { initializer } = descriptor;
-  delete descriptor.initializer;
+export const lastValue = decoratorWithParams(
+  (target, key, descriptor, [taskName] = []) => {
+    const { initializer } = descriptor;
+    delete descriptor.initializer;
 
-  if (USE_TRACKED) {
-    return {
-      get() {
-        let lastInstance = this[taskName].lastSuccessful;
+    if (USE_TRACKED) {
+      return {
+        get() {
+          let lastInstance = this[taskName].lastSuccessful;
+
+          if (lastInstance) {
+            return lastInstance.value;
+          }
+
+          if (initializer) {
+            return initializer.call(this);
+          }
+
+          return undefined;
+        },
+      };
+    } else {
+      let cp = computed(`${taskName}.lastSuccessful`, function () {
+        let lastInstance = get(this, `${taskName}.lastSuccessful`);
 
         if (lastInstance) {
-          return lastInstance.value;
+          return get(lastInstance, 'value');
         }
 
         if (initializer) {
@@ -107,26 +123,12 @@ export const lastValue = decoratorWithParams((target, key, descriptor, [taskName
         }
 
         return undefined;
-      }
-    };
-  } else {
-    let cp = computed(`${taskName}.lastSuccessful`, function() {
-      let lastInstance = get(this, `${taskName}.lastSuccessful`);
+      });
 
-      if (lastInstance) {
-        return get(lastInstance, 'value');
-      }
-
-      if (initializer) {
-        return initializer.call(this);
-      }
-
-      return undefined;
-    });
-
-    return cp(target, key, descriptor);
+      return cp(target, key, descriptor);
+    }
   }
-});
+);
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -209,10 +211,9 @@ export const task = createDecorator(taskFromPropertyDescriptor);
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const dropTask = createDecorator(
-  taskFromPropertyDescriptor,
-  { drop: true }
-);
+export const dropTask = createDecorator(taskFromPropertyDescriptor, {
+  drop: true,
+});
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -243,10 +244,9 @@ export const dropTask = createDecorator(
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const enqueueTask = createDecorator(
-  taskFromPropertyDescriptor,
-  { enqueue: true }
-);
+export const enqueueTask = createDecorator(taskFromPropertyDescriptor, {
+  enqueue: true,
+});
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -277,10 +277,9 @@ export const enqueueTask = createDecorator(
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const keepLatestTask = createDecorator(
-  taskFromPropertyDescriptor,
-  { keepLatest: true }
-);
+export const keepLatestTask = createDecorator(taskFromPropertyDescriptor, {
+  keepLatest: true,
+});
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -311,10 +310,9 @@ export const keepLatestTask = createDecorator(
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const restartableTask = createDecorator(
-  taskFromPropertyDescriptor,
-  { restartable: true }
-);
+export const restartableTask = createDecorator(taskFromPropertyDescriptor, {
+  restartable: true,
+});
 
 /**
  * "Task Groups" provide a means for applying
@@ -360,10 +358,9 @@ export const taskGroup = createDecorator(taskGroupPropertyDescriptor);
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const dropTaskGroup = createDecorator(
-  taskGroupPropertyDescriptor,
-  { drop: true }
-);
+export const dropTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
+  drop: true,
+});
 
 /**
  * Turns the decorated property into a task group and applies the
@@ -376,10 +373,9 @@ export const dropTaskGroup = createDecorator(
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const enqueueTaskGroup = createDecorator(
-  taskGroupPropertyDescriptor,
-  { enqueue: true }
-);
+export const enqueueTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
+  enqueue: true,
+});
 
 /**
  * Turns the decorated property into a task group and applies the

@@ -4,7 +4,7 @@ import { task, timeout } from 'ember-concurrency';
 function capitalizeAt(text, i) {
   let capsLetter = text.charAt(i).toUpperCase();
   let before = text.slice(0, i);
-  let after = text.slice(i+1);
+  let after = text.slice(i + 1);
   return before + capsLetter + after;
 }
 
@@ -13,7 +13,7 @@ export default class CapsMarqueeComponent extends Component {
   text = null;
   scrambledText = null;
 
-// BEGIN-SNIPPET caps-marquee
+  // BEGIN-SNIPPET caps-marquee
   @task({ on: 'init' })
   *marqueeLoop() {
     let text = this.text;
@@ -26,5 +26,5 @@ export default class CapsMarqueeComponent extends Component {
       }
     }
   }
-// END-SNIPPET
+  // END-SNIPPET
 }

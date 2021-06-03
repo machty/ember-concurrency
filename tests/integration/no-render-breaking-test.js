@@ -7,11 +7,11 @@ import hbs from 'htmlbars-inline-precompile';
 import { task, timeout } from 'ember-concurrency';
 import { gte } from 'ember-compatibility-helpers';
 
-module('Integration | no render breaking', function(hooks) {
+module('Integration | no render breaking', function (hooks) {
   setupRenderingTest(hooks);
 
   if (gte('3.15.0')) {
-    test('Issue #337 | internal task state updates do not trigger re-render assertions w/ auto-tracking', async function(assert) {
+    test('Issue #337 | internal task state updates do not trigger re-render assertions w/ auto-tracking', async function (assert) {
       assert.expect(1);
 
       this.owner.register(
@@ -31,7 +31,7 @@ module('Integration | no render breaking', function(hooks) {
             this.exampleTask.perform();
           },
 
-          exampleTask: task(function*() {
+          exampleTask: task(function* () {
             yield timeout(100);
           }),
         })
@@ -42,10 +42,10 @@ module('Integration | no render breaking', function(hooks) {
           <ECTest {{autofocus}} />
         {{/macroIf}}
       `);
-      assert.ok(true, "Renders");
+      assert.ok(true, 'Renders');
     });
 
-    test('Issue #340 | internal task state updates in cancellation do not trigger re-render assertions w/ auto-tracking', async function(assert) {
+    test('Issue #340 | internal task state updates in cancellation do not trigger re-render assertions w/ auto-tracking', async function (assert) {
       assert.expect(1);
 
       this.owner.register(
@@ -59,17 +59,17 @@ module('Integration | no render breaking', function(hooks) {
             this.exampleTask.perform();
             this.exampleTask.perform();
 
-            return "value";
+            return 'value';
           },
 
-          exampleTask: task(function*() {
+          exampleTask: task(function* () {
             yield timeout(100);
-          }).restartable()
+          }).restartable(),
         })
       );
 
       await render(hbs`<ECTest />`);
-      assert.ok(true, "Renders");
+      assert.ok(true, 'Renders');
     });
   }
 });

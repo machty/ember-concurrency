@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { task, timeout } from 'ember-concurrency';
 
-function * SHARED_TASK_FN(tracker) {
+function* SHARED_TASK_FN(tracker) {
   tracker.start();
   try {
     // simulate async work

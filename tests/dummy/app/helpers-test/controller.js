@@ -16,7 +16,7 @@ export default class HelpersTestController extends Controller {
   }
 
   @task *valueTask(value) {
-    let expected = "Set value option";
+    let expected = 'Set value option';
     if (value !== expected) {
       throw new Error(`value !== ${expected}`);
     }

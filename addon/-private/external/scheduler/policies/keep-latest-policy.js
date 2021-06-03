@@ -1,5 +1,5 @@
-import BoundedPolicy from "./bounded-policy";
-import { STARTED, QUEUED, makeCancelState } from "./execution-states";
+import BoundedPolicy from './bounded-policy';
+import { STARTED, QUEUED, makeCancelState } from './execution-states';
 
 const CANCELLED = makeCancelState(
   `it belongs to a 'keepLatest' Task that was already running`

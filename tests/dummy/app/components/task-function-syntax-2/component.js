@@ -4,7 +4,7 @@ import { task } from 'ember-concurrency';
 export default class TaskFunctionSyntaxComponent2 extends Component {
   status = null;
 
-// BEGIN-SNIPPET task-function-syntax-2
+  // BEGIN-SNIPPET task-function-syntax-2
   @task *pickRandomNumbers() {
     let nums = [];
     for (let i = 0; i < 3; i++) {
@@ -13,5 +13,5 @@ export default class TaskFunctionSyntaxComponent2 extends Component {
 
     this.set('status', `My favorite numbers: ${nums.join(', ')}`);
   }
-// END-SNIPPET
+  // END-SNIPPET
 }

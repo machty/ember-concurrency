@@ -1,4 +1,4 @@
-import NullState from "./null-state";
+import NullState from './null-state';
 
 const NULL_STATE = new NullState();
 
@@ -7,7 +7,7 @@ class NullStateTracker {
     return NULL_STATE;
   }
 
-  computeFinalStates() { }
+  computeFinalStates() {}
 }
 
 export default NullStateTracker;

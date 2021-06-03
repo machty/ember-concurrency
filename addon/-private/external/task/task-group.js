@@ -1,3 +1,3 @@
-import { Taskable } from "./taskable";
+import { Taskable } from './taskable';
 
-export class TaskGroup extends Taskable { }
+export class TaskGroup extends Taskable {}

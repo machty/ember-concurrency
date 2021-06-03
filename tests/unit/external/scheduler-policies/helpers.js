@@ -5,5 +5,5 @@ export function testScheduler(policy, numRunning, numQueued) {
 }
 
 export function typesFor(policy, numRunning, numQueued) {
-  return testScheduler(policy, numRunning, numQueued).map(a => a.type);
+  return testScheduler(policy, numRunning, numQueued).map((a) => a.type);
 }

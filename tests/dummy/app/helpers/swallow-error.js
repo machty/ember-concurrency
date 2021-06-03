@@ -1,4 +1,4 @@
-import { helper } from "@ember/component/helper";
+import { helper } from '@ember/component/helper';
 
 /**
  * This helper is meant to be wrapped around another action that might throw
