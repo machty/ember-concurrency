@@ -289,6 +289,7 @@ if (TRACKED_INITIAL_TASK_STATE) {
 
 Object.assign(Task.prototype, TASKABLE_MIXIN);
 
+const currentTaskInstanceSymbol = '__ec__encap_current_ti';
 export class EncapsulatedTask extends Task {
   constructor(options) {
     super(options);
@@ -297,15 +298,31 @@ export class EncapsulatedTask extends Task {
     this._encapsulatedTaskInstanceProxies = new WeakMap();
   }
 
+  _getEncapsulatedTaskClass() {
+    let encapsulatedTaskImplClass = this._encapsulatedTaskImplClass;
+
+    if (!encapsulatedTaskImplClass) {
+      encapsulatedTaskImplClass = EmberObject.extend(this.taskObj, {
+        unknownProperty(key) {
+          let currentInstance = this[currentTaskInstanceSymbol];
+          return currentInstance ? currentInstance[key] : undefined;
+        },
+      });
+    }
+
+    return encapsulatedTaskImplClass;
+  }
+
   _taskInstanceFactory(args, performType) {
     let owner = getOwner(this.context);
-    let encapsulatedTaskImpl = EmberObject.extend(this.taskObj).create({
+    let taskInstanceProxy;
+    let encapsulatedTaskImpl = this._getEncapsulatedTaskClass().create({
       context: this.context,
     });
     setOwner(encapsulatedTaskImpl, owner);
 
     let generatorFactory = () =>
-      encapsulatedTaskImpl.perform.apply(encapsulatedTaskImpl, args);
+      encapsulatedTaskImpl.perform.apply(taskInstanceProxy, args);
     let taskInstance = new TaskInstance({
       task: this,
       args,
@@ -317,10 +334,13 @@ export class EncapsulatedTask extends Task {
       performType,
       hasEnabledEvents: this.hasEnabledEvents,
     });
+    encapsulatedTaskImpl[currentTaskInstanceSymbol] = taskInstance;
 
     this._encapsulatedTaskStates.set(taskInstance, encapsulatedTaskImpl);
 
-    return this._wrappedEncapsulatedTaskInstance(taskInstance);
+    taskInstanceProxy = this._wrappedEncapsulatedTaskInstance(taskInstance);
+
+    return taskInstanceProxy;
   }
 
   _wrappedEncapsulatedTaskInstance(taskInstance) {

@@ -1,6 +1,7 @@
 import { run } from '@ember/runloop';
 import RSVP from 'rsvp';
 import EmberObject from '@ember/object';
+import { reads } from '@ember/object/computed';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
 import { decoratorTest } from '../helpers/helpers';
@@ -83,6 +84,31 @@ module('Unit: EncapsulatedTask', function () {
     defer.resolve();
     const value = await taskInstance;
     assert.equal(value, 'pickle');
+  });
+
+  test('encapsulated tasks can access task instance context', async function (assert) {
+    assert.expect(2);
+
+    let defer;
+    let Obj = EmberObject.extend({
+      myTask: task({
+        amIRunning: reads('isRunning'),
+
+        *perform() {
+          defer = RSVP.defer();
+          yield defer.promise;
+          return 'blah';
+        },
+      }),
+    });
+
+    let obj = Obj.create();
+    const taskInstance = obj.get('myTask').perform();
+    assert.equal(taskInstance.amIRunning, true);
+
+    defer.resolve();
+    await taskInstance;
+    assert.equal(taskInstance.amIRunning, false);
   });
 
   decoratorTest(
