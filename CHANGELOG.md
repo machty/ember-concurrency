@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.1.2
+  - Same as 2.1.1, but with the changes actually published.
+
 ### 2.1.1
   - Expose `TaskInstance` state inside encapsulated tasks (#434)
   - [dev] use prettier to format code (#415, thanks @alexlafroscia!)
