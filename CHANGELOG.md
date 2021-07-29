@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.1.1
+  - Expose `TaskInstance` state inside encapsulated tasks (#434)
+  - [dev] use prettier to format code (#415, thanks @alexlafroscia!)
+  - [dev] test against embroider scenarios (#430, thanks @alexlafroscia!)
+
 ### 2.1.0
   - Implemented a public API for [Yieldables](https://ember-concurrency.com/docs/yieldables),
     a new way to instrument TaskInstances by providing a safe mechanism to
