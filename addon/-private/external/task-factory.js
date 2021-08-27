@@ -1,11 +1,11 @@
 import Scheduler from './scheduler/scheduler';
-import UnboundedSchedulerPolicy from "./scheduler/policies/unbounded-policy";
-import EnqueueSchedulerPolicy from "./scheduler/policies/enqueued-policy";
-import DropSchedulerPolicy from "./scheduler/policies/drop-policy";
-import KeepLatestSchedulerPolicy from "./scheduler/policies/keep-latest-policy";
-import RestartableSchedulerPolicy from "./scheduler/policies/restartable-policy";
-import { Task } from "./task/task";
-import { TaskGroup } from "./task/task-group";
+import UnboundedSchedulerPolicy from './scheduler/policies/unbounded-policy';
+import EnqueueSchedulerPolicy from './scheduler/policies/enqueued-policy';
+import DropSchedulerPolicy from './scheduler/policies/drop-policy';
+import KeepLatestSchedulerPolicy from './scheduler/policies/keep-latest-policy';
+import RestartableSchedulerPolicy from './scheduler/policies/restartable-policy';
+import { Task } from './task/task';
+import { TaskGroup } from './task/task-group';
 
 function assertModifiersNotMixedWithGroup(obj) {
   if (obj._hasSetConcurrencyConstraint && obj._taskGroupPath) {
@@ -24,18 +24,20 @@ function assertUnsetBufferPolicy(obj) {
 }
 
 const MODIFIER_REGISTRY = {
-  enqueue: (factory, value) => (
-    value && factory.setBufferPolicy(EnqueueSchedulerPolicy)
-  ),
+  enqueue: (factory, value) =>
+    value && factory.setBufferPolicy(EnqueueSchedulerPolicy),
   evented: (factory, value) => value && factory.setEvented(value),
   debug: (factory, value) => value && factory.setDebug(value),
-  drop: (factory, value) => value && factory.setBufferPolicy(DropSchedulerPolicy),
+  drop: (factory, value) =>
+    value && factory.setBufferPolicy(DropSchedulerPolicy),
   group: (factory, groupName) => factory.setGroup(groupName),
-  keepLatest: (factory, value) => value && factory.setBufferPolicy(KeepLatestSchedulerPolicy),
+  keepLatest: (factory, value) =>
+    value && factory.setBufferPolicy(KeepLatestSchedulerPolicy),
   maxConcurrency: (factory, maxConcurrency) =>
     factory.setMaxConcurrency(maxConcurrency),
   onState: (factory, onStateCallback) => factory.setOnState(onStateCallback),
-  restartable: (factory, value) => value && factory.setBufferPolicy(RestartableSchedulerPolicy),
+  restartable: (factory, value) =>
+    value && factory.setBufferPolicy(RestartableSchedulerPolicy),
 };
 
 export function defineModifier(name, callback) {
@@ -60,7 +62,7 @@ export class TaskFactory {
   _schedulerPolicyClass = UnboundedSchedulerPolicy;
   _taskGroupPath = null;
 
-  constructor(name = "<unknown>", taskDefinition = null, options = {}) {
+  constructor(name = '<unknown>', taskDefinition = null, options = {}) {
     this.name = name;
     this.taskDefinition = taskDefinition;
 
@@ -73,8 +75,7 @@ export class TaskFactory {
     return new Task(
       Object.assign(
         {
-          generatorFactory: (args) =>
-            this.taskDefinition.apply(context, args),
+          generatorFactory: (args) => this.taskDefinition.apply(context, args),
         },
         options
       )
@@ -104,7 +105,9 @@ export class TaskFactory {
     if (this._taskGroupPath) {
       group = context[this._taskGroupPath];
       if (!(group instanceof TaskGroup)) {
-        throw new Error(`Expected group '${this._taskGroupPath}' to be defined but was not found.`);
+        throw new Error(
+          `Expected group '${this._taskGroupPath}' to be defined but was not found.`
+        );
       }
 
       scheduler = group.scheduler;

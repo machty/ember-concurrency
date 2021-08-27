@@ -166,7 +166,7 @@ export class Task extends BaseTask {
       hasEnabledEvents: this.hasEnabledEvents,
       name: this.name,
       onStateCallback: this.onStateCallback,
-      scheduler: this.scheduler
+      scheduler: this.scheduler,
     });
   }
 
