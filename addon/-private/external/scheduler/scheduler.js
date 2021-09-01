@@ -41,8 +41,9 @@ class Scheduler {
     this.refresh();
   }
 
-  // override
-  scheduleRefresh() {}
+  scheduleRefresh() {
+    Promise.resolve().then(() => this.refresh());
+  }
 
   refresh() {
     let stateTracker = this.stateTrackingEnabled

@@ -11,8 +11,13 @@ function makeGuid() {
 
 export class Taskable {
   constructor(options) {
-    this.options = options;
-    Object.assign(this, options);
+    this.context = options.context;
+    this.debug = options.debug || false;
+    this.group = options.group;
+    this.hasEnabledEvents = options.hasEnabledEvents;
+    this.name = options.name;
+    this.onStateCallback = options.onStateCallback;
+    this.scheduler = options.scheduler;
 
     this.guid = makeGuid();
     this.guids = {};
