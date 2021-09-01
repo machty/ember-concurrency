@@ -48,5 +48,25 @@ module.exports = function (defaults) {
     behave. You most likely want to be modifying `./index.js` or app's build file
   */
 
-  return maybeEmbroider(app);
+  return maybeEmbroider(app, {
+    packageRules: [
+      {
+        package: 'dummy',
+        components: {
+          '{{e-c-test}}': {
+            safeToIgnore: true,
+          },
+          '{{inner-component}}': {
+            safeToIgnore: true,
+          },
+          '{{my-component}}': {
+            safeToIgnore: true,
+          },
+          '{{test-swallow-error}}': {
+            safeToIgnore: true,
+          },
+        },
+      },
+    ],
+  });
 };

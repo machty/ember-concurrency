@@ -1,13 +1,19 @@
 import Component from '@ember/component';
 import { action } from '@ember/object';
-import { schedule } from '@ember/runloop';
+import { cancel, schedule } from '@ember/runloop';
 
 export default class CodeTemplateToggleComponent extends Component {
   toggleDescription = 'Toggle JS / Template';
   showCode = true;
+  _toggleTimer = null;
 
   didInsertElement() {
-    schedule('afterRender', null, () => {
+    super.didInsertElement(...arguments);
+    this._toggleTimer = schedule('afterRender', null, () => {
+      if (!this.element) {
+        return;
+      }
+
       let sectionToggles = this.element.querySelectorAll(
         '.code-template-toggle-section'
       );
@@ -17,10 +23,18 @@ export default class CodeTemplateToggleComponent extends Component {
           return el.offsetHeight;
         })
       );
-      this.element.querySelector(
-        '.code-template-toggle'
-      ).style.height = `${maxHeight}px`;
+
+      let toggle = this.element.querySelector('.code-template-toggle');
+
+      if (toggle) {
+        toggle.style.height = `${maxHeight}px`;
+      }
     });
+  }
+
+  willDestroyElement() {
+    super.willDestroyElement(...arguments);
+    cancel(this._toggleTimer);
   }
 
   @action
