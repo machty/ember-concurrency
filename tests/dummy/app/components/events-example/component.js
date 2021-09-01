@@ -1,12 +1,14 @@
 import Evented from '@ember/object/evented';
 import Component from '@ember/component';
-import $ from 'jquery';
 import {
   task,
   timeout,
   waitForEvent,
   waitForProperty,
 } from 'ember-concurrency';
+
+// Pretending to be jQuery for a very narrow snippet
+const $ = (selector) => document.querySelector(selector);
 
 export default class EventsExampleComponent extends Component.extend(Evented) {
   // BEGIN-SNIPPET waitForEvent

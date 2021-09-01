@@ -139,13 +139,20 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     await obj.get('parent').perform();
   });
 
-  test('all throws an assertion, if something other than an array is passed', function (assert) {
-    assert.expectAssertion(() => {
-      all();
-    }, /'all' expects an array/);
-    assert.expectAssertion(() => {
-      all(RSVP.Promise.resolve());
-    }, /'all' expects an array/);
+  test('all throws an assertion, if something other than an array is passed', async function (assert) {
+    assert.expect(2);
+
+    try {
+      await all();
+    } catch (e) {
+      assert.ok(e.message, /'all' expects an array/);
+    }
+
+    try {
+      await all(RSVP.Promise.resolve());
+    } catch (e) {
+      assert.ok(e.message, /'all' expects an array/);
+    }
   });
 
   test('allSettled behaves like Promise.allSettled', function (assert) {
@@ -300,13 +307,20 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     await obj.get('parent').perform();
   });
 
-  test('allSettled throws an assertion, if something other than an array is passed', function (assert) {
-    assert.expectAssertion(() => {
-      allSettled();
-    }, /'allSettled' expects an array/);
-    assert.expectAssertion(() => {
-      allSettled(RSVP.Promise.resolve());
-    }, /'allSettled' expects an array/);
+  test('allSettled throws an assertion, if something other than an array is passed', async function (assert) {
+    assert.expect(2);
+
+    try {
+      await allSettled();
+    } catch (e) {
+      assert.ok(e.message, /'allSettled' expects an array/);
+    }
+
+    try {
+      await allSettled(RSVP.Promise.resolve());
+    } catch (e) {
+      assert.ok(e.message, /'allSettled' expects an array/);
+    }
   });
 
   test('hash', function (assert) {
@@ -577,13 +591,20 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     await obj.get('parent').perform();
   });
 
-  test('race throws an assertion, if something other than an array is passed', function (assert) {
-    assert.expectAssertion(() => {
-      race();
-    }, /'race' expects an array/);
-    assert.expectAssertion(() => {
-      race(RSVP.Promise.resolve());
-    }, /'race' expects an array/);
+  test('race throws an assertion, if something other than an array is passed', async function (assert) {
+    assert.expect(2);
+
+    try {
+      await race();
+    } catch (e) {
+      assert.ok(e.message, /'race' expects an array/);
+    }
+
+    try {
+      await race(RSVP.Promise.resolve());
+    } catch (e) {
+      assert.ok(e.message, /'race' expects an array/);
+    }
   });
 
   test('yieldable helpers work with null/undefined values', function (assert) {
