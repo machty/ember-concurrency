@@ -21,15 +21,24 @@ export default Controller.extend({
   enqueuedTask3: task(SHARED_TASK_FN).maxConcurrency(3).enqueue(),
   droppingTask3: task(SHARED_TASK_FN).maxConcurrency(3).drop(),
 
-  tasks: computed(function () {
-    return [
-      this.defaultTask,
-      this.restartableTask,
-      this.enqueuedTask,
-      this.droppingTask,
-      this.restartableTask3,
-      this.enqueuedTask3,
-      this.droppingTask3,
-    ];
-  }),
+  tasks: computed(
+    'defaultTask',
+    'droppingTask',
+    'droppingTask3',
+    'enqueuedTask',
+    'enqueuedTask3',
+    'restartableTask',
+    'restartableTask3',
+    function () {
+      return [
+        this.defaultTask,
+        this.restartableTask,
+        this.enqueuedTask,
+        this.droppingTask,
+        this.restartableTask3,
+        this.enqueuedTask3,
+        this.droppingTask3,
+      ];
+    }
+  ),
 });

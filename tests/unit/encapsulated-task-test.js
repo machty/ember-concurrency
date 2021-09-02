@@ -25,12 +25,9 @@ module('Unit: EncapsulatedTask', function () {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj
-        .get('myTask')
-        .perform(1, 2, 3)
-        .then((v) => {
-          assert.equal(v, 123);
-        });
+      obj.myTask.perform(1, 2, 3).then((v) => {
+        assert.equal(v, 123);
+      });
     });
     run(defer, 'resolve');
   });
@@ -52,12 +49,12 @@ module('Unit: EncapsulatedTask', function () {
     });
 
     let obj = Obj.create();
-    const taskInstance = obj.get('myTask').perform(1, 2, 3);
-    assert.equal(taskInstance.someProp, false);
+    const taskInstance = obj.myTask.perform(1, 2, 3);
+    assert.false(taskInstance.someProp);
 
     defer.resolve();
     await taskInstance;
-    assert.equal(taskInstance.someProp, true);
+    assert.true(taskInstance.someProp);
   });
 
   test('encapsulated tasks can access host context', async function (assert) {
@@ -79,7 +76,7 @@ module('Unit: EncapsulatedTask', function () {
     });
 
     let obj = Obj.create();
-    const taskInstance = obj.get('myTask').perform();
+    const taskInstance = obj.myTask.perform();
 
     defer.resolve();
     const value = await taskInstance;
@@ -103,12 +100,12 @@ module('Unit: EncapsulatedTask', function () {
     });
 
     let obj = Obj.create();
-    const taskInstance = obj.get('myTask').perform();
-    assert.equal(taskInstance.amIRunning, true);
+    const taskInstance = obj.myTask.perform();
+    assert.true(taskInstance.amIRunning);
 
     defer.resolve();
     await taskInstance;
-    assert.equal(taskInstance.amIRunning, false);
+    assert.false(taskInstance.amIRunning);
   });
 
   decoratorTest(

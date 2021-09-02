@@ -1,8 +1,11 @@
 import Component from '@ember/component';
 import { action } from '@ember/object';
+import { guidFor } from '@ember/object/internals';
 import { cancel, schedule } from '@ember/runloop';
 
 export default class CodeTemplateToggleComponent extends Component {
+  tagName = '';
+  id = guidFor(this);
   toggleDescription = 'Toggle JS / Template';
   showCode = true;
   _toggleTimer = null;
@@ -10,11 +13,13 @@ export default class CodeTemplateToggleComponent extends Component {
   didInsertElement() {
     super.didInsertElement(...arguments);
     this._toggleTimer = schedule('afterRender', null, () => {
-      if (!this.element) {
+      const element = document.getElementById(this.id);
+
+      if (!element) {
         return;
       }
 
-      let sectionToggles = this.element.querySelectorAll(
+      let sectionToggles = element.querySelectorAll(
         '.code-template-toggle-section'
       );
       let maxHeight = Math.max.apply(
@@ -24,7 +29,7 @@ export default class CodeTemplateToggleComponent extends Component {
         })
       );
 
-      let toggle = this.element.querySelector('.code-template-toggle');
+      let toggle = element.querySelector('.code-template-toggle');
 
       if (toggle) {
         toggle.style.height = `${maxHeight}px`;

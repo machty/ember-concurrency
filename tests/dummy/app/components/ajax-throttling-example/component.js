@@ -14,6 +14,7 @@ function loopingAjaxTask(id, color) {
 }
 
 export default class AjaxThrottlingExampleComponent extends Component {
+  tagName = '';
   logs = [];
 
   @enqueueTask({ maxConcurrency: 3 })

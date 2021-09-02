@@ -39,15 +39,15 @@ module('Unit: task property', function () {
     assert.equal(taskRunCounter, 0);
 
     obj = Obj.create();
-    obj.get('doStuff').perform();
+    obj.doStuff.perform();
     assert.equal(taskRunCounter, 1);
 
-    obj.get('doStuff').perform();
+    obj.doStuff.perform();
     assert.equal(taskRunCounter, 2);
 
     await settled();
 
-    obj.get('doStuff').cancelAll();
+    obj.doStuff.cancelAll();
     assert.equal(taskRunCounter, 0);
   });
 

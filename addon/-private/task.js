@@ -311,6 +311,7 @@ export class EncapsulatedTask extends Task {
     let encapsulatedTaskImplClass = this._encapsulatedTaskImplClass;
 
     if (!encapsulatedTaskImplClass) {
+      // eslint-disable-next-line ember/no-classic-classes
       encapsulatedTaskImplClass = EmberObject.extend(this.taskObj, {
         unknownProperty(key) {
           let currentInstance = this[currentTaskInstanceSymbol];

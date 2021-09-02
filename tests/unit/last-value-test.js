@@ -15,15 +15,15 @@ module('Unit | lastValue', function () {
 
     const instance = ObjectWithTask.create();
     assert.strictEqual(
-      instance.get('value'),
+      instance.value,
       undefined,
       'it returns nothing if the task has not been performed'
     );
 
-    await instance.get('task').perform();
+    await instance.task.perform();
 
     assert.strictEqual(
-      instance.get('value'),
+      instance.value,
       'foo',
       'returning the last successful value'
     );
@@ -41,17 +41,13 @@ module('Unit | lastValue', function () {
     const instance = ObjectWithTaskDefaultValue.create();
 
     assert.strictEqual(
-      instance.get('value'),
+      instance.value,
       'default value',
       'it returns the default value if the task has not been performed'
     );
 
-    await instance.get('task').perform();
+    await instance.task.perform();
 
-    assert.equal(
-      instance.get('value'),
-      'foo',
-      'returning the last successful value'
-    );
+    assert.equal(instance.value, 'foo', 'returning the last successful value');
   });
 });

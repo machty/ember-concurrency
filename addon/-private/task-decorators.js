@@ -115,6 +115,7 @@ export const lastValue = decoratorWithParams(
         let lastInstance = get(this, `${taskName}.lastSuccessful`);
 
         if (lastInstance) {
+          // eslint-disable-next-line ember/no-get
           return get(lastInstance, 'value');
         }
 

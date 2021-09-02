@@ -92,6 +92,7 @@ class WaitForPropertyYieldable extends EmberYieldable {
     };
 
     if (!observerFn()) {
+      // eslint-disable-next-line ember/no-observers
       addObserver(this.object, this.key, null, observerFn);
       observerBound = true;
     }

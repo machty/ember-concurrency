@@ -23,11 +23,11 @@ module('Unit: task error handling', function () {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
     assert.ok(childDefer);
     run(() => {
-      obj.get('parent').cancelAll();
+      obj.parent.cancelAll();
     });
   });
 
@@ -71,11 +71,11 @@ module('Unit: task error handling', function () {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
     assert.ok(childDefer);
     run(() => {
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
   });
 
@@ -101,16 +101,16 @@ module('Unit: task error handling', function () {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform(1);
+      obj.parent.perform(1);
     });
     assert.ok(childDefer);
 
     run(() => {
-      obj.get('parent').perform(2);
+      obj.parent.perform(2);
     });
 
     run(() => {
-      obj.get('parent').cancelAll();
+      obj.parent.cancelAll();
     });
   });
 });

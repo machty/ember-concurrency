@@ -4,10 +4,11 @@ import { computed } from '@ember/object';
 import { task } from 'ember-concurrency';
 
 export default Component.extend({
+  tagName: '',
   status: null,
 
   favoriteNumbers: computed('pickRandomNumbers.last.value', function () {
-    return this.get('pickRandomNumbers.last.value') || [];
+    return this.pickRandomNumbers?.last?.value || [];
   }),
 
   pickRandomNumbers: task(function () {

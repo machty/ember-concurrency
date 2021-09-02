@@ -476,7 +476,7 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
    *
    * ```js
    * doSomeAjax: task(function * (url) {
-   *   return Ember.$.getJSON(url).promise();
+   *   return fetch(url);
    * }).maxConcurrency(3),
    *
    * elsewhere() {
@@ -510,7 +510,7 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
    *   }).evented(),
    *
    *   uploadedStarted: on('uploadTask:started', function(taskInstance) {
-   *     this.get('analytics').track("User Photo: upload started");
+   *     this.analytics.track("User Photo: upload started");
    *   }),
    * });
    * ```

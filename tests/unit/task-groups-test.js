@@ -50,9 +50,9 @@ module('Unit: task groups', function () {
     let obj, taskA, taskB, suffix, tg;
     run(() => {
       obj = Obj.create();
-      tg = obj.get('tg');
-      taskA = obj.get('taskA');
-      taskB = obj.get('taskB');
+      tg = obj.tg;
+      taskA = obj.taskA;
+      taskB = obj.taskB;
 
       suffix = 'before anything has been performed';
       assertStates(assert, tg, false, false, true, suffix);
@@ -74,7 +74,7 @@ module('Unit: task groups', function () {
     assertStates(assert, taskA, true, false, false, suffix);
     assertStates(assert, taskB, false, true, false, suffix); // this is expecting it NOT to be idle
     assert.ok(deferA);
-    assert.ok(!deferB);
+    assert.notOk(deferB);
 
     run(deferA, deferA.resolve);
 
@@ -101,7 +101,7 @@ module('Unit: task groups', function () {
     });
 
     run(() => {
-      assert.equal(Obj.create().get('taskA.group.name'), 'tg');
+      assert.equal(Obj.create().taskA.group.name, 'tg');
     });
   });
 
@@ -121,9 +121,9 @@ module('Unit: task groups', function () {
     let taskA, taskB, tg;
     run(() => {
       let obj = Obj.create();
-      tg = obj.get('tg');
-      taskA = obj.get('taskA');
-      taskB = obj.get('taskB');
+      tg = obj.tg;
+      taskA = obj.taskA;
+      taskB = obj.taskB;
       taskA.perform();
       taskB.perform();
     });
@@ -181,13 +181,12 @@ module('Unit: task groups', function () {
     });
 
     let obj = Obj.create();
-    let tg = obj.get('tg');
-    let myTask = obj.get('myTask');
-    assert.strictEqual(tg.isRunning, false);
-    run(() => myTask.perform());
-    assert.strictEqual(tg.isRunning, true);
+    let tg = obj.tg;
+    assert.false(tg.isRunning);
+    run(() => obj.myTask.perform());
+    assert.true(tg.isRunning);
     run(defer, defer.resolve);
-    assert.strictEqual(tg.isRunning, false);
+    assert.false(tg.isRunning);
   });
 
   test("calling cancelAll on a task doesn't cancel other tasks in group", function (assert) {
@@ -208,21 +207,21 @@ module('Unit: task groups', function () {
 
     run(() => {
       obj = Obj.create();
-      tg = obj.get('tg');
-      taskA = obj.get('taskA');
+      tg = obj.tg;
+      taskA = obj.taskA;
       taskA.perform();
-      taskB = obj.get('taskB');
+      taskB = obj.taskB;
     });
 
     function assertRunning() {
-      assert.strictEqual(tg.isRunning, true);
-      assert.strictEqual(taskA.isRunning, true);
-      assert.strictEqual(taskB.isRunning, false);
+      assert.true(tg.isRunning);
+      assert.true(taskA.isRunning);
+      assert.false(taskB.isRunning);
     }
 
     assertRunning();
 
-    run(() => obj.get('taskB').cancelAll());
+    run(() => obj.taskB.cancelAll());
 
     assertRunning();
   });

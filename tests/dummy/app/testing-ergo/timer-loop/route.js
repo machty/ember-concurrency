@@ -7,6 +7,7 @@ export default Route.extend({
   },
   loopingTask: task(function* () {
     while (true) {
+      // eslint-disable-next-line ember/no-controller-access-in-routes
       this.controller.incrementProperty('foo');
       yield timeout(200);
     }

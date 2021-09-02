@@ -108,6 +108,7 @@
 
 <h4>Put the two together...</h4>
 
+{{! template-lint-disable no-unbalanced-curlies }}
 <p>
   Given a task named <code>myTask</code>, if you need to display a success banner
   with the value returned from the most recent execution of <code>myTask</code>,
@@ -116,11 +117,15 @@
   just change it to <code>\{{myTask.lastSuccessful.value}}</code>. There are other
   combinations as well that might better suit your UI needs.
 </p>
+{{! template-lint-enable no-unbalanced-curlies }}
 
 <h3>Live Example</h3>
 
 <p>
-  <Input @type="checkbox" @checked={{this.showLessCommon}} /> Show less common properties
+  <label>
+    <Input @type="checkbox" @checked={{this.showLessCommon}} />
+    Show less common properties
+  </label>
 </p>
 
 {{#each this.tasks as |taskName|}}

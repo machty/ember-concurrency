@@ -68,5 +68,10 @@ module.exports = function (defaults) {
         },
       },
     ],
+    skipBabel: [
+      {
+        package: 'qunit',
+      },
+    ],
   });
 };

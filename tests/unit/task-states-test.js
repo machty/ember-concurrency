@@ -18,18 +18,18 @@ module('Unit: task states', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      assert.equal(obj.myTask.isIdle, true);
-      assert.equal(obj.myTask.isRunning, false);
+      assert.true(obj.myTask.isIdle);
+      assert.false(obj.myTask.isRunning);
       assert.equal(obj.myTask.state, 'idle');
       assert.equal(obj.myTask.performCount, 0);
       obj.myTask.perform();
-      assert.equal(obj.myTask.isIdle, false);
-      assert.equal(obj.myTask.isRunning, true);
+      assert.false(obj.myTask.isIdle);
+      assert.true(obj.myTask.isRunning);
       assert.equal(obj.myTask.state, 'running');
       assert.equal(obj.myTask.performCount, 1);
     });
-    assert.equal(obj.myTask.isIdle, true);
-    assert.equal(obj.myTask.isRunning, false);
+    assert.true(obj.myTask.isIdle);
+    assert.false(obj.myTask.isRunning);
     assert.equal(obj.myTask.state, 'idle');
   });
 
@@ -49,8 +49,8 @@ module('Unit: task states', function (hooks) {
     });
 
     let obj = Obj.create();
-    assert.equal(obj.myTask.isIdle, true);
-    assert.equal(obj.myTask.isRunning, false);
+    assert.true(obj.myTask.isIdle);
+    assert.false(obj.myTask.isRunning);
     assert.equal(obj.myTask.state, 'idle');
     assert.equal(obj.myTask.performCount, 0);
 
@@ -62,8 +62,8 @@ module('Unit: task states', function (hooks) {
     await rawTimeout(100);
     await obj.myTask.perform('');
 
-    assert.equal(obj.myTask.isIdle, true);
-    assert.equal(obj.myTask.isRunning, false);
+    assert.true(obj.myTask.isIdle);
+    assert.false(obj.myTask.isRunning);
     assert.equal(obj.myTask.state, 'idle');
     assert.equal(obj.myTask.performCount, 4);
   });
@@ -84,26 +84,26 @@ module('Unit: task states', function (hooks) {
     });
 
     run(() => {
-      assert.equal(t.isIdle, true);
-      assert.equal(t.isRunning, false);
-      assert.equal(t.isQueued, false);
+      assert.true(t.isIdle);
+      assert.false(t.isRunning);
+      assert.false(t.isQueued);
       assert.equal(t.state, 'idle');
       assert.equal(t.performCount, 0);
       t.perform();
     });
 
     run(() => {
-      let t = obj.get('myTask');
-      assert.equal(t.isIdle, false);
-      assert.equal(t.isRunning, true);
+      let t = obj.myTask;
+      assert.false(t.isIdle);
+      assert.true(t.isRunning);
       assert.equal(t.state, 'running');
       assert.equal(t.numRunning, 1);
       assert.equal(t.performCount, 1);
       t.perform();
     });
 
-    assert.equal(t.isIdle, false);
-    assert.equal(t.isRunning, true);
+    assert.false(t.isIdle);
+    assert.true(t.isRunning);
     assert.equal(t.state, 'running');
     assert.equal(t.numRunning, 2);
     assert.equal(t.performCount, 2);
@@ -120,7 +120,7 @@ module('Unit: task states', function (hooks) {
 
     run(() => {
       let obj = Obj.create();
-      let myTask = obj.get('myTask');
+      let myTask = obj.myTask;
       assert.equal(myTask.lastPerformed, null);
       let taskInstance0 = myTask.perform();
       assert.equal(myTask.lastPerformed, taskInstance0);
@@ -138,7 +138,7 @@ module('Unit: task states', function (hooks) {
 
     run(() => {
       let obj = Obj.create();
-      let doStuff = obj.get('doStuff');
+      let doStuff = obj.doStuff;
       assert.equal(doStuff.performCount, 0);
       doStuff.perform();
       assert.equal(doStuff.performCount, 1);
@@ -160,7 +160,7 @@ module('Unit: task states', function (hooks) {
     let myTask, taskInstance1;
     run(() => {
       let obj = Obj.create();
-      myTask = obj.get('myTask');
+      myTask = obj.myTask;
       myTask.perform();
       taskInstance1 = myTask.perform();
       assert.equal(myTask.lastPerformed, taskInstance1);
@@ -183,7 +183,7 @@ module('Unit: task states', function (hooks) {
     let obj, myTask;
     run(() => {
       obj = Obj.create();
-      myTask = obj.get('myTask');
+      myTask = obj.myTask;
       assert.equal(myTask.last, null);
       taskInstance0 = myTask.perform();
       taskInstance1 = myTask.perform();
@@ -210,7 +210,7 @@ module('Unit: task states', function (hooks) {
     let obj, myTask;
     run(() => {
       obj = Obj.create();
-      myTask = obj.get('myTask');
+      myTask = obj.myTask;
       assert.equal(myTask.lastSuccessful, null);
       taskInstance0 = myTask.perform();
       taskInstance1 = myTask.perform();
@@ -245,7 +245,7 @@ module('Unit: task states', function (hooks) {
     let obj, myTask;
     run(() => {
       obj = Obj.create();
-      myTask = obj.get('myTask');
+      myTask = obj.myTask;
       assert.equal(myTask.lastComplete, null);
       taskInstance0 = myTask.perform();
       taskInstance1 = myTask.perform();
@@ -276,7 +276,7 @@ module('Unit: task states', function (hooks) {
     let obj, myTask;
     run(() => {
       obj = Obj.create();
-      myTask = obj.get('myTask');
+      myTask = obj.myTask;
       assert.equal(myTask.lastErrored, null);
       myTask.perform();
       taskInstance1 = myTask.perform();
@@ -307,7 +307,7 @@ module('Unit: task states', function (hooks) {
     let obj, myTask;
     run(() => {
       obj = Obj.create();
-      myTask = obj.get('myTask');
+      myTask = obj.myTask;
       assert.equal(myTask.lastCanceled, null);
       myTask.perform();
       taskInstance1 = myTask.perform();
@@ -338,7 +338,7 @@ module('Unit: task states', function (hooks) {
     let obj, myTask;
     run(() => {
       obj = Obj.create();
-      myTask = obj.get('myTask');
+      myTask = obj.myTask;
       assert.equal(myTask.lastIncomplete, null);
       myTask.perform();
       taskInstance1 = myTask.perform();
@@ -369,7 +369,7 @@ module('Unit: task states', function (hooks) {
     const defer1 = RSVP.defer();
     const taskInstance1 = obj.myTask.perform(defer1);
 
-    assert.strictEqual(obj.myTask.isRunning, true);
+    assert.true(obj.myTask.isRunning);
     assert.strictEqual(obj.myTask.numRunning, 1);
     assert.strictEqual(
       obj.myTask.lastRunning,
@@ -380,7 +380,7 @@ module('Unit: task states', function (hooks) {
     const defer2 = RSVP.defer();
     const taskInstance2 = obj.myTask.perform(defer2);
 
-    assert.strictEqual(obj.myTask.isRunning, true);
+    assert.true(obj.myTask.isRunning);
     assert.strictEqual(obj.myTask.numRunning, 2);
     assert.strictEqual(
       obj.myTask.lastRunning,
@@ -390,7 +390,7 @@ module('Unit: task states', function (hooks) {
 
     run(defer2, 'resolve');
 
-    assert.strictEqual(obj.myTask.isRunning, true);
+    assert.true(obj.myTask.isRunning);
     assert.strictEqual(obj.myTask.numRunning, 1);
     assert.strictEqual(
       obj.myTask.lastRunning,
@@ -400,9 +400,8 @@ module('Unit: task states', function (hooks) {
 
     run(defer1, 'reject', 'big wrench');
 
-    assert.strictEqual(
+    assert.false(
       obj.myTask.isRunning,
-      false,
       'isRunning is false when tasks finished running'
     );
     assert.strictEqual(

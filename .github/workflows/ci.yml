@@ -151,10 +151,13 @@ jobs:
         - ember-lts-3.12
         - ember-lts-3.16
         - ember-lts-3.20
+        - ember-lts-3.24
         - ember-release
+        - ember-default
         - typescript-3.7
         - typescript-3.9
-        - ember-default
+        - embroider-safe
+        - embroider-optimized
         allow-failure: [false]
         include:
           - ember-try-scenario: ember-beta

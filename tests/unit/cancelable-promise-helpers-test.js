@@ -46,10 +46,10 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
 
-    let childTask = obj.get('child');
+    let childTask = obj.child;
     assert.equal(childTask.numRunning, 3);
     run(() => defers.shift().resolve('a'));
     assert.equal(childTask.numRunning, 2);
@@ -83,10 +83,10 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
 
-    let childTask = obj.get('child');
+    let childTask = obj.child;
     assert.equal(childTask.numRunning, 3);
     run(() => defers.shift().reject({ wat: 'lol' }));
     assert.equal(childTask.numRunning, 0);
@@ -109,12 +109,12 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
 
-    let childTask = obj.get('child');
+    let childTask = obj.child;
     assert.equal(childTask.numRunning, 3);
-    run(() => obj.get('parent').cancelAll());
+    run(() => obj.parent.cancelAll());
     assert.equal(childTask.numRunning, 0);
   });
 
@@ -136,7 +136,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let obj = Obj.create();
-    await obj.get('parent').perform();
+    await obj.parent.perform();
   });
 
   test('all throws an assertion, if something other than an array is passed', async function (assert) {
@@ -187,10 +187,10 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
 
-    let childTask = obj.get('child');
+    let childTask = obj.child;
     assert.equal(childTask.numRunning, 3);
     run(() => defers.shift().resolve('a'));
     assert.equal(childTask.numRunning, 2);
@@ -236,10 +236,10 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
 
-    let childTask = obj.get('child');
+    let childTask = obj.child;
     assert.equal(childTask.numRunning, 3);
     run(() => defers.shift().resolve('a'));
     assert.equal(childTask.numRunning, 2);
@@ -266,12 +266,12 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
 
-    let childTask = obj.get('child');
+    let childTask = obj.child;
     assert.equal(childTask.numRunning, 3);
-    run(() => obj.get('parent').cancelAll());
+    run(() => obj.parent.cancelAll());
     assert.equal(childTask.numRunning, 0);
   });
 
@@ -304,7 +304,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let obj = Obj.create();
-    await obj.get('parent').perform();
+    await obj.parent.perform();
   });
 
   test('allSettled throws an assertion, if something other than an array is passed', async function (assert) {
@@ -345,7 +345,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
   });
 
@@ -371,11 +371,11 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
-    assert.equal(obj.get('child.numRunning'), 3);
-    run(obj.get('child.last'), 'cancel');
-    assert.equal(obj.get('child.numRunning'), 0);
+    assert.equal(obj.child.numRunning, 3);
+    run(obj.child.last, 'cancel');
+    assert.equal(obj.child.numRunning, 0);
   });
 
   test('hash cancels children if parent is canceled', function (assert) {
@@ -400,11 +400,11 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
-    assert.equal(obj.get('child.numRunning'), 3);
-    run(obj.get('parent'), 'cancelAll');
-    assert.equal(obj.get('child.numRunning'), 0);
+    assert.equal(obj.child.numRunning, 3);
+    run(obj.parent, 'cancelAll');
+    assert.equal(obj.child.numRunning, 0);
   });
 
   test("hash doesn't asynchronously rethrow synchronous errors from child tasks", async function (assert) {
@@ -432,7 +432,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let obj = Obj.create();
-    await obj.get('parent').perform();
+    await obj.parent.perform();
   });
 
   test('hashSettled behaves like Promise.hashSettled', function (assert) {
@@ -467,10 +467,10 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
 
-    let childTask = obj.get('child');
+    let childTask = obj.child;
     assert.equal(childTask.numRunning, 3);
     run(() => defers.shift().resolve('a'));
     assert.equal(childTask.numRunning, 2);
@@ -516,10 +516,10 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
 
-    let childTask = obj.get('child');
+    let childTask = obj.child;
     assert.equal(childTask.numRunning, 3);
     run(() => defers.shift().resolve('a'));
     assert.equal(childTask.numRunning, 2);
@@ -550,12 +550,12 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
 
-    let childTask = obj.get('child');
+    let childTask = obj.child;
     assert.equal(childTask.numRunning, 3);
-    run(() => obj.get('parent').cancelAll());
+    run(() => obj.parent.cancelAll());
     assert.equal(childTask.numRunning, 0);
   });
 
@@ -588,7 +588,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let obj = Obj.create();
-    await obj.get('parent').perform();
+    await obj.parent.perform();
   });
 
   test('race throws an assertion, if something other than an array is passed', async function (assert) {
@@ -629,7 +629,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('parent').perform();
+      obj.parent.perform();
     });
   });
 
@@ -718,7 +718,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
 
     await obj.someTask.cancelAll();
 
-    assert.ok(!obj.someTask.isRunning, 'expected not to be running');
+    assert.notOk(obj.someTask.isRunning, 'expected not to be running');
     assert.ok(isSettled(), 'expected to be settled');
   });
 });

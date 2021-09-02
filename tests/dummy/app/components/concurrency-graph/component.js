@@ -14,12 +14,14 @@ let Tracker = EmberObject.extend({
   taskInstance: null,
   isCanceled: oneWay('taskInstance.isCanceled'),
   state: computed('taskInstance.state', function () {
-    return capitalize(this.get('taskInstance.state'));
+    return capitalize(this.taskInstance.state);
   }),
   hasStarted: false,
 });
 
 export default class ConcurrencyGraphComponent extends Component {
+  tagName = '';
+
   task = null;
   trackers = null;
   timeElapsed = 0;

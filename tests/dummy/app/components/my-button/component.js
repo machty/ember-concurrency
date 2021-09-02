@@ -1,9 +1,12 @@
 import Component from '@ember/component';
+import { action } from '@ember/object';
 import { didCancel } from 'ember-concurrency';
 
 export default class MyButtonComponent extends Component {
-  click() {
-    let val = this.attrs.action(3, 4);
+  tagName = '';
+
+  @action onClick() {
+    let val = this.action(3, 4);
     if (!val) {
       return;
     }

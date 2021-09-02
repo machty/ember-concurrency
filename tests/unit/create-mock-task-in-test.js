@@ -1,4 +1,4 @@
-import { default as EmberObject, get } from '@ember/object';
+import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import { task } from 'ember-concurrency';
@@ -16,11 +16,9 @@ module('Unit: test environment', function () {
     }).create();
 
     run(() => {
-      return get(myMock, 'doAsync')
-        .perform()
-        .then(() => {
-          assert.ok(taskRan);
-        });
+      return myMock.doAsync.perform().then(() => {
+        assert.ok(taskRan);
+      });
     });
   });
 });

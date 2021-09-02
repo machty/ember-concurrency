@@ -14,7 +14,7 @@ module('Unit: task states - onState', function () {
       myTask: task(function* () {
         yield forever;
       }).onState((state, task) => {
-        assert.equal(obj.get('myTask'), task);
+        assert.equal(obj.myTask, task);
         assert.equal(task.context, obj);
         states.push(state);
       }),
@@ -22,8 +22,8 @@ module('Unit: task states - onState', function () {
 
     run(() => {
       obj = Obj.create();
-      taskInstance = obj.get('myTask').perform();
-      assert.equal(obj.get('myTask.isIdle'), true);
+      taskInstance = obj.myTask.perform();
+      assert.true(obj.myTask.isIdle);
     });
 
     assert.equal(states.length, 1);
@@ -36,7 +36,7 @@ module('Unit: task states - onState', function () {
       numPerformedInc: 1,
     });
 
-    run(() => obj.get('myTask').cancelAll());
+    run(() => obj.myTask.cancelAll());
 
     assert.equal(states.length, 1);
     assert.deepEqual(states.pop(), {
@@ -62,8 +62,8 @@ module('Unit: task states - onState', function () {
 
     run(() => {
       obj = Obj.create();
-      obj.get('myTask').perform();
-      assert.equal(obj.get('myTask.isIdle'), true);
+      obj.myTask.perform();
+      assert.true(obj.myTask.isIdle);
     });
   });
 
@@ -86,7 +86,7 @@ module('Unit: task states - onState', function () {
 
     run(() => {
       let obj = Obj.create();
-      obj.get('b').perform();
+      obj.b.perform();
     });
 
     assert.deepEqual(changes, []);
@@ -112,8 +112,8 @@ module('Unit: task states - onState', function () {
 
     run(() => {
       let obj = Obj.create();
-      obj.get('a').perform();
-      obj.get('b').perform();
+      obj.a.perform();
+      obj.b.perform();
     });
 
     assert.deepEqual(changes, ['a', 'gg2', 'gg3', 'a', 'gg2', 'gg3']);
@@ -130,11 +130,11 @@ module('Unit: task states - onState', function () {
     let taskInstances = [];
     run(() => {
       obj = Obj.create();
-      taskInstances.push(obj.get('a').perform());
+      taskInstances.push(obj.a.perform());
     });
 
     run(() => {
-      taskInstances.push(obj.get('a').perform());
+      taskInstances.push(obj.a.perform());
     });
 
     let states = taskInstances.map((ti) => ti.state);

@@ -38,7 +38,15 @@ module.exports = async function () {
         name: 'ember-lts-3.20',
         npm: {
           devDependencies: {
-            'ember-source': '~3.20.0',
+            'ember-source': '~3.20.5',
+          },
+        },
+      },
+      {
+        name: 'ember-lts-3.24',
+        npm: {
+          devDependencies: {
+            'ember-source': '~3.24.3',
           },
         },
       },
@@ -55,6 +63,7 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('beta'),
+            'ember-cli-fastboot': null, // until compatible version available
           },
         },
       },
@@ -63,6 +72,7 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('canary'),
+            'ember-cli-fastboot': null, // until compatible version available
           },
         },
       },

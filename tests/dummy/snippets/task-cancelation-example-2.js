@@ -11,7 +11,7 @@ export default class TaskCancelationExampleComponent extends Component {
   @action
   async fetchResults() {
     try {
-      let results = await this.get('queryServer').perform();
+      let results = await this.queryServer.perform();
       this.set('results', results);
     } catch(e) {
       if (!didCancel(e)) {

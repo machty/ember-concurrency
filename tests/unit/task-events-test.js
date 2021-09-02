@@ -45,7 +45,7 @@ module('Unit: task events', function () {
     run(() => {
       deferred = defer();
       obj = Obj.create();
-      taskInstance = obj.get('doThings').perform(deferred);
+      taskInstance = obj.doThings.perform(deferred);
     });
 
     assertEventFired(assert, 'started', startedStub, taskInstance);
@@ -86,7 +86,7 @@ module('Unit: task events', function () {
     run(() => {
       deferred = defer();
       obj = Obj.create();
-      taskInstance = obj.get('doThings').perform(deferred);
+      taskInstance = obj.doThings.perform(deferred);
       taskInstance.catch((e) => {
         assert.equal(e.message, 'someone unplugged the network');
       });
@@ -128,7 +128,7 @@ module('Unit: task events', function () {
     run(() => {
       deferred = defer();
       obj = Obj.create();
-      taskInstance = obj.get('doThings').perform(deferred);
+      taskInstance = obj.doThings.perform(deferred);
     });
 
     assertEventFired(assert, 'started', startedStub, taskInstance);
