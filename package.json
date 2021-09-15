@@ -52,7 +52,7 @@
     "ember-export-application-global": "^2.0.1",
     "ember-fn-helper-polyfill": "^1.0.2",
     "ember-load-initializers": "^2.1.2",
-    "ember-modifier": "^1.0.2",
+    "ember-modifier": "^2.1.2",
     "ember-notify": "^6.0.1",
     "ember-page-title": "^6.2.2",
     "ember-qunit": "^5.1.4",
