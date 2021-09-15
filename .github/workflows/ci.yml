@@ -142,6 +142,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.allow-failure }}
     needs: test
+    timeout-minutes: 15
 
     strategy:
       fail-fast: true
