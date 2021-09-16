@@ -3,13 +3,6 @@
 const getChannelURL = require('ember-source-channel-url');
 const { embroiderSafe, embroiderOptimized } = require('@embroider/test-setup');
 
-const ember4packages = {
-  // these are incompatible but are only used for rendering the docs site, and
-  // not needed for running the tests
-  'ember-cli-fastboot': null,
-  prember: null,
-};
-
 module.exports = async function () {
   return {
     useYarn: true,
@@ -62,7 +55,6 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('release'),
-            ...ember4packages,
           },
         },
       },
@@ -71,7 +63,6 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('beta'),
-            ...ember4packages,
           },
         },
       },
@@ -80,7 +71,6 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('canary'),
-            ...ember4packages,
           },
         },
       },

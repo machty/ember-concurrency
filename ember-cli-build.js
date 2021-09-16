@@ -5,13 +5,6 @@ const { maybeEmbroider } = require('@embroider/test-setup');
 const urls = require('./lib/prember-urls');
 
 module.exports = function (defaults) {
-  let includePolyfill = process.env.EMBER_ENV === 'production';
-
-  let babelOptions = {};
-  if (!includePolyfill) {
-    babelOptions.exclude = ['@babel/plugin-transform-regenerator'];
-  }
-
   let app = new EmberAddon(defaults, {
     minifyJS: {
       enabled: false,
@@ -24,14 +17,8 @@ module.exports = function (defaults) {
       useScss: true,
     },
 
-    babel: babelOptions,
-
     autoImport: {
       forbidEval: true,
-    },
-
-    'ember-cli-babel': {
-      includePolyfill: process.env.EMBER_ENV === 'production',
     },
 
     prember: {
