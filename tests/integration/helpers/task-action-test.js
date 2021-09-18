@@ -35,7 +35,7 @@ module('Integration | Helper | task action', function (hooks) {
 
     this.owner.register(
       'template:components/my-component',
-      hbs`{{inner-component id="my-component" curriedTask=(task (task myTask 1 2) 3)}}`
+      hbs`{{inner-component id="my-component" curriedTask=(task (task this.myTask 1 2) 3)}}`
     );
 
     await render(hbs`{{my-component}}`);

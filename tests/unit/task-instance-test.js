@@ -6,6 +6,19 @@ import { module, test } from 'qunit';
 import { makeAsyncError } from '../helpers/helpers';
 import { TaskInstanceExecutor } from 'ember-concurrency/-private/external/task-instance/executor';
 import { EMBER_ENVIRONMENT } from 'ember-concurrency/-private/ember-environment';
+import {
+  dependencySatisfies,
+  importSync,
+  macroCondition,
+} from '@embroider/macros';
+
+const getCurrentRunloop = function () {
+  if (macroCondition(dependencySatisfies('ember-source', '^4.0.0-beta.1'))) {
+    return importSync('@ember/runloop')._getCurrentRunLoop();
+  } else {
+    return run.currentRunLoop;
+  }
+};
 
 module('Unit: task instance', function (hooks) {
   let asyncError = makeAsyncError(hooks);
@@ -74,11 +87,11 @@ module('Unit: task instance', function (hooks) {
           return window.Promise.resolve(v * 2);
         })(123);
       });
-      assert.equal(ti.isFinished, false);
+      assert.false(ti.isFinished);
       assert.equal(ti.value, null);
 
       setTimeout(() => {
-        assert.equal(ti.isFinished, true);
+        assert.true(ti.isFinished);
         assert.equal(ti.value, 246);
         done();
       }, 1);
@@ -91,19 +104,19 @@ module('Unit: task instance', function (hooks) {
       let ti;
       run(() => {
         ti = wrap(function* (v) {
-          assert.ok(run.currentRunLoop);
+          assert.ok(getCurrentRunloop);
           v = yield window.Promise.resolve(v * 2);
-          assert.ok(run.currentRunLoop);
+          assert.ok(getCurrentRunloop);
           v = yield window.Promise.resolve(v * 2);
-          assert.ok(run.currentRunLoop);
+          assert.ok(getCurrentRunloop);
           return v;
         })(123);
       });
-      assert.equal(ti.isFinished, false);
+      assert.false(ti.isFinished);
       assert.equal(ti.value, null);
 
       setTimeout(() => {
-        assert.equal(ti.isFinished, true);
+        assert.true(ti.isFinished);
         assert.equal(ti.value, 492);
         done();
       }, 1);
@@ -121,11 +134,11 @@ module('Unit: task instance', function (hooks) {
           return v;
         })(123);
       });
-      assert.equal(ti.isFinished, false);
+      assert.false(ti.isFinished);
       assert.equal(ti.value, null);
 
       ti.then((value) => {
-        assert.equal(ti.isFinished, true);
+        assert.true(ti.isFinished);
         assert.equal(ti.value, 492);
         assert.equal(value, 492);
         done();
@@ -190,27 +203,27 @@ module('Unit: task instance', function (hooks) {
     expectCancelation(assert, taskInstance);
 
     run(() => {
-      assert.ok(!taskInstance.isCanceled);
+      assert.false(taskInstance.isCanceled);
 
       defer0.resolve();
       taskInstance.cancel();
-      assert.ok(!taskInstance.isFinished, 'task is not yet finished');
-      assert.ok(!taskInstance.isCanceled, 'task is not yet canceled');
-      assert.ok(!taskInstance.isError);
+      assert.false(taskInstance.isFinished, 'task is not yet finished');
+      assert.false(taskInstance.isCanceled, 'task is not yet canceled');
+      assert.false(taskInstance.isError);
     });
 
     run(null, defer1.resolve, 123);
-    assert.ok(!taskInstance.isFinished, 'task is not yet finished');
-    assert.ok(!taskInstance.isCanceled, 'task is not yet canceled');
+    assert.false(taskInstance.isFinished, 'task is not yet finished');
+    assert.false(taskInstance.isCanceled, 'task is not yet canceled');
     run(null, defer2.resolve, 456);
-    assert.ok(taskInstance.isCanceled);
-    assert.ok(!taskInstance.isSuccessful);
-    assert.ok(!taskInstance.isError);
+    assert.true(taskInstance.isCanceled);
+    assert.false(taskInstance.isSuccessful);
+    assert.false(taskInstance.isError);
     run(null, defer2.resolve, 456);
-    assert.ok(taskInstance.isFinished);
-    assert.ok(taskInstance.isCanceled);
-    assert.ok(!taskInstance.isSuccessful);
-    assert.ok(!taskInstance.isError);
+    assert.true(taskInstance.isFinished);
+    assert.true(taskInstance.isCanceled);
+    assert.false(taskInstance.isSuccessful);
+    assert.false(taskInstance.isError);
   });
 
   test('deferred start', function (assert) {
@@ -227,7 +240,7 @@ module('Unit: task instance', function (hooks) {
       });
     });
 
-    assert.ok(!taskInstance.hasStarted);
+    assert.false(taskInstance.hasStarted);
     run(() => {
       shouldBeRunning = true;
       taskInstance.start();
@@ -257,7 +270,7 @@ module('Unit: task instance', function (hooks) {
       taskInstance.cancel();
       taskInstance.start();
     });
-    assert.ok(!taskInstance.hasStarted);
+    assert.false(taskInstance.hasStarted);
     assert.ok(taskInstance.isCanceled);
   });
 
@@ -332,10 +345,10 @@ module('Unit: task instance', function (hooks) {
       });
     });
 
-    assert.ok(!caughtError);
-    assert.ok(!taskInstance.isFinished);
+    assert.notOk(caughtError);
+    assert.false(taskInstance.isFinished);
     run(null, defer0.resolve, 123);
-    assert.ok(!taskInstance.isFinished);
+    assert.false(taskInstance.isFinished);
     run(null, defer1.resolve, 456);
     assert.equal(caughtError.message, 'wat');
     assert.ok(taskInstance.isFinished);
@@ -436,11 +449,11 @@ module('Unit: task instance', function (hooks) {
     });
 
     assert.ok(didRun);
-    assert.equal(taskInstance.isFinished, true);
-    assert.equal(taskInstance.isCanceled, false);
+    assert.true(taskInstance.isFinished);
+    assert.false(taskInstance.isCanceled);
     run(taskInstance, 'cancel');
-    assert.equal(taskInstance.isFinished, true);
-    assert.equal(taskInstance.isCanceled, false);
+    assert.true(taskInstance.isFinished);
+    assert.false(taskInstance.isCanceled);
   });
 
   test('taskInstance.value is null until task instance completes successfully', function (assert) {
@@ -518,10 +531,10 @@ module('Unit: task instance', function (hooks) {
     });
 
     run(taskInstance, 'start');
-    assert.equal(taskInstance.isFinished, true);
-    assert.equal(taskInstance.isSuccessful, true);
-    assert.equal(taskInstance.isCanceled, false);
-    assert.equal(taskInstance.isError, false);
+    assert.true(taskInstance.isFinished);
+    assert.true(taskInstance.isSuccessful);
+    assert.false(taskInstance.isCanceled);
+    assert.false(taskInstance.isError);
   });
 
   test('taskInstance.isError is set when task throws an error', async function (assert) {
@@ -538,10 +551,10 @@ module('Unit: task instance', function (hooks) {
 
     run(taskInstance, 'start');
 
-    assert.equal(taskInstance.isFinished, true);
-    assert.equal(taskInstance.isSuccessful, false);
-    assert.equal(taskInstance.isCanceled, false);
-    assert.equal(taskInstance.isError, true);
+    assert.true(taskInstance.isFinished);
+    assert.false(taskInstance.isSuccessful);
+    assert.false(taskInstance.isCanceled);
+    assert.true(taskInstance.isError);
 
     await asyncError();
   });

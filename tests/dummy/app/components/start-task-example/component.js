@@ -4,6 +4,8 @@ import { action } from '@ember/object';
 import { task, timeout } from 'ember-concurrency';
 
 export default class StartTaskExampleComponent extends Component {
+  tagName = '';
+
   status = null;
 
   @task({ on: ['init', 'foo'] })

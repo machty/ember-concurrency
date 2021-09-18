@@ -4,6 +4,7 @@ import { A } from '@ember/array';
 import Evented from '@ember/object/evented';
 import { run, later } from '@ember/runloop';
 import EmberObject, { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import { settled } from '@ember/test-helpers';
 import Ember from 'ember';
 import { task, timeout, forever } from 'ember-concurrency';
@@ -116,9 +117,9 @@ module('Unit: task', function (hooks) {
     });
 
     let obj = run(() => Obj.create());
-    assert.ok(obj.get('doStuff.isRunning'));
+    assert.true(obj.doStuff.isRunning);
     run(() => destroy(obj));
-    assert.ok(!obj.get('doStuff.isRunning'));
+    assert.false(obj.doStuff.isRunning);
   });
 
   test('task.cancelAll cancels all running task instances', async function (assert) {
@@ -132,7 +133,7 @@ module('Unit: task', function (hooks) {
     });
 
     let obj = Obj.create();
-    let taskObj = obj.get('doStuff');
+    let taskObj = obj.doStuff;
     let instances = A([
       taskObj.perform(),
       taskObj.perform(),
@@ -158,7 +159,7 @@ module('Unit: task', function (hooks) {
     });
 
     let obj = Obj.create();
-    let taskObj = obj.get('doStuff');
+    let taskObj = obj.doStuff;
     await taskObj.perform();
 
     assert.equal(taskObj.lastSuccessful.value, 1);
@@ -180,7 +181,7 @@ module('Unit: task', function (hooks) {
     });
 
     let obj = Obj.create();
-    let taskObj = obj.get('doStuff');
+    let taskObj = obj.doStuff;
     await taskObj.perform();
 
     assert.equal(taskObj.lastSuccessful.value, 1);
@@ -188,8 +189,8 @@ module('Unit: task', function (hooks) {
     taskObj.perform();
     await taskObj.cancelAll({ resetState: true });
 
-    assert.ok(
-      !taskObj.lastSuccessful,
+    assert.notOk(
+      taskObj.lastSuccessful,
       'expected there to be no last successful value'
     );
   });
@@ -206,7 +207,7 @@ module('Unit: task', function (hooks) {
     let instances;
     run(() => {
       let obj = Obj.create();
-      let task = obj.get('doStuff');
+      let task = obj.doStuff;
       instances = A([task.perform(), task.perform(), task.perform()]);
     });
 
@@ -230,10 +231,10 @@ module('Unit: task', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('doStuff').perform();
+      obj.doStuff.perform();
     });
 
-    assert.ok(obj.get('doStuff.last.isCanceled'));
+    assert.ok(obj.doStuff.last.isCanceled);
   });
 
   test('task().cancelOn', function (assert) {
@@ -324,9 +325,7 @@ module('Unit: task', function (hooks) {
     let values = [];
     let Obj = EmberObject.extend({
       foo: 0,
-      bar: computed('foo', function () {
-        return this.foo;
-      }),
+      bar: reads('foo'),
 
       observingTask: task(function* () {
         values.push(this.bar);
@@ -364,11 +363,11 @@ module('Unit: task', function (hooks) {
     run(() => {
       obj = Obj.create();
       destroy(obj);
-      assert.equal(obj.get('myTask').perform().isDropped, true);
+      assert.true(obj.myTask.perform().isDropped);
     });
 
     run(() => {
-      assert.equal(obj.get('myTask').perform().isDropped, true);
+      assert.true(obj.myTask.perform().isDropped);
     });
   });
 
@@ -380,7 +379,7 @@ module('Unit: task', function (hooks) {
     });
 
     run(() => {
-      Obj.create().get('doStuff').perform(Object.create(null));
+      Obj.create().doStuff.perform(Object.create(null));
     });
   });
 
@@ -389,15 +388,12 @@ module('Unit: task', function (hooks) {
 
     let Obj = EmberObject.extend({
       doStuff: task(function* () {
-        assert.ok(
-          this.get('doStuff.isRunning'),
-          'Expected to see self running'
-        );
+        assert.true(this.doStuff.isRunning, 'Expected to see self running');
       }),
     });
 
     run(() => {
-      Obj.create().get('doStuff').perform();
+      Obj.create().doStuff.perform();
     });
   });
 
@@ -426,7 +422,7 @@ module('Unit: task', function (hooks) {
 
     run(() => {
       let obj = Obj.create();
-      obj.get('a').perform();
+      obj.a.perform();
     });
     assert.ok(true);
   });
@@ -447,7 +443,7 @@ module('Unit: task', function (hooks) {
 
     run(() => {
       let obj = Obj.create();
-      obj.get('a').perform();
+      obj.a.perform();
       destroy(obj);
     });
 
@@ -476,7 +472,7 @@ module('Unit: task', function (hooks) {
 
     run(() => {
       let obj = Obj.create();
-      obj.get('a').perform();
+      obj.a.perform();
       destroy(obj);
     });
 
@@ -502,16 +498,16 @@ module('Unit: task', function (hooks) {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj.get('a').perform();
+      obj.a.perform();
 
-      assert.ok(obj.get('a.isRunning'));
-      assert.ok(obj.get('b.isRunning'));
+      assert.true(obj.a.isRunning);
+      assert.true(obj.b.isRunning);
 
-      obj.get('a').cancelAll();
+      obj.a.cancelAll();
     });
 
-    assert.ok(!obj.get('a.isRunning'));
-    assert.ok(obj.get('b.isRunning'));
+    assert.false(obj.a.isRunning);
+    assert.true(obj.b.isRunning);
   });
 
   test('.linked() throws an error if called outside of a task', function (assert) {
@@ -523,7 +519,7 @@ module('Unit: task', function (hooks) {
 
     run(() => {
       try {
-        Obj.create().get('a').linked();
+        Obj.create().a.linked();
       } catch (e) {
         assert.equal(
           e.message,
@@ -549,7 +545,7 @@ module('Unit: task', function (hooks) {
     });
 
     run(() => {
-      Obj.create().get('a').perform();
+      Obj.create().a.perform();
     });
 
     assert.deepEqual(warnings, [
@@ -559,6 +555,7 @@ module('Unit: task', function (hooks) {
     ]);
   });
 
+  // eslint-disable-next-line qunit/require-expect
   test('ES5 getter syntax works', function (assert) {
     let Obj = EmberObject.extend({
       es5getterSyntaxSupported: computed(function () {

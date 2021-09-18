@@ -27,13 +27,17 @@
 <h5>Live Example</h5>
 
 <p>
-  (Please mind the GitHub API quota :)
+  Please mind the GitHub API quota :)
 </p>
 
 <p>
   {{! BEGIN-SNIPPET debounced-search-with-cancelation-template }}
-  <input type="text" {{on "input" (perform this.searchRepo value="target.value")}}
-         placeholder="Search GitHub...">
+  <label>
+    Search GitHub...
+
+    <input type="text" {{on "input" (perform this.searchRepo value="target.value")}}
+           placeholder="e.g. machty/ember-concurrency">
+  </label>
 
   {{#if this.searchRepo.isRunning}}
     <LoadingSpinner />

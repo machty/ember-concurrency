@@ -8,7 +8,7 @@ export default class TaskCancelationExampleComponent extends Component {
   }
 
   @task *fetchResults() {
-    let results = yield this.get('queryServer').perform();
+    let results = yield this.queryServer.perform();
     this.set('results', results);
   }
 }

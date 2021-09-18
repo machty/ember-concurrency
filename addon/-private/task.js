@@ -1,5 +1,5 @@
 import { setOwner, getOwner } from '@ember/application';
-import EmberObject, { get } from '@ember/object';
+import EmberObject, { get, set } from '@ember/object';
 import { isDestroying, registerDestructor } from '@ember/destroyable';
 import { Task as BaseTask } from './external/task/task';
 import { TaskInstance } from './task-instance';
@@ -311,6 +311,7 @@ export class EncapsulatedTask extends Task {
     let encapsulatedTaskImplClass = this._encapsulatedTaskImplClass;
 
     if (!encapsulatedTaskImplClass) {
+      // eslint-disable-next-line ember/no-classic-classes
       encapsulatedTaskImplClass = EmberObject.extend(this.taskObj, {
         unknownProperty(key) {
           let currentInstance = this[currentTaskInstanceSymbol];
@@ -370,6 +371,14 @@ export class EncapsulatedTask extends Task {
             ? obj[prop]
             : get(encapsulatedTaskImpl, prop.toString());
         },
+        set(obj, prop, value) {
+          if (prop in obj) {
+            obj[prop] = value;
+          } else {
+            set(encapsulatedTaskImpl, prop.toString(), value);
+          }
+          return true;
+        },
         has(obj, prop) {
           return prop in obj || prop in encapsulatedTaskImpl;
         },
@@ -392,9 +401,7 @@ export class EncapsulatedTask extends Task {
             }
           }
 
-          return prop in obj
-            ? Reflect.defineProperty(obj, prop, descriptor)
-            : Reflect.defineProperty(encapsulatedTaskImpl, prop, descriptor);
+          return Reflect.defineProperty(encapsulatedTaskImpl, prop, descriptor);
         },
         getOwnPropertyDescriptor(obj, prop) {
           return prop in obj

@@ -48,6 +48,7 @@
 {{/if}}
 {{! END-SNIPPET }}
 
+{{! template-lint-disable no-unbalanced-curlies }}
 <p>
   <em>
     Tip: You can also use the <code>.numRunning</code> property to get
@@ -55,6 +56,7 @@
     e.g. <code>\{{myTask.numRunning}}</code>: {{this.myTask.numRunning}}
   </em>
 </p>
+{{! template-lint-enable no-unbalanced-curlies }}
 
 <CodeSnippet @name="cancelation-template.hbs" />
 <CodeSnippet @name="cancelation.js" />

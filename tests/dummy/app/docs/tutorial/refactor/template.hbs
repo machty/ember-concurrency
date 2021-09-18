@@ -32,10 +32,12 @@
   we define a <code>findStores</code> <em>task</em>.
 </p>
 
+{{! template-lint-disable no-unbalanced-curlies }}
 <p>
   Second, in the template, instead of using <code>onclick=\{{action 'findStores'}}</code>,
   we use <code>onclick=\{{perform findStores}}</code>.
 </p>
+{{! template-lint-enable no-unbalanced-curlies }}
 
 <p>
   Lastly, instead of using an <code>async</code> function with <code>await</code>

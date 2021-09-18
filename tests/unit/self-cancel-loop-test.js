@@ -25,7 +25,7 @@ module('Unit: self-cancel loops', function (hooks) {
 
     let Obj = EmberObject.extend({
       a: task(function* () {
-        yield this.get('child.b').perform();
+        yield this.child.b.perform();
       }),
 
       b: task(function* () {
@@ -33,7 +33,7 @@ module('Unit: self-cancel loops', function (hooks) {
       }),
 
       c: task(function* () {
-        yield this.get('child.b').linked().perform();
+        yield this.child.b.linked().perform();
       }),
 
       child: null,
@@ -44,13 +44,13 @@ module('Unit: self-cancel loops', function (hooks) {
       child = Obj.create();
       canceledParent = Obj.create({ child });
       destroyedParent = Obj.create({ child });
-      canceledParent.get('a').perform();
-      destroyedParent.get('a').perform();
+      canceledParent.a.perform();
+      destroyedParent.a.perform();
     });
 
     run(() => {
       destroy(destroyedParent);
-      canceledParent.get('a').cancelAll();
+      canceledParent.a.cancelAll();
     });
 
     assert.deepEqual(warnings, [
@@ -63,7 +63,7 @@ module('Unit: self-cancel loops', function (hooks) {
     run(() => {
       child = Obj.create();
       destroyedParent = Obj.create({ child });
-      destroyedParent.get('c').perform();
+      destroyedParent.c.perform();
     });
 
     run(() => {

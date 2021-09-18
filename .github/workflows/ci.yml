@@ -10,6 +10,8 @@ on:
       # npm version tags
       - /^v\d+.\d+.\d+(?:-(?:alpha|beta|rc)\.\d+)?/
   pull_request:
+  schedule:
+    - cron: '0 4 * * 6' # Saturdays at 4am
 
 jobs:
   lint:
@@ -142,6 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.allow-failure }}
     needs: test
+    timeout-minutes: 15
 
     strategy:
       fail-fast: true
@@ -151,10 +154,13 @@ jobs:
         - ember-lts-3.12
         - ember-lts-3.16
         - ember-lts-3.20
+        - ember-lts-3.24
         - ember-release
+        - ember-default
         - typescript-3.7
         - typescript-3.9
-        - ember-default
+        - embroider-safe
+        - embroider-optimized
         allow-failure: [false]
         include:
           - ember-try-scenario: ember-beta

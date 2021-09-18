@@ -2,9 +2,9 @@
 
 <p class="task-status">{{this.status}}</p>
 
-<MyButton @action={{perform this.myTask 1 2}} @class="perform-task">Perform</MyButton>
+<MyButton @action={{perform this.myTask 1 2}} class="perform-task">Perform</MyButton>
 <button {{on "click" (cancel-all this.myTask)}} type="button" class="cancel-task">Cancel</button>
-<MyButton @action={{perform this.returnValue}} @class="value-task">Return a Value</MyButton>
+<MyButton @action={{perform this.returnValue}} class="value-task">Return a Value</MyButton>
 
 <button {{on "click" (perform this.maybeNullTask)}} class="maybe-null-task" type="button">Maybe Null Task</button>
 <button {{on "click" this.setupTask}} class="setup-task" type="button">Setup Task</button>

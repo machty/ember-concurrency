@@ -1,6 +1,6 @@
 import { run } from '@ember/runloop';
 import RSVP from 'rsvp';
-import EmberObject from '@ember/object';
+import EmberObject, { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
@@ -25,12 +25,9 @@ module('Unit: EncapsulatedTask', function () {
     let obj;
     run(() => {
       obj = Obj.create();
-      obj
-        .get('myTask')
-        .perform(1, 2, 3)
-        .then((v) => {
-          assert.equal(v, 123);
-        });
+      obj.myTask.perform(1, 2, 3).then((v) => {
+        assert.equal(v, 123);
+      });
     });
     run(defer, 'resolve');
   });
@@ -52,12 +49,12 @@ module('Unit: EncapsulatedTask', function () {
     });
 
     let obj = Obj.create();
-    const taskInstance = obj.get('myTask').perform(1, 2, 3);
-    assert.equal(taskInstance.someProp, false);
+    const taskInstance = obj.myTask.perform(1, 2, 3);
+    assert.false(taskInstance.someProp);
 
     defer.resolve();
     await taskInstance;
-    assert.equal(taskInstance.someProp, true);
+    assert.true(taskInstance.someProp);
   });
 
   test('encapsulated tasks can access host context', async function (assert) {
@@ -79,7 +76,7 @@ module('Unit: EncapsulatedTask', function () {
     });
 
     let obj = Obj.create();
-    const taskInstance = obj.get('myTask').perform();
+    const taskInstance = obj.myTask.perform();
 
     defer.resolve();
     const value = await taskInstance;
@@ -103,12 +100,12 @@ module('Unit: EncapsulatedTask', function () {
     });
 
     let obj = Obj.create();
-    const taskInstance = obj.get('myTask').perform();
-    assert.equal(taskInstance.amIRunning, true);
+    const taskInstance = obj.myTask.perform();
+    assert.true(taskInstance.amIRunning);
 
     defer.resolve();
     await taskInstance;
-    assert.equal(taskInstance.amIRunning, false);
+    assert.false(taskInstance.amIRunning);
   });
 
   decoratorTest(
@@ -137,6 +134,43 @@ module('Unit: EncapsulatedTask', function () {
         });
       });
       run(defer, 'resolve');
+    }
+  );
+
+  decoratorTest(
+    'native ES class encapsulated tasks can modify their state',
+    async function (assert) {
+      assert.expect(4);
+
+      let defer;
+
+      class FakeComponent {
+        @task myTask = {
+          someProp: 0,
+
+          doubled: computed('someProp', function () {
+            return this.someProp * 2;
+          }),
+
+          *perform() {
+            defer = RSVP.defer();
+            let whatProp = this.someProp;
+            yield defer.promise;
+            // eslint-disable-next-line ember/classic-decorator-no-classic-methods
+            this.set('someProp', whatProp + 1);
+          },
+        };
+      }
+
+      let obj = new FakeComponent();
+      const taskInstance = obj.myTask.perform(1, 2, 3);
+      assert.equal(taskInstance.someProp, 0);
+      assert.equal(taskInstance.doubled, 0);
+
+      defer.resolve();
+      await taskInstance;
+      assert.equal(taskInstance.someProp, 1);
+      assert.equal(taskInstance.doubled, 2);
     }
   );
 });

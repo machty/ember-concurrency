@@ -28,6 +28,8 @@ function loopingAjaxTask(id) {
 }
 
 export default class TaskLifecycleEventsExample extends Component {
+  tagName = '';
+
   logs = [];
 
   constructor() {

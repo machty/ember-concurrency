@@ -56,6 +56,8 @@ class Geolocation {
 }
 
 export default class SharedTutorialComponent extends Component {
+  tagName = '';
+
   logs = A();
   formData = {
     user: 'machty',

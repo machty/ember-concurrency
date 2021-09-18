@@ -143,6 +143,20 @@ th, td {
   }
 }
 
+.concurrency-graph {
+  width: 100%;
+  padding: 5px;
+}
+
+.concurrency-graph-tracker {
+  height: 20px;
+}
+
+.concurrency-graph-tracker:hover {
+  stroke-width: 3px;
+  font-weight: 700;
+}
+
 .clickable {
   @extend .button-primary;
 }

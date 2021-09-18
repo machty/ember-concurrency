@@ -60,10 +60,6 @@ defineModifier('on', (factory, eventNames) =>
 );
 
 export class TaskFactory extends BaseTaskFactory {
-  _cancelEventNames = [];
-  _eventNames = [];
-  _observes = [];
-
   createTask(context) {
     assert(
       `Cannot create task if a task definition is not provided as generator function or encapsulated task.`,
@@ -100,16 +96,19 @@ export class TaskFactory extends BaseTaskFactory {
   }
 
   addCancelEvents(...cancelEventNames) {
+    this._cancelEventNames = this._cancelEventNames || [];
     this._cancelEventNames.push(...cancelEventNames);
     return this;
   }
 
   addObserverKeys(...keys) {
+    this._observes = this._observes || [];
     this._observes.push(...keys);
     return this;
   }
 
   addPerformEvents(...eventNames) {
+    this._eventNames = this._eventNames || [];
     this._eventNames.push(...eventNames);
     return this;
   }

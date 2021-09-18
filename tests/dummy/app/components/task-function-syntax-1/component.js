@@ -2,6 +2,7 @@ import Component from '@ember/component';
 import { task, timeout } from 'ember-concurrency';
 
 export default class TaskFunctionSyntaxComponent1 extends Component {
+  tagName = '';
   status = null;
 
   // BEGIN-SNIPPET task-function-syntax-1

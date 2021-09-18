@@ -1,8 +1,10 @@
 import { module, test, skip } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 import { visit } from '@ember/test-helpers';
-import { run } from '@ember/runloop';
+import { run, _cancelTimers } from '@ember/runloop';
 import { FLATTENED_TABLE_OF_CONTENTS } from 'dummy/docs/controller';
+
+const cancelTimers = _cancelTimers || run.cancelTimers;
 
 module('Acceptance | root', function (hooks) {
   setupApplicationTest(hooks);
@@ -19,11 +21,11 @@ module('Acceptance | root', function (hooks) {
       visit(url);
       await new Promise((r) => {
         setTimeout(() => {
-          run.cancelTimers();
+          cancelTimers();
           r();
         }, 200);
       });
-      run.cancelTimers();
+      cancelTimers();
     });
   });
 });

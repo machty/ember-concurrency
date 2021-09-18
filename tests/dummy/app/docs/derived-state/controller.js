@@ -30,7 +30,11 @@ export default class DerivedStateController extends Controller {
 
   tasks = ['doStuff', 'doStuffDrop', 'doStuffEnqueue', 'doStuffRestartable'];
 
-  @computed('showLessCommon')
+  @computed(
+    'commonTaskProperties',
+    'lessCommonTaskProperties',
+    'showLessCommon'
+  )
   get taskProperties() {
     return [
       ...this.commonTaskProperties,

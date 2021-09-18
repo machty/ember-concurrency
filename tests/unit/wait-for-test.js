@@ -63,7 +63,7 @@ module(
 
       run(() => {
         let obj = Obj.create();
-        obj.get('task').perform();
+        obj.task.perform();
         assert.notOk(taskCompleted, 'Task should not have completed');
       });
 
@@ -83,9 +83,9 @@ module(
 
       run(() => {
         let obj = Obj.create();
-        obj.get('task').perform();
+        obj.task.perform();
         assert.notOk(taskCompleted, 'Task should not have completed');
-        obj.get('task').cancelAll();
+        obj.task.cancelAll();
       });
 
       assert.notOk(taskCompleted, 'Task should not have completed');
@@ -112,7 +112,7 @@ module(
 
       run(() => {
         let obj = Obj.create();
-        obj.get('task').perform();
+        obj.task.perform();
         assert.notOk(taskErrored, 'Task should have errored');
       });
     });
@@ -131,7 +131,7 @@ module(
       let obj;
       run(() => {
         obj = Obj.create();
-        obj.get('task').perform();
+        obj.task.perform();
       });
 
       run(() => {
@@ -156,13 +156,13 @@ module(
       let obj;
       run(() => {
         obj = Obj.create();
-        obj.get('task').perform();
+        obj.task.perform();
       });
 
       run(() => {
         assert.notOk(taskCompleted, 'Task should not have completed');
         assert.ok(obj.has('foo'), 'Object has the event listener');
-        obj.get('task').cancelAll();
+        obj.task.cancelAll();
         obj.trigger('foo');
       });
 
@@ -187,7 +187,7 @@ module(
 
       run(() => {
         obj = Obj.create();
-        obj.get('task').perform();
+        obj.task.perform();
       });
 
       run(() => {
@@ -219,12 +219,12 @@ module(
 
       run(() => {
         obj = Obj.create();
-        obj.get('task').perform();
+        obj.task.perform();
       });
 
       run(() => {
         assert.notOk(taskCompleted, 'Task should not have completed');
-        obj.get('task').cancelAll();
+        obj.task.cancelAll();
         element.dispatchEvent(new CustomEvent('foo'));
       });
 
@@ -248,7 +248,7 @@ module(
       let obj;
       run(() => {
         obj = Obj.create();
-        obj.get('task').perform();
+        obj.task.perform();
       });
 
       run(() => {
@@ -276,13 +276,13 @@ module(
       let obj;
       run(() => {
         obj = Obj.create();
-        obj.get('task').perform();
+        obj.task.perform();
       });
 
       run(() => {
         assert.notOk(taskCompleted, 'Task should not have completed');
         assert.ok(obj.has('foo'), 'Object has the event listener');
-        obj.get('task').cancelAll();
+        obj.task.cancelAll();
         obj.trigger('foo');
       });
 
@@ -308,7 +308,7 @@ module(
       });
 
       let obj = Obj.create();
-      obj.get('task').perform();
+      obj.task.perform();
 
       obj.set('a', 2);
       await settled();
@@ -335,7 +335,7 @@ module(
       });
 
       let obj = Obj.create();
-      obj.get('task').perform();
+      obj.task.perform();
 
       await settled();
     });
@@ -352,18 +352,18 @@ module(
       });
 
       let obj = Obj.create();
-      obj.get('task').perform();
+      obj.task.perform();
 
       obj.set('a', false);
       await settled();
 
       obj.set('a', null);
       await settled();
-      assert.ok(obj.get('task.isRunning'));
+      assert.ok(obj.task.isRunning);
 
       obj.set('a', 'hey');
       await settled();
-      assert.ok(!obj.get('task.isRunning'));
+      assert.notOk(obj.task.isRunning);
     });
 
     test('passing a non-function value to waitForProperty will cause it to wait until the property equals that value', async function (assert) {
@@ -382,7 +382,7 @@ module(
       });
 
       let obj = Obj.create();
-      obj.get('task').perform();
+      obj.task.perform();
 
       obj.set('a', 1);
       await settled();
@@ -403,7 +403,7 @@ module(
 
       obj.set('a', null);
       await settled();
-      assert.ok(obj.get('task.isIdle'));
+      assert.ok(obj.task.isIdle);
     });
 
     test('exposes a Promise interface that works with promise helpers', function (assert) {
@@ -440,6 +440,7 @@ module(
         class Obj {
           a = 1;
 
+          // eslint-disable-next-line ember/no-computed-properties-in-native-classes
           @computed('a')
           get b() {
             return this.a;
