@@ -51,9 +51,7 @@ export function defineModifier(name, callback) {
 }
 
 export class TaskFactory {
-  _cancelEventNames = [];
   _debug = null;
-  _eventNames = [];
   _hasSetConcurrencyConstraint = false;
   _hasSetBufferPolicy = false;
   _hasEnabledEvents = false;
