@@ -1,11 +1,13 @@
-<div id={{this.id}} class="code-template-toggle">
-  <div class="code-template-toggle-section {{if this.showCode "hidden"}}">
-    <CodeSnippet @name={{@templateSnippet}} />
+<div id={{this.id}}>
+  <div class="code-template-toggle">
+    <div class="code-template-toggle-section {{if this.showCode "hidden"}}">
+      <CodeSnippet @name={{@templateSnippet}} />
+    </div>
+    <div class="code-template-toggle-section {{if this.showCode "" "hidden"}}">
+      <CodeSnippet @name={{@codeSnippet}} />
+    </div>
+    <span role="button" class="button code-template-toggle-button" {{on "click" this.toggle}}>
+      {{this.toggleDescription}}
+    </span>
   </div>
-  <div class="code-template-toggle-section {{if this.showCode "" "hidden"}}">
-    <CodeSnippet @name={{@codeSnippet}} />
-  </div>
-  <span role="button" class="button code-template-toggle-button" {{on "click" this.toggle}}>
-    {{this.toggleDescription}}
-  </span>
 </div>
