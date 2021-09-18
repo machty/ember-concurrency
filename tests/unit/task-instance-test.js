@@ -6,6 +6,19 @@ import { module, test } from 'qunit';
 import { makeAsyncError } from '../helpers/helpers';
 import { TaskInstanceExecutor } from 'ember-concurrency/-private/external/task-instance/executor';
 import { EMBER_ENVIRONMENT } from 'ember-concurrency/-private/ember-environment';
+import {
+  dependencySatisfies,
+  importSync,
+  macroCondition,
+} from '@embroider/macros';
+
+const getCurrentRunloop = function () {
+  if (macroCondition(dependencySatisfies('ember-source', '^4.0.0-beta.1'))) {
+    return importSync('@ember/runloop')._getCurrentRunLoop();
+  } else {
+    return run.currentRunLoop;
+  }
+};
 
 module('Unit: task instance', function (hooks) {
   let asyncError = makeAsyncError(hooks);
@@ -91,11 +104,11 @@ module('Unit: task instance', function (hooks) {
       let ti;
       run(() => {
         ti = wrap(function* (v) {
-          assert.ok(run.currentRunLoop);
+          assert.ok(getCurrentRunloop);
           v = yield window.Promise.resolve(v * 2);
-          assert.ok(run.currentRunLoop);
+          assert.ok(getCurrentRunloop);
           v = yield window.Promise.resolve(v * 2);
-          assert.ok(run.currentRunLoop);
+          assert.ok(getCurrentRunloop);
           return v;
         })(123);
       });

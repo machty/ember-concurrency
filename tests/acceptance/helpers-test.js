@@ -1,7 +1,7 @@
 import { click, visit, currentURL } from '@ember/test-helpers';
 import Ember from 'ember';
 import { setupApplicationTest } from 'ember-qunit';
-import { module, test } from 'qunit';
+import { module, skip, test } from 'qunit';
 import {
   macroCondition,
   dependencySatisfies,
@@ -50,7 +50,10 @@ module('Acceptance | helpers', function (hooks) {
     await click('.set-value-option-task');
   });
 
-  test('passing non-Tasks to (perform) helper only errors when invoked', async function (assert) {
+  // FIXME: for Ember 4.x, is there a suitable API for capturing assertion failures?
+  (macroCondition(dependencySatisfies('ember-source', '^4.0.0-beta.1'))
+    ? skip
+    : test)('passing non-Tasks to (perform) helper only errors when invoked', async function (assert) {
     assert.expect(2);
 
     await visit('/helpers-test');

@@ -4,6 +4,7 @@ import { A } from '@ember/array';
 import Evented from '@ember/object/evented';
 import { run, later } from '@ember/runloop';
 import EmberObject, { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import { settled } from '@ember/test-helpers';
 import Ember from 'ember';
 import { task, timeout, forever } from 'ember-concurrency';
@@ -324,7 +325,7 @@ module('Unit: task', function (hooks) {
     let values = [];
     let Obj = EmberObject.extend({
       foo: 0,
-      bar: computed.reads('foo'),
+      bar: reads('foo'),
 
       observingTask: task(function* () {
         values.push(this.bar);
