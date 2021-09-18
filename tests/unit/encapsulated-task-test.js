@@ -144,7 +144,7 @@ module('Unit: EncapsulatedTask', function () {
 
       let defer;
 
-      class FakeComponent extends EmberObject {
+      class FakeComponent {
         @task myTask = {
           someProp: 0,
 
