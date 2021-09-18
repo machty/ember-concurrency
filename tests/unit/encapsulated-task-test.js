@@ -1,6 +1,6 @@
 import { run } from '@ember/runloop';
 import RSVP from 'rsvp';
-import EmberObject from '@ember/object';
+import EmberObject, { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
@@ -134,6 +134,43 @@ module('Unit: EncapsulatedTask', function () {
         });
       });
       run(defer, 'resolve');
+    }
+  );
+
+  decoratorTest(
+    'native ES class encapsulated tasks can modify their state',
+    async function (assert) {
+      assert.expect(4);
+
+      let defer;
+
+      class FakeComponent extends EmberObject {
+        @task myTask = {
+          someProp: 0,
+
+          doubled: computed('someProp', function () {
+            return this.someProp * 2;
+          }),
+
+          *perform() {
+            defer = RSVP.defer();
+            let whatProp = this.someProp;
+            yield defer.promise;
+            // eslint-disable-next-line ember/classic-decorator-no-classic-methods
+            this.set('someProp', whatProp + 1);
+          },
+        };
+      }
+
+      let obj = new FakeComponent();
+      const taskInstance = obj.myTask.perform(1, 2, 3);
+      assert.equal(taskInstance.someProp, 0);
+      assert.equal(taskInstance.doubled, 0);
+
+      defer.resolve();
+      await taskInstance;
+      assert.equal(taskInstance.someProp, 1);
+      assert.equal(taskInstance.doubled, 2);
     }
   );
 });
