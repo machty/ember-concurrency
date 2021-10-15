@@ -37,7 +37,6 @@ class RefreshState {
   }
 
   onStart(taskInstance) {
-    // a.k.a. lastStarted
     this.attrs.last = taskInstance;
   }
 

@@ -66,7 +66,6 @@ interface TaskModifier {
 type TaskState = {
   last: TaskInstance<any> | null;
   lastRunning: TaskInstance<any> | null;
-  lastStarted: TaskInstance<any> | null;
   lastPerformed: TaskInstance<any> | null;
   lastSuccessful: TaskInstance<any> | null;
   lastComplete: TaskInstance<any> | null;
