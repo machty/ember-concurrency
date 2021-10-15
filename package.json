@@ -78,6 +78,7 @@
     "qunit-dom": "^1.6.0",
     "sass": "^1.22.12",
     "sinon": "^11.0.0",
+    "testem": "^3.4.2",
     "typescript": "~3.9.5"
   },
   "keywords": [
@@ -101,6 +102,9 @@
     "ember-cli-htmlbars": "^5.7.1",
     "ember-compatibility-helpers": "^1.2.0",
     "ember-destroyable-polyfill": "^2.0.2"
+  },
+  "resolutions": {
+    "socket.io": "4.2.0"
   },
   "ember": {
     "edition": "octane"
