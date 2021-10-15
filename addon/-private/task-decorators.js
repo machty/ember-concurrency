@@ -148,7 +148,7 @@ export const lastValue = decoratorWithParams(
  * that you can apply to a task.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -169,7 +169,7 @@ export const lastValue = decoratorWithParams(
  * @param {object?} [options={}] Task modifier options
  * @param {string|string[]} [options.cancelOn] Events to cancel task on. Applies only to `&#64;ember/component`
  * @param {boolean} [options.enqueue] Sets `enqueue` modifier on task if `true`
- * @param {boolean} [options.evented] Enables [task lifecycle events](/docs/task-lifecycle-events) for this Task, if `true`
+ * @param {boolean} [options.evented] Enables [task lifecycle events](/docs/advanced/lifecycle-events) for this Task, if `true`
  * @param {boolean} [options.debug] Enables task debugging if `true`
  * @param {boolean} [options.drop] Sets `drop` modifier on task if `true`
  * @param {string} [options.group] Associates task with the group specified
@@ -191,7 +191,7 @@ export const task = createDecorator(taskFromPropertyDescriptor);
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -224,7 +224,7 @@ export const dropTask = createDecorator(taskFromPropertyDescriptor, {
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -257,7 +257,7 @@ export const enqueueTask = createDecorator(taskFromPropertyDescriptor, {
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -290,7 +290,7 @@ export const keepLatestTask = createDecorator(taskFromPropertyDescriptor, {
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by decorating an object that defines a `perform` generator
  * method.
  *

@@ -30,15 +30,17 @@ export const TABLE_OF_CONTENTS = [
   { route: 'docs.child-tasks', title: 'Child Tasks' },
   { route: 'docs.task-groups', title: 'Task Groups' },
   { route: 'docs.derived-state', title: 'Derived State' },
-  { route: 'docs.encapsulated-task', title: 'Encapsulated Tasks' },
-  {
-    route: 'docs.yieldables',
-    title: 'Yieldables / Controlling Execution',
-    children: [{ route: 'docs.events', title: 'Awaiting Events / Conditions' }],
-  },
-  { route: 'docs.task-lifecycle-events', title: 'Lifecycle Events' },
+  { route: 'docs.events', title: 'Awaiting Events / Conditions' },
   { route: 'docs.testing-debugging', title: 'Testing & Debugging' },
   { route: 'docs.faq', title: 'FAQ & Fact Sheet' },
+
+  { section: 'Advanced' },
+  { route: 'docs.advanced.encapsulated-task', title: 'Encapsulated Tasks' },
+  { route: 'docs.advanced.lifecycle-events', title: 'Lifecycle Events' },
+  {
+    route: 'docs.advanced.yieldables',
+    title: 'Yieldables / Controlling Execution',
+  },
 
   { section: 'Examples' },
   { route: 'docs.examples.loading-ui', title: 'Loading UI' },

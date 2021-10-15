@@ -792,7 +792,7 @@ type MethodOrPropertyDecoratorWithParams<Params extends unknown[]> =
  * that you can apply to a task.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -837,7 +837,7 @@ export function task(target: Object, propertyKey: string): void;
  * operations.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by passing in an object that defined a `perform` generator
  * method.
  *
@@ -886,7 +886,7 @@ export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -925,7 +925,7 @@ export function dropTask(target: Object, propertyKey: string): void;
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -964,7 +964,7 @@ export function enqueueTask(target: Object, propertyKey: string): void;
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -1003,7 +1003,7 @@ export function keepLatestTask(target: Object, propertyKey: string): void;
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
