@@ -138,7 +138,7 @@ export class TaskFactory {
    * Returns a modifier callback with the given name bound to this TaskFactory,
    * if registered.
    *
-   * @public
+   * @protected
    * @param {string} name
    * @returns Function
    */

@@ -1,17 +1,26 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line ember/no-computed-properties-in-native-classes
 import ComputedProperty from '@ember/object/computed';
 
 export type TaskGenerator<T> = Generator<any, T, any>;
 
-export type TaskFunction<T, Args extends any[]> = (...args: Args) => TaskGenerator<T>;
+export type TaskFunction<T, Args extends any[]> = (
+  ...args: Args
+) => TaskGenerator<T>;
 
-export type TaskFunctionArgs<T extends TaskFunction<any, any[]>> =
-  T extends (...args: infer A) => TaskGenerator<any> ? A : [];
+export type TaskFunctionArgs<T extends TaskFunction<any, any[]>> = T extends (
+  ...args: infer A
+) => TaskGenerator<any>
+  ? A
+  : [];
 
 export type TaskFunctionReturnType<T extends TaskFunction<any, any[]>> =
   T extends (...args: any[]) => TaskGenerator<infer R> ? R : unknown;
 
-export type TaskForTaskFunction<T extends TaskFunction<any, any[]>> =
-  Task<TaskFunctionReturnType<T>, TaskFunctionArgs<T>>;
+export type TaskForTaskFunction<T extends TaskFunction<any, any[]>> = Task<
+  TaskFunctionReturnType<T>,
+  TaskFunctionArgs<T>
+>;
 
 export type TaskInstanceForTaskFunction<T extends TaskFunction<any, any[]>> =
   TaskInstance<TaskFunctionReturnType<T>>;
@@ -20,25 +29,36 @@ export interface EncapsulatedTaskDescriptor<T, Args extends any[]> {
   perform(...args: Args): TaskGenerator<T>;
 }
 
-export type EncapsulatedTaskDescriptorArgs<T extends EncapsulatedTaskDescriptor<any, any[]>> =
-  T extends { perform(...args: infer A): TaskGenerator<any> } ? A : [];
+export type EncapsulatedTaskDescriptorArgs<
+  T extends EncapsulatedTaskDescriptor<any, any[]>
+> = T extends { perform(...args: infer A): TaskGenerator<any> } ? A : [];
 
-export type EncapsulatedTaskDescriptorReturnType<T extends EncapsulatedTaskDescriptor<any, any[]>> =
-  T extends { perform(...args: any[]): TaskGenerator<infer R> } ? R : unknown;
+export type EncapsulatedTaskDescriptorReturnType<
+  T extends EncapsulatedTaskDescriptor<any, any[]>
+> = T extends { perform(...args: any[]): TaskGenerator<infer R> } ? R : unknown;
 
-export type EncapsulatedTaskState<T extends object> = Omit<T, 'perform' | keyof TaskInstance<any>>;
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type EncapsulatedTaskState<T extends object> = Omit<
+  T,
+  'perform' | keyof TaskInstance<any>
+>;
 
-export type TaskForEncapsulatedTaskDescriptor<T extends EncapsulatedTaskDescriptor<any, any[]>> =
-  EncapsulatedTask<
-    EncapsulatedTaskDescriptorReturnType<T>,
-    EncapsulatedTaskDescriptorArgs<T>,
-    EncapsulatedTaskState<T>
-  >;
+export type TaskForEncapsulatedTaskDescriptor<
+  T extends EncapsulatedTaskDescriptor<any, any[]>
+> = EncapsulatedTask<
+  EncapsulatedTaskDescriptorReturnType<T>,
+  EncapsulatedTaskDescriptorArgs<T>,
+  EncapsulatedTaskState<T>
+>;
 
-export type TaskInstanceForEncapsulatedTaskDescriptor<T extends EncapsulatedTaskDescriptor<any, any[]>> =
-  EncapsulatedTaskInstance<EncapsulatedTaskDescriptorReturnType<T>, EncapsulatedTaskState<T>>;
+export type TaskInstanceForEncapsulatedTaskDescriptor<
+  T extends EncapsulatedTaskDescriptor<any, any[]>
+> = EncapsulatedTaskInstance<
+  EncapsulatedTaskDescriptorReturnType<T>,
+  EncapsulatedTaskState<T>
+>;
 
-interface AbstractTask<Args extends any[], T extends TaskInstance<any>> {
+interface TaskState<T extends TaskInstance<any>> {
   /**
    * `true` if any current task instances are running.
    */
@@ -50,12 +70,12 @@ interface AbstractTask<Args extends any[], T extends TaskInstance<any>> {
   readonly isQueued: boolean;
 
   /**
-   * `true` if the task is not in the running or queued state.
+   * `true` if the task or task group is not in the running or queued state.
    */
   readonly isIdle: boolean;
 
   /**
-   * The current state of the task: `"running"`, `"queued"` or `"idle"`.
+   * The current state of the task or task group: `"running"`, `"queued"` or `"idle"`.
    */
   readonly state: 'running' | 'queued' | 'idle';
 
@@ -100,10 +120,13 @@ interface AbstractTask<Args extends any[], T extends TaskInstance<any>> {
   readonly lastIncomplete: T | null;
 
   /**
-   * The number of times this task has been performed.
+   * The number of times this task or task group has been performed.
    */
   readonly performCount: number;
+}
 
+interface AbstractTask<Args extends any[], T extends TaskInstance<any>>
+  extends TaskState<T> {
   /**
    * Cancels all running or queued `TaskInstance`s for this Task.
    * If you're trying to cancel a specific TaskInstance (rather
@@ -117,7 +140,7 @@ interface AbstractTask<Args extends any[], T extends TaskInstance<any>> {
    *   (`last*` and `performCount` properties will be set to initial
    *   values). Defaults to false.
    */
-  cancelAll(options?: { reason?: string, resetState?: boolean }): Promise<void>;
+  cancelAll(options?: { reason?: string; resetState?: boolean }): Promise<void>;
 
   /**
    * Creates a new {@linkcode TaskInstance} and attempts to run it right away.
@@ -159,11 +182,17 @@ interface AbstractTask<Args extends any[], T extends TaskInstance<any>> {
  * method on this object to cancel all running or enqueued
  * {@linkcode TaskInstance}s.
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Task<T, Args extends any[]>
   extends AbstractTask<Args, TaskInstance<T>> {}
 
-export interface EncapsulatedTask<T, Args extends any[], State extends object>
-  extends AbstractTask<Args, EncapsulatedTaskInstance<T, State>> {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface EncapsulatedTask<
+  T,
+  Args extends any[],
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  State extends object
+> extends AbstractTask<Args, EncapsulatedTaskInstance<T, State>> {}
 
 /**
  * "Task Groups" provide a means for applying
@@ -184,72 +213,7 @@ export interface EncapsulatedTask<T, Args extends any[], State extends object>
  * }
  * ```
  */
-export interface TaskGroup<T> {
-  /**
-   * `true` if any current task instances are running.
-   */
-  readonly isRunning: boolean;
-
-  /**
-   * `true` if any future task instances are queued.
-   */
-  readonly isQueued: boolean;
-
-  /**
-   * `true` if the task group is not in the running or queued state.
-   */
-  readonly isIdle: boolean;
-
-  /**
-   * The current state of the task group: `"running"`, `"queued"` or `"idle"`.
-   */
-  readonly state: 'running' | 'queued' | 'idle';
-
-  /**
-   * The most recently started task instance.
-   */
-  readonly last: TaskInstance<T> | null;
-
-  /**
-   * The most recent task instance that is currently running.
-   */
-  readonly lastRunning: TaskInstance<T> | null;
-
-  /**
-   * The most recently performed task instance.
-   */
-  readonly lastPerformed: TaskInstance<T> | null;
-
-  /**
-   * The most recent task instance that succeeded.
-   */
-  readonly lastSuccessful: TaskInstance<T> | null;
-
-  /**
-   * The most recently completed task instance.
-   */
-  readonly lastComplete: TaskInstance<T> | null;
-
-  /**
-   * The most recent task instance that errored.
-   */
-  readonly lastErrored: TaskInstance<T> | null;
-
-  /**
-   * The most recently canceled task instance.
-   */
-  readonly lastCanceled: TaskInstance<T> | null;
-
-  /**
-   * The most recent task instance that is incomplete.
-   */
-  readonly lastIncomplete: TaskInstance<T> | null;
-
-  /**
-   * The number of times this task group has been performed.
-   */
-  readonly performCount: number;
-
+export interface TaskGroup<T> extends TaskState<TaskInstance<T>> {
   /**
    * Cancels all running or queued `TaskInstance`s for this task group.
    * If you're trying to cancel a specific TaskInstance (rather
@@ -263,7 +227,7 @@ export interface TaskGroup<T> {
    *   (`last*` and `performCount` properties will be set to initial
    *   values). Defaults to false.
    */
-  cancelAll(options?: { reason?: string, resetState?: boolean }): Promise<void>;
+  cancelAll(options?: { reason?: string; resetState?: boolean }): Promise<void>;
 }
 
 /**
@@ -375,9 +339,12 @@ export interface TaskInstance<T> extends Promise<T> {
   finally(onfinally?: (() => void) | null): Promise<T>;
 }
 
-type EncapsulatedTaskInstance<T, State extends object> = TaskInstance<T> & EncapsulatedTaskState<State>;
+// eslint-disable-next-line @typescript-eslint/ban-types
+type EncapsulatedTaskInstance<T, State extends object> = TaskInstance<T> &
+  EncapsulatedTaskState<State>;
 
-interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedProperty<T> {
+interface AbstractTaskProperty<T extends Task<any, any[]>>
+  extends ComputedProperty<T> {
   volatile: never;
   readOnly: never;
   property: never;
@@ -534,11 +501,17 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> extends ComputedPrope
  * overview of all the different task modifiers you can use and how
  * they impact automatic cancelation / enqueueing of task instances.
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TaskProperty<T, Args extends any[]>
   extends AbstractTaskProperty<Task<T, Args>> {}
 
-export interface EncapsulatedTaskProperty<T, Args extends any[], State extends object>
-  extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>> {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface EncapsulatedTaskProperty<
+  T,
+  Args extends any[],
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  State extends object
+> extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>> {}
 
 export interface TaskGroupProperty<T> extends ComputedProperty<TaskGroup<T>> {
   volatile: never;
@@ -637,6 +610,58 @@ export interface TaskGroupProperty<T> extends ComputedProperty<TaskGroup<T>> {
 
 export type TaskCancelation = Error & { name: 'TaskCancelation' };
 
+export type TaskDefinition<T, Args extends any[]> =
+  | TaskFunction<T, Args>
+  | EncapsulatedTaskDescriptor<T, Args>;
+
+export interface TaskModifier<T, Args extends any[]> {
+  (factory: AbstractTaskFactory<T, Args>, taskModifierOption: any): void;
+}
+interface OnStateCallback<T> {
+  (
+    state: TaskState<TaskInstance<T>>,
+    taskable: Task<T, any[]> | TaskGroup<T> | EncapsulatedTask<T, any[], any>
+  ): void;
+}
+
+interface AbstractTaskFactory<T, Args extends any[]> {
+  readonly name: string;
+  readonly taskDefinition: TaskDefinition<T, Args>;
+
+  getOptions(): Record<string, any>;
+  setDebug(isDebug: boolean): this;
+  setEvented(isEvented: boolean): this;
+  setGroup(groupName: string): this;
+  setMaxConcurrency(maxConcurrency: number): this;
+  setName(name: string): this;
+  setOnState(onStateCallback: OnStateCallback<T>): this;
+  setTaskDefinition(taskDefinition: TaskDefinition<T, Args>): this;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface TaskFactory<T, Args extends any[]>
+  extends AbstractTaskFactory<T, Args> {}
+
+/**
+ * Registers a new modifier with the modifier registry
+ */
+export function registerModifier(
+  name: string,
+  definition: TaskModifier<any, any[]>
+): void;
+
+/**
+ * Returns a specified modifier, if it exists in the registry
+ */
+export function getModifier(
+  name: string
+): TaskModifier<unknown, unknown[]> | null;
+
+/**
+ * Returns whether a specified modifier exists in the registry
+ */
+export function hasModifier(name: string): boolean;
+
 export interface YieldableState {
   /**
    * Return yielded TaskInstance. Useful for introspection on instance state.
@@ -658,7 +683,7 @@ export interface YieldableState {
    * @method next
    * @param value
    */
-  next(value : any): void;
+  next(value: any): void;
 
   /**
    * Short-cirsuit TaskInstance execution and have it return with an optional
@@ -699,27 +724,37 @@ export abstract class Yieldable<T> implements PromiseLike<T> {
   finally(onfinally?: (() => void) | null): Promise<T>;
 }
 
-type Evented = {
-  on(event: string, callback: (...args: any[]) => void): void;
-  off(event: string, callback: (...args: any[]) => void): void;
-} | {
-  one(event: string, callback: (...args: any[]) => void): void;
-} | {
-  addEventListener(event: string, callback: (...args: any[]) => void): void;
-  removeEventListener(event: string, callback: (...args: any[]) => void): void;
-};
+type Evented =
+  | {
+      on(event: string, callback: (...args: any[]) => void): void;
+      off(event: string, callback: (...args: any[]) => void): void;
+    }
+  | {
+      one(event: string, callback: (...args: any[]) => void): void;
+    }
+  | {
+      addEventListener(event: string, callback: (...args: any[]) => void): void;
+      removeEventListener(
+        event: string,
+        callback: (...args: any[]) => void
+      ): void;
+    };
 
 type Resolved<T> = T extends PromiseLike<infer R> ? R : T;
 
-type Settlement<T> = { state: 'fulfilled', value: T } | { state: 'rejected', reason: any };
+type Settlement<T> =
+  | { state: 'fulfilled'; value: T }
+  | { state: 'rejected'; reason: any };
 
 type Settled<T> = Settlement<Resolved<T>>;
 
 // Decorator option types from ember-concurrency-decorators
+// eslint-disable-next-line @typescript-eslint/ban-types
 type OptionsFor<T extends object> = {
   [K in OptionKeysFor<T>]?: OptionTypeFor<T, T[K]>;
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type OptionKeysFor<T extends object> = {
   [K in keyof T]: OptionKeyFor<T, K, T[K]>;
 }[keyof T];
@@ -735,11 +770,10 @@ type OptionTypeFor<T, F> = F extends (...args: infer Args) => T
 type TaskOptions = OptionsFor<TaskProperty<unknown, unknown[]>>;
 type TaskGroupOptions = OptionsFor<TaskGroupProperty<unknown>>;
 
-type MethodOrPropertyDecoratorWithParams<
-  Params extends unknown[]
-> = MethodDecorator &
-  PropertyDecorator &
-  ((...params: Params) => MethodDecorator & PropertyDecorator);
+type MethodOrPropertyDecoratorWithParams<Params extends unknown[]> =
+  MethodDecorator &
+    PropertyDecorator &
+    ((...params: Params) => MethodDecorator & PropertyDecorator);
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -779,17 +813,15 @@ type MethodOrPropertyDecoratorWithParams<
  * @param {object?} [options={}]
  * @return {Task}
  */
-export function task<T extends TaskOptions>(baseOptions?: T):
-  MethodOrPropertyDecoratorWithParams<[T]>;
+export function task<T extends TaskOptions>(
+  baseOptions?: T
+): MethodOrPropertyDecoratorWithParams<[T]>;
 export function task<T>(
   target: Object,
   propertyKey: string,
   descriptor: TypedPropertyDescriptor<T>
 ): TypedPropertyDescriptor<T>;
-export function task(
-  target: Object,
-  propertyKey: string
-): void;
+export function task(target: Object, propertyKey: string): void;
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -835,14 +867,16 @@ export function task(
  *
  * @param taskFn A generator function backing the task or an encapsulated task descriptor object with a `perform` generator method.
  */
-export function task<T extends TaskFunction<any, any[]>>(taskFn: T):
-  TaskProperty<TaskFunctionReturnType<T>, TaskFunctionArgs<T>>;
-export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(taskFn: T):
-  EncapsulatedTaskProperty<
-    EncapsulatedTaskDescriptorReturnType<T>,
-    EncapsulatedTaskDescriptorArgs<T>,
-    EncapsulatedTaskState<T>
-  >;
+export function task<T extends TaskFunction<any, any[]>>(
+  taskFn: T
+): TaskProperty<TaskFunctionReturnType<T>, TaskFunctionArgs<T>>;
+export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(
+  taskFn: T
+): EncapsulatedTaskProperty<
+  EncapsulatedTaskDescriptorReturnType<T>,
+  EncapsulatedTaskDescriptorArgs<T>,
+  EncapsulatedTaskState<T>
+>;
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -873,17 +907,15 @@ export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(taskFn: T
  * @param {object?} [options={}]
  * @return {Task}
  */
-export function dropTask<T extends TaskOptions>(baseOptions?: T):
-  MethodOrPropertyDecoratorWithParams<[T]>;
+export function dropTask<T extends TaskOptions>(
+  baseOptions?: T
+): MethodOrPropertyDecoratorWithParams<[T]>;
 export function dropTask<T>(
   target: Object,
   propertyKey: string,
   descriptor: TypedPropertyDescriptor<T>
 ): TypedPropertyDescriptor<T>;
-export function dropTask(
-  target: Object,
-  propertyKey: string
-): void;
+export function dropTask(target: Object, propertyKey: string): void;
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -914,17 +946,15 @@ export function dropTask(
  * @param {object?} [options={}]
  * @return {Task}
  */
-export function enqueueTask<T extends TaskOptions>(baseOptions?: T):
-  MethodOrPropertyDecoratorWithParams<[T]>;
+export function enqueueTask<T extends TaskOptions>(
+  baseOptions?: T
+): MethodOrPropertyDecoratorWithParams<[T]>;
 export function enqueueTask<T>(
   target: Object,
   propertyKey: string,
   descriptor: TypedPropertyDescriptor<T>
 ): TypedPropertyDescriptor<T>;
-export function enqueueTask(
-  target: Object,
-  propertyKey: string
-): void;
+export function enqueueTask(target: Object, propertyKey: string): void;
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -955,17 +985,15 @@ export function enqueueTask(
  * @param {object?} [options={}]
  * @return {Task}
  */
-export function keepLatestTask<T extends TaskOptions>(baseOptions?: T):
-  MethodOrPropertyDecoratorWithParams<[T]>;
+export function keepLatestTask<T extends TaskOptions>(
+  baseOptions?: T
+): MethodOrPropertyDecoratorWithParams<[T]>;
 export function keepLatestTask<T>(
   target: Object,
   propertyKey: string,
   descriptor: TypedPropertyDescriptor<T>
 ): TypedPropertyDescriptor<T>;
-export function keepLatestTask(
-  target: Object,
-  propertyKey: string
-): void;
+export function keepLatestTask(target: Object, propertyKey: string): void;
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -996,17 +1024,15 @@ export function keepLatestTask(
  * @param {object?} [options={}]
  * @return {Task}
  */
-export function restartableTask<T extends TaskOptions>(baseOptions?: T):
-  MethodOrPropertyDecoratorWithParams<[T]>;
+export function restartableTask<T extends TaskOptions>(
+  baseOptions?: T
+): MethodOrPropertyDecoratorWithParams<[T]>;
 export function restartableTask<T>(
   target: Object,
   propertyKey: string,
   descriptor: TypedPropertyDescriptor<T>
 ): TypedPropertyDescriptor<T>;
-export function restartableTask(
-  target: Object,
-  propertyKey: string
-): void;
+export function restartableTask(target: Object, propertyKey: string): void;
 
 /**
  * "Task Groups" provide a means for applying
@@ -1039,84 +1065,10 @@ export function restartableTask(
  * @param {object?} [options={}]
  * @return {TaskGroup}
  */
-export function taskGroup<T extends TaskGroupOptions>(baseOptions: T):
-  PropertyDecorator;
-export function taskGroup<T>(
-  target: Object,
-  propertyKey: string
-): void;
-
-/**
- * Turns the decorated property into a task group and applies the
- * `drop` modifier.
- *
- * Optionally takes a hash of further options that will be applied as modifiers
- * to the task group.
- *
- * @function
- * @param {object?} [options={}]
- * @return {TaskGroup}
- */
-export function dropTaskGroup<T extends TaskGroupOptions>(baseOptions: T):
-  PropertyDecorator;
-export function dropTaskGroup(
-  target: Object,
-  propertyKey: string
-): void;
-
-/**
- * Turns the decorated property into a task group and applies the
- * `enqueue` modifier.
- *
- * Optionally takes a hash of further options that will be applied as modifiers
- * to the task group.
- *
- * @function
- * @param {object?} [options={}]
- * @return {TaskGroup}
- */
-export function enqueueTaskGroup<T extends TaskGroupOptions>(baseOptions: T):
-  PropertyDecorator;
-export function enqueueTaskGroup<T>(
-  target: Object,
-  propertyKey: string
-): void;
-
-/**
- * Turns the decorated property into a task group and applies the
- * `keepLatest` modifier.
- *
- * Optionally takes a hash of further options that will be applied as modifiers
- * to the task group.
- *
- * @function
- * @param {object?} [options={}]
- * @return {TaskGroup}
- */
-export function keepLatestTaskGroup<T extends TaskGroupOptions>(baseOptions: T):
-  PropertyDecorator;
-export function keepLatestGroup<T>(
-  target: Object,
-  propertyKey: string
-): void;
-
-/**
- * Turns the decorated property into a task group and applies the
- * `restartable` modifier.
- *
- * Optionally takes a hash of further options that will be applied as modifiers
- * to the task group.
- *
- * @function
- * @param {object?} [options={}]
- * @return {TaskGroup}
- */
-export function restartableTaskGroup<T extends TaskGroupOptions>(baseOptions: T):
-  PropertyDecorator;
-export function restartableTaskGroup<T>(
-  target: Object,
-  propertyKey: string
-): void;
+export function taskGroup<T extends TaskGroupOptions>(
+  baseOptions: T
+): PropertyDecorator;
+export function taskGroup(target: Object, propertyKey: string): void;
 
 /**
  * "Task Groups" provide a means for applying
@@ -1140,6 +1092,70 @@ export function restartableTaskGroup<T>(
  * @returns {TaskGroupProperty}
  */
 export function taskGroup<T>(): TaskGroupProperty<T>;
+
+/**
+ * Turns the decorated property into a task group and applies the
+ * `drop` modifier.
+ *
+ * Optionally takes a hash of further options that will be applied as modifiers
+ * to the task group.
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {TaskGroup}
+ */
+export function dropTaskGroup<T extends TaskGroupOptions>(
+  baseOptions: T
+): PropertyDecorator;
+export function dropTaskGroup(target: Object, propertyKey: string): void;
+
+/**
+ * Turns the decorated property into a task group and applies the
+ * `enqueue` modifier.
+ *
+ * Optionally takes a hash of further options that will be applied as modifiers
+ * to the task group.
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {TaskGroup}
+ */
+export function enqueueTaskGroup<T extends TaskGroupOptions>(
+  baseOptions: T
+): PropertyDecorator;
+export function enqueueTaskGroup(target: Object, propertyKey: string): void;
+
+/**
+ * Turns the decorated property into a task group and applies the
+ * `keepLatest` modifier.
+ *
+ * Optionally takes a hash of further options that will be applied as modifiers
+ * to the task group.
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {TaskGroup}
+ */
+export function keepLatestTaskGroup<T extends TaskGroupOptions>(
+  baseOptions: T
+): PropertyDecorator;
+export function keepLatestGroup(target: Object, propertyKey: string): void;
+
+/**
+ * Turns the decorated property into a task group and applies the
+ * `restartable` modifier.
+ *
+ * Optionally takes a hash of further options that will be applied as modifiers
+ * to the task group.
+ *
+ * @function
+ * @param {object?} [options={}]
+ * @return {TaskGroup}
+ */
+export function restartableTaskGroup<T extends TaskGroupOptions>(
+  baseOptions: T
+): PropertyDecorator;
+export function restartableTaskGroup(target: Object, propertyKey: string): void;
 
 /**
  * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
@@ -1234,7 +1250,9 @@ export function didCancel(error: unknown): error is TaskCancelation;
 export function hash<T extends Record<string, unknown>>(
   values: T
 ): Promise<{ [K in keyof T]: Resolved<T[K]> }>;
-export function hash<T>(values: Record<string, T>): Promise<Record<string, Resolved<T>>>;
+export function hash<T>(
+  values: Record<string, T>
+): Promise<Record<string, Resolved<T>>>;
 
 /**
  * A cancelation-aware variant of [RSVP.hashSettled](https://api.emberjs.com/ember/release/functions/rsvp/hashSettled).
@@ -1248,7 +1266,9 @@ export function hash<T>(values: Record<string, T>): Promise<Record<string, Resol
 export function hashSettled<T extends Record<string, unknown>>(
   values: T
 ): Promise<{ [K in keyof T]: Settled<T[K]> }>;
-export function hashSettled<T>(values: Record<string, T>): Promise<Record<string, Settled<T>>>;
+export function hashSettled<T>(
+  values: Record<string, T>
+): Promise<Record<string, Settled<T>>>;
 
 /**
  * A cancelation-aware variant of [Promise.race](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race).
@@ -1363,7 +1383,10 @@ export function waitForQueue(queueName: string): Yieldable<void>;
  *   that the event fires from.
  * @param eventName The name of the event to wait for.
  */
-export function waitForEvent(object: Evented, eventName: string): Yieldable<void>;
+export function waitForEvent(
+  object: Evented,
+  eventName: string
+): Yieldable<void>;
 
 /**
  * Use `waitForProperty` to pause the task until a property on an object
@@ -1409,13 +1432,19 @@ export function waitForEvent(object: Evented, eventName: string): Yieldable<void
  *   needs to equal before the task will continue running.
  */
 export function waitForProperty<O extends object, K extends keyof O>(
-  object: O, key: K, callbackOrValue: (value: O[K]) => boolean
+  object: O,
+  key: K,
+  callbackOrValue: (value: O[K]) => boolean
 ): Yieldable<void>;
 export function waitForProperty(
-  object: object, key: string, callbackOrValue: (value: unknown) => boolean
+  object: object,
+  key: string,
+  callbackOrValue: (value: unknown) => boolean
 ): Yieldable<void>;
 export function waitForProperty<O extends object, K extends keyof O>(
-  object: O, key: K, callbackOrValue: O[K]
+  object: O,
+  key: K,
+  callbackOrValue: O[K]
 ): Yieldable<void>;
 
 /**

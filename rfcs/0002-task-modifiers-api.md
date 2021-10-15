@@ -1,10 +1,10 @@
 ---
-Stage:
+Stage: Accepted
 Start Date: 2021-09-18
 Release Date:
 Release Versions:
   ember-concurrency: vX.X.X
-RFC PR:
+RFC PR: https://github.com/machty/ember-concurrency/pull/441
 ---
 
 <!---
@@ -109,7 +109,6 @@ interface TaskFactory {
   name: string;
   taskDefinition: TaskDefinition;
 
-  getModifier(name: string): TaskModifier;
   getOptions(): { [key: string]: any; }
   setDebug(isDebug: boolean): this;
   setEvented(isEvented: boolean): this;

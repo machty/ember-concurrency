@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import ClassicComponent from '@ember/component';
 import EmberObject, { get } from '@ember/object';
 import Evented from '@ember/object/evented';
@@ -14,6 +15,7 @@ import {
   TaskForEncapsulatedTaskDescriptor,
   TaskInstanceForTaskFunction,
   TaskInstanceForEncapsulatedTaskDescriptor,
+  TaskFactory,
   TaskFunction,
   TaskFunctionArgs,
   TaskFunctionReturnType,
@@ -21,16 +23,20 @@ import {
   TaskGroup,
   TaskGroupProperty,
   TaskInstance,
+  TaskModifier,
   TaskProperty,
   all,
   allSettled,
   animationFrame,
   didCancel,
   forever,
+  getModifier,
+  hasModifier,
   hash,
   hashSettled,
   race,
   rawTimeout,
+  registerModifier,
   restartableTask,
   task,
   taskGroup,
@@ -39,7 +45,7 @@ import {
   waitForProperty,
   waitForQueue,
   lastValue,
-  Yieldable
+  Yieldable,
 } from 'ember-concurrency';
 import { taskFor } from 'ember-concurrency-ts';
 import { expectTypeOf as expect } from 'expect-type';
@@ -50,7 +56,9 @@ declare function test(description: string, callback: TestCallback): void;
 
 module('unit tests', () => {
   test('TaskGenerator', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect<TaskGenerator<void>>().toEqualTypeOf<Generator<any, void, any>>();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect<TaskGenerator<string>>().toEqualTypeOf<Generator<any, string, any>>();
   });
 
@@ -319,7 +327,7 @@ module('unit tests', () => {
     new Task(); // Task cannot be constructed
 
     // @ts-expect-error
-    class Foo extends Task<any, any[]> {} // Task cannot be subclassed
+    class Foo extends Task<never, never[]> {} // Task cannot be subclassed
 
     let t!: Task<string, [boolean, number?]>;
     type MyTaskInstance = TaskInstance<string>;
@@ -390,7 +398,7 @@ module('unit tests', () => {
     new EncapsulatedTask(); // EncapsulatedTask cannot be constructed
 
     // @ts-expect-error
-    class Foo extends EncapsulatedTask<any, any[], { foo: string }> {} // EncapsulatedTask cannot be subclassed
+    class Foo extends EncapsulatedTask<never, never[], { foo: string }> {} // EncapsulatedTask cannot be subclassed
 
     let t!: EncapsulatedTask<string, [boolean, number?], { foo: string }>;
     type MyTaskInstance = TaskInstance<string> & { foo: string };
@@ -409,7 +417,9 @@ module('unit tests', () => {
     expect(t.lastIncomplete).toEqualTypeOf<MyTaskInstance | null>();
     expect(t.performCount).toBeNumber();
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(t.last!.foo).not.toBeAny();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(t.last!.foo).toBeString();
 
     expect(t.cancelAll).toBeCallableWith();
@@ -593,7 +603,7 @@ module('unit tests', () => {
     new TaskProperty(); // TaskProperty cannot be constructed
 
     // @ts-expect-error
-    class Foo extends TaskProperty<any, any[]> {} // TaskProperty cannot be subclassed
+    class Foo extends TaskProperty<never, never[]> {} // TaskProperty cannot be subclassed
 
     let tp!: TaskProperty<string, [boolean, number?]>;
 
@@ -807,7 +817,7 @@ module('unit tests', () => {
     new EncapsulatedTaskProperty(); // EncapsulatedTaskProperty cannot be constructed
 
     // @ts-expect-error
-    class Foo extends EncapsulatedTaskProperty<any, any[], {}> {} // EncapsulatedTaskProperty cannot be subclassed
+    class Foo extends EncapsulatedTaskProperty<never, never[], {}> {} // EncapsulatedTaskProperty cannot be subclassed
 
     let tp!: EncapsulatedTaskProperty<string, [boolean, number?], { foo: string }>;
 
@@ -1381,6 +1391,7 @@ module('unit tests', () => {
       expect(tg).toEqualTypeOf<TaskGroup<unknown>>();
       expect(tg.last).toEqualTypeOf<TaskInstance<unknown> | null>();
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       let value = tg.last!.value;
       expect(value).toEqualTypeOf<unknown | null>();
     }
@@ -1393,6 +1404,7 @@ module('unit tests', () => {
       expect(tg).toEqualTypeOf<TaskGroup<string>>();
       expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       let value = tg.last!.value;
       expect(value).toEqualTypeOf<string | null>();
     }
@@ -1590,6 +1602,7 @@ module('unit tests', () => {
     let thenable!: PromiseLike<number>;
     let promise!: Promise<void>;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     type S<T> = { state: 'fulfilled', value: T } | { state: 'rejected', reason: any };
 
     expect(allSettled([])).resolves.toEqualTypeOf<[]>();
@@ -1871,6 +1884,7 @@ module('unit tests', () => {
     let thenable!: PromiseLike<number>;
     let promise!: Promise<void>;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     type S<T> = { state: 'fulfilled', value: T } | { state: 'rejected', reason: any };
 
     expect(hashSettled({})).resolves.toEqualTypeOf<{}>();
@@ -2154,12 +2168,17 @@ module('unit tests', () => {
 
   test('waitForEvent', async () => {
     type Evented = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       on(event: string, callback: (...args: any[]) => void): void;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       off(event: string, callback: (...args: any[]) => void): void;
     } | {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       one(event: string, callback: (...args: any[]) => void): void;
     } | {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       addEventListener(event: string, callback: (...args: any[]) => void): void;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       removeEventListener(event: string, callback: (...args: any[]) => void): void;
     };
 
@@ -2244,6 +2263,77 @@ module('unit tests', () => {
       expect(result).toBeNever();
     }
   });
+
+  test('getModifier', () => {
+    expect(getModifier).toBeCallableWith('foo');
+    expect(getModifier).parameters.toEqualTypeOf<[string]>();
+    expect(getModifier).returns.toEqualTypeOf<TaskModifier<unknown, unknown[]> | null>();
+
+    // @ts-expect-error
+    getModifier();
+
+    // @ts-expect-error
+    getModifier(false);
+
+    // @ts-expect-error
+    getModifier(null);
+
+    // @ts-expect-error
+    getModifier(function*() {});
+  });
+
+  test('hasModifier', () => {
+    expect(hasModifier).toBeCallableWith('foo');
+    expect(hasModifier).parameters.toEqualTypeOf<[string]>();
+    expect(hasModifier).returns.toEqualTypeOf<boolean>();
+
+    // @ts-expect-error
+    hasModifier();
+
+    // @ts-expect-error
+    hasModifier(false);
+
+    // @ts-expect-error
+    hasModifier(null);
+
+    // @ts-expect-error
+    hasModifier(function*() {});
+  });
+
+  test('registerModifier', () => {
+    let taskDef = function*() { return 42; };
+    let encapDef = { *perform() { return 'boo!'; } };
+
+    let singleArgModifier = function (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      factory: TaskFactory<any, any[]>,
+      modifierArgument: boolean
+    ) {
+      factory.setTaskDefinition(taskDef);
+      factory.setTaskDefinition(encapDef);
+    };
+    let arrayArgModifier = function (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      factory: TaskFactory<any, any[]>,
+      arrayArg: string[]
+    ) {
+      factory.setTaskDefinition(taskDef);
+      factory.setTaskDefinition(encapDef);
+    }
+
+    expect(registerModifier).toBeCallableWith('foo', singleArgModifier);
+    expect(registerModifier).toBeCallableWith('foo', arrayArgModifier);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect(registerModifier).parameters.toEqualTypeOf<[string, TaskModifier<any, any[]>]>();
+    expect(registerModifier).returns.toEqualTypeOf<void>();
+
+    // @ts-expect-error
+    registerModifier();
+
+    // @ts-expect-error
+    registerModifier('foo');
+
+  });
 });
 
 module('integration tests', () => {
@@ -2251,6 +2341,7 @@ module('integration tests', () => {
 
   test('classic ember', () => {
     ClassicComponent.extend({
+      // eslint-disable-next-line @typescript-eslint/no-inferrable-types
       myTask: task(function * (immediately: boolean, ms: number = 500) {
         if (!immediately) {
           yield timeout(ms);
@@ -2311,6 +2402,7 @@ module('integration tests', () => {
       myTask: task({
         foo: 'foo',
 
+        // eslint-disable-next-line @typescript-eslint/no-inferrable-types
         *perform(immediately: boolean, ms: number = 500) {
           expect(this).not.toBeAny();
           expect(this.foo).not.toBeAny();
@@ -2380,7 +2472,7 @@ module('integration tests', () => {
   test('octane', () => {
     class MyComponent extends GlimmerComponent {
       @taskGroup
-      foo!: TaskGroup<any>;
+      foo!: TaskGroup<never>;
 
       @task({ restartable: true }) restartable = function*() {};
       @task({ enqueue: true }) enqueue = function*() {};
@@ -2398,7 +2490,7 @@ module('integration tests', () => {
 
       @lastValue('myTask') myTaskValue = 'or some default';
 
-      @restartableTask *myTask(immediately: boolean, ms: number = 500): TaskGenerator<string> {
+      @restartableTask *myTask(immediately: boolean, ms = 500): TaskGenerator<string> {
         // We want to assert `this` is not implicitly `any`, but due `this`
         // being a weird internal type in here, neither of the following
         // assertions would pass here. But the fact that the second assertion
@@ -2414,7 +2506,7 @@ module('integration tests', () => {
 
         // this is probably what we ultimately cares about
         expect(this.foo).not.toBeAny();
-        expect(this.foo).toEqualTypeOf<TaskGroup<any>>();
+        expect(this.foo).toEqualTypeOf<TaskGroup<never>>();
 
         if (!immediately) {
           yield timeout(ms);
@@ -2481,7 +2573,7 @@ module('integration tests', () => {
       @restartableTask myTask = {
         bar: true,
 
-        *perform(immediately: boolean, ms: number = 500): TaskGenerator<string> {
+        *perform(immediately: boolean, ms = 500): TaskGenerator<string> {
           expect(this).not.toBeAny();
           expect(this.bar).not.toBeAny();
           expect(this.bar).toBeBoolean();
