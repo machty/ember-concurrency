@@ -16,8 +16,8 @@ export const TASK_CANCELATION_NAME = 'TaskCancelation';
  * }
  * ```
  *
- * @param {Object} error the caught error, which might be a TaskCancelation
- * @returns {Boolean}
+ * @param {object} error the caught error, which might be a TaskCancelation
+ * @returns {boolean}
  */
 export function didCancel(e) {
   return e && e.name === TASK_CANCELATION_NAME;

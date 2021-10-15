@@ -215,7 +215,6 @@ function isDecoratorOptions(possibleOptions) {
   on methods instead.
 
   @class TaskProperty
-  @hideconstructor
 */
 export let TaskProperty;
 export let TaskGroupProperty;
