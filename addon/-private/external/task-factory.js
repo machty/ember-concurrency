@@ -41,17 +41,18 @@ const MODIFIER_REGISTRY = {
 };
 
 /**
- * This callback is displayed as part of the Requester class.
- * @callback TaskModifier~callback
+ * Callback type defining a task modifier
+ *
+ * @callback TaskFactory~TaskModifier
  * @param {TaskFactory} factory
- * @param {any} taskModifierOption
+ * @param {*} taskModifierOption
  */
 
 /**
  * Registers a new modifier with the modifier registry
  *
  * @param {string} name Name of the modifier
- * @param {TaskModifier~callback} callback
+ * @param {TaskFactory~TaskModifier} callback
  */
 export function registerModifier(name, callback) {
   if (MODIFIER_REGISTRY[name]) {
@@ -67,7 +68,7 @@ export function registerModifier(name, callback) {
  * Returns a specified modifier, if it exists in the registry
  *
  * @param {string} name Name of the modifier
- * @returns {TaskModifier~callback?}
+ * @returns {TaskFactory~TaskModifier?}
  */
 export function getModifier(name) {
   return MODIFIER_REGISTRY[name];
@@ -77,12 +78,23 @@ export function getModifier(name) {
  * Returns whether a specified modifier exists in the registry
  *
  * @param {string} name Name of the modifier
- * @returns boolean
+ * @returns {boolean}
  */
 export function hasModifier(name) {
   return name in MODIFIER_REGISTRY;
 }
 
+/**
+ * Factory used for instantiating Tasks and Task Groups. Mostly for internal
+ * use, but some public APIs exposed via the Task Modifier APIs.
+ *
+ * <style>
+ *  .ignore-this--this-is-here-to-hide-constructor,
+ *  #TaskFactory { display: none }
+ * </style>
+ *
+ * @class TaskFactory
+ */
 export class TaskFactory {
   _debug = null;
   _enabledModifiers = [];
@@ -106,7 +118,7 @@ export class TaskFactory {
    *
    * @protected
    * @param {*} context
-   * @returns Task
+   * @returns {Task}
    */
   createTask(context) {
     let options = this.getTaskOptions(context);
@@ -126,7 +138,7 @@ export class TaskFactory {
    *
    * @protected
    * @param {*} context
-   * @returns Task
+   * @returns {Task}
    */
   createTaskGroup(context) {
     let options = this.getTaskOptions(context);
@@ -140,7 +152,7 @@ export class TaskFactory {
    *
    * @protected
    * @param {string} name
-   * @returns Function
+   * @returns {TaskFactory~TaskModifier?}
    */
   getModifier(name) {
     if (hasModifier(name)) {
@@ -152,7 +164,7 @@ export class TaskFactory {
    * Returns the options provided to TaskFactory
    *
    * @public
-   * @returns object
+   * @returns {object}
    */
   getOptions() {
     return this.options;
@@ -164,7 +176,7 @@ export class TaskFactory {
    * @protected
    * @param {*} schedulerPolicy
    * @param {boolean} stateTrackingEnabled
-   * @returns Scheduler
+   * @returns {Scheduler}
    */
   getScheduler(schedulerPolicy, stateTrackingEnabled) {
     return new Scheduler(schedulerPolicy, stateTrackingEnabled);
@@ -175,7 +187,7 @@ export class TaskFactory {
    *
    * @protected
    * @param {*} context
-   * @returns object
+   * @returns {object}
    */
   getTaskOptions(context) {
     let group, scheduler;
@@ -219,7 +231,7 @@ export class TaskFactory {
    * Will raise an assertion if a buffer policy has already been specified
    *
    * @param {*} policy
-   * @returns this
+   * @returns {TaskFactory}
    */
   setBufferPolicy(policy) {
     assertUnsetBufferPolicy(this);
@@ -235,7 +247,7 @@ export class TaskFactory {
    * Sets debug mode
    *
    * @param {boolean} enabled
-   * @returns this
+   * @returns {TaskFactory}
    */
   setDebug(enabled) {
     this._debug = enabled;
@@ -246,7 +258,7 @@ export class TaskFactory {
    * Sets whether Task will dispatch Task events or not
    *
    * @param {boolean} enabled
-   * @returns this
+   * @returns {TaskFactory}
    */
   setEvented(enabled) {
     this._hasEnabledEvents = enabled;
@@ -257,7 +269,7 @@ export class TaskFactory {
    * Sets Scheduling policy's `maxConcurrency`
    *
    * @param {number} maxConcurrency
-   * @returns this
+   * @returns {TaskFactory}
    */
   setMaxConcurrency(maxConcurrency) {
     this._hasSetConcurrencyConstraint = true;
@@ -269,7 +281,7 @@ export class TaskFactory {
    * Assigns Task created from this factory to the specified group name
    *
    * @param {string} group
-   * @returns this
+   * @returns {TaskFactory}
    */
   setGroup(group) {
     this._taskGroupPath = group;
@@ -280,7 +292,7 @@ export class TaskFactory {
    * Sets the name of tasks created from this factory
    *
    * @param {string} name
-   * @returns this
+   * @returns {TaskFactory}
    */
   setName(name) {
     this.name = name;
@@ -292,7 +304,7 @@ export class TaskFactory {
    * state tracking on tasks.
    *
    * @param {function} onStateCallback
-   * @returns this
+   * @returns {TaskFactory}
    */
   setOnState(onStateCallback) {
     this._onStateCallback = onStateCallback;
@@ -303,7 +315,7 @@ export class TaskFactory {
    * Sets the definition for tasks created from this factory
    *
    * @param {*} taskDefinition
-   * @returns this
+   * @returns {TaskFactory}
    */
   setTaskDefinition(taskDefinition) {
     this.taskDefinition = taskDefinition;
