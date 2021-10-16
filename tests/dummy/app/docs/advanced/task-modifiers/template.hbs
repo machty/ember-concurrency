@@ -1,0 +1,61 @@
+<h2>Task Modifiers</h2>
+
+<p>
+  Starting with ember-concurrency v2.2.0, public Task Modifier APIs have been
+  added to allow for custom task modifiers to be registered from third-party
+  addons and application code to provide behavior for specific situations not
+  suited to inclusion within ember-concurrency's core itself.
+</p>
+
+<p>
+  Task modifiers have been a concept built-in to `ember-concurrency` since the
+  beginning. However, until `0.7.19` they were only specifyable within
+  `ember-concurrency` internals, and not extendable by users. `0.7.19` added the
+  ability to specify new modifiers as prototype extensions on `TaskProperty`.
+  Unfortunately, `TaskProperty` is inherently tied to Ember internals and is not
+  used when using decorators, and using prototype extensions does not make clear
+  what modifiers exist, so the `getModifier`, `hasModifier`, and `registerModifier`
+  APIs were introduced to provide a way to manage modifiers and make them
+  discoverable.
+</p>
+
+<h3>Defining a custom task modifier</h3>
+
+<p>
+  Let's say we want to build a benchmarking modifier to help us get a sense for
+  how long our tasks are running.
+</p>
+
+<CodeSnippet @name="task-modifier-benchmark.js" />
+
+<p>
+  Now that we have a new modifier defined, we can apply it to any tasks that we
+  wish and have it apply the behavior we built. Let's see it in action!
+</p>
+
+{{! BEGIN-SNIPPET task-modifier-benchmark-on-task }}
+<button {{on "click" (perform this.doWork)}} type="button">
+  Benchmark task
+</button>
+
+{{#if this.doWork.isRunning}}
+  Running benchmark...
+{{/if}}
+
+<ol>
+  {{#each this.perfEntries as |entry|}}
+    <li>Start time: {{entry.startTime}}ms after page-load; duration = {{entry.duration}}ms</li>
+  {{/each}}
+</ol>
+{{! END-SNIPPET }}
+
+<CodeSnippet @name="task-modifier-benchmark-on-task.hbs" />
+<CodeSnippet @name="task-modifier-benchmark-on-task.js" />
+
+<h3>More about Task Modifiers</h3>
+
+<p>
+  The behavior and implementation of task modifier APIs are defined further in
+  the <a href="https://github.com/machty/ember-concurrency/blob/master/rfcs/0002-yieldables.md">Task Modifiers RFC</a>.
+  Additionally, the API for <code>TaskFactory</code> is documented <a href="/api/TaskFactory.html">here</a>.
+</p>

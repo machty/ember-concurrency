@@ -35,6 +35,7 @@ Router.map(function () {
     this.route('advanced', function () {
       this.route('encapsulated-task');
       this.route('lifecycle-events');
+      this.route('task-modifiers');
       this.route('yieldables');
     });
 

@@ -37,6 +37,7 @@ export const TABLE_OF_CONTENTS = [
   { section: 'Advanced' },
   { route: 'docs.advanced.encapsulated-task', title: 'Encapsulated Tasks' },
   { route: 'docs.advanced.lifecycle-events', title: 'Lifecycle Events' },
+  { route: 'docs.advanced.task-modifiers', title: 'Task Modifiers' },
   {
     route: 'docs.advanced.yieldables',
     title: 'Yieldables / Controlling Execution',
