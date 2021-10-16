@@ -4,7 +4,7 @@ import { addListener } from '@ember/object/events';
 import { addObserver } from '@ember/object/observers';
 import { scheduleOnce } from '@ember/runloop';
 import {
-  defineModifier,
+  registerModifier,
   TaskFactory as BaseTaskFactory,
 } from './external/task-factory';
 
@@ -49,13 +49,13 @@ function makeTaskCallback(taskName, method, once) {
 const ensureArray = (possibleArr) =>
   Array.isArray(possibleArr) ? possibleArr : [possibleArr];
 
-defineModifier('cancelOn', (factory, eventNames) =>
+registerModifier('cancelOn', (factory, eventNames) =>
   factory.addCancelEvents(...ensureArray(eventNames))
 );
-defineModifier('observes', (factory, propertyPaths) =>
+registerModifier('observes', (factory, propertyPaths) =>
   factory.addObserverKeys(...ensureArray(propertyPaths))
 );
-defineModifier('on', (factory, eventNames) =>
+registerModifier('on', (factory, eventNames) =>
   factory.addPerformEvents(...ensureArray(eventNames))
 );
 
@@ -129,8 +129,8 @@ export class TaskFactory extends BaseTaskFactory {
     return modifier;
   }
 
-  getScheduler(schedulerPolicy, onStateCallback) {
-    return new EmberScheduler(schedulerPolicy, onStateCallback);
+  getScheduler(schedulerPolicy, stateTrackingEnabled) {
+    return new EmberScheduler(schedulerPolicy, stateTrackingEnabled);
   }
 
   _setupEmberKVO(proto) {

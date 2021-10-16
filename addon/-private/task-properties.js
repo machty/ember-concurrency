@@ -215,7 +215,6 @@ function isDecoratorOptions(possibleOptions) {
   on methods instead.
 
   @class TaskProperty
-  @hideconstructor
 */
 export let TaskProperty;
 export let TaskGroupProperty;
@@ -349,7 +348,7 @@ export function taskComputed(fn) {
  * operations.
  *
  * You can also define an
- * <a href="/docs/encapsulated-task">Encapsulated Task</a>
+ * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
  * by passing in an object that defined a `perform` generator
  * function property.
  *

@@ -1,7 +1,6 @@
 export const DEFAULT_STATE = {
   last: null,
   lastRunning: null,
-  lastStarted: null,
   lastPerformed: null,
   lastSuccessful: null,
   lastComplete: null,

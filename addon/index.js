@@ -37,6 +37,11 @@ import {
   restartableTask,
   restartableTaskGroup,
 } from './-private/task-decorators';
+import {
+  registerModifier,
+  getModifier,
+  hasModifier,
+} from './-private/external/task-factory';
 
 export {
   all,
@@ -48,13 +53,16 @@ export {
   enqueueTask,
   enqueueTaskGroup,
   forever,
+  getModifier,
   hash,
   hashSettled,
+  hasModifier,
   keepLatestTask,
   keepLatestTaskGroup,
   lastValue,
   race,
   rawTimeout,
+  registerModifier,
   restartableTask,
   restartableTaskGroup,
   task,

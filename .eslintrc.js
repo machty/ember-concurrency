@@ -67,9 +67,27 @@ module.exports = {
       extends: ['plugin:node/recommended'],
     },
     {
+      files: ['addon/index.d.ts', 'tests/types/**/*.ts'],
+      parser: '@typescript-eslint/parser',
+      plugins: ['@typescript-eslint'],
+      extends: ['plugin:@typescript-eslint/recommended'],
+      rules: {
+        // Need to support classic ember
+        'ember/no-classic-classes': 'off',
+        'ember/no-classic-components': 'off',
+        'ember/no-get': 'off',
+
+        // Used in type testing
+        'prefer-const': 'off',
+        '@typescript-eslint/ban-types': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
+        '@typescript-eslint/no-unused-vars': 'off',
+      },
+    },
+    {
       // Test files:
-      files: ['tests/**/*-test.{js,ts}'],
-      excludedFiles: ['tests/types/**/*-test.ts'],
+      files: ['tests/**/*-test.js'],
       extends: ['plugin:qunit/recommended'],
       env: {
         embertest: true,

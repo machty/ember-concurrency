@@ -13,8 +13,10 @@ export class Taskable {
   constructor(options) {
     this.context = options.context;
     this.debug = options.debug || false;
+    this.enabledModifiers = options.enabledModifiers;
     this.group = options.group;
     this.hasEnabledEvents = options.hasEnabledEvents;
+    this.modifierOptions = options.modifierOptions;
     this.name = options.name;
     this.onStateCallback = options.onStateCallback;
     this.scheduler = options.scheduler;

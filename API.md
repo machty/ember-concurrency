@@ -54,7 +54,14 @@ under the [Task Property API docs](TaskProperty.html).
 - [keepLatest](TaskProperty.html#keepLatest)
 - [maxConcurrency](TaskProperty.html#maxConcurrency)
 
+### Task Modifier API
 
+These functions provide the ability to register and lookup registered user-defined
+Task Modifiers.
+
+- [getModifier](global.html#getModifier)
+- [hasModifier](global.html#hasModifier)
+- [registerModifier](global.html#registerModifier)
 ## Task/cancelation-aware variants of Promise helpers
 
 These helpers are just like their Promise/RSVP equivalents, but with
