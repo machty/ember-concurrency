@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>JSDoc: Class: TaskProperty</title>
 
-    <script src="scripts/prettify/prettify-ac8c9277b05c42436cc08385614bed9c.js"> </script>
-    <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js"> </script>
+    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>TaskProperty</h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>TaskProperty<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -38,7 +38,27 @@
     
         
 
+    
 
+    
+    <h4 class="name" id="TaskProperty"><span class="type-signature"></span>new TaskProperty<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A <a href="TaskProperty.html">TaskProperty</a> is the Computed Property-like object returned
+from the <a href="global.html#task"><code>task</code></a> function. You can call Task Modifier methods
+on this object to configure the behavior of the <a href="Task.html">Task</a>.</p>
+<p>See <a href="/docs/task-concurrency">Managing Task Concurrency</a> for an
+overview of all the different task modifiers you can use and how
+they impact automatic cancelation / enqueueing of task instances.</p>
+<p><a href="TaskProperty.html">TaskProperty</a> is only used for supporting &quot;classic&quot; Ember objects.
+When using Native JavaScript or TypeScript classes, you will use <a href="/docs/task-decorators">task decorators</a>
+on methods instead.</p>
+</div>
 
 
 
@@ -81,7 +101,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line200">line 200</a>
+        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line204">line 204</a>
     </li></ul></dd>
     
 
@@ -241,7 +261,7 @@ specified events fire on the parent object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line282">line 282</a>
+        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line285">line 285</a>
     </li></ul></dd>
     
 
@@ -1136,7 +1156,7 @@ specified properties on the parent object change.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line299">line 299</a>
+        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line302">line 302</a>
     </li></ul></dd>
     
 
@@ -1292,7 +1312,7 @@ when the host object is initialized.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line246">line 246</a>
+        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line249">line 249</a>
     </li></ul></dd>
     
 
@@ -1580,16 +1600,16 @@ maxConcurrency to 1.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jun 01 2021 11:20:05 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Oct 26 2021 22:48:52 GMT-0500 (Central Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
-<script src="scripts/linenumber-bc32f8413602d59b0d893a8e704de17b.js"> </script>
+<script src="scripts/linenumber-b072639105045a40275250bc66645306.js"> </script>
 </body>
 </html>

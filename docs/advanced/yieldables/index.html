@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>ember-concurrency</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%222.2.0%2B2bf4db25%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
+<!-- EMBER_CLI_FASTBOOT_TITLE -->
+
+    <link integrity="" rel="stylesheet" href="/assets/vendor-e754b247f0b14ad5fde0f302404dd7cb.css">
+    <link integrity="" rel="stylesheet" href="/assets/dummy-4257be3042dd680ca4a8b02fa35594c9.css">
+    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+    
+  </head>
+  <body>
+    <script type="x/boundary" id="fastboot-body-start"></script><div class="container navbar">
+  <div class="row">
+    <div class="ten columns">
+      <h3 style="float:left;">
+        ember-concurrency
+
+        <span style="font-size: 0.5em;">
+          (v 2.2.0)
+        </span>
+      </h3>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="/api">API</a>
+      </div>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="https://github.com/machty/ember-concurrency" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="docs row">
+    <div class="three columns">
+      <div class="side-menu">
+            <div class="toc-entry">
+                <a id="ember1007" class="ember-view" href="/docs/introduction">Home</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1008" class="ember-view" href="/docs/installation">Installation</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Introduction
+            </div>
+            <div class="toc-entry">
+                <a id="ember1009" class="ember-view" href="/docs/tutorial">Writing Code Without Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1010" class="ember-view" href="/docs/tutorial/discussion">Post-Mortem</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1011" class="ember-view" href="/docs/tutorial/refactor">Refactoring With Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Reference
+            </div>
+            <div class="toc-entry">
+                <a id="ember1012" class="ember-view" href="/docs/task-function-syntax">Task Function Syntax</a>
+            </div>
+
+
+                <div class="toc-entry toc-subentry">
+                  <a id="ember1013" class="ember-view" href="/docs/task-decorators">Decorators</a>
+                </div>
+                <div class="toc-entry toc-subentry">
+                  <a id="ember1014" class="ember-view" href="/docs/typescript">TypeScript</a>
+                </div>
+            <div class="toc-entry">
+                <a id="ember1015" class="ember-view" href="/docs/task-concurrency">Managing Task Concurrency</a>
+            </div>
+
+
+                <div class="toc-entry toc-subentry">
+                  <a id="ember1016" class="ember-view" href="/docs/task-concurrency-advanced">Advanced</a>
+                </div>
+            <div class="toc-entry">
+                <a id="ember1017" class="ember-view" href="/docs/cancelation">Cancelation</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1018" class="ember-view" href="/docs/error-vs-cancelation">Handling Errors</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1019" class="ember-view" href="/docs/child-tasks">Child Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1020" class="ember-view" href="/docs/task-groups">Task Groups</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1021" class="ember-view" href="/docs/derived-state">Derived State</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1022" class="ember-view" href="/docs/events">Awaiting Events / Conditions</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1023" class="ember-view" href="/docs/testing-debugging">Testing &amp; Debugging</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1024" class="ember-view" href="/docs/faq">FAQ &amp; Fact Sheet</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Advanced
+            </div>
+            <div class="toc-entry">
+                <a id="ember1025" class="ember-view" href="/docs/advanced/encapsulated-task">Encapsulated Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1026" class="ember-view" href="/docs/advanced/lifecycle-events">Lifecycle Events</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1027" class="ember-view" href="/docs/advanced/task-modifiers">Task Modifiers</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1028" class="ember-view active" href="/docs/advanced/yieldables">Yieldables / Controlling Execution</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Examples
+            </div>
+            <div class="toc-entry">
+                <a id="ember1029" class="ember-view" href="/docs/examples/loading-ui">Loading UI</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1030" class="ember-view" href="/docs/examples/autocomplete">Type-Ahead Search</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1031" class="ember-view" href="/docs/examples/increment-buttons">Accelerating Increment Buttons</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1032" class="ember-view" href="/docs/examples/ajax-throttling">AJAX Throttling</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1033" class="ember-view" href="/docs/examples/route-tasks">Route Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember1034" class="ember-view" href="/docs/examples/joining-tasks">Awaiting Multiple Child Tasks</a>
+            </div>
+
+
+<!---->      </div>
+    </div>
+    <div class="nine columns">
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a id="ember1035" class="ember-view" href="/docs/advanced/task-modifiers">Task Modifiers</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a id="ember1036" class="ember-view" href="/docs/examples/loading-ui">Loading UI</a>
+    </p>
+</div>
+
+      <a class="github-edit" href="https://github.com/machty/ember-concurrency/edit/master/tests/dummy/app/docs/advanced/yieldables/template.hbs" title="Edit on GitHub">
+  <i class="icon-pencil"></i>
+</a>
+
+
+      <h2>Yieldables</h2>
+
+<p>
+  Starting with ember-concurrency v2.1.0, Yieldables are a new addition to the
+  public API to provide a way to instrument TaskInstances. The API provides a
+  safe mechanism to implement custom waiters, hooks, introspection, and other
+  operations in a task definition, from application code.
+</p>
+
+<p>
+  There are many great uses for yieldables, and indeed many of them are already
+  built-in to ember-concurrency today. Yieldables like
+  <a href="/api/global.html#animationFrame"><code>animationFrame</code></a>,
+  <a href="/api/global.html#timeout"><code>timeout</code></a>, and
+  <a href="/api/global.html#rawTimeout"><code>rawTimeout</code></a> provide safe,
+  cancelation-aware ways to delay execution of a task. Cancelable Promise
+  helpers like <a href="/api/global.html#all"><code>all</code></a>, and
+  <a href="/api/global.html#hashSettled"><code>hashSettled</code></a> are too a
+  form of yieldable.
+</p>
+
+<p>
+  While there are many built-in forms that provide cancelation-aware wrappers around
+  common browser APIs, you can also define domain-specific yieldables for use
+  within your application or complementary addons. This allows you to implement
+  behavior that would be inappropriate for inclusion in ember-concurrency itself.
+</p>
+
+<h3>Defining a new yieldable</h3>
+
+<p>
+  Let's suppose you want to create a Task-aware, cancelable wrapper for the
+  <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback"><code>requestIdleCallback</code></a>
+  browser API, in order to write tasks that pause until the browser has time to
+  execute some lower-priority tasks.
+</p>
+
+<pre id="ember1037" class="javascript ember-view">// app/yieldables/idle-callback.js
+import { Yieldable } from 'ember-concurrency';
+
+class IdleCallbackYieldable extends Yieldable {
+  onYield(state) {
+    let callbackId = requestIdleCallback(() =&gt; state.next());
+
+    return () =&gt; cancelIdleCallback(callbackId);
+  }
+}
+
+export const idleCallback = () =&gt; new IdleCallbackYieldable();
+
+export default idleCallback;
+</pre>
+
+<p>
+  Now that we have a yieldable defined, we can import and use it in any tasks
+  that we wish.
+</p>
+
+<pre id="ember1038" class="javascript ember-view">import Component from '@glimmer/component';
+import { task } from 'ember-concurrency';
+import idleCallback from 'my-app/yieldables/idle-callback';
+
+export class MyComponent extends Component {
+  @task *backgroundTask() {
+    while (1) {
+      yield idleCallback();
+
+      const data = this.complicatedNumberCrunching();
+      yield this.sendData(data);
+    }
+  }
+}
+</pre>
+
+<h3>More about Yieldables</h3>
+
+<p>
+  The behavior and implementation of yieldables are defined further in
+  the <a href="https://github.com/machty/ember-concurrency/blob/master/rfcs/0001-yieldables.md">Yieldables RFC</a>.
+  Additionally, the API for <code>Yieldable</code> is documented <a href="/api/Yieldable.html">here</a>.
+</p>
+
+
+      <br> <br> <br> <br>
+
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a id="ember1039" class="ember-view" href="/docs/advanced/task-modifiers">Task Modifiers</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a id="ember1040" class="ember-view" href="/docs/examples/loading-ui">Loading UI</a>
+    </p>
+</div>
+
+    </div>
+  </div>
+</div>
+
+
+<div id="ember1041" class="ember-notify-cn ember-notify-default ember-view"><!----></div>
+<script type="x/boundary" id="fastboot-body-end"></script>
+
+    <script src="/assets/vendor-ce787ffecc1168ce3d1f81d30840a4b9.js"></script>
+    <script src="/assets/dummy-814af449562e8f47908dcfc7faebafd8.js"></script>
+
+    
+  </body>
+</html>

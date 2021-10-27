@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>JSDoc: Global</title>
 
-    <script src="scripts/prettify/prettify-ac8c9277b05c42436cc08385614bed9c.js"> </script>
-    <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js"> </script>
+    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -306,7 +306,7 @@ export default class MyComponent extends Component {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line325">line 325</a>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line328">line 328</a>
     </li></ul></dd>
     
 
@@ -616,7 +616,7 @@ for every animation frame.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line291">line 291</a>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line294">line 294</a>
     </li></ul></dd>
     
 
@@ -652,7 +652,7 @@ for every animation frame.</p>
     
 
     
-    <h4 class="name" id="didCancel"><span class="type-signature"></span>didCancel<span class="signature">(error)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    <h4 class="name" id="didCancel"><span class="type-signature"></span>didCancel<span class="signature">(error)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
 
     
@@ -713,7 +713,7 @@ convenience function to distinguish cancelation from errors.</p>
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">object</span>
 
 
             
@@ -800,7 +800,7 @@ convenience function to distinguish cancelation from errors.</p>
     </dt>
     <dd>
         
-<span class="param-type">Boolean</span>
+<span class="param-type">boolean</span>
 
 
     </dd>
@@ -831,7 +831,7 @@ convenience function to distinguish cancelation from errors.</p>
 <p>Optionally takes a hash of options that will be applied as modifiers to the
 task. For instance <code>maxConcurrency</code>, <code>on</code>, or <code>group</code>.</p>
 <p>You can also define an
-<a href="/docs/encapsulated-task">Encapsulated Task</a>
+<a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
 by decorating an object that defines a <code>perform</code> generator
 method.</p>
 <pre class="prettyprint source lang-js"><code>import Component from '@ember/component';
@@ -959,7 +959,7 @@ class MyComponent extends Component {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line212">line 212</a>
+        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line215">line 215</a>
     </li></ul></dd>
     
 
@@ -1139,7 +1139,7 @@ to the task group.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line363">line 363</a>
+        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line362">line 362</a>
     </li></ul></dd>
     
 
@@ -1206,7 +1206,7 @@ to the task group.</p>
 <p>Optionally takes a hash of options that will be applied as modifiers to the
 task. For instance <code>maxConcurrency</code>, <code>on</code>, or <code>group</code>.</p>
 <p>You can also define an
-<a href="/docs/encapsulated-task">Encapsulated Task</a>
+<a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
 by decorating an object that defines a <code>perform</code> generator
 method.</p>
 <pre class="prettyprint source lang-js"><code>import Component from '@ember/component';
@@ -1334,7 +1334,7 @@ class MyComponent extends Component {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line246">line 246</a>
+        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line248">line 248</a>
     </li></ul></dd>
     
 
@@ -1514,7 +1514,7 @@ to the task group.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line379">line 379</a>
+        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line377">line 377</a>
     </li></ul></dd>
     
 
@@ -1568,6 +1568,316 @@ to the task group.</p>
     
 
     
+    <h4 class="name" id="getModifier"><span class="type-signature"></span>getModifier<span class="signature">(name)</span><span class="type-signature"> &rarr; (nullable) {<a href="TaskFactory.html#~TaskModifier">TaskFactory~TaskModifier</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Returns a specified modifier, if it exists in the registry</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the modifier</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="external_task-factory.js.html">external/task-factory.js</a>, <a href="external_task-factory.js.html#line73">line 73</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="TaskFactory.html#~TaskModifier">TaskFactory~TaskModifier</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="hasModifier"><span class="type-signature"></span>hasModifier<span class="signature">(name)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Returns whether a specified modifier exists in the registry</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the modifier</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="external_task-factory.js.html">external/task-factory.js</a>, <a href="external_task-factory.js.html#line83">line 83</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="keepLatestTask"><span class="type-signature"></span>keepLatestTask<span class="signature">(options<span class="signature-attributes">opt, nullable</span>)</span><span class="type-signature"> &rarr; {<a href="Task.html">Task</a>}</span></h4>
     
 
@@ -1581,7 +1891,7 @@ to the task group.</p>
 <p>Optionally takes a hash of options that will be applied as modifiers to the
 task. For instance <code>maxConcurrency</code>, <code>on</code>, or <code>group</code>.</p>
 <p>You can also define an
-<a href="/docs/encapsulated-task">Encapsulated Task</a>
+<a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
 by decorating an object that defines a <code>perform</code> generator
 method.</p>
 <pre class="prettyprint source lang-js"><code>import Component from '@ember/component';
@@ -1709,7 +2019,7 @@ class MyComponent extends Component {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line280">line 280</a>
+        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line281">line 281</a>
     </li></ul></dd>
     
 
@@ -1889,7 +2199,7 @@ to the task group.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line395">line 395</a>
+        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line392">line 392</a>
     </li></ul></dd>
     
 
@@ -2060,7 +2370,167 @@ the task, in milliseconds</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line353">line 353</a>
+        <a href="external_yieldables.js.html">external/yieldables.js</a>, <a href="external_yieldables.js.html#line356">line 356</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="registerModifier"><span class="type-signature"></span>registerModifier<span class="signature">(name, callback)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Registers a new modifier with the modifier registry</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the modifier</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="TaskFactory.html#~TaskModifier">TaskFactory~TaskModifier</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="external_task-factory.js.html">external/task-factory.js</a>, <a href="external_task-factory.js.html#line57">line 57</a>
     </li></ul></dd>
     
 
@@ -2109,7 +2579,7 @@ the task, in milliseconds</p></td>
 <p>Optionally takes a hash of options that will be applied as modifiers to the
 task. For instance <code>maxConcurrency</code>, <code>on</code>, or <code>group</code>.</p>
 <p>You can also define an
-<a href="/docs/encapsulated-task">Encapsulated Task</a>
+<a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
 by decorating an object that defines a <code>perform</code> generator
 method.</p>
 <pre class="prettyprint source lang-js"><code>import Component from '@ember/component';
@@ -2417,7 +2887,7 @@ to the task group.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line411">line 411</a>
+        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line408">line 408</a>
     </li></ul></dd>
     
 
@@ -2491,7 +2961,7 @@ task. For instance <code>maxConcurrency</code>, <code>on</code>, <code>group</co
 but much of a power of tasks lies in proper usage of Task Modifiers
 that you can apply to a task.</p>
 <p>You can also define an
-<a href="/docs/encapsulated-task">Encapsulated Task</a>
+<a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
 by decorating an object that defines a <code>perform</code> generator
 method.</p>
 <pre class="prettyprint source lang-js"><code>import Component from '@ember/component';
@@ -2701,7 +3171,7 @@ class MyComponent extends Component {
 
             
 
-            <td class="description last"><p>Enables <a href="/docs/task-lifecycle-events">task lifecycle events</a> for this Task, if <code>true</code></p></td>
+            <td class="description last"><p>Enables <a href="/docs/advanced/lifecycle-events">task lifecycle events</a> for this Task, if <code>true</code></p></td>
         </tr>
 
     
@@ -3054,7 +3524,7 @@ class MyComponent extends Component {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line181">line 181</a>
+        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line184">line 184</a>
     </li></ul></dd>
     
 
@@ -3127,7 +3597,7 @@ that they (like the proposed ES7 async-await syntax) can
 be used to elegantly express asynchronous, cancelable
 operations.</p>
 <p>You can also define an
-<a href="/docs/encapsulated-task">Encapsulated Task</a>
+<a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
 by passing in an object that defined a <code>perform</code> generator
 function property.</p>
 <p>The following Component defines a task called <code>myTask</code> that,
@@ -3240,7 +3710,7 @@ that you can apply to a task.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line379">line 379</a>
+        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line382">line 382</a>
     </li></ul></dd>
     
 
@@ -3437,7 +3907,7 @@ class MyComponent extends Component {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line350">line 350</a>
+        <a href="task-decorators.js.html">task-decorators.js</a>, <a href="task-decorators.js.html#line349">line 349</a>
     </li></ul></dd>
     
 
@@ -3557,7 +4027,7 @@ export default class MyController extends Controller {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line418">line 418</a>
+        <a href="task-properties.js.html">task-properties.js</a>, <a href="task-properties.js.html#line424">line 424</a>
     </li></ul></dd>
     
 
@@ -3729,7 +4199,7 @@ the task, in milliseconds</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line64">line 64</a>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line66">line 66</a>
     </li></ul></dd>
     
 
@@ -3906,7 +4376,7 @@ that the event fires from</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="wait-for.js.html">wait-for.js</a>, <a href="wait-for.js.html#line151">line 151</a>
+        <a href="wait-for.js.html">wait-for.js</a>, <a href="wait-for.js.html#line152">line 152</a>
     </li></ul></dd>
     
 
@@ -4123,7 +4593,7 @@ needs to equal before the task will continue running</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="wait-for.js.html">wait-for.js</a>, <a href="wait-for.js.html#line202">line 202</a>
+        <a href="wait-for.js.html">wait-for.js</a>, <a href="wait-for.js.html#line203">line 203</a>
     </li></ul></dd>
     
 
@@ -4268,7 +4738,7 @@ export default class MyComponent extends Component {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="wait-for.js.html">wait-for.js</a>, <a href="wait-for.js.html#line122">line 122</a>
+        <a href="wait-for.js.html">wait-for.js</a>, <a href="wait-for.js.html#line123">line 123</a>
     </li></ul></dd>
     
 
@@ -4314,16 +4784,16 @@ export default class MyComponent extends Component {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jun 01 2021 11:20:05 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Oct 26 2021 22:48:52 GMT-0500 (Central Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
-<script src="scripts/linenumber-bc32f8413602d59b0d893a8e704de17b.js"> </script>
+<script src="scripts/linenumber-b072639105045a40275250bc66645306.js"> </script>
 </body>
 </html>

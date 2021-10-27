@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>JSDoc: Source: task-decorators.js</title>
 
-    <script src="scripts/prettify/prettify-ac8c9277b05c42436cc08385614bed9c.js"> </script>
-    <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js"> </script>
+    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -27,7 +27,7 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>import { computed, get } from '@ember/object';
-import { TaskFactory, TaskGroupFactory } from './task-factory';
+import { TaskFactory } from './task-factory';
 import { USE_TRACKED } from './utils';
 
 function taskFromPropertyDescriptor(target, key, descriptor, params = []) {
@@ -59,14 +59,14 @@ function taskFromPropertyDescriptor(target, key, descriptor, params = []) {
       }
 
       return task;
-    }
-  }
+    },
+  };
 }
 
 function taskGroupPropertyDescriptor(target, key, _descriptor, params = []) {
   let taskGroups = new WeakMap();
   let options = params[0] || {};
-  let factory = new TaskGroupFactory(key, null, options);
+  let factory = new TaskFactory(key, null, options);
 
   return {
     get() {
@@ -78,8 +78,8 @@ function taskGroupPropertyDescriptor(target, key, _descriptor, params = []) {
       }
 
       return task;
-    }
-  }
+    },
+  };
 }
 
 // Cribbed from @ember-decorators/utils
@@ -100,13 +100,13 @@ function isFieldDescriptor(possibleDesc) {
 }
 
 function decoratorWithParams(descriptorFn) {
-  return function(...params) {
+  return function (...params) {
     if (isFieldDescriptor(params)) {
       return descriptorFn(...params);
     } else {
       return (...desc) => descriptorFn(...desc, params);
     }
-  }
+  };
 }
 
 function createDecorator(fn, baseOptions = {}) {
@@ -117,17 +117,34 @@ function createDecorator(fn, baseOptions = {}) {
   });
 }
 
-export const lastValue = decoratorWithParams((target, key, descriptor, [taskName] = []) => {
-  const { initializer } = descriptor;
-  delete descriptor.initializer;
+export const lastValue = decoratorWithParams(
+  (target, key, descriptor, [taskName] = []) => {
+    const { initializer } = descriptor;
+    delete descriptor.initializer;
 
-  if (USE_TRACKED) {
-    return {
-      get() {
-        let lastInstance = this[taskName].lastSuccessful;
+    if (USE_TRACKED) {
+      return {
+        get() {
+          let lastInstance = this[taskName].lastSuccessful;
+
+          if (lastInstance) {
+            return lastInstance.value;
+          }
+
+          if (initializer) {
+            return initializer.call(this);
+          }
+
+          return undefined;
+        },
+      };
+    } else {
+      let cp = computed(`${taskName}.lastSuccessful`, function () {
+        let lastInstance = get(this, `${taskName}.lastSuccessful`);
 
         if (lastInstance) {
-          return lastInstance.value;
+          // eslint-disable-next-line ember/no-get
+          return get(lastInstance, 'value');
         }
 
         if (initializer) {
@@ -135,26 +152,12 @@ export const lastValue = decoratorWithParams((target, key, descriptor, [taskName
         }
 
         return undefined;
-      }
-    };
-  } else {
-    let cp = computed(`${taskName}.lastSuccessful`, function() {
-      let lastInstance = get(this, `${taskName}.lastSuccessful`);
+      });
 
-      if (lastInstance) {
-        return get(lastInstance, 'value');
-      }
-
-      if (initializer) {
-        return initializer.call(this);
-      }
-
-      return undefined;
-    });
-
-    return cp(target, key, descriptor);
+      return cp(target, key, descriptor);
+    }
   }
-});
+);
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -173,7 +176,7 @@ export const lastValue = decoratorWithParams((target, key, descriptor, [taskName
  * that you can apply to a task.
  *
  * You can also define an
- * &lt;a href="/docs/encapsulated-task">Encapsulated Task&lt;/a>
+ * &lt;a href="/docs/advanced/encapsulated-task">Encapsulated Task&lt;/a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -194,7 +197,7 @@ export const lastValue = decoratorWithParams((target, key, descriptor, [taskName
  * @param {object?} [options={}] Task modifier options
  * @param {string|string[]} [options.cancelOn] Events to cancel task on. Applies only to `&amp;#64;ember/component`
  * @param {boolean} [options.enqueue] Sets `enqueue` modifier on task if `true`
- * @param {boolean} [options.evented] Enables [task lifecycle events](/docs/task-lifecycle-events) for this Task, if `true`
+ * @param {boolean} [options.evented] Enables [task lifecycle events](/docs/advanced/lifecycle-events) for this Task, if `true`
  * @param {boolean} [options.debug] Enables task debugging if `true`
  * @param {boolean} [options.drop] Sets `drop` modifier on task if `true`
  * @param {string} [options.group] Associates task with the group specified
@@ -216,7 +219,7 @@ export const task = createDecorator(taskFromPropertyDescriptor);
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * &lt;a href="/docs/encapsulated-task">Encapsulated Task&lt;/a>
+ * &lt;a href="/docs/advanced/encapsulated-task">Encapsulated Task&lt;/a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -237,10 +240,9 @@ export const task = createDecorator(taskFromPropertyDescriptor);
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const dropTask = createDecorator(
-  taskFromPropertyDescriptor,
-  { drop: true }
-);
+export const dropTask = createDecorator(taskFromPropertyDescriptor, {
+  drop: true,
+});
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -250,7 +252,7 @@ export const dropTask = createDecorator(
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * &lt;a href="/docs/encapsulated-task">Encapsulated Task&lt;/a>
+ * &lt;a href="/docs/advanced/encapsulated-task">Encapsulated Task&lt;/a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -271,10 +273,9 @@ export const dropTask = createDecorator(
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const enqueueTask = createDecorator(
-  taskFromPropertyDescriptor,
-  { enqueue: true }
-);
+export const enqueueTask = createDecorator(taskFromPropertyDescriptor, {
+  enqueue: true,
+});
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -284,7 +285,7 @@ export const enqueueTask = createDecorator(
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * &lt;a href="/docs/encapsulated-task">Encapsulated Task&lt;/a>
+ * &lt;a href="/docs/advanced/encapsulated-task">Encapsulated Task&lt;/a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -305,10 +306,9 @@ export const enqueueTask = createDecorator(
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const keepLatestTask = createDecorator(
-  taskFromPropertyDescriptor,
-  { keepLatest: true }
-);
+export const keepLatestTask = createDecorator(taskFromPropertyDescriptor, {
+  keepLatest: true,
+});
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -318,7 +318,7 @@ export const keepLatestTask = createDecorator(
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
  * You can also define an
- * &lt;a href="/docs/encapsulated-task">Encapsulated Task&lt;/a>
+ * &lt;a href="/docs/advanced/encapsulated-task">Encapsulated Task&lt;/a>
  * by decorating an object that defines a `perform` generator
  * method.
  *
@@ -339,10 +339,9 @@ export const keepLatestTask = createDecorator(
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const restartableTask = createDecorator(
-  taskFromPropertyDescriptor,
-  { restartable: true }
-);
+export const restartableTask = createDecorator(taskFromPropertyDescriptor, {
+  restartable: true,
+});
 
 /**
  * "Task Groups" provide a means for applying
@@ -388,10 +387,9 @@ export const taskGroup = createDecorator(taskGroupPropertyDescriptor);
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const dropTaskGroup = createDecorator(
-  taskGroupPropertyDescriptor,
-  { drop: true }
-);
+export const dropTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
+  drop: true,
+});
 
 /**
  * Turns the decorated property into a task group and applies the
@@ -404,10 +402,9 @@ export const dropTaskGroup = createDecorator(
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const enqueueTaskGroup = createDecorator(
-  taskGroupPropertyDescriptor,
-  { enqueue: true }
-);
+export const enqueueTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
+  enqueue: true,
+});
 
 /**
  * Turns the decorated property into a task group and applies the
@@ -450,16 +447,16 @@ export const restartableTaskGroup = createDecorator(
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jun 01 2021 11:20:05 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Oct 26 2021 22:48:52 GMT-0500 (Central Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
-<script src="scripts/linenumber-bc32f8413602d59b0d893a8e704de17b.js"> </script>
+<script src="scripts/linenumber-b072639105045a40275250bc66645306.js"> </script>
 </body>
 </html>

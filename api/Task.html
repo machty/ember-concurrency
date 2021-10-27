@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>JSDoc: Class: Task</title>
 
-    <script src="scripts/prettify/prettify-ac8c9277b05c42436cc08385614bed9c.js"> </script>
-    <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js"> </script>
+    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -103,7 +103,7 @@ method on this object to cancel all running or enqueued
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task.js.html">task.js</a>, <a href="task.js.html#line19">line 19</a>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line16">line 16</a>
     </li></ul></dd>
     
 
@@ -148,6 +148,946 @@ method on this object to cancel all running or enqueued
 
     
 
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="isIdle"><span class="type-signature">(readonly) </span>isIdle<span class="type-signature"> :boolean</span></h4>
+
+
+
+
+<div class="description">
+    <p><code>true</code> if the task is not in the running or queued state.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line49">line 49</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="isQueued"><span class="type-signature">(readonly) </span>isQueued<span class="type-signature"> :boolean</span></h4>
+
+
+
+
+<div class="description">
+    <p><code>true</code> if any future task instances are queued.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line41">line 41</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="isRunning"><span class="type-signature">(readonly) </span>isRunning<span class="type-signature"> :boolean</span></h4>
+
+
+
+
+<div class="description">
+    <p><code>true</code> if any current task instances are running.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line33">line 33</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="last"><span class="type-signature">(readonly) </span>last<span class="type-signature"> :<a href="TaskInstance.html">TaskInstance</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>The most recently started task instance.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="TaskInstance.html">TaskInstance</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line65">line 65</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="lastCanceled"><span class="type-signature">(readonly) </span>lastCanceled<span class="type-signature"> :<a href="TaskInstance.html">TaskInstance</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>The most recently canceled task instance.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="TaskInstance.html">TaskInstance</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line113">line 113</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="lastComplete"><span class="type-signature">(readonly) </span>lastComplete<span class="type-signature"> :<a href="TaskInstance.html">TaskInstance</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>The most recently completed task instance.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="TaskInstance.html">TaskInstance</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line97">line 97</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="lastErrored"><span class="type-signature">(readonly) </span>lastErrored<span class="type-signature"> :<a href="TaskInstance.html">TaskInstance</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>The most recent task instance that errored.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="TaskInstance.html">TaskInstance</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line105">line 105</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="lastIncomplete"><span class="type-signature">(readonly) </span>lastIncomplete<span class="type-signature"> :<a href="TaskInstance.html">TaskInstance</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>The most recent task instance that is incomplete.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="TaskInstance.html">TaskInstance</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line121">line 121</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="lastPerformed"><span class="type-signature">(readonly) </span>lastPerformed<span class="type-signature"> :<a href="TaskInstance.html">TaskInstance</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>The most recently performed task instance.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="TaskInstance.html">TaskInstance</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line81">line 81</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="lastRunning"><span class="type-signature">(readonly) </span>lastRunning<span class="type-signature"> :<a href="TaskInstance.html">TaskInstance</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>The most recent task instance that is currently running.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="TaskInstance.html">TaskInstance</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line73">line 73</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="lastSuccessful"><span class="type-signature">(readonly) </span>lastSuccessful<span class="type-signature"> :<a href="TaskInstance.html">TaskInstance</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>The most recent task instance that succeeded.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="TaskInstance.html">TaskInstance</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line89">line 89</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="performCount"><span class="type-signature">(readonly) </span>performCount<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>The number of times this task has been performed.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line129">line 129</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="state"><span class="type-signature">(readonly) </span>state<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    <p>The current state of the task: <code>&quot;running&quot;</code>, <code>&quot;queued&quot;</code> or <code>&quot;idle&quot;</code>.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line57">line 57</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
     
 
     
@@ -279,7 +1219,7 @@ values). Defaults to false.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task.js.html">task.js</a>, <a href="task.js.html#line95">line 95</a>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line197">line 197</a>
     </li></ul></dd>
     
 
@@ -370,7 +1310,7 @@ parent task is canceled as well.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task.js.html">task.js</a>, <a href="task.js.html#line49">line 49</a>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line151">line 151</a>
     </li></ul></dd>
     
 
@@ -511,7 +1451,7 @@ to run at later time, after the currently running task(s) have finished.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task.js.html">task.js</a>, <a href="task.js.html#line76">line 76</a>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line178">line 178</a>
     </li></ul></dd>
     
 
@@ -614,7 +1554,7 @@ ember-concurrency will indicate when this may be needed.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task.js.html">task.js</a>, <a href="task.js.html#line62">line 62</a>
+        <a href="task.js.html">task.js</a>, <a href="task.js.html#line164">line 164</a>
     </li></ul></dd>
     
 
@@ -660,16 +1600,16 @@ ember-concurrency will indicate when this may be needed.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jun 01 2021 11:20:05 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Oct 26 2021 22:48:52 GMT-0500 (Central Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
-<script src="scripts/linenumber-bc32f8413602d59b0d893a8e704de17b.js"> </script>
+<script src="scripts/linenumber-b072639105045a40275250bc66645306.js"> </script>
 </body>
 </html>

@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>JSDoc: Source: task-properties.js</title>
 
-    <script src="scripts/prettify/prettify-ac8c9277b05c42436cc08385614bed9c.js"> </script>
-    <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js"> </script>
+    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -30,17 +30,17 @@
 import { computed } from '@ember/object';
 import ComputedProperty from '@ember/object/computed';
 import { gte } from 'ember-compatibility-helpers';
-import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy'
-import DropSchedulerPolicy from './external/scheduler/policies/drop-policy'
-import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy'
-import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy'
+import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
+import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
+import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy';
+import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy';
 import {
   task as taskDecorator,
-  taskGroup as taskGroupDecorator
+  taskGroup as taskGroupDecorator,
 } from './task-decorators';
-import { TaskFactory, TaskGroupFactory } from './task-factory';
+import { TaskFactory } from './task-factory';
 
-let taskFactorySymbol = "__ec_task_factory";
+let taskFactorySymbol = '__ec_task_factory';
 
 export const propertyModifiers = {
   /**
@@ -207,17 +207,21 @@ export const propertyModifiers = {
   onState(callback) {
     this[taskFactorySymbol].setOnState(callback);
     return this;
-  }
+  },
 };
 
 function isDecoratorOptions(possibleOptions) {
-  if (!possibleOptions) { return false; }
-  if (typeof possibleOptions === "function") { return false; }
+  if (!possibleOptions) {
+    return false;
+  }
+  if (typeof possibleOptions === 'function') {
+    return false;
+  }
 
   if (
-    typeof possibleOptions === "object" &amp;&amp;
+    typeof possibleOptions === 'object' &amp;&amp;
     'perform' in possibleOptions &amp;&amp;
-    typeof possibleOptions.perform === "function"
+    typeof possibleOptions.perform === 'function'
   ) {
     return false;
   }
@@ -239,7 +243,6 @@ function isDecoratorOptions(possibleOptions) {
   on methods instead.
 
   @class TaskProperty
-  @hideconstructor
 */
 export let TaskProperty;
 export let TaskGroupProperty;
@@ -343,7 +346,7 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
 const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
 export function taskComputed(fn) {
   if (gte('3.10.0')) {
-    let cp = function(proto, key) {
+    let cp = function (proto, key) {
       if (cp.setup !== undefined) {
         cp.setup(proto, key);
       }
@@ -373,7 +376,7 @@ export function taskComputed(fn) {
  * operations.
  *
  * You can also define an
- * &lt;a href="/docs/encapsulated-task">Encapsulated Task&lt;/a>
+ * &lt;a href="/docs/advanced/encapsulated-task">Encapsulated Task&lt;/a>
  * by passing in an object that defined a `perform` generator
  * function property.
  *
@@ -405,10 +408,13 @@ export function taskComputed(fn) {
  * @returns {TaskProperty}
  */
 export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
-  if (isDecoratorOptions(taskFnOrProtoOrDecoratorOptions) || (key &amp;&amp; descriptor)) {
+  if (
+    isDecoratorOptions(taskFnOrProtoOrDecoratorOptions) ||
+    (key &amp;&amp; descriptor)
+  ) {
     return taskDecorator(...arguments);
   } else {
-    let tp = taskComputed(function() {
+    let tp = taskComputed(function () {
       tp[taskFactorySymbol].setTaskDefinition(tp.taskFn);
       return tp[taskFactorySymbol].createTask(this);
     });
@@ -447,12 +453,12 @@ export function taskGroup(possibleDecoratorOptions, key, descriptor) {
   if (isDecoratorOptions(possibleDecoratorOptions) || (key &amp;&amp; descriptor)) {
     return taskGroupDecorator(...arguments);
   } else {
-    let tp = taskComputed(function(key) {
+    let tp = taskComputed(function (key) {
       tp[taskFactorySymbol].setName(key);
       return tp[taskFactorySymbol].createTaskGroup(this);
     });
 
-    tp[taskFactorySymbol] = new TaskGroupFactory();
+    tp[taskFactorySymbol] = new TaskFactory();
 
     Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
 
@@ -469,16 +475,16 @@ export function taskGroup(possibleDecoratorOptions, key, descriptor) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jun 01 2021 11:20:05 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Oct 26 2021 22:48:52 GMT-0500 (Central Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
-<script src="scripts/linenumber-bc32f8413602d59b0d893a8e704de17b.js"> </script>
+<script src="scripts/linenumber-b072639105045a40275250bc66645306.js"> </script>
 </body>
 </html>

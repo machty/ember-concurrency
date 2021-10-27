@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>JSDoc: Source: task-group.js</title>
 
-    <script src="scripts/prettify/prettify-ac8c9277b05c42436cc08385614bed9c.js"> </script>
-    <script src="scripts/prettify/lang-css-d282952562bb6dc303bbbb9eb864baa3.js"> </script>
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js"> </script>
+    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -26,10 +26,44 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { TaskGroup as TaskGroupBase } from "./external/task/task-group";
-import { TASKABLE_MIXIN } from "./taskable-mixin";
-import { TRACKED_INITIAL_TASK_STATE } from "./tracked-state";
+            <pre class="prettyprint source linenums"><code>import { TaskGroup as TaskGroupBase } from './external/task/task-group';
+import { TASKABLE_MIXIN } from './taskable-mixin';
+import { TRACKED_INITIAL_TASK_STATE } from './tracked-state';
 
+/**
+ * "Task Groups" provide a means for applying
+ * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
+ * as part of a group task, modifiers like `drop` or `restartable`
+ * will no longer affect the individual `Task`. Instead those
+ * modifiers can be applied to the entire group.
+ *
+ * Turns the decorated property into a task group.
+ *
+ * Optionally takes a hash of options that will be applied as modifiers to the
+ * task group. For instance `maxConcurrency` or `keepLatest`.
+ *
+ * ```js
+ * import Component from '@glimmer/component';
+ * import { task, taskGroup } from 'ember-concurrency';
+ *
+ * class MyComponent extends Component {
+ *   &amp;#64;taskGroup({ maxConcurrency: 5 }) chores;
+ *
+ *   &amp;#64;task({ group: 'chores' })
+ *   *mowLawn() {}
+ *
+ *   &amp;#64;task({ group: 'chores' })
+ *   *doDishes() {}
+ * }
+ * ```
+ *
+ * &lt;style>
+ *  .ignore-this--this-is-here-to-hide-constructor,
+ *  #TaskGroup { display: none }
+ * &lt;/style>
+ *
+ * @class TaskGroup
+ */
 export class TaskGroup extends TaskGroupBase {
   /**
    * Cancels all running or queued `TaskInstance`s for this task group.
@@ -49,8 +83,7 @@ export class TaskGroup extends TaskGroupBase {
    * @async
    *
    */
-
-     /**
+  /**
    * `true` if any current task instances are running.
    *
    * @memberof TaskGroup
@@ -58,7 +91,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * `true` if any future task instances are queued.
    *
@@ -67,7 +99,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * `true` if the task is not in the running or queued state.
    *
@@ -76,7 +107,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The current state of the task: `"running"`, `"queued"` or `"idle"`.
    *
@@ -85,7 +115,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recently started task instance.
    *
@@ -94,7 +123,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recent task instance that is currently running.
    *
@@ -103,7 +131,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recently performed task instance.
    *
@@ -112,7 +139,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recent task instance that succeeded.
    *
@@ -121,7 +147,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recently completed task instance.
    *
@@ -130,7 +155,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recent task instance that errored.
    *
@@ -139,7 +163,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recently canceled task instance.
    *
@@ -148,7 +171,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The most recent task instance that is incomplete.
    *
@@ -157,7 +179,6 @@ export class TaskGroup extends TaskGroupBase {
    * @instance
    * @readOnly
    */
-
   /**
    * The number of times this task has been performed.
    *
@@ -183,16 +204,16 @@ Object.assign(TaskGroup.prototype, TASKABLE_MIXIN);
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jun 01 2021 11:20:05 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Oct 26 2021 22:48:52 GMT-0500 (Central Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
-<script src="scripts/linenumber-bc32f8413602d59b0d893a8e704de17b.js"> </script>
+<script src="scripts/linenumber-b072639105045a40275250bc66645306.js"> </script>
 </body>
 </html>
