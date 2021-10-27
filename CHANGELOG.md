@@ -1,5 +1,17 @@
 # Changelog
 
+### 2.2.0
+  - Implemented a public API for [Task Modifiers](https://ember-concurrency.com/docs/advanced/task-modifiers),
+    providing a way for users to define additional modifiers and behavior in
+    application code. (#441) Please consider the `TaskProperty`
+    prototype extension method of implementing task modifiers to be **deprecated**
+    in favor of the `registerModifier` API.
+  - Add `onError` parameter to `perform` helper to allow UI-triggered tasks to
+    specify alternative or null error handlers (#443, fixes #435. Thanks
+    @lolmaus for the discussion)
+  - Fix inefficent use of `run.once` (#442, fixes #437. Thanks @stefanpenner for
+    the heads up!)
+
 ### 2.1.2
   - Same as 2.1.1, but with the changes actually published.
 
@@ -9,7 +21,7 @@
   - [dev] test against embroider scenarios (#430, thanks @alexlafroscia!)
 
 ### 2.1.0
-  - Implemented a public API for [Yieldables](https://ember-concurrency.com/docs/yieldables),
+  - Implemented a public API for [Yieldables](https://ember-concurrency.com/docs/advanced/yieldables),
     a new way to instrument TaskInstances by providing a safe mechanism to
     implement custom waiters, hooks, introspection, and other operations from
     application code. (#413)
