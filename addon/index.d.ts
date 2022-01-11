@@ -343,6 +343,10 @@ export interface TaskInstance<T> extends Promise<T> {
 type EncapsulatedTaskInstance<T, State extends object> = TaskInstance<T> &
   EncapsulatedTaskState<State>;
 
+interface OnStateCallback<T> {
+  (state: TaskState<TaskInstance<any>>, taskable: T): void;
+}
+
 interface AbstractTaskProperty<T extends Task<any, any[]>>
   extends ComputedProperty<T> {
   volatile: never;
@@ -490,6 +494,16 @@ interface AbstractTaskProperty<T extends Task<any, any[]>>
    * e.g. "TaskInstance 'doStuff' was canceled because the object it lives on was destroyed or unrendered"
    */
   debug(): this;
+
+  /**
+   * Configures the task to call the passed in callback for derived state updates,
+   * overriding the default derived state tracking. You may call with `null` to
+   * completely opt-out of derived state tracking.
+   *
+   * @param {function?} callback Callback to be called. Receives an object argument with the new state.
+   * @instance
+   */
+  onState(callback: OnStateCallback<T> | null): this;
 }
 
 /**
@@ -617,12 +631,6 @@ export type TaskDefinition<T, Args extends any[]> =
 export interface TaskModifier<T, Args extends any[]> {
   (factory: AbstractTaskFactory<T, Args>, taskModifierOption: any): void;
 }
-interface OnStateCallback<T> {
-  (
-    state: TaskState<TaskInstance<T>>,
-    taskable: Task<T, any[]> | TaskGroup<T> | EncapsulatedTask<T, any[], any>
-  ): void;
-}
 
 interface AbstractTaskFactory<T, Args extends any[]> {
   readonly name: string;
@@ -634,7 +642,7 @@ interface AbstractTaskFactory<T, Args extends any[]> {
   setGroup(groupName: string): this;
   setMaxConcurrency(maxConcurrency: number): this;
   setName(name: string): this;
-  setOnState(onStateCallback: OnStateCallback<T>): this;
+  setOnState(onStateCallback: OnStateCallback<T> | null): this;
   setTaskDefinition(taskDefinition: TaskDefinition<T, Args>): this;
 }
 

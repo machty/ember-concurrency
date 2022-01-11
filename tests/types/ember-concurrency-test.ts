@@ -10,6 +10,7 @@ import {
   EncapsulatedTaskDescriptorReturnType,
   EncapsulatedTaskProperty,
   EncapsulatedTaskState,
+  OnStateCallback,
   Task,
   TaskForTaskFunction,
   TaskForEncapsulatedTaskDescriptor,
@@ -25,6 +26,8 @@ import {
   TaskInstance,
   TaskModifier,
   TaskProperty,
+  TaskState,
+  Yieldable,
   all,
   allSettled,
   animationFrame,
@@ -45,7 +48,6 @@ import {
   waitForProperty,
   waitForQueue,
   lastValue,
-  Yieldable,
 } from 'ember-concurrency';
 import { taskFor } from 'ember-concurrency-ts';
 import { expectTypeOf as expect } from 'expect-type';
@@ -713,6 +715,30 @@ module('unit tests', () => {
     // @ts-expect-error
     tp.debug('nope');
 
+    expect(tp.onState).toBeCallableWith(() => {});
+    expect(tp.onState).toBeCallableWith(null);
+    expect(tp.onState).toBeCallableWith(
+      (s) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect(s).toEqualTypeOf<TaskState<TaskInstance<any>>>();
+      }
+    );
+    expect(tp.onState).toBeCallableWith(
+      (s, t) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect(s).toEqualTypeOf<TaskState<TaskInstance<any>>>();
+        expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
+      }
+    );
+    expect(tp.onState).parameters.toEqualTypeOf<[OnStateCallback<Task<string, [boolean, number?]>> | null]>();
+    expect(tp.onState).returns.toEqualTypeOf(tp);
+
+    // @ts-expect-error
+    tp.onState('nope');
+
+    // @ts-expect-error
+    tp.onState(undefined);
+
     let O = EmberObject.extend({
       tp,
 
@@ -927,6 +953,30 @@ module('unit tests', () => {
     // @ts-expect-error
     tp.debug('nope');
 
+    expect(tp.onState).toBeCallableWith(() => {});
+    expect(tp.onState).toBeCallableWith(null);
+    expect(tp.onState).toBeCallableWith(
+      (s) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect(s).toEqualTypeOf<TaskState<TaskInstance<any>>>();
+      }
+    );
+    expect(tp.onState).toBeCallableWith(
+      (s, t) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect(s).toEqualTypeOf<TaskState<TaskInstance<any>>>();
+        expect(t).toEqualTypeOf<EncapsulatedTask<string, [boolean, number?], { foo: string }>>();
+      }
+    );
+    expect(tp.onState).parameters.toEqualTypeOf<[OnStateCallback<EncapsulatedTask<string, [boolean, number?], { foo: string }>> | null]>();
+    expect(tp.onState).returns.toEqualTypeOf(tp);
+
+    // @ts-expect-error
+    tp.onState('nope');
+
+    // @ts-expect-error
+    tp.onState(undefined);
+
     let O = EmberObject.extend({
       tp,
 
@@ -1112,6 +1162,9 @@ module('unit tests', () => {
 
     // @ts-expect-error
     tgp.debug();
+
+    // @ts-expect-error
+    tgp.onState();
 
     let O = EmberObject.extend({
       tgp: tgp,
@@ -2480,6 +2533,8 @@ module('integration tests', () => {
       @task({ keepLatest: true }) keepLatest = function*() {};
       @task({ evented: true }) evented = function*() {};
       @task({ debug: true }) debug = function*() {};
+      @task({ onState: () => {} }) onState = function*() {};
+      @task({ onState: null }) onStateNull = function*() {};
 
       // Note: these options work even when strictFunctionTypes is enabled, but
       // turning it on in this repo breaks other things in addon/index.d.ts
