@@ -90,6 +90,7 @@ module.exports = async function () {
         name: 'typescript-3.7',
         npm: {
           devDependencies: {
+            '@types/node': '~16.11.7', // @types/node 17.x breaks TS 3.7
             typescript: '~3.7.0',
           },
         },

@@ -157,7 +157,7 @@ jobs:
         - ember-lts-3.24
         - ember-release
         - ember-default
-        - typescript-3.7
+        # - typescript-3.7
         - typescript-3.9
         - embroider-safe
         - embroider-optimized
