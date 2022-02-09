@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.2.1
+  - Added missing TypeScript types for `onState` task modifier and
+    `TaskFactory#setOnState` (#449, fixed #447. Thanks @johanrd for the heads up!)
+
 ### 2.2.0
   - Implemented a public API for [Task Modifiers](https://ember-concurrency.com/docs/advanced/task-modifiers),
     providing a way for users to define additional modifiers and behavior in
