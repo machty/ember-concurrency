@@ -1,135 +1,38 @@
 import { computed, get } from '@ember/object';
-import { TaskFactory } from './task-factory';
+import {
+  decoratorWithParams,
+  createTaskDecorator,
+  createTaskGroupDecorator,
+  lastValue as nativeLastValue,
+} from './external/task-decorators';
+import { TaskFactory as EmberTaskFactory } from './task-factory';
 import { USE_TRACKED } from './utils';
 
-function taskFromPropertyDescriptor(target, key, descriptor, params = []) {
-  let { initializer, get, value } = descriptor;
-  let taskFn;
-
-  if (initializer) {
-    taskFn = initializer.call(undefined);
-  } else if (get) {
-    taskFn = get.call(undefined);
-  } else if (value) {
-    taskFn = value;
-  }
-
-  taskFn.displayName = `${key} (task)`;
-
-  let tasks = new WeakMap();
-  let options = params[0] || {};
-  let factory = new TaskFactory(key, taskFn, options);
-  factory._setupEmberKVO(target);
-
-  return {
-    get() {
-      let task = tasks.get(this);
-
-      if (!task) {
-        task = factory.createTask(this);
-        tasks.set(this, task);
-      }
-
-      return task;
-    },
-  };
-}
-
-function taskGroupPropertyDescriptor(target, key, _descriptor, params = []) {
-  let taskGroups = new WeakMap();
-  let options = params[0] || {};
-  let factory = new TaskFactory(key, null, options);
-
-  return {
-    get() {
-      let task = taskGroups.get(this);
-
-      if (!task) {
-        task = factory.createTaskGroup(this);
-        taskGroups.set(this, task);
-      }
-
-      return task;
-    },
-  };
-}
-
-// Cribbed from @ember-decorators/utils
-function isFieldDescriptor(possibleDesc) {
-  let [target, key, desc] = possibleDesc;
-
-  return (
-    possibleDesc.length === 3 &&
-    typeof target === 'object' &&
-    target !== null &&
-    typeof key === 'string' &&
-    ((typeof desc === 'object' &&
-      desc !== null &&
-      'enumerable' in desc &&
-      'configurable' in desc) ||
-      desc === undefined) // TS compatibility ???
-  );
-}
-
-function decoratorWithParams(descriptorFn) {
-  return function (...params) {
-    if (isFieldDescriptor(params)) {
-      return descriptorFn(...params);
-    } else {
-      return (...desc) => descriptorFn(...desc, params);
-    }
-  };
-}
-
-function createDecorator(fn, baseOptions = {}) {
-  return decoratorWithParams((target, key, descriptor, [userOptions] = []) => {
-    let mergedOptions = Object.assign({}, { ...baseOptions, ...userOptions });
-
-    return fn(target, key, descriptor, [mergedOptions]);
-  });
-}
-
-export const lastValue = decoratorWithParams(
+const computedLastValue = decoratorWithParams(
   (target, key, descriptor, [taskName] = []) => {
     const { initializer } = descriptor;
     delete descriptor.initializer;
 
-    if (USE_TRACKED) {
-      return {
-        get() {
-          let lastInstance = this[taskName].lastSuccessful;
+    let cp = computed(`${taskName}.lastSuccessful`, function () {
+      let lastInstance = get(this, `${taskName}.lastSuccessful`);
 
-          if (lastInstance) {
-            return lastInstance.value;
-          }
+      if (lastInstance) {
+        // eslint-disable-next-line ember/no-get
+        return get(lastInstance, 'value');
+      }
 
-          if (initializer) {
-            return initializer.call(this);
-          }
+      if (initializer) {
+        return initializer.call(this);
+      }
 
-          return undefined;
-        },
-      };
-    } else {
-      let cp = computed(`${taskName}.lastSuccessful`, function () {
-        let lastInstance = get(this, `${taskName}.lastSuccessful`);
+      return undefined;
+    });
 
-        if (lastInstance) {
-          // eslint-disable-next-line ember/no-get
-          return get(lastInstance, 'value');
-        }
-
-        if (initializer) {
-          return initializer.call(this);
-        }
-
-        return undefined;
-      });
-
-      return cp(target, key, descriptor);
-    }
+    return cp(target, key, descriptor);
   }
 );
+
+export const lastValue = USE_TRACKED ? nativeLastValue : computedLastValue;
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -181,7 +84,7 @@ export const lastValue = decoratorWithParams(
  * @param {boolean} [options.restartable] Sets `restartable` modifier on task if `true`
  * @return {Task}
  */
-export const task = createDecorator(taskFromPropertyDescriptor);
+export const task = createTaskDecorator({}, EmberTaskFactory);
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -212,9 +115,7 @@ export const task = createDecorator(taskFromPropertyDescriptor);
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const dropTask = createDecorator(taskFromPropertyDescriptor, {
-  drop: true,
-});
+export const dropTask = createTaskDecorator({ drop: true }, EmberTaskFactory);
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -245,9 +146,12 @@ export const dropTask = createDecorator(taskFromPropertyDescriptor, {
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const enqueueTask = createDecorator(taskFromPropertyDescriptor, {
-  enqueue: true,
-});
+export const enqueueTask = createTaskDecorator(
+  {
+    enqueue: true,
+  },
+  EmberTaskFactory
+);
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -278,9 +182,12 @@ export const enqueueTask = createDecorator(taskFromPropertyDescriptor, {
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const keepLatestTask = createDecorator(taskFromPropertyDescriptor, {
-  keepLatest: true,
-});
+export const keepLatestTask = createTaskDecorator(
+  {
+    keepLatest: true,
+  },
+  EmberTaskFactory
+);
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -311,9 +218,12 @@ export const keepLatestTask = createDecorator(taskFromPropertyDescriptor, {
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const restartableTask = createDecorator(taskFromPropertyDescriptor, {
-  restartable: true,
-});
+export const restartableTask = createTaskDecorator(
+  {
+    restartable: true,
+  },
+  EmberTaskFactory
+);
 
 /**
  * "Task Groups" provide a means for applying
@@ -346,7 +256,7 @@ export const restartableTask = createDecorator(taskFromPropertyDescriptor, {
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const taskGroup = createDecorator(taskGroupPropertyDescriptor);
+export const taskGroup = createTaskGroupDecorator({}, EmberTaskFactory);
 
 /**
  * Turns the decorated property into a task group and applies the
@@ -359,9 +269,12 @@ export const taskGroup = createDecorator(taskGroupPropertyDescriptor);
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const dropTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
-  drop: true,
-});
+export const dropTaskGroup = createTaskGroupDecorator(
+  {
+    drop: true,
+  },
+  EmberTaskFactory
+);
 
 /**
  * Turns the decorated property into a task group and applies the
@@ -374,9 +287,12 @@ export const dropTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const enqueueTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
-  enqueue: true,
-});
+export const enqueueTaskGroup = createTaskGroupDecorator(
+  {
+    enqueue: true,
+  },
+  EmberTaskFactory
+);
 
 /**
  * Turns the decorated property into a task group and applies the
@@ -389,9 +305,9 @@ export const enqueueTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const keepLatestTaskGroup = createDecorator(
-  taskGroupPropertyDescriptor,
-  { keepLatest: true }
+export const keepLatestTaskGroup = createTaskGroupDecorator(
+  { keepLatest: true },
+  EmberTaskFactory
 );
 
 /**
@@ -405,7 +321,7 @@ export const keepLatestTaskGroup = createDecorator(
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const restartableTaskGroup = createDecorator(
-  taskGroupPropertyDescriptor,
-  { restartable: true }
+export const restartableTaskGroup = createTaskGroupDecorator(
+  { restartable: true },
+  EmberTaskFactory
 );
