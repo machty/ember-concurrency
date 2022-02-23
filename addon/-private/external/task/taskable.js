@@ -14,6 +14,7 @@ export class Taskable {
     this.context = options.context;
     this.debug = options.debug || false;
     this.enabledModifiers = options.enabledModifiers;
+    this.env = options.env;
     this.group = options.group;
     this.hasEnabledEvents = options.hasEnabledEvents;
     this.modifierOptions = options.modifierOptions;
@@ -42,6 +43,10 @@ export class Taskable {
         this._resetState();
       }
     });
+  }
+
+  get _isAlive() {
+    return true;
   }
 
   _resetState() {

@@ -6,6 +6,7 @@ import KeepLatestSchedulerPolicy from './scheduler/policies/keep-latest-policy';
 import RestartableSchedulerPolicy from './scheduler/policies/restartable-policy';
 import { Task } from './task/task';
 import { TaskGroup } from './task/task-group';
+import { DEFAULT_ENVIRONMENT } from './environment';
 
 function assertModifiersNotMixedWithGroup(obj) {
   if (obj._hasSetConcurrencyConstraint && obj._taskGroupPath) {
@@ -96,6 +97,8 @@ export function hasModifier(name) {
  * @class TaskFactory
  */
 export class TaskFactory {
+  env = DEFAULT_ENVIRONMENT;
+
   _debug = null;
   _enabledModifiers = [];
   _hasSetConcurrencyConstraint = false;
@@ -215,6 +218,7 @@ export class TaskFactory {
     return {
       context,
       debug: this._debug,
+      env: this.env,
       name: this.name,
       group,
       scheduler,
