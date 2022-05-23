@@ -233,9 +233,9 @@ export class TaskInstanceExecutor {
       return;
     }
 
-    this.addDisposer(yieldedValue[cancelableSymbol]);
+    this.addDisposer(getSymbol(yieldedValue, cancelableSymbol));
 
-    if (yieldedValue[yieldableSymbol]) {
+    if (getSymbol(yieldedValue, yieldableSymbol)) {
       this.invokeYieldable(yieldedValue);
     } else if (typeof yieldedValue.then === 'function') {
       this.handleYieldedUnknownThenable(yieldedValue);
@@ -504,5 +504,15 @@ export class TaskInstanceExecutor {
     ) {
       this.taskInstance.selfCancelLoopWarning(parent);
     }
+  }
+}
+
+function getSymbol(obj, symbol) {
+  try {
+    return obj[symbol];
+  } catch {
+    // Ember Data started to throw errors if unknown properties on its
+    // promises are accessed. Here we ignore such errors because we don't
+    // care about promises without the required symbol.
   }
 }
