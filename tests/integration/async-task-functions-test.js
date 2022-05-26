@@ -85,6 +85,8 @@ module('Integration | async-task-functions', function (hooks) {
   });
 
   test('it works', async function (assert) {
+    assert.expect(12);
+
     let { promise, resolve } = defer();
 
     this.owner.register(
@@ -105,6 +107,8 @@ module('Integration | async-task-functions', function (hooks) {
   });
 
   test('it works when containing an async function', async function (assert) {
+    assert.expect(12);
+
     let { promise, resolve } = defer();
 
     this.owner.register(
@@ -133,6 +137,8 @@ module('Integration | async-task-functions', function (hooks) {
   });
 
   test('it works when containing an async arrow function', async function (assert) {
+    assert.expect(12);
+
     let { promise, resolve } = defer();
 
     this.owner.register(
@@ -162,6 +168,8 @@ module('Integration | async-task-functions', function (hooks) {
 
   module('task constructor with async arrow', function () {
     test('it works', async function (assert) {
+      assert.expect(12);
+
       let { promise, resolve } = defer();
 
       this.owner.register(
@@ -184,6 +192,8 @@ module('Integration | async-task-functions', function (hooks) {
 
   module('taskFor', function () {
     test('it works when using taskFor', async function (assert) {
+      assert.expect(12);
+
       let { promise, resolve } = defer();
 
       this.owner.register(
@@ -204,6 +214,8 @@ module('Integration | async-task-functions', function (hooks) {
     });
 
     test('it works when using taskFor containing an async function', async function (assert) {
+      assert.expect(12);
+
       let { promise, resolve } = defer();
 
       this.owner.register(
@@ -232,6 +244,8 @@ module('Integration | async-task-functions', function (hooks) {
     });
 
     test('it works when using taskFor containing an async arrow function', async function (assert) {
+      assert.expect(12);
+
       let { promise, resolve } = defer();
 
       this.owner.register(
@@ -261,6 +275,8 @@ module('Integration | async-task-functions', function (hooks) {
 
     module('arrow function', function () {
       test('it works when using taskFor with an arrow function', async function (assert) {
+        assert.expect(12);
+
         let { promise, resolve } = defer();
 
         this.owner.register(
@@ -281,6 +297,8 @@ module('Integration | async-task-functions', function (hooks) {
       });
 
       test('it works when using taskFor with an arrow function containing an async function', async function (assert) {
+        assert.expect(12);
+
         let { promise, resolve } = defer();
 
         this.owner.register(
@@ -309,6 +327,8 @@ module('Integration | async-task-functions', function (hooks) {
       });
 
       test('it works when using taskFor with an arrow function containing an async arrow function', async function (assert) {
+        assert.expect(12);
+
         let { promise, resolve } = defer();
 
         this.owner.register(
