@@ -167,7 +167,7 @@ module('Integration | async-task-functions', function (hooks) {
       this.owner.register(
         'component:test',
         class extends TestComponent {
-          myTask = task(this, async () => {
+          myTask = task(this, async (arg) => {
             set(this, 'resolved', await promise);
             return arg;
           });

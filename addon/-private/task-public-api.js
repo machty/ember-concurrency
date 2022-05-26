@@ -100,9 +100,10 @@ function buildClassicTaskProperty(taskFn) {
  *
  * @private
  */
-function buildTask(_context, _options, _taskGeneratorFn) {
-  // const taskFactory = new TaskFactory()
-  throw new Error('Not implemented!');
+function buildTask(context, _options, taskGeneratorFn) {
+  const taskFactory = new TaskFactory()
+  taskFactory.taskFn = taskGeneratorFn;
+  return taskFactory.createTask(context);
 }
 
 /**
