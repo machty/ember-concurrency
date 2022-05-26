@@ -7,7 +7,7 @@ import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
 import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy';
 import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy';
 
-let taskFactorySymbol = '__ec_task_factory';
+export let taskFactorySymbol = '__ec_task_factory';
 
 export const propertyModifiers = {
   /**

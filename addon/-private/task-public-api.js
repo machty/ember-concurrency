@@ -2,6 +2,8 @@ import { TaskFactory } from './task-factory';
 import {
   TaskProperty,
   TaskGroupProperty,
+  taskComputed,
+  taskFactorySymbol
 } from './task-properties';
 import {
   task as taskDecorator,
@@ -10,7 +12,7 @@ import {
 
 /**
  * TODO: update docs to reflect both old and new ES6 styles
- * 
+ *
  * A Task is a cancelable, restartable, asynchronous operation that
  * is driven by a generator function. Tasks are automatically canceled
  * when the object they live on is destroyed (e.g. a Component
@@ -60,7 +62,7 @@ export function task(...args) {
   if (isDecoratorOptions(args[0]) || (args[1] && args[2])) {
     return taskDecorator(...args);
   } else {
-    switch (args.size) {
+    switch (args.length) {
       case 1:
         return buildClassicTaskProperty(args[0]);
       case 2:
@@ -73,7 +75,7 @@ export function task(...args) {
 
 /**
  * Build and return a "classic" TaskProperty, which is essentially a subclass of a Computed Property
- * descriptor that can be used to define Tasks on classic Ember.Objects. 
+ * descriptor that can be used to define Tasks on classic Ember.Objects.
  *
  * @private
  */
@@ -98,9 +100,9 @@ function buildClassicTaskProperty(taskFn) {
  *
  * @private
  */
-function buildTask(context, options, taskGeneratorFn) {
+function buildTask(_context, _options, _taskGeneratorFn) {
   // const taskFactory = new TaskFactory()
-  throw new Error("Not implemented!");
+  throw new Error('Not implemented!');
 }
 
 /**
@@ -159,4 +161,3 @@ function isDecoratorOptions(possibleOptions) {
 
   return Object.getPrototypeOf(possibleOptions) === Object.prototype;
 }
-

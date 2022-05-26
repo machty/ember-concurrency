@@ -19,6 +19,10 @@ module.exports = function (defaults) {
 
     autoImport: {
       forbidEval: true,
+      webpack: {
+        // Webpack won't auto-detect, because of "maintained node versions" in config/targets.js
+        target: 'web',
+      },
     },
 
     prember: {
