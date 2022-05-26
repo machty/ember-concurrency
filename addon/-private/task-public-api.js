@@ -3,7 +3,7 @@ import {
   TaskProperty,
   TaskGroupProperty,
   taskComputed,
-  taskFactorySymbol
+  taskFactorySymbol,
 } from './task-properties';
 import {
   task as taskDecorator,
