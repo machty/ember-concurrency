@@ -160,6 +160,28 @@ module('Integration | async-task-functions', function (hooks) {
     await finishTest(assert);
   });
 
+  module('task constructor with async arrow', function () {
+    test('it works', async function (assert) {
+      let { promise, resolve } = defer();
+
+      this.owner.register(
+        'component:test',
+        class extends TestComponent {
+          myTask = task(this, async () => {
+            set(this, 'resolved', await promise);
+            return arg;
+          });
+        }
+      );
+
+      await startTest(assert);
+
+      resolve('Wow!');
+
+      await finishTest(assert);
+    });
+  });
+
   module('taskFor', function () {
     test('it works when using taskFor', async function (assert) {
       let { promise, resolve } = defer();
