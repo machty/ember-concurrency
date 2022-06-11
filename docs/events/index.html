@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>ember-concurrency</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%222.2.1%2B7a79e000%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
+<!-- EMBER_CLI_FASTBOOT_TITLE -->
+
+    <link integrity="" rel="stylesheet" href="/assets/vendor-e754b247f0b14ad5fde0f302404dd7cb.css">
+    <link integrity="" rel="stylesheet" href="/assets/dummy-4257be3042dd680ca4a8b02fa35594c9.css">
+    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+    
+  </head>
+  <body>
+    <script type="x/boundary" id="fastboot-body-start"></script><div class="container navbar">
+  <div class="row">
+    <div class="ten columns">
+      <h3 style="float:left;">
+        ember-concurrency
+
+        <span style="font-size: 0.5em;">
+          (v 2.2.1)
+        </span>
+      </h3>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="/api">API</a>
+      </div>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="https://github.com/machty/ember-concurrency" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="docs row">
+    <div class="three columns">
+      <div class="side-menu">
+            <div class="toc-entry">
+                <a id="ember753" class="ember-view" href="/docs/introduction">Home</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember754" class="ember-view" href="/docs/installation">Installation</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Introduction
+            </div>
+            <div class="toc-entry">
+                <a id="ember755" class="ember-view" href="/docs/tutorial">Writing Code Without Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember756" class="ember-view" href="/docs/tutorial/discussion">Post-Mortem</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember757" class="ember-view" href="/docs/tutorial/refactor">Refactoring With Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Reference
+            </div>
+            <div class="toc-entry">
+                <a id="ember758" class="ember-view" href="/docs/task-function-syntax">Task Function Syntax</a>
+            </div>
+
+
+                <div class="toc-entry toc-subentry">
+                  <a id="ember759" class="ember-view" href="/docs/task-decorators">Decorators</a>
+                </div>
+                <div class="toc-entry toc-subentry">
+                  <a id="ember760" class="ember-view" href="/docs/typescript">TypeScript</a>
+                </div>
+            <div class="toc-entry">
+                <a id="ember761" class="ember-view" href="/docs/task-concurrency">Managing Task Concurrency</a>
+            </div>
+
+
+                <div class="toc-entry toc-subentry">
+                  <a id="ember762" class="ember-view" href="/docs/task-concurrency-advanced">Advanced</a>
+                </div>
+            <div class="toc-entry">
+                <a id="ember763" class="ember-view" href="/docs/cancelation">Cancelation</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember764" class="ember-view" href="/docs/error-vs-cancelation">Handling Errors</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember765" class="ember-view" href="/docs/child-tasks">Child Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember766" class="ember-view" href="/docs/task-groups">Task Groups</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember767" class="ember-view" href="/docs/derived-state">Derived State</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember768" class="ember-view active" href="/docs/events">Awaiting Events / Conditions</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember769" class="ember-view" href="/docs/testing-debugging">Testing &amp; Debugging</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember770" class="ember-view" href="/docs/faq">FAQ &amp; Fact Sheet</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Advanced
+            </div>
+            <div class="toc-entry">
+                <a id="ember771" class="ember-view" href="/docs/advanced/encapsulated-task">Encapsulated Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember772" class="ember-view" href="/docs/advanced/lifecycle-events">Lifecycle Events</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember773" class="ember-view" href="/docs/advanced/task-modifiers">Task Modifiers</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember774" class="ember-view" href="/docs/advanced/yieldables">Yieldables / Controlling Execution</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Examples
+            </div>
+            <div class="toc-entry">
+                <a id="ember775" class="ember-view" href="/docs/examples/loading-ui">Loading UI</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember776" class="ember-view" href="/docs/examples/autocomplete">Type-Ahead Search</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember777" class="ember-view" href="/docs/examples/increment-buttons">Accelerating Increment Buttons</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember778" class="ember-view" href="/docs/examples/ajax-throttling">AJAX Throttling</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember779" class="ember-view" href="/docs/examples/route-tasks">Route Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember780" class="ember-view" href="/docs/examples/joining-tasks">Awaiting Multiple Child Tasks</a>
+            </div>
+
+
+<!---->      </div>
+    </div>
+    <div class="nine columns">
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a id="ember781" class="ember-view" href="/docs/derived-state">Derived State</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a id="ember782" class="ember-view" href="/docs/testing-debugging">Testing &amp; Debugging</a>
+    </p>
+</div>
+
+      <a class="github-edit" href="https://github.com/machty/ember-concurrency/edit/master/tests/dummy/app/docs/events/template.hbs" title="Edit on GitHub">
+  <i class="icon-pencil"></i>
+</a>
+
+
+      <div id="ember783" class="ember-view"><h2>Awaiting Events / Conditions</h2>
+
+<p>
+  In addition to pausing the execution of a task until a yielded promise
+  resolves, it's also possible to pause the execution of a task until
+  some other event or condition occurs by using the following helpers:
+</p>
+
+<ul>
+  <li>
+    <a href="/api/global.html#waitForEvent">waitForEvent</a>
+    Pause the task until an Ember/DOM/jQuery event fires.
+  </li>
+  <li>
+    <a href="/api/global.html#waitForProperty">waitForProperty</a>
+    Pause the task until a property on an Ember object becomes
+    some expected value.
+  </li>
+  <li>
+    <a href="/api/global.html#waitForQueue">waitForQueue</a>
+    Pause the task and resume execution within a specific
+    Ember Run Loop queue.
+  </li>
+</ul>
+
+<p>
+  The patterns described below can be seen as alternatives to using observers
+  and other patterns that are often prone to abuse; proper use of observers or
+  Ember.Evented hooks often requires conditionals and defensive programming to
+  ensure that the app is in some expected state before running the logic in that
+  hook, which is the kind of error-prone busywork that ember-concurrency
+  intends to prevent.
+</p>
+
+<p>
+  By expressing event-driven code within tasks using the patterns below, you are
+  already heavily constraining the conditions in which that event or observer can fire,
+  which means you don't have to write nearly as much guard/cleanup logic to ensure that
+  an event doesn't fire at an unexpected time/state.
+</p>
+
+<h3>Waiting for Ember &amp; DOM / jQuery Events</h3>
+
+<p>
+  You can use <code><a href="/api/global.html#waitForEvent">waitForEvent(object, eventName)</a></code> to pause your task until
+  an Ember.Evented or DOM / jQuery Event fires.
+  <code>object</code> must include Ember.Evented (or support <code>.one()</code>
+  and <code>.off()</code>) or be a valid DOM EventTarget (or support
+  <code>.addEventListener()</code> and <code>.removeEventListener()</code>).
+</p>
+
+<p>
+  This is useful for when you want to dynamically wait for an event to fire
+  within a task, but you don't want to have to set up a Promise that
+  resolves when the event fires.
+</p>
+
+<h3>Example</h3>
+
+<p>
+  Try clicking around the page; <code>waitForEvent</code> will install
+  handlers and wait for the specified Ember, DOM or jQuery event to fire;
+  the value returned from <code>yield</code> is the event that was fired.
+</p>
+
+<h4>
+  domEvent: (x=, y=)
+</h4>
+
+<h4>
+  jqueryEvent: (x=, y=)
+</h4>
+
+<h4>
+  emberEvent: (v=)
+</h4>
+
+<pre id="ember784" class="javascript ember-view">domEvent = null;
+@task *domEventLoop() {
+  while (true) {
+    let event = yield waitForEvent(document.body, 'click');
+    this.set('domEvent', event);
+    this.trigger('fooEvent', { v: Math.random() });
+  }
+}
+
+jQueryEvent = null;
+@task *jQueryEventLoop() {
+  let $body = $('body');
+  while (true) {
+    let event = yield waitForEvent($body, 'click');
+    this.set('jQueryEvent', event);
+  }
+}
+
+emberEvent = null;
+@task *emberEventedLoop() {
+  while (true) {
+    let event = yield waitForEvent(this, 'fooEvent');
+    this.set('emberEvent', event);
+  }
+}
+
+didInsertElement() {
+  super.didInsertElement(...arguments);
+  this.domEventLoop.perform();
+  this.jQueryEventLoop.perform();
+  this.emberEventedLoop.perform();
+  this.waiterLoop.perform();
+}
+</pre>
+<pre id="ember785" class="htmlbars ember-view">&lt;h4&gt;
+  domEvent: (x={{this.domEvent.offsetX}}, y={{this.domEvent.offsetX}})
+&lt;/h4&gt;
+
+&lt;h4&gt;
+  jqueryEvent: (x={{this.jQueryEvent.offsetX}}, y={{this.jQueryEvent.offsetX}})
+&lt;/h4&gt;
+
+&lt;h4&gt;
+  emberEvent: (v={{this.emberEvent.v}})
+&lt;/h4&gt;
+</pre>
+
+<h3>Example with Derived State</h3>
+
+<p>
+  Sometimes, it's desirable to know whether a certain part of a task
+  is executing, rather than the whole task. For instance, in the example
+  below, the <code>waiterLoop</code> task has an infinite loop, so
+  <code>waiterLoop.isRunning</code> will always be true. If you want
+  to know whether a specific part of that loop is running, then you
+  can just extract some of that logic into another task and check
+  if that subtask's <code>isRunning</code> property in the template.
+</p>
+
+<h4>
+    Thanks!
+</h4>
+
+<pre id="ember786" class="javascript ember-view">@task *waiterLoop() {
+  while (true) {
+    yield this.waiter.perform();
+    yield timeout(1500);
+  }
+}
+
+@task *waiter() {
+  let event = yield waitForEvent(document.body, 'click');
+  return event;
+}
+</pre>
+<pre id="ember787" class="htmlbars ember-view">&lt;h4&gt;
+  {{#if this.waiter.isRunning}}
+    Please click somewhere...
+  {{else}}
+    Thanks!
+  {{/if}}
+&lt;/h4&gt;
+</pre>
+
+<h3>Waiting for a condition / property</h3>
+
+<p>
+  You can use <code><a href="/api/global.html#waitForProperty">waitForProperty(object, property, callbackOrValue)</a></code>
+  to pause your task until a property on an Ember Object becomes a certain value.
+  This can be used in a variety of use cases, including coordination execution
+  between concurrent tasks.
+</p>
+
+<button type="button">
+  Start
+</button>
+
+<h5>
+  State: 
+</h5>
+
+<pre id="ember788" class="javascript ember-view">@task *startAll() {
+  this.set('bazValue', 1);
+  this.set('state', 'Start.');
+  this.foo.perform();
+  this.bar.perform();
+  this.baz.perform();
+}
+
+@task *foo() {
+  yield timeout(500);
+}
+
+@task *bar() {
+  yield waitForProperty(this, 'foo.isIdle');
+  this.set('state', `${this.state} Foo is idle.`);
+  yield timeout(500);
+  this.set('bazValue', 42);
+  this.set('state', `${this.state} Bar.`);
+}
+
+bazValue = 1;
+@task *baz() {
+  let val = yield waitForProperty(this, 'bazValue', (v) =&gt; v % 2 === 0);
+  yield timeout(500);
+  this.set('state', `${this.state} Baz got even value ${val}.`);
+}
+</pre>
+<pre id="ember789" class="htmlbars ember-view">&lt;button {{on "click" (perform this.startAll)}} type="button"&gt;
+  Start
+&lt;/button&gt;
+
+&lt;h5&gt;
+  State: {{this.state}}
+&lt;/h5&gt;
+</pre>
+</div>
+
+      <br> <br> <br> <br>
+
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a id="ember790" class="ember-view" href="/docs/derived-state">Derived State</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a id="ember791" class="ember-view" href="/docs/testing-debugging">Testing &amp; Debugging</a>
+    </p>
+</div>
+
+    </div>
+  </div>
+</div>
+
+
+<div id="ember792" class="ember-notify-cn ember-notify-default ember-view"><!----></div>
+<script type="x/boundary" id="fastboot-body-end"></script>
+
+    <script src="/assets/vendor-8b9fdb2df219a6e3ad2b83d48a176353.js"></script>
+    <script src="/assets/dummy-fb9e4ad6636ed34cf5880dfc32d2c328.js"></script>
+
+    
+  </body>
+</html>

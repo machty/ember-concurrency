@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>ember-concurrency</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%222.2.1%2B7a79e000%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
+<!-- EMBER_CLI_FASTBOOT_TITLE -->
+
+    <link integrity="" rel="stylesheet" href="/assets/vendor-e754b247f0b14ad5fde0f302404dd7cb.css">
+    <link integrity="" rel="stylesheet" href="/assets/dummy-4257be3042dd680ca4a8b02fa35594c9.css">
+    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+    
+  </head>
+  <body>
+    <script type="x/boundary" id="fastboot-body-start"></script><div class="container navbar">
+  <div class="row">
+    <div class="ten columns">
+      <h3 style="float:left;">
+        ember-concurrency
+
+        <span style="font-size: 0.5em;">
+          (v 2.2.1)
+        </span>
+      </h3>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="/api">API</a>
+      </div>
+    </div>
+    <div class="one columns">
+      <div class="nav-bar-link-outer">
+        <a href="https://github.com/machty/ember-concurrency" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="docs row">
+    <div class="three columns">
+      <div class="side-menu">
+            <div class="toc-entry">
+                <a id="ember213" class="ember-view" href="/docs/introduction">Home</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember214" class="ember-view" href="/docs/installation">Installation</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Introduction
+            </div>
+            <div class="toc-entry">
+                <a id="ember215" class="ember-view" href="/docs/tutorial">Writing Code Without Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember216" class="ember-view active" href="/docs/tutorial/discussion">Post-Mortem</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember217" class="ember-view" href="/docs/tutorial/refactor">Refactoring With Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Reference
+            </div>
+            <div class="toc-entry">
+                <a id="ember218" class="ember-view" href="/docs/task-function-syntax">Task Function Syntax</a>
+            </div>
+
+
+                <div class="toc-entry toc-subentry">
+                  <a id="ember219" class="ember-view" href="/docs/task-decorators">Decorators</a>
+                </div>
+                <div class="toc-entry toc-subentry">
+                  <a id="ember220" class="ember-view" href="/docs/typescript">TypeScript</a>
+                </div>
+            <div class="toc-entry">
+                <a id="ember221" class="ember-view" href="/docs/task-concurrency">Managing Task Concurrency</a>
+            </div>
+
+
+                <div class="toc-entry toc-subentry">
+                  <a id="ember222" class="ember-view" href="/docs/task-concurrency-advanced">Advanced</a>
+                </div>
+            <div class="toc-entry">
+                <a id="ember223" class="ember-view" href="/docs/cancelation">Cancelation</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember224" class="ember-view" href="/docs/error-vs-cancelation">Handling Errors</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember225" class="ember-view" href="/docs/child-tasks">Child Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember226" class="ember-view" href="/docs/task-groups">Task Groups</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember227" class="ember-view" href="/docs/derived-state">Derived State</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember228" class="ember-view" href="/docs/events">Awaiting Events / Conditions</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember229" class="ember-view" href="/docs/testing-debugging">Testing &amp; Debugging</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember230" class="ember-view" href="/docs/faq">FAQ &amp; Fact Sheet</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Advanced
+            </div>
+            <div class="toc-entry">
+                <a id="ember231" class="ember-view" href="/docs/advanced/encapsulated-task">Encapsulated Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember232" class="ember-view" href="/docs/advanced/lifecycle-events">Lifecycle Events</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember233" class="ember-view" href="/docs/advanced/task-modifiers">Task Modifiers</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember234" class="ember-view" href="/docs/advanced/yieldables">Yieldables / Controlling Execution</a>
+            </div>
+
+
+<!---->            <div class="toc-section-title">
+              Examples
+            </div>
+            <div class="toc-entry">
+                <a id="ember235" class="ember-view" href="/docs/examples/loading-ui">Loading UI</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember236" class="ember-view" href="/docs/examples/autocomplete">Type-Ahead Search</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember237" class="ember-view" href="/docs/examples/increment-buttons">Accelerating Increment Buttons</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember238" class="ember-view" href="/docs/examples/ajax-throttling">AJAX Throttling</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember239" class="ember-view" href="/docs/examples/route-tasks">Route Tasks</a>
+            </div>
+
+
+<!---->            <div class="toc-entry">
+                <a id="ember240" class="ember-view" href="/docs/examples/joining-tasks">Awaiting Multiple Child Tasks</a>
+            </div>
+
+
+<!---->      </div>
+    </div>
+    <div class="nine columns">
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a id="ember241" class="ember-view" href="/docs/tutorial">Writing Code Without Tasks</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a id="ember242" class="ember-view" href="/docs/tutorial/refactor">Refactoring With Tasks</a>
+    </p>
+</div>
+
+      <a class="github-edit" href="https://github.com/machty/ember-concurrency/edit/master/tests/dummy/app/docs/tutorial/discussion/template.hbs" title="Edit on GitHub">
+  <i class="icon-pencil"></i>
+</a>
+
+
+      <h3>A Quick Post-Mortem</h3>
+
+<p>
+  In the previous part of the tutorial, we built a component that
+  fetches and displays nearby retail stores. As you can see, it takes
+  quite a bit of code to cover all of the corner cases and build
+  something that is actually production-ready:
+</p>
+
+<div id="ember243">
+  <div class="code-template-toggle">
+    <div class="code-template-toggle-section hidden">
+      <pre id="ember244" class="htmlbars ember-view">&lt;button {{on "click" this.findStores}} type="button"&gt;
+  Find Nearby Stores
+  {{#if this.isFindingStores}}
+    &lt;LoadingSpinner /&gt;
+  {{/if}}
+&lt;/button&gt;
+
+{{#if this.result}}
+  {{#each this.result.stores as |s|}}
+    &lt;li&gt;
+      &lt;strong&gt;{{s.name}}&lt;/strong&gt;:
+      {{s.distance}} miles away
+    &lt;/li&gt;
+  {{/each}}
+{{/if}}
+</pre>
+    </div>
+    <div class="code-template-toggle-section ">
+      <pre id="ember245" class="javascript ember-view">import { action } from '@ember/object';
+
+export default class Tutorial5 extends TutorialComponent {
+  result = null;
+  isFindingStores = false;
+
+  @action
+  async findStores() {
+    if (this.isFindingStores) { return; }
+
+    let geolocation = this.geolocation;
+    let store = this.store;
+
+    this.set('isFindingStores', true);
+
+    try {
+      let coords = await geolocation.getCoords()
+      let result = await store.getNearbyStores(coords);
+
+      if (this.isDestroyed) { return; }
+
+      this.set('result', result);
+    } finally {
+      if (!this.isDestroyed) {
+        this.set('isFindingStores', false);
+      }
+    }
+  }
+}
+</pre>
+    </div>
+    <span role="button" class="button code-template-toggle-button">
+      Toggle JS / Template
+    </span>
+  </div>
+</div>
+
+<div class="tutorial-example">
+
+  <button type="button">
+    Find Nearby Stores
+<!---->  </button>
+
+<!---->
+  <span class="tutorial-example-label">Example</span>
+</div>
+
+
+<p>
+  This is not the beautiful Ember code we all thought we'd be writing,
+  and unfortunately this kind of code is extremely commonplace.
+</p>
+
+<h5>Alternative: Move tricky code to an object with a long lifespan</h5>
+
+<p>
+  Components have limited lifespans: they're rendered, and then
+  eventually they're unrendered and destroyed. Controllers, Services, Ember-Data
+  Stores, and Routes, on the other hand, live forever (or at least until
+  the app is torn down in a testing environment).
+</p>
+
+<p>
+  As such, one approach
+  to avoiding <code>"set on destroyed object"</code> errors is to move
+  tricky async logic into a method/action on a Controller or Service that
+  is invoked by a Component. Sometimes this works, but it's often the case
+  that even though you no longer see exceptions in the console, you still need to
+  clean up / stop / cancel some operation on a long lived object in response
+  to a Component being destroyed. There are Component lifecycle hooks
+  like <code>willDestroyElement</code> or element modifiers like
+  <code>will-destroy</code> that you can use for these kinds of things,
+  but then you still end up with the same amount of code, but now it's smeared
+  between Component and Controller.
+</p>
+
+
+      <br> <br> <br> <br>
+
+      <div class="row">
+    <p class="u-pull-left">
+      Previous: <a id="ember246" class="ember-view" href="/docs/tutorial">Writing Code Without Tasks</a>
+    </p>
+
+    <p class="u-pull-right">
+      Next: <a id="ember247" class="ember-view" href="/docs/tutorial/refactor">Refactoring With Tasks</a>
+    </p>
+</div>
+
+    </div>
+  </div>
+</div>
+
+
+<div id="ember248" class="ember-notify-cn ember-notify-default ember-view"><!----></div>
+<script type="x/boundary" id="fastboot-body-end"></script>
+
+    <script src="/assets/vendor-8b9fdb2df219a6e3ad2b83d48a176353.js"></script>
+    <script src="/assets/dummy-fb9e4ad6636ed34cf5880dfc32d2c328.js"></script>
+
+    
+  </body>
+</html>
