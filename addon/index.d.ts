@@ -830,6 +830,7 @@ export function task<T>(
   descriptor: TypedPropertyDescriptor<T>
 ): TypedPropertyDescriptor<T>;
 export function task(target: Object, propertyKey: string): void;
+export function task(target: Object, propertyKey: string): void;
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
