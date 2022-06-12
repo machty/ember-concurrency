@@ -56,6 +56,9 @@ module.exports = function (defaults) {
           '{{test-swallow-error}}': {
             safeToIgnore: true,
           },
+          '{{test-async-arrow-task}}': {
+            safeToIgnore: true,
+          },
         },
       },
     ],

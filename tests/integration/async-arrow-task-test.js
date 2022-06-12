@@ -38,7 +38,7 @@ class TestComponent extends Component {
 }
 
 async function startTest(assert) {
-  await render(hbs`<Test />`);
+  await render(hbs`<TestAsyncArrowTask />`);
 
   assert.dom('button#start').hasText('Start!');
   assert.dom().doesNotContainText('Running!');
@@ -62,12 +62,12 @@ async function finishTest(assert) {
   assert.dom('#resolved').hasText('Wow!');
 }
 
-module('Integration | async-task-functions', function (hooks) {
+module('Integration | async-arrow-task', function (hooks) {
   setupRenderingTest(hooks);
 
   hooks.beforeEach(function () {
     this.owner.register(
-      'template:components/test',
+      'template:components/test-async-arrow-task',
       hbs`
       {{#if this.isWaiting}}
         <button id="start" {{on "click" (perform this.myTask "Done!")}}>Start!</button>
@@ -89,12 +89,12 @@ module('Integration | async-task-functions', function (hooks) {
     let { promise, resolve } = defer();
 
     this.owner.register(
-      'component:test',
+      'component:test-async-arrow-task',
       class extends TestComponent {
-        @task async myTask(arg) {
+        myTask = task(this, async (arg) => {
           set(this, 'resolved', await promise);
           return arg;
-        }
+        });
       }
     );
 
@@ -103,89 +103,5 @@ module('Integration | async-task-functions', function (hooks) {
     resolve('Wow!');
 
     await finishTest(assert);
-  });
-
-  test('it works when containing an async function', async function (assert) {
-    assert.expect(12);
-
-    let { promise, resolve } = defer();
-
-    this.owner.register(
-      'component:test',
-      class extends TestComponent {
-        @task async myTask(arg) {
-          const result = await Promise.all(
-            [promise].map(async function (p) {
-              const r = await p;
-              return r;
-            })
-          );
-          set(this, 'resolved', result[0]);
-          return arg;
-        }
-      }
-    );
-
-    await startTest(assert);
-
-    let { promise: promise2, resolve: resolve2 } = defer();
-    resolve(promise2);
-    resolve2('Wow!');
-
-    await finishTest(assert);
-  });
-
-  test('it works when containing an async arrow function', async function (assert) {
-    assert.expect(12);
-
-    let { promise, resolve } = defer();
-
-    this.owner.register(
-      'component:test',
-      class extends TestComponent {
-        @task async myTask(arg) {
-          const result = await Promise.all(
-            [promise].map(async (p) => {
-              const r = await p;
-              return r;
-            })
-          );
-          set(this, 'resolved', result[0]);
-          return arg;
-        }
-      }
-    );
-
-    await startTest(assert);
-
-    let { promise: promise2, resolve: resolve2 } = defer();
-    resolve(promise2);
-    resolve2('Wow!');
-
-    await finishTest(assert);
-  });
-
-  module('task constructor with async arrow', function () {
-    test('it works', async function (assert) {
-      assert.expect(12);
-
-      let { promise, resolve } = defer();
-
-      this.owner.register(
-        'component:test',
-        class extends TestComponent {
-          myTask = task(this, async (arg) => {
-            set(this, 'resolved', await promise);
-            return arg;
-          });
-        }
-      );
-
-      await startTest(assert);
-
-      resolve('Wow!');
-
-      await finishTest(assert);
-    });
   });
 });
