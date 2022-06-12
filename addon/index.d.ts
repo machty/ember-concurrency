@@ -37,6 +37,40 @@ export type EncapsulatedTaskDescriptorReturnType<
   T extends EncapsulatedTaskDescriptor<any, any[]>
 > = T extends { perform(...args: any[]): TaskGenerator<infer R> } ? R : unknown;
 
+/**
+ * Types for async arrow function-based task (i.e. types that were originally
+ * declared in ember-concurrency-ts/ember-concurrency-async)
+ */
+
+// T is the return type of the task.
+export type AsyncArrowTaskFunction<HostObject, T, Args extends any[]> = (
+  this: HostObject,
+  ...args: Args
+) => Promise<T>;
+
+export type AsyncTaskArrowFunctionArgs<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+> = T extends (...args: infer A) => Promise<any> ? A : [];
+
+export type AsyncTaskArrowFunctionReturnType<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+> = T extends (...args: any[]) => Promise<infer R> ? R : unknown;
+
+export type TaskForAsyncTaskFunction<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+> = Task<
+  AsyncTaskArrowFunctionReturnType<HostObject, T>,
+  AsyncTaskArrowFunctionArgs<HostObject, T>
+>;
+
+export type TaskInstanceForAsyncTaskFunction<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+> = TaskInstance<AsyncTaskArrowFunctionReturnType<HostObject, T>>;
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type EncapsulatedTaskState<T extends object> = Omit<
   T,
@@ -830,7 +864,6 @@ export function task<T>(
   descriptor: TypedPropertyDescriptor<T>
 ): TypedPropertyDescriptor<T>;
 export function task(target: Object, propertyKey: string): void;
-export function task(target: Object, propertyKey: string): void;
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -886,6 +919,25 @@ export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(
   EncapsulatedTaskDescriptorArgs<T>,
   EncapsulatedTaskState<T>
 >;
+
+/**
+ * TODO: new docs for new `task(this, async () = {})` API.
+ */
+
+// can we do T extends TaskFunction?
+// does it qualify? does it return a generator fn?
+export function task<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(
+  hostObject: HostObject,
+  asyncArrowTaskFn: T
+): TaskForAsyncTaskFunction<HostObject, T>;
+
+
+export type AsyncTaskFunction<T, Args extends any[]> = (...args: Args) => Promise<T>;
+
+// what is the arg of Task<T>
 
 /**
  * Turns the decorated generator function into a task and applies the

@@ -13,7 +13,7 @@ export default class extends Component {
       return;
     }
 
-    taskFor(this.myTask).perform(1000).then(value => {
+    this.myTask.perform(1000).then(value => {
       console.log(value.toUpperCase());
     });
   }
