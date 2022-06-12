@@ -944,8 +944,9 @@ export function task<
   asyncArrowTaskFn: T
 ): TaskForAsyncTaskFunction<HostObject, T>;
 
-export type AsyncTaskFunction<T, Args extends any[]> = (...args: Args) => Promise<T>;
-
+export type AsyncTaskFunction<T, Args extends any[]> = (
+  ...args: Args
+) => Promise<T>;
 
 //  */
 // export function task<T extends TaskOptions>(
