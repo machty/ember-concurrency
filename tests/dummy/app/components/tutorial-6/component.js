@@ -10,8 +10,8 @@ export default class Tutorial6 extends TutorialComponent {
     let geolocation = this.geolocation;
     let store = this.store;
 
-    let coords = yield geolocation.getCoords();
-    let result = yield store.getNearbyStores(coords);
+    let coords = await geolocation.getCoords();
+    let result = await store.getNearbyStores(coords);
     this.set('result', result);
   });
 }

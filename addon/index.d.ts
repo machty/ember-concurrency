@@ -934,8 +934,23 @@ export function task<
   asyncArrowTaskFn: T
 ): TaskForAsyncTaskFunction<HostObject, T>;
 
+export function task<
+  HostObject,
+  O extends TaskOptions,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(
+  hostObject: HostObject,
+  baseOptions: O,
+  asyncArrowTaskFn: T
+): TaskForAsyncTaskFunction<HostObject, T>;
 
 export type AsyncTaskFunction<T, Args extends any[]> = (...args: Args) => Promise<T>;
+
+
+//  */
+// export function task<T extends TaskOptions>(
+//   baseOptions?: T
+// ): MethodOrPropertyDecoratorWithParams<[T]>;
 
 // what is the arg of Task<T>
 

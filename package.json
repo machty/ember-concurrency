@@ -21,9 +21,11 @@
   },
   "types": "./addon/index.d.ts",
   "devDependencies": {
-    "@babel/core": "^7.10.2",
-    "@babel/plugin-syntax-class-properties": "^7.10.1",
-    "@babel/plugin-syntax-decorators": "^7.10.1",
+    "@babel/core": "^7.12.13",
+    "@babel/helper-define-map": "^7.18.0",
+    "@babel/plugin-syntax-class-properties": "^7.12.13",
+    "@babel/plugin-syntax-decorators": "^7.12.13",
+    "@babel/preset-env": "^7.18.2",
     "@ember/optional-features": "^2.0.0",
     "@ember/test-helpers": "^2.6.0",
     "@ember/test-waiters": "^3.0.0",
@@ -99,8 +101,8 @@
     "test": "tests"
   },
   "dependencies": {
-    "@babel/helper-plugin-utils": "^7.10.1",
-    "@babel/types": "^7.10.2",
+    "@babel/helper-plugin-utils": "^7.12.13",
+    "@babel/types": "^7.12.13",
     "@glimmer/tracking": "^1.0.4",
     "ember-cli-babel": "^7.26.11",
     "ember-cli-babel-plugin-helpers": "^1.1.1",
