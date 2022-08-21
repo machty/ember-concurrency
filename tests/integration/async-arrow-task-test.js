@@ -83,7 +83,7 @@ module('Integration | async-arrow-task', function (hooks) {
     );
   });
 
-  test('it works', async function (assert) {
+  test('two args - task(this, async () => {})', async function (assert) {
     assert.expect(12);
 
     let { promise, resolve } = defer();
@@ -92,6 +92,28 @@ module('Integration | async-arrow-task', function (hooks) {
       'component:test-async-arrow-task',
       class extends TestComponent {
         myTask = task(this, async (arg) => {
+          set(this, 'resolved', await promise);
+          return arg;
+        });
+      }
+    );
+
+    await startTest(assert);
+
+    resolve('Wow!');
+
+    await finishTest(assert);
+  });
+
+  test('three args - task(this, options, async () => {})', async function (assert) {
+    assert.expect(12);
+
+    let { promise, resolve } = defer();
+
+    this.owner.register(
+      'component:test-async-arrow-task',
+      class extends TestComponent {
+        myTask = task(this, { drop: true }, async (arg) => {
           set(this, 'resolved', await promise);
           return arg;
         });

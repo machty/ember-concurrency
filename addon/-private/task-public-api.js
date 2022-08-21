@@ -59,7 +59,10 @@ import {
  */
 // export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
 export function task(...args) {
-  if (isDecoratorOptions(args[0]) || (args[1] && args[2])) {
+  if (
+    isDecoratorOptions(args[0]) ||
+    (args.length === 3 && typeof args[2] !== 'function')
+  ) {
     return taskDecorator(...args);
   } else {
     switch (args.length) {
