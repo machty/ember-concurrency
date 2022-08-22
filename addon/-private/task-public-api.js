@@ -103,9 +103,12 @@ function buildClassicTaskProperty(taskFn) {
  *
  * @private
  */
-function buildTask(context, options, taskGeneratorFn) {
-  // TODO: any way to provide a useful name for these kinds of async-arrow-fn tasks?
-  const taskFactory = new TaskFactory('<unknown>', taskGeneratorFn, options);
+export function buildTask(context, options, taskGeneratorFn, taskName) {
+  const taskFactory = new TaskFactory(
+    taskName || '<unknown>',
+    taskGeneratorFn,
+    options
+  );
   return taskFactory.createTask(context);
 }
 

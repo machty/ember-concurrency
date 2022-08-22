@@ -23,6 +23,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.13",
     "@babel/helper-define-map": "^7.18.0",
+    "@babel/helper-module-imports": "^7.18.2",
     "@babel/plugin-syntax-class-properties": "^7.12.13",
     "@babel/plugin-syntax-decorators": "^7.12.13",
     "@babel/preset-env": "^7.18.2",

@@ -84,7 +84,7 @@ module('Integration | async-arrow-task', function (hooks) {
   });
 
   test('two args - task(this, async () => {})', async function (assert) {
-    assert.expect(12);
+    assert.expect(13);
 
     let { promise, resolve } = defer();
 
@@ -93,6 +93,7 @@ module('Integration | async-arrow-task', function (hooks) {
       class extends TestComponent {
         myTask = task(this, async (arg) => {
           set(this, 'resolved', await promise);
+          assert.strictEqual(this.myTask.name, 'myTask');
           return arg;
         });
       }
@@ -106,7 +107,7 @@ module('Integration | async-arrow-task', function (hooks) {
   });
 
   test('three args - task(this, options, async () => {})', async function (assert) {
-    assert.expect(12);
+    assert.expect(13);
 
     let { promise, resolve } = defer();
 
@@ -115,6 +116,7 @@ module('Integration | async-arrow-task', function (hooks) {
       class extends TestComponent {
         myTask = task(this, { drop: true }, async (arg) => {
           set(this, 'resolved', await promise);
+          assert.strictEqual(this.myTask.name, 'myTask');
           return arg;
         });
       }
