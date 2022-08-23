@@ -32,7 +32,6 @@ export const TABLE_OF_CONTENTS = [
   { route: 'docs.faq', title: 'FAQ & Fact Sheet' },
 
   { section: 'Advanced' },
-  { route: 'docs.advanced.encapsulated-task', title: 'Encapsulated Tasks' },
   { route: 'docs.advanced.lifecycle-events', title: 'Lifecycle Events' },
   { route: 'docs.advanced.task-modifiers', title: 'Task Modifiers' },
   {
