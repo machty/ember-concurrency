@@ -3069,47 +3069,6 @@ module('integration tests', () => {
 
         return 'wow';
       }
-
-      // TODO: fix
-      // async performMyTask() {
-      //   let myTask = taskFor(this.myTask);
-
-      //   expect(myTask).not.toBeAny();
-      //   expect(myTask).toEqualTypeOf<Task<string, [boolean, number?]>>();
-      //   expect(myTask.isRunning).toBeBoolean();
-      //   expect(myTask.last).toEqualTypeOf<TaskInstance<string> | null>();
-      //   expect(myTask.perform).toBeCallableWith(true);
-      //   expect(myTask.perform).toBeCallableWith(false, 500);
-      //   expect(myTask.perform).parameters.toEqualTypeOf<[boolean, number?]>();
-      //   expect(myTask.perform).returns.toEqualTypeOf<TaskInstance<string>>();
-
-      //   let myTaskInstance = myTask.perform(true);
-
-      //   expect(myTaskInstance).not.toBeAny();
-      //   expect(myTaskInstance).toEqualTypeOf<TaskInstance<string>>();
-      //   expect(myTaskInstance.isRunning).toBeBoolean();
-      //   expect(myTaskInstance.value).toEqualTypeOf<string | null>();
-      //   expect(myTaskInstance).toMatchTypeOf<Promise<string>>();
-
-      //   let result = await myTaskInstance;
-
-      //   expect(result).not.toBeAny();
-      //   expect(result).toBeString();
-      //   expect(result.length).toBeNumber();
-
-      //   expect(this.myTaskValue).not.toBeAny();
-      //   expect(this.myTaskValue).toBeString();
-      //   expect(this.myTaskValue.length).toBeNumber();
-
-      //   // @ts-expect-error
-      //   myTask.perform('nope');
-
-      //   // @ts-expect-error
-      //   myTask.perform(true, 'nope');
-
-      //   // @ts-expect-error
-      //   myTask.perform(false, 500, 'nope');
-      // }
     }
   });
 
