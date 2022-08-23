@@ -11,4 +11,5 @@ export default class ApplicationController extends Controller {
   addonVersion = version.match(versionRegExp)[0];
 
   @service notifications;
+  @service router;
 }
