@@ -1,6 +1,6 @@
 import Component from '@ember/component';
-import { TaskGenerator, task, timeout } from 'ember-concurrency';
-
+import { task, timeout } from 'ember-concurrency';
+import { action } from '@ember/object';
 
 export default class extends Component {
   myTask = task(this, async (ms: number) => {
@@ -8,6 +8,7 @@ export default class extends Component {
     return 'done!';
   });
 
+  @action
   performTask() {
     if (this.myTask.isRunning) {
       return;

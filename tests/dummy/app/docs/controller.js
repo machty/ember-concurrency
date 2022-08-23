@@ -15,10 +15,7 @@ export const TABLE_OF_CONTENTS = [
   {
     route: 'docs.task-function-syntax',
     title: 'Task Function Syntax',
-    children: [
-      { route: 'docs.task-decorators', title: 'Decorators' },
-      { route: 'docs.typescript', title: 'TypeScript' },
-    ],
+    children: [{ route: 'docs.typescript', title: 'TypeScript' }],
   },
   {
     route: 'docs.task-concurrency',
