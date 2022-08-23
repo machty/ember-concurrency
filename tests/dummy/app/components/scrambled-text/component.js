@@ -21,19 +21,18 @@ export default class ScrambledTextComponent extends Component {
   scrambledText = null;
 
   // BEGIN-SNIPPET scrambled-text
-  @task({ on: 'init' })
-  *startScrambling() {
+  startScrambling = task(this, { on: 'init' }, async () => {
     let text = this.text;
     while (true) {
       let pauseTime = 140;
       while (pauseTime > 5) {
         this.set('scrambledText', scramble(text));
-        yield timeout(pauseTime);
+        await timeout(pauseTime);
         pauseTime = pauseTime * 0.95;
       }
       this.set('scrambledText', text);
-      yield timeout(1500);
+      await timeout(1500);
     }
-  }
+  });
   // END-SNIPPET
 }

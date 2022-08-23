@@ -2,10 +2,9 @@ import Component from '@ember/component';
 import { task } from 'ember-concurrency';
 
 export default class ExampleComponent extends Component {
-  @task
-  *doStuff() {
+  doStuff = task(this, async () => {
     // ...
-  }
+  });
 
   // and then elsewhere
   executeTheTask() {

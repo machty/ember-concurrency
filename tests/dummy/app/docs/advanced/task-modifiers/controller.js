@@ -17,10 +17,9 @@ let performance =
     : { getEntriesByName() {} };
 
 export default class TaskModifiersController extends Controller {
-  @task({ drop: true, benchmark: true })
-  *doWork() {
-    yield timeout(20000 * Math.random());
-  }
+  doWork = task(this, { drop: true, benchmark: true }, async () => {
+    await timeout(20000 * Math.random());
+  });
 
   @computed('doWork.isRunning')
   get perfEntries() {

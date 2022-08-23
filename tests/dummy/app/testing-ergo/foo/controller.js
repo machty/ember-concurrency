@@ -4,11 +4,12 @@ import { task, timeout } from 'ember-concurrency';
 
 export default class FooController extends Controller {
   isShowingButton = false;
-  @task *showButtonSoon() {
+
+  showButtonSoon = task(this, async () => {
     this.set('isShowingButton', false);
-    yield timeout(200);
+    await timeout(200);
     this.set('isShowingButton', true);
-  }
+  });
 
   value = 0;
 

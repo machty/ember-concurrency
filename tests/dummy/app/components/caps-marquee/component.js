@@ -14,17 +14,16 @@ export default class CapsMarqueeComponent extends Component {
   scrambledText = null;
 
   // BEGIN-SNIPPET caps-marquee
-  @task({ on: 'init' })
-  *marqueeLoop() {
+  marqueeLoop = task(this, { on: 'init' }, async () => {
     let text = this.text;
     while (true) {
       this.set('formattedText', text);
-      yield timeout(1500);
+      await timeout(1500);
       for (let i = 0; i < text.length; ++i) {
         this.set('formattedText', capitalizeAt(text, i));
-        yield timeout(50);
+        await timeout(50);
       }
     }
-  }
+  });
   // END-SNIPPET
 }

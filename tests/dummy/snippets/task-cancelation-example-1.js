@@ -3,10 +3,10 @@ import { action } from '@ember/object';
 import { task, timeout } from 'ember-concurrency';
 
 export default class TaskCancelationExampleComponent extends Component {
-  @task *queryServer() {
-    yield timeout(10000);
+  queryServer = task(this, async () => {
+    await timeout(10000);
     return 123;
-  }
+  });
 
   @action
   async fetchResults() {

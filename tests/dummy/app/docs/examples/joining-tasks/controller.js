@@ -11,8 +11,7 @@ export default class JoiningTasksController extends Controller {
   colors = ['#ff8888', '#88ff88', '#8888ff'];
   status = 'Waiting...';
 
-  @task({ restartable: true })
-  *parent(methodName) {
+  parent = task(this, { restartable: true }, async (methodName) => {
     let allOrRace = methods[methodName];
     let childTasks = [];
 
@@ -22,9 +21,9 @@ export default class JoiningTasksController extends Controller {
 
     this.set('childTasks', childTasks);
     this.set('status', 'Waiting for child tasks to complete...');
-    let words = yield allOrRace(childTasks);
+    let words = await allOrRace(childTasks);
     this.set('status', `Done: ${makeArray(words).join(', ')}`);
-  }
+  });
 
   @task({ enqueue: true, maxConcurrency: 3 })
   child = {

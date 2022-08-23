@@ -7,9 +7,9 @@ export default class ErrorVsCancelationController extends Controller {
   numErrors = 0;
   numFinallys = 0;
 
-  @restartableTask *myTask(doError) {
+  myTask = restartableTask(this, async (doError) => {
     try {
-      yield timeout(1000);
+      await timeout(1000);
       if (doError) {
         throw new Error('Boom');
       }
@@ -19,6 +19,6 @@ export default class ErrorVsCancelationController extends Controller {
       this.incrementProperty('numFinallys');
     }
     this.incrementProperty('numCompletions');
-  }
+  });
 }
 // END-SNIPPET

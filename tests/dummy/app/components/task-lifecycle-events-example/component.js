@@ -48,17 +48,20 @@ export default class TaskLifecycleEventsExample extends Component {
     removeListener(this, 'ajaxTask:errored', this, this.ajaxTaskErrored);
   }
 
-  @task({ enqueue: true, maxConcurrency: 3, evented: true })
-  *ajaxTask() {
-    // simulate slow AJAX
-    const ms = 2000 + 2000 * Math.random();
-    yield timeout(ms);
+  ajaxTask = task(
+    this,
+    { enqueue: true, maxConcurrency: 3, evented: true },
+    async () => {
+      // simulate slow AJAX
+      const ms = 2000 + 2000 * Math.random();
+      await timeout(ms);
 
-    if (parseInt(ms) % 7 === 0) {
-      throw new Error('Unexpected matrix glitch');
+      if (parseInt(ms) % 7 === 0) {
+        throw new Error('Unexpected matrix glitch');
+      }
+      return {};
     }
-    return {};
-  }
+  );
 
   ajaxTaskStarted(taskInstance) {
     const [id] = taskInstance.args;

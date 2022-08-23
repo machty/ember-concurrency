@@ -1,10 +1,9 @@
 import { task } from 'ember-concurrency';
 
 export default class Foo {
-  @task
-  *doStuff(this: Foo) {
+  doStuff = task(this, async () => {
     // ...
-  }
+  });
 
   executeTheTask() {
     // @ts-ignore
