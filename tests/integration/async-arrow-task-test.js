@@ -4,7 +4,13 @@ import { setupRenderingTest } from 'ember-qunit';
 import { computed, set } from '@ember/object';
 import { click, render, settled } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
-import { task } from 'ember-concurrency';
+import {
+  task,
+  dropTask,
+  restartableTask,
+  keepLatestTask,
+  enqueueTask,
+} from 'ember-concurrency';
 import Component from '@glimmer/component';
 
 function defer() {
@@ -118,6 +124,41 @@ module('Integration | async-arrow-task', function (hooks) {
           set(this, 'resolved', await promise);
           assert.strictEqual(this.myTask.name, 'myTask');
           return arg;
+        });
+      }
+    );
+
+    await startTest(assert);
+
+    resolve('Wow!');
+
+    await finishTest(assert);
+  });
+
+  test('dropTask and other shorthand tasks', async function (assert) {
+    assert.expect(13);
+
+    let { promise, resolve } = defer();
+
+    this.owner.register(
+      'component:test-async-arrow-task',
+      class extends TestComponent {
+        dt = dropTask(this, async (arg) => {
+          set(this, 'resolved', await promise);
+          return arg;
+        });
+        rt = restartableTask(this, async (arg) => {
+          assert.strictEqual(this.rt.name, 'rt');
+          return this.dt.perform(arg);
+        });
+        kt = keepLatestTask(this, { maxConcurrency: 2 }, async (arg) => {
+          return this.rt.perform(arg);
+        });
+        et = enqueueTask(this, async (arg) => {
+          return this.kt.perform(arg);
+        });
+        myTask = task(this, async (arg) => {
+          return this.et.perform(arg);
         });
       }
     );

@@ -98,21 +98,6 @@ function buildClassicTaskProperty(taskFn) {
 }
 
 /**
- * Instantiate and return a Task object that is bound to (i.e. its lifetime is intertwined with)
- * the `context` param (e.g. a Component or other class defined with modern ES6 class syntax).
- *
- * @private
- */
-export function buildTask(context, options, taskGeneratorFn, taskName) {
-  const taskFactory = new TaskFactory(
-    taskName || '<unknown>',
-    taskGeneratorFn,
-    options
-  );
-  return taskFactory.createTask(context);
-}
-
-/**
  * "Task Groups" provide a means for applying
  * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
  * as part of a group task, modifiers like `drop` or `restartable`
