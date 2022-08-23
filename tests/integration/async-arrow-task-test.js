@@ -154,9 +154,7 @@ module('Integration | async-arrow-task', function (hooks) {
         kt = keepLatestTask(this, { maxConcurrency: 2 }, async (arg) => {
           return this.rt.perform(arg);
         });
-        et = enqueueTask(this, async (arg) => {
-          return this.kt.perform(arg);
-        });
+        et = enqueueTask(this, async (arg) => this.kt.perform(arg));
         myTask = task(this, async (arg) => {
           return this.et.perform(arg);
         });
