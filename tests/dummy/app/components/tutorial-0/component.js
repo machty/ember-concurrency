@@ -11,7 +11,7 @@ export default class Tutorial0 extends TutorialComponent {
     let geolocation = this.geolocation;
     let store = this.store;
 
-    let coords = await geolocation.getCoords()
+    let coords = await geolocation.getCoords();
     let result = await store.getNearbyStores(coords);
 
     this.set('result', result);

@@ -17,7 +17,7 @@ export default class Tutorial4 extends TutorialComponent {
     this.set('isFindingStores', true);
 
     try {                                   // ++
-      let coords = await geolocation.getCoords()
+      let coords = await geolocation.getCoords();
       let result = await store.getNearbyStores(coords);
 
       if (this.isDestroyed) { return; }
