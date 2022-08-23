@@ -57,22 +57,14 @@ import {
  * @param {function} generatorFunction the generator function backing the task.
  * @returns {TaskProperty}
  */
-// export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
-export function task(...args) {
+export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
   if (
-    isDecoratorOptions(args[0]) ||
-    (args.length === 3 && typeof args[2] !== 'function')
+    isDecoratorOptions(taskFnOrProtoOrDecoratorOptions) ||
+    (key && descriptor)
   ) {
-    return taskDecorator(...args);
+    return taskDecorator(...arguments);
   } else {
-    switch (args.length) {
-      case 1:
-        return buildClassicTaskProperty(args[0]);
-      case 2:
-        return buildTask(args[0], {}, args[1]);
-      case 3:
-        return buildTask(args[0], args[1], args[2]);
-    }
+    return buildClassicTaskProperty(taskFnOrProtoOrDecoratorOptions);
   }
 }
 
