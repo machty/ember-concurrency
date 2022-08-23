@@ -37,12 +37,6 @@ export type EncapsulatedTaskDescriptorReturnType<
   T extends EncapsulatedTaskDescriptor<any, any[]>
 > = T extends { perform(...args: any[]): TaskGenerator<infer R> } ? R : unknown;
 
-/**
- * Types for async arrow function-based task (i.e. types that were originally
- * declared in ember-concurrency-ts/ember-concurrency-async)
- */
-
-// T is the return type of the task.
 export type AsyncArrowTaskFunction<HostObject, T, Args extends any[]> = (
   this: HostObject,
   ...args: Args
@@ -920,12 +914,6 @@ export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(
   EncapsulatedTaskState<T>
 >;
 
-/**
- * TODO: new docs for new `task(this, async () = {})` API.
- */
-
-// can we do T extends TaskFunction?
-// does it qualify? does it return a generator fn?
 export function task<
   HostObject,
   T extends AsyncArrowTaskFunction<HostObject, any, any[]>
@@ -947,13 +935,6 @@ export function task<
 export type AsyncTaskFunction<T, Args extends any[]> = (
   ...args: Args
 ) => Promise<T>;
-
-//  */
-// export function task<T extends TaskOptions>(
-//   baseOptions?: T
-// ): MethodOrPropertyDecoratorWithParams<[T]>;
-
-// what is the arg of Task<T>
 
 /**
  * Turns the decorated generator function into a task and applies the
