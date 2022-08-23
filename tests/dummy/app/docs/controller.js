@@ -22,7 +22,7 @@ export const TABLE_OF_CONTENTS = [
     title: 'Managing Task Concurrency',
     children: [{ route: 'docs.task-concurrency-advanced', title: 'Advanced' }],
   },
-  { route: 'docs.cancelation', title: 'Cancelation' },
+  { route: 'docs.cancelation', title: 'Cancellation' },
   { route: 'docs.error-vs-cancelation', title: 'Handling Errors' },
   { route: 'docs.child-tasks', title: 'Child Tasks' },
   { route: 'docs.task-groups', title: 'Task Groups' },
