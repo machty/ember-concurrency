@@ -10,7 +10,7 @@ interface Args {
 }
 
 export default class extends Component<Args> {
-  slowlyComputeStringLength: MyTaskType = task(this, async (ms: number) => {
+  slowlyComputeStringLength: MyTaskType = task(async (ms: number) => {
     await timeout(ms);
 
     const length = await this.args.fooTask.perform(ms);

@@ -7,7 +7,7 @@ export default class CancelationController extends Controller {
   count = 0;
   mostRecent = null;
 
-  myTask = task(this, async () => {
+  myTask = task(async () => {
     try {
       this.incrementProperty('count');
       await forever;

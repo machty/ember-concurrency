@@ -14,7 +14,7 @@ export default class CapsMarqueeComponent extends Component {
   scrambledText = null;
 
   // BEGIN-SNIPPET caps-marquee
-  marqueeLoop = task(this, { on: 'init' }, async () => {
+  marqueeLoop = task({ on: 'init' }, async () => {
     let text = this.text;
     while (true) {
       this.set('formattedText', text);

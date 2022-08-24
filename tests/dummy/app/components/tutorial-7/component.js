@@ -6,7 +6,7 @@ import { task } from 'ember-concurrency';
 export default class Tutorial7 extends TutorialComponent {
   result = null;
 
-  findStores = task(this, async () => {
+  findStores = task(async () => {
     let geolocation = this.geolocation;
     let store = this.store;
 

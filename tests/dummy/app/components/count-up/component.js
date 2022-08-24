@@ -6,7 +6,7 @@ export default class CountUpComponent extends Component {
   count = 0;
 
   // BEGIN-SNIPPET count-up
-  countUp = task(this, { on: 'init' }, async () => {
+  countUp = task({ on: 'init' }, async () => {
     while (true) {
       this.incrementProperty('count');
       await timeout(100);

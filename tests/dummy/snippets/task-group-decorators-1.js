@@ -5,11 +5,11 @@ export default class ExampleComponent extends Component {
   @taskGroup
   someTaskGroup;
 
-  doStuff = task(this, { group: 'someTaskGroup' }, async () => {
+  doStuff = task({ group: 'someTaskGroup' }, async () => {
     // ...
   });
 
-  doOtherStuff = task(this, { group: 'someTaskGroup' }, async () => {
+  doOtherStuff = task({ group: 'someTaskGroup' }, async () => {
     // ...
   });
 

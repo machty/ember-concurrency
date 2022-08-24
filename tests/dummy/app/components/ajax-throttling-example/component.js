@@ -17,7 +17,7 @@ export default class AjaxThrottlingExampleComponent extends Component {
   tagName = '';
   logs = [];
 
-  ajaxTask = enqueueTask(this, { maxConcurrency: 3 }, async () => {
+  ajaxTask = enqueueTask({ maxConcurrency: 3 }, async () => {
     // simulate slow AJAX
     await timeout(2000 + 2000 * Math.random());
     return {};

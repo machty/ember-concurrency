@@ -6,7 +6,7 @@ export default class HelpersTestController extends Controller {
   maybeNullTask = null;
   status = null;
 
-  myTask = task(this, async (...args) => {
+  myTask = task(async (...args) => {
     try {
       this.set('status', args.join('-'));
       await forever;
@@ -15,18 +15,18 @@ export default class HelpersTestController extends Controller {
     }
   });
 
-  valueTask = task(this, async (value) => {
+  valueTask = task(async (value) => {
     let expected = 'Set value option';
     if (value !== expected) {
       throw new Error(`value !== ${expected}`);
     }
   });
 
-  returnValue = task(this, async () => {
+  returnValue = task(async () => {
     return 10;
   });
 
-  someTask = task(this, async () => {
+  someTask = task(async () => {
     this.set('status', 'someTask');
   });
 

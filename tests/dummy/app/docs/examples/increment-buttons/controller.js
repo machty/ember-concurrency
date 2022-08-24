@@ -5,7 +5,7 @@ import { task, timeout } from 'ember-concurrency';
 export default class IncrementButtonsController extends Controller {
   count = 0;
 
-  incrementBy = task(this, async (inc) => {
+  incrementBy = task(async (inc) => {
     let speed = 400;
     while (true) {
       this.incrementProperty('count', inc);

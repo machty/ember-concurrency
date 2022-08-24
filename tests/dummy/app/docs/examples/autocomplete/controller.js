@@ -5,7 +5,7 @@ import { restartableTask, task, timeout } from 'ember-concurrency';
 // BEGIN-SNIPPET debounced-search-with-cancelation
 const DEBOUNCE_MS = 250;
 export default class AutocompleteController extends Controller {
-  searchRepo = restartableTask(this, async (term) => {
+  searchRepo = restartableTask(async (term) => {
     if (isBlank(term)) {
       return [];
     }
@@ -26,7 +26,7 @@ export default class AutocompleteController extends Controller {
     return json.items.slice(0, 10);
   });
 
-  getJSON = task(this, async (url) => {
+  getJSON = task(async (url) => {
     let controller = new AbortController();
     let signal = controller.signal;
 

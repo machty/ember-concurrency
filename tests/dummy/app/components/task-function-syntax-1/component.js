@@ -6,7 +6,7 @@ export default class TaskFunctionSyntaxComponent1 extends Component {
   status = null;
 
   // BEGIN-SNIPPET task-function-syntax-1
-  waitAFewSeconds = task(this, async () => {
+  waitAFewSeconds = task(async () => {
     this.set('status', 'Gimme one second...');
     await timeout(1000);
     this.set('status', 'Gimme one more second...');
