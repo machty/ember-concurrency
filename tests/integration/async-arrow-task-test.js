@@ -12,6 +12,7 @@ import {
   enqueueTask,
 } from 'ember-concurrency';
 import Component from '@glimmer/component';
+import { getDebugFunction, setDebugFunction } from '../helpers/helpers';
 
 function defer() {
   let resolve, reject;
@@ -23,6 +24,8 @@ function defer() {
 
   return { promise, resolve, reject };
 }
+
+const originalAssert = getDebugFunction('assert');
 
 class TestComponent extends Component {
   resolved = null;
@@ -87,6 +90,10 @@ module('Integration | async-arrow-task', function (hooks) {
       {{/if}}
     `
     );
+  });
+
+  hooks.afterEach(function () {
+    setDebugFunction('assert', originalAssert);
   });
 
   test('two args - task(this, async () => {})', async function (assert) {
@@ -166,5 +173,27 @@ module('Integration | async-arrow-task', function (hooks) {
     resolve('Wow!');
 
     await finishTest(assert);
+  });
+
+  test('runtime assertion to detect improper task() use or transpilation errors', async function (assert) {
+    assert.expect(2);
+
+    let assertionDidFire = false;
+    setDebugFunction('assert', function (msg, test) {
+      if (!test) {
+        // eslint-disable-next-line qunit/no-conditional-assertions
+        assert.ok(
+          msg.includes(
+            "the async arrow task function you've provided is not being properly compiled by Babel"
+          ),
+          'expected assertion message'
+        );
+        assertionDidFire = true;
+      }
+    });
+
+    const asyncArrowFn = async () => {};
+    task(this, asyncArrowFn);
+    assert.ok(assertionDidFire);
   });
 });

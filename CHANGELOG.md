@@ -1,5 +1,8 @@
 # Changelog
 
+### master
+  - Add runtime assertion to detect transpilation failures with the new async arrow fn API
+
 ### 2.3.0
   - Introduce async-arrow task() API as the new universal JS/TS API, e.g.
     `myTask = task(this, { drop: true }, async (arg: string) => {})`. This new API

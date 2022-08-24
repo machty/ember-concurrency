@@ -9,6 +9,7 @@ import {
   task as taskDecorator,
   taskGroup as taskGroupDecorator,
 } from './task-decorators';
+import { assert } from '@ember/debug';
 
 /**
  * TODO: update docs to reflect both old and new ES6 styles
@@ -58,6 +59,11 @@ import {
  * @returns {TaskProperty}
  */
 export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
+  assert(
+    `It appears you're attempting to use the new task(this, async () => { ... }) syntax, but the async arrow task function you've provided is not being properly compiled by Babel.\n\nPossible causes / remedies:\n\n1. You must pass the async function expression directly to the task() function (it is not currently supported to pass in a variable containing the async arrow fn, or any other kind of indirection)\n2. If this code is in an addon, please ensure the addon specificies ember-concurrency "2.3.0" or higher in "dependencies" (not "devDependencies")\n3. Ensure that there is only one version of ember-concurrency v2.3.0+ being used in your project (including nested dependencies) and consider using npm/yarn/pnpm resolutions to enforce a single version is used`,
+    !isUntranspiledAsyncFn(arguments[arguments.length - 1])
+  );
+
   if (
     isDecoratorOptions(taskFnOrProtoOrDecoratorOptions) ||
     (key && descriptor)
@@ -66,6 +72,10 @@ export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
   } else {
     return buildClassicTaskProperty(taskFnOrProtoOrDecoratorOptions);
   }
+}
+
+function isUntranspiledAsyncFn(obj) {
+  return obj && obj.constructor && obj.constructor.name === 'AsyncFunction';
 }
 
 /**
