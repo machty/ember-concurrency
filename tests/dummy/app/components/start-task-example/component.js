@@ -8,7 +8,7 @@ export default class StartTaskExampleComponent extends Component {
 
   status = null;
 
-  myTask = task(this, { on: ['init', 'foo'] }, async (msg = 'init') => {
+  myTask = task({ on: ['init', 'foo'] }, async (msg = 'init') => {
     let status = `myTask.perform(${msg})...`;
     this.set('status', status);
 

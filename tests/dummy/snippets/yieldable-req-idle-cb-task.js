@@ -3,7 +3,7 @@ import { task } from 'ember-concurrency';
 import idleCallback from 'my-app/yieldables/idle-callback';
 
 export class MyComponent extends Component {
-  backgroundTask = task(this, async () => {
+  backgroundTask = task(async () => {
     while (1) {
       await idleCallback();
 

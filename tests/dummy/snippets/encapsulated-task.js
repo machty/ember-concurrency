@@ -3,7 +3,7 @@ import { task } from 'ember-concurrency';
 export default class EncapsulatedTaskComponent extends Component {
   outerFoo = 123;
 
-  regularTask = task(this, async value => {
+  regularTask = task(async value => {
     // this is a classic/regular ember-concurrency task,
     // which has direct access to the host object that it
     // lives on via `this`

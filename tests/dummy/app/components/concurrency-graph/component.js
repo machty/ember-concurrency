@@ -52,7 +52,7 @@ export default class ConcurrencyGraphComponent extends Component {
     return Math.max(10000, timeElapsed);
   }
 
-  ticker = task(this, { drop: true }, async () => {
+  ticker = task({ drop: true }, async () => {
     while (true) {
       let now = +new Date();
       this.set('timeElapsed', now - this.startTime);

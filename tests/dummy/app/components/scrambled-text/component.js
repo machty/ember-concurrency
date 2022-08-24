@@ -21,7 +21,7 @@ export default class ScrambledTextComponent extends Component {
   scrambledText = null;
 
   // BEGIN-SNIPPET scrambled-text
-  startScrambling = task(this, { on: 'init' }, async () => {
+  startScrambling = task({ on: 'init' }, async () => {
     let text = this.text;
     while (true) {
       let pauseTime = 140;

@@ -7,7 +7,7 @@ export default class ErrorVsCancelationController extends Controller {
   numErrors = 0;
   numFinallys = 0;
 
-  myTask = restartableTask(this, async (doError) => {
+  myTask = restartableTask(async (doError) => {
     try {
       await timeout(1000);
       if (doError) {

@@ -5,7 +5,7 @@ import { restartableTask, task, timeout } from 'ember-concurrency';
 export default class ChildTasksController extends Controller {
   status = 'Waiting to start';
 
-  parentTask = restartableTask(this, async () => {
+  parentTask = restartableTask(async () => {
     this.set('status', '1. Parent: one moment...');
     await timeout(1000);
     let value = await this.childTask.perform();
@@ -14,7 +14,7 @@ export default class ChildTasksController extends Controller {
     this.set('status', '6. Done!');
   });
 
-  childTask = task(this, async () => {
+  childTask = task(async () => {
     this.set('status', '2. Child: one moment...');
     await timeout(1000);
     let value = await this.grandchildTask.perform();
@@ -23,7 +23,7 @@ export default class ChildTasksController extends Controller {
     return "What's up";
   });
 
-  grandchildTask = task(this, async () => {
+  grandchildTask = task(async () => {
     this.set('status', '3. Grandchild: one moment...');
     await timeout(1000);
     return 'Hello';

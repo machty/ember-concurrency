@@ -11,7 +11,7 @@ export default class JoiningTasksController extends Controller {
   colors = ['#ff8888', '#88ff88', '#8888ff'];
   status = 'Waiting...';
 
-  parent = task(this, { restartable: true }, async (methodName) => {
+  parent = task({ restartable: true }, async (methodName) => {
     let allOrRace = methods[methodName];
     let childTasks = [];
 

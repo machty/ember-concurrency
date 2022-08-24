@@ -8,11 +8,11 @@ export default class SharedTasksController extends Controller {
     async (t) => this.sharedTask.perform(t)
   );
 
-  enqueuedTask3 = task(this, { maxConcurrency: 3, enqueue: true }, async (t) =>
+  enqueuedTask3 = task({ maxConcurrency: 3, enqueue: true }, async (t) =>
     this.sharedTask.perform(t)
   );
 
-  droppingTask3 = task(this, { maxConcurrency: 3, drop: true }, async (t) =>
+  droppingTask3 = task({ maxConcurrency: 3, drop: true }, async (t) =>
     this.sharedTask.perform(t)
   );
 
@@ -22,7 +22,7 @@ export default class SharedTasksController extends Controller {
     async (t) => this.sharedTask.perform(t)
   );
 
-  sharedTask = task(this, async (tracker) => {
+  sharedTask = task(async (tracker) => {
     tracker.start();
     try {
       // simulate async work
@@ -35,9 +35,9 @@ export default class SharedTasksController extends Controller {
 
 /*
 // BEGIN-SNIPPET shared-tasks-concurrent
-  restartableTask3 = task(this, { maxConcurrency: 3, restartable: true }, async (t) => { ... }
-  enqueuedTask3 = task(this, { maxConcurrency: 3, enqueue: true }, async (t) => { ... }
-  droppingTask3 = task(this, { maxConcurrency: 3, drop: true }, async (t) => { ... }
-  keepLatestTask3 = task(this, { maxConcurrency: 3, keepLatest: true }, async (t) => { ... }
+  restartableTask3 = task({ maxConcurrency: 3, restartable: true }, async (t) => { ... }
+  enqueuedTask3 = task({ maxConcurrency: 3, enqueue: true }, async (t) => { ... }
+  droppingTask3 = task({ maxConcurrency: 3, drop: true }, async (t) => { ... }
+  keepLatestTask3 = task({ maxConcurrency: 3, keepLatest: true }, async (t) => { ... }
 // END-SNIPPET
 */

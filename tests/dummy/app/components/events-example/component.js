@@ -14,7 +14,7 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
   // BEGIN-SNIPPET waitForEvent
   domEvent = null;
 
-  domEventLoop = task(this, async () => {
+  domEventLoop = task(async () => {
     while (true) {
       let event = await waitForEvent(document.body, 'click');
       this.set('domEvent', event);
@@ -24,7 +24,7 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
 
   jQueryEvent = null;
 
-  jQueryEventLoop = task(this, async () => {
+  jQueryEventLoop = task(async () => {
     let $body = $('body');
     while (true) {
       let event = await waitForEvent($body, 'click');
@@ -34,7 +34,7 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
 
   emberEvent = null;
 
-  emberEventedLoop = task(this, async () => {
+  emberEventedLoop = task(async () => {
     while (true) {
       let event = await waitForEvent(this, 'fooEvent');
       this.set('emberEvent', event);
@@ -52,14 +52,14 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
   // END-SNIPPET
 
   // BEGIN-SNIPPET waitForEvent-derived-state
-  waiterLoop = task(this, async () => {
+  waiterLoop = task(async () => {
     while (true) {
       await this.waiter.perform();
       await timeout(1500);
     }
   });
 
-  waiter = task(this, async () => {
+  waiter = task(async () => {
     let event = await waitForEvent(document.body, 'click');
     return event;
   });
@@ -67,7 +67,7 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
   // END-SNIPPET
 
   // BEGIN-SNIPPET waitForProperty
-  startAll = task(this, async () => {
+  startAll = task(async () => {
     this.set('bazValue', 1);
     this.set('state', 'Start.');
     this.foo.perform();
@@ -75,11 +75,11 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
     this.baz.perform();
   });
 
-  foo = task(this, async () => {
+  foo = task(async () => {
     await timeout(500);
   });
 
-  bar = task(this, async () => {
+  bar = task(async () => {
     await waitForProperty(this, 'foo.isIdle');
     this.set('state', `${this.state} Foo is idle.`);
     await timeout(500);
@@ -89,7 +89,7 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
 
   bazValue = 1;
 
-  baz = task(this, async () => {
+  baz = task(async () => {
     let val = await waitForProperty(this, 'bazValue', (v) => v % 2 === 0);
     await timeout(500);
     this.set('state', `${this.state} Baz got even value ${val}.`);

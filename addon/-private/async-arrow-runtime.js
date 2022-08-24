@@ -1,18 +1,12 @@
 import { TaskFactory } from './task-factory';
 
 /**
- * Instantiate and return a Task object that is bound to (i.e. its lifetime is intertwined with)
- * the `context` param (e.g. a Component or other class defined with modern ES6 class syntax).
+ * This builder function is called by the transpiled code from
+ * `task(async () => {})`. See lib/babel-plugin-transform-ember-concurrency-async-tasks.js
  *
  * @private
  */
-export function buildTask(
-  context,
-  options,
-  taskGeneratorFn,
-  taskName,
-  bufferPolicyName
-) {
+export function buildTask(contextFn, options, taskName, bufferPolicyName) {
   let optionsWithBufferPolicy = options;
 
   if (bufferPolicyName) {
@@ -20,10 +14,12 @@ export function buildTask(
     optionsWithBufferPolicy[bufferPolicyName] = true;
   }
 
+  const result = contextFn();
+
   const taskFactory = new TaskFactory(
     taskName || '<unknown>',
-    taskGeneratorFn,
+    result.generator,
     optionsWithBufferPolicy
   );
-  return taskFactory.createTask(context);
+  return taskFactory.createTask(result.context);
 }

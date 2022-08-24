@@ -3072,7 +3072,7 @@ module('integration tests', () => {
     }
   });
 
-  test('octane async arrow', () => {
+  test('async arrow with first arg `this`', () => {
     class MyComponent extends GlimmerComponent {
       @taskGroup
       foo!: TaskGroup<never>;
@@ -3113,6 +3113,77 @@ module('integration tests', () => {
       cancelOn = task(this, { cancelOn: 'bye' }, async () => {});
       maxConcurrency = task(this, { maxConcurrency: 1 }, async () => {});
       group = task(this, { group: 'foo' }, async () => {});
+
+      @lastValue('myTask') myTaskValue = 'or some default';
+
+      myTask = task(
+        this,
+        { restartable: true },
+        async (immediately: boolean, ms = 500) => {
+          // expect(this).toEqualTypeOf<MyComponent>();
+          expect(this.foo).not.toBeAny();
+          expect(this.foo).toEqualTypeOf<TaskGroup<never>>();
+
+          if (!immediately) {
+            await timeout(ms);
+          }
+
+          let fetchPromise = fetch('/api/data.json');
+          expect(fetchPromise).resolves.toEqualTypeOf<Response>();
+
+          let response: Response = await fetchPromise;
+          expect(response).toEqualTypeOf<Response>();
+
+          let safeResponse: Resolved<typeof fetchPromise> = await fetchPromise;
+          expect(safeResponse).toEqualTypeOf<Response>();
+
+          return 'wow';
+        }
+      );
+    }
+  });
+
+  test('async arrow omitting `this`', () => {
+    class MyComponent extends GlimmerComponent {
+      @taskGroup
+      foo!: TaskGroup<never>;
+
+      normalTask = task(async (immediately: boolean, ms = 500) => {
+        // expect(this).toEqualTypeOf<MyComponent>();
+        expect(this.foo).not.toBeAny();
+        expect(this.foo).toEqualTypeOf<TaskGroup<never>>();
+
+        if (!immediately) {
+          await timeout(ms);
+        }
+
+        let fetchPromise = fetch('/api/data.json');
+        expect(fetchPromise).resolves.toEqualTypeOf<Response>();
+
+        let response: Response = await fetchPromise;
+        expect(response).toEqualTypeOf<Response>();
+
+        let safeResponse: Resolved<typeof fetchPromise> = await fetchPromise;
+        expect(safeResponse).toEqualTypeOf<Response>();
+
+        return 'wow';
+      });
+
+      restartable = task({ restartable: true }, async () => {});
+      enqueue = task({ enqueue: true }, async () => {});
+      drop = task({ drop: true }, async () => {});
+      keepLatest = task({ keepLatest: true }, async () => {});
+      evented = task({ evented: true }, async () => {});
+      debug = task({ debug: true }, async () => {});
+      onState = task({ onState: () => {} }, async () => {});
+      onStateNull = task({ onState: null }, async () => {});
+
+      // Note: these options work even when strictFunctionTypes is enabled, but
+      // turning it on in this repo breaks other things in addon/index.d.ts
+      on = task({ on: 'hi' }, async () => {});
+      cancelOn = task({ cancelOn: 'bye' }, async () => {});
+      maxConcurrency = task({ maxConcurrency: 1 }, async () => {});
+      group = task({ group: 'foo' }, async () => {});
 
       @lastValue('myTask') myTaskValue = 'or some default';
 

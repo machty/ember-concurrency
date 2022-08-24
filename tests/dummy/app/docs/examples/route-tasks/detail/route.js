@@ -16,7 +16,7 @@ export default class RouteTasksDetailRoute extends Route {
     this.pollServerForChanges.cancelAll();
   }
 
-  pollServerForChanges = restartableTask(this, async (id) => {
+  pollServerForChanges = restartableTask(async (id) => {
     let notify = this.notify;
     await timeout(500);
     try {

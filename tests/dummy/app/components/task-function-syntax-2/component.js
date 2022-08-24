@@ -6,7 +6,7 @@ export default class TaskFunctionSyntaxComponent2 extends Component {
   status = null;
 
   // BEGIN-SNIPPET task-function-syntax-2
-  pickRandomNumbers = task(this, async () => {
+  pickRandomNumbers = task(async () => {
     let nums = [];
     for (let i = 0; i < 3; i++) {
       nums.push(Math.floor(Math.random() * 10));
