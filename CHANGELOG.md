@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.3.2
+  - Simplify the async arrow fn task() API to allow omitting the `this` param, e.g.
+    `myTask = task(async () => {})` (#477)
+
 ### 2.3.1
   - Add runtime assertion to detect transpilation failures with the new async arrow fn API
 
