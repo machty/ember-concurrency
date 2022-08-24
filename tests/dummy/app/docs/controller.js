@@ -12,26 +12,19 @@ export const TABLE_OF_CONTENTS = [
   { route: 'docs.tutorial.refactor', title: 'Refactoring With Tasks' },
 
   { section: 'Reference' },
-  {
-    route: 'docs.task-function-syntax',
-    title: 'Task Function Syntax',
-    children: [{ route: 'docs.typescript', title: 'TypeScript' }],
-  },
-  {
-    route: 'docs.task-concurrency',
-    title: 'Managing Task Concurrency',
-    children: [{ route: 'docs.task-concurrency-advanced', title: 'Advanced' }],
-  },
+  { route: 'docs.task-function-syntax', title: 'Defining Tasks' },
+  { route: 'docs.task-concurrency', title: 'Task Modifiers' },
   { route: 'docs.cancelation', title: 'Cancellation' },
   { route: 'docs.error-vs-cancelation', title: 'Handling Errors' },
   { route: 'docs.child-tasks', title: 'Child Tasks' },
-  { route: 'docs.task-groups', title: 'Task Groups' },
   { route: 'docs.derived-state', title: 'Derived State' },
   { route: 'docs.events', title: 'Awaiting Events / Conditions' },
   { route: 'docs.testing-debugging', title: 'Testing & Debugging' },
+  { route: 'docs.typescript', title: 'TypeScript' },
   { route: 'docs.faq', title: 'FAQ & Fact Sheet' },
 
   { section: 'Advanced' },
+  { route: 'docs.task-concurrency-advanced', title: 'Using maxConcurrency' },
   { route: 'docs.advanced.lifecycle-events', title: 'Lifecycle Events' },
   { route: 'docs.advanced.task-modifiers', title: 'Task Modifiers' },
   {
