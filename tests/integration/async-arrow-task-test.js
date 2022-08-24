@@ -142,7 +142,7 @@ module('Integration | async-arrow-task', function (hooks) {
     await finishTest(assert);
   });
 
-  test('dropTask and other shorthand tasks', async function (assert) {
+  test('dropTask and other shorthand tasks (with `this` arg)', async function (assert) {
     assert.expect(13);
 
     let { promise, resolve } = defer();
@@ -162,6 +162,39 @@ module('Integration | async-arrow-task', function (hooks) {
           return this.rt.perform(arg);
         });
         et = enqueueTask(this, async (arg) => this.kt.perform(arg));
+        myTask = task(this, async (arg) => {
+          return this.et.perform(arg);
+        });
+      }
+    );
+
+    await startTest(assert);
+
+    resolve('Wow!');
+
+    await finishTest(assert);
+  });
+
+  test('dropTask and other shorthand tasks (without `this` arg)', async function (assert) {
+    assert.expect(13);
+
+    let { promise, resolve } = defer();
+
+    this.owner.register(
+      'component:test-async-arrow-task',
+      class extends TestComponent {
+        dt = dropTask(async (arg) => {
+          set(this, 'resolved', await promise);
+          return arg;
+        });
+        rt = restartableTask(async (arg) => {
+          assert.strictEqual(this.rt.name, 'rt');
+          return this.dt.perform(arg);
+        });
+        kt = keepLatestTask({ maxConcurrency: 2 }, async (arg) => {
+          return this.rt.perform(arg);
+        });
+        et = enqueueTask(async (arg) => this.kt.perform(arg));
         myTask = task(this, async (arg) => {
           return this.et.perform(arg);
         });
