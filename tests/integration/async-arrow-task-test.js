@@ -11,8 +11,8 @@ import {
   keepLatestTask,
   enqueueTask,
 } from 'ember-concurrency';
-import { getDebugFunction, setDebugFunction } from '@ember/debug';
 import Component from '@glimmer/component';
+import { getDebugFunction, setDebugFunction } from '../helpers/helpers';
 
 function defer() {
   let resolve, reject;

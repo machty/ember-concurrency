@@ -1,28 +1,8 @@
 import { click, visit, currentURL } from '@ember/test-helpers';
-import Ember from 'ember';
 import { setupApplicationTest } from 'ember-qunit';
 import { module, skip, test } from 'qunit';
-import {
-  macroCondition,
-  dependencySatisfies,
-  importSync,
-} from '@embroider/macros';
-
-function getDebugFunction(type) {
-  if (macroCondition(dependencySatisfies('ember-source', '^3.26.0'))) {
-    return importSync('@ember/debug').getDebugFunction(type);
-  } else {
-    return Ember[type];
-  }
-}
-
-function setDebugFunction(type, fn) {
-  if (macroCondition(dependencySatisfies('ember-source', '^3.26.0'))) {
-    return importSync('@ember/debug').setDebugFunction(type, fn);
-  } else {
-    Ember[type] = fn;
-  }
-}
+import { macroCondition, dependencySatisfies } from '@embroider/macros';
+import { getDebugFunction, setDebugFunction } from '../helpers/helpers';
 
 const originalAssert = getDebugFunction('assert');
 
