@@ -1,6 +1,6 @@
 # Changelog
 
-### master
+### 2.3.0
   - Introduce async-arrow task() API as the new universal JS/TS API, e.g.
     `myTask = task(this, { drop: true }, async (arg: string) => {})`. This new API
     sidesteps the vast majority of TypeScript issues that plagued past decorators- and generators-
