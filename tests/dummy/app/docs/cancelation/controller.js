@@ -7,16 +7,16 @@ export default class CancelationController extends Controller {
   count = 0;
   mostRecent = null;
 
-  @task *myTask() {
+  myTask = task(this, async () => {
     try {
       this.incrementProperty('count');
-      yield forever;
+      await forever;
     } finally {
       // finally blocks always get called,
       // even when the task is being canceled
       this.decrementProperty('count');
     }
-  }
+  });
 
   @action
   performTask() {

@@ -6,11 +6,11 @@ export default class TaskFunctionSyntaxComponent3 extends Component {
   status = null;
 
   // BEGIN-SNIPPET task-function-syntax-3
-  @task *myTask() {
+  myTask = task(this, async () => {
     this.set('status', `Thinking...`);
     let promise = timeout(1000).then(() => 123);
-    let resolvedValue = yield promise;
+    let resolvedValue = await promise;
     this.set('status', `The value is ${resolvedValue}`);
-  }
+  });
   // END-SNIPPET
 }

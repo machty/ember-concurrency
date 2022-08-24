@@ -1,10 +1,6 @@
 import { timeout, EmberYieldable as Yieldable } from './-private/utils';
-import {
-  TaskProperty,
-  TaskGroupProperty,
-  task,
-  taskGroup,
-} from './-private/task-properties';
+import { TaskProperty, TaskGroupProperty } from './-private/task-properties';
+import { task, taskGroup } from './-private/task-public-api';
 import { TaskInstance } from './-private/task-instance';
 import {
   all,

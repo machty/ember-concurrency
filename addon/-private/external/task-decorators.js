@@ -138,35 +138,3 @@ export const lastValue = decoratorWithParams(
     };
   }
 );
-
-export const task = createTaskDecorator(taskFromPropertyDescriptor);
-export const dropTask = createTaskDecorator(taskFromPropertyDescriptor, {
-  drop: true,
-});
-export const enqueueTask = createTaskDecorator(taskFromPropertyDescriptor, {
-  enqueue: true,
-});
-export const keepLatestTask = createTaskDecorator(taskFromPropertyDescriptor, {
-  keepLatest: true,
-});
-export const restartableTask = createTaskDecorator(taskFromPropertyDescriptor, {
-  restartable: true,
-});
-export const taskGroup = createTaskDecorator(taskGroupPropertyDescriptor);
-export const dropTaskGroup = createTaskDecorator(taskGroupPropertyDescriptor, {
-  drop: true,
-});
-export const enqueueTaskGroup = createTaskDecorator(
-  taskGroupPropertyDescriptor,
-  {
-    enqueue: true,
-  }
-);
-export const keepLatestTaskGroup = createTaskDecorator(
-  taskGroupPropertyDescriptor,
-  { keepLatest: true }
-);
-export const restartableTaskGroup = createTaskDecorator(
-  taskGroupPropertyDescriptor,
-  { restartable: true }
-);

@@ -1,5 +1,24 @@
 # Changelog
 
+### master
+  - Introduce async-arrow task() API as the new universal JS/TS API, e.g.
+    `myTask = task(this, { drop: true }, async (arg: string) => {})`. This new API
+    sidesteps the vast majority of TypeScript issues that plagued past decorators- and generators-
+    based APIs. All prior APIs are still supported, but users are strongly recommended
+    to migrate to the new API. Recommended steps:
+    - Finish migrating any classes with EC tasks to ES6 class syntax
+    - Once you've done that, use the following codemods
+      - Convert `@task` decorator based APIs to the new async-arrow fn
+        - npx machty-ember-concurrency-codemods async-arrow-task **/*.ts **/*.js
+      - If you've used `ember-concurrency-ts`, run the following codemod to remove `taskFor()`
+        - npx machty-ember-concurrency-codemods rm-ember-concurrency-ts **/*.ts **/*.js
+  - The `ember-concurrency-ts` and `ember-concurrency-async` packages are no longer needed
+    and can be removed
+  - Soft-deprecated (removed from documentation, likely to formally deprecate later)
+    a number of less commonly used features
+    - Encapsulated Tasks
+    - Task Groups
+
 ### 2.2.1
   - Added missing TypeScript types for `onState` task modifier and
     `TaskFactory#setOnState` (#449, fixed #447. Thanks @johanrd for the heads up!)

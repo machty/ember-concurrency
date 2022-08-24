@@ -3,10 +3,9 @@ import { task } from 'ember-concurrency';
 import { lastValue } from 'ember-concurrency';
 
 export default class ExampleComponent extends Component {
-  @task
-  *someTask() {
+  someTask = task(this, async () => {
     // ...
-  }
+  });
 
   @lastValue('someTask')
   someTaskValue;

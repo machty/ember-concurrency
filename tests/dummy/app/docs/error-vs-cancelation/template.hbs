@@ -1,7 +1,7 @@
 <h3>Errors vs Cancelation</h3>
 
 <p>
-  When you <code>yield</code> a promise or async function call,
+  When you <code>await</code> a promise or async function call,
   your task function will pause execution until one of three things happens:
 </p>
 
@@ -55,7 +55,7 @@
 <p>
   Both of the buttons below will (re)start <code>myTask</code> when clicked.
   If you click the buttons quickly, it will cause the currently running task
-  to cancel from the <code>yield</code> where it is paused. Notice how
+  to cancel from the <code>await</code> where it is paused. Notice how
   cancelations don't increment the <code>numErrors</code> property because
   cancelations skip the <code>catch</code> block.
 </p>

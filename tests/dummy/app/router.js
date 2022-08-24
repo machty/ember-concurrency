@@ -53,7 +53,6 @@ Router.map(function () {
     this.route('task-cancelation-help');
     this.route('404', { path: '*path' });
   });
-  this.route('experimental-prediction');
   this.route('helpers-test');
   this.route('deprecation-test');
   this.route('testing-ergo', function () {

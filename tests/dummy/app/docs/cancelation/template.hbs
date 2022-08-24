@@ -1,4 +1,4 @@
-<h3>Cancelation</h3>
+<h3>Cancellation</h3>
 
 <p>
   <strong>ember-concurrency</strong> tasks can be canceled either
@@ -7,6 +7,24 @@
   how the task is configured, or because the task's host object
   was destroyed).
 </p>
+
+<h4>How ember-concurrency cancels task functions</h4>
+
+<p>
+  You may be aware that async functions in JavaScript are not cancellable, i.e. if you
+  call an async function, you can't externally cause that async function to stop running
+  (unless you're making explicit use of cancel tokens or some other mechanism).
+</p>
+
+<p>
+  ember-concurrency's <code>task()</code> API is built around async arrow functions, so you might
+  be wondering, how does e-c get around this limitation? The answer is that behind the scenes,
+  ember-concurrency uses a Babel transform to convert your async arrow function into a
+  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">Generator Function</a>,
+  which are able to be cancelled.
+</p>
+
+<h4>Implict Cancelation via Task Modifiers</h4>
 
 <p>
   Generally speaking, it is <em>much</em> better to configure your tasks properly

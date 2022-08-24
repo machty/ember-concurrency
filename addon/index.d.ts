@@ -37,6 +37,34 @@ export type EncapsulatedTaskDescriptorReturnType<
   T extends EncapsulatedTaskDescriptor<any, any[]>
 > = T extends { perform(...args: any[]): TaskGenerator<infer R> } ? R : unknown;
 
+export type AsyncArrowTaskFunction<HostObject, T, Args extends any[]> = (
+  this: HostObject,
+  ...args: Args
+) => Promise<T>;
+
+export type AsyncTaskArrowFunctionArgs<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+> = T extends (...args: infer A) => Promise<any> ? A : [];
+
+export type AsyncTaskArrowFunctionReturnType<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+> = T extends (...args: any[]) => Promise<infer R> ? R : unknown;
+
+export type TaskForAsyncTaskFunction<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+> = Task<
+  AsyncTaskArrowFunctionReturnType<HostObject, T>,
+  AsyncTaskArrowFunctionArgs<HostObject, T>
+>;
+
+export type TaskInstanceForAsyncTaskFunction<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+> = TaskInstance<AsyncTaskArrowFunctionReturnType<HostObject, T>>;
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type EncapsulatedTaskState<T extends object> = Omit<
   T,
@@ -885,6 +913,28 @@ export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(
   EncapsulatedTaskDescriptorArgs<T>,
   EncapsulatedTaskState<T>
 >;
+
+export function task<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(
+  hostObject: HostObject,
+  asyncArrowTaskFn: T
+): TaskForAsyncTaskFunction<HostObject, T>;
+
+export function task<
+  HostObject,
+  O extends TaskOptions,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(
+  hostObject: HostObject,
+  baseOptions: O,
+  asyncArrowTaskFn: T
+): TaskForAsyncTaskFunction<HostObject, T>;
+
+export type AsyncTaskFunction<T, Args extends any[]> = (
+  ...args: Args
+) => Promise<T>;
 
 /**
  * Turns the decorated generator function into a task and applies the

@@ -1,7 +1,7 @@
 <h3>Child Tasks</h3>
 
 <p>
-  Tasks can call other tasks by <code>yield</code>ing the
+  Tasks can call other tasks by <code>await</code>ing the
   result of <code>anotherTask.perform()</code>. When this happens,
   the Parent task will wait for the Child task to complete before
   proceeding. If the Parent task is canceled, the Child task will

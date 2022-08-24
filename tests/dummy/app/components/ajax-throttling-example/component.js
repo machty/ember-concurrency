@@ -17,12 +17,11 @@ export default class AjaxThrottlingExampleComponent extends Component {
   tagName = '';
   logs = [];
 
-  @enqueueTask({ maxConcurrency: 3 })
-  *ajaxTask() {
+  ajaxTask = enqueueTask(this, { maxConcurrency: 3 }, async () => {
     // simulate slow AJAX
-    yield timeout(2000 + 2000 * Math.random());
+    await timeout(2000 + 2000 * Math.random());
     return {};
-  }
+  });
 
   @task({ on: 'init' }) task0 = loopingAjaxTask(0, '#0000FF');
   @task({ on: 'init' }) task1 = loopingAjaxTask(1, '#8A2BE2');

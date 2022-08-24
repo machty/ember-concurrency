@@ -1,71 +1,10 @@
 <h3>Encapsulated Tasks</h3>
 
 <p>
-  Normally, you define tasks by decorating a generator function like
-  <code>@task *myGeneratorFn() { /* ... */ }</code>.
-  Occasionally, you may want to be able to expose additional state of the task,
-  e.g. you might want to show the percentage progress of an <code>uploadFile</code> task,
-  but unless you're using the techniques described below there's no good
-  place to expose that data to the template other than to set some properties
-  on the host object, but then you lose a lot of the benefits of encapsulation
-  in the process.
+  Encapsulated tasks have a somewhat murky future are likely to be deprecated in the future.
 </p>
 
 <p>
-  In cases like these, you can use Encapsulated Tasks, which behave just
-  like regular tasks, but with one crucial difference: the value
-  of <code>this</code> within the task function points to the currently
-  running TaskInstance, rather than the host object that the task lives on
-  (e.g. a Component, Controller, etc). This allows for some nice patterns
-  where all of the state produced/mutated by a task can be contained (encapsulated)
-  <em>within</em> the Task itself, rather than having to live on the host
-  object.
+  You can read about them in the
+  <a href="http://v221.ember-concurrency.com/docs/advanced/encapsulated-task">old docs</a>.
 </p>
-
-<p>
-  To create an encapsulated task, decorate an object (instead of a generator function)
-  with the <code>@task</code> decorator that defines a <code>perform</code>
-  generator function. The object can also contain initial values for task state,
-  as well as computed properties and anything else supported by classic Ember objects.
-</p>
-
-<CodeSnippet @name="encapsulated-task.js" />
-
-<h3>Live Example</h3>
-
-<p>
-  This example demonstrates how to use encapsulated tasks to
-  model file uploads. It keeps all of the upload state <em>within</em>
-  each TaskInstance, and uses <LinkTo @route="docs.derived-state">Derived State</LinkTo>
-  to expose the values set within the encapsulated tasks.
-</p>
-
-{{! BEGIN-SNIPPET encapsulated-task-template }}
-<p>
-  <button {{on "click" (perform this.uploadFile this.makeRandomUrl)}} type="button">
-    Start Upload
-  </button>
-</p>
-
-<h5>Queued Uploads: {{this.uploadFile.numQueued}}</h5>
-
-{{#let this.uploadFile.last as |encapsTask|}}
-  <h5>
-    Uploading to {{encapsTask.url}} ({{encapsTask.stateText}}):
-    {{encapsTask.progress}}%
-  </h5>
-{{/let}}
-
-{{#if this.uploadFile.lastSuccessful}}
-  <h5 style="color: green;" {{! template-lint-disable no-inline-styles }}>
-    <strong>
-      Upload to {{this.uploadFile.lastSuccessful.url}}:
-      {{this.uploadFile.lastSuccessful.value}}
-    </strong>
-  </h5>
-{{/if}}
-
-{{! END-SNIPPET }}
-
-<CodeSnippet @name="encapsulated-task-controller.js" />
-<CodeSnippet @name="encapsulated-task-template.hbs" />

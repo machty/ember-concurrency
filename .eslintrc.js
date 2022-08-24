@@ -41,6 +41,9 @@ module.exports = {
         'ember/no-component-lifecycle-hooks': 'off',
         'ember/classic-decorator-no-classic-methods': 'off',
         'ember/no-computed-properties-in-native-classes': 'off',
+
+        // allow while(true) in async task fns
+        'no-constant-condition': 'off',
       },
     },
     // node files

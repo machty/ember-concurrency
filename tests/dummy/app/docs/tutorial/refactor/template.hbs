@@ -29,7 +29,9 @@
 
 <p>
   First, instead of using a <code>findStores</code> <em>action</em>,
-  we define a <code>findStores</code> <em>task</em>.
+  we define a <code>findStores</code> <em>task</em>. This involves calling
+  the <code>task()</code> builder function with <code>this</code> and modifying
+  our async function to use the async arrow function syntax.
 </p>
 
 {{! template-lint-disable no-unbalanced-curlies }}
@@ -38,25 +40,6 @@
   we use <code>onclick=\{{perform findStores}}</code>.
 </p>
 {{! template-lint-enable no-unbalanced-curlies }}
-
-<p>
-  Lastly, instead of using an <code>async</code> function with <code>await</code>
-  calls, we use the
-  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">Generator Function Syntax</a>
-  and the <code>yield</code> keyword.
-</p>
-
-<p>
-  <LinkTo @route="docs.task-function-syntax">We'll get into much greater detail</LinkTo>
-  about how this syntax is used, but for now, the most important thing to understand
-  is that when you <code>yield</code> a promise or async function, the task will
-  pause until that promise or async function fulfills,
-  and then continue executing with the resolved value of that promise or async function.
-
-  Semantically, it is roughly the same as using <code>await</code>, but using
-  generator functions allows controlling the execution in a way that using
-  native, browser-managed <code>async/await</code> does not.
-</p>
 
 <p>Let's press onward with the refactor:</p>
 
@@ -114,12 +97,6 @@
   <code>"set on destroyed object"</code> error.
 </p>
 
-<p>
-  The ability to cancel a task in mid-execution is one of ember-concurrency's
-  most powerful features, and it is the generator function syntax that
-  makes cancelation possible.
-</p>
-
 <h4>Version 5: Handle Promise Rejection/Async Exceptions (with Tasks)</h4>
 
 <p>
@@ -155,5 +132,5 @@
 <p>
   This was a very successful refactor. We were able to remove a lot
   of ugly boilerplate and defensive programming code, and what we're left
-  with is very clean, concise, safe, and stress-free code.
+  with is very clean, concise, and safe.
 </p>

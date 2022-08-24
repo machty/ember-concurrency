@@ -1,18 +1,20 @@
 import Component from '@ember/component';
-import { TaskGenerator, task, timeout } from 'ember-concurrency';
-import { taskFor } from 'ember-concurrency-ts';
-export default class extends Component {
-  @task *myTask(ms: number): TaskGenerator<string> {
-    yield timeout(ms);
-    return 'done!';
-  }
+import { task, timeout } from 'ember-concurrency';
+import { action } from '@ember/object';
 
+export default class extends Component {
+  myTask = task(this, async (ms: number) => {
+    await timeout(ms);
+    return 'done!';
+  });
+
+  @action
   performTask() {
-    if (taskFor(this.myTask).isRunning) {
+    if (this.myTask.isRunning) {
       return;
     }
 
-    taskFor(this.myTask).perform(1000).then(value => {
+    this.myTask.perform(1000).then(value => {
       console.log(value.toUpperCase());
     });
   }

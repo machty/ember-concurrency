@@ -19,6 +19,10 @@ module.exports = function (defaults) {
 
     autoImport: {
       forbidEval: true,
+      webpack: {
+        // Webpack won't auto-detect, because of "maintained node versions" in config/targets.js
+        target: 'web',
+      },
     },
 
     prember: {
@@ -50,6 +54,9 @@ module.exports = function (defaults) {
             safeToIgnore: true,
           },
           '{{test-swallow-error}}': {
+            safeToIgnore: true,
+          },
+          '{{test-async-arrow-task}}': {
             safeToIgnore: true,
           },
         },

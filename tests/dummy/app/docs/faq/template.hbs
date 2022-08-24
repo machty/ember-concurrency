@@ -50,7 +50,7 @@
   set / overridden; in other words, once a Task has been performed, there's
   no way to externally force it to return/reject early, with the exception of
   cancelation. When you <code>.cancel()</code> a task instance, the task
-  will "return" from wherever it is currently paused (e.g. at a <code>yield</code>).
+  will "return" from wherever it is currently paused (e.g. at a <code>await</code>).
   Presently, there is no API to "delay" the cancelation of a Task once a cancel
   has been requested, but this functionality might be added to future APIs.
 </p>

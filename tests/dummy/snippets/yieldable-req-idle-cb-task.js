@@ -3,12 +3,12 @@ import { task } from 'ember-concurrency';
 import idleCallback from 'my-app/yieldables/idle-callback';
 
 export class MyComponent extends Component {
-  @task *backgroundTask() {
+  backgroundTask = task(this, async () => {
     while (1) {
-      yield idleCallback();
+      await idleCallback();
 
       const data = this.complicatedNumberCrunching();
-      yield this.sendData(data);
+      await this.sendData(data);
     }
-  }
+  });
 }

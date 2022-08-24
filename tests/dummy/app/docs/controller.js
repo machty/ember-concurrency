@@ -15,17 +15,14 @@ export const TABLE_OF_CONTENTS = [
   {
     route: 'docs.task-function-syntax',
     title: 'Task Function Syntax',
-    children: [
-      { route: 'docs.task-decorators', title: 'Decorators' },
-      { route: 'docs.typescript', title: 'TypeScript' },
-    ],
+    children: [{ route: 'docs.typescript', title: 'TypeScript' }],
   },
   {
     route: 'docs.task-concurrency',
     title: 'Managing Task Concurrency',
     children: [{ route: 'docs.task-concurrency-advanced', title: 'Advanced' }],
   },
-  { route: 'docs.cancelation', title: 'Cancelation' },
+  { route: 'docs.cancelation', title: 'Cancellation' },
   { route: 'docs.error-vs-cancelation', title: 'Handling Errors' },
   { route: 'docs.child-tasks', title: 'Child Tasks' },
   { route: 'docs.task-groups', title: 'Task Groups' },
@@ -35,7 +32,6 @@ export const TABLE_OF_CONTENTS = [
   { route: 'docs.faq', title: 'FAQ & Fact Sheet' },
 
   { section: 'Advanced' },
-  { route: 'docs.advanced.encapsulated-task', title: 'Encapsulated Tasks' },
   { route: 'docs.advanced.lifecycle-events', title: 'Lifecycle Events' },
   { route: 'docs.advanced.task-modifiers', title: 'Task Modifiers' },
   {

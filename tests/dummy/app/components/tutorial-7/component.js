@@ -6,13 +6,13 @@ import { task } from 'ember-concurrency';
 export default class Tutorial7 extends TutorialComponent {
   result = null;
 
-  @task *findStores() {
+  findStores = task(this, async () => {
     let geolocation = this.geolocation;
     let store = this.store;
 
-    let coords = yield geolocation.getCoords();
-    let result = yield store.getNearbyStores(coords);
+    let coords = await geolocation.getCoords();
+    let result = await store.getNearbyStores(coords);
     this.set('result', result);
-  }
+  });
 }
 // END-SNIPPET

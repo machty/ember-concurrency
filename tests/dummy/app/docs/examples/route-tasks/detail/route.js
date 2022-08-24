@@ -16,18 +16,18 @@ export default class RouteTasksDetailRoute extends Route {
     this.pollServerForChanges.cancelAll();
   }
 
-  @restartableTask *pollServerForChanges(id) {
+  pollServerForChanges = restartableTask(this, async (id) => {
     let notify = this.notify;
-    yield timeout(500);
+    await timeout(500);
     try {
       notify.info(`Thing ${id}: Starting to poll for changes`);
       while (true) {
-        yield timeout(5000);
+        await timeout(5000);
         notify.info(`Thing ${id}: Polling now...`);
       }
     } finally {
       notify.warning(`Thing ${id}: No longer polling for changes`);
     }
-  }
+  });
 }
 // END-SNIPPET

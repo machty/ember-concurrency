@@ -1,149 +1,54 @@
 <h3>Using ember-concurrency with TypeScript</h3>
 
 <p>
-  As of version 1.2, ember-concurrency comes bundled with its own
-  <a href="https://github.com/machty/ember-concurrency/blob/master/addon/index.d.ts">
-    type definitions
-  </a>. On compatible verions of TypeScript – currently 3.7 and 3.9,
-  it should automatically pick them up to provide type checking and
-  completion.
+  The documentation below covers how to use ember-concurrency v2.3+
+  with Ember Octane. For older versions of ember-concurrency (or pre-Octane Ember),
+  <a href="https://v221.ember-concurrency.com/docs/typescript">please see the old guides</a>.
 </p>
 
-<h4>Octane</h4>
+<h4>Ember Octane</h4>
+
+<p>
+  ember-concurrency tasks play nicely with TypeScript and all of the APIs covered in these docs.
+  Here is an example of a TypeScript component with an ember-concurrency task:
+</p>
 
 <CodeSnippet @name="ts/classic-vs-octane/octane.ts" />
 
+<h4>Version 2.2 and older</h4>
+
 <p>
-  Since we are using native classes in Octane, TypeScript has
-  an easier time understanding and following our code. Normally,
-  this is a good thing, but in the case of ember-concurrency, it
-  ends up getting a bit in the way.
+  Support for TypeScript in ember-concurrency was recently greatly improved and simplified
+  with the release of version 2.3, largely due to the introduction of the new
+  async arrow task function syntax (e.g. <code>myTask = task(this, async () => {})</code>),
+  which alleviated most / all of the prior challenges with getting ember-concurrency tasks
+  to play nicely with TypeScript.
+</p>
+
+<ul>
+  <li>
+    <strong>
+      <a href="https://github.com/chancancode/ember-concurrency-async">ember-concurrency-async</a>
+    </strong>
+    is no longer necessary
+  </li>
+    <li>
+    <strong>
+      <a href="https://github.com/chancancode/ember-concurrency-ts">ember-concurrency-ts</a>
+    </strong>
+    and the <code>taskFor()</code> function it provides is no longer necessary
+    for interacting with tasks declared using the new syntax.
+  </li>
+</ul>
+
+<p>
+  TODO: link to Github V 2.3 release notes / upgrade guide.
 </p>
 
 <p>
-  ember-concurrency's API was designed with Classic Ember in mind,
-  where it could decorate a property or method and replace it
-  with a different type in the <code>.extend()</code> hook.
+  If you would like to see the TypeScript guides for older versions of ember-concurrency
+  (or pre-Octane Ember), please
+  <a href="https://v221.ember-concurrency.com/docs/typescript">see the old guides</a>.
 </p>
 
-<p>
-  This is not allowed using TypeScript's decorators implementation. Since
-  <code>myTask</code> is defined using as the (generator) method
-  syntax, and since methods do not have a <code>.perform()</code>
-  method on them, calling <code>this.myTask.perform()</code> will
-  result in a type error, even though it will work at runtime.
-</p>
 
-<p>
-  We could work around this by type casting the method, such as
-  <code>(this.myTask as any as Task&lt;string, number&gt;)</code>,
-  but doing this everywhere is quite verbose and error-prone.
-  Instead, we opted to use the
-  <a href="https://github.com/chancancode/ember-concurrency-ts">
-    ember-concurrency-ts
-  </a> addon, which encapsulate the type cast transparently in
-  a <code>taskFor</code> utility function.
-</p>
-
-<p>
-  In addition to the code readability improvements, this utility
-  function is also safer than the inline type cast, as it is able
-  to automatically infer the arguments and return type of the task
-  based on the task function signature.
-</p>
-
-<p>
-  The <code>taskFor</code> utility function also works with
-  <a href="/docs/advanced/encapsulated-task">Encapsulated Tasks</a>:
-</p>
-
-<CodeSnippet @name="ts/classic-vs-octane/octane-encapsulated.ts" />
-
-<h4>Classic Ember</h4>
-
-<CodeSnippet @name="ts/classic-vs-octane/classic.ts" />
-
-<p>
-  In Classic Ember, everything works as expected. Note that while
-  from Ember's perspective <code>this.get()</code> is no longer
-  required, it is needed here to get the correct type.
-</p>
-
-<p>
-  From what TypeScript can see, <code>this.myTask</code> is a
-  <code>TaskProperty</code> but <code>this.get('myTask')</code>
-  "unwraps" the task property into a <code>Task</code>, allowing
-  <code>perform()</code> to be called on it, among other things.
-  This is a limitation of <code>@types/ember</code> and is true
-  for other computed properties as well.
-</p>
-
-<h4>Limitations of Generator Functions in TypeScript</h4>
-
-<p>
-  In ember-concurrency, tasks are defined with generator function
-  (method) syntax. The task can <code>yield</code> any objects,
-  typically promises or other <code>TaskInstance</code>, and the
-  ember-concurrency runtime will resolve it and resume the task
-  with the resolved value when it becomes available.
-</p>
-
-<p>
-  Due to limitations in TypeScript's understanding of generator
-  functions, it is not possible to express the relationship between
-  the left and right hand side of a <code>yield</code> expression.
-  As a result, the resulting type of a yield expression inside a
-  task function must be annotated manually:
-</p>
-
-<CodeSnippet @name="ts/yield/unsafe.ts" />
-
-<p>
-  Since the <code>yield</code> expressions are typed to "return"
-  <code>any</code>, TypeScript would happily go along with any
-  type annotation and allow you to freely assign the result of the
-  <code>yield</code> expression. Therefore, it is very important
-  to ensure it matches up with reality.
-</p>
-
-<p>
-  A safer approach would be to use a utility type, like so:
-</p>
-
-<CodeSnippet @name="ts/yield/safe.ts" />
-
-<p>
-  This <code>Resolved</code> utility type will unwrap a yieldable
-  value into its resolved type. This is much safer, as it retains
-  the types relationship between the left and right hand side of
-  the <code>yield</code> expressions.
-</p>
-
-<p>
-  A third approach to this solving this problem is to use the
-  <a href="https://github.com/chancancode/ember-concurrency-async">
-    ember-concurrency-async
-  </a> addon, which enables async method syntax for tasks:
-</p>
-
-<CodeSnippet @name="ts/yield/async.ts" />
-
-<p>
-  <code>await</code> expressions in <code>async</code> methods
-  already have the <code>Resolved</code> semantics we are after,
-  natively built into the TypeScript compiler. Using this syntax,
-  we automatically get the correct types out-of-the-box.
-</p>
-
-<p>
-  In order for this code to type-check, we will have to include
-  the following in <code>types/&lt;app name&gt;/index.d.ts</code>:
-</p>
-
-<CodeSnippet @name="ts/yield/index.d.ts" />
-
-<p>
-  This imports the type extensions form the addons to add a few
-  new utility types as well as to add new overload signatures to
-  existing functions to support async task functions.
-</p>

@@ -5,7 +5,7 @@ import { restartableTask, task, timeout } from 'ember-concurrency';
 // BEGIN-SNIPPET debounced-search-with-cancelation
 const DEBOUNCE_MS = 250;
 export default class AutocompleteController extends Controller {
-  @restartableTask *searchRepo(term) {
+  searchRepo = restartableTask(this, async (term) => {
     if (isBlank(term)) {
       return [];
     }
@@ -15,24 +15,24 @@ export default class AutocompleteController extends Controller {
     // the current search will be canceled at this point and
     // start over from the beginning. This is the
     // ember-concurrency way of debouncing a task.
-    yield timeout(DEBOUNCE_MS);
+    await timeout(DEBOUNCE_MS);
 
     let url = `https://api.github.com/search/repositories?q=${term}`;
 
     // We yield an AJAX request and wait for it to complete. If the task
     // is restarted before this request completes, the XHR request
     // is aborted (open the inspector and see for yourself :)
-    let json = yield this.getJSON.perform(url);
+    let json = await this.getJSON.perform(url);
     return json.items.slice(0, 10);
-  }
+  });
 
-  @task *getJSON(url) {
+  getJSON = task(this, async (url) => {
     let controller = new AbortController();
     let signal = controller.signal;
 
     try {
-      let response = yield fetch(url, { signal });
-      let result = yield response.json();
+      let response = await fetch(url, { signal });
+      let result = await response.json();
       return result;
 
       // NOTE: could also write this as
@@ -44,6 +44,6 @@ export default class AutocompleteController extends Controller {
     } finally {
       controller.abort();
     }
-  }
+  });
 }
 // END-SNIPPET

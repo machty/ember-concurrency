@@ -323,6 +323,10 @@ export class TaskFactory {
   }
 
   _processModifierOptions(options) {
+    if (!options) {
+      return;
+    }
+
     for (let key of Object.keys(options)) {
       let value = options[key];
       let modifier = this.getModifier(key);

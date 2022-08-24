@@ -5,9 +5,9 @@ import { dropTask, timeout } from 'ember-concurrency';
 export default class LoadingUIController extends Controller {
   result = null;
 
-  @dropTask *askQuestion() {
-    yield timeout(1000);
+  askQuestion = dropTask(this, async () => {
+    await timeout(1000);
     this.set('result', Math.random());
-  }
+  });
 }
 // END-SNIPPET
