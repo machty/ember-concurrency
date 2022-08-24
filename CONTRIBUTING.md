@@ -26,8 +26,17 @@ This project uses `yarn` as a package manager. If you're adding a new dependency
 
 For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
 
-### Generate Docs
+### Generate API Docs
 
 TODO: use build pipeline.
 * From addon root directory `yarn docs:build`
 * View built docs in `tests/dummy/public/api`
+
+### Publishing Guides and API Docs
+
+(Requires commit access.)
+
+```
+./node_modules/.bin/ember github-pages:commit
+git push origin gh-pages:gh-pages
+```
