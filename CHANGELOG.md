@@ -1,6 +1,6 @@
 # Changelog
 
-### master
+### 2.3.1
   - Add runtime assertion to detect transpilation failures with the new async arrow fn API
 
 ### 2.3.0
