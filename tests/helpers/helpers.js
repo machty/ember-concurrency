@@ -15,7 +15,7 @@ export function makeAsyncError(hooks) {
 }
 
 export function getDebugFunction(type) {
-  if (macroCondition(dependencySatisfies('ember-source', '^3.26.0'))) {
+  if (macroCondition(dependencySatisfies('ember-source', '>3.26.0'))) {
     return importSync('@ember/debug').getDebugFunction(type);
   } else {
     return Ember[type];
@@ -23,7 +23,7 @@ export function getDebugFunction(type) {
 }
 
 export function setDebugFunction(type, fn) {
-  if (macroCondition(dependencySatisfies('ember-source', '^3.26.0'))) {
+  if (macroCondition(dependencySatisfies('ember-source', '>3.26.0'))) {
     return importSync('@ember/debug').setDebugFunction(type, fn);
   } else {
     Ember[type] = fn;
