@@ -12,9 +12,7 @@ export default class SharedTasksController extends Controller {
     this.sharedTask.perform(t)
   );
 
-  droppingTask = task({ drop: true }, async (t) =>
-    this.sharedTask.perform(t)
-  );
+  droppingTask = task({ drop: true }, async (t) => this.sharedTask.perform(t));
 
   keepLatestTask = task({ keepLatest: true }, async (t) =>
     this.sharedTask.perform(t)
