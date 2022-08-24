@@ -3,12 +3,7 @@ import EmberObject, { get, set } from '@ember/object';
 import { isDestroying, registerDestructor } from '@ember/destroyable';
 import { Task as BaseTask } from './external/task/task';
 import { TaskInstance } from './task-instance';
-import {
-  PERFORM_TYPE_DEFAULT,
-  TaskInstanceExecutor,
-  PERFORM_TYPE_LINKED,
-} from './external/task-instance/executor';
-import { EMBER_ENVIRONMENT } from './ember-environment';
+import { TaskInstanceExecutor } from './external/task-instance/executor';
 import { TASKABLE_MIXIN } from './taskable-mixin';
 import { TRACKED_INITIAL_TASK_STATE } from './tracked-state';
 import { CANCEL_KIND_LIFESPAN_END } from './external/task-instance/cancelation';
@@ -213,59 +208,21 @@ export class Task extends BaseTask {
    *
    */
 
-  _perform(...args) {
-    return this._performShared(args, PERFORM_TYPE_DEFAULT, null);
+  get _isAlive() {
+    return !isDestroying(this.context);
   }
 
-  _performShared(args, performType, linkedObject) {
-    let fullArgs = this._curryArgs ? [...this._curryArgs, ...args] : args;
-    let taskInstance = this._taskInstanceFactory(
-      fullArgs,
-      performType,
-      linkedObject
-    );
-
-    if (performType === PERFORM_TYPE_LINKED) {
-      linkedObject._expectsLinkedYield = true;
-    }
-
-    if (isDestroying(this.context)) {
-      // TODO: express this in terms of lifetimes; a task linked to
-      // a dead lifetime should immediately cancel.
-      taskInstance.cancel();
-    }
-
-    this.scheduler.perform(taskInstance);
+  _taskInstanceFactory(args, performType, linkedObject) {
+    let options = this._taskInstanceOptions(args, performType, linkedObject);
+    let taskInstance = new TaskInstance(options);
     return taskInstance;
-  }
-
-  _taskInstanceFactory(args, performType) {
-    let generatorFactory = () => this.generatorFactory(args);
-    let taskInstance = new TaskInstance({
-      task: this,
-      args,
-      executor: new TaskInstanceExecutor({
-        generatorFactory,
-        env: EMBER_ENVIRONMENT,
-        debug: this.debug,
-      }),
-      performType,
-      hasEnabledEvents: this.hasEnabledEvents,
-    });
-
-    return taskInstance;
-  }
-
-  _curry(...args) {
-    let task = this._clone();
-    task._curryArgs = [...(this._curryArgs || []), ...args];
-    return task;
   }
 
   _clone() {
     return new Task({
       context: this.context,
       debug: this.debug,
+      env: this.env,
       generatorFactory: this.generatorFactory,
       group: this.group,
       hasEnabledEvents: this.hasEnabledEvents,
@@ -273,10 +230,6 @@ export class Task extends BaseTask {
       onStateCallback: this.onStateCallback,
       scheduler: this.scheduler,
     });
-  }
-
-  toString() {
-    return `<Task:${this.name}>`;
   }
 }
 
@@ -326,7 +279,7 @@ export class EncapsulatedTask extends Task {
       args,
       executor: new TaskInstanceExecutor({
         generatorFactory,
-        env: EMBER_ENVIRONMENT,
+        env: this.env,
         debug: this.debug,
       }),
       performType,

@@ -12,6 +12,7 @@ import { Task, EncapsulatedTask } from './task';
 import { TaskProperty } from './task-properties';
 import { TaskGroup } from './task-group';
 import EmberScheduler from './scheduler/ember-scheduler';
+import { EMBER_ENVIRONMENT } from './ember-environment';
 
 let handlerCounter = 0;
 
@@ -60,6 +61,8 @@ registerModifier('on', (factory, eventNames) =>
 );
 
 export class TaskFactory extends BaseTaskFactory {
+  env = EMBER_ENVIRONMENT;
+
   createTask(context) {
     assert(
       `Cannot create task if a task definition is not provided as generator function or encapsulated task.`,
