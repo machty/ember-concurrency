@@ -196,9 +196,11 @@ export function waitForEvent(object, eventName) {
  * @param {object} object an object (most likely an Ember Object)
  * @param {string} key the property name that is observed for changes
  * @param {function} callbackOrValue a Function that should return a truthy value
- *                                   when the task should continue executing, or
+ *                                   when the task should continue executing,
  *                                   a non-Function value that the watched property
- *                                   needs to equal before the task will continue running
+ *                                   needs to equal before the task will continue running.
+ *                                   If this parameter is omitted, waits for the watched value
+ *                                   to become any truthy value.
  */
 export function waitForProperty(object, key, predicateCallback) {
   return new WaitForPropertyYieldable(object, key, predicateCallback);

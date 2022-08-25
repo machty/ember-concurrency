@@ -773,13 +773,12 @@ module('unit tests', () => {
     // @ts-expect-error
     t.finally((v) => {});
 
-    // TODO: fix
-    // try {
-    //   let r = await t;
-    //   expect(r).toBeString();
-    // } catch (e) {
-    //   expect(e).toBeAny();
-    // }
+    try {
+      let r = await t;
+      expect(r).toBeString();
+    } catch (e) {
+      expect(e).toBeAny();
+    }
   });
 
   test('TaskProperty', async () => {
@@ -2226,8 +2225,7 @@ module('unit tests', () => {
       let t!: TaskInstance<string>;
       await t;
     } catch (e) {
-      // TODO: fix
-      // expect(e).toBeAny();
+      expect(e).toBeAny();
 
       if (didCancel(e)) {
         expect(e).not.toBeAny();
@@ -2731,22 +2729,22 @@ module('unit tests', () => {
   test('waitForProperty', async () => {
     let obj = { foo: 'foo' };
 
-    // TODO: fix
-    // expect(waitForProperty).toBeCallableWith(obj, 'foo', 'bar');
-    // expect(waitForProperty).toBeCallableWith(
-    //   obj,
-    //   'foo',
-    //   (v: unknown) => v === 'bar'
-    // );
-    // expect(waitForProperty).toBeCallableWith(
-    //   obj,
-    //   'foo',
-    //   (v: string) => v === 'bar'
-    // );
+    expect(waitForProperty).toBeCallableWith(obj, 'foo');
+    expect(waitForProperty).toBeCallableWith(obj, 'foo', 'bar');
+    expect(waitForProperty).toBeCallableWith(
+      obj,
+      'foo',
+      (v: unknown) => v === 'bar'
+    );
+    expect(waitForProperty).toBeCallableWith(
+      obj,
+      'foo',
+      (v: string) => v === 'bar'
+    );
 
-    // expect(waitForProperty).parameters.toEqualTypeOf<
-    //   [object, string | number | symbol, unknown]
-    // >();
+    expect(waitForProperty).parameters.toEqualTypeOf<
+      [object, string | number | symbol, unknown]
+    >();
     expect(waitForProperty).returns.toEqualTypeOf<Yieldable<void>>();
 
     // @ts-expect-error

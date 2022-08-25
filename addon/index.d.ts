@@ -1495,25 +1495,27 @@ export function waitForEvent(
  *
  * @param object An object (most likely an Ember Object).
  * @param key The property name that is observed for changes.
- * @param callbackOrValue a Function that should return a truthy value
- *   when the task should continue executing, or
+ * @param [callbackOrValue] a Function that should return a truthy value
+ *   when the task should continue executing,
  *   a non-Function value that the watched property
  *   needs to equal before the task will continue running.
+ *   If this parameter is omitted, waits for the watched value
+ *   to become any truthy value.
  */
 export function waitForProperty<O extends object, K extends keyof O>(
   object: O,
   key: K,
-  callbackOrValue: (value: O[K]) => boolean
+  callbackOrValue?: (value: O[K]) => boolean
 ): Yieldable<void>;
 export function waitForProperty(
   object: object,
   key: string,
-  callbackOrValue: (value: unknown) => boolean
+  callbackOrValue?: (value: unknown) => boolean
 ): Yieldable<void>;
 export function waitForProperty<O extends object, K extends keyof O>(
   object: O,
   key: K,
-  callbackOrValue: O[K]
+  callbackOrValue?: O[K]
 ): Yieldable<void>;
 
 /**
