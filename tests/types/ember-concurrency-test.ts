@@ -49,6 +49,9 @@ import {
   waitForQueue,
   lastValue,
   TaskForAsyncTaskFunction,
+  dropTask,
+  enqueueTask,
+  keepLatestTask,
 } from 'ember-concurrency';
 import { expectTypeOf as expect } from 'expect-type';
 
@@ -2930,7 +2933,7 @@ module('integration tests', () => {
     });
   });
 
-  test('classic ember (encpsulated task)', () => {
+  test('classic ember (encapsulated task)', () => {
     ClassicComponent.extend({
       myTask: task({
         foo: 'foo',
@@ -3173,6 +3176,81 @@ module('integration tests', () => {
       enqueue = task({ enqueue: true }, async () => {});
       drop = task({ drop: true }, async () => {});
       keepLatest = task({ keepLatest: true }, async () => {});
+      evented = task({ evented: true }, async () => {});
+      debug = task({ debug: true }, async () => {});
+      onState = task({ onState: () => {} }, async () => {});
+      onStateNull = task({ onState: null }, async () => {});
+
+      // Note: these options work even when strictFunctionTypes is enabled, but
+      // turning it on in this repo breaks other things in addon/index.d.ts
+      on = task({ on: 'hi' }, async () => {});
+      cancelOn = task({ cancelOn: 'bye' }, async () => {});
+      maxConcurrency = task({ maxConcurrency: 1 }, async () => {});
+      group = task({ group: 'foo' }, async () => {});
+
+      @lastValue('myTask') myTaskValue = 'or some default';
+
+      myTask = task(
+        this,
+        { restartable: true },
+        async (immediately: boolean, ms = 500) => {
+          // expect(this).toEqualTypeOf<MyComponent>();
+          expect(this.foo).not.toBeAny();
+          expect(this.foo).toEqualTypeOf<TaskGroup<never>>();
+
+          if (!immediately) {
+            await timeout(ms);
+          }
+
+          let fetchPromise = fetch('/api/data.json');
+          expect(fetchPromise).resolves.toEqualTypeOf<Response>();
+
+          let response: Response = await fetchPromise;
+          expect(response).toEqualTypeOf<Response>();
+
+          let safeResponse: Resolved<typeof fetchPromise> = await fetchPromise;
+          expect(safeResponse).toEqualTypeOf<Response>();
+
+          return 'wow';
+        }
+      );
+    }
+  });
+
+  test('async arrow dropTask and other alternative task fns', () => {
+    class MyComponent extends GlimmerComponent {
+      @taskGroup
+      foo!: TaskGroup<never>;
+
+      normalTask = task(async (immediately: boolean, ms = 500) => {
+        // expect(this).toEqualTypeOf<MyComponent>();
+        expect(this.foo).not.toBeAny();
+        expect(this.foo).toEqualTypeOf<TaskGroup<never>>();
+
+        if (!immediately) {
+          await timeout(ms);
+        }
+
+        let fetchPromise = fetch('/api/data.json');
+        expect(fetchPromise).resolves.toEqualTypeOf<Response>();
+
+        let response: Response = await fetchPromise;
+        expect(response).toEqualTypeOf<Response>();
+
+        let safeResponse: Resolved<typeof fetchPromise> = await fetchPromise;
+        expect(safeResponse).toEqualTypeOf<Response>();
+
+        return 'wow';
+      });
+
+      restartable = restartableTask(async () => {});
+      restartable2 = restartableTask({ maxConcurrency: 2 }, async () => {});
+      enqueue = enqueueTask(async () => {});
+      enqueue2 = enqueueTask({ maxConcurrency: 2 }, async () => {});
+      drop = dropTask(async () => {});
+      drop2 = dropTask({ maxConcurrency: 2 }, async () => {});
+      keepLatest = keepLatestTask(async () => {});
+      keepLatest2 = keepLatestTask({ maxConcurrency: 2 }, async () => {});
       evented = task({ evented: true }, async () => {});
       debug = task({ debug: true }, async () => {});
       onState = task({ onState: () => {} }, async () => {});
