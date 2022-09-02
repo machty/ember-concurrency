@@ -722,7 +722,7 @@ export interface YieldableState {
   next(value: any): void;
 
   /**
-   * Short-cirsuit TaskInstance execution and have it return with an optional
+   * Short-circuit TaskInstance execution and have it return with an optional
    * value.
    * @param value
    */
