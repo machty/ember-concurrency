@@ -11,6 +11,7 @@
     "lint:hbs:fix": "ember-template-lint . --fix",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
+    "release": "release-it",
     "start": "ember serve",
     "test": "npm-run-all lint test:*",
     "test:ember": "ember test",
@@ -80,6 +81,7 @@
     "prettier": "^2.3.2",
     "qunit": "^2.16.0",
     "qunit-dom": "^1.6.0",
+    "release-it": "^15.4.1",
     "sass": "^1.22.12",
     "sinon": "^11.0.0",
     "testem": "^3.4.2",
@@ -126,7 +128,7 @@
     }
   },
   "volta": {
-    "node": "12.22.10",
+    "node": "16.17.0",
     "yarn": "1.22.17"
   }
 }
