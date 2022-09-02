@@ -1,7 +1,7 @@
 import { TaskFactory } from './task-factory';
 
 function taskFromPropertyDescriptor(
-  _target,
+  target,
   key,
   descriptor,
   params = [],
@@ -23,6 +23,7 @@ function taskFromPropertyDescriptor(
   let tasks = new WeakMap();
   let options = params[0] || {};
   let factory = new factoryClass(key, taskFn, options);
+  factory._setupEmberKVO(target);
 
   return {
     get() {
