@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.3.3
+  - Fix types for the async arrow API for `dropTask`, `restartableTask`, and others (#486)
+  
 ### 2.3.2
   - Simplify the async arrow fn task() API to allow omitting the `this` param, e.g.
     `myTask = task(async () => {})` (#477)
