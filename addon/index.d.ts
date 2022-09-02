@@ -985,6 +985,15 @@ export function dropTask<T>(
   descriptor: TypedPropertyDescriptor<T>
 ): TypedPropertyDescriptor<T>;
 export function dropTask(target: Object, propertyKey: string): void;
+export function dropTask<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
+export function dropTask<
+  HostObject,
+  O extends TaskOptions,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -1024,6 +1033,16 @@ export function enqueueTask<T>(
   descriptor: TypedPropertyDescriptor<T>
 ): TypedPropertyDescriptor<T>;
 export function enqueueTask(target: Object, propertyKey: string): void;
+export function enqueueTask<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
+
+export function enqueueTask<
+  HostObject,
+  O extends TaskOptions,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -1063,6 +1082,16 @@ export function keepLatestTask<T>(
   descriptor: TypedPropertyDescriptor<T>
 ): TypedPropertyDescriptor<T>;
 export function keepLatestTask(target: Object, propertyKey: string): void;
+export function keepLatestTask<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
+
+export function keepLatestTask<
+  HostObject,
+  O extends TaskOptions,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -1102,6 +1131,16 @@ export function restartableTask<T>(
   descriptor: TypedPropertyDescriptor<T>
 ): TypedPropertyDescriptor<T>;
 export function restartableTask(target: Object, propertyKey: string): void;
+export function restartableTask<
+  HostObject,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
+
+export function restartableTask<
+  HostObject,
+  O extends TaskOptions,
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+>(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 /**
  * "Task Groups" provide a means for applying
