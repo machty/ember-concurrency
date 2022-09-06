@@ -16,6 +16,9 @@ module.exports = {
         before: [
           '@babel/plugin-proposal-decorators',
           '@babel/plugin-transform-typescript',
+
+          // Run before ember-cli-code-coverage
+          'babel-plugin-istanbul',
         ],
       });
     }
