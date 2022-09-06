@@ -16,6 +16,7 @@ module.exports = {
         before: [
           '@babel/plugin-proposal-decorators',
           '@babel/plugin-transform-typescript',
+          'babel-plugin-istanbul',
         ],
       });
     }
