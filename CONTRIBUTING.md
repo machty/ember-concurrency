@@ -29,7 +29,7 @@ For more information on using ember-cli, visit [http://www.ember-cli.com/](http:
 ### Releasing new versions / publishing to NPM
 
 ```
-yarn release
+npx release-it
 ```
 
 ### Generate API Docs
