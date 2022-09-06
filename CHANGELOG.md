@@ -1,4 +1,8 @@
 # Changelog
+
+### 2.3.5
+  - Fix Babel transpiler conflict with ember-cli-code-coverage (#490)
+
 ### 2.3.4
   - Bugfix: observers stopped working in 2.3.0+ (#487)
 
