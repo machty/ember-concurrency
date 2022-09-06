@@ -94,7 +94,7 @@
 ### 2.0.0-rc.1
   - Implement decorators from `ember-concurrency-decorators`. The "nice" decorators
     from `ember-concurrency-decorators` are now built-in to ember-concurrency, without
-    requiring an additional addon or seperate import. All decorators are available for
+    requiring an additional addon or separate import. All decorators are available for
     import directly from the top-level `ember-concurrency` package.
 
     **Addon maintainers**: Please see notes in `UPGRADING-2.x.md` if you're using

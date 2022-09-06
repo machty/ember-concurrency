@@ -3,7 +3,7 @@
 ember-concurrency 2.0 is primarily an "engine" replacement. Internally, its been
 substantially rewritten and decoupled from Ember at it's core. This will enable
 a much more maintainable codebase, as well as setting the stage for potential
-extraction of core primatives for us in the broader JavaScript ecosystem.
+extraction of core primitives for us in the broader JavaScript ecosystem.
 
 The application developer-facing changes are fairly minimal, and there are few
 semantic changes to the operation of the addon.

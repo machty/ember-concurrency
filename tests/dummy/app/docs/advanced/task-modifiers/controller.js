@@ -6,7 +6,7 @@ import { task, timeout } from 'ember-concurrency';
 
 // registerModifer is called in the module defining the modifier,
 // so we're really just importing it here for the side-effect. This is mostly for
-// terseness in this illustration. You may want to seperate defining the modifier
+// terseness in this illustration. You may want to separate defining the modifier
 // and registering it with registerModifier, and be explicit about where you
 // register (e.g. addon, library, or app initialization)
 import 'dummy/task-modifiers/benchmark';

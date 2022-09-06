@@ -6,7 +6,7 @@ import { helper } from '@ember/component/helper';
  *
  * While this pattern should be used sparingly, as errors should generally not be ignores, it
  * is sometimes appropriate to follow do this when working with an Ember Concurrency task that uses
- * the `.error` derrived state to directly render the error from a Task. In these cases, we rarely
+ * the `.error` derived state to directly render the error from a Task. In these cases, we rarely
  * want the error to bubble up to the application itself, as we're already handling the error case.
  *
  *   ```hbs

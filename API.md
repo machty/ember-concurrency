@@ -10,7 +10,7 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
 
-export default class MyCompontent extends Component {
+export default class MyComponent extends Component {
   @tracked num;
 
   constructor() {
