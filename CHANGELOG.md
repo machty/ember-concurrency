@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.3.6
+  - Additional fix for Babel transpiler conflict with ember-cli-code-coverage / istanbul (#492)
+
 ### 2.3.5
   - Fix Babel transpiler conflict with ember-cli-code-coverage (#490)
 
