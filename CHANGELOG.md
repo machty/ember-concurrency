@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.3.7
+  - Mention native class requirement in un-transpiled task() error (#494)
+
 ### 2.3.6
   - Additional fix for Babel transpiler conflict with ember-cli-code-coverage / istanbul (#492)
 
