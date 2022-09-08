@@ -26,11 +26,11 @@
     based APIs. All prior APIs are still supported, but users are strongly recommended
     to migrate to the new API. Recommended steps:
     - Finish migrating any classes with EC tasks to ES6 class syntax
-    - Once you've done that, use the following codemods
+    - Once you've done that, use the following codemods on any `app/` or `addon/` folders that are using Ember Concurrency tasks
       - Convert `@task` decorator based APIs to the new async-arrow fn
-        - npx machty-ember-concurrency-codemods async-arrow-task **/*.ts **/*.js
+        - `npx machty-ember-concurrency-codemods async-arrow-task app/**/*.ts app/**/*.js`
       - If you've used `ember-concurrency-ts`, run the following codemod to remove `taskFor()`
-        - npx machty-ember-concurrency-codemods rm-ember-concurrency-ts **/*.ts **/*.js
+        - `npx machty-ember-concurrency-codemods rm-ember-concurrency-ts app/**/*.ts app/**/*.js`
   - The `ember-concurrency-ts` and `ember-concurrency-async` packages are no longer needed
     and can be removed
   - Soft-deprecated (removed from documentation, likely to formally deprecate later)
