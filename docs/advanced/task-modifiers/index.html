@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     
-<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%222.3.0%2Bc3ec0125%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
+<meta name="dummy/config/environment" content="%7B%22modulePrefix%22%3A%22dummy%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22auto%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22ember-concurrency%22%2C%22version%22%3A%222.3.7%2B1f10f08b%22%7D%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%2C%22exportApplicationGlobal%22%3Afalse%7D" />
 <!-- EMBER_CLI_FASTBOOT_TITLE -->
 
     <link integrity="" rel="stylesheet" href="/assets/vendor-e754b247f0b14ad5fde0f302404dd7cb.css">
@@ -25,7 +25,7 @@
         ember-concurrency
 
         <span style="font-size: 0.5em;">
-          (v 2.3.0)
+          (v 2.3.7)
         </span>
       </h3>
     </div>
@@ -301,7 +301,7 @@ export default benchmarkModifier;
 
 // registerModifer is called in the module defining the modifier,
 // so we're really just importing it here for the side-effect. This is mostly for
-// terseness in this illustration. You may want to seperate defining the modifier
+// terseness in this illustration. You may want to separate defining the modifier
 // and registering it with registerModifier, and be explicit about where you
 // register (e.g. addon, library, or app initialization)
 import 'dummy/task-modifiers/benchmark';
@@ -312,7 +312,7 @@ let performance =
     : { getEntriesByName() {} };
 
 export default class TaskModifiersController extends Controller {
-  doWork = task(this, { drop: true, benchmark: true }, async () =&gt; {
+  doWork = task({ drop: true, benchmark: true }, async () =&gt; {
     await timeout(20000 * Math.random());
   });
 
@@ -359,8 +359,8 @@ export default class TaskModifiersController extends Controller {
 <div id="ember797" class="ember-notify-cn ember-notify-default ember-view"><!----></div>
 <script type="x/boundary" id="fastboot-body-end"></script>
 
-    <script src="/assets/vendor-072fcae1f075a0771bc6c86bf50ee233.js"></script>
-    <script src="/assets/dummy-762d9c592d61f061257a9d30ba37ae7e.js"></script>
+    <script src="/assets/vendor-5c1f43f2606471f87dec90ca50dc3542.js"></script>
+    <script src="/assets/dummy-c563c0c4b564a1339f8eb4d5a916e41a.js"></script>
 
     
   </body>
