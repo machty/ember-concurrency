@@ -2,6 +2,7 @@ import { module } from 'qunit';
 import EmberObject from '@ember/object';
 import { task, lastValue } from 'ember-concurrency';
 import { decoratorTest } from '../helpers/helpers';
+import { computed } from '@ember/object';
 
 module('Unit | lastValue', function () {
   decoratorTest('without a default value', async function (assert) {
@@ -50,4 +51,38 @@ module('Unit | lastValue', function () {
 
     assert.equal(instance.value, 'foo', 'returning the last successful value');
   });
+
+  decoratorTest(
+    'computed properties that depend on @lastValue do change',
+    async function (assert) {
+      class ObjectWithTaskDefaultValue extends EmberObject {
+        @task task = function* () {
+          return yield 'foo';
+        };
+
+        @lastValue('task') value = 'default value';
+
+        @computed('value')
+        get computedValue() {
+          return this.value;
+        }
+      }
+
+      const instance = ObjectWithTaskDefaultValue.create();
+
+      assert.strictEqual(
+        instance.computedValue,
+        'default value',
+        'it returns the default value if the task has not been performed'
+      );
+
+      await instance.task.perform();
+
+      assert.equal(
+        instance.computedValue,
+        'foo',
+        'returning the last successful value'
+      );
+    }
+  );
 });
