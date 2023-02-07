@@ -376,7 +376,7 @@ interface OnStateCallback<T> {
 }
 
 interface AbstractTaskProperty<T extends Task<any, any[]>>
-  extends ComputedProperty<T> {
+  extends ComputedProperty {
   volatile: never;
   readOnly: never;
   property: never;
@@ -555,7 +555,7 @@ export interface EncapsulatedTaskProperty<
   State extends object
 > extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>> {}
 
-export interface TaskGroupProperty<T> extends ComputedProperty<TaskGroup<T>> {
+export interface TaskGroupProperty extends ComputedProperty {
   volatile: never;
   readOnly: never;
   property: never;
@@ -804,7 +804,7 @@ type OptionTypeFor<T, F> = F extends (...args: infer Args) => T
   : never;
 
 type TaskOptions = OptionsFor<TaskProperty<unknown, unknown[]>>;
-type TaskGroupOptions = OptionsFor<TaskGroupProperty<unknown>>;
+type TaskGroupOptions = OptionsFor<TaskGroupProperty>;
 
 type MethodOrPropertyDecoratorWithParams<Params extends unknown[]> =
   MethodDecorator &
@@ -1199,7 +1199,7 @@ export function taskGroup(target: Object, propertyKey: string): void;
  *
  * @returns {TaskGroupProperty}
  */
-export function taskGroup<T>(): TaskGroupProperty<T>;
+export function taskGroup(): TaskGroupProperty;
 
 /**
  * Turns the decorated property into a task group and applies the

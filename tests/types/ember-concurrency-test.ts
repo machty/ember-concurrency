@@ -925,99 +925,99 @@ module('unit tests', () => {
     let O = EmberObject.extend({
       tp,
 
-      foo() {
-        let t = this.get('tp');
+      foo(this: EmberObject) {
+        let t = this.get('tp') as Task<string, [boolean, number?]>;
         expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
         expect(t.last).toEqualTypeOf<TaskInstance<string> | null>();
         expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
 
-        let i = this.get('tp').perform(true);
+        let i = t.perform(true);
         expect(i).toEqualTypeOf<TaskInstance<string>>();
         expect(i.value).toEqualTypeOf<string | null>();
 
         // @ts-expect-error
-        this.get('tp').perform();
+        t.perform();
 
         // @ts-expect-error
-        this.get('tp').perform('nope');
+        t.perform('nope');
 
         // @ts-expect-error
-        this.get('tp').perform(true, 'nope');
+        t.perform(true, 'nope');
 
         // @ts-expect-error
-        this.get('tp').perform(false, 5, 'nope');
+        t.perform(false, 5, 'nope');
       },
 
-      bar() {
-        let t = get(this, 'tp');
+      bar(this: EmberObject) {
+        let t = get(this, 'tp') as Task<string, [boolean, number?]>;
         expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
         expect(t.last).toEqualTypeOf<TaskInstance<string> | null>();
         expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
 
-        let i = get(this, 'tp').perform(true);
+        let i = t.perform(true);
         expect(i).toEqualTypeOf<TaskInstance<string>>();
         expect(i.value).toEqualTypeOf<string | null>();
 
         // @ts-expect-error
-        get(this, 'tp').perform();
+        t.perform();
 
         // @ts-expect-error
-        get(this, 'tp').perform('nope');
+        t.perform('nope');
 
         // @ts-expect-error
-        get(this, 'tp').perform(true, 'nope');
+        t.perform(true, 'nope');
 
         // @ts-expect-error
-        get(this, 'tp').perform(false, 5, 'nope');
+        t.perform(false, 5, 'nope');
       },
     });
 
     {
       let o = O.create();
 
-      let t = o.get('tp');
+      let t = o.get('tp') as Task<string, [boolean, number?]>;
 
       expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
       expect(t.last).toEqualTypeOf<TaskInstance<string> | null>();
 
-      let i = o.get('tp').perform(false, 5);
+      let i = t.perform(false, 5);
       expect(i).toEqualTypeOf<TaskInstance<string>>();
       expect(i.value).toEqualTypeOf<string | null>();
 
       // @ts-expect-error
-      o.get('tp').perform();
+      t.perform();
 
       // @ts-expect-error
-      o.get('tp').perform('nope');
+      t.perform('nope');
 
       // @ts-expect-error
-      o.get('tp').perform(true, 'nope');
+      t.perform(true, 'nope');
 
       // @ts-expect-error
-      o.get('tp').perform(false, 5, 'nope');
+      t.perform(false, 5, 'nope');
     }
 
     {
-      let t = get(O.create(), 'tp');
+      let t = get(O.create(), 'tp') as Task<string, [boolean, number?]>;
 
       expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
       expect(t.last).toEqualTypeOf<TaskInstance<string> | null>();
 
-      let i = get(O.create(), 'tp').perform(false, 5);
+      let i = t.perform(false, 5);
       expect(i).toEqualTypeOf<TaskInstance<string>>();
       expect(i.value).toEqualTypeOf<string | null>();
 
       // @ts-expect-error
-      get(O.create(), 'tp').perform();
+      t.perform();
 
       // @ts-expect-error
-      get(O.create(), 'tp').perform('nope');
+      t.perform('nope');
 
       // @ts-expect-error
-      get(O.create(), 'tp').perform(true, 'nope');
+      t.perform(true, 'nope');
 
       // @ts-expect-error
-      get(O.create(), 'tp').perform(false, 5, 'nope');
+      t.perform(false, 5, 'nope');
     }
   });
 
@@ -1171,8 +1171,12 @@ module('unit tests', () => {
     let O = EmberObject.extend({
       tp,
 
-      foo() {
-        let t = this.get('tp');
+      foo(this: EmberObject) {
+        let t = this.get('tp') as EncapsulatedTask<
+          string,
+          [boolean, number?],
+          { foo: string }
+        >;
         expect(t).toEqualTypeOf<
           EncapsulatedTask<string, [boolean, number?], { foo: string }>
         >();
@@ -1181,27 +1185,31 @@ module('unit tests', () => {
         >();
         expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
 
-        let i = this.get('tp').perform(true);
+        let i = t.perform(true);
         expect(i).toEqualTypeOf<TaskInstance<string> & { foo: string }>();
         expect(i.value).toEqualTypeOf<string | null>();
         expect(i.foo).not.toBeAny();
         expect(i.foo).toBeString();
 
         // @ts-expect-error
-        this.get('tp').perform();
+        t.perform();
 
         // @ts-expect-error
-        this.get('tp').perform('nope');
+        t.perform('nope');
 
         // @ts-expect-error
-        this.get('tp').perform(true, 'nope');
+        t.perform(true, 'nope');
 
         // @ts-expect-error
-        this.get('tp').perform(false, 5, 'nope');
+        t.perform(false, 5, 'nope');
       },
 
-      bar() {
-        let t = get(this, 'tp');
+      bar(this: EmberObject) {
+        let t = get(this, 'tp') as EncapsulatedTask<
+          string,
+          [boolean, number?],
+          { foo: string }
+        >;
         expect(t).toEqualTypeOf<
           EncapsulatedTask<string, [boolean, number?], { foo: string }>
         >();
@@ -1210,30 +1218,34 @@ module('unit tests', () => {
         >();
         expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
 
-        let i = get(this, 'tp').perform(true);
+        let i = t.perform(true);
         expect(i).toEqualTypeOf<TaskInstance<string> & { foo: string }>();
         expect(i.value).toEqualTypeOf<string | null>();
         expect(i.foo).not.toBeAny();
         expect(i.foo).toBeString();
 
         // @ts-expect-error
-        get(this, 'tp').perform();
+        t.perform();
 
         // @ts-expect-error
-        get(this, 'tp').perform('nope');
+        t.perform('nope');
 
         // @ts-expect-error
-        get(this, 'tp').perform(true, 'nope');
+        t.perform(true, 'nope');
 
         // @ts-expect-error
-        get(this, 'tp').perform(false, 5, 'nope');
+        t.perform(false, 5, 'nope');
       },
     });
 
     {
       let o = O.create();
 
-      let t = o.get('tp');
+      let t = o.get('tp') as EncapsulatedTask<
+        string,
+        [boolean, number?],
+        { foo: string }
+      >;
 
       expect(t).toEqualTypeOf<
         EncapsulatedTask<string, [boolean, number?], { foo: string }>
@@ -1242,27 +1254,31 @@ module('unit tests', () => {
         (TaskInstance<string> & { foo: string }) | null
       >();
 
-      let i = o.get('tp').perform(false, 5);
+      let i = t.perform(false, 5);
       expect(i).toEqualTypeOf<TaskInstance<string> & { foo: string }>();
       expect(i.value).toEqualTypeOf<string | null>();
       expect(i.foo).not.toBeAny();
       expect(i.foo).toBeString();
 
       // @ts-expect-error
-      o.get('tp').perform();
+      t.perform();
 
       // @ts-expect-error
-      o.get('tp').perform('nope');
+      t.perform('nope');
 
       // @ts-expect-error
-      o.get('tp').perform(true, 'nope');
+      t.perform(true, 'nope');
 
       // @ts-expect-error
-      o.get('tp').perform(false, 5, 'nope');
+      t.perform(false, 5, 'nope');
     }
 
     {
-      let t = get(O.create(), 'tp');
+      let t = get(O.create(), 'tp') as EncapsulatedTask<
+        string,
+        [boolean, number?],
+        { foo: string }
+      >;
 
       expect(t).toEqualTypeOf<
         EncapsulatedTask<string, [boolean, number?], { foo: string }>
@@ -1271,23 +1287,23 @@ module('unit tests', () => {
         (TaskInstance<string> & { foo: string }) | null
       >();
 
-      let i = get(O.create(), 'tp').perform(false, 5);
+      let i = t.perform(false, 5);
       expect(i).toEqualTypeOf<TaskInstance<string> & { foo: string }>();
       expect(i.value).toEqualTypeOf<string | null>();
       expect(i.foo).not.toBeAny();
       expect(i.foo).toBeString();
 
       // @ts-expect-error
-      get(O.create(), 'tp').perform();
+      t.perform();
 
       // @ts-expect-error
-      get(O.create(), 'tp').perform('nope');
+      t.perform('nope');
 
       // @ts-expect-error
-      get(O.create(), 'tp').perform(true, 'nope');
+      t.perform(true, 'nope');
 
       // @ts-expect-error
-      get(O.create(), 'tp').perform(false, 5, 'nope');
+      t.perform(false, 5, 'nope');
     }
   });
 
@@ -1298,7 +1314,7 @@ module('unit tests', () => {
     // @ts-expect-error
     class Foo extends TaskGroupProperty {} // TaskGroupProperty cannot be subclassed
 
-    let tgp!: TaskGroupProperty<string>;
+    let tgp!: TaskGroupProperty;
 
     expect(tgp.volatile).toBeNever();
     expect(tgp.readOnly).toBeNever();
@@ -1376,51 +1392,45 @@ module('unit tests', () => {
     let O = EmberObject.extend({
       tgp: tgp,
 
-      foo() {
-        let tg = this.get('tgp');
+      foo(this: EmberObject) {
+        let tg = this.get('tgp') as TaskGroup<string>;
         expect(tg).toEqualTypeOf<TaskGroup<string>>();
         expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
         // @ts-expect-error
         tg.perform();
-
-        // @ts-expect-error
-        this.get('tgp').perform();
       },
 
       bar() {
-        let tg = get(this, 'tgp');
+        let tg = get(this, 'tgp') as TaskGroup<string>;
         expect(tg).toEqualTypeOf<TaskGroup<string>>();
         expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
         // @ts-expect-error
         tg.perform();
-
-        // @ts-expect-error
-        get(this, 'tgp').perform();
       },
     });
 
     {
       let o = O.create();
 
-      let tg = o.get('tgp');
+      let tg = o.get('tgp') as TaskGroup<string>;
 
       expect(tg).toEqualTypeOf<TaskGroup<string>>();
       expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
       // @ts-expect-error
-      o.get('tgp').perform();
+      tg.perform();
     }
 
     {
-      let tg = get(O.create(), 'tgp');
+      let tg = get(O.create(), 'tgp') as TaskGroup<string>;
 
       expect(tg).toEqualTypeOf<TaskGroup<string>>();
       expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
       // @ts-expect-error
-      get(O.create(), 'tp').perform();
+      tg.perform();
     }
   });
 
@@ -1429,19 +1439,19 @@ module('unit tests', () => {
       let tp = task(function* () {});
       expect(tp).toEqualTypeOf<TaskProperty<void, []>>();
 
-      let t = get({ tp }, 'tp');
+      let t = get({ tp }, 'tp') as unknown as Task<void, []>;
       expect(t).toEqualTypeOf<Task<void, []>>();
       expect(t.perform).toBeCallableWith();
       expect(t.perform).parameters.toEqualTypeOf<[]>();
       expect(t.perform).returns.toEqualTypeOf<TaskInstance<void>>();
 
-      let i = get({ tp }, 'tp').perform();
+      let i = t.perform();
       expect(i).toEqualTypeOf<TaskInstance<void>>();
       expect(i.value).toEqualTypeOf<void | null>();
       expect(i).resolves.toEqualTypeOf<void>();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform('nope');
+      t.perform('nope');
     }
 
     {
@@ -1450,48 +1460,48 @@ module('unit tests', () => {
       });
       expect(tp).toEqualTypeOf<TaskProperty<string, []>>();
 
-      let t = get({ tp }, 'tp');
+      let t = get({ tp }, 'tp') as unknown as Task<string, []>;
       expect(t).toEqualTypeOf<Task<string, []>>();
       expect(t.perform).toBeCallableWith();
       expect(t.perform).parameters.toEqualTypeOf<[]>();
       expect(t.perform).returns.toEqualTypeOf<TaskInstance<string>>();
 
-      let i = get({ tp }, 'tp').perform();
+      let i = t.perform();
       expect(i).toEqualTypeOf<TaskInstance<string>>();
       expect(i.value).toEqualTypeOf<string | null>();
       expect(i).resolves.toBeString();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform('nope');
+      t.perform('nope');
     }
 
     {
       let tp = task(function* (foo: boolean, bar?: number) {});
       expect(tp).toEqualTypeOf<TaskProperty<void, [boolean, number?]>>();
 
-      let t = get({ tp }, 'tp');
+      let t = get({ tp }, 'tp') as unknown as Task<void, [boolean, number?]>;
       expect(t).toEqualTypeOf<Task<void, [boolean, number?]>>();
       expect(t.perform).toBeCallableWith(true);
       expect(t.perform).toBeCallableWith(false, 5);
       expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
       expect(t.perform).returns.toEqualTypeOf<TaskInstance<void>>();
 
-      let i = get({ tp }, 'tp').perform(true);
+      let i = t.perform(true);
       expect(i).toEqualTypeOf<TaskInstance<void>>();
       expect(i.value).toEqualTypeOf<void | null>();
       expect(i).resolves.toEqualTypeOf<void>();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform();
+      t.perform();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform('nope');
+      t.perform('nope');
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform(true, 'nope');
+      t.perform(true, 'nope');
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform(false, 5, 'nope');
+      t.perform(false, 5, 'nope');
     }
 
     {
@@ -1500,29 +1510,29 @@ module('unit tests', () => {
       });
       expect(tp).toEqualTypeOf<TaskProperty<string, [boolean, number?]>>();
 
-      let t = get({ tp }, 'tp');
+      let t = get({ tp }, 'tp') as unknown as Task<string, [boolean, number?]>;
       expect(t).toEqualTypeOf<Task<string, [boolean, number?]>>();
       expect(t.perform).toBeCallableWith(true);
       expect(t.perform).toBeCallableWith(false, 5);
       expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
       expect(t.perform).returns.toEqualTypeOf<TaskInstance<string>>();
 
-      let i = get({ tp }, 'tp').perform(false, 5);
+      let i = t.perform(false, 5);
       expect(i).toEqualTypeOf<TaskInstance<string>>();
       expect(i.value).toEqualTypeOf<string | null>();
       expect(i).resolves.toEqualTypeOf<string>();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform();
+      t.perform();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform('nope');
+      t.perform('nope');
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform(true, 'nope');
+      t.perform(true, 'nope');
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform(false, 5, 'nope');
+      t.perform(false, 5, 'nope');
     }
 
     {
@@ -1532,7 +1542,11 @@ module('unit tests', () => {
         EncapsulatedTaskProperty<void, [], { foo: string }>
       >();
 
-      let t = get({ tp }, 'tp');
+      let t = get({ tp }, 'tp') as unknown as EncapsulatedTask<
+        void,
+        [],
+        { foo: string }
+      >;
       expect(t).toMatchTypeOf<Task<void, []>>();
       expect(t).toEqualTypeOf<EncapsulatedTask<void, [], { foo: string }>>();
       expect(t.perform).toBeCallableWith();
@@ -1542,7 +1556,7 @@ module('unit tests', () => {
         TaskInstance<void> & { foo: string }
       >();
 
-      let i = get({ tp }, 'tp').perform();
+      let i = t.perform();
       expect(i).toMatchTypeOf<TaskInstance<void>>();
       expect(i).toEqualTypeOf<TaskInstance<void> & { foo: string }>();
       expect(i.value).toEqualTypeOf<void | null>();
@@ -1551,7 +1565,7 @@ module('unit tests', () => {
       expect(i.foo).toBeString();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform('nope');
+      t.perform('nope');
     }
 
     {
@@ -1566,7 +1580,11 @@ module('unit tests', () => {
         EncapsulatedTaskProperty<string, [], { foo: string }>
       >();
 
-      let t = get({ tp }, 'tp');
+      let t = get({ tp }, 'tp') as unknown as EncapsulatedTask<
+        string,
+        [],
+        { foo: string }
+      >;
       expect(t).toMatchTypeOf<Task<string, []>>();
       expect(t).toEqualTypeOf<EncapsulatedTask<string, [], { foo: string }>>();
       expect(t.perform).toBeCallableWith();
@@ -1576,7 +1594,7 @@ module('unit tests', () => {
         TaskInstance<string> & { foo: string }
       >();
 
-      let i = get({ tp }, 'tp').perform();
+      let i = t.perform();
       expect(i).toMatchTypeOf<TaskInstance<string>>();
       expect(i).toEqualTypeOf<TaskInstance<string> & { foo: string }>();
       expect(i.value).toEqualTypeOf<string | null>();
@@ -1585,7 +1603,7 @@ module('unit tests', () => {
       expect(i.foo).toBeString();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform('nope');
+      t.perform('nope');
     }
 
     {
@@ -1595,7 +1613,11 @@ module('unit tests', () => {
         EncapsulatedTaskProperty<void, [boolean, number?], { foo: string }>
       >();
 
-      let t = get({ tp }, 'tp');
+      let t = get({ tp }, 'tp') as unknown as EncapsulatedTask<
+        void,
+        [boolean, number?],
+        { foo: string }
+      >;
       expect(t).toMatchTypeOf<Task<void, [boolean, number?]>>();
       expect(t).toEqualTypeOf<
         EncapsulatedTask<void, [boolean, number?], { foo: string }>
@@ -1608,7 +1630,7 @@ module('unit tests', () => {
         TaskInstance<void> & { foo: string }
       >();
 
-      let i = get({ tp }, 'tp').perform(true);
+      let i = t.perform(true);
       expect(i).toMatchTypeOf<TaskInstance<void>>();
       expect(i).toEqualTypeOf<TaskInstance<void> & { foo: string }>();
       expect(i.value).toEqualTypeOf<void | null>();
@@ -1617,16 +1639,16 @@ module('unit tests', () => {
       expect(i.foo).toBeString();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform();
+      t.perform();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform('nope');
+      t.perform('nope');
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform(true, 'nope');
+      t.perform(true, 'nope');
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform(false, 5, 'nope');
+      t.perform(false, 5, 'nope');
     }
 
     {
@@ -1641,7 +1663,11 @@ module('unit tests', () => {
         EncapsulatedTaskProperty<string, [boolean, number?], { foo: string }>
       >();
 
-      let t = get({ tp }, 'tp');
+      let t = get({ tp }, 'tp') as unknown as EncapsulatedTask<
+        string,
+        [boolean, number?],
+        { foo: string }
+      >;
       expect(t).toMatchTypeOf<Task<string, [boolean, number?]>>();
       expect(t).toEqualTypeOf<
         EncapsulatedTask<string, [boolean, number?], { foo: string }>
@@ -1654,7 +1680,7 @@ module('unit tests', () => {
         TaskInstance<string> & { foo: string }
       >();
 
-      let i = get({ tp }, 'tp').perform(false, 5);
+      let i = t.perform(false, 5);
       expect(i).toMatchTypeOf<TaskInstance<string>>();
       expect(i).toEqualTypeOf<TaskInstance<string> & { foo: string }>();
       expect(i.value).toEqualTypeOf<string | null>();
@@ -1663,25 +1689,25 @@ module('unit tests', () => {
       expect(i.foo).toBeString();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform();
+      t.perform();
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform('nope');
+      t.perform('nope');
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform(true, 'nope');
+      t.perform(true, 'nope');
 
       // @ts-expect-error
-      get({ tp }, 'tp').perform(false, 5, 'nope');
+      t.perform(false, 5, 'nope');
     }
   });
 
   test('taskGroup', () => {
     {
       let tgp = taskGroup();
-      expect(tgp).toEqualTypeOf<TaskGroupProperty<unknown>>();
+      expect(tgp).toEqualTypeOf<TaskGroupProperty>();
 
-      let tg = get({ tgp: tgp }, 'tgp');
+      let tg = get({ tgp: tgp }, 'tgp') as unknown as TaskGroup<unknown>;
       expect(tg).toEqualTypeOf<TaskGroup<unknown>>();
       expect(tg.last).toEqualTypeOf<TaskInstance<unknown> | null>();
 
@@ -1691,10 +1717,10 @@ module('unit tests', () => {
     }
 
     {
-      let tgp = taskGroup<string>();
-      expect(tgp).toEqualTypeOf<TaskGroupProperty<string>>();
+      let tgp = taskGroup();
+      expect(tgp).toEqualTypeOf<TaskGroupProperty>();
 
-      let tg = get({ tgp: tgp }, 'tgp');
+      let tg = get({ tgp: tgp }, 'tgp') as unknown as TaskGroup<string>;
       expect(tg).toEqualTypeOf<TaskGroup<string>>();
       expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
@@ -2702,7 +2728,7 @@ module('unit tests', () => {
       'foo'
     );
     expect(waitForEvent).toBeCallableWith(
-      EmberObject.extend(Evented).create(),
+      EmberObject.extend(Evented).create() as unknown as Evented,
       'foo'
     );
     expect(waitForEvent).toBeCallableWith(
@@ -2895,8 +2921,8 @@ module('integration tests', () => {
         return 'wow';
       }).restartable(),
 
-      async performMyTask() {
-        let myTask = this.get('myTask');
+      async performMyTask(this: EmberObject) {
+        let myTask = this.get('myTask') as Task<string, [boolean, number?]>;
 
         expect(myTask).not.toBeAny();
         expect(myTask).toEqualTypeOf<Task<string, [boolean, number?]>>();
@@ -2961,8 +2987,12 @@ module('integration tests', () => {
         },
       }).restartable(),
 
-      async performMyTask() {
-        let myTask = this.get('myTask');
+      async performMyTask(this: EmberObject) {
+        let myTask = this.get('myTask') as EncapsulatedTask<
+          string,
+          [boolean, number?],
+          { foo: string }
+        >;
 
         expect(myTask).not.toBeAny();
         expect(myTask).toMatchTypeOf<Task<string, [boolean, number?]>>();
