@@ -68,6 +68,12 @@ with the computed property system.
 The Task, TaskGroup, and TaskInstance remain compatible with `@computed`-based
 uses, as well, allowing use in both classic and Glimmer components.
 
+As a consequence of using `@tracked` properties, reading `Task` or `TaskInstance`
+state via native getters inside a computed property may require annotating the
+native getter with [`@dependentKeyCompat`](https://api.emberjs.com/ember/release/functions/@ember%2Fobject%2Fcompat/dependentKeyCompat) to make changes visible to the
+computed property system. This also applies to decorators like `@lastValue` that
+internally create a native getter. For more information, see [this comment](https://github.com/machty/ember-concurrency/issues/424#issuecomment-1322505998).
+
 ### Scheduler now runs all task steps on microtask queue
 
 In ember-concurrency 1.x, scheduling of tasks happened on the runloop OR using
