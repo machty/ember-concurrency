@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// eslint-disable-next-line ember/no-computed-properties-in-native-classes
-import ComputedProperty from '@ember/object/computed';
-
 export type TaskGenerator<T> = Generator<any, T, any>;
 
 export type TaskFunction<T, Args extends any[]> = (
@@ -375,13 +371,7 @@ interface OnStateCallback<T> {
   (state: TaskState<TaskInstance<any>>, taskable: T): void;
 }
 
-interface AbstractTaskProperty<T extends Task<any, any[]>>
-  extends ComputedProperty {
-  volatile: never;
-  readOnly: never;
-  property: never;
-  meta: never;
-
+interface AbstractTaskProperty<T extends Task<any, any[]>> {
   /**
    * Calling `task(...).on(eventName)` configures the task to be
    * automatically performed when the specified events fire. In
@@ -545,7 +535,8 @@ interface AbstractTaskProperty<T extends Task<any, any[]>>
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TaskProperty<T, Args extends any[]>
-  extends AbstractTaskProperty<Task<T, Args>> {}
+  extends AbstractTaskProperty<Task<T, Args>>,
+    Task<T, Args> {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface EncapsulatedTaskProperty<
@@ -553,14 +544,10 @@ export interface EncapsulatedTaskProperty<
   Args extends any[],
   // eslint-disable-next-line @typescript-eslint/ban-types
   State extends object
-> extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>> {}
+> extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>>,
+    EncapsulatedTask<T, Args, State> {}
 
-export interface TaskGroupProperty extends ComputedProperty {
-  volatile: never;
-  readOnly: never;
-  property: never;
-  meta: never;
-
+export interface TaskGroupProperty<T> extends TaskGroup<T> {
   /**
    * Configures the task group to cancel old currently task
    * instances to make room for a new one to perform. Sets
@@ -804,7 +791,7 @@ type OptionTypeFor<T, F> = F extends (...args: infer Args) => T
   : never;
 
 type TaskOptions = OptionsFor<TaskProperty<unknown, unknown[]>>;
-type TaskGroupOptions = OptionsFor<TaskGroupProperty>;
+type TaskGroupOptions = OptionsFor<TaskGroupProperty<unknown>>;
 
 type MethodOrPropertyDecoratorWithParams<Params extends unknown[]> =
   MethodDecorator &
@@ -1199,7 +1186,7 @@ export function taskGroup(target: Object, propertyKey: string): void;
  *
  * @returns {TaskGroupProperty}
  */
-export function taskGroup(): TaskGroupProperty;
+export function taskGroup<T>(): TaskGroupProperty<T>;
 
 /**
  * Turns the decorated property into a task group and applies the
