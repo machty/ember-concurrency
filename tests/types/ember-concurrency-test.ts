@@ -1,4 +1,7 @@
 /* eslint-disable prettier/prettier */
+import 'ember-source/types';
+import 'ember-source/types/preview';
+
 import ClassicComponent from '@ember/component';
 import EmberObject, { get } from '@ember/object';
 import Evented from '@ember/object/evented';
