@@ -371,7 +371,9 @@ interface OnStateCallback<T> {
   (state: TaskState<TaskInstance<any>>, taskable: T): void;
 }
 
-interface AbstractTaskProperty<T extends Task<any, any[]>> {
+// This intermediate interface is necessary because
+// `interface MyThing<T> extends T {}` is not allowed
+interface _AbstractTaskProperty<T extends Task<any, any[]>> {
   /**
    * Calling `task(...).on(eventName)` configures the task to be
    * automatically performed when the specified events fire. In
@@ -524,6 +526,9 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> {
   onState(callback: OnStateCallback<T> | null): this;
 }
 
+type AbstractTaskProperty<T extends Task<any, any[]>> = T &
+  _AbstractTaskProperty<T>;
+
 /**
  * A {@link TaskProperty} is the Computed Property-like object returned
  * from the {@linkcode task} function. You can call Task Modifier methods
@@ -535,8 +540,7 @@ interface AbstractTaskProperty<T extends Task<any, any[]>> {
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TaskProperty<T, Args extends any[]>
-  extends AbstractTaskProperty<Task<T, Args>>,
-    Task<T, Args> {}
+  extends AbstractTaskProperty<Task<T, Args>> {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface EncapsulatedTaskProperty<
@@ -544,8 +548,7 @@ export interface EncapsulatedTaskProperty<
   Args extends any[],
   // eslint-disable-next-line @typescript-eslint/ban-types
   State extends object
-> extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>>,
-    EncapsulatedTask<T, Args, State> {}
+> extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>> {}
 
 export interface TaskGroupProperty<T> extends TaskGroup<T> {
   /**
