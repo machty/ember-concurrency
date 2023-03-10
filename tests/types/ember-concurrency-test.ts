@@ -3138,7 +3138,7 @@ module('integration tests', () => {
       myTask = task(
         this,
         { restartable: true },
-        // FIXME: Seems strange that this was necessary
+        // TODO: Seems strange that this was necessary
         // eslint-disable-next-line @typescript-eslint/no-inferrable-types
         async (immediately: boolean, ms: number | undefined = 500) => {
           // expect(this).toEqualTypeOf<MyComponent>();
@@ -3246,7 +3246,7 @@ module('integration tests', () => {
 
       myTask = task(
         { restartable: true },
-        // FIXME: Seems strange that this was necessary
+        // TODO: Seems strange that this was necessary
         // eslint-disable-next-line @typescript-eslint/no-inferrable-types
         async (immediately: boolean, ms: number | undefined = 500) => {
           // expect(this).toEqualTypeOf<MyComponent>();
@@ -3312,7 +3312,7 @@ module('integration tests', () => {
     class MyComponent extends GlimmerComponent {
       myTask = task(
         { restartable: true },
-        // FIXME: Seems strange that this was necessary
+        // TODO: Seems strange that this was necessary
         // eslint-disable-next-line @typescript-eslint/no-inferrable-types
         async (immediately: boolean, ms: number | undefined = 500) => {
           if (!immediately) {
@@ -3419,7 +3419,7 @@ module('integration tests', () => {
       myTask = task(
         this,
         { restartable: true },
-        // FIXME: Seems strange that this was necessary
+        // TODO: Seems strange that this was necessary
         // eslint-disable-next-line @typescript-eslint/no-inferrable-types
         async (immediately: boolean, ms: number | undefined = 500) => {
           // expect(this).toEqualTypeOf<MyComponent>();
