@@ -7,22 +7,22 @@ import { decoratorTest } from '../helpers/helpers';
 
 module('Unit: task groups', function () {
   function assertStates(assert, task, isRunning, isQueued, isIdle, suffix) {
-    assert.equal(
+    assert.strictEqual(
       task.isRunning,
       isRunning,
       `${task.name} is ${isRunning ? '' : 'not'} running ${suffix}`
     );
-    assert.equal(
+    assert.strictEqual(
       task.isQueued,
       isQueued,
       `${task.name} is ${isQueued ? '' : 'not'} queued ${suffix}`
     );
-    assert.equal(
+    assert.strictEqual(
       task.isIdle,
       isIdle,
       `${task.name} is ${isIdle ? '' : 'not'} idle ${suffix}`
     );
-    assert.equal(
+    assert.strictEqual(
       task.state,
       isRunning ? 'running' : 'idle',
       `${task.name} state is '${isRunning ? 'running' : 'idle'}' ${suffix}`
@@ -101,7 +101,7 @@ module('Unit: task groups', function () {
     });
 
     run(() => {
-      assert.equal(Obj.create().taskA.group.name, 'tg');
+      assert.strictEqual(Obj.create().taskA.group.name, 'tg');
     });
   });
 

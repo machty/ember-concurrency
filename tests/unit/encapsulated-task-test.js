@@ -26,7 +26,7 @@ module('Unit: EncapsulatedTask', function () {
     run(() => {
       obj = Obj.create();
       obj.myTask.perform(1, 2, 3).then((v) => {
-        assert.equal(v, 123);
+        assert.strictEqual(v, 123);
       });
     });
     run(defer, 'resolve');
@@ -80,7 +80,7 @@ module('Unit: EncapsulatedTask', function () {
 
     defer.resolve();
     const value = await taskInstance;
-    assert.equal(value, 'pickle');
+    assert.strictEqual(value, 'pickle');
   });
 
   test('encapsulated tasks can access task instance context', async function (assert) {
@@ -130,7 +130,7 @@ module('Unit: EncapsulatedTask', function () {
       run(() => {
         obj = new FakeGlimmerComponent();
         obj.myTask.perform(1, 2, 3).then((v) => {
-          assert.equal(v, 123);
+          assert.strictEqual(v, 123);
         });
       });
       run(defer, 'resolve');
@@ -164,13 +164,13 @@ module('Unit: EncapsulatedTask', function () {
 
       let obj = new FakeComponent();
       const taskInstance = obj.myTask.perform(1, 2, 3);
-      assert.equal(taskInstance.someProp, 0);
-      assert.equal(taskInstance.doubled, 0);
+      assert.strictEqual(taskInstance.someProp, 0);
+      assert.strictEqual(taskInstance.doubled, 0);
 
       defer.resolve();
       await taskInstance;
-      assert.equal(taskInstance.someProp, 1);
-      assert.equal(taskInstance.doubled, 2);
+      assert.strictEqual(taskInstance.someProp, 1);
+      assert.strictEqual(taskInstance.doubled, 2);
     }
   );
 });

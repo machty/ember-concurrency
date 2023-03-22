@@ -88,7 +88,7 @@ module('Unit: task events', function () {
       obj = Obj.create();
       taskInstance = obj.doThings.perform(deferred);
       taskInstance.catch((e) => {
-        assert.equal(e.message, 'someone unplugged the network');
+        assert.strictEqual(e.message, 'someone unplugged the network');
       });
     });
 

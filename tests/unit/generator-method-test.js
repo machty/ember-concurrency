@@ -54,10 +54,10 @@ module('Unit | generator method', function () {
       subject.c.perform();
       subject.d.perform();
     });
-    assert.equal(subject.doStuff.last.value, 123);
-    assert.equal(subject.a.last.value, 456);
-    assert.equal(subject.b.last.value, 789);
-    assert.equal(subject.c.last.value, 12);
-    assert.equal(subject.d.last.value, 34);
+    assert.strictEqual(subject.doStuff.last.value, 123);
+    assert.strictEqual(subject.a.last.value, 456);
+    assert.strictEqual(subject.b.last.value, 789);
+    assert.strictEqual(subject.c.last.value, 12);
+    assert.strictEqual(subject.d.last.value, 34);
   });
 });

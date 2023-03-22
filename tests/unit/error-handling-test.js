@@ -44,7 +44,7 @@ module('Unit: task error handling', function () {
       let obj = Obj.create();
 
       obj.throwError.perform().catch((e) => {
-        assert.equal(
+        assert.strictEqual(
           e.message,
           'This error should be caught',
           'The thrown error was caught'

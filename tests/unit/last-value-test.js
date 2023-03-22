@@ -48,6 +48,6 @@ module('Unit | lastValue', function () {
 
     await instance.task.perform();
 
-    assert.equal(instance.value, 'foo', 'returning the last successful value');
+    assert.strictEqual(instance.value, 'foo', 'returning the last successful value');
   });
 });

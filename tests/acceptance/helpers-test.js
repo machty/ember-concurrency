@@ -16,7 +16,7 @@ module('Acceptance | helpers', function (hooks) {
   test('perform and cancel-all', async function (assert) {
     assert.expect(3);
     await visit('/helpers-test');
-    assert.equal(currentURL(), '/helpers-test');
+    assert.strictEqual(currentURL(), '/helpers-test');
 
     await click('.perform-task');
     assert.dom('.task-status').hasText('1-2-3-4');

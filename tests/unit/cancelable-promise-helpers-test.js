@@ -30,7 +30,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
       parent: task(function* () {
         let task = this.child;
         let allPromise = all([task.perform(), task.perform(), task.perform()]);
-        assert.equal(typeof allPromise.then, 'function');
+        assert.strictEqual(typeof allPromise.then, 'function');
         let values = yield allPromise;
         assert.deepEqual(values, ['a', 'b', 'c']);
       }),
@@ -50,13 +50,13 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let childTask = obj.child;
-    assert.equal(childTask.numRunning, 3);
+    assert.strictEqual(childTask.numRunning, 3);
     run(() => defers.shift().resolve('a'));
-    assert.equal(childTask.numRunning, 2);
+    assert.strictEqual(childTask.numRunning, 2);
     run(() => defers.shift().resolve('b'));
-    assert.equal(childTask.numRunning, 1);
+    assert.strictEqual(childTask.numRunning, 1);
     run(() => defers.shift().resolve('c'));
-    assert.equal(childTask.numRunning, 0);
+    assert.strictEqual(childTask.numRunning, 0);
   });
 
   test('all cancels all other joined tasks if one of them fails', function (assert) {
@@ -69,7 +69,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
         try {
           yield all([task.perform(), task.perform(), task.perform()]);
         } catch (e) {
-          assert.equal(e.wat, 'lol');
+          assert.strictEqual(e.wat, 'lol');
         }
       }),
 
@@ -87,9 +87,9 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let childTask = obj.child;
-    assert.equal(childTask.numRunning, 3);
+    assert.strictEqual(childTask.numRunning, 3);
     run(() => defers.shift().reject({ wat: 'lol' }));
-    assert.equal(childTask.numRunning, 0);
+    assert.strictEqual(childTask.numRunning, 0);
   });
 
   test('all cancels all joined tasks if parent task is canceled', function (assert) {
@@ -113,9 +113,9 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let childTask = obj.child;
-    assert.equal(childTask.numRunning, 3);
+    assert.strictEqual(childTask.numRunning, 3);
     run(() => obj.parent.cancelAll());
-    assert.equal(childTask.numRunning, 0);
+    assert.strictEqual(childTask.numRunning, 0);
   });
 
   test("all doesn't asynchronously rethrow synchronous errors from child tasks", async function (assert) {
@@ -126,7 +126,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
         try {
           yield all([this.child.perform()]);
         } catch (e) {
-          assert.equal(e.message, 'boom');
+          assert.strictEqual(e.message, 'boom');
         }
       }),
 
@@ -167,7 +167,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
           task.perform(),
           task.perform(),
         ]);
-        assert.equal(typeof allPromise.then, 'function');
+        assert.strictEqual(typeof allPromise.then, 'function');
         let values = yield allPromise;
         assert.deepEqual(values, [
           { state: 'fulfilled', value: 'a' },
@@ -191,13 +191,13 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let childTask = obj.child;
-    assert.equal(childTask.numRunning, 3);
+    assert.strictEqual(childTask.numRunning, 3);
     run(() => defers.shift().resolve('a'));
-    assert.equal(childTask.numRunning, 2);
+    assert.strictEqual(childTask.numRunning, 2);
     run(() => defers.shift().resolve('b'));
-    assert.equal(childTask.numRunning, 1);
+    assert.strictEqual(childTask.numRunning, 1);
     run(() => defers.shift().resolve('c'));
-    assert.equal(childTask.numRunning, 0);
+    assert.strictEqual(childTask.numRunning, 0);
   });
 
   test('allSettled does not cancel all other joined tasks if one of them fails', function (assert) {
@@ -212,7 +212,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
           task.perform(),
           task.perform(),
         ]);
-        assert.equal(typeof allPromise.then, 'function');
+        assert.strictEqual(typeof allPromise.then, 'function');
         let values = yield allPromise;
         let fulfilled = values.filter((value) => value.state === 'fulfilled');
         let rejected = values.filter((value) => value.state !== 'fulfilled');
@@ -220,9 +220,9 @@ module('Unit: cancelable promises test helpers', function (hooks) {
           { state: 'fulfilled', value: 'a' },
           { state: 'fulfilled', value: 'c' },
         ]);
-        assert.equal(rejected.length, 1);
-        assert.equal(rejected[0].state, 'rejected');
-        assert.equal(rejected[0].reason.message, 'wat');
+        assert.strictEqual(rejected.length, 1);
+        assert.strictEqual(rejected[0].state, 'rejected');
+        assert.strictEqual(rejected[0].reason.message, 'wat');
       }),
 
       child: task(function* () {
@@ -240,13 +240,13 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let childTask = obj.child;
-    assert.equal(childTask.numRunning, 3);
+    assert.strictEqual(childTask.numRunning, 3);
     run(() => defers.shift().resolve('a'));
-    assert.equal(childTask.numRunning, 2);
+    assert.strictEqual(childTask.numRunning, 2);
     run(() => defers.shift().reject(new Error('wat')));
-    assert.equal(childTask.numRunning, 1);
+    assert.strictEqual(childTask.numRunning, 1);
     run(() => defers.shift().resolve('c'));
-    assert.equal(childTask.numRunning, 0);
+    assert.strictEqual(childTask.numRunning, 0);
   });
 
   test('allSettled cancels all joined tasks if parent task is canceled', function (assert) {
@@ -270,9 +270,9 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let childTask = obj.child;
-    assert.equal(childTask.numRunning, 3);
+    assert.strictEqual(childTask.numRunning, 3);
     run(() => obj.parent.cancelAll());
-    assert.equal(childTask.numRunning, 0);
+    assert.strictEqual(childTask.numRunning, 0);
   });
 
   test("allSettled doesn't asynchronously rethrow synchronous errors from child tasks", async function (assert) {
@@ -288,9 +288,9 @@ module('Unit: cancelable promises test helpers', function (hooks) {
         let fulfilled = values.filter((value) => value.state === 'fulfilled');
         let rejected = values.filter((value) => value.state !== 'fulfilled');
         assert.deepEqual(fulfilled, [{ state: 'fulfilled', value: 'ok!' }]);
-        assert.equal(rejected.length, 1);
-        assert.equal(rejected[0].state, 'rejected');
-        assert.equal(rejected[0].reason.message, 'boom');
+        assert.strictEqual(rejected.length, 1);
+        assert.strictEqual(rejected[0].state, 'rejected');
+        assert.strictEqual(rejected[0].reason.message, 'boom');
       }),
 
       child: task(function* () {
@@ -373,9 +373,9 @@ module('Unit: cancelable promises test helpers', function (hooks) {
       obj = Obj.create();
       obj.parent.perform();
     });
-    assert.equal(obj.child.numRunning, 3);
+    assert.strictEqual(obj.child.numRunning, 3);
     run(obj.child.last, 'cancel');
-    assert.equal(obj.child.numRunning, 0);
+    assert.strictEqual(obj.child.numRunning, 0);
   });
 
   test('hash cancels children if parent is canceled', function (assert) {
@@ -402,9 +402,9 @@ module('Unit: cancelable promises test helpers', function (hooks) {
       obj = Obj.create();
       obj.parent.perform();
     });
-    assert.equal(obj.child.numRunning, 3);
+    assert.strictEqual(obj.child.numRunning, 3);
     run(obj.parent, 'cancelAll');
-    assert.equal(obj.child.numRunning, 0);
+    assert.strictEqual(obj.child.numRunning, 0);
   });
 
   test("hash doesn't asynchronously rethrow synchronous errors from child tasks", async function (assert) {
@@ -418,7 +418,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
             b: this.throws.perform(),
           });
         } catch (e) {
-          assert.equal(e.message, 'boom');
+          assert.strictEqual(e.message, 'boom');
         }
       }),
 
@@ -447,7 +447,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
           b: task.perform(2),
           c: task.perform(3),
         });
-        assert.equal(typeof allPromise.then, 'function');
+        assert.strictEqual(typeof allPromise.then, 'function');
         let values = yield allPromise;
         assert.deepEqual(values, {
           a: { state: 'fulfilled', value: 'a' },
@@ -471,13 +471,13 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let childTask = obj.child;
-    assert.equal(childTask.numRunning, 3);
+    assert.strictEqual(childTask.numRunning, 3);
     run(() => defers.shift().resolve('a'));
-    assert.equal(childTask.numRunning, 2);
+    assert.strictEqual(childTask.numRunning, 2);
     run(() => defers.shift().resolve('b'));
-    assert.equal(childTask.numRunning, 1);
+    assert.strictEqual(childTask.numRunning, 1);
     run(() => defers.shift().resolve('c'));
-    assert.equal(childTask.numRunning, 0);
+    assert.strictEqual(childTask.numRunning, 0);
   });
 
   test('hashSettled does not cancel all other joined tasks if one of them fails', function (assert) {
@@ -492,7 +492,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
           b: task.perform(),
           c: task.perform(),
         });
-        assert.equal(typeof allPromise.then, 'function');
+        assert.strictEqual(typeof allPromise.then, 'function');
         let values = Object.values(yield allPromise);
         let fulfilled = values.filter((value) => value.state === 'fulfilled');
         let rejected = values.filter((value) => value.state !== 'fulfilled');
@@ -500,9 +500,9 @@ module('Unit: cancelable promises test helpers', function (hooks) {
           { state: 'fulfilled', value: 'a' },
           { state: 'fulfilled', value: 'c' },
         ]);
-        assert.equal(rejected.length, 1);
-        assert.equal(rejected[0].state, 'rejected');
-        assert.equal(rejected[0].reason.message, 'wat');
+        assert.strictEqual(rejected.length, 1);
+        assert.strictEqual(rejected[0].state, 'rejected');
+        assert.strictEqual(rejected[0].reason.message, 'wat');
       }),
 
       child: task(function* () {
@@ -520,13 +520,13 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let childTask = obj.child;
-    assert.equal(childTask.numRunning, 3);
+    assert.strictEqual(childTask.numRunning, 3);
     run(() => defers.shift().resolve('a'));
-    assert.equal(childTask.numRunning, 2);
+    assert.strictEqual(childTask.numRunning, 2);
     run(() => defers.shift().reject(new Error('wat')));
-    assert.equal(childTask.numRunning, 1);
+    assert.strictEqual(childTask.numRunning, 1);
     run(() => defers.shift().resolve('c'));
-    assert.equal(childTask.numRunning, 0);
+    assert.strictEqual(childTask.numRunning, 0);
   });
 
   test('hashSettled cancels all joined tasks if parent task is canceled', function (assert) {
@@ -554,9 +554,9 @@ module('Unit: cancelable promises test helpers', function (hooks) {
     });
 
     let childTask = obj.child;
-    assert.equal(childTask.numRunning, 3);
+    assert.strictEqual(childTask.numRunning, 3);
     run(() => obj.parent.cancelAll());
-    assert.equal(childTask.numRunning, 0);
+    assert.strictEqual(childTask.numRunning, 0);
   });
 
   test("hashSettled doesn't asynchronously rethrow synchronous errors from child tasks", async function (assert) {
@@ -572,9 +572,9 @@ module('Unit: cancelable promises test helpers', function (hooks) {
         let fulfilled = values.filter((value) => value.state === 'fulfilled');
         let rejected = values.filter((value) => value.state !== 'fulfilled');
         assert.deepEqual(fulfilled, [{ state: 'fulfilled', value: 'ok!' }]);
-        assert.equal(rejected.length, 1);
-        assert.equal(rejected[0].state, 'rejected');
-        assert.equal(rejected[0].reason.message, 'boom');
+        assert.strictEqual(rejected.length, 1);
+        assert.strictEqual(rejected[0].state, 'rejected');
+        assert.strictEqual(rejected[0].reason.message, 'boom');
       }),
 
       child: task(function* () {

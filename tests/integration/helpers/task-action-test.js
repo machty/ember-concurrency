@@ -27,7 +27,7 @@ module('Integration | Helper | task action', function (hooks) {
       Component.extend({
         click() {
           return this.curriedTask.perform(4, 5, 6).then((v) => {
-            assert.equal(v, 999);
+            assert.strictEqual(v, 999);
           });
         },
       })

@@ -69,6 +69,6 @@ module('Unit: self-cancel loops', function (hooks) {
     run(() => {
       destroy(destroyedParent);
     });
-    assert.equal(warnings.length, 0);
+    assert.strictEqual(warnings.length, 0);
   });
 });
