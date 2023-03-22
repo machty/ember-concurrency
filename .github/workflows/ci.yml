@@ -18,12 +18,12 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 1
 
     - name: Set up Volta
-      uses: volta-cli/action@v1
+      uses: volta-cli/action@v4
 
     - name: Get package manager's global cache path
       id: global-cache-dir-path
@@ -31,7 +31,7 @@ jobs:
 
     - name: Cache package manager's global cache and node_modules
       id: cache-dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           ${{ steps.global-cache-dir-path.outputs.dir }}
@@ -62,12 +62,12 @@ jobs:
         browser: [chrome, firefox]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 1
 
     - name: Set up Volta
-      uses: volta-cli/action@v1
+      uses: volta-cli/action@v4
 
     - name: Get package manager's global cache path
       id: global-cache-dir-path
@@ -75,7 +75,7 @@ jobs:
 
     - name: Cache package manager's global cache and node_modules
       id: cache-dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           ${{ steps.global-cache-dir-path.outputs.dir }}
@@ -106,12 +106,12 @@ jobs:
         browser: [chrome, firefox]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 1
 
     - name: Set up Volta
-      uses: volta-cli/action@v1
+      uses: volta-cli/action@v4
 
     - name: Get package manager's global cache path
       id: global-cache-dir-path
@@ -119,7 +119,7 @@ jobs:
 
     - name: Cache package manager's global cache and node_modules
       id: cache-dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           ${{ steps.global-cache-dir-path.outputs.dir }}
@@ -156,6 +156,7 @@ jobs:
         - ember-lts-3.20
         - ember-lts-3.24
         - ember-lts-3.28
+        - ember-lts-4.4
         - ember-release
         - ember-default
         - typescript-3.9
@@ -169,12 +170,12 @@ jobs:
             allow-failure: true
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 1
 
     - name: Set up Volta
-      uses: volta-cli/action@v1
+      uses: volta-cli/action@v4
 
     - name: Get package manager's global cache path
       id: global-cache-dir-path
@@ -182,7 +183,7 @@ jobs:
 
     - name: Cache package manager's global cache and node_modules
       id: cache-dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           ${{ steps.global-cache-dir-path.outputs.dir }}

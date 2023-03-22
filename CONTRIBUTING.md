@@ -24,7 +24,7 @@ This project uses `yarn` as a package manager. If you're adding a new dependency
 
 * `ember build`
 
-For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+For more information on using ember-cli, visit [https://cli.emberjs.com/release/](https://cli.emberjs.com/release/).
 
 ### Releasing new versions / publishing to NPM
 

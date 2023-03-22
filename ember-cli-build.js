@@ -5,7 +5,7 @@ const { maybeEmbroider } = require('@embroider/test-setup');
 const urls = require('./lib/prember-urls');
 
 module.exports = function (defaults) {
-  let app = new EmberAddon(defaults, {
+  const app = new EmberAddon(defaults, {
     minifyJS: {
       enabled: false,
     },
