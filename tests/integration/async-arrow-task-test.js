@@ -79,7 +79,7 @@ module('Integration | async-arrow-task', function (hooks) {
       'template:components/test-async-arrow-task',
       hbs`
       {{#if this.isWaiting}}
-        <button id="start" {{on "click" (perform this.myTask "Done!")}}>Start!</button>
+        <button id="start" type="button" {{on "click" (perform this.myTask "Done!")}}>Start!</button>
       {{else if this.isRunning}}
         Running!
         {{else}}

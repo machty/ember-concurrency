@@ -320,7 +320,11 @@ module('Unit: task states', function (hooks) {
     run(taskInstance1, 'cancel');
     assert.deepEqual(myTask.lastCanceled, taskInstance1);
     run(defer, 'reject', 'i am error');
-    assert.strictEqual(myTask.lastCanceled, taskInstance1, 'still taskInstance1');
+    assert.strictEqual(
+      myTask.lastCanceled,
+      taskInstance1,
+      'still taskInstance1'
+    );
     await asyncError();
   });
 

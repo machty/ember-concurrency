@@ -1,6 +1,6 @@
 {{! BEGIN-SNIPPET increment-button }}
 <button
-  {{! template-lint-disable no-down-event-binding }}
+  {{! template-lint-disable no-pointer-down-event-binding }}
   {{on "touchstart" @press}}
   {{on "mousedown" @press}}
   {{on "touchend" @release}}

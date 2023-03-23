@@ -23,7 +23,7 @@ module('Integration | helpers | perform', function (hooks) {
     this.owner.register(
       'template:components/test-swallow-error',
       hbs`
-      <button {{on 'click' (swallow-error (perform this.errorGeneratingTask))}}>
+      <button type="button" {{on 'click' (swallow-error (perform this.errorGeneratingTask))}}>
         I create an error!
       </button>
     `
@@ -51,7 +51,7 @@ module('Integration | helpers | perform', function (hooks) {
     this.owner.register(
       'template:components/test-swallow-error',
       hbs`
-      <button {{on 'click' (perform this.errorGeneratingTask onError=null)}}>
+      <button type="button" {{on 'click' (perform this.errorGeneratingTask onError=null)}}>
         I create an error!
       </button>
     `
@@ -84,7 +84,7 @@ module('Integration | helpers | perform', function (hooks) {
     this.owner.register(
       'template:components/test-swallow-error',
       hbs`
-      <button {{on 'click' (perform this.errorGeneratingTask onError=this.errorReport)}}>
+      <button type="button" {{on 'click' (perform this.errorGeneratingTask onError=this.errorReport)}}>
         I create an error!
       </button>
     `
