@@ -8,49 +8,6 @@ module.exports = async function () {
     useYarn: true,
     scenarios: [
       {
-        name: 'ember-lts-3.8',
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.8.0',
-            'ember-angle-bracket-invocation-polyfill': '^3.0.0',
-            'ember-decorators-polyfill': '^1.1.5',
-            'ember-on-modifier': '^1.0.1',
-          },
-        },
-      },
-      {
-        name: 'ember-lts-3.12',
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.12.0',
-          },
-        },
-      },
-      {
-        name: 'ember-lts-3.16',
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.16.0',
-          },
-        },
-      },
-      {
-        name: 'ember-lts-3.20',
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.20.5',
-          },
-        },
-      },
-      {
-        name: 'ember-lts-3.24',
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.24.3',
-          },
-        },
-      },
-      {
         name: 'ember-lts-3.28',
         npm: {
           devDependencies: {
@@ -71,8 +28,6 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('release'),
-            'ember-auto-import': '^2.0.0',
-            webpack: '^5.0.0',
           },
         },
       },
@@ -81,8 +36,6 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('beta'),
-            'ember-auto-import': '^2.0.0',
-            webpack: '^5.0.0',
           },
         },
       },
@@ -91,8 +44,6 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('canary'),
-            'ember-auto-import': '^2.0.0',
-            webpack: '^5.0.0',
           },
         },
       },
