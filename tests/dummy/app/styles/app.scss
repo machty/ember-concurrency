@@ -102,10 +102,6 @@ button, .button {
                                   not supported by any browser */
 }
 
-.ember-notify {
-  background-color: rgba(255, 255, 255, 0.9);
-}
-
 th, td {
   min-width: 60px;
 }
@@ -240,4 +236,25 @@ th, td {
 
 .loading-spinner {
   display: inline-block;
+}
+
+.notifications-container {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+}
+
+.notification {
+  padding: 1rem;
+  border: 1px solid #aaa;
+  margin-bottom: 1rem;
+  background-color: white;
+
+  &.info {
+    color: #333;
+  }
+
+  &.warning {
+    color: red;
+  }
 }

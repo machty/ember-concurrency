@@ -5377,7 +5377,7 @@ ember-cli-github-pages@^0.2.2:
     ember-cli-version-checker "^2.1.0"
     rsvp "^4.7.0"
 
-ember-cli-htmlbars@^5.3.2, ember-cli-htmlbars@^5.7.1:
+ember-cli-htmlbars@^5.7.1:
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/ember-cli-htmlbars/-/ember-cli-htmlbars-5.7.2.tgz#e0cd2fb3c20d85fe4c3e228e6f0590ee1c645ba8"
   integrity sha512-Uj6R+3TtBV5RZoJY14oZn/sNPnc+UgmC8nb5rI4P3fR/gYoyTFIZSXiIM7zl++IpMoIrocxOrgt+mhonKphgGg==
@@ -5734,13 +5734,6 @@ ember-modifier@^2.1.2:
     ember-compatibility-helpers "^1.2.4"
     ember-destroyable-polyfill "^2.0.2"
     ember-modifier-manager-polyfill "^1.2.0"
-
-"ember-notify@https://github.com/adopted-ember-addons/ember-notify.git#c616e5b239a68c82b3d674bdb8f4db16a0687706":
-  version "6.0.1"
-  resolved "https://github.com/adopted-ember-addons/ember-notify.git#c616e5b239a68c82b3d674bdb8f4db16a0687706"
-  dependencies:
-    ember-cli-babel "^7.23.1"
-    ember-cli-htmlbars "^5.3.2"
 
 ember-page-title@^6.2.2:
   version "6.2.2"

@@ -4,10 +4,11 @@ import { restartableTask, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET detail-route
 export default class RouteTasksDetailRoute extends Route {
-  @service notify;
+  @service notifications;
 
   setupController(controller, model) {
     super.setupController(...arguments);
+
     this.pollServerForChanges.perform(model.id);
   }
 
@@ -17,16 +18,16 @@ export default class RouteTasksDetailRoute extends Route {
   }
 
   pollServerForChanges = restartableTask(async (id) => {
-    let notify = this.notify;
+    let notifications = this.notifications;
     await timeout(500);
     try {
-      notify.info(`Thing ${id}: Starting to poll for changes`);
+      notifications.info(`Thing ${id}: Starting to poll for changes`);
       while (true) {
         await timeout(5000);
-        notify.info(`Thing ${id}: Polling now...`);
+        notifications.info(`Thing ${id}: Polling now...`);
       }
     } finally {
-      notify.warning(`Thing ${id}: No longer polling for changes`);
+      notifications.warning(`Thing ${id}: No longer polling for changes`);
     }
   });
 }
