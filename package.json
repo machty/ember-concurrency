@@ -57,7 +57,6 @@
     "ember-fn-helper-polyfill": "^1.0.2",
     "ember-load-initializers": "^2.1.2",
     "ember-modifier": "^2.1.2",
-    "ember-notify": "https://github.com/adopted-ember-addons/ember-notify.git#c616e5b239a68c82b3d674bdb8f4db16a0687706",
     "ember-page-title": "^6.2.2",
     "ember-qunit": "^5.1.4",
     "ember-resolver": "^8.0.2",

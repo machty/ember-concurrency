@@ -24,4 +24,10 @@
 
 {{outlet}}
 
-<EmberNotify />
+<div class="notifications-container">
+  {{#each this.notifications.messages as |m|}}
+    <div class="notification {{m.severity}}">
+      {{m.message}}
+    </div>
+  {{/each}}
+</div>
