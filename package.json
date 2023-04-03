@@ -21,7 +21,7 @@
     "ember-source": "^3.28.0 || ^4.0.0"
   },
   "engines": {
-    "node": "10.* || 12.* || 14.* || 16.* || >= 18"
+    "node": "14.* || 16.* || >= 18"
   },
   "types": "./addon/index.d.ts",
   "devDependencies": {
