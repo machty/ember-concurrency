@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// eslint-disable-next-line ember/no-computed-properties-in-native-classes
-import ComputedProperty from '@ember/object/computed';
-
 export type TaskGenerator<T> = Generator<any, T, any>;
 
 export type TaskFunction<T, Args extends any[]> = (
@@ -375,13 +371,9 @@ interface OnStateCallback<T> {
   (state: TaskState<TaskInstance<any>>, taskable: T): void;
 }
 
-interface AbstractTaskProperty<T extends Task<any, any[]>>
-  extends ComputedProperty<T> {
-  volatile: never;
-  readOnly: never;
-  property: never;
-  meta: never;
-
+// This intermediate interface is necessary because
+// `interface MyThing<T> extends T {}` is not allowed
+interface _AbstractTaskProperty<T extends Task<any, any[]>> {
   /**
    * Calling `task(...).on(eventName)` configures the task to be
    * automatically performed when the specified events fire. In
@@ -534,6 +526,9 @@ interface AbstractTaskProperty<T extends Task<any, any[]>>
   onState(callback: OnStateCallback<T> | null): this;
 }
 
+type AbstractTaskProperty<T extends Task<any, any[]>> = T &
+  _AbstractTaskProperty<T>;
+
 /**
  * A {@link TaskProperty} is the Computed Property-like object returned
  * from the {@linkcode task} function. You can call Task Modifier methods
@@ -555,12 +550,7 @@ export interface EncapsulatedTaskProperty<
   State extends object
 > extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>> {}
 
-export interface TaskGroupProperty<T> extends ComputedProperty<TaskGroup<T>> {
-  volatile: never;
-  readOnly: never;
-  property: never;
-  meta: never;
-
+export interface TaskGroupProperty<T> extends TaskGroup<T> {
   /**
    * Configures the task group to cancel old currently task
    * instances to make room for a new one to perform. Sets
