@@ -36,19 +36,19 @@ module('Unit: task property', function () {
 
     let obj;
 
-    assert.equal(taskRunCounter, 0);
+    assert.strictEqual(taskRunCounter, 0);
 
     obj = Obj.create();
     obj.doStuff.perform();
-    assert.equal(taskRunCounter, 1);
+    assert.strictEqual(taskRunCounter, 1);
 
     obj.doStuff.perform();
-    assert.equal(taskRunCounter, 2);
+    assert.strictEqual(taskRunCounter, 2);
 
     await settled();
 
     obj.doStuff.cancelAll();
-    assert.equal(taskRunCounter, 0);
+    assert.strictEqual(taskRunCounter, 0);
   });
 
   decoratorTest(
@@ -67,22 +67,22 @@ module('Unit: task property', function () {
           }
         }
 
-        assert.equal(taskRunCounter, 0);
+        assert.strictEqual(taskRunCounter, 0);
 
         let obj = new TestSubject();
         setOwner(obj, this.owner);
 
         obj.doStuff.perform();
-        assert.equal(taskRunCounter, 1);
+        assert.strictEqual(taskRunCounter, 1);
 
         obj.doStuff.perform();
-        assert.equal(taskRunCounter, 2);
+        assert.strictEqual(taskRunCounter, 2);
 
         obj.doStuff.cancelAll();
 
         await settled();
 
-        assert.equal(taskRunCounter, 0);
+        assert.strictEqual(taskRunCounter, 0);
       } finally {
         delete TaskProperty.prototype.countable;
       }

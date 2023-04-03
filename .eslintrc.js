@@ -18,7 +18,6 @@ module.exports = {
   ],
   env: {
     browser: true,
-    es6: true,
   },
   rules: {
     'require-yield': 0,
@@ -66,8 +65,7 @@ module.exports = {
         browser: false,
         node: true,
       },
-      plugins: ['node'],
-      extends: ['plugin:node/recommended'],
+      extends: ['plugin:n/recommended'],
     },
     {
       files: ['addon/index.d.ts', 'tests/types/**/*.ts'],
@@ -89,8 +87,8 @@ module.exports = {
       },
     },
     {
-      // Test files:
-      files: ['tests/**/*-test.js'],
+      // test files
+      files: ['tests/**/*-test.{js,ts}'],
       extends: ['plugin:qunit/recommended'],
       env: {
         embertest: true,

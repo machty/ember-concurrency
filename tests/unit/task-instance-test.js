@@ -30,7 +30,7 @@ module('Unit: task instance', function (hooks) {
     run(() => {
       makeTaskInstance({
         *fn(...args) {
-          assert.equal(
+          assert.deepEqual(
             this,
             context,
             "generator functions' `this` is the context passed in"
@@ -53,9 +53,9 @@ module('Unit: task instance', function (hooks) {
         return v;
       })(123);
       isSync = false;
-      assert.equal(ti.value, null);
+      assert.strictEqual(ti.value, null);
     });
-    assert.equal(ti.value, 123);
+    assert.strictEqual(ti.value, 123);
   });
 
   test('task instance hierarchies run synchronously', function (assert) {
@@ -71,9 +71,9 @@ module('Unit: task instance', function (hooks) {
         })(v);
       })(123);
       isSync = false;
-      assert.equal(ti.value, null);
+      assert.strictEqual(ti.value, null);
     });
-    assert.equal(ti.value, 246);
+    assert.strictEqual(ti.value, 246);
   });
 
   if (window.Promise) {
@@ -88,11 +88,11 @@ module('Unit: task instance', function (hooks) {
         })(123);
       });
       assert.false(ti.isFinished);
-      assert.equal(ti.value, null);
+      assert.strictEqual(ti.value, null);
 
       setTimeout(() => {
         assert.true(ti.isFinished);
-        assert.equal(ti.value, 246);
+        assert.strictEqual(ti.value, 246);
         done();
       }, 1);
     });
@@ -113,11 +113,11 @@ module('Unit: task instance', function (hooks) {
         })(123);
       });
       assert.false(ti.isFinished);
-      assert.equal(ti.value, null);
+      assert.strictEqual(ti.value, null);
 
       setTimeout(() => {
         assert.true(ti.isFinished);
-        assert.equal(ti.value, 492);
+        assert.strictEqual(ti.value, 492);
         done();
       }, 1);
     });
@@ -135,12 +135,12 @@ module('Unit: task instance', function (hooks) {
         })(123);
       });
       assert.false(ti.isFinished);
-      assert.equal(ti.value, null);
+      assert.strictEqual(ti.value, null);
 
       ti.then((value) => {
         assert.true(ti.isFinished);
-        assert.equal(ti.value, 492);
-        assert.equal(value, 492);
+        assert.strictEqual(ti.value, 492);
+        assert.strictEqual(value, 492);
         done();
       });
     });
@@ -154,7 +154,7 @@ module('Unit: task instance', function (hooks) {
       wrap(function* () {
         defer = RSVP.defer();
         let value = yield defer.promise;
-        assert.equal(value, 123);
+        assert.strictEqual(value, 123);
       })();
     });
 
@@ -167,13 +167,13 @@ module('Unit: task instance', function (hooks) {
         assert.ok(false, 'promise should have rejected');
       },
       (e) => {
-        assert.equal(
+        assert.strictEqual(
           e.name,
           'TaskCancelation',
           'promise rejection is a cancelation'
         );
         if (message) {
-          assert.equal(e.message, message);
+          assert.strictEqual(e.message, message);
         }
       }
     );
@@ -192,10 +192,10 @@ module('Unit: task instance', function (hooks) {
         } finally {
           defer1 = RSVP.defer();
           let result = yield defer1.promise;
-          assert.equal(result, 123);
+          assert.strictEqual(result, 123);
           defer2 = RSVP.defer();
           result = yield defer2.promise;
-          assert.equal(result, 456);
+          assert.strictEqual(result, 456);
         }
       })();
     });
@@ -281,7 +281,7 @@ module('Unit: task instance', function (hooks) {
       wrap(function* () {
         return 123;
       })().then((v) => {
-        assert.equal(v, 123);
+        assert.strictEqual(v, 123);
       });
     });
   });
@@ -293,7 +293,7 @@ module('Unit: task instance', function (hooks) {
       wrap(function* () {
         return resolve(123);
       })().then((v) => {
-        assert.equal(v, 123);
+        assert.strictEqual(v, 123);
       });
     });
   });
@@ -305,7 +305,7 @@ module('Unit: task instance', function (hooks) {
       wrap(function* () {
         return reject(123);
       })().then(null, (v) => {
-        assert.equal(v, 123);
+        assert.strictEqual(v, 123);
       });
     });
   });
@@ -316,7 +316,7 @@ module('Unit: task instance', function (hooks) {
       wrap(function* () {
         yield 5;
       })().then((v) => {
-        assert.equal(v, undefined);
+        assert.strictEqual(v, undefined);
       });
     });
   });
@@ -334,10 +334,10 @@ module('Unit: task instance', function (hooks) {
         } finally {
           defer0 = RSVP.defer();
           let val = yield defer0.promise;
-          assert.equal(val, 123);
+          assert.strictEqual(val, 123);
           defer1 = RSVP.defer();
           val = yield defer1.promise;
-          assert.equal(val, 456);
+          assert.strictEqual(val, 456);
         }
       })();
       taskInstance.catch((e) => {
@@ -350,7 +350,7 @@ module('Unit: task instance', function (hooks) {
     run(null, defer0.resolve, 123);
     assert.false(taskInstance.isFinished);
     run(null, defer1.resolve, 456);
-    assert.equal(caughtError.message, 'wat');
+    assert.strictEqual(caughtError.message, 'wat');
     assert.ok(taskInstance.isFinished);
   });
 
@@ -376,12 +376,12 @@ module('Unit: task instance', function (hooks) {
           return value;
         })();
         let value = yield taskInstance1;
-        assert.equal(value, 123);
+        assert.strictEqual(value, 123);
       })();
     });
 
-    assert.equal(taskInstance0.state, 'running');
-    assert.equal(taskInstance1.state, 'running');
+    assert.strictEqual(taskInstance0.state, 'running');
+    assert.strictEqual(taskInstance1.state, 'running');
 
     run(null, defer.resolve, 123);
   });
@@ -398,17 +398,17 @@ module('Unit: task instance', function (hooks) {
           return value;
         })();
         let value = yield taskInstance1;
-        assert.equal(value, 123);
+        assert.strictEqual(value, 123);
       })();
     });
 
-    assert.equal(taskInstance0.state, 'running');
-    assert.equal(taskInstance1.state, 'running');
+    assert.strictEqual(taskInstance0.state, 'running');
+    assert.strictEqual(taskInstance1.state, 'running');
 
     run(taskInstance0, 'cancel');
 
-    assert.equal(taskInstance0.state, 'canceled');
-    assert.equal(taskInstance1.state, 'canceled');
+    assert.strictEqual(taskInstance0.state, 'canceled');
+    assert.strictEqual(taskInstance1.state, 'canceled');
 
     run(null, defer.resolve, 'naw');
   });
@@ -431,8 +431,8 @@ module('Unit: task instance', function (hooks) {
 
     run(taskInstance1, 'cancel');
 
-    assert.equal(taskInstance0.state, 'canceled');
-    assert.equal(taskInstance1.state, 'canceled');
+    assert.strictEqual(taskInstance0.state, 'canceled');
+    assert.strictEqual(taskInstance1.state, 'canceled');
 
     run(null, defer.resolve, 'naw');
   });
@@ -468,9 +468,9 @@ module('Unit: task instance', function (hooks) {
       });
     });
 
-    assert.equal(taskInstance.value, null);
+    assert.strictEqual(taskInstance.value, null);
     run(taskInstance, 'start');
-    assert.equal(taskInstance.value, 123);
+    assert.strictEqual(taskInstance.value, 123);
   });
 
   test('taskInstance.error is null until task instance errors', async function (assert) {
@@ -485,12 +485,12 @@ module('Unit: task instance', function (hooks) {
       });
     });
 
-    assert.equal(taskInstance.error, null);
+    assert.strictEqual(taskInstance.error, null);
     run(taskInstance, 'start');
 
     let error = await asyncError();
-    assert.equal(error, 'justin bailey');
-    assert.equal(taskInstance.error, 'justin bailey');
+    assert.strictEqual(error, 'justin bailey');
+    assert.strictEqual(taskInstance.error, 'justin bailey');
   });
 
   test('taskInstance.error is set when task cancels', function (assert) {
@@ -504,7 +504,7 @@ module('Unit: task instance', function (hooks) {
 
     run(taskInstance, 'start');
     run(taskInstance, 'cancel');
-    assert.equal(taskInstance.error.name, 'TaskCancelation');
+    assert.strictEqual(taskInstance.error.name, 'TaskCancelation');
   });
 
   test('taskInstance.error is set when task is dropped', function (assert) {
@@ -517,7 +517,7 @@ module('Unit: task instance', function (hooks) {
     });
 
     run(taskInstance, 'cancel');
-    assert.equal(taskInstance.error.name, 'TaskCancelation');
+    assert.strictEqual(taskInstance.error.name, 'TaskCancelation');
   });
 
   test('taskInstance.isSuccessful is set when task fulfills', function (assert) {
@@ -567,7 +567,7 @@ module('Unit: task instance', function (hooks) {
         try {
           yield reject('wat');
         } catch (e) {
-          assert.equal(e, 'wat');
+          assert.strictEqual(e, 'wat');
         }
       })();
     });
@@ -584,7 +584,7 @@ module('Unit: task instance', function (hooks) {
         try {
           yield taskInstance1;
         } catch (e) {
-          assert.equal(e, 'wat');
+          assert.strictEqual(e, 'wat');
         }
       })();
     });
@@ -602,7 +602,7 @@ module('Unit: task instance', function (hooks) {
         try {
           yield taskInstance1;
         } catch (e) {
-          assert.equal(e, 'wat');
+          assert.strictEqual(e, 'wat');
         }
       })();
     });
@@ -622,7 +622,7 @@ module('Unit: task instance', function (hooks) {
     });
 
     let error = await asyncError();
-    assert.equal(error, 'wat');
+    assert.strictEqual(error, 'wat');
   });
 
   test('in a hierarchy of child task performs, a bubbling cancel should not be considered an error', function (assert) {
@@ -672,7 +672,7 @@ module('Unit: task instance', function (hooks) {
           assert.ok(false, 'three catch');
         }
       })().catch((e) => {
-        assert.equal(e.name, 'TaskCancelation');
+        assert.strictEqual(e.name, 'TaskCancelation');
       });
     });
 

@@ -27,7 +27,7 @@ module('Integration | Helper | task action', function (hooks) {
       Component.extend({
         click() {
           return this.curriedTask.perform(4, 5, 6).then((v) => {
-            assert.equal(v, 999);
+            assert.strictEqual(v, 999);
           });
         },
       })
@@ -35,10 +35,10 @@ module('Integration | Helper | task action', function (hooks) {
 
     this.owner.register(
       'template:components/my-component',
-      hbs`{{inner-component id="my-component" curriedTask=(task (task this.myTask 1 2) 3)}}`
+      hbs`<InnerComponent @id="my-component" @curriedTask={{task (task this.myTask 1 2) 3}} />`
     );
 
-    await render(hbs`{{my-component}}`);
+    await render(hbs`<MyComponent/>`);
 
     await click('#my-component');
   });

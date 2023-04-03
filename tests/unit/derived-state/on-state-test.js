@@ -14,8 +14,8 @@ module('Unit: task states - onState', function () {
       myTask: task(function* () {
         yield forever;
       }).onState((state, task) => {
-        assert.equal(obj.myTask, task);
-        assert.equal(task.context, obj);
+        assert.deepEqual(obj.myTask, task);
+        assert.deepEqual(task.context, obj);
         states.push(state);
       }),
     });
@@ -26,7 +26,7 @@ module('Unit: task states - onState', function () {
       assert.true(obj.myTask.isIdle);
     });
 
-    assert.equal(states.length, 1);
+    assert.strictEqual(states.length, 1);
     assert.deepEqual(states.pop(), {
       last: taskInstance,
       lastPerformed: taskInstance,
@@ -38,7 +38,7 @@ module('Unit: task states - onState', function () {
 
     run(() => obj.myTask.cancelAll());
 
-    assert.equal(states.length, 1);
+    assert.strictEqual(states.length, 1);
     assert.deepEqual(states.pop(), {
       lastRunning: null,
       lastCanceled: taskInstance,

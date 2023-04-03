@@ -142,7 +142,7 @@ module('Unit: task', function (hooks) {
     await taskObj.cancelAll();
 
     assert.deepEqual(instances.mapBy('isCanceled'), [true, true, true]);
-    assert.equal(
+    assert.strictEqual(
       instances[0].cancelReason,
       "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
     );
@@ -162,12 +162,12 @@ module('Unit: task', function (hooks) {
     let taskObj = obj.doStuff;
     await taskObj.perform();
 
-    assert.equal(taskObj.lastSuccessful.value, 1);
+    assert.strictEqual(taskObj.lastSuccessful.value, 1);
 
     taskObj.perform();
     await taskObj.cancelAll();
 
-    assert.equal(taskObj.lastSuccessful.value, 1);
+    assert.strictEqual(taskObj.lastSuccessful.value, 1);
   });
 
   test('task.cancelAll({ resetState: true }) resets derived state', async function (assert) {
@@ -184,7 +184,7 @@ module('Unit: task', function (hooks) {
     let taskObj = obj.doStuff;
     await taskObj.perform();
 
-    assert.equal(taskObj.lastSuccessful.value, 1);
+    assert.strictEqual(taskObj.lastSuccessful.value, 1);
 
     taskObj.perform();
     await taskObj.cancelAll({ resetState: true });
@@ -212,7 +212,7 @@ module('Unit: task', function (hooks) {
     });
 
     assert.deepEqual(instances.mapBy('isCanceled'), [true, true, false]);
-    assert.equal(
+    assert.strictEqual(
       instances[0].cancelReason,
       "TaskInstance 'doStuff' was canceled because it belongs to a 'restartable' Task that was .perform()ed again. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
     );
@@ -521,7 +521,7 @@ module('Unit: task', function (hooks) {
       try {
         Obj.create().a.linked();
       } catch (e) {
-        assert.equal(
+        assert.strictEqual(
           e.message,
           'You can only call .linked() from within a task.'
         );
@@ -612,11 +612,11 @@ module('Unit: task', function (hooks) {
       run(() => {
         obj = new Obj();
         destroy(obj);
-        assert.equal(obj.task.perform().isDropped, true);
+        assert.strictEqual(obj.task.perform().isDropped, true);
       });
 
       run(() => {
-        assert.equal(obj.task.perform().isDropped, true);
+        assert.strictEqual(obj.task.perform().isDropped, true);
       });
     }
   );

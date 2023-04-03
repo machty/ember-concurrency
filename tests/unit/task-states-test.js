@@ -20,17 +20,17 @@ module('Unit: task states', function (hooks) {
       obj = Obj.create();
       assert.true(obj.myTask.isIdle);
       assert.false(obj.myTask.isRunning);
-      assert.equal(obj.myTask.state, 'idle');
-      assert.equal(obj.myTask.performCount, 0);
+      assert.strictEqual(obj.myTask.state, 'idle');
+      assert.strictEqual(obj.myTask.performCount, 0);
       obj.myTask.perform();
       assert.false(obj.myTask.isIdle);
       assert.true(obj.myTask.isRunning);
-      assert.equal(obj.myTask.state, 'running');
-      assert.equal(obj.myTask.performCount, 1);
+      assert.strictEqual(obj.myTask.state, 'running');
+      assert.strictEqual(obj.myTask.performCount, 1);
     });
     assert.true(obj.myTask.isIdle);
     assert.false(obj.myTask.isRunning);
-    assert.equal(obj.myTask.state, 'idle');
+    assert.strictEqual(obj.myTask.state, 'idle');
   });
 
   test('state resets properly on early return', async function (assert) {
@@ -51,8 +51,8 @@ module('Unit: task states', function (hooks) {
     let obj = Obj.create();
     assert.true(obj.myTask.isIdle);
     assert.false(obj.myTask.isRunning);
-    assert.equal(obj.myTask.state, 'idle');
-    assert.equal(obj.myTask.performCount, 0);
+    assert.strictEqual(obj.myTask.state, 'idle');
+    assert.strictEqual(obj.myTask.performCount, 0);
 
     obj.myTask.perform('h');
     await rawTimeout(100);
@@ -64,8 +64,8 @@ module('Unit: task states', function (hooks) {
 
     assert.true(obj.myTask.isIdle);
     assert.false(obj.myTask.isRunning);
-    assert.equal(obj.myTask.state, 'idle');
-    assert.equal(obj.myTask.performCount, 4);
+    assert.strictEqual(obj.myTask.state, 'idle');
+    assert.strictEqual(obj.myTask.performCount, 4);
   });
 
   test('state when task is blocked on a yield', function (assert) {
@@ -87,8 +87,8 @@ module('Unit: task states', function (hooks) {
       assert.true(t.isIdle);
       assert.false(t.isRunning);
       assert.false(t.isQueued);
-      assert.equal(t.state, 'idle');
-      assert.equal(t.performCount, 0);
+      assert.strictEqual(t.state, 'idle');
+      assert.strictEqual(t.performCount, 0);
       t.perform();
     });
 
@@ -96,17 +96,17 @@ module('Unit: task states', function (hooks) {
       let t = obj.myTask;
       assert.false(t.isIdle);
       assert.true(t.isRunning);
-      assert.equal(t.state, 'running');
-      assert.equal(t.numRunning, 1);
-      assert.equal(t.performCount, 1);
+      assert.strictEqual(t.state, 'running');
+      assert.strictEqual(t.numRunning, 1);
+      assert.strictEqual(t.performCount, 1);
       t.perform();
     });
 
     assert.false(t.isIdle);
     assert.true(t.isRunning);
-    assert.equal(t.state, 'running');
-    assert.equal(t.numRunning, 2);
-    assert.equal(t.performCount, 2);
+    assert.strictEqual(t.state, 'running');
+    assert.strictEqual(t.numRunning, 2);
+    assert.strictEqual(t.performCount, 2);
 
     t.cancelAll();
   });
@@ -121,11 +121,11 @@ module('Unit: task states', function (hooks) {
     run(() => {
       let obj = Obj.create();
       let myTask = obj.myTask;
-      assert.equal(myTask.lastPerformed, null);
+      assert.strictEqual(myTask.lastPerformed, null);
       let taskInstance0 = myTask.perform();
-      assert.equal(myTask.lastPerformed, taskInstance0);
+      assert.deepEqual(myTask.lastPerformed, taskInstance0);
       let taskInstance1 = myTask.perform();
-      assert.equal(myTask.lastPerformed, taskInstance1);
+      assert.deepEqual(myTask.lastPerformed, taskInstance1);
     });
   });
 
@@ -139,12 +139,12 @@ module('Unit: task states', function (hooks) {
     run(() => {
       let obj = Obj.create();
       let doStuff = obj.doStuff;
-      assert.equal(doStuff.performCount, 0);
+      assert.strictEqual(doStuff.performCount, 0);
       doStuff.perform();
-      assert.equal(doStuff.performCount, 1);
+      assert.strictEqual(doStuff.performCount, 1);
       doStuff.perform();
       doStuff.perform();
-      assert.equal(doStuff.performCount, 3);
+      assert.strictEqual(doStuff.performCount, 3);
     });
   });
 
@@ -163,10 +163,10 @@ module('Unit: task states', function (hooks) {
       myTask = obj.myTask;
       myTask.perform();
       taskInstance1 = myTask.perform();
-      assert.equal(myTask.lastPerformed, taskInstance1);
+      assert.deepEqual(myTask.lastPerformed, taskInstance1);
     });
-    assert.equal(taskInstance1.error.name, 'TaskCancelation');
-    assert.equal(myTask.lastPerformed.error.name, 'TaskCancelation');
+    assert.strictEqual(taskInstance1.error.name, 'TaskCancelation');
+    assert.strictEqual(myTask.lastPerformed.error.name, 'TaskCancelation');
   });
 
   test('.last is set when a task starts', function (assert) {
@@ -184,16 +184,16 @@ module('Unit: task states', function (hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.myTask;
-      assert.equal(myTask.last, null);
+      assert.strictEqual(myTask.last, null);
       taskInstance0 = myTask.perform();
       taskInstance1 = myTask.perform();
     });
 
-    assert.equal(myTask.last, taskInstance0);
+    assert.deepEqual(myTask.last, taskInstance0);
     run(defer, 'resolve');
-    assert.equal(myTask.last, taskInstance1);
+    assert.deepEqual(myTask.last, taskInstance1);
     run(defer, 'resolve');
-    assert.equal(myTask.last, taskInstance1);
+    assert.deepEqual(myTask.last, taskInstance1);
   });
 
   test('.lastSuccessful is set when a task instance returns a value', async function (assert) {
@@ -211,19 +211,19 @@ module('Unit: task states', function (hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.myTask;
-      assert.equal(myTask.lastSuccessful, null);
+      assert.strictEqual(myTask.lastSuccessful, null);
       taskInstance0 = myTask.perform();
       taskInstance1 = myTask.perform();
       myTask.perform();
     });
 
-    assert.equal(myTask.lastSuccessful, null);
+    assert.strictEqual(myTask.lastSuccessful, null);
     run(defer, 'resolve');
-    assert.equal(myTask.lastSuccessful, taskInstance0);
+    assert.deepEqual(myTask.lastSuccessful, taskInstance0);
     run(defer, 'resolve');
-    assert.equal(myTask.lastSuccessful, taskInstance1);
+    assert.deepEqual(myTask.lastSuccessful, taskInstance1);
     run(defer, 'reject', 'i am error');
-    assert.equal(
+    assert.deepEqual(
       myTask.lastSuccessful,
       taskInstance1,
       'still is taskInstance1 because taskInstance2 failed'
@@ -246,19 +246,19 @@ module('Unit: task states', function (hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.myTask;
-      assert.equal(myTask.lastComplete, null);
+      assert.strictEqual(myTask.lastComplete, null);
       taskInstance0 = myTask.perform();
       taskInstance1 = myTask.perform();
       taskInstance2 = myTask.perform();
     });
 
-    assert.equal(myTask.lastComplete, null);
+    assert.strictEqual(myTask.lastComplete, null);
     run(defer, 'resolve');
-    assert.equal(myTask.lastComplete, taskInstance0);
+    assert.deepEqual(myTask.lastComplete, taskInstance0);
     run(taskInstance1, 'cancel');
-    assert.equal(myTask.lastComplete, taskInstance1);
+    assert.deepEqual(myTask.lastComplete, taskInstance1);
     run(defer, 'reject', 'i am error');
-    assert.equal(myTask.lastComplete, taskInstance2);
+    assert.deepEqual(myTask.lastComplete, taskInstance2);
     await asyncError();
   });
 
@@ -277,19 +277,19 @@ module('Unit: task states', function (hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.myTask;
-      assert.equal(myTask.lastErrored, null);
+      assert.strictEqual(myTask.lastErrored, null);
       myTask.perform();
       taskInstance1 = myTask.perform();
       taskInstance2 = myTask.perform();
     });
 
-    assert.equal(myTask.lastErrored, null);
+    assert.strictEqual(myTask.lastErrored, null);
     run(defer, 'resolve');
-    assert.equal(myTask.lastErrored, null);
+    assert.strictEqual(myTask.lastErrored, null);
     run(taskInstance1, 'cancel');
-    assert.equal(myTask.lastErrored, null);
+    assert.strictEqual(myTask.lastErrored, null);
     run(defer, 'reject', 'i am error');
-    assert.equal(myTask.lastErrored, taskInstance2);
+    assert.deepEqual(myTask.lastErrored, taskInstance2);
     await asyncError();
   });
 
@@ -308,19 +308,23 @@ module('Unit: task states', function (hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.myTask;
-      assert.equal(myTask.lastCanceled, null);
+      assert.strictEqual(myTask.lastCanceled, null);
       myTask.perform();
       taskInstance1 = myTask.perform();
       myTask.perform();
     });
 
-    assert.equal(myTask.lastCanceled, null);
+    assert.strictEqual(myTask.lastCanceled, null);
     run(defer, 'resolve');
-    assert.equal(myTask.lastCanceled, null);
+    assert.strictEqual(myTask.lastCanceled, null);
     run(taskInstance1, 'cancel');
-    assert.equal(myTask.lastCanceled, taskInstance1);
+    assert.deepEqual(myTask.lastCanceled, taskInstance1);
     run(defer, 'reject', 'i am error');
-    assert.equal(myTask.lastCanceled, taskInstance1, 'still taskInstance1');
+    assert.strictEqual(
+      myTask.lastCanceled,
+      taskInstance1,
+      'still taskInstance1'
+    );
     await asyncError();
   });
 
@@ -339,19 +343,19 @@ module('Unit: task states', function (hooks) {
     run(() => {
       obj = Obj.create();
       myTask = obj.myTask;
-      assert.equal(myTask.lastIncomplete, null);
+      assert.strictEqual(myTask.lastIncomplete, null);
       myTask.perform();
       taskInstance1 = myTask.perform();
       taskInstance2 = myTask.perform();
     });
 
-    assert.equal(myTask.lastIncomplete, null);
+    assert.strictEqual(myTask.lastIncomplete, null);
     run(defer, 'resolve');
-    assert.equal(myTask.lastIncomplete, null);
+    assert.strictEqual(myTask.lastIncomplete, null);
     run(taskInstance1, 'cancel');
-    assert.equal(myTask.lastIncomplete, taskInstance1);
+    assert.deepEqual(myTask.lastIncomplete, taskInstance1);
     run(defer, 'reject', 'i am error');
-    assert.equal(myTask.lastIncomplete, taskInstance2);
+    assert.deepEqual(myTask.lastIncomplete, taskInstance2);
     await asyncError();
   });
 

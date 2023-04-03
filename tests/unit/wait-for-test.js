@@ -100,7 +100,7 @@ module(
           try {
             yield waitForQueue('non-existing-queue');
           } catch (error) {
-            assert.equal(
+            assert.strictEqual(
               error.toString(),
               "Error: You attempted to schedule an action in a queue (non-existing-queue) that doesn't exist",
               'it correctly bubbles error up'
@@ -123,7 +123,7 @@ module(
       const Obj = EventedObject.extend({
         task: task(function* () {
           let value = yield waitForEvent(this, 'foo');
-          assert.equal(value, 123);
+          assert.strictEqual(value, 123);
           taskCompleted = true;
         }),
       });
@@ -180,7 +180,7 @@ module(
       const Obj = EventedObject.extend({
         task: task(function* () {
           let { detail } = yield waitForEvent(element, 'foo');
-          assert.equal(detail, 123);
+          assert.strictEqual(detail, 123);
           taskCompleted = true;
         }),
       });
@@ -240,7 +240,7 @@ module(
 
         task: task(function* () {
           let value = yield waitForEvent(this, 'foo');
-          assert.equal(value, 123);
+          assert.strictEqual(value, 123);
           taskCompleted = true;
         }),
       });
@@ -268,7 +268,7 @@ module(
 
         task: task(function* () {
           let value = yield waitForEvent(this, 'foo');
-          assert.equal(value, 123);
+          assert.strictEqual(value, 123);
           taskCompleted = true;
         }),
       });
@@ -389,17 +389,17 @@ module(
 
       obj.set('a', 2);
       await settled();
-      assert.equal(state, 'waiting for a===3');
+      assert.strictEqual(state, 'waiting for a===3');
 
       obj.set('a', 3);
       await settled();
-      assert.equal(state, 'waiting for a===null');
+      assert.strictEqual(state, 'waiting for a===null');
 
       obj.set('a', 0);
       await settled();
       obj.set('a', false);
       await settled();
-      assert.equal(state, 'waiting for a===null');
+      assert.strictEqual(state, 'waiting for a===null');
 
       obj.set('a', null);
       await settled();
@@ -416,9 +416,9 @@ module(
           ev = v;
         })
       );
-      assert.equal(ev, null);
+      assert.strictEqual(ev, null);
       run(obj, 'trigger', 'foo', 123);
-      assert.equal(ev, 123);
+      assert.strictEqual(ev, 123);
 
       ev = null;
       run(() =>
@@ -426,9 +426,9 @@ module(
           ev = v;
         })
       );
-      assert.equal(ev, null);
+      assert.strictEqual(ev, null);
       run(obj, 'trigger', 'bar', 456);
-      assert.equal(ev, 456);
+      assert.strictEqual(ev, 456);
     });
 
     decoratorTest(
