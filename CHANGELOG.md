@@ -1,5 +1,11 @@
 # Changelog
 
+### 3.0.0
+  - Drop support for Node versions below version 16 (#520)
+  - Add support and tests for Ember 4 (#515)
+    - Minimum supported Ember version is now 3.28+ (but still likely to work for lower versions)
+  - TypeScript: use the types published directly from Ember.js (#512)
+
 ### 2.3.7
   - Mention native class requirement in un-transpiled task() error (#494)
 
