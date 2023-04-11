@@ -59,7 +59,7 @@ import {
 import { expectTypeOf as expect } from 'expect-type';
 import { taskFor } from 'ember-concurrency-ts';
 
-declare type TestCallback = () => void | Promise<void>;
+type TestCallback = () => void | Promise<void>;
 declare function module(description: string, callback: TestCallback): void;
 declare function test(description: string, callback: TestCallback): void;
 
