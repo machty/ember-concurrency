@@ -13,6 +13,10 @@ module.exports = function (defaults) {
     snippetPaths: ['tests/dummy/snippets'],
     snippetSearchPaths: ['app', 'tests/dummy/app', 'addon'],
 
+    'ember-prism': {
+      components: ['javascript', 'typescript', 'bash', 'markup'],
+    },
+
     emberCliFontAwesome: {
       useScss: true,
     },

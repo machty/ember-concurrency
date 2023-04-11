@@ -1,7 +1,6 @@
 import Component from '@ember/component';
 import { action } from '@ember/object';
 import { guidFor } from '@ember/object/internals';
-import { cancel, schedule } from '@ember/runloop';
 
 export default class CodeTemplateToggleComponent extends Component {
   tagName = '';
@@ -10,40 +9,53 @@ export default class CodeTemplateToggleComponent extends Component {
   showCode = true;
   _toggleTimer = null;
 
+  maxHeight = 0;
+  resizeObserver;
+
   didInsertElement() {
     super.didInsertElement(...arguments);
-    this._toggleTimer = schedule('afterRender', null, () => {
-      const element = document.getElementById(this.id);
+    const element = document.getElementById(this.id);
+    if (!element) {
+      return;
+    }
 
-      if (!element) {
-        return;
-      }
-
-      let sectionToggles = element.querySelectorAll(
-        '.code-template-toggle-section'
-      );
-      let maxHeight = Math.max.apply(
-        null,
-        [].map.call(sectionToggles, function (el) {
-          return el.offsetHeight;
-        })
-      );
-
-      let toggle = element.querySelector('.code-template-toggle');
-
+    const resizeObserver = this._createResizeObserver((maxHeight) => {
+      const toggle = element.querySelector('.code-template-toggle');
       if (toggle) {
         toggle.style.height = `${maxHeight}px`;
       }
+    });
+    this.set('resizeObserver', resizeObserver);
+
+    const sectionToggles = element.querySelectorAll(
+      '.code-template-toggle-section'
+    );
+
+    sectionToggles.forEach((sectionToggle) => {
+      resizeObserver.observe(sectionToggle);
     });
   }
 
   willDestroyElement() {
     super.willDestroyElement(...arguments);
-    cancel(this._toggleTimer);
+    this.resizeObserver.disconnect();
   }
 
   @action
   toggle() {
     this.toggleProperty('showCode');
+  }
+
+  _createResizeObserver(onMaxHeightChange) {
+    return new ResizeObserver((entries) => {
+      const maxHeight = entries
+        .map((entry) => entry.contentRect.height)
+        .reduce((a, b) => Math.max(a, b));
+
+      if (maxHeight > this.maxHeight) {
+        this.maxHeight = maxHeight;
+        onMaxHeightChange && onMaxHeightChange(maxHeight);
+      }
+    });
   }
 }
