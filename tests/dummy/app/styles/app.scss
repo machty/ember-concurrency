@@ -201,19 +201,15 @@ th, td {
   color: #bbb;
 }
 
-pre > code {
+.code-snippet {
   border: none;
   margin: 0;
   padding: 0 .5rem;
 }
 
-:not(pre) > code[class*="language-"], pre[class*="language-"] {
-  background-color: #f8f8f8;
-}
-
 .code-template-toggle {
   position: relative;
-  background-color: #f8f8f8;
+  background-color: #f5f2f0;
   pre {
     margin: 0 !important;
   }
