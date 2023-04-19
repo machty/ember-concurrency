@@ -201,9 +201,15 @@ th, td {
   color: #bbb;
 }
 
+.code-snippet {
+  border: none;
+  margin: 0;
+  padding: 0 .5rem;
+}
+
 .code-template-toggle {
   position: relative;
-  background-color: #f8f8f8;
+  background-color: #f5f2f0;
   pre {
     margin: 0 !important;
   }
