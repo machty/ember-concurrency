@@ -15,7 +15,7 @@ function benchmarkModifier(taskFactory, option) {
       window.performance.mark(`${namespace}.start`);
 
       try {
-        const result = yield* fn.apply(this, args);
+        const result = yield* taskDefinition.apply(this, args);
         window.performance.measure(
           `${namespace}.success`,
           `${namespace}.start`
