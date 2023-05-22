@@ -1,9 +1,9 @@
 import { helper } from '@ember/component/helper';
 import { assert } from '@ember/debug';
-import { taskHelperClosure } from 'ember-concurrency/-private/helpers';
+import { taskHelperClosure, TaskHelperClosure, OnErrorCallback } from '../-private/helpers';
 
-function maybeReportError(onError) {
-  return function (e) {
+function maybeReportError(onError: OnErrorCallback | null) {
+  return function (e: any) {
     if (typeof onError === 'function') {
       onError(e);
     } else if (onError === null) {
@@ -17,22 +17,29 @@ function maybeReportError(onError) {
   };
 }
 
-export function performHelper(args, hash) {
+export type PerformHelperType = (
+  args: [TaskHelperClosure, ...any[]],
+  hash: { value?: string, onError?: OnErrorCallback }
+) => (...innerArgs: any[]) => void;
+
+const perform: PerformHelperType = (args, hash) => {
   let perform = taskHelperClosure('perform', 'perform', args, hash);
 
-  if (hash && typeof hash.onError !== 'undefined') {
+  if (hash && typeof hash.onError !== undefined) {
     return function (...innerArgs) {
       try {
         let taskInstance = perform(...innerArgs);
-        return taskInstance.catch(maybeReportError(hash.onError));
+        return taskInstance.catch(maybeReportError(hash.onError!));
         // eslint-disable-next-line no-empty
       } catch {
-        maybeReportError(hash.onError);
+        maybeReportError(hash.onError!);
       }
     };
   } else {
     return perform;
   }
-}
+};
 
-export default helper(performHelper);
+export const performHelper = helper(perform);
+
+export default performHelper;

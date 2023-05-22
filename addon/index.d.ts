@@ -1,3 +1,5 @@
+import { PerformHelperType } from './helpers/perform';
+
 export type TaskGenerator<T> = Generator<any, T, any>;
 
 export type TaskFunction<T, Args extends any[]> = (
@@ -1605,3 +1607,5 @@ export function forever(): Yieldable<never>;
  * @param {string} taskName the name of the task to read a value from
  */
 export function lastValue(taskName: string): PropertyDecorator;
+
+export const performHelper: PerformHelperType;

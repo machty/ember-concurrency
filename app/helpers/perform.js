@@ -1,1 +1,1 @@
-export { default } from 'ember-concurrency/helpers/perform';
+export { performHelper, PerformHelperType } from '/helpers/perform';
