@@ -796,6 +796,16 @@ type OptionTypeFor<T, F> = F extends (...args: infer Args) => T
 type TaskOptions = OptionsFor<TaskProperty<unknown, unknown[]>>;
 type TaskGroupOptions = OptionsFor<TaskGroupProperty<unknown>>;
 
+type AsyncArrowFunctionTaskOptions<
+  HostObject,
+  T,
+  Args extends any[]
+> = TaskOptions & {
+  waitFor?: (
+    fn: AsyncArrowTaskFunction<HostObject, T, Args>
+  ) => AsyncArrowTaskFunction<HostObject, T, Args>;
+};
+
 type MethodOrPropertyDecoratorWithParams<Params extends unknown[]> =
   MethodDecorator &
     PropertyDecorator &
@@ -919,7 +929,7 @@ export function task<
 
 export function task<
   HostObject,
-  O extends TaskOptions,
+  O extends AsyncArrowFunctionTaskOptions<HostObject, any, any[]>,
   T extends AsyncArrowTaskFunction<HostObject, any, any[]>
 >(
   hostObject: HostObject,
@@ -929,7 +939,7 @@ export function task<
 
 export function task<
   HostObject,
-  O extends TaskOptions,
+  O extends AsyncArrowFunctionTaskOptions<HostObject, any, any[]>,
   T extends AsyncArrowTaskFunction<HostObject, any, any[]>
 >(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
@@ -981,7 +991,7 @@ export function dropTask<
 >(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 export function dropTask<
   HostObject,
-  O extends TaskOptions,
+  O extends AsyncArrowFunctionTaskOptions<HostObject, any, any[]>,
   T extends AsyncArrowTaskFunction<HostObject, any, any[]>
 >(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
@@ -1030,7 +1040,7 @@ export function enqueueTask<
 
 export function enqueueTask<
   HostObject,
-  O extends TaskOptions,
+  O extends AsyncArrowFunctionTaskOptions<HostObject, any, any[]>,
   T extends AsyncArrowTaskFunction<HostObject, any, any[]>
 >(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
@@ -1079,7 +1089,7 @@ export function keepLatestTask<
 
 export function keepLatestTask<
   HostObject,
-  O extends TaskOptions,
+  O extends AsyncArrowFunctionTaskOptions<HostObject, any, any[]>,
   T extends AsyncArrowTaskFunction<HostObject, any, any[]>
 >(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
@@ -1128,7 +1138,7 @@ export function restartableTask<
 
 export function restartableTask<
   HostObject,
-  O extends TaskOptions,
+  O extends AsyncArrowFunctionTaskOptions<HostObject, any, any[]>,
   T extends AsyncArrowTaskFunction<HostObject, any, any[]>
 >(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
