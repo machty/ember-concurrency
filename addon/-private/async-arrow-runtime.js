@@ -16,6 +16,13 @@ export function buildTask(contextFn, options, taskName, bufferPolicyName) {
 
   const result = contextFn();
 
+  if (optionsWithBufferPolicy && optionsWithBufferPolicy.waitFor) {
+    result.generator = optionsWithBufferPolicy.waitFor(result.generator);
+
+    optionsWithBufferPolicy = Object.assign({}, optionsWithBufferPolicy);
+    delete optionsWithBufferPolicy.waitFor;
+  }
+
   const taskFactory = new TaskFactory(
     taskName || '<unknown>',
     result.generator,

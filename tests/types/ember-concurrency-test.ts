@@ -58,6 +58,7 @@ import {
 } from 'ember-concurrency';
 import { expectTypeOf as expect } from 'expect-type';
 import { taskFor } from 'ember-concurrency-ts';
+import { waitFor } from '@ember/test-waiters';
 
 declare type TestCallback = () => void | Promise<void>;
 declare function module(description: string, callback: TestCallback): void;
@@ -3128,6 +3129,7 @@ module('integration tests', () => {
       debug = task(this, { debug: true }, async () => {});
       onState = task(this, { onState: () => {} }, async () => {});
       onStateNull = task(this, { onState: null }, async () => {});
+      waitFor = task({ waitFor }, async () => {});
 
       // Note: these options work even when strictFunctionTypes is enabled, but
       // turning it on in this repo breaks other things in addon/index.d.ts
@@ -3237,6 +3239,7 @@ module('integration tests', () => {
       debug = task({ debug: true }, async () => {});
       onState = task({ onState: () => {} }, async () => {});
       onStateNull = task({ onState: null }, async () => {});
+      waitFor = task({ waitFor }, async () => {});
 
       // Note: these options work even when strictFunctionTypes is enabled, but
       // turning it on in this repo breaks other things in addon/index.d.ts
@@ -3409,6 +3412,7 @@ module('integration tests', () => {
       debug = task({ debug: true }, async () => {});
       onState = task({ onState: () => {} }, async () => {});
       onStateNull = task({ onState: null }, async () => {});
+      waitFor = task({ waitFor }, async () => {});
 
       // Note: these options work even when strictFunctionTypes is enabled, but
       // turning it on in this repo breaks other things in addon/index.d.ts
