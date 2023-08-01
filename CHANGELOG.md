@@ -1,5 +1,10 @@
 # Changelog
 
+### 3.1.0
+  - Support waitFor()-type modifiers in async arrow transform (#536)
+  - Drop now-unneeded dependency on polyfill for unsupported Ember versions
+  - [docs] Fix broken code block rendering for examples (#522, #524)
+
 ### 3.0.0
   - Drop support for Node versions below version 16 (#520)
   - Add support and tests for Ember 4 (#515)
@@ -20,7 +25,7 @@
 
 ### 2.3.3
   - Fix types for the async arrow API for `dropTask`, `restartableTask`, and others (#486)
-  
+
 ### 2.3.2
   - Simplify the async arrow fn task() API to allow omitting the `this` param, e.g.
     `myTask = task(async () => {})` (#477)
