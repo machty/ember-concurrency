@@ -2,7 +2,14 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 // eslint-disable-next-line ember/no-computed-properties-in-native-classes
 import { computed, set } from '@ember/object';
-import { click, render, settled } from '@ember/test-helpers';
+import {
+  click,
+  getSettledState,
+  render,
+  settled,
+  waitUntil,
+} from '@ember/test-helpers';
+import { waitFor } from '@ember/test-waiters';
 import { hbs } from 'ember-cli-htmlbars';
 import {
   task,
@@ -138,6 +145,76 @@ module('Integration | async-arrow-task', function (hooks) {
     await startTest(assert);
 
     resolve('Wow!');
+
+    await finishTest(assert);
+  });
+
+  test('modifiers', async function (assert) {
+    let modifier1Called = false;
+    let modifier2Called = false;
+
+    function modifier1(fn) {
+      return function* (...args) {
+        modifier1Called = true;
+        yield* fn(args);
+      };
+    }
+    function modifier2(fn) {
+      return function* (...args) {
+        modifier2Called = true;
+        yield* fn(args);
+      };
+    }
+
+    this.owner.register(
+      'component:test-async-arrow-task',
+      class extends TestComponent {
+        myTask = task(
+          this,
+          modifier1(
+            modifier2(async (arg) => {
+              return arg;
+            })
+          )
+        );
+      }
+    );
+
+    await render(hbs`<TestAsyncArrowTask />`);
+    await click('button#start');
+    assert.true(modifier1Called);
+    assert.true(modifier2Called);
+  });
+
+  test('waitFor modifier', async function (assert) {
+    assert.expect(9);
+
+    let { promise, resolve } = defer();
+
+    this.owner.register(
+      'component:test-async-arrow-task',
+      class extends TestComponent {
+        myTask = task(
+          this,
+          waitFor(async (arg) => {
+            set(this, 'resolved', await promise);
+            assert.strictEqual(this.myTask.name, 'myTask');
+            return arg;
+          })
+        );
+      }
+    );
+
+    await render(hbs`<TestAsyncArrowTask />`);
+    click('button#start');
+    await waitUntil(() => this.element.textContent.includes('Running!'));
+
+    assert.true(getSettledState().hasPendingWaiters);
+
+    resolve('Wow!');
+    await settled();
+
+    assert.false(getSettledState().hasPendingWaiters);
 
     await finishTest(assert);
   });
