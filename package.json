@@ -127,7 +127,7 @@
     "configPath": "tests/dummy/config",
     "demoURL": "http://ember-concurrency.com/",
     "versionCompatibility": {
-      "ember": ">=3.8.0"
+      "ember": ">=4.0.0"
     }
   },
   "volta": {
