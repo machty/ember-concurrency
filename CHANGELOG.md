@@ -1,5 +1,8 @@
 # Changelog
 
+### 3.1.1
+  - Add ember 5 as peerDependencies (#542)
+
 ### 3.1.0
   - Support waitFor()-type modifiers in async arrow transform (#536)
   - Drop now-unneeded dependency on polyfill for unsupported Ember versions
