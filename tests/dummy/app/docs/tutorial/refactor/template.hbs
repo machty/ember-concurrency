@@ -36,8 +36,8 @@
 
 {{! template-lint-disable no-unbalanced-curlies }}
 <p>
-  Second, in the template, instead of using <code>onclick=\{{action 'findStores'}}</code>,
-  we use <code>onclick=\{{perform this.findStores}}</code>.
+  Second, in the template, instead of using <code>\{{on "click" this.findStores}}</code>,
+  we use <code>\{{on "click" (perform this.findStores)}}</code>.
 </p>
 {{! template-lint-enable no-unbalanced-curlies }}
 
