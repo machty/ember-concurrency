@@ -57,7 +57,6 @@ import {
   keepLatestTask,
 } from 'ember-concurrency';
 import { expectTypeOf as expect } from 'expect-type';
-import { taskFor } from 'ember-concurrency-ts';
 
 declare type TestCallback = () => void | Promise<void>;
 declare function module(description: string, callback: TestCallback): void;
@@ -2994,104 +2993,6 @@ module('integration tests', () => {
         myTask.perform(false, 500, 'nope');
       },
     });
-  });
-
-  test('octane', () => {
-    class MyComponent extends GlimmerComponent {
-      @taskGroup
-      foo!: TaskGroup<never>;
-
-      @task({ restartable: true }) restartable = function* () {};
-      @task({ enqueue: true }) enqueue = function* () {};
-      @task({ drop: true }) drop = function* () {};
-      @task({ keepLatest: true }) keepLatest = function* () {};
-      @task({ evented: true }) evented = function* () {};
-      @task({ debug: true }) debug = function* () {};
-      @task({ onState: () => {} }) onState = function* () {};
-      @task({ onState: null }) onStateNull = function* () {};
-
-      // Note: these options work even when strictFunctionTypes is enabled, but
-      // turning it on in this repo breaks other things in addon/index.d.ts
-      @task({ on: 'hi' }) on = function* () {};
-      @task({ cancelOn: 'bye' }) cancelOn = function* () {};
-      @task({ maxConcurrency: 1 }) maxConcurrency = function* () {};
-      @task({ group: 'foo' }) group = function* () {};
-
-      @lastValue('myTask') myTaskValue = 'or some default';
-
-      @restartableTask *myTask(
-        immediately: boolean,
-        ms = 500
-      ): TaskGenerator<string> {
-        // We want to assert `this` is not implicitly `any`, but due `this`
-        // being a weird internal type in here, neither of the following
-        // assertions would pass here. But the fact that the second assertion
-        // errors is a pretty good indication that it is in fact *not* `any`.
-        // In any case, asserting on `this.foo` is a more useful test, which
-        // does pass.
-
-        // @ts-expect-error
-        expect(this).not.toBeAny();
-
-        // @ts-expect-error:
-        expect(this).toBeAny();
-
-        // this is probably what we ultimately cares about
-        expect(this.foo).not.toBeAny();
-        expect(this.foo).toEqualTypeOf<TaskGroup<never>>();
-
-        if (!immediately) {
-          yield timeout(ms);
-        }
-
-        let fetchPromise = fetch('/api/data.json');
-        expect(fetchPromise).resolves.toEqualTypeOf<Response>();
-
-        let response: Response = yield fetchPromise;
-        expect(response).toEqualTypeOf<Response>();
-
-        let safeResponse: Resolved<typeof fetchPromise> = yield fetchPromise;
-        expect(safeResponse).toEqualTypeOf<Response>();
-
-        return 'wow';
-      }
-
-      async performMyTask() {
-        let myTask = taskFor(this.myTask);
-
-        expect(myTask).not.toBeAny();
-        expect(myTask).toEqualTypeOf<Task<string, [boolean, number?]>>();
-        expect(myTask.isRunning).toBeBoolean();
-        expect(myTask.last).toEqualTypeOf<TaskInstance<string> | null>();
-        expect(myTask.perform).toBeCallableWith(true);
-        expect(myTask.perform).toBeCallableWith(false, 500);
-        expect(myTask.perform).parameters.toEqualTypeOf<[boolean, number?]>();
-        expect(myTask.perform).returns.toEqualTypeOf<TaskInstance<string>>();
-
-        let myTaskInstance = myTask.perform(true);
-
-        expect(myTaskInstance).not.toBeAny();
-        expect(myTaskInstance).toEqualTypeOf<TaskInstance<string>>();
-        expect(myTaskInstance.isRunning).toBeBoolean();
-        expect(myTaskInstance.value).toEqualTypeOf<string | null>();
-        expect(myTaskInstance).toMatchTypeOf<Promise<string>>();
-
-        let result = await myTaskInstance;
-
-        expect(result).not.toBeAny();
-        expect(result).toBeString();
-        expect(result.length).toBeNumber();
-
-        // @ts-expect-error
-        myTask.perform('nope');
-
-        // @ts-expect-error
-        myTask.perform(true, 'nope');
-
-        // @ts-expect-error
-        myTask.perform(false, 500, 'nope');
-      }
-    }
   });
 
   test('async arrow with first arg `this`', () => {

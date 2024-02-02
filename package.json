@@ -59,7 +59,6 @@
     "ember-cli-sass": "^10.0.1",
     "ember-cli-terser": "^4.0.2",
     "ember-code-snippet": "^3.0.0",
-    "ember-concurrency-ts": "^0.3.1",
     "ember-fn-helper-polyfill": "^1.0.2",
     "ember-load-initializers": "^2.1.2",
     "ember-modifier": "^3.2.7",
@@ -132,6 +131,6 @@
   },
   "volta": {
     "node": "16.19.0",
-    "yarn": "1.22.19"
+    "pnpm": "7.33.6"
   }
 }

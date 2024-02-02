@@ -18,38 +18,12 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: wyvox/action@v1
       with:
-        fetch-depth: 1
-
-    - name: Set up Volta
-      uses: volta-cli/action@v4
-
-    - name: Get package manager's global cache path
-      id: global-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-
-    - name: Cache package manager's global cache and node_modules
-      id: cache-dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          ${{ steps.global-cache-dir-path.outputs.dir }}
-          node_modules
-        key: ${{ runner.os }}-${{ matrix.node-version }}-${{
-          hashFiles('**/yarn.lock'
-          ) }}
-        restore-keys: |
-          ${{ runner.os }}-${{ matrix.node-version }}-
-
-    - name: Install Dependencies
-      run: yarn install --frozen-lockfile
-      if: |
-        steps.cache-dependencies.outputs.cache-hit != 'true'
+        pnpm-args: --frozen-lockfile
 
     - name: Lint
-      run: yarn lint
-
+      run: pnpm lint
 
   test:
     name: Tests
@@ -62,38 +36,12 @@ jobs:
         browser: [chrome, firefox]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: wyvox/action@v1
       with:
-        fetch-depth: 1
-
-    - name: Set up Volta
-      uses: volta-cli/action@v4
-
-    - name: Get package manager's global cache path
-      id: global-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-
-    - name: Cache package manager's global cache and node_modules
-      id: cache-dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          ${{ steps.global-cache-dir-path.outputs.dir }}
-          node_modules
-        key: ${{ runner.os }}-${{ matrix.node-version }}-${{
-          hashFiles('**/yarn.lock'
-          ) }}
-        restore-keys: |
-          ${{ runner.os }}-${{ matrix.node-version }}-
-
-    - name: Install Dependencies
-      run: yarn install --frozen-lockfile
-      if: |
-        steps.cache-dependencies.outputs.cache-hit != 'true'
+        pnpm-args: --frozen-lockfile
 
     - name: Test
-      run: yarn test:ember --launch ${{ matrix.browser }}
-
+      run: pnpm test:ember --launch ${{ matrix.browser }}
 
   floating-dependencies:
     name: Floating Dependencies
@@ -106,37 +54,12 @@ jobs:
         browser: [chrome, firefox]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: wyvox/action@v1
       with:
-        fetch-depth: 1
-
-    - name: Set up Volta
-      uses: volta-cli/action@v4
-
-    - name: Get package manager's global cache path
-      id: global-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-
-    - name: Cache package manager's global cache and node_modules
-      id: cache-dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          ${{ steps.global-cache-dir-path.outputs.dir }}
-          node_modules
-        key: ${{ runner.os }}-${{ matrix.node-version }}-${{
-          hashFiles('**/yarn.lock'
-          ) }}
-        restore-keys: |
-          ${{ runner.os }}-${{ matrix.node-version }}-
-
-    - name: Install Dependencies
-      run: yarn install --frozen-lockfile
-      if: |
-        steps.cache-dependencies.outputs.cache-hit != 'true'
+        pnpm-args: --frozen-lockfile
 
     - name: Test
-      run: yarn test:ember --launch ${{ matrix.browser }}
+      run: pnpm test:ember --launch ${{ matrix.browser }}
 
 
   try-scenarios:
@@ -168,34 +91,9 @@ jobs:
             allow-failure: true
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: wyvox/action@v1
       with:
-        fetch-depth: 1
-
-    - name: Set up Volta
-      uses: volta-cli/action@v4
-
-    - name: Get package manager's global cache path
-      id: global-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-
-    - name: Cache package manager's global cache and node_modules
-      id: cache-dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          ${{ steps.global-cache-dir-path.outputs.dir }}
-          node_modules
-        key: ${{ runner.os }}-${{ matrix.node-version }}-${{
-          hashFiles('**/yarn.lock'
-          ) }}
-        restore-keys: |
-          ${{ runner.os }}-${{ matrix.node-version }}-
-
-    - name: Install Dependencies
-      run: yarn install --frozen-lockfile
-      if: |
-        steps.cache-dependencies.outputs.cache-hit != 'true'
+        pnpm-args: --frozen-lockfile
 
     - name: Strip ts-expect-error from tests (for TypeScript 3.7)
       run: find tests/types -type f -name '*.ts' | xargs sed -i 's/@ts-expect-error/@ts-ignore/g'
