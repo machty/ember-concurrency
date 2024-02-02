@@ -83,7 +83,12 @@
     },
     "version": 2,
     "type": "addon",
-    "main": "addon-main.js"
+    "main": "addon-main.js",
+    "app-js": {
+      "./helpers/cancel-all.js": "./dist/_app_/helpers/cancel-all.js",
+      "./helpers/perform.js": "./dist/_app_/helpers/perform.js",
+      "./helpers/task.js": "./dist/_app_/helpers/task.js"
+    }
   },
   "volta": {
     "node": "16.19.0",
