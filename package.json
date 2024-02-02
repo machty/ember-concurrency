@@ -1,3 +1,19 @@
 {
-  "private": true
+  "private": true,
+  "scripts": {
+    "prepare": "pnpm --filter ember-concurrency run prepare",
+    "start": "npm-run-all --parallel start:*",
+    "start:addon": "pnpm --filter ember-concurrency run start",
+    "start:test-app": "pnpm workspace test-app run start",
+    "lint": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*",
+    "lint:addon": "pnpm --filter ember-concurrency run lint",
+    "lint:test-app": "pnpm workspace test-app run lint",
+    "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:fix:*",
+    "lint:fix:addon": "pnpm --filter ember-concurrency run lint:fix",
+    "lint:fix:test-app": "pnpm workspace test-app run lint:fix",
+    "test": "npm-run-all --aggregate-output --continue-on-error --parallel test:*",
+    "test:addon": "pnpm --filter ember-concurrency run test",
+    "test:test-app": "pnpm workspace test-app run test",
+    "docs:build": "node_modules/.bin/jsdoc -c .jsdoc --verbose"
+  }
 }
