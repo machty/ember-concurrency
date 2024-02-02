@@ -23,7 +23,7 @@ jobs:
         pnpm-args: --frozen-lockfile
 
     - name: Lint
-      run: yarn lint
+      run: pnpm lint
 
   test:
     name: Tests
@@ -41,7 +41,7 @@ jobs:
         pnpm-args: --frozen-lockfile
 
     - name: Test
-      run: yarn test:ember --launch ${{ matrix.browser }}
+      run: pnpm test:ember --launch ${{ matrix.browser }}
 
   floating-dependencies:
     name: Floating Dependencies
@@ -59,7 +59,7 @@ jobs:
         pnpm-args: --frozen-lockfile
 
     - name: Test
-      run: yarn test:ember --launch ${{ matrix.browser }}
+      run: pnpm test:ember --launch ${{ matrix.browser }}
 
 
   try-scenarios:
