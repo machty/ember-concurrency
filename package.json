@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "prepare": "pnpm --filter ember-concurrency run prepare",
+    "prepack": "pnpm --filter ember-concurrency run prepack",
     "start": "npm-run-all --parallel start:*",
     "start:addon": "pnpm --filter ember-concurrency run start",
     "start:test-app": "pnpm workspace test-app run start",
