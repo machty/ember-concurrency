@@ -191,8 +191,8 @@ export const propertyModifiers = {
 
   @class TaskProperty
 */
-export class TaskProperty {};
-export class TaskGroupProperty {};
+export class TaskProperty {}
+export class TaskGroupProperty {}
 
 Object.assign(TaskGroupProperty.prototype, propertyModifiers);
 Object.assign(TaskProperty.prototype, propertyModifiers, {
@@ -276,19 +276,15 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
 
 const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
 export function taskComputed(fn) {
-  if (macroCondition(dependencySatisfies('ember-source', '>=3.10.0'))) {
-    let cp = function (proto, key) {
-      if (cp.setup !== undefined) {
-        cp.setup(proto, key);
-      }
+  let cp = function (proto, key) {
+    if (cp.setup !== undefined) {
+      cp.setup(proto, key);
+    }
 
-      return computed(fn)(...arguments);
-    };
+    return computed(fn)(...arguments);
+  };
 
-    setDecorator(cp);
+  setDecorator(cp);
 
-    return cp;
-  } else {
-    return computed(fn);
-  }
+  return cp;
 }
