@@ -57,6 +57,8 @@ importers:
       '@ember/optional-features': ^2.0.0
       '@ember/string': ^3.0.1
       '@ember/test-helpers': ^2.9.3
+      '@embroider/macros': ^1.13.0
+      '@embroider/test-setup': ^2.1.1
       '@glimmer/component': ^1.1.2
       '@glimmer/tracking': ^1.1.2
       babel-eslint: ^10.1.0
@@ -99,6 +101,8 @@ importers:
       '@ember/optional-features': 2.0.0
       '@ember/string': 3.1.1
       '@ember/test-helpers': 2.9.4_pyu5h26lqtbvj35ny6ypvb7yn4
+      '@embroider/macros': 1.13.5
+      '@embroider/test-setup': 2.1.1
       '@glimmer/component': 1.1.2_@babel+core@7.23.9
       '@glimmer/tracking': 1.1.2
       babel-eslint: 10.1.0_eslint@7.32.0
@@ -1824,6 +1828,14 @@ packages:
       typescript-memoize: 1.1.1
     transitivePeerDependencies:
       - supports-color
+
+  /@embroider/test-setup/2.1.1:
+    resolution: {integrity: sha512-t81a2z2OEFAOZVbV7wkgiDuCyZ3ajD7J7J+keaTfNSRiXoQgeFFASEECYq1TCsH8m/R+xHMRiY59apF2FIeFhw==}
+    engines: {node: 12.* || 14.* || >= 16}
+    dependencies:
+      lodash: 4.17.21
+      resolve: 1.22.8
+    dev: true
 
   /@embroider/util/1.12.1_ember-source@4.11.0:
     resolution: {integrity: sha512-sEjFf2HOcqQdm3auernvvD3oXX/CdGTjo9eB5N8DmQBz9vseYNjn4kQRaAcyHWpCpMHe5Yr0d9xW8+4c9a9fJw==}

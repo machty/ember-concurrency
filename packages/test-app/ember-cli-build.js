@@ -11,7 +11,7 @@ module.exports = function (defaults) {
     },
 
     snippetPaths: ["snippets"],
-    snippetSearchPaths: ["app", "tests/dummy/app", "addon"],
+    snippetSearchPaths: ["tests/dummy/app"],
 
     "ember-prism": {
       components: ["javascript", "typescript", "bash", "markup"],
