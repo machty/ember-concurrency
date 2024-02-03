@@ -4,7 +4,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { later } from '@ember/runloop';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import { restartableTask, timeout } from 'ember-concurrency';
+import { restartableTask, timeout, task, taskGroup } from 'ember-concurrency';
 
 module('Integration | tracked use', function (hooks) {
   setupRenderingTest(hooks);

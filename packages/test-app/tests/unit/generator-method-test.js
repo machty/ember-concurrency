@@ -1,4 +1,4 @@
-import { module } from 'qunit';
+import { module, test } from 'qunit';
 import { run } from '@ember/runloop';
 import {
   task,

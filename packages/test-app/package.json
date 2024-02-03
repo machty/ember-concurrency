@@ -53,6 +53,7 @@
     "ember-prism": "^0.13.0",
     "ember-qunit": "^6.2.0",
     "ember-resolver": "^10.0.0",
+    "ember-sinon-qunit": "^7.4.0",
     "ember-source": "~4.11.0",
     "ember-template-lint": "^5.6.0",
     "eslint": "^7.32.0",
@@ -66,6 +67,7 @@
     "qunit": "^2.19.4",
     "qunit-dom": "^2.0.0",
     "sass": "^1.22.12",
+    "sinon": "^15.0.2",
     "tracked-built-ins": "^3.1.1",
     "webpack": "^5.75.0"
   },
