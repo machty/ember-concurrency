@@ -34,6 +34,10 @@ module.exports = function (defaults) {
       // GitHub Pages uses this filename to serve 404s
       emptyFile: "404.html",
     },
+
+    babel: {
+      plugins: [require.resolve('ember-concurrency/transform-async-arrow-task-functions')]
+    }
   });
 
   /*

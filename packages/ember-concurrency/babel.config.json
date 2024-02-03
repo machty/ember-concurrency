@@ -1,5 +1,10 @@
+// Babel config for building the ember-concurrency package itself. Because EC is a V2 addon,
+// this babel config should *not* apply presets or compile away ES modules.
+// It exists only to provide development niceties for you, like automatic
+// template colocation.
 {
   "plugins": [
+    // https://github.com/embroider-build/embroider/issues/1014
     ["@babel/plugin-proposal-decorators", { "legacy": true }],
     "@babel/plugin-proposal-class-properties",
     "@embroider/addon-dev/template-colocation-plugin"
