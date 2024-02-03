@@ -6,33 +6,8 @@ import {
   lastValue as nativeLastValue,
 } from './external/task-decorators';
 import { TaskFactory as EmberTaskFactory } from './task-factory';
-import { USE_TRACKED } from './utils';
 
-const computedLastValue = decoratorWithParams(
-  (target, key, descriptor, [taskName] = []) => {
-    const { initializer } = descriptor;
-    delete descriptor.initializer;
-
-    let cp = computed(`${taskName}.lastSuccessful`, function () {
-      let lastInstance = get(this, `${taskName}.lastSuccessful`);
-
-      if (lastInstance) {
-        // eslint-disable-next-line ember/no-get
-        return get(lastInstance, 'value');
-      }
-
-      if (initializer) {
-        return initializer.call(this);
-      }
-
-      return undefined;
-    });
-
-    return cp(target, key, descriptor);
-  }
-);
-
-export const lastValue = USE_TRACKED ? nativeLastValue : computedLastValue;
+export const lastValue = nativeLastValue;
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
