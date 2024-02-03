@@ -25,14 +25,14 @@ module.exports = {
   overrides: [
     {
       // Tutorial components (where specific formatting matters)
-      files: ['tests/dummy/app/components/tutorial-*/**/*.js'],
+      files: ['packages/test-app/app/components/tutorial-*/**/*.js'],
       rules: {
         'prettier/prettier': 'off',
       },
     },
     {
       // Docs site
-      files: ['tests/dummy/app/**/*.js'],
+      files: ['packages/test-app/app/**/*.js'],
       rules: {
         // Can't use Glimmer components or tracked due to 3.8 support
         'ember/no-classic-classes': 'off',
@@ -56,7 +56,7 @@ module.exports = {
         './testem.js',
         './blueprints/*/index.js',
         './config/**/*.js',
-        './tests/dummy/config/**/*.js',
+        './packages/test-app/config/**/*.js',
       ],
       parserOptions: {
         sourceType: 'script',

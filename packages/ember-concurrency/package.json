@@ -41,6 +41,7 @@
     "dist"
   ],
   "exports": {
+    ".": "./dist/index.js",
     "./*": "./dist/*",
     "./addon-main.js": "./addon-main.js"
   },
@@ -76,7 +77,6 @@
     "app-js": "./app"
   },
   "ember-addon": {
-    "configPath": "tests/dummy/config",
     "demoURL": "http://ember-concurrency.com/",
     "versionCompatibility": {
       "ember": ">=3.8.0"

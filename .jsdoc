@@ -1,6 +1,6 @@
 {
   "opts": {
-    "destination": "tests/dummy/public/api/",
+    "destination": "packages/test-app/public/api/",
     "readme": "API.md",
     "recurse": true
   },

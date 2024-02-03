@@ -1,6 +1,6 @@
 import { helper } from '@ember/component/helper';
 import { assert } from '@ember/debug';
-import { taskHelperClosure } from 'ember-concurrency/-private/helpers';
+import { taskHelperClosure } from '../-private/helpers';
 
 const CANCEL_REASON = "the 'cancel-all' template helper was invoked";
 

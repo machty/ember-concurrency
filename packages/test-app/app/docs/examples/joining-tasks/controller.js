@@ -1,6 +1,6 @@
 import { makeArray } from '@ember/array';
 import Controller from '@ember/controller';
-import { randomWord } from 'dummy/utils';
+import { randomWord } from 'test-app/utils';
 
 // BEGIN-SNIPPET joining-tasks
 import { task, timeout, all, race } from 'ember-concurrency';

@@ -25,7 +25,7 @@
 /yarn.lock.ember-try
 
 # snippets
-/tests/dummy/snippets/
+/packages/test-app/snippets/
 
 # jsdoc assets
-/tests/dummy/public/
+/packages/test-app/public/

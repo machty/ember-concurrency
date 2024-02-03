@@ -1,7 +1,7 @@
 import { getOwner } from '@ember/application';
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-import ENV from 'dummy/config/environment';
+import ENV from 'test-app/config/environment';
 
 export default class ApplicationRoute extends Route {
   @service router;

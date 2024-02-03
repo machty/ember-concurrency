@@ -1,7 +1,7 @@
 import { action, computed } from '@ember/object';
 import Controller from '@ember/controller';
 import { task, timeout } from 'ember-concurrency';
-import { randomWord } from 'dummy/utils';
+import { randomWord } from 'test-app/utils';
 
 let i = 0;
 function* sharedFn(shouldError) {

@@ -1,6 +1,6 @@
 import Controller from '@ember/controller';
 import { computed } from '@ember/object';
-import { randomWord } from 'dummy/utils';
+import { randomWord } from 'test-app/utils';
 
 // BEGIN-SNIPPET encapsulated-task-controller
 import { task, timeout } from 'ember-concurrency';

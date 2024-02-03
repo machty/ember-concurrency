@@ -11,7 +11,7 @@ module.exports = function (defaults) {
     },
 
     snippetPaths: ["snippets"],
-    snippetSearchPaths: ["tests/dummy/app"],
+    snippetSearchPaths: ["app"],
 
     "ember-prism": {
       components: ["javascript", "typescript", "bash", "markup"],
@@ -37,8 +37,7 @@ module.exports = function (defaults) {
   });
 
   /*
-    This build file specifies the options for the dummy test app of this
-    addon, located in `/tests/dummy`
+    This build file specifies the options for the test app of this addon.
     This build file does *not* influence how the addon or the app using it
     behave. You most likely want to be modifying `./index.js` or app's build file
   */
@@ -46,7 +45,7 @@ module.exports = function (defaults) {
   return maybeEmbroider(app, {
     packageRules: [
       {
-        package: "dummy",
+        package: "test-app",
         components: {
           "{{e-c-test}}": {
             safeToIgnore: true,

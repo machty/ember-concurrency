@@ -14,6 +14,6 @@ export default class extends Component {
       return '#';
     }
     path = path.replace(/\./g, '/');
-    return `https://github.com/machty/ember-concurrency/edit/master/tests/dummy/app/${path}/template.hbs`;
+    return `https://github.com/machty/ember-concurrency/edit/master/packages/test-app/app/${path}/template.hbs`;
   }
 }

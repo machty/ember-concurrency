@@ -1,6 +1,6 @@
 import { helper } from '@ember/component/helper';
 import { assert } from '@ember/debug';
-import { taskHelperClosure } from 'ember-concurrency/-private/helpers';
+import { taskHelperClosure } from '../-private/helpers';
 
 function maybeReportError(onError) {
   return function (e) {

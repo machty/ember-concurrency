@@ -9,7 +9,7 @@ import { task, timeout } from 'ember-concurrency';
 // terseness in this illustration. You may want to separate defining the modifier
 // and registering it with registerModifier, and be explicit about where you
 // register (e.g. addon, library, or app initialization)
-import 'dummy/task-modifiers/benchmark';
+import 'test-app/task-modifiers/benchmark';
 
 let performance =
   typeof window !== 'undefined' && window.performance

@@ -36,7 +36,7 @@ npx release-it
 
 TODO: use build pipeline.
 * From addon root directory `pnpm docs:build`
-* View built docs in `tests/dummy/public/api`
+* View built docs in `packages/test-app/public/api`
 
 ### Publishing Guides and API Docs
 

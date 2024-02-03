@@ -3,7 +3,7 @@
 # compiled output
 dist/
 tmp/
-tests/dummy/public/api
+/packages/test-app/public/api
 
 # dependencies
 node_modules/
