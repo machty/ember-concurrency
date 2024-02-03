@@ -42,8 +42,10 @@
     "ember-cli-htmlbars": "^6.2.0",
     "ember-cli-inject-live-reload": "^2.1.0",
     "ember-cli-sri": "^2.1.1",
+    "ember-cli-sass": "^10.0.1",
     "ember-cli-terser": "^4.0.2",
     "ember-code-snippet": "^3.0.0",
+    "ember-compatibility-helpers": "^1.2.7",
     "ember-concurrency": "workspace:*",
     "ember-data": "~4.11.3",
     "ember-fetch": "^8.1.2",
@@ -64,6 +66,7 @@
     "prettier": "^2.8.4",
     "qunit": "^2.19.4",
     "qunit-dom": "^2.0.0",
+    "sass": "^1.22.12",
     "tracked-built-ins": "^3.1.1",
     "webpack": "^5.75.0"
   },

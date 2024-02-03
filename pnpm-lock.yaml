@@ -71,9 +71,11 @@ importers:
       ember-cli-dependency-checker: ^3.3.1
       ember-cli-htmlbars: ^6.2.0
       ember-cli-inject-live-reload: ^2.1.0
+      ember-cli-sass: ^10.0.1
       ember-cli-sri: ^2.1.1
       ember-cli-terser: ^4.0.2
       ember-code-snippet: ^3.0.0
+      ember-compatibility-helpers: ^1.2.7
       ember-concurrency: workspace:*
       ember-data: ~4.11.3
       ember-fetch: ^8.1.2
@@ -94,6 +96,7 @@ importers:
       prettier: ^2.8.4
       qunit: ^2.19.4
       qunit-dom: ^2.0.0
+      sass: ^1.22.12
       tracked-built-ins: ^3.1.1
       webpack: ^5.75.0
     devDependencies:
@@ -115,9 +118,11 @@ importers:
       ember-cli-dependency-checker: 3.3.2_ember-cli@4.11.0
       ember-cli-htmlbars: 6.3.0
       ember-cli-inject-live-reload: 2.1.0
+      ember-cli-sass: 10.0.1
       ember-cli-sri: 2.1.1
       ember-cli-terser: 4.0.2
       ember-code-snippet: 3.0.0
+      ember-compatibility-helpers: 1.2.7_@babel+core@7.23.9
       ember-concurrency: link:../ember-concurrency
       ember-data: 4.11.3_ezxyf6w2nhdhjbhsrzl5qpocjy
       ember-fetch: 8.1.2
@@ -138,6 +143,7 @@ importers:
       prettier: 2.8.8
       qunit: 2.20.0
       qunit-dom: 2.0.0
+      sass: 1.70.0
       tracked-built-ins: 3.3.0
       webpack: 5.90.1
 
@@ -3140,6 +3146,11 @@ packages:
     resolution: {integrity: sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==}
     dev: true
 
+  /binary-extensions/2.2.0:
+    resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
+    engines: {node: '>=8'}
+    dev: true
+
   /binaryextensions/2.3.0:
     resolution: {integrity: sha512-nAihlQsYGyc5Bwq6+EsubvANYGExeJKHDO3RjnvwU042fawQTQfM3Kxn7IHUXQOz4bzfwsGYYHGSvXyW4zOGLg==}
     engines: {node: '>=0.8'}
@@ -3686,6 +3697,17 @@ packages:
       - supports-color
     dev: true
 
+  /broccoli-sass-source-maps/4.2.4:
+    resolution: {integrity: sha512-MHwqLkgYW24T9k2OzprdYtERCAaO3wuSGqKna8QcAzCjDxYyoojisg2lfSWj9k2G72PlACUjUg8O39jttE84og==}
+    engines: {node: '>=10.24.1'}
+    dependencies:
+      broccoli-caching-writer: 3.0.3
+      include-path-searcher: 0.1.0
+      rsvp: 4.8.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /broccoli-slow-trees/3.1.0:
     resolution: {integrity: sha512-FRI7mRTk2wjIDrdNJd6znS7Kmmne4VkAkl8Ix1R/VoePFMD0g0tEl671xswzFqaRjpT9Qu+CC4hdXDLDJBuzMw==}
     dependencies:
@@ -3961,6 +3983,21 @@ packages:
     resolution: {integrity: sha512-wqW3VdPnlSWT4eRiYX+hcs+C6ViBPUWk1qTCd+37qw9kEm/a5n2qcyQDMBWvSYKN/ctqZzeXNQaeBjOetJJUkw==}
     dependencies:
       inherits: 2.0.4
+    dev: true
+
+  /chokidar/3.5.3:
+    resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
+    engines: {node: '>= 8.10.0'}
+    dependencies:
+      anymatch: 3.1.3
+      braces: 3.0.2
+      glob-parent: 5.1.2
+      is-binary-path: 2.1.0
+      is-glob: 4.0.3
+      normalize-path: 3.0.0
+      readdirp: 3.6.0
+    optionalDependencies:
+      fsevents: 2.3.3
     dev: true
 
   /chrome-trace-event/1.0.3:
@@ -5042,6 +5079,18 @@ packages:
       - supports-color
     dev: true
 
+  /ember-cli-sass/10.0.1:
+    resolution: {integrity: sha512-dWVoX03O2Mot1dEB1AN3ofC8DDZb6iU4Kfkbr3WYi9S9bGVHrpR/ngsR7tuVBuTugTyG53FPtLLqYdqx7XjXdA==}
+    engines: {node: 6.* || 8.* || >= 10.*}
+    dependencies:
+      broccoli-funnel: 2.0.2
+      broccoli-merge-trees: 3.0.2
+      broccoli-sass-source-maps: 4.2.4
+      ember-cli-version-checker: 2.2.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /ember-cli-sri/2.1.1:
     resolution: {integrity: sha512-YG/lojDxkur9Bnskt7xB6gUOtJ6aPl/+JyGYm9HNDk3GECVHB3SMN3rlGhDKHa1ndS5NK2W2TSLb9bzRbGlMdg==}
     engines: {node: '>= 0.10.0'}
@@ -5145,6 +5194,14 @@ packages:
       walk-sync: 2.2.0
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /ember-cli-version-checker/2.2.0:
+    resolution: {integrity: sha512-G+KtYIVlSOWGcNaTFHk76xR4GdzDLzAS4uxZUKdASuFX0KJE43C6DaqL+y3VTpUFLI2FIkAS6HZ4I1YBi+S3hg==}
+    engines: {node: '>= 4'}
+    dependencies:
+      resolve: 1.22.8
+      semver: 5.7.2
     dev: true
 
   /ember-cli-version-checker/3.1.3:
@@ -7269,6 +7326,10 @@ packages:
     engines: {node: '>= 4'}
     dev: true
 
+  /immutable/4.3.5:
+    resolution: {integrity: sha512-8eabxkth9gZatlwl5TBuJnCsoTADlL6ftEr7A4qgdaTsPyreilDSnUk57SO+jfKcNtxPa22U5KK6DSeAYhpBJw==}
+    dev: true
+
   /import-fresh/3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
@@ -7280,6 +7341,10 @@ packages:
   /imurmurhash/0.1.4:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
+    dev: true
+
+  /include-path-searcher/0.1.0:
+    resolution: {integrity: sha512-KlpXnsZOrBGo4PPKqPFi3Ft6dcRyh8fTaqgzqDRi8jKAsngJEWWOxeFIWC8EfZtXKaZqlsNf9XRwcQ49DVgl/g==}
     dev: true
 
   /indent-string/4.0.0:
@@ -7422,6 +7487,13 @@ packages:
     resolution: {integrity: sha512-zB9CruMamjym81i2JZ3UMn54PKGsQzsJeo6xvN3HJJ4CAsQNB6iRutp2To77OfCNuoxspsIhzaPoO1zyCEhFOg==}
     dependencies:
       has-bigints: 1.0.2
+    dev: true
+
+  /is-binary-path/2.1.0:
+    resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
+    engines: {node: '>=8'}
+    dependencies:
+      binary-extensions: 2.2.0
     dev: true
 
   /is-boolean-object/1.1.2:
@@ -9327,6 +9399,13 @@ packages:
       util-deprecate: 1.0.2
     dev: true
 
+  /readdirp/3.6.0:
+    resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
+    engines: {node: '>=8.10.0'}
+    dependencies:
+      picomatch: 2.3.1
+    dev: true
+
   /recast/0.18.10:
     resolution: {integrity: sha512-XNvYvkfdAN9QewbrxeTOjgINkdY/odTgTS56ZNEWL9Ml0weT4T3sFtvnTuF+Gxyu46ANcRm1ntrF6F5LAJPAaQ==}
     engines: {node: '>= 4'}
@@ -9763,6 +9842,16 @@ packages:
       micromatch: 4.0.5
       minimist: 1.2.8
       walker: 1.0.8
+    dev: true
+
+  /sass/1.70.0:
+    resolution: {integrity: sha512-uUxNQ3zAHeAx5nRFskBnrWzDUJrrvpCPD5FNAoRvTi0WwremlheES3tg+56PaVtCs5QDRX5CBLxxKMDJMEa1WQ==}
+    engines: {node: '>=14.0.0'}
+    hasBin: true
+    dependencies:
+      chokidar: 3.5.3
+      immutable: 4.3.5
+      source-map-js: 1.0.2
     dev: true
 
   /saxes/5.0.1:
