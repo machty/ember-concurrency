@@ -4,12 +4,12 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { task, timeout } from 'ember-concurrency';
-import { gte } from 'ember-compatibility-helpers';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
 
 module('Integration | no render breaking', function (hooks) {
   setupRenderingTest(hooks);
 
-  if (gte('3.15.0')) {
+  if (macroCondition(dependencySatisfies('ember-source', '>=3.15.0'))) {
     test('Issue #337 | internal task state updates do not trigger re-render assertions w/ auto-tracking', async function (assert) {
       assert.expect(1);
 

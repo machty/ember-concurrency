@@ -1,11 +1,15 @@
 import { setProperties } from '@ember/object';
 import { later, cancel } from '@ember/runloop';
-import { gte } from 'ember-compatibility-helpers';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
 import { EMBER_ENVIRONMENT } from './ember-environment';
 import { Yieldable } from './external/yieldables';
 
-export const USE_TRACKED = gte('3.16.0');
-export const assignProperties = USE_TRACKED ? Object.assign : setProperties;
+// Use tracked properties
+export const assignProperties = macroCondition(
+  dependencySatisfies('ember-source', '>=3.16.0')
+)
+  ? Object.assign
+  : setProperties;
 
 export function isEventedObject(c) {
   return (

@@ -1,5 +1,5 @@
 import { skip, test } from 'qunit';
-import { gte } from 'ember-compatibility-helpers';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
 import Ember from 'ember';
 import {
   importSync,
@@ -7,7 +7,9 @@ import {
   dependencySatisfies,
 } from '@embroider/macros';
 
-export const decoratorTest = gte('3.10.0') ? test : skip;
+export const decoratorTest = macroCondition(
+  dependencySatisfies('ember-source', '>=3.10.0')
+) ? test : skip;
 
 export function makeAsyncError(hooks) {
   hooks.afterEach(() => (Ember.onerror = null));

@@ -5,12 +5,12 @@ import { later } from '@ember/runloop';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { restartableTask, timeout } from 'ember-concurrency';
-import { gte } from 'ember-compatibility-helpers';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
 
 module('Integration | tracked use', function (hooks) {
   setupRenderingTest(hooks);
 
-  if (gte('3.16.0')) {
+  if (macroCondition(dependencySatisfies('ember-source', '>=3.16.0'))) {
     test('Issue #343 | Task: tracked use with getter', async function (assert) {
       assert.expect(2);
       const done = assert.async();

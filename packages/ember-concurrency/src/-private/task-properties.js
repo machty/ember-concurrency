@@ -1,7 +1,8 @@
 import Ember from 'ember';
 import { computed } from '@ember/object';
 import ComputedProperty from '@ember/object/computed';
-import { gte } from 'ember-compatibility-helpers';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+
 import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
 import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
 import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy';
@@ -17,7 +18,7 @@ export const propertyModifiers = {
    *
    * [See the Live Example](/docs/examples/route-tasks/1)
    *
-   * @method restartable
+   * @melithod restartable
    * @memberof TaskProperty
    * @instance
    */
@@ -195,7 +196,7 @@ export const propertyModifiers = {
 export let TaskProperty;
 export let TaskGroupProperty;
 
-if (gte('3.10.0')) {
+if (macroCondition(dependencySatisfies('ember-source', '>=3.10.0'))) {
   TaskProperty = class {};
   TaskGroupProperty = class {};
 } else {
@@ -293,7 +294,7 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
 
 const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
 export function taskComputed(fn) {
-  if (gte('3.10.0')) {
+  if (macroCondition(dependencySatisfies('ember-source', '>=3.10.0'))) {
     let cp = function (proto, key) {
       if (cp.setup !== undefined) {
         cp.setup(proto, key);
