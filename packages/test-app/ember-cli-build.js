@@ -1,24 +1,75 @@
-'use strict';
+"use strict";
 
-const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const EmberApp = require("ember-cli/lib/broccoli/ember-app");
+const { maybeEmbroider } = require("@embroider/test-setup");
+const urls = require("./lib/prember-urls");
 
 module.exports = function (defaults) {
   const app = new EmberApp(defaults, {
-    // Add options here
+    minifyJS: {
+      enabled: false,
+    },
+
+    snippetPaths: ["snippets"],
+    snippetSearchPaths: ["app", "tests/dummy/app", "addon"],
+
+    "ember-prism": {
+      components: ["javascript", "typescript", "bash", "markup"],
+    },
+
+    emberCliFontAwesome: {
+      useScss: true,
+    },
+
+    autoImport: {
+      forbidEval: true,
+      webpack: {
+        // Webpack won't auto-detect, because of "maintained node versions" in config/targets.js
+        target: "web",
+      },
+    },
+
+    prember: {
+      urls,
+      // GitHub Pages uses this filename to serve 404s
+      emptyFile: "404.html",
+    },
   });
 
-  // Use `app.import` to add additional libraries to the generated
-  // output files.
-  //
-  // If you need to use different assets in different
-  // environments, specify an object as the first parameter. That
-  // object's keys should be the environment name and the values
-  // should be the asset to use in that environment.
-  //
-  // If the library that you are including contains AMD or ES6
-  // modules that you would like to import into your application
-  // please specify an object with the list of modules as keys
-  // along with the exports of each module as its value.
+  /*
+    This build file specifies the options for the dummy test app of this
+    addon, located in `/tests/dummy`
+    This build file does *not* influence how the addon or the app using it
+    behave. You most likely want to be modifying `./index.js` or app's build file
+  */
 
-  return app.toTree();
+  return maybeEmbroider(app, {
+    packageRules: [
+      {
+        package: "dummy",
+        components: {
+          "{{e-c-test}}": {
+            safeToIgnore: true,
+          },
+          "{{inner-component}}": {
+            safeToIgnore: true,
+          },
+          "{{my-component}}": {
+            safeToIgnore: true,
+          },
+          "{{test-swallow-error}}": {
+            safeToIgnore: true,
+          },
+          "{{test-async-arrow-task}}": {
+            safeToIgnore: true,
+          },
+        },
+      },
+    ],
+    skipBabel: [
+      {
+        package: "qunit",
+      },
+    ],
+  });
 };

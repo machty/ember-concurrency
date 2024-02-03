@@ -71,6 +71,7 @@ importers:
       ember-cli-inject-live-reload: ^2.1.0
       ember-cli-sri: ^2.1.1
       ember-cli-terser: ^4.0.2
+      ember-code-snippet: ^3.0.0
       ember-concurrency: workspace:*
       ember-data: ~4.11.3
       ember-fetch: ^8.1.2
@@ -112,6 +113,7 @@ importers:
       ember-cli-inject-live-reload: 2.1.0
       ember-cli-sri: 2.1.1
       ember-cli-terser: 4.0.2
+      ember-code-snippet: 3.0.0
       ember-concurrency: link:../ember-concurrency
       ember-data: 4.11.3_ezxyf6w2nhdhjbhsrzl5qpocjy
       ember-fetch: 8.1.2
@@ -3406,6 +3408,13 @@ packages:
       - supports-color
     dev: true
 
+  /broccoli-flatiron/0.1.3:
+    resolution: {integrity: sha512-dD/4ck+LKOLTBzFlxP2zX7fhWt1TFMVR/88b9/wd8LkAHUyAzWs1vBah94ObSvajYGZ7ic+XvMXw+OhmvdlYoQ==}
+    dependencies:
+      broccoli-plugin: 1.3.1
+      mkdirp: 0.5.6
+    dev: true
+
   /broccoli-funnel-reducer/1.0.0:
     resolution: {integrity: sha512-SaOCEdh+wnt2jFUV2Qb32m7LXyElvFwW3NKNaEJyi5PGQNwxfqpkc0KI6AbQANKgdj/40U2UC0WuGThFwuEUaA==}
     dev: true
@@ -3457,6 +3466,21 @@ packages:
     dependencies:
       glob: 5.0.15
       mkdirp: 0.5.6
+    dev: true
+
+  /broccoli-merge-trees/1.2.4:
+    resolution: {integrity: sha512-RXJAleytlED0dxXGEo2EXwrg5cCesY8LQzzGRogwGQmluoz+ijzxajpyWAW6wu/AyuQZj1vgnIqnld8jvuuXtQ==}
+    dependencies:
+      broccoli-plugin: 1.3.1
+      can-symlink: 1.0.0
+      fast-ordered-set: 1.0.3
+      fs-tree-diff: 0.5.9
+      heimdalljs: 0.2.6
+      heimdalljs-logger: 0.1.10
+      rimraf: 2.7.1
+      symlink-or-copy: 1.3.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /broccoli-merge-trees/3.0.2:
@@ -4908,6 +4932,18 @@ packages:
     resolution: {integrity: sha512-k47TDwcJ2zPideBCZE8sCiShSxQSpebY2BHcX2DdipMmBox5gsfyVrbKJWIHeSTTKyEUgmBIvQkqTOozEziCZA==}
     dev: true
 
+  /ember-cli-htmlbars/3.1.0:
+    resolution: {integrity: sha512-cgvRJM73IT0aePUG7oQ/afB7vSRBV3N0wu9BrWhHX2zkR7A7cUBI7KC9VPk6tbctCXoM7BRGsCC4aIjF7yrfXA==}
+    engines: {node: 6.* || 8.* || >= 10.*}
+    dependencies:
+      broccoli-persistent-filter: 2.3.1
+      hash-for-dep: 1.5.1
+      json-stable-stringify: 1.1.1
+      strip-bom: 3.0.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /ember-cli-htmlbars/5.7.2:
     resolution: {integrity: sha512-Uj6R+3TtBV5RZoJY14oZn/sNPnc+UgmC8nb5rI4P3fR/gYoyTFIZSXiIM7zl++IpMoIrocxOrgt+mhonKphgGg==}
     engines: {node: 10.* || >= 12.*}
@@ -5285,6 +5321,21 @@ packages:
       - velocityjs
       - walrus
       - whiskers
+    dev: true
+
+  /ember-code-snippet/3.0.0:
+    resolution: {integrity: sha512-pvIpGPLma7m6WQ5+uOjwkzozIzRAqlUSQk9TMCrQQ/AeEGWtqTJvZyAtH9LoarPtudHtWCZkUqJXIqKsjIqAbw==}
+    engines: {node: 8.* || >= 10.*}
+    dependencies:
+      broccoli-flatiron: 0.1.3
+      broccoli-merge-trees: 1.2.4
+      broccoli-plugin: 1.3.1
+      ember-cli-babel: 7.26.11
+      ember-cli-htmlbars: 3.1.0
+      es6-promise: 1.0.0
+      glob: 7.2.3
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /ember-compatibility-helpers/1.2.7_@babel+core@7.23.9:
@@ -5741,6 +5792,10 @@ packages:
       is-callable: 1.2.7
       is-date-object: 1.0.5
       is-symbol: 1.0.4
+    dev: true
+
+  /es6-promise/1.0.0:
+    resolution: {integrity: sha512-8/2Juj7DeNMwxkbcruBmErKcgPSTPgaGIB08nQvlBzaqliW1vMliNOaBQaMzzQAxX9k0vGy+8wwWlgiLuKqZIw==}
     dev: true
 
   /escalade/3.1.1:
@@ -10216,6 +10271,11 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       ansi-regex: 5.0.1
+    dev: true
+
+  /strip-bom/3.0.0:
+    resolution: {integrity: sha512-vavAMRXOgBVNF6nyEEmL3DBK19iRpDcoIwW+swQ+CbGiu7lju6t+JklA1MHweoWtadgt4ISVUsXLyDq34ddcwA==}
+    engines: {node: '>=4'}
     dev: true
 
   /strip-bom/4.0.0:

@@ -1,7 +1,7 @@
   pollForChanges = task(async () => {
     while(true) {
-      yield pollServerForChanges();
+      await pollServerForChanges();
       if (Ember.testing) { return; }
-      yield timeout(5000);
+      await timeout(5000);
     }
   })
