@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-const EmberApp = require("ember-cli/lib/broccoli/ember-app");
-const { maybeEmbroider } = require("@embroider/test-setup");
-const urls = require("./lib/prember-urls");
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const { maybeEmbroider } = require('@embroider/test-setup');
+const urls = require('./lib/prember-urls');
 
 module.exports = function (defaults) {
   const app = new EmberApp(defaults, {
@@ -10,11 +10,11 @@ module.exports = function (defaults) {
       enabled: false,
     },
 
-    snippetPaths: ["snippets"],
-    snippetSearchPaths: ["app"],
+    snippetPaths: ['snippets'],
+    snippetSearchPaths: ['app'],
 
-    "ember-prism": {
-      components: ["javascript", "typescript", "bash", "markup"],
+    'ember-prism': {
+      components: ['javascript', 'typescript', 'bash', 'markup'],
     },
 
     emberCliFontAwesome: {
@@ -25,19 +25,23 @@ module.exports = function (defaults) {
       forbidEval: true,
       webpack: {
         // Webpack won't auto-detect, because of "maintained node versions" in config/targets.js
-        target: "web",
+        target: 'web',
       },
     },
 
     prember: {
       urls,
       // GitHub Pages uses this filename to serve 404s
-      emptyFile: "404.html",
+      emptyFile: '404.html',
     },
 
     babel: {
-      plugins: [require.resolve('ember-concurrency/transform-async-arrow-task-functions')]
-    }
+      plugins: [
+        require.resolve(
+          'ember-concurrency/babel-plugin-transform-ember-concurrency-async-tasks.js'
+        ),
+      ],
+    },
   });
 
   /*
@@ -49,21 +53,21 @@ module.exports = function (defaults) {
   return maybeEmbroider(app, {
     packageRules: [
       {
-        package: "test-app",
+        package: 'test-app',
         components: {
-          "{{e-c-test}}": {
+          '{{e-c-test}}': {
             safeToIgnore: true,
           },
-          "{{inner-component}}": {
+          '{{inner-component}}': {
             safeToIgnore: true,
           },
-          "{{my-component}}": {
+          '{{my-component}}': {
             safeToIgnore: true,
           },
-          "{{test-swallow-error}}": {
+          '{{test-swallow-error}}': {
             safeToIgnore: true,
           },
-          "{{test-async-arrow-task}}": {
+          '{{test-async-arrow-task}}': {
             safeToIgnore: true,
           },
         },
@@ -71,7 +75,7 @@ module.exports = function (defaults) {
     ],
     skipBabel: [
       {
-        package: "qunit",
+        package: 'qunit',
       },
     ],
   });

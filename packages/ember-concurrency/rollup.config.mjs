@@ -6,8 +6,6 @@ const addon = new Addon({
   destDir: "dist",
 });
 
-// todo: refer to https://github.com/embroider-build/addon-blueprint/blob/b1168b4616adf748bd713c5af39e104325982e9b/files/__addonLocation__/rollup.config.mjs#L4
-
 export default {
   // This provides defaults that work well alongside `publicEntrypoints` below.
   // You can augment this if you need to.
@@ -16,7 +14,6 @@ export default {
   plugins: [
     // These are the modules that users should be able to import from your
     // addon. Anything not listed here may get optimized away.
-    // addon.publicEntrypoints(["helpers/**/*.js"]),
     addon.publicEntrypoints(['index.js', '**/*.js']),
 
     // These are the modules that should get reexported into the traditional
