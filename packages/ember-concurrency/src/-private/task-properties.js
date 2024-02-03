@@ -1,7 +1,5 @@
 import Ember from 'ember';
 import { computed } from '@ember/object';
-import ComputedProperty from '@ember/object/computed';
-import { dependencySatisfies, macroCondition } from '@embroider/macros';
 
 import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
 import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
@@ -193,24 +191,8 @@ export const propertyModifiers = {
 
   @class TaskProperty
 */
-export let TaskProperty;
-export let TaskGroupProperty;
-
-if (macroCondition(dependencySatisfies('ember-source', '>=3.10.0'))) {
-  TaskProperty = class {};
-  TaskGroupProperty = class {};
-} else {
-  // Prior to the 3.10.0 refactors, we had to extend the _ComputedProperty class
-  // for a classic decorator/descriptor to run correctly.
-  TaskProperty = class extends ComputedProperty {
-    callSuperSetup() {
-      if (super.setup) {
-        super.setup(...arguments);
-      }
-    }
-  };
-  TaskGroupProperty = class extends ComputedProperty {};
-}
+export class TaskProperty {};
+export class TaskGroupProperty {};
 
 Object.assign(TaskGroupProperty.prototype, propertyModifiers);
 Object.assign(TaskProperty.prototype, propertyModifiers, {

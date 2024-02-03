@@ -11,7 +11,6 @@ import {
   race,
 } from 'ember-concurrency';
 import { alias } from '@ember/object/computed';
-import { decoratorTest } from '../helpers/helpers';
 
 const EventedObject = EmberObject.extend(Evented);
 
@@ -431,44 +430,41 @@ module(
       assert.strictEqual(ev, 456);
     });
 
-    decoratorTest(
-      'waitForProperty works on an ES class',
-      async function (assert) {
-        assert.expect(1);
+    test('waitForProperty works on an ES class', async function (assert) {
+      assert.expect(1);
 
-        let values = [];
-        class Obj {
-          a = 1;
+      let values = [];
+      class Obj {
+        a = 1;
 
-          // eslint-disable-next-line ember/no-computed-properties-in-native-classes
-          @computed('a')
-          get b() {
-            return this.a;
-          }
-
-          @task *task() {
-            let result = yield waitForProperty(this, 'b', (v) => {
-              values.push(v);
-              return v == 3 ? 'done' : false;
-            });
-            values.push(`val=${result}`);
-          }
+        // eslint-disable-next-line ember/no-computed-properties-in-native-classes
+        @computed('a')
+        get b() {
+          return this.a;
         }
 
-        let obj = new Obj();
-        obj.task.perform();
-
-        set(obj, 'a', 2);
-        await settled();
-
-        set(obj, 'a', 3);
-        await settled();
-
-        set(obj, 'a', 4);
-        await settled();
-
-        assert.deepEqual(values, [1, 2, 3, 'val=3']);
+        @task *task() {
+          let result = yield waitForProperty(this, 'b', (v) => {
+            values.push(v);
+            return v == 3 ? 'done' : false;
+          });
+          values.push(`val=${result}`);
+        }
       }
-    );
+
+      let obj = new Obj();
+      obj.task.perform();
+
+      set(obj, 'a', 2);
+      await settled();
+
+      set(obj, 'a', 3);
+      await settled();
+
+      set(obj, 'a', 4);
+      await settled();
+
+      assert.deepEqual(values, [1, 2, 3, 'val=3']);
+    });
   }
 );

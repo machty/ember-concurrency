@@ -10,7 +10,6 @@ import Ember from 'ember';
 import { task, timeout, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
 import { destroy } from '@ember/destroyable';
-import { decoratorTest } from '../helpers/helpers';
 
 const originalLog = console.log;
 const originalWarn = console.warn;
@@ -577,7 +576,7 @@ module('Unit: task', function (hooks) {
     });
   });
 
-  decoratorTest('ES classes: syntax with decorators works', function (assert) {
+  test('ES classes: syntax with decorators works', function (assert) {
     const done = assert.async(2);
 
     class FakeGlimmerComponent {
@@ -597,58 +596,52 @@ module('Unit: task', function (hooks) {
     later(done, 1);
   });
 
-  decoratorTest(
-    'ES classes: performing a task on a destroyed object returns an immediately-canceled taskInstance',
-    function (assert) {
-      assert.expect(2);
+  test('ES classes: performing a task on a destroyed object returns an immediately-canceled taskInstance', function (assert) {
+    assert.expect(2);
 
-      class Obj {
-        @task *task() {
-          throw new Error("shouldn't get here");
-        }
+    class Obj {
+      @task *task() {
+        throw new Error("shouldn't get here");
+      }
+    }
+
+    let obj;
+    run(() => {
+      obj = new Obj();
+      destroy(obj);
+      assert.strictEqual(obj.task.perform().isDropped, true);
+    });
+
+    run(() => {
+      assert.strictEqual(obj.task.perform().isDropped, true);
+    });
+  });
+
+  test('ES classes: task discontinues after destruction when blocked on async values', function (assert) {
+    let start = assert.async();
+    assert.expect(1);
+
+    class Obj {
+      @task *doStuff() {
+        assert.ok(true);
+        yield timeout(1000);
+        assert.ok(false);
+        yield timeout(1000);
       }
 
-      let obj;
-      run(() => {
-        obj = new Obj();
-        destroy(obj);
-        assert.strictEqual(obj.task.perform().isDropped, true);
-      });
-
-      run(() => {
-        assert.strictEqual(obj.task.perform().isDropped, true);
-      });
-    }
-  );
-
-  decoratorTest(
-    'ES classes: task discontinues after destruction when blocked on async values',
-    function (assert) {
-      let start = assert.async();
-      assert.expect(1);
-
-      class Obj {
-        @task *doStuff() {
-          assert.ok(true);
-          yield timeout(1000);
-          assert.ok(false);
-          yield timeout(1000);
-        }
-
-        constructor() {
-          this.doStuff.perform();
-        }
+      constructor() {
+        this.doStuff.perform();
       }
-
-      let obj;
-      run(() => {
-        obj = new Obj();
-      });
-
-      later(() => {
-        destroy(obj);
-        start();
-      });
     }
-  );
+
+    let obj;
+    run(() => {
+      obj = new Obj();
+    });
+
+    later(() => {
+      destroy(obj);
+      start();
+    });
+  });
 });

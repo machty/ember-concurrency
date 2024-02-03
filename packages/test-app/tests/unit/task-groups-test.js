@@ -3,7 +3,6 @@ import RSVP from 'rsvp';
 import EmberObject from '@ember/object';
 import { task, taskGroup, forever } from 'ember-concurrency';
 import { module, test } from 'qunit';
-import { decoratorTest } from '../helpers/helpers';
 
 module('Unit: task groups', function () {
   function assertStates(assert, task, isRunning, isQueued, isIdle, suffix) {
@@ -226,41 +225,38 @@ module('Unit: task groups', function () {
     assertRunning();
   });
 
-  decoratorTest(
-    'ES class syntax with decorators works with task groups',
-    function (assert) {
-      assert.expect(12);
+  test('ES class syntax with decorators works with task groups', function (assert) {
+    assert.expect(12);
 
-      let deferA, deferB;
-      class FakeGlimmerComponent {
-        @taskGroup({ enqueue: true }) tg;
+    let deferA, deferB;
+    class FakeGlimmerComponent {
+      @taskGroup({ enqueue: true }) tg;
 
-        @task({ group: 'tg' }) *taskA() {
-          deferA = RSVP.defer();
-          yield deferA.promise;
-        }
-
-        @task({ group: 'tg' }) *taskB() {
-          deferB = RSVP.defer();
-          yield deferB.promise;
-        }
+      @task({ group: 'tg' }) *taskA() {
+        deferA = RSVP.defer();
+        yield deferA.promise;
       }
 
-      let obj, taskA, taskB, suffix, tg;
-
-      run(() => {
-        obj = new FakeGlimmerComponent();
-        tg = obj.tg;
-        taskA = obj.taskA;
-        taskB = obj.taskB;
-
-        taskA.perform();
-      });
-
-      suffix = 'performing taskA';
-      assertStates(assert, tg, true, false, false, suffix);
-      assertStates(assert, taskA, true, false, false, suffix);
-      assertStates(assert, taskB, false, false, true, suffix);
+      @task({ group: 'tg' }) *taskB() {
+        deferB = RSVP.defer();
+        yield deferB.promise;
+      }
     }
-  );
+
+    let obj, taskA, taskB, suffix, tg;
+
+    run(() => {
+      obj = new FakeGlimmerComponent();
+      tg = obj.tg;
+      taskA = obj.taskA;
+      taskB = obj.taskB;
+
+      taskA.perform();
+    });
+
+    suffix = 'performing taskA';
+    assertStates(assert, tg, true, false, false, suffix);
+    assertStates(assert, taskA, true, false, false, suffix);
+    assertStates(assert, taskB, false, false, true, suffix);
+  });
 });

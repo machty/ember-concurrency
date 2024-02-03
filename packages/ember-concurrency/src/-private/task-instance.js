@@ -1,6 +1,5 @@
 import { BaseTaskInstance } from './external/task-instance/base';
 import { TRACKED_INITIAL_INSTANCE_STATE } from './tracked-state';
-import { assignProperties } from './utils';
 
 /**
   A `TaskInstance` represent a single execution of a
@@ -24,7 +23,7 @@ import { assignProperties } from './utils';
 export class TaskInstance extends BaseTaskInstance {
   setState(props) {
     let state = this._recomputeState(props);
-    assignProperties(this, {
+    Object.assign(this, {
       ...props,
       isRunning: !props.isFinished,
       isDropped: state === 'dropped',

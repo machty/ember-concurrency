@@ -1,15 +1,6 @@
-import { setProperties } from '@ember/object';
 import { later, cancel } from '@ember/runloop';
-import { dependencySatisfies, macroCondition } from '@embroider/macros';
 import { EMBER_ENVIRONMENT } from './ember-environment';
 import { Yieldable } from './external/yieldables';
-
-// Use tracked properties
-export const assignProperties = macroCondition(
-  dependencySatisfies('ember-source', '>=3.16.0')
-)
-  ? Object.assign
-  : setProperties;
 
 export function isEventedObject(c) {
   return (

@@ -1,10 +1,9 @@
-import { module } from 'qunit';
+import { module, test } from 'qunit';
 import EmberObject from '@ember/object';
 import { task, lastValue } from 'ember-concurrency';
-import { decoratorTest } from '../helpers/helpers';
 
 module('Unit | lastValue', function () {
-  decoratorTest('without a default value', async function (assert) {
+  test('without a default value', async function (assert) {
     class ObjectWithTask extends EmberObject {
       @task task = function* () {
         return yield 'foo';
@@ -29,7 +28,7 @@ module('Unit | lastValue', function () {
     );
   });
 
-  decoratorTest('with a default value', async function (assert) {
+  test('with a default value', async function (assert) {
     class ObjectWithTaskDefaultValue extends EmberObject {
       @task task = function* () {
         return yield 'foo';

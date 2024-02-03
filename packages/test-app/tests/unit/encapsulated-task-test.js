@@ -4,7 +4,6 @@ import EmberObject, { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
-import { decoratorTest } from '../helpers/helpers';
 
 module('Unit: EncapsulatedTask', function () {
   test('encapsulated tasks can be specified via a pojos with perform methods', function (assert) {
@@ -108,69 +107,63 @@ module('Unit: EncapsulatedTask', function () {
     assert.false(taskInstance.amIRunning);
   });
 
-  decoratorTest(
-    'encapsulated tasks work with native ES classes and decorators',
-    function (assert) {
-      assert.expect(2);
+  test('encapsulated tasks work with native ES classes and decorators', function (assert) {
+    assert.expect(2);
 
-      let defer;
+    let defer;
 
-      class FakeGlimmerComponent {
-        @task myTask = {
-          *perform(...args) {
-            assert.deepEqual(args, [1, 2, 3]);
-            defer = RSVP.defer();
-            yield defer.promise;
-            return 123;
-          },
-        };
-      }
+    class FakeGlimmerComponent {
+      @task myTask = {
+        *perform(...args) {
+          assert.deepEqual(args, [1, 2, 3]);
+          defer = RSVP.defer();
+          yield defer.promise;
+          return 123;
+        },
+      };
+    }
 
-      let obj;
-      run(() => {
-        obj = new FakeGlimmerComponent();
-        obj.myTask.perform(1, 2, 3).then((v) => {
-          assert.strictEqual(v, 123);
-        });
+    let obj;
+    run(() => {
+      obj = new FakeGlimmerComponent();
+      obj.myTask.perform(1, 2, 3).then((v) => {
+        assert.strictEqual(v, 123);
       });
-      run(defer, 'resolve');
+    });
+    run(defer, 'resolve');
+  });
+
+  test('native ES class encapsulated tasks can modify their state', async function (assert) {
+    assert.expect(4);
+
+    let defer;
+
+    class FakeComponent {
+      @task myTask = {
+        someProp: 0,
+
+        doubled: computed('someProp', function () {
+          return this.someProp * 2;
+        }),
+
+        *perform() {
+          defer = RSVP.defer();
+          let whatProp = this.someProp;
+          yield defer.promise;
+          // eslint-disable-next-line ember/classic-decorator-no-classic-methods
+          this.set('someProp', whatProp + 1);
+        },
+      };
     }
-  );
 
-  decoratorTest(
-    'native ES class encapsulated tasks can modify their state',
-    async function (assert) {
-      assert.expect(4);
+    let obj = new FakeComponent();
+    const taskInstance = obj.myTask.perform(1, 2, 3);
+    assert.strictEqual(taskInstance.someProp, 0);
+    assert.strictEqual(taskInstance.doubled, 0);
 
-      let defer;
-
-      class FakeComponent {
-        @task myTask = {
-          someProp: 0,
-
-          doubled: computed('someProp', function () {
-            return this.someProp * 2;
-          }),
-
-          *perform() {
-            defer = RSVP.defer();
-            let whatProp = this.someProp;
-            yield defer.promise;
-            // eslint-disable-next-line ember/classic-decorator-no-classic-methods
-            this.set('someProp', whatProp + 1);
-          },
-        };
-      }
-
-      let obj = new FakeComponent();
-      const taskInstance = obj.myTask.perform(1, 2, 3);
-      assert.strictEqual(taskInstance.someProp, 0);
-      assert.strictEqual(taskInstance.doubled, 0);
-
-      defer.resolve();
-      await taskInstance;
-      assert.strictEqual(taskInstance.someProp, 1);
-      assert.strictEqual(taskInstance.doubled, 2);
-    }
-  );
+    defer.resolve();
+    await taskInstance;
+    assert.strictEqual(taskInstance.someProp, 1);
+    assert.strictEqual(taskInstance.doubled, 2);
+  });
 });

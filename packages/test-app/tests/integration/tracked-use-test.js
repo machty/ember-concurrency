@@ -5,97 +5,94 @@ import { later } from '@ember/runloop';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { restartableTask, timeout } from 'ember-concurrency';
-import { dependencySatisfies, macroCondition } from '@embroider/macros';
 
 module('Integration | tracked use', function (hooks) {
   setupRenderingTest(hooks);
 
-  if (macroCondition(dependencySatisfies('ember-source', '>=3.16.0'))) {
-    test('Issue #343 | Task: tracked use with getter', async function (assert) {
-      assert.expect(2);
-      const done = assert.async();
+  test('Issue #343 | Task: tracked use with getter', async function (assert) {
+    assert.expect(2);
+    const done = assert.async();
 
-      this.owner.register(
-        'component:e-c-test',
-        class ECTest extends Component {
-          layout = hbs`<div>{{#if this.exampleTask.isRunning}}running{{else}}{{this.value}}{{/if}}</div>`;
+    this.owner.register(
+      'component:e-c-test',
+      class ECTest extends Component {
+        layout = hbs`<div>{{#if this.exampleTask.isRunning}}running{{else}}{{this.value}}{{/if}}</div>`;
 
-          constructor() {
-            super(...arguments);
-            this.exampleTask.perform();
-          }
-
-          get value() {
-            if (this.exampleTask.last) {
-              return this.exampleTask.last.value;
-            }
-
-            return null;
-          }
-
-          @restartableTask *exampleTask() {
-            yield timeout(1000);
-            return 'done';
-          }
+        constructor() {
+          super(...arguments);
+          this.exampleTask.perform();
         }
-      );
 
-      render(hbs`<ECTest />`);
-
-      later(() => {
-        assert.dom('div').hasText('running');
-      }, 400);
-
-      later(() => {
-        assert.dom('div').hasText('done');
-
-        done();
-      }, 1500);
-    });
-
-    test('Issue #343 | TaskGroup: tracked use with getter', async function (assert) {
-      assert.expect(2);
-      const done = assert.async();
-
-      this.owner.register(
-        'component:e-c-test',
-        class ECTest extends Component {
-          layout = hbs`<div>{{#if this.exampleGroup.isRunning}}running{{else}}{{this.value}}{{/if}}</div>`;
-
-          constructor() {
-            super(...arguments);
-            this.exampleTask.perform();
+        get value() {
+          if (this.exampleTask.last) {
+            return this.exampleTask.last.value;
           }
 
-          get value() {
-            if (this.exampleGroup.last) {
-              return this.exampleGroup.last.value;
-            }
-
-            return null;
-          }
-
-          @taskGroup({ restartable: true }) exampleGroup;
-
-          @task({ group: 'exampleGroup' })
-          *exampleTask() {
-            yield timeout(1000);
-            return 'done';
-          }
+          return null;
         }
-      );
 
-      render(hbs`<ECTest />`);
+        @restartableTask *exampleTask() {
+          yield timeout(1000);
+          return 'done';
+        }
+      }
+    );
 
-      later(() => {
-        assert.dom('div').hasText('running');
-      }, 400);
+    render(hbs`<ECTest />`);
 
-      later(() => {
-        assert.dom('div').hasText('done');
+    later(() => {
+      assert.dom('div').hasText('running');
+    }, 400);
 
-        done();
-      }, 1500);
-    });
-  }
+    later(() => {
+      assert.dom('div').hasText('done');
+
+      done();
+    }, 1500);
+  });
+
+  test('Issue #343 | TaskGroup: tracked use with getter', async function (assert) {
+    assert.expect(2);
+    const done = assert.async();
+
+    this.owner.register(
+      'component:e-c-test',
+      class ECTest extends Component {
+        layout = hbs`<div>{{#if this.exampleGroup.isRunning}}running{{else}}{{this.value}}{{/if}}</div>`;
+
+        constructor() {
+          super(...arguments);
+          this.exampleTask.perform();
+        }
+
+        get value() {
+          if (this.exampleGroup.last) {
+            return this.exampleGroup.last.value;
+          }
+
+          return null;
+        }
+
+        @taskGroup({ restartable: true }) exampleGroup;
+
+        @task({ group: 'exampleGroup' })
+        *exampleTask() {
+          yield timeout(1000);
+          return 'done';
+        }
+      }
+    );
+
+    render(hbs`<ECTest />`);
+
+    later(() => {
+      assert.dom('div').hasText('running');
+    }, 400);
+
+    later(() => {
+      assert.dom('div').hasText('done');
+
+      done();
+    }, 1500);
+  });
 });

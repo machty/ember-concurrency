@@ -1,4 +1,4 @@
-import { module } from 'qunit';
+import { module, test } from 'qunit';
 import { run } from '@ember/runloop';
 import EmberObject from '@ember/object';
 import { setOwner } from '@ember/application';
@@ -9,11 +9,10 @@ import {
   keepLatestTask,
   enqueueTask,
 } from 'ember-concurrency';
-import { decoratorTest } from '../helpers/helpers';
 import { settled } from '@ember/test-helpers';
 
 module('Unit | decorators', function () {
-  decoratorTest('Basic decorators functionality', function (assert) {
+  test('Basic decorators functionality', function (assert) {
     assert.expect(5);
 
     class TestSubject {
@@ -67,7 +66,7 @@ module('Unit | decorators', function () {
     assert.strictEqual(subject.d.last.value, 34);
   });
 
-  decoratorTest('Encapsulated tasks', function (assert) {
+  test('Encapsulated tasks', function (assert) {
     assert.expect(1);
 
     class TestSubject {
@@ -89,7 +88,7 @@ module('Unit | decorators', function () {
     assert.strictEqual(subject.encapsulated.last.value, 56);
   });
 
-  decoratorTest(
+  test(
     '`observes` re-performs the task every time the observed property changes in a coalesced manner',
     async function (assert) {
       assert.expect(2);

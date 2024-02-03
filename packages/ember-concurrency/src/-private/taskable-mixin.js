@@ -1,5 +1,3 @@
-import { assignProperties } from './utils';
-
 export const TASKABLE_MIXIN = {
   _performCount: 0,
 
@@ -15,7 +13,7 @@ export const TASKABLE_MIXIN = {
       isIdle: !isRunning && !isQueued,
       state: isRunning ? 'running' : 'idle',
     });
-    assignProperties(this, derivedState);
+    Object.assign(this, derivedState);
   },
 
   onState(state, task) {
