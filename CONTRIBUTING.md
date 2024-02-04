@@ -32,18 +32,6 @@ For more information on using ember-cli, visit [https://cli.emberjs.com/release/
 npx release-it
 ```
 
-### Generate API Docs
-
-TODO: use build pipeline.
-* From addon root directory `pnpm docs:build`
-* View built docs in `packages/test-app/public/api`
-
 ### Publishing Guides and API Docs
 
-(Requires commit access.)
-
-```
-cd packages/test-app
-./node_modules/.bin/ember github-pages:commit
-git push origin gh-pages:gh-pages
-```
+The [docs site](https://www.ember-concurrency.com) is built and deployed when merging to master. See [docs.yml](./.github/workflows/deploy-docs.yml).
