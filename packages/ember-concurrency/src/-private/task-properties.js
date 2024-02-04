@@ -17,7 +17,7 @@ export const propertyModifiers = {
    *
    * [See the Live Example](/docs/examples/route-tasks/1)
    *
-   * @melithod restartable
+   * @method restartable
    * @memberof TaskProperty
    * @instance
    */
