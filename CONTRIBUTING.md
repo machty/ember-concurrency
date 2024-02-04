@@ -43,6 +43,7 @@ TODO: use build pipeline.
 (Requires commit access.)
 
 ```
+cd packages/test-app
 ./node_modules/.bin/ember github-pages:commit
 git push origin gh-pages:gh-pages
 ```
