@@ -1,5 +1,8 @@
 # Changelog
 
+### 4.0.0-beta.0
+  - Convert to V2 Addon (#551)
+
 ### 3.1.1
   - Add ember 5 as peerDependencies (#542)
 
