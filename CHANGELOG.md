@@ -1,5 +1,8 @@
 # Changelog
 
+### 4.0.0-beta.1
+  - Fix missing transform in NPM package.
+
 ### 4.0.0-beta.0
   - Convert to V2 Addon (#551)
 
