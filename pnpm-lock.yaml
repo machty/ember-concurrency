@@ -150,6 +150,9 @@ importers:
       ember-cli-dependency-checker:
         specifier: ^3.3.1
         version: 3.3.2(ember-cli@4.11.0)
+      ember-cli-github-pages:
+        specifier: ^0.2.2
+        version: 0.2.2
       ember-cli-htmlbars:
         specifier: ^6.2.0
         version: 6.3.0
@@ -5254,6 +5257,14 @@ packages:
 
   /ember-cli-get-component-path-option@1.0.0:
     resolution: {integrity: sha512-k47TDwcJ2zPideBCZE8sCiShSxQSpebY2BHcX2DdipMmBox5gsfyVrbKJWIHeSTTKyEUgmBIvQkqTOozEziCZA==}
+
+  /ember-cli-github-pages@0.2.2:
+    resolution: {integrity: sha512-pFtruVBZ5OW1O1MiGQRQSQewW9DSBx6ZbRcbVpcpTlZqeDyWs5nyvhOm4qRFwK6m+jQPe2l52cYtf1rUAkBNxA==}
+    engines: {node: 8.* || >= 10.*}
+    dependencies:
+      ember-cli-version-checker: 2.2.0
+      rsvp: 4.8.5
+    dev: true
 
   /ember-cli-htmlbars@3.1.0:
     resolution: {integrity: sha512-cgvRJM73IT0aePUG7oQ/afB7vSRBV3N0wu9BrWhHX2zkR7A7cUBI7KC9VPk6tbctCXoM7BRGsCC4aIjF7yrfXA==}
