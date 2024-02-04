@@ -8,7 +8,7 @@
     "lint:fix": "pnpm run --filter '*' lint:fix",
     "test": "pnpm --filter test-app run test",
     "test:ember": "pnpm --filter test-app run test:ember",
-    "docs:build": "node_modules/.bin/jsdoc -c .jsdoc --verbose"
+    "docs:build": "pnpm --filter test-app run docs:build"
   },
   "devDependencies": {
     "concurrently": "^8.0.0"

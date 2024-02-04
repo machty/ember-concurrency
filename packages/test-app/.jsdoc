@@ -1,12 +1,12 @@
 {
   "opts": {
-    "destination": "packages/test-app/public/api/",
+    "destination": "public/api/",
     "readme": "API.md",
     "recurse": true
   },
   "plugins": ["plugins/markdown"],
   "source": {
-    "include": ["addon"]
+    "include": ["../ember-concurrency/src"]
   },
   "sourceType": "module"
 }
