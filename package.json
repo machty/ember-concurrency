@@ -1,7 +1,6 @@
 {
   "private": true,
   "scripts": {
-    "prepack": "pnpm --filter ember-concurrency run prepack",
     "start": "concurrently 'pnpm:start:*' --restart-after 5000 --prefix-colors cyan,white,yellow",
     "start:addon": "pnpm --filter ember-concurrency run start",
     "start:test-app": "pnpm --filter test-app run start",
