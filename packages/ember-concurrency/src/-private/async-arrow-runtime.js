@@ -2,7 +2,7 @@ import { TaskFactory } from './task-factory';
 
 /**
  * This builder function is called by the transpiled code from
- * `task(async () => {})`. See lib/babel-plugin-transform-ember-concurrency-async-tasks.js
+ * `task(async () => {})`. See async-arrow-task-transform.js
  *
  * @private
  */

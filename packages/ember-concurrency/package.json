@@ -52,7 +52,7 @@
     ".": "./dist/index.js",
     "./*": "./dist/*",
     "./addon-main.js": "./addon-main.cjs",
-    "./babel-plugin-transform-ember-concurrency-async-tasks.js": "./babel-plugin-transform-ember-concurrency-async-tasks.js"
+    "./async-arrow-task-transform": "./async-arrow-task-transform.js"
   },
   "keywords": [
     "ember-addon",
