@@ -44,7 +44,7 @@
     "ember-cli-app-version": "^6.0.0",
     "ember-cli-babel": "^7.26.11",
     "ember-cli-dependency-checker": "^3.3.1",
-    "ember-cli-github-pages": "^0.2.2",
+    "ember-cli-fastboot": "^4.1.2",
     "ember-cli-htmlbars": "^6.2.0",
     "ember-cli-inject-live-reload": "^2.1.0",
     "ember-cli-sass": "^10.0.1",
@@ -84,6 +84,9 @@
     "typescript": "^5.3.3",
     "webpack": "^5.75.0"
   },
+  "fastbootDependencies": [
+    "crypto"
+  ],
   "engines": {
     "node": "14.* || 16.* || >= 18"
   },
