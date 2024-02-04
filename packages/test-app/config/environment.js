@@ -18,6 +18,8 @@ module.exports = function (environment) {
       // Here you can pass flags/options to your application instance
       // when it is created
     },
+    
+    emberConcurrencyVersion: require('../../ember-concurrency/package.json').version,
 
     fastboot: {
       hostWhitelist: [/^localhost:\d+$/, 'ember-concurrency.com'],

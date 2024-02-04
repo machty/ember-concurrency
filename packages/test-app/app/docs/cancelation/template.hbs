@@ -21,7 +21,8 @@
   be wondering, how does e-c get around this limitation? The answer is that behind the scenes,
   ember-concurrency uses a Babel transform to convert your async arrow function into a
   <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">Generator Function</a>,
-  which are able to be cancelled.
+  which are able to be cancelled. (Please see the <LinkTo @route="docs.installation">Installation Docs</LinkTo> on
+  how to install this transform.)
 </p>
 
 <h4>Implicit Cancelation via Task Modifiers</h4>
