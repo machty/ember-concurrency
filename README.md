@@ -18,7 +18,7 @@ found [here](http://ember-concurrency.com).
 
 The [ember-concurrency documentation site](http://ember-concurrency.com) is an ember-cli app
 with interactive examples powered by ember-concurrency. It runs from
-ember-concurrency's [dummy test app](https://github.com/machty/ember-concurrency/tree/master/tests/dummy/app).
+ember-concurrency's [test app](https://github.com/machty/ember-concurrency/tree/master/packages/test-app/app).
 
 ## Problems?
 

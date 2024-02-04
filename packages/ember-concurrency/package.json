@@ -1,0 +1,100 @@
+{
+  "name": "ember-concurrency",
+  "version": "3.1.1",
+  "description": "Improved concurrency/async primitives for Ember.js",
+  "scripts": {
+    "build": "rollup --config",
+    "lint": "concurrently 'npm:lint:*(!fix)' --names 'lint:'",
+    "lint:fix": "concurrently 'npm:lint:*:fix' --names 'fix:'",
+    "lint:hbs": "ember-template-lint .",
+    "lint:hbs:fix": "ember-template-lint . --fix",
+    "lint:js": "eslint . --cache",
+    "lint:js:fix": "eslint . --fix",
+    "start": "rollup --config --watch",
+    "test": "echo 'Addon does not have tests, run tests in test-app'",
+    "prepare": "pnpm build"
+  },
+  "peerDependencies": {
+    "ember-source": "^3.28.0 || ^4.0.0 || >=5.0.0",
+    "@glimmer/tracking": "^1.1.2",
+    "@glint/template": ">= 1.0.0"
+  },
+  "engines": {
+    "node": "16.* || >= 18"
+  },
+  "types": "./addon/index.d.ts",
+  "devDependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-decorators": "^7.23.9",
+    "@embroider/addon-dev": "^4.2.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@tsconfig/ember": "^3.0.3",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "ember-template-lint": "^5.6.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-ember": "^11.4.7",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-qunit": "^7.3.4",
+    "prettier": "^2.8.4",
+    "rollup": "^4.9.6",
+    "typescript": "^5.3.3"
+  },
+  "files": [
+    "addon-main.cjs",
+    "dist",
+    "src/build"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*",
+    "./addon-main.js": "./addon-main.cjs",
+    "./async-arrow-task-transform": "./async-arrow-task-transform.js"
+  },
+  "keywords": [
+    "ember-addon",
+    "concurrency",
+    "task",
+    "tasks",
+    "cancellation",
+    "cancelation"
+  ],
+  "repository": "https://github.com/machty/ember-concurrency",
+  "license": "MIT",
+  "author": "Alex Matchneer <machty@gmail.com>",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "dependencies": {
+    "@babel/helper-plugin-utils": "^7.12.13",
+    "@babel/types": "^7.12.13",
+    "decorator-transforms": "^1.0.1",
+    "@embroider/addon-shim": "^1.8.7"
+  },
+  "ember": {
+    "version": 2,
+    "app-js": "./app"
+  },
+  "ember-addon": {
+    "demoURL": "http://ember-concurrency.com/",
+    "versionCompatibility": {
+      "ember": ">=3.8.0"
+    },
+    "version": 2,
+    "type": "addon",
+    "main": "addon-main.cjs",
+    "app-js": {
+      "./helpers/cancel-all.js": "./dist/_app_/helpers/cancel-all.js",
+      "./helpers/perform.js": "./dist/_app_/helpers/perform.js",
+      "./helpers/task.js": "./dist/_app_/helpers/task.js"
+    }
+  },
+  "volta": {
+    "node": "16.19.0",
+    "pnpm": "7.33.6"
+  }
+}

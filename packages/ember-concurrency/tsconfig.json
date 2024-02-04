@@ -1,0 +1,42 @@
+{
+  "extends": "@tsconfig/ember/tsconfig.json",
+  "include": [
+    "src/**/*",
+    "unpublished-development-types/**/*"
+  ],
+  "glint": {
+    "environment": ["ember-loose", "ember-template-imports"]
+  },
+  "compilerOptions": {
+    "allowJs": true,
+    "declarationDir": "declarations",
+
+    /**
+      https://www.typescriptlang.org/tsconfig#rootDir
+      "Default: The longest common path of all non-declaration input files."
+
+      Because we want our declarations' structure to match our rollup output,
+      we need this "rootDir" to match the "srcDir" in the rollup.config.mjs.
+
+      This way, we can have simpler `package.json#exports` that matches
+      imports to files on disk
+    */
+    "rootDir": "./src",
+
+    /**
+      https://www.typescriptlang.org/tsconfig#verbatimModuleSyntax
+
+      We don't want to include types dependencies in our compiled output, so tell TypeScript
+      to enforce using `import type` instead of `import` for Types.
+     */
+    "verbatimModuleSyntax": true,
+
+    /**
+      https://www.typescriptlang.org/tsconfig#allowImportingTsExtensions
+
+      We want our tooling to know how to resolve our custom files so the appropriate plugins
+      can do the proper transformations on those files.
+    */
+    "allowImportingTsExtensions": true
+  }
+}
