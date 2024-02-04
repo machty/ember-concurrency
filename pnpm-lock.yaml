@@ -19,6 +19,7 @@ importers:
       '@embroider/addon-shim': ^1.8.7
       '@glimmer/tracking': ^1.1.2
       '@rollup/plugin-babel': ^6.0.4
+      '@tsconfig/ember': ^3.0.3
       '@typescript-eslint/eslint-plugin': ^6.14.0
       '@typescript-eslint/parser': ^6.14.0
       ember-template-lint: ^5.6.0
@@ -43,6 +44,7 @@ importers:
       '@babel/plugin-proposal-decorators': 7.23.9_@babel+core@7.23.9
       '@embroider/addon-dev': 4.2.0_rollup@4.9.6
       '@rollup/plugin-babel': 6.0.4_daf6xcxwfqzb424pswgspmjhkq
+      '@tsconfig/ember': 3.0.3
       '@typescript-eslint/eslint-plugin': 6.20.0_ecvl2sdc5evmhaeopegx5qwf6q
       '@typescript-eslint/parser': 6.20.0_4vyosxxjef3etqzmrgpo56bcwy
       ember-template-lint: 5.13.0
@@ -64,6 +66,7 @@ importers:
       '@embroider/test-setup': ^2.1.1
       '@glimmer/component': ^1.1.2
       '@glimmer/tracking': ^1.1.2
+      '@tsconfig/ember': ^3.0.3
       '@typescript-eslint/eslint-plugin': ^6.14.0
       '@typescript-eslint/parser': ^6.14.0
       babel-eslint: ^10.1.0
@@ -117,6 +120,7 @@ importers:
       '@embroider/test-setup': 2.1.1
       '@glimmer/component': 1.1.2_@babel+core@7.23.9
       '@glimmer/tracking': 1.1.2
+      '@tsconfig/ember': 3.0.3
       '@typescript-eslint/eslint-plugin': 6.20.0_ecvl2sdc5evmhaeopegx5qwf6q
       '@typescript-eslint/parser': 6.20.0_4vyosxxjef3etqzmrgpo56bcwy
       babel-eslint: 10.1.0_eslint@7.32.0
@@ -2349,6 +2353,10 @@ packages:
   /@tootallnate/once/1.1.2:
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
     engines: {node: '>= 6'}
+    dev: true
+
+  /@tsconfig/ember/3.0.3:
+    resolution: {integrity: sha512-StVVkcg/VxA+eDzBcTQAcnmmcmg1OxaV41OqFYluqVHpUX28TOD91DGg58n2AMU9ia27zeBBeVQiLsfmzuIV7w==}
     dev: true
 
   /@types/acorn/4.0.6:

@@ -125,7 +125,6 @@ module('unit tests', () => {
 
     {
       let f = function () {};
-      // @ts-expect-error
       expect<TaskFunctionArgs<typeof f>>();
     }
   });
@@ -145,7 +144,6 @@ module('unit tests', () => {
 
     {
       let f = function () {};
-      // @ts-expect-error
       expect<TaskFunctionReturnType<typeof f>>();
     }
   });
@@ -188,7 +186,6 @@ module('unit tests', () => {
 
     {
       let f = function () {};
-      // @ts-expect-error
       expect<TaskForTaskFunction<typeof f>>();
     }
   });
@@ -235,7 +232,6 @@ module('unit tests', () => {
 
     {
       let f = function () {};
-      // @ts-expect-error
       expect<TaskInstanceForTaskFunction<typeof f>>();
     }
   });
@@ -281,7 +277,6 @@ module('unit tests', () => {
 
     {
       let d = { foo: 'foo', perform() {} };
-      // @ts-expect-error
       expect<EncapsulatedTaskDescriptorArgs<typeof d>>();
     }
   });
@@ -308,7 +303,6 @@ module('unit tests', () => {
 
     {
       let d = { perform() {} };
-      // @ts-expect-error
       expect<EncapsulatedTaskDescriptorReturnType<typeof d>>();
     }
   });
@@ -412,7 +406,6 @@ module('unit tests', () => {
 
     {
       let d = { foo: 'foo', perform() {} };
-      // @ts-expect-error
       expect<TaskForEncapsulatedTaskDescriptor<typeof d>>();
     }
   });
@@ -465,16 +458,13 @@ module('unit tests', () => {
 
     {
       let d = { foo: 'foo', perform() {} };
-      // @ts-expect-error
       expect<TaskInstanceForEncapsulatedTaskDescriptor<typeof d>>();
     }
   });
 
   test('Task', () => {
-    // @ts-expect-error
     new Task(); // Task cannot be constructed
 
-    // @ts-expect-error
     class Foo extends Task<never, never[]> {} // Task cannot be subclassed
 
     let t!: Task<string, [boolean, number?]>;
@@ -507,10 +497,8 @@ module('unit tests', () => {
     >();
     expect(t.cancelAll).returns.toEqualTypeOf<Promise<void>>();
 
-    // @ts-expect-error
     t.cancelAll(null);
 
-    // @ts-expect-error
     t.cancelAll({ wow: false });
 
     expect(t.perform).toBeCallableWith(true);
@@ -518,38 +506,30 @@ module('unit tests', () => {
     expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
     expect(t.perform).returns.toEqualTypeOf<MyTaskInstance>();
 
-    // @ts-expect-error
     t.perform();
 
-    // @ts-expect-error
     t.perform('not boolean');
 
-    // @ts-expect-error
     t.perform(false, 'not number');
 
-    // @ts-expect-error
     t.perform(false, 3, 'extra');
 
     expect(t.linked).toBeCallableWith();
     expect(t.linked).parameters.toEqualTypeOf<[]>();
     expect(t.linked).returns.toEqualTypeOf(t);
 
-    // @ts-expect-error
     t.linked(null);
 
     expect(t.unlinked).toBeCallableWith();
     expect(t.unlinked).parameters.toEqualTypeOf<[]>();
     expect(t.unlinked).returns.toEqualTypeOf(t);
 
-    // @ts-expect-error
     t.unlinked(null);
   });
 
   test('EncapsulatedTask', () => {
-    // @ts-expect-error
     new EncapsulatedTask(); // EncapsulatedTask cannot be constructed
 
-    // @ts-expect-error
     class Foo extends EncapsulatedTask<never, never[], { foo: string }> {} // EncapsulatedTask cannot be subclassed
 
     let t!: EncapsulatedTask<string, [boolean, number?], { foo: string }>;
@@ -587,10 +567,8 @@ module('unit tests', () => {
     >();
     expect(t.cancelAll).returns.toEqualTypeOf<Promise<void>>();
 
-    // @ts-expect-error
     t.cancelAll(null);
 
-    // @ts-expect-error
     t.cancelAll({ wow: false });
 
     expect(t.perform).toBeCallableWith(true);
@@ -598,38 +576,30 @@ module('unit tests', () => {
     expect(t.perform).parameters.toEqualTypeOf<[boolean, number?]>();
     expect(t.perform).returns.toEqualTypeOf<MyTaskInstance>();
 
-    // @ts-expect-error
     t.perform();
 
-    // @ts-expect-error
     t.perform('not boolean');
 
-    // @ts-expect-error
     t.perform(false, 'not number');
 
-    // @ts-expect-error
     t.perform(false, 3, 'extra');
 
     expect(t.linked).toBeCallableWith();
     expect(t.linked).parameters.toEqualTypeOf<[]>();
     expect(t.linked).returns.toEqualTypeOf(t);
 
-    // @ts-expect-error
     t.linked(null);
 
     expect(t.unlinked).toBeCallableWith();
     expect(t.unlinked).parameters.toEqualTypeOf<[]>();
     expect(t.unlinked).returns.toEqualTypeOf(t);
 
-    // @ts-expect-error
     t.unlinked(null);
   });
 
   test('TaskGroup', () => {
-    // @ts-expect-error
     new TaskGroup(); // TaskGroup cannot be constructed
 
-    // @ts-expect-error
     class Foo extends TaskGroup {} // TaskGroup cannot be subclassed
 
     let tg!: TaskGroup<string>;
@@ -662,21 +632,16 @@ module('unit tests', () => {
     >();
     expect(tg.cancelAll).returns.toEqualTypeOf<Promise<void>>();
 
-    // @ts-expect-error
     tg.cancelAll(null);
 
-    // @ts-expect-error
     tg.cancelAll({ wow: false });
 
-    // @ts-expect-error
     tg.perform();
   });
 
   test('TaskInstance', async () => {
-    // @ts-expect-error
     new TaskInstance(); // TaskInstance cannot be constructed
 
-    // @ts-expect-error
     class Foo extends TaskInstance {} // TaskInstance cannot be subclassed
 
     let t!: TaskInstance<string>;
@@ -719,13 +684,11 @@ module('unit tests', () => {
       expect(chained).resolves.toBeNumber();
     }
 
-    // @ts-expect-error
     t.then('not a function');
 
     t.then(
       () => {},
       () => {},
-      // @ts-expect-error
       () => {}
     );
 
@@ -738,12 +701,10 @@ module('unit tests', () => {
       expect(chained).resolves.toBeString();
     }
 
-    // @ts-expect-error
     t.catch('not a function');
 
     t.catch(
       () => {},
-      // @ts-expect-error
       () => {}
     );
 
@@ -755,7 +716,6 @@ module('unit tests', () => {
       expect(chained).resolves.toBeString();
     }
 
-    // @ts-expect-error
     t.finally((v) => {});
 
     // TODO: fix
@@ -768,10 +728,8 @@ module('unit tests', () => {
   });
 
   test('TaskProperty', async () => {
-    // @ts-expect-error
     new TaskProperty(); // TaskProperty cannot be constructed
 
-    // @ts-expect-error
     class Foo extends TaskProperty<never, never[]> {} // TaskProperty cannot be subclassed
 
     let tp!: TaskProperty<string, [boolean, number?]>;
@@ -782,10 +740,8 @@ module('unit tests', () => {
     expect(tp.on).parameters.toEqualTypeOf<string[]>();
     expect(tp.on).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.on(false);
 
-    // @ts-expect-error
     tp.on('init', false);
 
     expect(tp.cancelOn).toBeCallableWith();
@@ -794,72 +750,60 @@ module('unit tests', () => {
     expect(tp.cancelOn).parameters.toEqualTypeOf<string[]>();
     expect(tp.cancelOn).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.cancelOn(false);
 
-    // @ts-expect-error
     tp.cancelOn('init', false);
 
     expect(tp.restartable).toBeCallableWith();
     expect(tp.restartable).parameters.toEqualTypeOf<[]>();
     expect(tp.restartable).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.restartable('nope');
 
     expect(tp.enqueue).toBeCallableWith();
     expect(tp.enqueue).parameters.toEqualTypeOf<[]>();
     expect(tp.enqueue).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.enqueue('nope');
 
     expect(tp.drop).toBeCallableWith();
     expect(tp.drop).parameters.toEqualTypeOf<[]>();
     expect(tp.drop).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.drop('nope');
 
     expect(tp.keepLatest).toBeCallableWith();
     expect(tp.keepLatest).parameters.toEqualTypeOf<[]>();
     expect(tp.keepLatest).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.keepLatest('nope');
 
     expect(tp.maxConcurrency).toBeCallableWith(5);
     expect(tp.maxConcurrency).parameters.toEqualTypeOf<[number]>();
     expect(tp.maxConcurrency).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.maxConcurrency();
 
-    // @ts-expect-error
     tp.maxConcurrency('nope');
 
     expect(tp.group).toBeCallableWith('foo');
     expect(tp.group).parameters.toEqualTypeOf<[string]>();
     expect(tp.group).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.group();
 
-    // @ts-expect-error
     tp.group(false);
 
     expect(tp.evented).toBeCallableWith();
     expect(tp.evented).parameters.toEqualTypeOf<[]>();
     expect(tp.evented).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.evented('nope');
 
     expect(tp.debug).toBeCallableWith();
     expect(tp.debug).parameters.toEqualTypeOf<[]>();
     expect(tp.debug).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.debug('nope');
 
     expect(tp.onState).toBeCallableWith(() => {});
@@ -878,10 +822,8 @@ module('unit tests', () => {
     >();
     expect(tp.onState).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.onState('nope');
 
-    // @ts-expect-error
     tp.onState(undefined);
 
     let O = EmberObject.extend({
@@ -899,16 +841,12 @@ module('unit tests', () => {
         expect(i).toEqualTypeOf<TaskInstance<string>>();
         expect(i.value).toEqualTypeOf<string | null>();
 
-        // @ts-expect-error
         this.get('tp').perform();
 
-        // @ts-expect-error
         this.get('tp').perform('nope');
 
-        // @ts-expect-error
         this.get('tp').perform(true, 'nope');
 
-        // @ts-expect-error
         this.get('tp').perform(false, 5, 'nope');
       },
 
@@ -924,16 +862,12 @@ module('unit tests', () => {
         expect(i).toEqualTypeOf<TaskInstance<string>>();
         expect(i.value).toEqualTypeOf<string | null>();
 
-        // @ts-expect-error
         get(this, 'tp').perform();
 
-        // @ts-expect-error
         get(this, 'tp').perform('nope');
 
-        // @ts-expect-error
         get(this, 'tp').perform(true, 'nope');
 
-        // @ts-expect-error
         get(this, 'tp').perform(false, 5, 'nope');
       },
     });
@@ -952,16 +886,12 @@ module('unit tests', () => {
       expect(i).toEqualTypeOf<TaskInstance<string>>();
       expect(i.value).toEqualTypeOf<string | null>();
 
-      // @ts-expect-error
       o.get('tp').perform();
 
-      // @ts-expect-error
       o.get('tp').perform('nope');
 
-      // @ts-expect-error
       o.get('tp').perform(true, 'nope');
 
-      // @ts-expect-error
       o.get('tp').perform(false, 5, 'nope');
     }
 
@@ -980,25 +910,19 @@ module('unit tests', () => {
       expect(i).toEqualTypeOf<TaskInstance<string>>();
       expect(i.value).toEqualTypeOf<string | null>();
 
-      // @ts-expect-error
       t.perform();
 
-      // @ts-expect-error
       t.perform('nope');
 
-      // @ts-expect-error
       t.perform(true, 'nope');
 
-      // @ts-expect-error
       t.perform(false, 5, 'nope');
     }
   });
 
   test('EncapsulatedTaskProperty', async () => {
-    // @ts-expect-error
     new EncapsulatedTaskProperty(); // EncapsulatedTaskProperty cannot be constructed
 
-    // @ts-expect-error
     class Foo extends EncapsulatedTaskProperty<never, never[], {}> {} // EncapsulatedTaskProperty cannot be subclassed
 
     let tp!: EncapsulatedTaskProperty<
@@ -1013,10 +937,8 @@ module('unit tests', () => {
     expect(tp.on).parameters.toEqualTypeOf<string[]>();
     expect(tp.on).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.on(false);
 
-    // @ts-expect-error
     tp.on('init', false);
 
     expect(tp.cancelOn).toBeCallableWith();
@@ -1025,72 +947,60 @@ module('unit tests', () => {
     expect(tp.cancelOn).parameters.toEqualTypeOf<string[]>();
     expect(tp.cancelOn).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.cancelOn(false);
 
-    // @ts-expect-error
     tp.cancelOn('init', false);
 
     expect(tp.restartable).toBeCallableWith();
     expect(tp.restartable).parameters.toEqualTypeOf<[]>();
     expect(tp.restartable).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.restartable('nope');
 
     expect(tp.enqueue).toBeCallableWith();
     expect(tp.enqueue).parameters.toEqualTypeOf<[]>();
     expect(tp.enqueue).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.enqueue('nope');
 
     expect(tp.drop).toBeCallableWith();
     expect(tp.drop).parameters.toEqualTypeOf<[]>();
     expect(tp.drop).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.drop('nope');
 
     expect(tp.keepLatest).toBeCallableWith();
     expect(tp.keepLatest).parameters.toEqualTypeOf<[]>();
     expect(tp.keepLatest).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.keepLatest('nope');
 
     expect(tp.maxConcurrency).toBeCallableWith(5);
     expect(tp.maxConcurrency).parameters.toEqualTypeOf<[number]>();
     expect(tp.maxConcurrency).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.maxConcurrency();
 
-    // @ts-expect-error
     tp.maxConcurrency('nope');
 
     expect(tp.group).toBeCallableWith('foo');
     expect(tp.group).parameters.toEqualTypeOf<[string]>();
     expect(tp.group).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.group();
 
-    // @ts-expect-error
     tp.group(false);
 
     expect(tp.evented).toBeCallableWith();
     expect(tp.evented).parameters.toEqualTypeOf<[]>();
     expect(tp.evented).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.evented('nope');
 
     expect(tp.debug).toBeCallableWith();
     expect(tp.debug).parameters.toEqualTypeOf<[]>();
     expect(tp.debug).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.debug('nope');
 
     expect(tp.onState).toBeCallableWith(() => {});
@@ -1115,10 +1025,8 @@ module('unit tests', () => {
     >();
     expect(tp.onState).returns.toEqualTypeOf(tp);
 
-    // @ts-expect-error
     tp.onState('nope');
 
-    // @ts-expect-error
     tp.onState(undefined);
 
     let O = EmberObject.extend({
@@ -1148,16 +1056,12 @@ module('unit tests', () => {
         expect(i.foo).not.toBeAny();
         expect(i.foo).toBeString();
 
-        // @ts-expect-error
         this.get('tp').perform();
 
-        // @ts-expect-error
         this.get('tp').perform('nope');
 
-        // @ts-expect-error
         this.get('tp').perform(true, 'nope');
 
-        // @ts-expect-error
         this.get('tp').perform(false, 5, 'nope');
       },
 
@@ -1185,16 +1089,12 @@ module('unit tests', () => {
         expect(i.foo).not.toBeAny();
         expect(i.foo).toBeString();
 
-        // @ts-expect-error
         get(this, 'tp').perform();
 
-        // @ts-expect-error
         get(this, 'tp').perform('nope');
 
-        // @ts-expect-error
         get(this, 'tp').perform(true, 'nope');
 
-        // @ts-expect-error
         get(this, 'tp').perform(false, 5, 'nope');
       },
     });
@@ -1223,16 +1123,12 @@ module('unit tests', () => {
       expect(i.foo).not.toBeAny();
       expect(i.foo).toBeString();
 
-      // @ts-expect-error
       o.get('tp').perform();
 
-      // @ts-expect-error
       o.get('tp').perform('nope');
 
-      // @ts-expect-error
       o.get('tp').perform(true, 'nope');
 
-      // @ts-expect-error
       o.get('tp').perform(false, 5, 'nope');
     }
 
@@ -1261,83 +1157,65 @@ module('unit tests', () => {
       expect(i.foo).not.toBeAny();
       expect(i.foo).toBeString();
 
-      // @ts-expect-error
       t.perform();
 
-      // @ts-expect-error
       t.perform('nope');
 
-      // @ts-expect-error
       t.perform(true, 'nope');
 
-      // @ts-expect-error
       t.perform(false, 5, 'nope');
     }
   });
 
   test('TaskGroupProperty', async () => {
-    // @ts-expect-error
     new TaskGroupProperty(); // TaskGroupProperty cannot be constructed
 
-    // @ts-expect-error
     class Foo extends TaskGroupProperty {} // TaskGroupProperty cannot be subclassed
 
     let tgp!: TaskGroupProperty<string>;
 
-    // @ts-expect-error
     tgp.on('init');
 
-    // @ts-expect-error
     tgp.cancelOn('init');
 
     expect(tgp.restartable).toBeCallableWith();
     expect(tgp.restartable).parameters.toEqualTypeOf<[]>();
     expect(tgp.restartable).returns.toEqualTypeOf(tgp);
 
-    // @ts-expect-error
     tgp.restartable('nope');
 
     expect(tgp.enqueue).toBeCallableWith();
     expect(tgp.enqueue).parameters.toEqualTypeOf<[]>();
     expect(tgp.enqueue).returns.toEqualTypeOf(tgp);
 
-    // @ts-expect-error
     tgp.enqueue('nope');
 
     expect(tgp.drop).toBeCallableWith();
     expect(tgp.drop).parameters.toEqualTypeOf<[]>();
     expect(tgp.drop).returns.toEqualTypeOf(tgp);
 
-    // @ts-expect-error
     tgp.drop('nope');
 
     expect(tgp.keepLatest).toBeCallableWith();
     expect(tgp.keepLatest).parameters.toEqualTypeOf<[]>();
     expect(tgp.keepLatest).returns.toEqualTypeOf(tgp);
 
-    // @ts-expect-error
     tgp.keepLatest('nope');
 
     expect(tgp.maxConcurrency).toBeCallableWith(5);
     expect(tgp.maxConcurrency).parameters.toEqualTypeOf<[number]>();
     expect(tgp.maxConcurrency).returns.toEqualTypeOf(tgp);
 
-    // @ts-expect-error
     tgp.maxConcurrency();
 
-    // @ts-expect-error
     tgp.maxConcurrency('nope');
 
-    // @ts-expect-error
     tgp.group('nope');
 
-    // @ts-expect-error
     tgp.evented();
 
-    // @ts-expect-error
     tgp.debug();
 
-    // @ts-expect-error
     tgp.onState();
 
     let O = EmberObject.extend({
@@ -1348,10 +1226,8 @@ module('unit tests', () => {
         expect(tg).toMatchTypeOf<TaskGroup<string>>();
         expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
-        // @ts-expect-error
         tg.perform();
 
-        // @ts-expect-error
         this.get('tgp').perform();
       },
 
@@ -1360,10 +1236,8 @@ module('unit tests', () => {
         expect(tg).toMatchTypeOf<TaskGroup<string>>();
         expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
-        // @ts-expect-error
         tg.perform();
 
-        // @ts-expect-error
         get(this, 'tgp').perform();
       },
     });
@@ -1376,7 +1250,6 @@ module('unit tests', () => {
       expect(tg).toMatchTypeOf<TaskGroup<string>>();
       expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
-      // @ts-expect-error
       o.get('tgp').perform();
     }
 
@@ -1389,7 +1262,6 @@ module('unit tests', () => {
       expect(tg).toMatchTypeOf<TaskGroup<string>>();
       expect(tg.last).toEqualTypeOf<TaskInstance<string> | null>();
 
-      // @ts-expect-error
       tg.perform();
     }
   });
@@ -1410,7 +1282,6 @@ module('unit tests', () => {
       expect(i.value).toEqualTypeOf<void | null>();
       expect(i).resolves.toEqualTypeOf<void>();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
     }
 
@@ -1431,7 +1302,6 @@ module('unit tests', () => {
       expect(i.value).toEqualTypeOf<string | null>();
       expect(i).resolves.toBeString();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
     }
 
@@ -1451,16 +1321,12 @@ module('unit tests', () => {
       expect(i.value).toEqualTypeOf<void | null>();
       expect(i).resolves.toEqualTypeOf<void>();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform(true, 'nope');
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform(false, 5, 'nope');
     }
 
@@ -1482,16 +1348,12 @@ module('unit tests', () => {
       expect(i.value).toEqualTypeOf<string | null>();
       expect(i).resolves.toEqualTypeOf<string>();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform(true, 'nope');
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform(false, 5, 'nope');
     }
 
@@ -1520,7 +1382,6 @@ module('unit tests', () => {
       expect(i.foo).not.toBeAny();
       expect(i.foo).toBeString();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
     }
 
@@ -1554,7 +1415,6 @@ module('unit tests', () => {
       expect(i.foo).not.toBeAny();
       expect(i.foo).toBeString();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
     }
 
@@ -1586,16 +1446,12 @@ module('unit tests', () => {
       expect(i.foo).not.toBeAny();
       expect(i.foo).toBeString();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform(true, 'nope');
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform(false, 5, 'nope');
     }
 
@@ -1632,16 +1488,12 @@ module('unit tests', () => {
       expect(i.foo).not.toBeAny();
       expect(i.foo).toBeString();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform();
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform('nope');
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform(true, 'nope');
 
-      // @ts-expect-error
       get({ tp }, 'tp').perform(false, 5, 'nope');
     }
   });
@@ -1693,7 +1545,6 @@ module('unit tests', () => {
     {
       let result = await all([]);
 
-      // @ts-expect-error
       result[0];
     }
 
@@ -1701,7 +1552,6 @@ module('unit tests', () => {
       let result = await all([value]);
       expect(result[0]).toBeString();
 
-      // @ts-expect-error
       result[1];
     }
 
@@ -1710,7 +1560,6 @@ module('unit tests', () => {
       expect(result[0]).toBeString();
       expect(result[1]).toBeBoolean();
 
-      // @ts-expect-error
       result[2];
     }
 
@@ -1720,7 +1569,6 @@ module('unit tests', () => {
       expect(result[1]).toBeBoolean();
       expect(result[2]).toBeNumber();
 
-      // @ts-expect-error
       result[3];
     }
 
@@ -1731,7 +1579,6 @@ module('unit tests', () => {
       expect(result[2]).toBeNumber();
       expect(result[3]).toEqualTypeOf<void>();
 
-      // @ts-expect-error
       result[4];
     }
 
@@ -1743,7 +1590,6 @@ module('unit tests', () => {
       expect(result[3]).toEqualTypeOf<void>();
       expect(result[4]).toBeString();
 
-      // @ts-expect-error
       result[5];
     }
 
@@ -1756,7 +1602,6 @@ module('unit tests', () => {
       expect(result[4]).toBeString();
       expect(result[5]).toBeBoolean();
 
-      // @ts-expect-error
       result[6];
     }
 
@@ -1778,7 +1623,6 @@ module('unit tests', () => {
       expect(result[5]).toBeBoolean();
       expect(result[6]).toBeNumber();
 
-      // @ts-expect-error
       result[7];
     }
 
@@ -1802,7 +1646,6 @@ module('unit tests', () => {
       expect(result[6]).toBeNumber();
       expect(result[7]).toEqualTypeOf<void>();
 
-      // @ts-expect-error
       result[8];
     }
 
@@ -1828,7 +1671,6 @@ module('unit tests', () => {
       expect(result[7]).toEqualTypeOf<void>();
       expect(result[8]).toBeString();
 
-      // @ts-expect-error
       result[9];
     }
 
@@ -1856,7 +1698,6 @@ module('unit tests', () => {
       expect(result[8]).toBeString();
       expect(result[9]).toBeBoolean();
 
-      // @ts-expect-error
       result[10];
     }
 
@@ -1886,7 +1727,6 @@ module('unit tests', () => {
       expect(result[9]).toBeBoolean();
       expect(result[10]).toBeNumber();
 
-      // @ts-expect-error
       result[11];
     }
 
@@ -1918,7 +1758,6 @@ module('unit tests', () => {
       expect(result[10]).toBeNumber();
       expect(result[11]).toEqualTypeOf<void>();
 
-      // @ts-expect-error
       result[12];
     }
   });
@@ -1947,7 +1786,6 @@ module('unit tests', () => {
     {
       let result = await allSettled([]);
 
-      // @ts-expect-error
       result[0];
     }
 
@@ -1955,7 +1793,6 @@ module('unit tests', () => {
       let result = await allSettled([value]);
       expect(result[0]).toEqualTypeOf<S<string>>();
 
-      // @ts-expect-error
       result[1];
     }
 
@@ -1964,7 +1801,6 @@ module('unit tests', () => {
       expect(result[0]).toEqualTypeOf<S<string>>();
       expect(result[1]).toEqualTypeOf<S<boolean>>();
 
-      // @ts-expect-error
       result[2];
     }
 
@@ -1974,7 +1810,6 @@ module('unit tests', () => {
       expect(result[1]).toEqualTypeOf<S<boolean>>();
       expect(result[2]).toEqualTypeOf<S<number>>();
 
-      // @ts-expect-error
       result[3];
     }
 
@@ -1985,7 +1820,6 @@ module('unit tests', () => {
       expect(result[2]).toEqualTypeOf<S<number>>();
       expect(result[3]).toEqualTypeOf<S<void>>();
 
-      // @ts-expect-error
       result[4];
     }
 
@@ -1997,7 +1831,6 @@ module('unit tests', () => {
       expect(result[3]).toEqualTypeOf<S<void>>();
       expect(result[4]).toEqualTypeOf<S<string>>();
 
-      // @ts-expect-error
       result[5];
     }
 
@@ -2017,7 +1850,6 @@ module('unit tests', () => {
       expect(result[4]).toEqualTypeOf<S<string>>();
       expect(result[5]).toEqualTypeOf<S<boolean>>();
 
-      // @ts-expect-error
       result[6];
     }
 
@@ -2039,7 +1871,6 @@ module('unit tests', () => {
       expect(result[5]).toEqualTypeOf<S<boolean>>();
       expect(result[6]).toEqualTypeOf<S<number>>();
 
-      // @ts-expect-error
       result[7];
     }
 
@@ -2063,7 +1894,6 @@ module('unit tests', () => {
       expect(result[6]).toEqualTypeOf<S<number>>();
       expect(result[7]).toEqualTypeOf<S<void>>();
 
-      // @ts-expect-error
       result[8];
     }
 
@@ -2089,7 +1919,6 @@ module('unit tests', () => {
       expect(result[7]).toEqualTypeOf<S<void>>();
       expect(result[8]).toEqualTypeOf<S<string>>();
 
-      // @ts-expect-error
       result[9];
     }
 
@@ -2117,7 +1946,6 @@ module('unit tests', () => {
       expect(result[8]).toEqualTypeOf<S<string>>();
       expect(result[9]).toEqualTypeOf<S<boolean>>();
 
-      // @ts-expect-error
       result[10];
     }
 
@@ -2147,7 +1975,6 @@ module('unit tests', () => {
       expect(result[9]).toEqualTypeOf<S<boolean>>();
       expect(result[10]).toEqualTypeOf<S<number>>();
 
-      // @ts-expect-error
       result[11];
     }
 
@@ -2179,7 +2006,6 @@ module('unit tests', () => {
       expect(result[10]).toEqualTypeOf<S<number>>();
       expect(result[11]).toEqualTypeOf<S<void>>();
 
-      // @ts-expect-error
       result[12];
     }
   });
@@ -2192,7 +2018,6 @@ module('unit tests', () => {
     expect(didCancel).parameters.toEqualTypeOf<[unknown]>();
     expect(didCancel).returns.toEqualTypeOf<boolean>();
 
-    // @ts-expect-error
     didCancel();
 
     try {
@@ -2232,7 +2057,6 @@ module('unit tests', () => {
     {
       let result = await hash({});
 
-      // @ts-expect-error
       result.nope;
     }
 
@@ -2240,7 +2064,6 @@ module('unit tests', () => {
       let result = await hash({ value });
       expect(result.value).toBeString();
 
-      // @ts-expect-error
       result.nope;
     }
 
@@ -2249,7 +2072,6 @@ module('unit tests', () => {
       expect(result.value).toBeString();
       expect(result.task).toBeBoolean();
 
-      // @ts-expect-error
       result.nope;
     }
 
@@ -2259,7 +2081,6 @@ module('unit tests', () => {
       expect(result.task).toBeBoolean();
       expect(result.thenable).toBeNumber();
 
-      // @ts-expect-error
       result.nope;
     }
 
@@ -2270,7 +2091,6 @@ module('unit tests', () => {
       expect(result.thenable).toBeNumber();
       expect(result.promise).toEqualTypeOf<void>();
 
-      // @ts-expect-error
       result.nope;
     }
   });
@@ -2312,7 +2132,6 @@ module('unit tests', () => {
     {
       let result = await hashSettled({});
 
-      // @ts-expect-error
       result.nope;
     }
 
@@ -2320,7 +2139,6 @@ module('unit tests', () => {
       let result = await hashSettled({ value });
       expect(result.value).toEqualTypeOf<S<string>>();
 
-      // @ts-expect-error
       result.nope;
     }
 
@@ -2329,7 +2147,6 @@ module('unit tests', () => {
       expect(result.value).toEqualTypeOf<S<string>>();
       expect(result.task).toEqualTypeOf<S<boolean>>();
 
-      // @ts-expect-error
       result.nope;
     }
 
@@ -2339,7 +2156,6 @@ module('unit tests', () => {
       expect(result.task).toEqualTypeOf<S<boolean>>();
       expect(result.thenable).toEqualTypeOf<S<number>>();
 
-      // @ts-expect-error
       result.nope;
     }
 
@@ -2350,7 +2166,6 @@ module('unit tests', () => {
       expect(result.thenable).toEqualTypeOf<S<number>>();
       expect(result.promise).toEqualTypeOf<S<void>>();
 
-      // @ts-expect-error
       result.nope;
     }
   });
@@ -2389,7 +2204,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean>();
 
-      // @ts-expect-error
       result.length;
     }
 
@@ -2398,7 +2212,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean | number>();
 
-      // @ts-expect-error
       result.length;
     }
 
@@ -2407,7 +2220,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean | number | void>();
 
-      // @ts-expect-error
       result.length;
     }
 
@@ -2416,7 +2228,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean | number | void>();
 
-      // @ts-expect-error
       result.length;
     }
 
@@ -2425,7 +2236,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean | number | void>();
 
-      // @ts-expect-error
       result.length;
     }
 
@@ -2434,7 +2244,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean | number | void>();
 
-      // @ts-expect-error
       result.length;
     }
 
@@ -2451,7 +2260,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean | number | void>();
 
-      // @ts-expect-error
       result.length;
     }
 
@@ -2469,7 +2277,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean | number | void>();
 
-      // @ts-expect-error
       result.length;
     }
 
@@ -2488,7 +2295,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean | number | void>();
 
-      // @ts-expect-error
       result.length;
     }
 
@@ -2508,7 +2314,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean | number | void>();
 
-      // @ts-expect-error
       result.length;
     }
 
@@ -2529,7 +2334,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean | number | void>();
 
-      // @ts-expect-error
       result.length;
     }
 
@@ -2551,7 +2355,6 @@ module('unit tests', () => {
       expect(result).not.toBeAny();
       expect(result).toEqualTypeOf<string | boolean | number | void>();
 
-      // @ts-expect-error
       result.length;
     }
   });
@@ -2561,13 +2364,10 @@ module('unit tests', () => {
     expect(timeout).parameters.toEqualTypeOf<[number]>();
     expect(timeout).returns.toEqualTypeOf<Yieldable<void>>();
 
-    // @ts-expect-error
     timeout();
 
-    // @ts-expect-error
     timeout('nope');
 
-    // @ts-expect-error
     timeout(500, 'nope');
 
     {
@@ -2581,13 +2381,10 @@ module('unit tests', () => {
     expect(rawTimeout).parameters.toEqualTypeOf<[number]>();
     expect(rawTimeout).returns.toEqualTypeOf<Yieldable<void>>();
 
-    // @ts-expect-error
     rawTimeout();
 
-    // @ts-expect-error
     rawTimeout('nope');
 
-    // @ts-expect-error
     rawTimeout(500, 'nope');
 
     {
@@ -2601,10 +2398,8 @@ module('unit tests', () => {
     expect(animationFrame).parameters.toEqualTypeOf<[]>();
     expect(animationFrame).returns.toEqualTypeOf<Yieldable<void>>();
 
-    // @ts-expect-error
     animationFrame('nope');
 
-    // @ts-expect-error
     animationFrame(500, 'nope');
 
     {
@@ -2618,13 +2413,10 @@ module('unit tests', () => {
     expect(waitForQueue).parameters.toEqualTypeOf<[string]>();
     expect(waitForQueue).returns.toEqualTypeOf<Yieldable<void>>();
 
-    // @ts-expect-error
     waitForQueue();
 
-    // @ts-expect-error
     waitForQueue(500);
 
-    // @ts-expect-error
     waitForQueue('afterRender', 'nope');
 
     {
@@ -2686,13 +2478,10 @@ module('unit tests', () => {
     expect(waitForEvent).parameters.toEqualTypeOf<[Evented, string]>();
     expect(waitForEvent).returns.toEqualTypeOf<Yieldable<void>>();
 
-    // @ts-expect-error
     waitForEvent();
 
-    // @ts-expect-error
     waitForEvent('nope');
 
-    // @ts-expect-error
     waitForEvent(document.body, 'click', 'nope');
 
     {
@@ -2722,13 +2511,10 @@ module('unit tests', () => {
     // >();
     expect(waitForProperty).returns.toEqualTypeOf<Yieldable<void>>();
 
-    // @ts-expect-error
     waitForProperty();
 
-    // @ts-expect-error
     waitForProperty('nope');
 
-    // @ts-expect-error
     waitForProperty(obj, 'foo', 'bar', 'nope');
 
     {
@@ -2751,7 +2537,6 @@ module('unit tests', () => {
     expect(forever).parameters.toEqualTypeOf<[]>();
     expect(forever).returns.toEqualTypeOf<Yieldable<never>>();
 
-    // @ts-expect-error
     forever('nope');
 
     {
@@ -2768,16 +2553,12 @@ module('unit tests', () => {
       unknown[]
     > | null>();
 
-    // @ts-expect-error
     getModifier();
 
-    // @ts-expect-error
     getModifier(false);
 
-    // @ts-expect-error
     getModifier(null);
 
-    // @ts-expect-error
     getModifier(function* () {});
   });
 
@@ -2786,16 +2567,12 @@ module('unit tests', () => {
     expect(hasModifier).parameters.toEqualTypeOf<[string]>();
     expect(hasModifier).returns.toEqualTypeOf<boolean>();
 
-    // @ts-expect-error
     hasModifier();
 
-    // @ts-expect-error
     hasModifier(false);
 
-    // @ts-expect-error
     hasModifier(null);
 
-    // @ts-expect-error
     hasModifier(function* () {});
   });
 
@@ -2834,10 +2611,8 @@ module('unit tests', () => {
     >();
     expect(registerModifier).returns.toEqualTypeOf<void>();
 
-    // @ts-expect-error
     registerModifier();
 
-    // @ts-expect-error
     registerModifier('foo');
   });
 });
@@ -2895,13 +2670,10 @@ module('integration tests', () => {
         expect(result).toBeString();
         expect(result.length).toBeNumber();
 
-        // @ts-expect-error
         myTask.perform('nope');
 
-        // @ts-expect-error
         myTask.perform(true, 'nope');
 
-        // @ts-expect-error
         myTask.perform(false, 500, 'nope');
       },
     });
@@ -2983,13 +2755,10 @@ module('integration tests', () => {
         expect(result).toBeString();
         expect(result.length).toBeNumber();
 
-        // @ts-expect-error
         myTask.perform('nope');
 
-        // @ts-expect-error
         myTask.perform(true, 'nope');
 
-        // @ts-expect-error
         myTask.perform(false, 500, 'nope');
       },
     });
@@ -3092,13 +2861,10 @@ module('integration tests', () => {
         expect(result).toBeString();
         expect(result.length).toBeNumber();
 
-        // @ts-expect-error
         myTask.perform('nope');
 
-        // @ts-expect-error
         myTask.perform(true, 'nope');
 
-        // @ts-expect-error
         myTask.perform(false, 500, 'nope');
       }
     }
@@ -3200,13 +2966,10 @@ module('integration tests', () => {
         expect(result).toBeString();
         expect(result.length).toBeNumber();
 
-        // @ts-expect-error
         myTask.perform('nope');
 
-        // @ts-expect-error
         myTask.perform(true, 'nope');
 
-        // @ts-expect-error
         myTask.perform(false, 500, 'nope');
       }
     }
@@ -3260,13 +3023,10 @@ module('integration tests', () => {
         expect(result).toBeString();
         expect(result.length).toBeNumber();
 
-        // @ts-expect-error
         myTask.perform('nope');
 
-        // @ts-expect-error
         myTask.perform(true, 'nope');
 
-        // @ts-expect-error
         myTask.perform(false, 500, 'nope');
       }
     }
@@ -3373,13 +3133,10 @@ module('integration tests', () => {
         expect(result).toBeString();
         expect(result.length).toBeNumber();
 
-        // @ts-expect-error
         myTask.perform('nope');
 
-        // @ts-expect-error
         myTask.perform(true, 'nope');
 
-        // @ts-expect-error
         myTask.perform(false, 500, 'nope');
       }
     }
