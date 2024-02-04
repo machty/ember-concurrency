@@ -21,6 +21,7 @@ jobs:
     - uses: wyvox/action@v1
       with:
         pnpm-args: --frozen-lockfile
+        pnpm-version: 7.33.6
 
     - name: Lint
       run: pnpm lint
@@ -39,6 +40,7 @@ jobs:
     - uses: wyvox/action@v1
       with:
         pnpm-args: --frozen-lockfile
+        pnpm-version: 7.33.6
 
     - name: Test
       run: pnpm test:ember --launch ${{ matrix.browser }}
@@ -57,6 +59,7 @@ jobs:
     - uses: wyvox/action@v1
       with:
         pnpm-args: --frozen-lockfile
+        pnpm-version: 7.33.6
 
     - name: Test
       run: pnpm test:ember --launch ${{ matrix.browser }}
@@ -94,6 +97,7 @@ jobs:
     - uses: wyvox/action@v1
       with:
         pnpm-args: --frozen-lockfile
+        pnpm-version: 7.33.6
 
     - name: Strip ts-expect-error from tests (for TypeScript 3.7)
       run: find tests/types -type f -name '*.ts' | xargs sed -i 's/@ts-expect-error/@ts-ignore/g'
