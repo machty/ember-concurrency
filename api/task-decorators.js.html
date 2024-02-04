@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <title>JSDoc: Source: task-decorators.js</title>
 
-    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js"> </script>
-    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js"> </script>
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js" integrity="sha256-OdwnjpJmUf0qo35PEn08X3HnqEK8iVOqYj/GspMf5PA= sha512-JcSVG6KneerYlyLyiu7r3UYKrvYPOY8iNu7eOpwbCCSCdvXuStbMzc4MB+v21gQ7Y+82m2MyFg6ggylf9rLHXg==" > </script>
+    <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js" integrity="sha256-W/8u/xdnRt8pUf2OdHRfPyaq6lGTxTZQZsKHgKD/y4I= sha512-OsUG3GgeyMYQWj48BRAEUKSbafPqxNMaG6fkAKuvqQ9bIza9JNaxDiQ+H7ObiSv8eJvEaUHTnHJA6FLxpV0HZQ==" > </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow-3559834dc32d2cad6adeb2d2fed40e18.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default-594052a05e44d70859cdc4fb12075e1c.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow-3559834dc32d2cad6adeb2d2fed40e18.css" integrity="sha256-zInEqaMwHPE1XRPTqnMP2uZOEEYFQ2zjcasAv2R1nXg= sha512-DNQDuSSkAzc46N+QWE3KS1L9bV0TmwsRxFLYlC6kX3SP8nJmMl/33DgpGRmNKkm+TppbqCWXPhhin5iHk2K+WQ==" >
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default-594052a05e44d70859cdc4fb12075e1c.css" integrity="sha256-OucZHIVqEQk8qlXgv8+nPvbqL94vt9ahShp9sdYkX/U= sha512-a9TNVtnXumScv9GK2yf1iys25O5zcN8XoXFlPp8zWPkE6XSW3mQWjztV/9mDCj/0tgZAmlDiZWMaW3HUuVfkSw==" >
 </head>
 
 <body>
@@ -26,138 +26,14 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { computed, get } from '@ember/object';
-import { TaskFactory } from './task-factory';
-import { USE_TRACKED } from './utils';
+            <pre class="prettyprint source linenums"><code>import {
+  createTaskDecorator,
+  createTaskGroupDecorator,
+  lastValue as nativeLastValue,
+} from './external/task-decorators';
+import { TaskFactory as EmberTaskFactory } from './task-factory';
 
-function taskFromPropertyDescriptor(target, key, descriptor, params = []) {
-  let { initializer, get, value } = descriptor;
-  let taskFn;
-
-  if (initializer) {
-    taskFn = initializer.call(undefined);
-  } else if (get) {
-    taskFn = get.call(undefined);
-  } else if (value) {
-    taskFn = value;
-  }
-
-  taskFn.displayName = `${key} (task)`;
-
-  let tasks = new WeakMap();
-  let options = params[0] || {};
-  let factory = new TaskFactory(key, taskFn, options);
-  factory._setupEmberKVO(target);
-
-  return {
-    get() {
-      let task = tasks.get(this);
-
-      if (!task) {
-        task = factory.createTask(this);
-        tasks.set(this, task);
-      }
-
-      return task;
-    },
-  };
-}
-
-function taskGroupPropertyDescriptor(target, key, _descriptor, params = []) {
-  let taskGroups = new WeakMap();
-  let options = params[0] || {};
-  let factory = new TaskFactory(key, null, options);
-
-  return {
-    get() {
-      let task = taskGroups.get(this);
-
-      if (!task) {
-        task = factory.createTaskGroup(this);
-        taskGroups.set(this, task);
-      }
-
-      return task;
-    },
-  };
-}
-
-// Cribbed from @ember-decorators/utils
-function isFieldDescriptor(possibleDesc) {
-  let [target, key, desc] = possibleDesc;
-
-  return (
-    possibleDesc.length === 3 &amp;&amp;
-    typeof target === 'object' &amp;&amp;
-    target !== null &amp;&amp;
-    typeof key === 'string' &amp;&amp;
-    ((typeof desc === 'object' &amp;&amp;
-      desc !== null &amp;&amp;
-      'enumerable' in desc &amp;&amp;
-      'configurable' in desc) ||
-      desc === undefined) // TS compatibility ???
-  );
-}
-
-function decoratorWithParams(descriptorFn) {
-  return function (...params) {
-    if (isFieldDescriptor(params)) {
-      return descriptorFn(...params);
-    } else {
-      return (...desc) => descriptorFn(...desc, params);
-    }
-  };
-}
-
-function createDecorator(fn, baseOptions = {}) {
-  return decoratorWithParams((target, key, descriptor, [userOptions] = []) => {
-    let mergedOptions = Object.assign({}, { ...baseOptions, ...userOptions });
-
-    return fn(target, key, descriptor, [mergedOptions]);
-  });
-}
-
-export const lastValue = decoratorWithParams(
-  (target, key, descriptor, [taskName] = []) => {
-    const { initializer } = descriptor;
-    delete descriptor.initializer;
-
-    if (USE_TRACKED) {
-      return {
-        get() {
-          let lastInstance = this[taskName].lastSuccessful;
-
-          if (lastInstance) {
-            return lastInstance.value;
-          }
-
-          if (initializer) {
-            return initializer.call(this);
-          }
-
-          return undefined;
-        },
-      };
-    } else {
-      let cp = computed(`${taskName}.lastSuccessful`, function () {
-        let lastInstance = get(this, `${taskName}.lastSuccessful`);
-
-        if (lastInstance) {
-          // eslint-disable-next-line ember/no-get
-          return get(lastInstance, 'value');
-        }
-
-        if (initializer) {
-          return initializer.call(this);
-        }
-
-        return undefined;
-      });
-
-      return cp(target, key, descriptor);
-    }
-  }
-);
+export const lastValue = nativeLastValue;
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -209,7 +85,7 @@ export const lastValue = decoratorWithParams(
  * @param {boolean} [options.restartable] Sets `restartable` modifier on task if `true`
  * @return {Task}
  */
-export const task = createDecorator(taskFromPropertyDescriptor);
+export const task = createTaskDecorator({}, EmberTaskFactory);
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -240,9 +116,7 @@ export const task = createDecorator(taskFromPropertyDescriptor);
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const dropTask = createDecorator(taskFromPropertyDescriptor, {
-  drop: true,
-});
+export const dropTask = createTaskDecorator({ drop: true }, EmberTaskFactory);
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -273,9 +147,12 @@ export const dropTask = createDecorator(taskFromPropertyDescriptor, {
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const enqueueTask = createDecorator(taskFromPropertyDescriptor, {
-  enqueue: true,
-});
+export const enqueueTask = createTaskDecorator(
+  {
+    enqueue: true,
+  },
+  EmberTaskFactory
+);
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -306,9 +183,12 @@ export const enqueueTask = createDecorator(taskFromPropertyDescriptor, {
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const keepLatestTask = createDecorator(taskFromPropertyDescriptor, {
-  keepLatest: true,
-});
+export const keepLatestTask = createTaskDecorator(
+  {
+    keepLatest: true,
+  },
+  EmberTaskFactory
+);
 
 /**
  * Turns the decorated generator function into a task and applies the
@@ -339,9 +219,12 @@ export const keepLatestTask = createDecorator(taskFromPropertyDescriptor, {
  * @param {object?} [options={}] Task modifier options. See {@link task} for list.
  * @return {Task}
  */
-export const restartableTask = createDecorator(taskFromPropertyDescriptor, {
-  restartable: true,
-});
+export const restartableTask = createTaskDecorator(
+  {
+    restartable: true,
+  },
+  EmberTaskFactory
+);
 
 /**
  * "Task Groups" provide a means for applying
@@ -374,7 +257,7 @@ export const restartableTask = createDecorator(taskFromPropertyDescriptor, {
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const taskGroup = createDecorator(taskGroupPropertyDescriptor);
+export const taskGroup = createTaskGroupDecorator({}, EmberTaskFactory);
 
 /**
  * Turns the decorated property into a task group and applies the
@@ -387,9 +270,12 @@ export const taskGroup = createDecorator(taskGroupPropertyDescriptor);
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const dropTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
-  drop: true,
-});
+export const dropTaskGroup = createTaskGroupDecorator(
+  {
+    drop: true,
+  },
+  EmberTaskFactory
+);
 
 /**
  * Turns the decorated property into a task group and applies the
@@ -402,9 +288,12 @@ export const dropTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const enqueueTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
-  enqueue: true,
-});
+export const enqueueTaskGroup = createTaskGroupDecorator(
+  {
+    enqueue: true,
+  },
+  EmberTaskFactory
+);
 
 /**
  * Turns the decorated property into a task group and applies the
@@ -417,9 +306,9 @@ export const enqueueTaskGroup = createDecorator(taskGroupPropertyDescriptor, {
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const keepLatestTaskGroup = createDecorator(
-  taskGroupPropertyDescriptor,
-  { keepLatest: true }
+export const keepLatestTaskGroup = createTaskGroupDecorator(
+  { keepLatest: true },
+  EmberTaskFactory
 );
 
 /**
@@ -433,9 +322,9 @@ export const keepLatestTaskGroup = createDecorator(
  * @param {object?} [options={}] Task group modifier options. See {@link task} for list.
  * @return {TaskGroup}
  */
-export const restartableTaskGroup = createDecorator(
-  taskGroupPropertyDescriptor,
-  { restartable: true }
+export const restartableTaskGroup = createTaskGroupDecorator(
+  { restartable: true },
+  EmberTaskFactory
 );
 </code></pre>
         </article>
@@ -453,10 +342,10 @@ export const restartableTaskGroup = createDecorator(
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Feb 08 2022 22:36:03 GMT-0600 (Central Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Feb 05 2024 05:30:41 GMT+0800 (Hong Kong Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
-<script src="scripts/linenumber-b072639105045a40275250bc66645306.js"> </script>
+<script src="scripts/linenumber-b072639105045a40275250bc66645306.js" integrity="sha256-TEufSbZ4Qwxf/IJCHQPJHfr9wjUfJpvHrtBv+gBKAh4= sha512-m4njB62kvXFnGPFIRSI6kNnkpeV9cKBk/seICNSJoAFnJbhYD1Bl1WdhlHLlTylsdwDdr4lXBPUE6VlUEPU7xg==" > </script>
 </body>
 </html>
