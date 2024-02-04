@@ -46,7 +46,7 @@
   "files": [
     "addon-main.cjs",
     "dist",
-    "src/build"
+    "async-arrow-task-transform.js"
   ],
   "exports": {
     ".": "./dist/index.js",
