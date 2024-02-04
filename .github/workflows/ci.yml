@@ -82,8 +82,8 @@ jobs:
         - ember-5.0
         - ember-release
         - ember-default
-        - typescript-3.9
         - typescript-4.2
+        - typescript-default
         - embroider-safe
         - embroider-optimized
         allow-failure: [false]

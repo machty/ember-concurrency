@@ -79,21 +79,16 @@ module.exports = async function () {
         },
       },
       {
-        name: 'typescript-3.9',
-        npm: {
-          devDependencies: {
-            typescript: '~3.9.0',
-          },
-        },
-        command: 'tsc',
-      },
-      {
         name: 'typescript-4.2',
         npm: {
           devDependencies: {
             typescript: '~4.2.0',
           },
         },
+        command: 'tsc',
+      },
+      {
+        name: 'typescript-default',
         command: 'tsc',
       },
       embroiderSafe(),
