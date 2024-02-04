@@ -4,9 +4,17 @@
 // template colocation.
 {
   "plugins": [
-    // https://github.com/embroider-build/embroider/issues/1014
-    ["@babel/plugin-proposal-decorators", { "legacy": true }],
-    "@babel/plugin-proposal-class-properties",
-    "@embroider/addon-dev/template-colocation-plugin"
+    "@embroider/addon-dev/template-colocation-plugin",
+    [
+      "babel-plugin-ember-template-compilation",
+      {
+        "targetFormat": "hbs",
+        "transforms": []
+      }
+    ],
+    [
+      "module:decorator-transforms",
+      { "runtime": { "import": "decorator-transforms/runtime" } }
+    ]
   ]
 }
