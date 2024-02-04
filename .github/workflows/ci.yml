@@ -44,6 +44,9 @@ jobs:
       with:
         pnpm-args: --frozen-lockfile
 
+    - name: Dump env
+      run: env
+  
     - name: Test
       run: pnpm test:ember --launch ${{ matrix.browser }}
 
@@ -62,10 +65,14 @@ jobs:
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo "$GITHUB_CONTEXT"
+
     - uses: wyvox/action@v1
       with:
         pnpm-args: --frozen-lockfile
 
+    - name: Dump env
+      run: env
+  
     - name: Test
       run: pnpm test:ember --launch ${{ matrix.browser }}
 
