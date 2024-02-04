@@ -67,6 +67,7 @@ importers:
       '@glimmer/component': ^1.1.2
       '@glimmer/tracking': ^1.1.2
       '@tsconfig/ember': ^3.0.3
+      '@types/rsvp': ^4.0.9
       '@typescript-eslint/eslint-plugin': ^6.14.0
       '@typescript-eslint/parser': ^6.14.0
       babel-eslint: ^10.1.0
@@ -122,6 +123,7 @@ importers:
       '@glimmer/component': 1.1.2_@babel+core@7.23.9
       '@glimmer/tracking': 1.1.2
       '@tsconfig/ember': 3.0.3
+      '@types/rsvp': 4.0.9
       '@typescript-eslint/eslint-plugin': 6.20.0_ecvl2sdc5evmhaeopegx5qwf6q
       '@typescript-eslint/parser': 6.20.0_4vyosxxjef3etqzmrgpo56bcwy
       babel-eslint: 10.1.0_eslint@7.32.0
@@ -2529,6 +2531,10 @@ packages:
     dependencies:
       '@types/glob': 8.1.0
       '@types/node': 20.11.16
+    dev: true
+
+  /@types/rsvp/4.0.9:
+    resolution: {integrity: sha512-F6vaN5mbxw2MBCu/AD9fSKwrhnto2pE77dyUsi415qz9IP9ni9ZOWXHxnXfsM4NW9UjW+it189jvvqnhv37Z7Q==}
     dev: true
 
   /@types/semver/7.5.6:

@@ -100,6 +100,7 @@ module('unit tests', function () {
         }
         {
             var f = function () { };
+            // @ts-expect-error
             (0, expect_type_1.expectTypeOf)();
         }
     });
@@ -120,6 +121,7 @@ module('unit tests', function () {
         }
         {
             var f = function () { };
+            // @ts-expect-error
             (0, expect_type_1.expectTypeOf)();
         }
     });
@@ -160,6 +162,7 @@ module('unit tests', function () {
         }
         {
             var f = function () { };
+            // @ts-expect-error
             (0, expect_type_1.expectTypeOf)();
         }
     });
@@ -200,6 +203,7 @@ module('unit tests', function () {
         }
         {
             var f = function () { };
+            // @ts-expect-error
             (0, expect_type_1.expectTypeOf)();
         }
     });
@@ -230,6 +234,7 @@ module('unit tests', function () {
         }
         {
             var d = { foo: 'foo', perform: function () { } };
+            // @ts-expect-error
             (0, expect_type_1.expectTypeOf)();
         }
     });
@@ -253,6 +258,7 @@ module('unit tests', function () {
         }
         {
             var d = { perform: function () { } };
+            // @ts-expect-error
             (0, expect_type_1.expectTypeOf)();
         }
     });
@@ -342,6 +348,7 @@ module('unit tests', function () {
         }
         {
             var d = { foo: 'foo', perform: function () { } };
+            // @ts-expect-error
             (0, expect_type_1.expectTypeOf)();
         }
     });
@@ -388,18 +395,21 @@ module('unit tests', function () {
         }
         {
             var d = { foo: 'foo', perform: function () { } };
+            // @ts-expect-error
             (0, expect_type_1.expectTypeOf)();
         }
     });
     test('Task', function () {
-        new ember_concurrency_1.Task(); // Task cannot be constructed
+        // @ts-expect-error
+        new Task(); // Task cannot be constructed
+        // @ts-expect-error
         var Foo = /** @class */ (function (_super) {
             __extends(Foo, _super);
             function Foo() {
                 return _super !== null && _super.apply(this, arguments) || this;
             }
             return Foo;
-        }(ember_concurrency_1.Task)); // Task cannot be subclassed
+        }(Task)); // Task cannot be subclassed
         var t;
         (0, expect_type_1.expectTypeOf)(t.isRunning).toBeBoolean();
         (0, expect_type_1.expectTypeOf)(t.isQueued).toBeBoolean;
@@ -424,34 +434,44 @@ module('unit tests', function () {
         });
         (0, expect_type_1.expectTypeOf)(t.cancelAll).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(t.cancelAll).returns.toEqualTypeOf();
+        // @ts-expect-error
         t.cancelAll(null);
+        // @ts-expect-error
         t.cancelAll({ wow: false });
         (0, expect_type_1.expectTypeOf)(t.perform).toBeCallableWith(true);
         (0, expect_type_1.expectTypeOf)(t.perform).toBeCallableWith(false, 2);
         (0, expect_type_1.expectTypeOf)(t.perform).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(t.perform).returns.toEqualTypeOf();
+        // @ts-expect-error
         t.perform();
+        // @ts-expect-error
         t.perform('not boolean');
+        // @ts-expect-error
         t.perform(false, 'not number');
+        // @ts-expect-error
         t.perform(false, 3, 'extra');
         (0, expect_type_1.expectTypeOf)(t.linked).toBeCallableWith();
         (0, expect_type_1.expectTypeOf)(t.linked).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(t.linked).returns.toEqualTypeOf(t);
+        // @ts-expect-error
         t.linked(null);
         (0, expect_type_1.expectTypeOf)(t.unlinked).toBeCallableWith();
         (0, expect_type_1.expectTypeOf)(t.unlinked).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(t.unlinked).returns.toEqualTypeOf(t);
+        // @ts-expect-error
         t.unlinked(null);
     });
     test('EncapsulatedTask', function () {
-        new ember_concurrency_1.EncapsulatedTask(); // EncapsulatedTask cannot be constructed
+        // @ts-expect-error
+        new EncapsulatedTask(); // EncapsulatedTask cannot be constructed
+        // @ts-expect-error
         var Foo = /** @class */ (function (_super) {
             __extends(Foo, _super);
             function Foo() {
                 return _super !== null && _super.apply(this, arguments) || this;
             }
             return Foo;
-        }(ember_concurrency_1.EncapsulatedTask)); // EncapsulatedTask cannot be subclassed
+        }(EncapsulatedTask)); // EncapsulatedTask cannot be subclassed
         var t;
         (0, expect_type_1.expectTypeOf)(t.isRunning).toBeBoolean();
         (0, expect_type_1.expectTypeOf)(t.isQueued).toBeBoolean;
@@ -480,34 +500,44 @@ module('unit tests', function () {
         });
         (0, expect_type_1.expectTypeOf)(t.cancelAll).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(t.cancelAll).returns.toEqualTypeOf();
+        // @ts-expect-error
         t.cancelAll(null);
+        // @ts-expect-error
         t.cancelAll({ wow: false });
         (0, expect_type_1.expectTypeOf)(t.perform).toBeCallableWith(true);
         (0, expect_type_1.expectTypeOf)(t.perform).toBeCallableWith(false, 2);
         (0, expect_type_1.expectTypeOf)(t.perform).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(t.perform).returns.toEqualTypeOf();
+        // @ts-expect-error
         t.perform();
+        // @ts-expect-error
         t.perform('not boolean');
+        // @ts-expect-error
         t.perform(false, 'not number');
+        // @ts-expect-error
         t.perform(false, 3, 'extra');
         (0, expect_type_1.expectTypeOf)(t.linked).toBeCallableWith();
         (0, expect_type_1.expectTypeOf)(t.linked).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(t.linked).returns.toEqualTypeOf(t);
+        // @ts-expect-error
         t.linked(null);
         (0, expect_type_1.expectTypeOf)(t.unlinked).toBeCallableWith();
         (0, expect_type_1.expectTypeOf)(t.unlinked).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(t.unlinked).returns.toEqualTypeOf(t);
+        // @ts-expect-error
         t.unlinked(null);
     });
     test('TaskGroup', function () {
-        new ember_concurrency_1.TaskGroup(); // TaskGroup cannot be constructed
+        // @ts-expect-error
+        new TaskGroup(); // TaskGroup cannot be constructed
+        // @ts-expect-error
         var Foo = /** @class */ (function (_super) {
             __extends(Foo, _super);
             function Foo() {
                 return _super !== null && _super.apply(this, arguments) || this;
             }
             return Foo;
-        }(ember_concurrency_1.TaskGroup)); // TaskGroup cannot be subclassed
+        }(TaskGroup)); // TaskGroup cannot be subclassed
         var tg;
         (0, expect_type_1.expectTypeOf)(tg.isRunning).toBeBoolean();
         (0, expect_type_1.expectTypeOf)(tg.isQueued).toBeBoolean;
@@ -532,21 +562,26 @@ module('unit tests', function () {
         });
         (0, expect_type_1.expectTypeOf)(tg.cancelAll).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(tg.cancelAll).returns.toEqualTypeOf();
+        // @ts-expect-error
         tg.cancelAll(null);
+        // @ts-expect-error
         tg.cancelAll({ wow: false });
+        // @ts-expect-error
         tg.perform();
     });
     test('TaskInstance', function () { return __awaiter(void 0, void 0, void 0, function () {
         var Foo, t, chained, chained, chained;
         return __generator(this, function (_a) {
-            new ember_concurrency_1.TaskInstance(); // TaskInstance cannot be constructed
+            // @ts-expect-error
+            new TaskInstance(); // TaskInstance cannot be constructed
             Foo = /** @class */ (function (_super) {
                 __extends(Foo, _super);
+                // @ts-expect-error
                 function Foo() {
                     return _super !== null && _super.apply(this, arguments) || this;
                 }
                 return Foo;
-            }(ember_concurrency_1.TaskInstance));
+            }(TaskInstance));
             (0, expect_type_1.expectTypeOf)(t.value).toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(t.error).toBeUnknown();
             (0, expect_type_1.expectTypeOf)(t.isSuccessful).toBeBoolean();
@@ -572,8 +607,11 @@ module('unit tests', function () {
                 chained = t.then(function (v) { return v.length; });
                 (0, expect_type_1.expectTypeOf)(chained).resolves.toBeNumber();
             }
+            // @ts-expect-error
             t.then('not a function');
-            t.then(function () { }, function () { }, function () { });
+            t.then(function () { }, function () { }, 
+            // @ts-expect-error
+            function () { });
             (0, expect_type_1.expectTypeOf)(t["catch"]).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(t["catch"]).toBeCallableWith(function () { });
             (0, expect_type_1.expectTypeOf)(t["catch"]).toBeCallableWith(function (e) { return (0, expect_type_1.expectTypeOf)(e).toBeAny(); });
@@ -581,14 +619,18 @@ module('unit tests', function () {
                 chained = t["catch"](function () { return 'caught'; });
                 (0, expect_type_1.expectTypeOf)(chained).resolves.toBeString();
             }
+            // @ts-expect-error
             t["catch"]('not a function');
-            t["catch"](function () { }, function () { });
+            t["catch"](function () { }, 
+            // @ts-expect-error
+            function () { });
             (0, expect_type_1.expectTypeOf)(t["finally"]).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(t["finally"]).toBeCallableWith(function () { });
             {
                 chained = t["finally"](function () { return 'finally'; });
                 (0, expect_type_1.expectTypeOf)(chained).resolves.toBeString();
             }
+            // @ts-expect-error
             t["finally"](function (v) { });
             return [2 /*return*/];
         });
@@ -596,61 +638,77 @@ module('unit tests', function () {
     test('TaskProperty', function () { return __awaiter(void 0, void 0, void 0, function () {
         var Foo, tp, O, o, t, i, t, i;
         return __generator(this, function (_a) {
-            new ember_concurrency_1.TaskProperty(); // TaskProperty cannot be constructed
+            // @ts-expect-error
+            new TaskProperty(); // TaskProperty cannot be constructed
             Foo = /** @class */ (function (_super) {
                 __extends(Foo, _super);
+                // @ts-expect-error
                 function Foo() {
                     return _super !== null && _super.apply(this, arguments) || this;
                 }
                 return Foo;
-            }(ember_concurrency_1.TaskProperty));
+            }(TaskProperty));
             (0, expect_type_1.expectTypeOf)(tp.on).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.on).toBeCallableWith('init');
             (0, expect_type_1.expectTypeOf)(tp.on).toBeCallableWith('init', 'didInsertElement');
             (0, expect_type_1.expectTypeOf)(tp.on).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.on).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.on(false);
+            // @ts-expect-error
             tp.on('init', false);
             (0, expect_type_1.expectTypeOf)(tp.cancelOn).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.cancelOn).toBeCallableWith('init');
             (0, expect_type_1.expectTypeOf)(tp.cancelOn).toBeCallableWith('init', 'didInsertElement');
             (0, expect_type_1.expectTypeOf)(tp.cancelOn).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.cancelOn).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.cancelOn(false);
+            // @ts-expect-error
             tp.cancelOn('init', false);
             (0, expect_type_1.expectTypeOf)(tp.restartable).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.restartable).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.restartable).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.restartable('nope');
             (0, expect_type_1.expectTypeOf)(tp.enqueue).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.enqueue).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.enqueue).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.enqueue('nope');
             (0, expect_type_1.expectTypeOf)(tp.drop).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.drop).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.drop).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.drop('nope');
             (0, expect_type_1.expectTypeOf)(tp.keepLatest).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.keepLatest).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.keepLatest).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.keepLatest('nope');
             (0, expect_type_1.expectTypeOf)(tp.maxConcurrency).toBeCallableWith(5);
             (0, expect_type_1.expectTypeOf)(tp.maxConcurrency).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.maxConcurrency).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.maxConcurrency();
+            // @ts-expect-error
             tp.maxConcurrency('nope');
             (0, expect_type_1.expectTypeOf)(tp.group).toBeCallableWith('foo');
             (0, expect_type_1.expectTypeOf)(tp.group).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.group).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.group();
+            // @ts-expect-error
             tp.group(false);
             (0, expect_type_1.expectTypeOf)(tp.evented).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.evented).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.evented).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.evented('nope');
             (0, expect_type_1.expectTypeOf)(tp.debug).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.debug).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.debug).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.debug('nope');
             (0, expect_type_1.expectTypeOf)(tp.onState).toBeCallableWith(function () { });
             (0, expect_type_1.expectTypeOf)(tp.onState).toBeCallableWith(null);
@@ -665,7 +723,9 @@ module('unit tests', function () {
             });
             (0, expect_type_1.expectTypeOf)(tp.onState).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.onState).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.onState('nope');
+            // @ts-expect-error
             tp.onState(undefined);
             O = object_1["default"].extend({
                 tp: tp,
@@ -677,9 +737,13 @@ module('unit tests', function () {
                     var i = this.get('tp').perform(true);
                     (0, expect_type_1.expectTypeOf)(i).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
+                    // @ts-expect-error
                     this.get('tp').perform();
+                    // @ts-expect-error
                     this.get('tp').perform('nope');
+                    // @ts-expect-error
                     this.get('tp').perform(true, 'nope');
+                    // @ts-expect-error
                     this.get('tp').perform(false, 5, 'nope');
                 },
                 bar: function () {
@@ -690,9 +754,13 @@ module('unit tests', function () {
                     var i = (0, object_1.get)(this, 'tp').perform(true);
                     (0, expect_type_1.expectTypeOf)(i).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
+                    // @ts-expect-error
                     (0, object_1.get)(this, 'tp').perform();
+                    // @ts-expect-error
                     (0, object_1.get)(this, 'tp').perform('nope');
+                    // @ts-expect-error
                     (0, object_1.get)(this, 'tp').perform(true, 'nope');
+                    // @ts-expect-error
                     (0, object_1.get)(this, 'tp').perform(false, 5, 'nope');
                 }
             });
@@ -704,9 +772,13 @@ module('unit tests', function () {
                 i = o.get('tp').perform(false, 5);
                 (0, expect_type_1.expectTypeOf)(i).toEqualTypeOf();
                 (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
+                // @ts-expect-error
                 o.get('tp').perform();
+                // @ts-expect-error
                 o.get('tp').perform('nope');
+                // @ts-expect-error
                 o.get('tp').perform(true, 'nope');
+                // @ts-expect-error
                 o.get('tp').perform(false, 5, 'nope');
             }
             {
@@ -716,9 +788,13 @@ module('unit tests', function () {
                 i = t.perform(false, 5);
                 (0, expect_type_1.expectTypeOf)(i).toEqualTypeOf();
                 (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
+                // @ts-expect-error
                 t.perform();
+                // @ts-expect-error
                 t.perform('nope');
+                // @ts-expect-error
                 t.perform(true, 'nope');
+                // @ts-expect-error
                 t.perform(false, 5, 'nope');
             }
             return [2 /*return*/];
@@ -727,61 +803,77 @@ module('unit tests', function () {
     test('EncapsulatedTaskProperty', function () { return __awaiter(void 0, void 0, void 0, function () {
         var Foo, tp, O, o, t, i, t, i;
         return __generator(this, function (_a) {
-            new ember_concurrency_1.EncapsulatedTaskProperty(); // EncapsulatedTaskProperty cannot be constructed
+            // @ts-expect-error
+            new EncapsulatedTaskProperty(); // EncapsulatedTaskProperty cannot be constructed
             Foo = /** @class */ (function (_super) {
                 __extends(Foo, _super);
+                // @ts-expect-error
                 function Foo() {
                     return _super !== null && _super.apply(this, arguments) || this;
                 }
                 return Foo;
-            }(ember_concurrency_1.EncapsulatedTaskProperty));
+            }(EncapsulatedTaskProperty));
             (0, expect_type_1.expectTypeOf)(tp.on).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.on).toBeCallableWith('init');
             (0, expect_type_1.expectTypeOf)(tp.on).toBeCallableWith('init', 'didInsertElement');
             (0, expect_type_1.expectTypeOf)(tp.on).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.on).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.on(false);
+            // @ts-expect-error
             tp.on('init', false);
             (0, expect_type_1.expectTypeOf)(tp.cancelOn).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.cancelOn).toBeCallableWith('init');
             (0, expect_type_1.expectTypeOf)(tp.cancelOn).toBeCallableWith('init', 'didInsertElement');
             (0, expect_type_1.expectTypeOf)(tp.cancelOn).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.cancelOn).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.cancelOn(false);
+            // @ts-expect-error
             tp.cancelOn('init', false);
             (0, expect_type_1.expectTypeOf)(tp.restartable).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.restartable).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.restartable).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.restartable('nope');
             (0, expect_type_1.expectTypeOf)(tp.enqueue).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.enqueue).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.enqueue).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.enqueue('nope');
             (0, expect_type_1.expectTypeOf)(tp.drop).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.drop).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.drop).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.drop('nope');
             (0, expect_type_1.expectTypeOf)(tp.keepLatest).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.keepLatest).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.keepLatest).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.keepLatest('nope');
             (0, expect_type_1.expectTypeOf)(tp.maxConcurrency).toBeCallableWith(5);
             (0, expect_type_1.expectTypeOf)(tp.maxConcurrency).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.maxConcurrency).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.maxConcurrency();
+            // @ts-expect-error
             tp.maxConcurrency('nope');
             (0, expect_type_1.expectTypeOf)(tp.group).toBeCallableWith('foo');
             (0, expect_type_1.expectTypeOf)(tp.group).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.group).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.group();
+            // @ts-expect-error
             tp.group(false);
             (0, expect_type_1.expectTypeOf)(tp.evented).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.evented).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.evented).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.evented('nope');
             (0, expect_type_1.expectTypeOf)(tp.debug).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tp.debug).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.debug).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.debug('nope');
             (0, expect_type_1.expectTypeOf)(tp.onState).toBeCallableWith(function () { });
             (0, expect_type_1.expectTypeOf)(tp.onState).toBeCallableWith(null);
@@ -796,7 +888,9 @@ module('unit tests', function () {
             });
             (0, expect_type_1.expectTypeOf)(tp.onState).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tp.onState).returns.toEqualTypeOf(tp);
+            // @ts-expect-error
             tp.onState('nope');
+            // @ts-expect-error
             tp.onState(undefined);
             O = object_1["default"].extend({
                 tp: tp,
@@ -810,9 +904,13 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(i.foo).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(i.foo).toBeString();
+                    // @ts-expect-error
                     this.get('tp').perform();
+                    // @ts-expect-error
                     this.get('tp').perform('nope');
+                    // @ts-expect-error
                     this.get('tp').perform(true, 'nope');
+                    // @ts-expect-error
                     this.get('tp').perform(false, 5, 'nope');
                 },
                 bar: function () {
@@ -825,9 +923,13 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(i.foo).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(i.foo).toBeString();
+                    // @ts-expect-error
                     (0, object_1.get)(this, 'tp').perform();
+                    // @ts-expect-error
                     (0, object_1.get)(this, 'tp').perform('nope');
+                    // @ts-expect-error
                     (0, object_1.get)(this, 'tp').perform(true, 'nope');
+                    // @ts-expect-error
                     (0, object_1.get)(this, 'tp').perform(false, 5, 'nope');
                 }
             });
@@ -841,9 +943,13 @@ module('unit tests', function () {
                 (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
                 (0, expect_type_1.expectTypeOf)(i.foo).not.toBeAny();
                 (0, expect_type_1.expectTypeOf)(i.foo).toBeString();
+                // @ts-expect-error
                 o.get('tp').perform();
+                // @ts-expect-error
                 o.get('tp').perform('nope');
+                // @ts-expect-error
                 o.get('tp').perform(true, 'nope');
+                // @ts-expect-error
                 o.get('tp').perform(false, 5, 'nope');
             }
             {
@@ -855,9 +961,13 @@ module('unit tests', function () {
                 (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
                 (0, expect_type_1.expectTypeOf)(i.foo).not.toBeAny();
                 (0, expect_type_1.expectTypeOf)(i.foo).toBeString();
+                // @ts-expect-error
                 t.perform();
+                // @ts-expect-error
                 t.perform('nope');
+                // @ts-expect-error
                 t.perform(true, 'nope');
+                // @ts-expect-error
                 t.perform(false, 5, 'nope');
             }
             return [2 /*return*/];
@@ -866,40 +976,54 @@ module('unit tests', function () {
     test('TaskGroupProperty', function () { return __awaiter(void 0, void 0, void 0, function () {
         var Foo, tgp, O, o, tg, tg;
         return __generator(this, function (_a) {
-            new ember_concurrency_1.TaskGroupProperty(); // TaskGroupProperty cannot be constructed
+            // @ts-expect-error
+            new TaskGroupProperty(); // TaskGroupProperty cannot be constructed
             Foo = /** @class */ (function (_super) {
                 __extends(Foo, _super);
+                // @ts-expect-error
                 function Foo() {
                     return _super !== null && _super.apply(this, arguments) || this;
                 }
                 return Foo;
-            }(ember_concurrency_1.TaskGroupProperty));
+            }(TaskGroupProperty));
+            // @ts-expect-error
             tgp.on('init');
+            // @ts-expect-error
             tgp.cancelOn('init');
             (0, expect_type_1.expectTypeOf)(tgp.restartable).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tgp.restartable).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tgp.restartable).returns.toEqualTypeOf(tgp);
+            // @ts-expect-error
             tgp.restartable('nope');
             (0, expect_type_1.expectTypeOf)(tgp.enqueue).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tgp.enqueue).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tgp.enqueue).returns.toEqualTypeOf(tgp);
+            // @ts-expect-error
             tgp.enqueue('nope');
             (0, expect_type_1.expectTypeOf)(tgp.drop).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tgp.drop).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tgp.drop).returns.toEqualTypeOf(tgp);
+            // @ts-expect-error
             tgp.drop('nope');
             (0, expect_type_1.expectTypeOf)(tgp.keepLatest).toBeCallableWith();
             (0, expect_type_1.expectTypeOf)(tgp.keepLatest).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tgp.keepLatest).returns.toEqualTypeOf(tgp);
+            // @ts-expect-error
             tgp.keepLatest('nope');
             (0, expect_type_1.expectTypeOf)(tgp.maxConcurrency).toBeCallableWith(5);
             (0, expect_type_1.expectTypeOf)(tgp.maxConcurrency).parameters.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(tgp.maxConcurrency).returns.toEqualTypeOf(tgp);
+            // @ts-expect-error
             tgp.maxConcurrency();
+            // @ts-expect-error
             tgp.maxConcurrency('nope');
+            // @ts-expect-error
             tgp.group('nope');
+            // @ts-expect-error
             tgp.evented();
+            // @ts-expect-error
             tgp.debug();
+            // @ts-expect-error
             tgp.onState();
             O = object_1["default"].extend({
                 tgp: tgp,
@@ -907,14 +1031,18 @@ module('unit tests', function () {
                     var tg = this.get('tgp');
                     (0, expect_type_1.expectTypeOf)(tg).toMatchTypeOf();
                     (0, expect_type_1.expectTypeOf)(tg.last).toEqualTypeOf();
+                    // @ts-expect-error
                     tg.perform();
+                    // @ts-expect-error
                     this.get('tgp').perform();
                 },
                 bar: function () {
                     var tg = (0, object_1.get)(this, 'tgp');
                     (0, expect_type_1.expectTypeOf)(tg).toMatchTypeOf();
                     (0, expect_type_1.expectTypeOf)(tg.last).toEqualTypeOf();
+                    // @ts-expect-error
                     tg.perform();
+                    // @ts-expect-error
                     (0, object_1.get)(this, 'tgp').perform();
                 }
             });
@@ -923,12 +1051,14 @@ module('unit tests', function () {
                 tg = o.get('tgp');
                 (0, expect_type_1.expectTypeOf)(tg).toMatchTypeOf();
                 (0, expect_type_1.expectTypeOf)(tg.last).toEqualTypeOf();
+                // @ts-expect-error
                 o.get('tgp').perform();
             }
             {
                 tg = (0, object_1.get)(O.create(), 'tgp');
                 (0, expect_type_1.expectTypeOf)(tg).toMatchTypeOf();
                 (0, expect_type_1.expectTypeOf)(tg.last).toEqualTypeOf();
+                // @ts-expect-error
                 tg.perform();
             }
             return [2 /*return*/];
@@ -949,6 +1079,7 @@ module('unit tests', function () {
             (0, expect_type_1.expectTypeOf)(i).toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(i).resolves.toEqualTypeOf();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform('nope');
         }
         {
@@ -967,6 +1098,7 @@ module('unit tests', function () {
             (0, expect_type_1.expectTypeOf)(i).toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(i).resolves.toBeString();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform('nope');
         }
         {
@@ -984,9 +1116,13 @@ module('unit tests', function () {
             (0, expect_type_1.expectTypeOf)(i).toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(i).resolves.toEqualTypeOf();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform('nope');
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform(true, 'nope');
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform(false, 5, 'nope');
         }
         {
@@ -1006,9 +1142,13 @@ module('unit tests', function () {
             (0, expect_type_1.expectTypeOf)(i).toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(i.value).toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(i).resolves.toEqualTypeOf();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform('nope');
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform(true, 'nope');
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform(false, 5, 'nope');
         }
         {
@@ -1031,6 +1171,7 @@ module('unit tests', function () {
             (0, expect_type_1.expectTypeOf)(i).resolves.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(i.foo).not.toBeAny();
             (0, expect_type_1.expectTypeOf)(i.foo).toBeString();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform('nope');
         }
         {
@@ -1058,6 +1199,7 @@ module('unit tests', function () {
             (0, expect_type_1.expectTypeOf)(i).resolves.toBeString();
             (0, expect_type_1.expectTypeOf)(i.foo).not.toBeAny();
             (0, expect_type_1.expectTypeOf)(i.foo).toBeString();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform('nope');
         }
         {
@@ -1081,9 +1223,13 @@ module('unit tests', function () {
             (0, expect_type_1.expectTypeOf)(i).resolves.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(i.foo).not.toBeAny();
             (0, expect_type_1.expectTypeOf)(i.foo).toBeString();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform('nope');
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform(true, 'nope');
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform(false, 5, 'nope');
         }
         {
@@ -1112,9 +1258,13 @@ module('unit tests', function () {
             (0, expect_type_1.expectTypeOf)(i).resolves.toEqualTypeOf();
             (0, expect_type_1.expectTypeOf)(i.foo).not.toBeAny();
             (0, expect_type_1.expectTypeOf)(i.foo).toBeString();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform();
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform('nope');
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform(true, 'nope');
+            // @ts-expect-error
             (0, object_1.get)({ tp: tp }, 'tp').perform(false, 5, 'nope');
         }
     });
@@ -1155,17 +1305,20 @@ module('unit tests', function () {
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([])];
                 case 1:
                     result = _a.sent();
+                    // @ts-expect-error
                     result[0];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([value])];
                 case 2:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result[0]).toBeString();
+                    // @ts-expect-error
                     result[1];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([value, task])];
                 case 3:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result[0]).toBeString();
                     (0, expect_type_1.expectTypeOf)(result[1]).toBeBoolean();
+                    // @ts-expect-error
                     result[2];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([value, task, thenable])];
                 case 4:
@@ -1173,6 +1326,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[0]).toBeString();
                     (0, expect_type_1.expectTypeOf)(result[1]).toBeBoolean();
                     (0, expect_type_1.expectTypeOf)(result[2]).toBeNumber();
+                    // @ts-expect-error
                     result[3];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([value, task, thenable, promise])];
                 case 5:
@@ -1181,6 +1335,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[1]).toBeBoolean();
                     (0, expect_type_1.expectTypeOf)(result[2]).toBeNumber();
                     (0, expect_type_1.expectTypeOf)(result[3]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[4];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([value, task, thenable, promise, value])];
                 case 6:
@@ -1190,6 +1345,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[2]).toBeNumber();
                     (0, expect_type_1.expectTypeOf)(result[3]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[4]).toBeString();
+                    // @ts-expect-error
                     result[5];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([value, task, thenable, promise, value, task])];
                 case 7:
@@ -1200,6 +1356,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[3]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[4]).toBeString();
                     (0, expect_type_1.expectTypeOf)(result[5]).toBeBoolean();
+                    // @ts-expect-error
                     result[6];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([
                             value,
@@ -1219,6 +1376,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[4]).toBeString();
                     (0, expect_type_1.expectTypeOf)(result[5]).toBeBoolean();
                     (0, expect_type_1.expectTypeOf)(result[6]).toBeNumber();
+                    // @ts-expect-error
                     result[7];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([
                             value,
@@ -1240,6 +1398,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[5]).toBeBoolean();
                     (0, expect_type_1.expectTypeOf)(result[6]).toBeNumber();
                     (0, expect_type_1.expectTypeOf)(result[7]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[8];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([
                             value,
@@ -1263,6 +1422,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[6]).toBeNumber();
                     (0, expect_type_1.expectTypeOf)(result[7]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[8]).toBeString();
+                    // @ts-expect-error
                     result[9];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([
                             value,
@@ -1288,6 +1448,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[7]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[8]).toBeString();
                     (0, expect_type_1.expectTypeOf)(result[9]).toBeBoolean();
+                    // @ts-expect-error
                     result[10];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([
                             value,
@@ -1315,6 +1476,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[8]).toBeString();
                     (0, expect_type_1.expectTypeOf)(result[9]).toBeBoolean();
                     (0, expect_type_1.expectTypeOf)(result[10]).toBeNumber();
+                    // @ts-expect-error
                     result[11];
                     return [4 /*yield*/, (0, ember_concurrency_1.all)([
                             value,
@@ -1344,6 +1506,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[9]).toBeBoolean();
                     (0, expect_type_1.expectTypeOf)(result[10]).toBeNumber();
                     (0, expect_type_1.expectTypeOf)(result[11]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[12];
                     return [2 /*return*/];
             }
@@ -1364,17 +1527,20 @@ module('unit tests', function () {
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([])];
                 case 1:
                     result = _a.sent();
+                    // @ts-expect-error
                     result[0];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([value])];
                 case 2:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result[0]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[1];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([value, task])];
                 case 3:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result[0]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[1]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[2];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([value, task, thenable])];
                 case 4:
@@ -1382,6 +1548,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[0]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[1]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[2]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[3];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([value, task, thenable, promise])];
                 case 5:
@@ -1390,6 +1557,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[1]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[2]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[3]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[4];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([value, task, thenable, promise, value])];
                 case 6:
@@ -1399,6 +1567,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[2]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[3]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[4]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[5];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([
                             value,
@@ -1416,6 +1585,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[3]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[4]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[5]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[6];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([
                             value,
@@ -1435,6 +1605,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[4]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[5]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[6]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[7];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([
                             value,
@@ -1456,6 +1627,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[5]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[6]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[7]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[8];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([
                             value,
@@ -1479,6 +1651,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[6]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[7]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[8]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[9];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([
                             value,
@@ -1504,6 +1677,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[7]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[8]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[9]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[10];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([
                             value,
@@ -1531,6 +1705,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[8]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[9]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[10]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[11];
                     return [4 /*yield*/, (0, ember_concurrency_1.allSettled)([
                             value,
@@ -1560,6 +1735,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result[9]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[10]).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result[11]).toEqualTypeOf();
+                    // @ts-expect-error
                     result[12];
                     return [2 /*return*/];
             }
@@ -1576,6 +1752,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.didCancel).toBeCallableWith(new Error());
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.didCancel).parameters.toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.didCancel).returns.toEqualTypeOf();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.didCancel)();
                     _a.label = 1;
                 case 1:
@@ -1614,17 +1791,20 @@ module('unit tests', function () {
                     return [4 /*yield*/, (0, ember_concurrency_1.hash)({})];
                 case 1:
                     result = _a.sent();
+                    // @ts-expect-error
                     result.nope;
                     return [4 /*yield*/, (0, ember_concurrency_1.hash)({ value: value })];
                 case 2:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result.value).toBeString();
+                    // @ts-expect-error
                     result.nope;
                     return [4 /*yield*/, (0, ember_concurrency_1.hash)({ value: value, task: task })];
                 case 3:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result.value).toBeString();
                     (0, expect_type_1.expectTypeOf)(result.task).toBeBoolean();
+                    // @ts-expect-error
                     result.nope;
                     return [4 /*yield*/, (0, ember_concurrency_1.hash)({ value: value, task: task, thenable: thenable })];
                 case 4:
@@ -1632,6 +1812,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result.value).toBeString();
                     (0, expect_type_1.expectTypeOf)(result.task).toBeBoolean();
                     (0, expect_type_1.expectTypeOf)(result.thenable).toBeNumber();
+                    // @ts-expect-error
                     result.nope;
                     return [4 /*yield*/, (0, ember_concurrency_1.hash)({ value: value, task: task, thenable: thenable, promise: promise })];
                 case 5:
@@ -1640,6 +1821,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result.task).toBeBoolean();
                     (0, expect_type_1.expectTypeOf)(result.thenable).toBeNumber();
                     (0, expect_type_1.expectTypeOf)(result.promise).toEqualTypeOf();
+                    // @ts-expect-error
                     result.nope;
                     return [2 /*return*/];
             }
@@ -1660,17 +1842,20 @@ module('unit tests', function () {
                     return [4 /*yield*/, (0, ember_concurrency_1.hashSettled)({})];
                 case 1:
                     result = _a.sent();
+                    // @ts-expect-error
                     result.nope;
                     return [4 /*yield*/, (0, ember_concurrency_1.hashSettled)({ value: value })];
                 case 2:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result.value).toEqualTypeOf();
+                    // @ts-expect-error
                     result.nope;
                     return [4 /*yield*/, (0, ember_concurrency_1.hashSettled)({ value: value, task: task })];
                 case 3:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result.value).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result.task).toEqualTypeOf();
+                    // @ts-expect-error
                     result.nope;
                     return [4 /*yield*/, (0, ember_concurrency_1.hashSettled)({ value: value, task: task, thenable: thenable })];
                 case 4:
@@ -1678,6 +1863,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result.value).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result.task).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result.thenable).toEqualTypeOf();
+                    // @ts-expect-error
                     result.nope;
                     return [4 /*yield*/, (0, ember_concurrency_1.hashSettled)({ value: value, task: task, thenable: thenable, promise: promise })];
                 case 5:
@@ -1686,6 +1872,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(result.task).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result.thenable).toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(result.promise).toEqualTypeOf();
+                    // @ts-expect-error
                     result.nope;
                     return [2 /*return*/];
             }
@@ -1719,36 +1906,42 @@ module('unit tests', function () {
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [4 /*yield*/, (0, ember_concurrency_1.race)([value, task, thenable])];
                 case 4:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [4 /*yield*/, (0, ember_concurrency_1.race)([value, task, thenable, promise])];
                 case 5:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [4 /*yield*/, (0, ember_concurrency_1.race)([value, task, thenable, promise])];
                 case 6:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [4 /*yield*/, (0, ember_concurrency_1.race)([value, task, thenable, promise, value])];
                 case 7:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [4 /*yield*/, (0, ember_concurrency_1.race)([value, task, thenable, promise, value, task])];
                 case 8:
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [4 /*yield*/, (0, ember_concurrency_1.race)([
                             value,
@@ -1763,6 +1956,7 @@ module('unit tests', function () {
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [4 /*yield*/, (0, ember_concurrency_1.race)([
                             value,
@@ -1778,6 +1972,7 @@ module('unit tests', function () {
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [4 /*yield*/, (0, ember_concurrency_1.race)([
                             value,
@@ -1794,6 +1989,7 @@ module('unit tests', function () {
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [4 /*yield*/, (0, ember_concurrency_1.race)([
                             value,
@@ -1811,6 +2007,7 @@ module('unit tests', function () {
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [4 /*yield*/, (0, ember_concurrency_1.race)([
                             value,
@@ -1829,6 +2026,7 @@ module('unit tests', function () {
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [4 /*yield*/, (0, ember_concurrency_1.race)([
                             value,
@@ -1848,6 +2046,7 @@ module('unit tests', function () {
                     result = _a.sent();
                     (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                     (0, expect_type_1.expectTypeOf)(result).toEqualTypeOf();
+                    // @ts-expect-error
                     result.length;
                     return [2 /*return*/];
             }
@@ -1861,8 +2060,11 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.timeout).toBeCallableWith(500);
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.timeout).parameters.toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.timeout).returns.toEqualTypeOf();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.timeout)();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.timeout)('nope');
+                    // @ts-expect-error
                     (0, ember_concurrency_1.timeout)(500, 'nope');
                     return [4 /*yield*/, (0, ember_concurrency_1.timeout)(500)];
                 case 1:
@@ -1880,8 +2082,11 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.rawTimeout).toBeCallableWith(500);
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.rawTimeout).parameters.toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.rawTimeout).returns.toEqualTypeOf();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.rawTimeout)();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.rawTimeout)('nope');
+                    // @ts-expect-error
                     (0, ember_concurrency_1.rawTimeout)(500, 'nope');
                     return [4 /*yield*/, (0, ember_concurrency_1.rawTimeout)(500)];
                 case 1:
@@ -1899,7 +2104,9 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.animationFrame).toBeCallableWith();
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.animationFrame).parameters.toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.animationFrame).returns.toEqualTypeOf();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.animationFrame)('nope');
+                    // @ts-expect-error
                     (0, ember_concurrency_1.animationFrame)(500, 'nope');
                     return [4 /*yield*/, (0, ember_concurrency_1.animationFrame)()];
                 case 1:
@@ -1917,8 +2124,11 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.waitForQueue).toBeCallableWith('afterRender');
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.waitForQueue).parameters.toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.waitForQueue).returns.toEqualTypeOf();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.waitForQueue)();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.waitForQueue)(500);
+                    // @ts-expect-error
                     (0, ember_concurrency_1.waitForQueue)('afterRender', 'nope');
                     return [4 /*yield*/, (0, ember_concurrency_1.waitForQueue)('afterRender')];
                 case 1:
@@ -1948,8 +2158,11 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.waitForEvent).toBeCallableWith(document.body, 'click');
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.waitForEvent).parameters.toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.waitForEvent).returns.toEqualTypeOf();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.waitForEvent)();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.waitForEvent)('nope');
+                    // @ts-expect-error
                     (0, ember_concurrency_1.waitForEvent)(document.body, 'click', 'nope');
                     return [4 /*yield*/, (0, ember_concurrency_1.waitForEvent)(document.body, 'click')];
                 case 1:
@@ -1981,8 +2194,11 @@ module('unit tests', function () {
                     //   [object, string | number | symbol, unknown]
                     // >();
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.waitForProperty).returns.toEqualTypeOf();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.waitForProperty)();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.waitForProperty)('nope');
+                    // @ts-expect-error
                     (0, ember_concurrency_1.waitForProperty)(obj, 'foo', 'bar', 'nope');
                     return [4 /*yield*/, (0, ember_concurrency_1.waitForProperty)(obj, 'foo', 'bar')];
                 case 1:
@@ -2007,6 +2223,7 @@ module('unit tests', function () {
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.forever).toBeCallableWith();
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.forever).parameters.toEqualTypeOf();
                     (0, expect_type_1.expectTypeOf)(ember_concurrency_1.forever).returns.toEqualTypeOf();
+                    // @ts-expect-error
                     (0, ember_concurrency_1.forever)('nope');
                     return [4 /*yield*/, (0, ember_concurrency_1.forever)()];
                 case 1:
@@ -2020,9 +2237,13 @@ module('unit tests', function () {
         (0, expect_type_1.expectTypeOf)(ember_concurrency_1.getModifier).toBeCallableWith('foo');
         (0, expect_type_1.expectTypeOf)(ember_concurrency_1.getModifier).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(ember_concurrency_1.getModifier).returns.toEqualTypeOf();
+        // @ts-expect-error
         (0, ember_concurrency_1.getModifier)();
+        // @ts-expect-error
         (0, ember_concurrency_1.getModifier)(false);
+        // @ts-expect-error
         (0, ember_concurrency_1.getModifier)(null);
+        // @ts-expect-error
         (0, ember_concurrency_1.getModifier)(function () { return __generator(this, function (_a) {
             return [2 /*return*/];
         }); });
@@ -2031,9 +2252,13 @@ module('unit tests', function () {
         (0, expect_type_1.expectTypeOf)(ember_concurrency_1.hasModifier).toBeCallableWith('foo');
         (0, expect_type_1.expectTypeOf)(ember_concurrency_1.hasModifier).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(ember_concurrency_1.hasModifier).returns.toEqualTypeOf();
+        // @ts-expect-error
         (0, ember_concurrency_1.hasModifier)();
+        // @ts-expect-error
         (0, ember_concurrency_1.hasModifier)(false);
+        // @ts-expect-error
         (0, ember_concurrency_1.hasModifier)(null);
+        // @ts-expect-error
         (0, ember_concurrency_1.hasModifier)(function () { return __generator(this, function (_a) {
             return [2 /*return*/];
         }); });
@@ -2068,7 +2293,9 @@ module('unit tests', function () {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (0, expect_type_1.expectTypeOf)(ember_concurrency_1.registerModifier).parameters.toEqualTypeOf();
         (0, expect_type_1.expectTypeOf)(ember_concurrency_1.registerModifier).returns.toEqualTypeOf();
+        // @ts-expect-error
         (0, ember_concurrency_1.registerModifier)();
+        // @ts-expect-error
         (0, ember_concurrency_1.registerModifier)('foo');
     });
 });
@@ -2129,8 +2356,11 @@ module('integration tests', function () {
                                 (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                                 (0, expect_type_1.expectTypeOf)(result).toBeString();
                                 (0, expect_type_1.expectTypeOf)(result.length).toBeNumber();
+                                // @ts-expect-error
                                 myTask.perform('nope');
+                                // @ts-expect-error
                                 myTask.perform(true, 'nope');
+                                // @ts-expect-error
                                 myTask.perform(false, 500, 'nope');
                                 return [2 /*return*/];
                         }
@@ -2207,8 +2437,11 @@ module('integration tests', function () {
                                 (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                                 (0, expect_type_1.expectTypeOf)(result).toBeString();
                                 (0, expect_type_1.expectTypeOf)(result.length).toBeNumber();
+                                // @ts-expect-error
                                 myTask.perform('nope');
+                                // @ts-expect-error
                                 myTask.perform(true, 'nope');
+                                // @ts-expect-error
                                 myTask.perform(false, 500, 'nope');
                                 return [2 /*return*/];
                         }
@@ -2355,8 +2588,11 @@ module('integration tests', function () {
                                 (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                                 (0, expect_type_1.expectTypeOf)(result).toBeString();
                                 (0, expect_type_1.expectTypeOf)(result.length).toBeNumber();
+                                // @ts-expect-error
                                 myTask.perform('nope');
+                                // @ts-expect-error
                                 myTask.perform(true, 'nope');
+                                // @ts-expect-error
                                 myTask.perform(false, 500, 'nope');
                                 return [2 /*return*/];
                         }
@@ -2510,8 +2746,11 @@ module('integration tests', function () {
                                 (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                                 (0, expect_type_1.expectTypeOf)(result).toBeString();
                                 (0, expect_type_1.expectTypeOf)(result.length).toBeNumber();
+                                // @ts-expect-error
                                 myTask.perform('nope');
+                                // @ts-expect-error
                                 myTask.perform(true, 'nope');
+                                // @ts-expect-error
                                 myTask.perform(false, 500, 'nope');
                                 return [2 /*return*/];
                         }
@@ -2590,8 +2829,11 @@ module('integration tests', function () {
                                 (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                                 (0, expect_type_1.expectTypeOf)(result).toBeString();
                                 (0, expect_type_1.expectTypeOf)(result.length).toBeNumber();
+                                // @ts-expect-error
                                 myTask.perform('nope');
+                                // @ts-expect-error
                                 myTask.perform(true, 'nope');
+                                // @ts-expect-error
                                 myTask.perform(false, 500, 'nope');
                                 return [2 /*return*/];
                         }
@@ -2751,8 +2993,11 @@ module('integration tests', function () {
                                 (0, expect_type_1.expectTypeOf)(result).not.toBeAny();
                                 (0, expect_type_1.expectTypeOf)(result).toBeString();
                                 (0, expect_type_1.expectTypeOf)(result.length).toBeNumber();
+                                // @ts-expect-error
                                 myTask.perform('nope');
+                                // @ts-expect-error
                                 myTask.perform(true, 'nope');
+                                // @ts-expect-error
                                 myTask.perform(false, 500, 'nope');
                                 return [2 /*return*/];
                         }
