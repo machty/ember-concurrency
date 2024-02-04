@@ -33,8 +33,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        browser: [chrome]
-        # browser: [chrome, firefox]
+        browser: [chrome, firefox]
 
     steps:
     - uses: wyvox/action@v1
@@ -52,8 +51,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        browser: [chrome]
-        # browser: [chrome, firefox]
+        browser: [chrome, firefox]
 
     steps:
     - uses: wyvox/action@v1
