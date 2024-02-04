@@ -36,6 +36,10 @@ jobs:
         browser: [chrome, firefox]
 
     steps:
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
     - uses: wyvox/action@v1
       with:
         pnpm-args: --frozen-lockfile
@@ -54,6 +58,11 @@ jobs:
         browser: [chrome, firefox]
 
     steps:
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+
     - uses: wyvox/action@v1
       with:
         pnpm-args: --frozen-lockfile
