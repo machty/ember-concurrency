@@ -1,0 +1,25 @@
+name: Docs CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wyvox/action@v1
+        with:
+          pnpm-args: --frozen-lockfile
+
+      - name: Build docs assets
+        run: pnpm --filter test-app docs:buildall
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./packages/test-app/dist

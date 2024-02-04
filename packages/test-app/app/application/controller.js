@@ -4,11 +4,11 @@ import { inject as service } from '@ember/service';
 
 const versionRegExp = /\d+[.]\d+[.]\d+(?:-(?:alpha|beta|rc)\.\d+)?/;
 const {
-  APP: { version },
+  emberConcurrencyVersion
 } = config;
 
 export default class ApplicationController extends Controller {
-  addonVersion = version.match(versionRegExp)[0];
+  addonVersion = emberConcurrencyVersion.match(versionRegExp)[0];
 
   @service notifications;
 }

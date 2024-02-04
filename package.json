@@ -7,8 +7,7 @@
     "lint": "pnpm run --filter '*' lint",
     "lint:fix": "pnpm run --filter '*' lint:fix",
     "test": "pnpm --filter test-app run test",
-    "test:ember": "pnpm --filter test-app run test:ember",
-    "docs:build": "pnpm --filter test-app run docs:build"
+    "test:ember": "pnpm --filter test-app run test:ember"
   },
   "devDependencies": {
     "concurrently": "^8.0.0"

@@ -19,6 +19,9 @@ module.exports = function (environment) {
       // when it is created
     },
 
+    emberConcurrencyVersion: require('../../ember-concurrency/package.json')
+      .version,
+
     fastboot: {
       hostWhitelist: [/^localhost:\d+$/, 'ember-concurrency.com'],
     },
