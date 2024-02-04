@@ -103,6 +103,7 @@ importers:
       eslint-plugin-n: ^15.6.1
       eslint-plugin-prettier: ^4.2.1
       eslint-plugin-qunit: ^7.3.4
+      expect-type: ^0.15.0
       loader.js: ^4.7.0
       prettier: ^2.8.4
       qunit: ^2.19.4
@@ -157,6 +158,7 @@ importers:
       eslint-plugin-n: 15.7.0_eslint@7.32.0
       eslint-plugin-prettier: 4.2.1_bbatpuwfbpnx32jr4tzjhnui3m
       eslint-plugin-qunit: 7.3.4_eslint@7.32.0
+      expect-type: 0.15.0
       loader.js: 4.7.0
       prettier: 2.8.8
       qunit: 2.20.0
@@ -6725,6 +6727,10 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       homedir-polyfill: 1.0.3
+    dev: true
+
+  /expect-type/0.15.0:
+    resolution: {integrity: sha512-yWnriYB4e8G54M5/fAFj7rCIBiKs1HAACaY13kCz6Ku0dezjS9aMcfcdVK2X8Tv2tEV1BPz/wKfQ7WA4S/d8aA==}
     dev: true
 
   /express/4.18.2:

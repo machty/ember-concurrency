@@ -68,6 +68,7 @@
     "eslint-plugin-n": "^15.6.1",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-qunit": "^7.3.4",
+    "expect-type": "^0.15.0",
     "loader.js": "^4.7.0",
     "prettier": "^2.8.4",
     "qunit": "^2.19.4",
