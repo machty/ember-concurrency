@@ -104,4 +104,4 @@ jobs:
     - name: Test
       env:
         EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
-      run: node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO
+      run: pnpm --filter test-app test:ember-try $EMBER_TRY_SCENARIO
