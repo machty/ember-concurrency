@@ -83,6 +83,7 @@ jobs:
         - ember-release
         - ember-default
         - typescript-3.9
+        - typescript-4.2
         - embroider-safe
         - embroider-optimized
         allow-failure: [false]
@@ -96,10 +97,6 @@ jobs:
     - uses: wyvox/action@v1
       with:
         pnpm-args: --frozen-lockfile
-
-    - name: Strip ts-expect-error from tests (for TypeScript 3.7)
-      run: find tests/types -type f -name '*.ts' | xargs sed -i 's/@ts-expect-error/@ts-ignore/g'
-      if: matrix.ember-try-scenario == 'typescript-3.7'
 
     - name: Test
       env:
