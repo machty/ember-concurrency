@@ -1,6 +1,4 @@
-import { computed, get } from '@ember/object';
 import {
-  decoratorWithParams,
   createTaskDecorator,
   createTaskGroupDecorator,
   lastValue as nativeLastValue,

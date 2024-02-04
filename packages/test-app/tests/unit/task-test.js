@@ -577,13 +577,15 @@ module('Unit: task', function (hooks) {
   });
 
   test('ES classes: syntax with decorators works', function (assert) {
+    assert.expect(2);
+
     const done = assert.async(2);
 
     class FakeGlimmerComponent {
       @task *task() {
-        assert.ok(this instanceof FakeGlimmerComponent);
+        assert.true(this instanceof FakeGlimmerComponent);
         yield timeout(1);
-        assert.ok(true);
+        assert.true(true);
         done();
       }
     }
@@ -609,11 +611,11 @@ module('Unit: task', function (hooks) {
     run(() => {
       obj = new Obj();
       destroy(obj);
-      assert.strictEqual(obj.task.perform().isDropped, true);
+      assert.true(obj.task.perform().isDropped);
     });
 
     run(() => {
-      assert.strictEqual(obj.task.perform().isDropped, true);
+      assert.true(obj.task.perform().isDropped);
     });
   });
 

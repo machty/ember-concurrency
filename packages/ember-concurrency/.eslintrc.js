@@ -21,6 +21,7 @@ module.exports = {
   },
   rules: {
     'require-yield': 0,
+    'ember/no-computed-properties-in-native-classes': 0,
   },
   overrides: [
     {

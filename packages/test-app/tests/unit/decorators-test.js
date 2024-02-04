@@ -88,38 +88,35 @@ module('Unit | decorators', function () {
     assert.strictEqual(subject.encapsulated.last.value, 56);
   });
 
-  test(
-    '`observes` re-performs the task every time the observed property changes in a coalesced manner',
-    async function (assert) {
-      assert.expect(2);
+  test('`observes` re-performs the task every time the observed property changes in a coalesced manner', async function (assert) {
+    assert.expect(2);
 
-      let values = [];
-      class Obj extends EmberObject {
-        foo = 0;
+    let values = [];
+    class Obj extends EmberObject {
+      foo = 0;
 
-        @task({ observes: 'foo' })
-        *observingTask() {
-          values.push(this.foo);
-        }
+      @task({ observes: 'foo' })
+      *observingTask() {
+        values.push(this.foo);
       }
-
-      let obj = Obj.create();
-      await settled();
-
-      obj.set('foo', 1);
-      obj.set('foo', 2);
-      obj.set('foo', 3);
-      await settled();
-
-      assert.deepEqual(values, [3]);
-      values = [];
-
-      obj.set('foo', 4);
-      obj.set('foo', 5);
-      obj.set('foo', 6);
-      await settled();
-
-      assert.deepEqual(values, [6]);
     }
-  );
+
+    let obj = Obj.create();
+    await settled();
+
+    obj.set('foo', 1);
+    obj.set('foo', 2);
+    obj.set('foo', 3);
+    await settled();
+
+    assert.deepEqual(values, [3]);
+    values = [];
+
+    obj.set('foo', 4);
+    obj.set('foo', 5);
+    obj.set('foo', 6);
+    await settled();
+
+    assert.deepEqual(values, [6]);
+  });
 });

@@ -4,8 +4,8 @@
   "description": "Improved concurrency/async primitives for Ember.js",
   "scripts": {
     "build": "rollup --config",
-    "lint": "npm-run-all --aggregate-output --continue-on-error --parallel \"lint:!(fix)\"",
-    "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
+    "lint": "concurrently 'npm:lint:*(!fix)' --names 'lint:'",
+    "lint:fix": "concurrently 'npm:lint:*:fix' --names 'fix:'",
     "lint:hbs": "ember-template-lint .",
     "lint:hbs:fix": "ember-template-lint . --fix",
     "lint:js": "eslint . --cache",
@@ -27,6 +27,8 @@
     "@babel/plugin-proposal-decorators": "^7.23.9",
     "@embroider/addon-dev": "^4.2.0",
     "@rollup/plugin-babel": "^6.0.4",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
     "ember-template-lint": "^5.6.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.6.0",
@@ -34,17 +36,18 @@
     "eslint-plugin-n": "^15.6.1",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-qunit": "^7.3.4",
-    "rollup": "^4.9.6"
+    "rollup": "^4.9.6",
+    "typescript": "^5.3.3"
   },
   "files": [
-    "addon-main.js",
+    "addon-main.cjs",
     "dist",
     "src/build"
   ],
   "exports": {
     ".": "./dist/index.js",
     "./*": "./dist/*",
-    "./addon-main.js": "./addon-main.js",
+    "./addon-main.js": "./addon-main.cjs",
     "./babel-plugin-transform-ember-concurrency-async-tasks.js": "./babel-plugin-transform-ember-concurrency-async-tasks.js"
   },
   "keywords": [
@@ -80,7 +83,7 @@
     },
     "version": 2,
     "type": "addon",
-    "main": "addon-main.js",
+    "main": "addon-main.cjs",
     "app-js": {
       "./helpers/cancel-all.js": "./dist/_app_/helpers/cancel-all.js",
       "./helpers/perform.js": "./dist/_app_/helpers/perform.js",

@@ -1,4 +1,5 @@
 import Ember from 'ember';
+
 import { computed } from '@ember/object';
 
 import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
