@@ -1,6 +1,7 @@
 import { helper } from '@ember/component/helper';
 import { assert } from '@ember/debug';
 import { taskHelperClosure } from '../-private/helpers';
+import type { Task } from '../manual-types';
 
 function maybeReportError(onError: (error: unknown) => void | null | undefined) {
   return function (e: unknown) {
@@ -17,7 +18,9 @@ function maybeReportError(onError: (error: unknown) => void | null | undefined) 
   };
 }
 
-export function performHelper(args: any[], hash: any) {
+type PerformParams = [task: Task<any, any[]>, ...args: any[]];
+
+export function performHelper(args: PerformParams, hash: any) {
   let perform = taskHelperClosure('perform', 'perform', args, hash);
 
   if (hash && typeof hash.onError !== 'undefined') {

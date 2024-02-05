@@ -1,5 +1,5 @@
 import { helper } from '@ember/component/helper';
-import type { Task } from '..';
+import type { Task } from '../manual-types';
 
 type TaskParams = [task: Task<any, any[]>, ...args: any[]];
 
