@@ -1,4 +1,5 @@
 import Component from '@ember/component';
+import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
 
 export default class TaskFunctionSyntaxComponent3 extends Component {
