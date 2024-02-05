@@ -86,7 +86,7 @@ export class TaskInstanceExecutor {
     if (yieldResumeType === YIELDABLE_CANCEL) {
       this.requestCancel(
         new CancelRequest(CANCEL_KIND_YIELDABLE_CANCEL),
-        value
+        value,
       );
       this.proceedWithCancelAsync();
     } else {
@@ -196,7 +196,7 @@ export class TaskInstanceExecutor {
       },
       (error) => {
         this.proceedChecked(resumeIndex, YIELDABLE_THROW, error);
-      }
+      },
     );
   }
 
@@ -290,7 +290,7 @@ export class TaskInstanceExecutor {
       if (!value || value.performType !== PERFORM_TYPE_LINKED) {
         // eslint-disable-next-line no-console
         console.warn(
-          'You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency).'
+          'You performed a .linked() task without immediately yielding/returning it. This is currently unsupported (but might be supported in future version of ember-concurrency).',
         );
       }
       this._expectsLinkedYield = false;
@@ -379,7 +379,7 @@ export class TaskInstanceExecutor {
 
   finalizeWithCancel() {
     let cancelReason = this.taskInstance.formatCancelReason(
-      this.cancelRequest.reason
+      this.cancelRequest.reason,
     );
     let error = new Error(cancelReason);
 
@@ -430,7 +430,7 @@ export class TaskInstanceExecutor {
     try {
       let maybeDisposer = yieldedValue[yieldableSymbol](
         this.taskInstance,
-        this.index
+        this.index,
       );
       this.addDisposer(maybeDisposer);
     } catch (e) {

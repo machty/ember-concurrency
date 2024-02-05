@@ -22,7 +22,7 @@ function registerOnPrototype(
   names,
   taskName,
   taskMethod,
-  once
+  once,
 ) {
   if (names && names.length > 0) {
     for (let i = 0; i < names.length; ++i) {
@@ -51,13 +51,13 @@ const ensureArray = (possibleArr) =>
   Array.isArray(possibleArr) ? possibleArr : [possibleArr];
 
 registerModifier('cancelOn', (factory, eventNames) =>
-  factory.addCancelEvents(...ensureArray(eventNames))
+  factory.addCancelEvents(...ensureArray(eventNames)),
 );
 registerModifier('observes', (factory, propertyPaths) =>
-  factory.addObserverKeys(...ensureArray(propertyPaths))
+  factory.addObserverKeys(...ensureArray(propertyPaths)),
 );
 registerModifier('on', (factory, eventNames) =>
-  factory.addPerformEvents(...ensureArray(eventNames))
+  factory.addPerformEvents(...ensureArray(eventNames)),
 );
 
 export class TaskFactory extends BaseTaskFactory {
@@ -66,14 +66,14 @@ export class TaskFactory extends BaseTaskFactory {
   createTask(context) {
     assert(
       `Cannot create task if a task definition is not provided as generator function or encapsulated task.`,
-      this.taskDefinition
+      this.taskDefinition,
     );
 
     let options = this.getTaskOptions(context);
 
     if (typeof this.taskDefinition === 'object') {
       return new EncapsulatedTask(
-        Object.assign({ taskObj: this.taskDefinition }, options)
+        Object.assign({ taskObj: this.taskDefinition }, options),
       );
     } else {
       return new Task(
@@ -82,8 +82,8 @@ export class TaskFactory extends BaseTaskFactory {
             generatorFactory: (args) =>
               this.taskDefinition.apply(context, args),
           },
-          options
-        )
+          options,
+        ),
       );
     }
   }
@@ -91,7 +91,7 @@ export class TaskFactory extends BaseTaskFactory {
   createTaskGroup(context) {
     assert(
       `A task definition is not expected for a task group.`,
-      !this.taskDefinition
+      !this.taskDefinition,
     );
     let options = this.getTaskOptions(context);
 
@@ -126,7 +126,7 @@ export class TaskFactory extends BaseTaskFactory {
 
     assert(
       `Task option '${name}' is not recognized as a supported option.`,
-      modifier
+      modifier,
     );
 
     return modifier;
@@ -145,7 +145,7 @@ export class TaskFactory extends BaseTaskFactory {
       this._eventNames,
       this.name,
       'perform',
-      false
+      false,
     );
     registerOnPrototype(
       addListener,
@@ -153,7 +153,7 @@ export class TaskFactory extends BaseTaskFactory {
       this._cancelEventNames,
       this.name,
       'cancelAll',
-      false
+      false,
     );
     registerOnPrototype(
       addObserver,
@@ -161,7 +161,7 @@ export class TaskFactory extends BaseTaskFactory {
       this._observes,
       this.name,
       'perform',
-      true
+      true,
     );
   }
 

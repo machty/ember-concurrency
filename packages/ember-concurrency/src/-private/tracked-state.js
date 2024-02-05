@@ -30,7 +30,7 @@ TRACKED_INITIAL_TASK_STATE = applyTracked(
     isIdle: true,
     state: 'idle',
   },
-  TRACKED_INITIAL_TASK_STATE
+  TRACKED_INITIAL_TASK_STATE,
 );
 
 TRACKED_INITIAL_INSTANCE_STATE = applyTracked(INITIAL_INSTANCE_STATE, {});
@@ -40,7 +40,7 @@ TRACKED_INITIAL_INSTANCE_STATE = applyTracked(
     isDropped: false,
     isRunning: false,
   },
-  TRACKED_INITIAL_INSTANCE_STATE
+  TRACKED_INITIAL_INSTANCE_STATE,
 );
 
 Object.freeze(TRACKED_INITIAL_TASK_STATE);

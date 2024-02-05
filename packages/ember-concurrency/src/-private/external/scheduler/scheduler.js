@@ -52,7 +52,7 @@ class Scheduler {
     let refresh = new SchedulerRefresh(
       this.schedulerPolicy,
       stateTracker,
-      this.taskInstances
+      this.taskInstances,
     );
     this.taskInstances = refresh.process();
   }

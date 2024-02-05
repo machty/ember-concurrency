@@ -26,11 +26,11 @@ export interface EncapsulatedTaskDescriptor<T, Args extends any[]> {
 }
 
 export type EncapsulatedTaskDescriptorArgs<
-  T extends EncapsulatedTaskDescriptor<any, any[]>
+  T extends EncapsulatedTaskDescriptor<any, any[]>,
 > = T extends { perform(...args: infer A): TaskGenerator<any> } ? A : [];
 
 export type EncapsulatedTaskDescriptorReturnType<
-  T extends EncapsulatedTaskDescriptor<any, any[]>
+  T extends EncapsulatedTaskDescriptor<any, any[]>,
 > = T extends { perform(...args: any[]): TaskGenerator<infer R> } ? R : unknown;
 
 export type AsyncArrowTaskFunction<HostObject, T, Args extends any[]> = (
@@ -40,17 +40,17 @@ export type AsyncArrowTaskFunction<HostObject, T, Args extends any[]> = (
 
 export type AsyncTaskArrowFunctionArgs<
   HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 > = T extends (...args: infer A) => Promise<any> ? A : [];
 
 export type AsyncTaskArrowFunctionReturnType<
   HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 > = T extends (...args: any[]) => Promise<infer R> ? R : unknown;
 
 export type TaskForAsyncTaskFunction<
   HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 > = Task<
   AsyncTaskArrowFunctionReturnType<HostObject, T>,
   AsyncTaskArrowFunctionArgs<HostObject, T>
@@ -58,7 +58,7 @@ export type TaskForAsyncTaskFunction<
 
 export type TaskInstanceForAsyncTaskFunction<
   HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 > = TaskInstance<AsyncTaskArrowFunctionReturnType<HostObject, T>>;
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -68,7 +68,7 @@ export type EncapsulatedTaskState<T extends object> = Omit<
 >;
 
 export type TaskForEncapsulatedTaskDescriptor<
-  T extends EncapsulatedTaskDescriptor<any, any[]>
+  T extends EncapsulatedTaskDescriptor<any, any[]>,
 > = EncapsulatedTask<
   EncapsulatedTaskDescriptorReturnType<T>,
   EncapsulatedTaskDescriptorArgs<T>,
@@ -76,7 +76,7 @@ export type TaskForEncapsulatedTaskDescriptor<
 >;
 
 export type TaskInstanceForEncapsulatedTaskDescriptor<
-  T extends EncapsulatedTaskDescriptor<any, any[]>
+  T extends EncapsulatedTaskDescriptor<any, any[]>,
 > = EncapsulatedTaskInstance<
   EncapsulatedTaskDescriptorReturnType<T>,
   EncapsulatedTaskState<T>
@@ -215,7 +215,7 @@ export interface EncapsulatedTask<
   T,
   Args extends any[],
   // eslint-disable-next-line @typescript-eslint/ban-types
-  State extends object
+  State extends object,
 > extends AbstractTask<Args, EncapsulatedTaskInstance<T, State>> {}
 
 /**
@@ -353,11 +353,11 @@ export interface TaskInstance<T> extends Promise<T> {
    */
   then<TResult1 = T, TResult2 = never>(
     onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
-    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ): Promise<TResult1 | TResult2>;
 
   catch<TResult = never>(
-    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null
+    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null,
   ): Promise<T | TResult>;
 
   finally(onfinally?: (() => void) | null): Promise<T>;
@@ -547,7 +547,7 @@ export interface EncapsulatedTaskProperty<
   T,
   Args extends any[],
   // eslint-disable-next-line @typescript-eslint/ban-types
-  State extends object
+  State extends object,
 > extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>> {}
 
 export interface TaskGroupProperty<T> extends TaskGroup<T> {
@@ -673,14 +673,14 @@ export interface TaskFactory<T, Args extends any[]>
  */
 export function registerModifier(
   name: string,
-  definition: TaskModifier<any, any[]>
+  definition: TaskModifier<any, any[]>,
 ): void;
 
 /**
  * Returns a specified modifier, if it exists in the registry
  */
 export function getModifier(
-  name: string
+  name: string,
 ): TaskModifier<unknown, unknown[]> | null;
 
 /**
@@ -740,11 +740,11 @@ export abstract class Yieldable<T> implements PromiseLike<T> {
 
   then<TResult1 = T, TResult2 = never>(
     onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
-    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ): Promise<TResult1 | TResult2>;
 
   catch<TResult = never>(
-    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null
+    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null,
   ): Promise<T | TResult>;
 
   finally(onfinally?: (() => void) | null): Promise<T>;
@@ -762,7 +762,7 @@ type Evented =
       addEventListener(event: string, callback: (...args: any[]) => void): void;
       removeEventListener(
         event: string,
-        callback: (...args: any[]) => void
+        callback: (...args: any[]) => void,
       ): void;
     };
 
@@ -840,12 +840,12 @@ type MethodOrPropertyDecoratorWithParams<Params extends unknown[]> =
  * @return {Task}
  */
 export function task<T extends TaskOptions>(
-  baseOptions?: T
+  baseOptions?: T,
 ): MethodOrPropertyDecoratorWithParams<[T]>;
 export function task<T>(
   target: Object,
   propertyKey: string,
-  descriptor: TypedPropertyDescriptor<T>
+  descriptor: TypedPropertyDescriptor<T>,
 ): TypedPropertyDescriptor<T>;
 export function task(target: Object, propertyKey: string): void;
 
@@ -894,10 +894,10 @@ export function task(target: Object, propertyKey: string): void;
  * @param taskFn A generator function backing the task or an encapsulated task descriptor object with a `perform` generator method.
  */
 export function task<T extends TaskFunction<any, any[]>>(
-  taskFn: T
+  taskFn: T,
 ): TaskProperty<TaskFunctionReturnType<T>, TaskFunctionArgs<T>>;
 export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(
-  taskFn: T
+  taskFn: T,
 ): EncapsulatedTaskProperty<
   EncapsulatedTaskDescriptorReturnType<T>,
   EncapsulatedTaskDescriptorArgs<T>,
@@ -906,31 +906,31 @@ export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(
 
 export function task<
   HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(
   hostObject: HostObject,
-  asyncArrowTaskFn: T
+  asyncArrowTaskFn: T,
 ): TaskForAsyncTaskFunction<HostObject, T>;
 
 export function task<
   HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 export function task<
   HostObject,
   O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(
   hostObject: HostObject,
   baseOptions: O,
-  asyncArrowTaskFn: T
+  asyncArrowTaskFn: T,
 ): TaskForAsyncTaskFunction<HostObject, T>;
 
 export function task<
   HostObject,
   O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 export type AsyncTaskFunction<T, Args extends any[]> = (
@@ -967,22 +967,22 @@ export type AsyncTaskFunction<T, Args extends any[]> = (
  * @return {Task}
  */
 export function dropTask<T extends TaskOptions>(
-  baseOptions?: T
+  baseOptions?: T,
 ): MethodOrPropertyDecoratorWithParams<[T]>;
 export function dropTask<T>(
   target: Object,
   propertyKey: string,
-  descriptor: TypedPropertyDescriptor<T>
+  descriptor: TypedPropertyDescriptor<T>,
 ): TypedPropertyDescriptor<T>;
 export function dropTask(target: Object, propertyKey: string): void;
 export function dropTask<
   HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 export function dropTask<
   HostObject,
   O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 /**
@@ -1015,23 +1015,23 @@ export function dropTask<
  * @return {Task}
  */
 export function enqueueTask<T extends TaskOptions>(
-  baseOptions?: T
+  baseOptions?: T,
 ): MethodOrPropertyDecoratorWithParams<[T]>;
 export function enqueueTask<T>(
   target: Object,
   propertyKey: string,
-  descriptor: TypedPropertyDescriptor<T>
+  descriptor: TypedPropertyDescriptor<T>,
 ): TypedPropertyDescriptor<T>;
 export function enqueueTask(target: Object, propertyKey: string): void;
 export function enqueueTask<
   HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 export function enqueueTask<
   HostObject,
   O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 /**
@@ -1064,23 +1064,23 @@ export function enqueueTask<
  * @return {Task}
  */
 export function keepLatestTask<T extends TaskOptions>(
-  baseOptions?: T
+  baseOptions?: T,
 ): MethodOrPropertyDecoratorWithParams<[T]>;
 export function keepLatestTask<T>(
   target: Object,
   propertyKey: string,
-  descriptor: TypedPropertyDescriptor<T>
+  descriptor: TypedPropertyDescriptor<T>,
 ): TypedPropertyDescriptor<T>;
 export function keepLatestTask(target: Object, propertyKey: string): void;
 export function keepLatestTask<
   HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 export function keepLatestTask<
   HostObject,
   O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 /**
@@ -1113,23 +1113,23 @@ export function keepLatestTask<
  * @return {Task}
  */
 export function restartableTask<T extends TaskOptions>(
-  baseOptions?: T
+  baseOptions?: T,
 ): MethodOrPropertyDecoratorWithParams<[T]>;
 export function restartableTask<T>(
   target: Object,
   propertyKey: string,
-  descriptor: TypedPropertyDescriptor<T>
+  descriptor: TypedPropertyDescriptor<T>,
 ): TypedPropertyDescriptor<T>;
 export function restartableTask(target: Object, propertyKey: string): void;
 export function restartableTask<
   HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 export function restartableTask<
   HostObject,
   O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>
+  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 >(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 /**
@@ -1164,7 +1164,7 @@ export function restartableTask<
  * @return {TaskGroup}
  */
 export function taskGroup<T extends TaskGroupOptions>(
-  baseOptions: T
+  baseOptions: T,
 ): PropertyDecorator;
 export function taskGroup(target: Object, propertyKey: string): void;
 
@@ -1203,7 +1203,7 @@ export function taskGroup<T>(): TaskGroupProperty<T>;
  * @return {TaskGroup}
  */
 export function dropTaskGroup<T extends TaskGroupOptions>(
-  baseOptions: T
+  baseOptions: T,
 ): PropertyDecorator;
 export function dropTaskGroup(target: Object, propertyKey: string): void;
 
@@ -1219,7 +1219,7 @@ export function dropTaskGroup(target: Object, propertyKey: string): void;
  * @return {TaskGroup}
  */
 export function enqueueTaskGroup<T extends TaskGroupOptions>(
-  baseOptions: T
+  baseOptions: T,
 ): PropertyDecorator;
 export function enqueueTaskGroup(target: Object, propertyKey: string): void;
 
@@ -1235,7 +1235,7 @@ export function enqueueTaskGroup(target: Object, propertyKey: string): void;
  * @return {TaskGroup}
  */
 export function keepLatestTaskGroup<T extends TaskGroupOptions>(
-  baseOptions: T
+  baseOptions: T,
 ): PropertyDecorator;
 export function keepLatestGroup(target: Object, propertyKey: string): void;
 
@@ -1251,7 +1251,7 @@ export function keepLatestGroup(target: Object, propertyKey: string): void;
  * @return {TaskGroup}
  */
 export function restartableTaskGroup<T extends TaskGroupOptions>(
-  baseOptions: T
+  baseOptions: T,
 ): PropertyDecorator;
 export function restartableTaskGroup(target: Object, propertyKey: string): void;
 
@@ -1270,7 +1270,7 @@ export function restartableTaskGroup(target: Object, propertyKey: string): void;
  * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
 export function all<T extends readonly unknown[] | readonly [unknown]>(
-  values: T
+  values: T,
 ): Promise<{ -readonly [K in keyof T]: Resolved<T[K]> }>;
 export function all<T>(values: Iterable<T>): Promise<Array<Resolved<T>>>;
 
@@ -1284,7 +1284,7 @@ export function all<T>(values: Iterable<T>): Promise<Array<Resolved<T>>>;
  *   {@linkcode TaskInstance}s passed in to `allSettled` will be canceled
  */
 export function allSettled<T extends readonly unknown[] | readonly [unknown]>(
-  values: T
+  values: T,
 ): Promise<{ -readonly [K in keyof T]: Settled<T[K]> }>;
 export function allSettled<T>(values: Iterable<T>): Promise<Array<Settled<T>>>;
 
@@ -1346,10 +1346,10 @@ export function didCancel(error: unknown): error is TaskCancelation;
  *   (e.g. {@linkcode TaskInstance}s) will be canceled
  */
 export function hash<T extends Record<string, unknown>>(
-  values: T
+  values: T,
 ): Promise<{ [K in keyof T]: Resolved<T[K]> }>;
 export function hash<T>(
-  values: Record<string, T>
+  values: Record<string, T>,
 ): Promise<Record<string, Resolved<T>>>;
 
 /**
@@ -1362,10 +1362,10 @@ export function hash<T>(
  *   {@linkcode TaskInstance}s passed in to `hashSettled` will be canceled
  */
 export function hashSettled<T extends Record<string, unknown>>(
-  values: T
+  values: T,
 ): Promise<{ [K in keyof T]: Settled<T[K]> }>;
 export function hashSettled<T>(
-  values: Record<string, T>
+  values: Record<string, T>,
 ): Promise<Record<string, Settled<T>>>;
 
 /**
@@ -1483,7 +1483,7 @@ export function waitForQueue(queueName: string): Yieldable<void>;
  */
 export function waitForEvent(
   object: Evented,
-  eventName: string
+  eventName: string,
 ): Yieldable<void>;
 
 /**
@@ -1532,17 +1532,17 @@ export function waitForEvent(
 export function waitForProperty<O extends object, K extends keyof O>(
   object: O,
   key: K,
-  callbackOrValue: (value: O[K]) => boolean
+  callbackOrValue: (value: O[K]) => boolean,
 ): Yieldable<void>;
 export function waitForProperty(
   object: object,
   key: string,
-  callbackOrValue: (value: unknown) => boolean
+  callbackOrValue: (value: unknown) => boolean,
 ): Yieldable<void>;
 export function waitForProperty<O extends object, K extends keyof O>(
   object: O,
   key: K,
-  callbackOrValue: O[K]
+  callbackOrValue: O[K],
 ): Yieldable<void>;
 
 /**

@@ -81,7 +81,7 @@ export class TaskInstance extends BaseTaskInstance {
     let childName = `\`${this.getName()}\``;
     // eslint-disable-next-line no-console
     console.warn(
-      `ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task ${parentName} and child task ${childName}. If you want child task ${childName} to be canceled when parent task ${parentName} is canceled, please change \`.perform()\` to \`.linked().perform()\`. If you want child task ${childName} to keep running after parent task ${parentName} is canceled, change it to \`.unlinked().perform()\``
+      `ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task ${parentName} and child task ${childName}. If you want child task ${childName} to be canceled when parent task ${parentName} is canceled, please change \`.perform()\` to \`.linked().perform()\`. If you want child task ${childName} to keep running after parent task ${parentName} is canceled, change it to \`.unlinked().perform()\``,
     );
   }
 
@@ -272,6 +272,6 @@ export class TaskInstance extends BaseTaskInstance {
 if (TRACKED_INITIAL_INSTANCE_STATE) {
   Object.defineProperties(
     TaskInstance.prototype,
-    TRACKED_INITIAL_INSTANCE_STATE
+    TRACKED_INITIAL_INSTANCE_STATE,
   );
 }

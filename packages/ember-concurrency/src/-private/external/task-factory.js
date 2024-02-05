@@ -11,7 +11,7 @@ import { DEFAULT_ENVIRONMENT } from './environment';
 function assertModifiersNotMixedWithGroup(obj) {
   if (obj._hasSetConcurrencyConstraint && obj._taskGroupPath) {
     throw new Error(
-      `Cannot use both 'group' and other concurrency-constraining task modifiers (e.g. 'drop', 'enqueue', 'restartable')`
+      `Cannot use both 'group' and other concurrency-constraining task modifiers (e.g. 'drop', 'enqueue', 'restartable')`,
     );
   }
 }
@@ -19,7 +19,7 @@ function assertModifiersNotMixedWithGroup(obj) {
 function assertUnsetBufferPolicy(obj) {
   if (obj._hasSetBufferPolicy) {
     throw new Error(
-      `Cannot set multiple buffer policies on a task or task group. ${obj._schedulerPolicyClass} has already been set for task or task group '${obj.name}'`
+      `Cannot set multiple buffer policies on a task or task group. ${obj._schedulerPolicyClass} has already been set for task or task group '${obj.name}'`,
     );
   }
 }
@@ -58,7 +58,7 @@ const MODIFIER_REGISTRY = {
 export function registerModifier(name, callback) {
   if (MODIFIER_REGISTRY[name]) {
     throw new Error(
-      `A modifier with the name '${name}' has already been defined.`
+      `A modifier with the name '${name}' has already been defined.`,
     );
   }
 
@@ -131,8 +131,8 @@ export class TaskFactory {
         {
           generatorFactory: (args) => this.taskDefinition.apply(context, args),
         },
-        options
-      )
+        options,
+      ),
     );
   }
 
@@ -200,18 +200,18 @@ export class TaskFactory {
       group = context[this._taskGroupPath];
       if (!(group instanceof TaskGroup)) {
         throw new Error(
-          `Expected group '${this._taskGroupPath}' to be defined but was not found.`
+          `Expected group '${this._taskGroupPath}' to be defined but was not found.`,
         );
       }
 
       scheduler = group.scheduler;
     } else {
       let schedulerPolicy = new this._schedulerPolicyClass(
-        this._maxConcurrency
+        this._maxConcurrency,
       );
       scheduler = this.getScheduler(
         schedulerPolicy,
-        onStateCallback && typeof onStateCallback === 'function'
+        onStateCallback && typeof onStateCallback === 'function',
       );
     }
 

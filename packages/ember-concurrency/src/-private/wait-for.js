@@ -152,7 +152,7 @@ export function waitForQueue(queueName) {
 export function waitForEvent(object, eventName) {
   assert(
     `${object} must include Ember.Evented (or support \`.on()\` and \`.off()\`) or DOM EventTarget (or support \`addEventListener\` and  \`removeEventListener\`) to be able to use \`waitForEvent\``,
-    isEventedObject(object)
+    isEventedObject(object),
   );
   return new WaitForEventYieldable(object, eventName);
 }

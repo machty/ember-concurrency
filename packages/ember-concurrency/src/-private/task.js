@@ -325,7 +325,7 @@ export class EncapsulatedTask extends Task {
         },
         ownKeys(obj) {
           return Reflect.ownKeys(obj).concat(
-            Reflect.ownKeys(encapsulatedTaskImpl)
+            Reflect.ownKeys(encapsulatedTaskImpl),
           );
         },
         defineProperty(obj, prop, descriptor) {

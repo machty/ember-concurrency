@@ -2,7 +2,7 @@ import BoundedPolicy from './bounded-policy';
 import { STARTED, QUEUED, makeCancelState } from './execution-states';
 
 const CANCELLED = makeCancelState(
-  `it belongs to a 'keepLatest' Task that was already running`
+  `it belongs to a 'keepLatest' Task that was already running`,
 );
 
 // Given:
@@ -44,7 +44,7 @@ class KeepLatestPolicy extends BoundedPolicy {
     let totalRunning = numRunning + numQueued;
     return new KeepLatestReducer(
       this.maxConcurrency,
-      totalRunning - this.maxConcurrency - maxEnqueued
+      totalRunning - this.maxConcurrency - maxEnqueued,
     );
   }
 }
