@@ -1,6 +1,6 @@
 # Changelog
 
-### 4.0.0
+### 4.0.0 (unreleased)
   - Ember Concurrency is now a V2 Embroider Addon (#551)
     - BREAKING CHANGE: you must now register the Babel transform used by Ember Concurrency within consuming apps and addons
       - See upgrade docs: https://ember-concurrency.com/docs/v4-upgrade
