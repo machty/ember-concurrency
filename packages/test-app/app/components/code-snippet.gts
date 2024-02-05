@@ -1,14 +1,14 @@
 import Component from '@glimmer/component';
 import { getCodeSnippet } from 'ember-code-snippet';
-import { cached } from "@glimmer/tracking";
+import { cached } from '@glimmer/tracking';
 
 import CodeBlock from 'ember-prism/components/code-block';
 
 type Signature = {
   Args: {
     name: string;
-  }
-}
+  };
+};
 
 export default class CodeTemplateToggleComponent extends Component<Signature> {
   @cached

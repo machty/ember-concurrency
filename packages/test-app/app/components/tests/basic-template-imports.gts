@@ -34,17 +34,29 @@ export default class BasicTemplateImports extends GlimmerComponent<Signature> {
   <template>
     <div>
       {{#let (curryTask this.valueTask 'foo') as |curriedTask|}}
-        <button id='perform-curried' {{on 'click' (perform curriedTask)}}>
+        <button
+          type='button'
+          id='perform-curried'
+          {{on 'click' (perform curriedTask)}}
+        >
           Perform Curried Value Task
         </button>
         <div id='value'>{{this.value}}</div>
       {{/let}}
 
-      <button id='perform-promise' {{on 'click' (perform this.promiseTask)}}>
+      <button
+        type='button'
+        id='perform-promise'
+        {{on 'click' (perform this.promiseTask)}}
+      >
         Perform Promise Task
       </button>
 
-      <button id='cancel-all' {{on 'click' (cancelAll this.promiseTask)}}>
+      <button
+        type='button'
+        id='cancel-all'
+        {{on 'click' (cancelAll this.promiseTask)}}
+      >
         Cancel
       </button>
       <div>{{if this.promiseTask.isRunning 'running' 'idle'}}</div>
