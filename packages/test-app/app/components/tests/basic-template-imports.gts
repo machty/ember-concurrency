@@ -9,6 +9,8 @@ import perform from 'ember-concurrency/helpers/perform';
 import curryTask from 'ember-concurrency/helpers/task';
 import cancelAll from 'ember-concurrency/helpers/cancel-all';
 
+import RSVP from 'rsvp';
+
 interface Signature {
   Args: {
     rating: null | number;
@@ -21,24 +23,31 @@ export default class BasicTemplateImports extends GlimmerComponent<Signature> {
   @tracked value = '';
 
   valueTask = task(async (value) => {
-    debugger;
     this.value = value;
-    await timeout(1000);
   });
 
+  promiseTask = task(async (_event, value) => {
+    this.value = value;
+    await new RSVP.Promise(() => {});
+  });
 
   <template>
     <div>
       {{#let (curryTask this.valueTask 'foo') as |curriedTask|}}
-        <button id='perform' {{on 'click' (perform curriedTask)}}>
+        <button id='perform-curried' {{on 'click' (perform curriedTask)}}>
           Perform Curried Value Task
         </button>
-        <button id='cancel-all' {{on 'click' (cancelAll curriedTask)}}>
-          Cancel
-        </button>
         <div id='value'>{{this.value}}</div>
-        <div>{{if curriedTask.isRunning 'running' 'idle'}}</div>
       {{/let}}
+
+      <button id='perform-promise' {{on 'click' (perform this.promiseTask)}}>
+        Perform Promise Task
+      </button>
+
+      <button id='cancel-all' {{on 'click' (cancelAll this.promiseTask)}}>
+        Cancel
+      </button>
+      <div>{{if this.promiseTask.isRunning 'running' 'idle'}}</div>
     </div>
   </template>
 }
