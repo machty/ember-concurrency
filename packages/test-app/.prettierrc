@@ -1,0 +1,25 @@
+{
+  "plugins": ["prettier-plugin-ember-template-tag"],
+  "overrides": [
+    {
+      "files": "*.{js,ts}",
+      "options": {
+        "singleQuote": true
+      }
+    },
+    {
+      "files": "*.gjs",
+      "options": {
+        "parser": "ember-template-tag",
+        "singleQuote": true
+      }
+    },
+    {
+      "files": "*.gts",
+      "options": {
+        "parser": "ember-template-tag",
+        "singleQuote": true
+      }
+    }
+  ]
+}
