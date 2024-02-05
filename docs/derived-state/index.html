@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     
-<meta name="test-app/config/environment" content="%7B%22modulePrefix%22%3A%22test-app%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22history%22%2C%22EmberENV%22%3A%7B%22EXTEND_PROTOTYPES%22%3Afalse%2C%22FEATURES%22%3A%7B%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22test-app%22%2C%22version%22%3A%220.0.0%2B75e1463d%22%7D%2C%22emberConcurrencyVersion%22%3A%224.0.0-beta.1%22%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%7D" />
+<meta name="test-app/config/environment" content="%7B%22modulePrefix%22%3A%22test-app%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22history%22%2C%22EmberENV%22%3A%7B%22EXTEND_PROTOTYPES%22%3Afalse%2C%22FEATURES%22%3A%7B%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22test-app%22%2C%22version%22%3A%220.0.0%2Bc668a526%22%7D%2C%22emberConcurrencyVersion%22%3A%224.0.0-beta.1%22%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%7D" />
 <!-- EMBER_CLI_FASTBOOT_TITLE -->
 
     <link integrity="" rel="stylesheet" href="/assets/vendor-10d8eaf9101947f2130df71856c61a0b.css" />
@@ -218,36 +218,44 @@
 
 <p>
   One of the core goals of ember-concurrency is to provide as much
-  <strong>Derived State</strong> as possible; for example, instead
-  of requiring you to set and then later unset your own <code>isRunning</code>
-  flag at the beginning and end of a task, ember-concurrency gives you
-  an <code>.isRunning</code> (and <code>.isIdle</code>) property for free so that
-  you don't have to manage your own state (which is a common source of bugs
-  and boilerplate).
+  <strong>Derived State</strong>
+  as possible; for example, instead of requiring you to set and then later unset
+  your own
+  <code>isRunning</code>
+  flag at the beginning and end of a task, ember-concurrency gives you an
+  <code>.isRunning</code>
+  (and
+  <code>.isIdle</code>) property for free so that you don't have to manage your
+  own state (which is a common source of bugs and boilerplate).
 </p>
 
 <p>
-  ember-concurrency gives you the concept of <strong>Tasks</strong>, and
-  when you <code>perform</code> a Task, it produces a
-  <strong>Task Instance</strong>, which represents a single execution
-  of that task. Both of these objects expose a lot of derived state,
-  which is described below.
+  ember-concurrency gives you the concept of
+  <strong>Tasks</strong>, and when you
+  <code>perform</code>
+  a Task, it produces a
+  <strong>Task Instance</strong>, which represents a single execution of that
+  task. Both of these objects expose a lot of derived state, which is described
+  below.
 </p>
 
 <p>
-  Less commonly-used properties are <em>italicized</em>. Also, keep in
-  mind that there are <a href="/api">API docs</a> for everything described below.
+  Less commonly-used properties are
+  <em>italicized</em>. Also, keep in mind that there are
+  <a href="/api">API docs</a>
+  for everything described below.
 </p>
 
 <h4>Properties on <a href="/api/Task.html">Task</a> objects</h4>
 
 <ul>
   <li>
-    <code>isRunning</code>:
-    true when there is at least one instance of the task running, false otherwise.
+    <code>isRunning</code>: true when there is at least one instance of the task
+    running, false otherwise.
   </li>
   <li>
-    <code>isIdle</code>: the opposite of <code>isRunning</code>
+    <code>isIdle</code>: the opposite of
+    <code>isRunning</code>
   </li>
   <li>
     <code>performCount</code>: The number of times the task has been performed
@@ -255,28 +263,31 @@
   <li>
     <code>numRunning</code>: an integer representing the number of currently
     running task instances. If you're using a task modifier like
-    <code>drop/enqueue/restartable</code> (without specifying <code>maxConcurrency</code>)
-    this number will never be greater than 1. This property is mostly useful for
-    debugging.
+    <code>drop/enqueue/restartable</code>
+    (without specifying
+    <code>maxConcurrency</code>) this number will never be greater than 1. This
+    property is mostly useful for debugging.
   </li>
   <li>
-    <code>state</code>: a string description of the task's state; can
-    either by "running" or "idle". Useful for debugging.
+    <code>state</code>: a string description of the task's state; can either by
+    "running" or "idle". Useful for debugging.
   </li>
 </ul>
 
 <h5>Accessing Task Instances from the Task object</h5>
 
 <p>
-  Tasks also expose properties for accessing specific
-  Task Instances (which are created every time you call <code>.perform()</code>
+  Tasks also expose properties for accessing specific Task Instances (which are
+  created every time you call
+  <code>.perform()</code>
   on a task).
 </p>
 
 <ul>
   <li>
-    <code>last</code>: the last Task Instance that started executing.
-    This property will never point to a <code>drop</code>ped Task Instance,
+    <code>last</code>: the last Task Instance that started executing. This
+    property will never point to a
+    <code>drop</code>ped Task Instance,
   </li>
   <li>
     <code>lastSuccessful</code>: the last Task Instance that ran to completion
@@ -285,12 +296,13 @@
 </ul>
 
 <p>
-  In addition to these properties, keep in mind that at any point you can
-  also just save the TaskInstance returned from <code>.perform()</code>
-  to some property for later access in case the above properties don't
-  hit your use cases (but please open a GitHub issue if you find yourself
-  doing this often because this might suggest room for improvement in
-  ember-concurrency's API).
+  In addition to these properties, keep in mind that at any point you can also
+  just save the TaskInstance returned from
+  <code>.perform()</code>
+  to some property for later access in case the above properties don't hit your
+  use cases (but please open a GitHub issue if you find yourself doing this
+  often because this might suggest room for improvement in ember-concurrency's
+  API).
 </p>
 
 <h4>Properties on <a href="/api/TaskInstance.html">Task Instances</a></h4>
@@ -301,23 +313,27 @@
   </li>
 
   <li>
-    <code>isError</code>: true if Task Instance failed to run to completion due to an exception
+    <code>isError</code>: true if Task Instance failed to run to completion due
+    to an exception
   </li>
 
   <li>
     <code>value</code>: the value returned from the task function. Is
-    <code>null</code> before a value is returned, and remains null
-    if the task never completes (throws an error or is canceled).
+    <code>null</code>
+    before a value is returned, and remains null if the task never completes
+    (throws an error or is canceled).
   </li>
 
   <li>
-    <code>error</code>: the error/exception thrown from the task function
-    (might also be the value of a rejected promise that was yielded).
+    <code>error</code>: the error/exception thrown from the task function (might
+    also be the value of a rejected promise that was yielded).
     <em>
-      Note: until <a href="https://github.com/machty/ember-concurrency/issues/40">this issue</a>
-      is resolved, unless you write code to explicitly <code>.catch()</code>
-      an error thrown from a performed task, this error will bubble
-      to the browser (so error reporters like Bugsnag will see it).
+      Note: until
+      <a href="https://github.com/machty/ember-concurrency/issues/40">this issue</a>
+      is resolved, unless you write code to explicitly
+      <code>.catch()</code>
+      an error thrown from a performed task, this error will bubble to the
+      browser (so error reporters like Bugsnag will see it).
     </em>
   </li>
 </ul>
@@ -325,12 +341,14 @@
 <h4>Put the two together...</h4>
 
 <p>
-  Given a task named <code>myTask</code>, if you need to display a success banner
-  with the value returned from the most recent execution of <code>myTask</code>,
-  you can simply reference <code>{{myTask.last.value}}</code>. If want this banner
-  to persist until the next time the task runs to completion, you can
-  just change it to <code>{{myTask.lastSuccessful.value}}</code>. There are other
-  combinations as well that might better suit your UI needs.
+  Given a task named
+  <code>myTask</code>, if you need to display a success banner with the value
+  returned from the most recent execution of
+  <code>myTask</code>, you can simply reference
+  <code>{{myTask.last.value}}</code>. If want this banner to persist until the
+  next time the task runs to completion, you can just change it to
+  <code>{{myTask.lastSuccessful.value}}</code>. There are other combinations as
+  well that might better suit your UI needs.
 </p>
 
 <h3>Live Example</h3>
@@ -342,7 +360,9 @@
   </label>
 </p>
 
-    <h5>doStuff (performCount=0 numRunning=0)</h5>
+    <h5>doStuff
+      (performCount=0
+      numRunning=0)</h5>
 
     <p>
       <button class="button-primary" type="button">
@@ -421,7 +441,9 @@
       </tbody>
     </table>
     <br>
-    <h5>doStuffDrop (performCount=0 numRunning=0)</h5>
+    <h5>doStuffDrop
+      (performCount=0
+      numRunning=0)</h5>
 
     <p>
       <button class="button-primary" type="button">
@@ -500,7 +522,9 @@
       </tbody>
     </table>
     <br>
-    <h5>doStuffEnqueue (performCount=0 numRunning=0)</h5>
+    <h5>doStuffEnqueue
+      (performCount=0
+      numRunning=0)</h5>
 
     <p>
       <button class="button-primary" type="button">
@@ -579,7 +603,9 @@
       </tbody>
     </table>
     <br>
-    <h5>doStuffRestartable (performCount=0 numRunning=0)</h5>
+    <h5>doStuffRestartable
+      (performCount=0
+      numRunning=0)</h5>
 
     <p>
       <button class="button-primary" type="button">
@@ -681,9 +707,9 @@
 <!----></div>
 <script type="x/boundary" id="fastboot-body-end"></script>
 
-    <script src="/assets/vendor-a286e50c47086fec960a3485ecc3f30e.js"></script>
-<script src="/assets/chunk.524.4328b51f18b8c2e2a531.js"></script>
-    <script src="/assets/test-app-46707fb1319f2896704f03cd1ae42c64.js"></script>
+    <script src="/assets/vendor-096cba46ce673ba8206668b44b310dbe.js"></script>
+<script src="/assets/chunk.524.5b8806431ddaa690f067.js"></script>
+    <script src="/assets/test-app-584aee267a79c558d0ecda4cdbe81f37.js"></script>
 
     
   </body>

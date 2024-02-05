@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     
-<meta name="test-app/config/environment" content="%7B%22modulePrefix%22%3A%22test-app%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22history%22%2C%22EmberENV%22%3A%7B%22EXTEND_PROTOTYPES%22%3Afalse%2C%22FEATURES%22%3A%7B%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22test-app%22%2C%22version%22%3A%220.0.0%2B75e1463d%22%7D%2C%22emberConcurrencyVersion%22%3A%224.0.0-beta.1%22%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%7D" />
+<meta name="test-app/config/environment" content="%7B%22modulePrefix%22%3A%22test-app%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22history%22%2C%22EmberENV%22%3A%7B%22EXTEND_PROTOTYPES%22%3Afalse%2C%22FEATURES%22%3A%7B%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22test-app%22%2C%22version%22%3A%220.0.0%2Bc668a526%22%7D%2C%22emberConcurrencyVersion%22%3A%224.0.0-beta.1%22%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%7D" />
 <!-- EMBER_CLI_FASTBOOT_TITLE -->
 
     <link integrity="" rel="stylesheet" href="/assets/vendor-10d8eaf9101947f2130df71856c61a0b.css" />
@@ -217,14 +217,14 @@
       <h3>Refactoring With Tasks</h3>
 
 <p>
-  Now we're going to build the same functionality using
-  ember-concurrency tasks, starting with the same bare minimum
-  implementation as before, and making incremental improvements.
+  Now we're going to build the same functionality using ember-concurrency tasks,
+  starting with the same bare minimum implementation as before, and making
+  incremental improvements.
 </p>
 
 <p>
-  For reference, here is the bare minimum implementation that we
-  started with before (which only uses core Ember APIs):
+  For reference, here is the bare minimum implementation that we started with
+  before (which only uses core Ember APIs):
 </p>
 
 <div id="ember340">
@@ -282,7 +282,7 @@
 
 <div class="tutorial-example">
 
-  <button type="button"> 
+  <button type="button">
     Find Nearby Stores
   </button>
 
@@ -290,21 +290,26 @@
   <span class="tutorial-example-label">Example</span>
 </div>
 
-
 <p>
   Let's take a moment to point out everything that has changed:
 </p>
 
 <p>
-  First, instead of using a <code>findStores</code> <em>action</em>,
-  we define a <code>findStores</code> <em>task</em>. This involves calling
-  the <code>task()</code> builder function with <code>this</code> and modifying
-  our async function to use the async arrow function syntax.
+  First, instead of using a
+  <code>findStores</code>
+  <em>action</em>, we define a
+  <code>findStores</code>
+  <em>task</em>. This involves calling the
+  <code>task()</code>
+  builder function with
+  <code>this</code>
+  and modifying our async function to use the async arrow function syntax.
 </p>
 
 <p>
-  Second, in the template, instead of using <code>{{on "click" this.findStores}}</code>,
-  we use <code>{{on "click" (perform this.findStores)}}</code>.
+  Second, in the template, instead of using
+  <code>{{on "click" this.findStores}}</code>, we use
+  <code>{{on "click" this.findStores.perform}}</code>.
 </p>
 
 <p>Let's press onward with the refactor:</p>
@@ -312,9 +317,10 @@
 <h5>Version 2: Add a Loading Spinner (with Tasks)</h5>
 
 <p>
-  Rather than defining a separate boolean flag and manually tracking
-  the state of the task, we can use the <code>isRunning</code> property
-  exposed by the task to drive our loading spinner, which means we only
+  Rather than defining a separate boolean flag and manually tracking the state
+  of the task, we can use the
+  <code>isRunning</code>
+  property exposed by the task to drive our loading spinner, which means we only
   need to make a change to the template code; the JavaScript can stay the same:
 </p>
 
@@ -346,22 +352,24 @@
   <span class="tutorial-example-label">Example</span>
 </div>
 
-
 <h4>Version 3: Preventing Concurrency (with Tasks)</h4>
 
 <p>
-  So far so good, but we still haven't addressed the issue that clicking
-  the button multiple times causes weird behavior due to multiple
-  fetch operations running at the same time.
+  So far so good, but we still haven't addressed the issue that clicking the
+  button multiple times causes weird behavior due to multiple fetch operations
+  running at the same time.
 </p>
 
 <p>
-  Rather than putting an <code>if</code> guard at the start of the task,
-  the ember-concurrency way to prevent concurrency is to apply a
-  <a id="ember343" class="ember-view" href="/docs/task-concurrency">Task Modifier</a> to the task.
-  The one we want to use is the <code>drop</code> modifier, which prevents
-  concurrency by "dropping" any attempt to perform the task while it is
-  already running.
+  Rather than putting an
+  <code>if</code>
+  guard at the start of the task, the ember-concurrency way to prevent
+  concurrency is to apply a
+  <a id="ember343" class="ember-view" href="/docs/task-concurrency">Task Modifier</a>
+  to the task. The one we want to use is the
+  <code>drop</code>
+  modifier, which prevents concurrency by "dropping" any attempt to perform the
+  task while it is already running.
 </p>
 
 <div id="ember344">
@@ -392,7 +400,6 @@
   <span class="tutorial-example-label">Example</span>
 </div>
 
-
 <p>
   Now when you button mash "Find Nearby Stores", you no longer get the weird
   behavior due to concurrent fetches.
@@ -401,32 +408,46 @@
 <h4>Version 4: Handling "set on destroyed object" errors (with Tasks)</h4>
 
 <p>
-  What about those pesky <code>"set on destroyed object"</code> errors?
+  What about those pesky
+  <code>"set on destroyed object"</code>
+  errors?
 </p>
 
 <p>
   Good news! Our code is already safe because ember-concurrency automatically
-  cancels tasks when their host object (e.g. a Component) is destroyed.
-  In our example, if the <code>findStores</code> task is paused
-  at the unresolved <code>getNearbyStores</code> <code>await</code> call right
-  when the user navigates away, the component will be destroyed and the
-  <code>findStores</code> task will stop right where it is and will never hit
-  the line of code with the <code>this.set()</code>, thus avoiding the
-  <code>"set on destroyed object"</code> error.
+  cancels tasks when their host object (e.g. a Component) is destroyed. In our
+  example, if the
+  <code>findStores</code>
+  task is paused at the unresolved
+  <code>getNearbyStores</code>
+  <code>await</code>
+  call right when the user navigates away, the component will be destroyed and
+  the
+  <code>findStores</code>
+  task will stop right where it is and will never hit the line of code with the
+  <code>this.set()</code>, thus avoiding the
+  <code>"set on destroyed object"</code>
+  error.
 </p>
 
 <h4>Version 5: Handle Promise Rejection/Async Exceptions (with Tasks)</h4>
 
 <p>
-  Will a promise rejection/async exception put our task into an unrecoverable state?
+  Will a promise rejection/async exception put our task into an unrecoverable
+  state?
 </p>
 
 <p>
   It turns out that, again, we don't need to change any code; if either
-  <code>getCoords</code> or <code>getNearbyStores</code> throw an exception,
-  the <code>findStores</code> task would stop execution where the error occurred, bubble
-  the exception to the console (so that error reporters can catch it), but from there on
-  the task can be immediately performed / retried again. So, we don't need to change any code.
+  <code>getCoords</code>
+  or
+  <code>getNearbyStores</code>
+  throw an exception, the
+  <code>findStores</code>
+  task would stop execution where the error occurred, bubble the exception to
+  the console (so that error reporters can catch it), but from there on the task
+  can be immediately performed / retried again. So, we don't need to change any
+  code.
 </p>
 
 <h3>Final Diff</h3>
@@ -482,11 +503,10 @@
 <h3>Conclusion</h3>
 
 <p>
-  This was a very successful refactor. We were able to remove a lot
-  of ugly boilerplate and defensive programming code, and what we're left
-  with is very clean, concise, and safe.
+  This was a very successful refactor. We were able to remove a lot of ugly
+  boilerplate and defensive programming code, and what we're left with is very
+  clean, concise, and safe.
 </p>
-
 
       <br> <br> <br> <br>
 
@@ -509,9 +529,9 @@
 <!----></div>
 <script type="x/boundary" id="fastboot-body-end"></script>
 
-    <script src="/assets/vendor-a286e50c47086fec960a3485ecc3f30e.js"></script>
-<script src="/assets/chunk.524.4328b51f18b8c2e2a531.js"></script>
-    <script src="/assets/test-app-46707fb1319f2896704f03cd1ae42c64.js"></script>
+    <script src="/assets/vendor-096cba46ce673ba8206668b44b310dbe.js"></script>
+<script src="/assets/chunk.524.5b8806431ddaa690f067.js"></script>
+    <script src="/assets/test-app-584aee267a79c558d0ecda4cdbe81f37.js"></script>
 
     
   </body>

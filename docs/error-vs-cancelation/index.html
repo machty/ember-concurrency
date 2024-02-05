@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     
-<meta name="test-app/config/environment" content="%7B%22modulePrefix%22%3A%22test-app%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22history%22%2C%22EmberENV%22%3A%7B%22EXTEND_PROTOTYPES%22%3Afalse%2C%22FEATURES%22%3A%7B%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22test-app%22%2C%22version%22%3A%220.0.0%2B75e1463d%22%7D%2C%22emberConcurrencyVersion%22%3A%224.0.0-beta.1%22%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%7D" />
+<meta name="test-app/config/environment" content="%7B%22modulePrefix%22%3A%22test-app%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22history%22%2C%22EmberENV%22%3A%7B%22EXTEND_PROTOTYPES%22%3Afalse%2C%22FEATURES%22%3A%7B%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22test-app%22%2C%22version%22%3A%220.0.0%2Bc668a526%22%7D%2C%22emberConcurrencyVersion%22%3A%224.0.0-beta.1%22%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%7D" />
 <!-- EMBER_CLI_FASTBOOT_TITLE -->
 
     <link integrity="" rel="stylesheet" href="/assets/vendor-10d8eaf9101947f2130df71856c61a0b.css" />
@@ -217,51 +217,71 @@
       <h3>Errors vs Cancelation</h3>
 
 <p>
-  When you <code>await</code> a promise or async function call,
-  your task function will pause execution until one of three things happens:
+  When you
+  <code>await</code>
+  a promise or async function call, your task function will pause execution
+  until one of three things happens:
 </p>
 
 <ol>
-  <li>The promise fulfills/async function returns, and your task will continue executing from that point.</li>
-  <li>The promise rejects/async function throws, and your task will automatically `throw` an error from that point.</li>
-  <li>Something causes the task to be canceled, which has the behavior described below.</li>
+  <li>The promise fulfills/async function returns, and your task will continue
+    executing from that point.</li>
+  <li>The promise rejects/async function throws, and your task will
+    automatically `throw` an error from that point.</li>
+  <li>Something causes the task to be canceled, which has the behavior described
+    below.</li>
 </ol>
 
 <p>
-  The <a id="ember511" class="ember-view" href="/docs/task-function-syntax">Task Function Syntax docs</a>
-  demonstrates how you can use standard JavaScript <code>try/catch</code> blocks
-  to catch exceptions thrown when you yield a rejecting promise, but
-  what about cancelation? Are cancelations considered exceptions/errors, or something else?
+  The
+  <a id="ember511" class="ember-view" href="/docs/task-function-syntax">Task Function Syntax docs</a>
+  demonstrates how you can use standard JavaScript
+  <code>try/catch</code>
+  blocks to catch exceptions thrown when you yield a rejecting promise, but what
+  about cancelation? Are cancelations considered exceptions/errors, or something
+  else?
 </p>
 
 <p>
   In ember-concurrency, cancelation is considered a third kind of "completion"
-  (the other two being a successful return from a function, and throwing an exception
-  from a function).
-  Specifically, this means that if a task is canceled while it is paused on a
-  yield, the task will essentially return from that point,
-  it will skip any <code>catch(e) {}</code> blocks it is in, but it <em>will</em>
-  execute any <code>finally {}</code> blocks. The benefit of this behavior is that:
+  (the other two being a successful return from a function, and throwing an
+  exception from a function). Specifically, this means that if a task is
+  canceled while it is paused on a yield, the task will essentially return from
+  that point, it will skip any
+  <code>catch(e) {}</code>
+  blocks it is in, but it
+  <em>will</em>
+  execute any
+  <code>finally {}</code>
+  blocks. The benefit of this behavior is that:
 </p>
 
 <ol>
-  <li><code>finally</code> blocks will always run and can be used for cleanup logic *</li>
+  <li><code>finally</code>
+    blocks will always run and can be used for cleanup logic *</li>
   <li>
-    You don't have to distinguish between cancelation and thrown exceptions
-    in your <code>catch</code> blocks (which you'd annoyingly have to do
-    if cancelation were considered just another type of error).
+    You don't have to distinguish between cancelation and thrown exceptions in
+    your
+    <code>catch</code>
+    blocks (which you'd annoyingly have to do if cancelation were considered
+    just another type of error).
   </li>
 </ol>
 
 <p>
   <em>
-    * While <code>finally</code> blocks are nice for cleanup logic, make
-    sure you're leveraging the power of
-    <a id="ember512" class="ember-view" href="/docs/task-concurrency">Task Modifiers</a> and <code>.isRunning / .isIdle</code>
-    task properties as much as possible so that you're not manually re-implementing
-    a lot of the implicit state that ember-concurrency provides you for free, e.g.
-    you should avoid manually toggling the visibility of a loading spinner within
-    a task if you could accomplish the same thing using the <code>.isRunning</code>
+    * While
+    <code>finally</code>
+    blocks are nice for cleanup logic, make sure you're leveraging the power of
+    <a id="ember512" class="ember-view" href="/docs/task-concurrency">Task Modifiers</a>
+    and
+    <code>.isRunning / .isIdle</code>
+    task properties as much as possible so that you're not manually
+    re-implementing a lot of the implicit state that ember-concurrency provides
+    you for free, e.g. you should avoid manually toggling the visibility of a
+    loading spinner within a task if you could accomplish the same thing using
+    the
+    <code>.isRunning</code>
     property on a task.
   </em>
 </p>
@@ -269,11 +289,16 @@
 <h4>Example</h4>
 
 <p>
-  Both of the buttons below will (re)start <code>myTask</code> when clicked.
-  If you click the buttons quickly, it will cause the currently running task
-  to cancel from the <code>await</code> where it is paused. Notice how
-  cancelations don't increment the <code>numErrors</code> property because
-  cancelations skip the <code>catch</code> block.
+  Both of the buttons below will (re)start
+  <code>myTask</code>
+  when clicked. If you click the buttons quickly, it will cause the currently
+  running task to cancel from the
+  <code>await</code>
+  where it is paused. Notice how cancelations don't increment the
+  <code>numErrors</code>
+  property because cancelations skip the
+  <code>catch</code>
+  block.
 </p>
 
 <button type="button">
@@ -299,7 +324,6 @@
     <pre class="language-javascript "><code class="code-snippet language-javascript"></code></pre>
   
 
-
       <br> <br> <br> <br>
 
       <div class="row">
@@ -321,9 +345,9 @@
 <!----></div>
 <script type="x/boundary" id="fastboot-body-end"></script>
 
-    <script src="/assets/vendor-a286e50c47086fec960a3485ecc3f30e.js"></script>
-<script src="/assets/chunk.524.4328b51f18b8c2e2a531.js"></script>
-    <script src="/assets/test-app-46707fb1319f2896704f03cd1ae42c64.js"></script>
+    <script src="/assets/vendor-096cba46ce673ba8206668b44b310dbe.js"></script>
+<script src="/assets/chunk.524.5b8806431ddaa690f067.js"></script>
+    <script src="/assets/test-app-584aee267a79c558d0ecda4cdbe81f37.js"></script>
 
     
   </body>
