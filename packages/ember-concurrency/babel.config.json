@@ -3,6 +3,7 @@
 // It exists only to provide development niceties for you, like automatic
 // template colocation.
 {
+  "presets": [["@babel/preset-typescript"]],
   "plugins": [
     "@embroider/addon-dev/template-colocation-plugin",
     [

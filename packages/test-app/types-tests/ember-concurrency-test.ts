@@ -55,7 +55,13 @@ import {
   enqueueTask,
   keepLatestTask,
 } from 'ember-concurrency';
+
+import perform from 'ember-concurrency/helpers/perform';
+import curryTask from 'ember-concurrency/helpers/task';
+import cancelAll from 'ember-concurrency/helpers/cancel-all';
+
 import { expectTypeOf as expect } from 'expect-type';
+import { FunctionBasedHelperInstance, helper } from '@ember/component/helper';
 
 declare type TestCallback = () => void | Promise<void>;
 declare function module(description: string, callback: TestCallback): void;
@@ -310,6 +316,44 @@ module('unit tests', () => {
       // @ts-expect-error
       expect<EncapsulatedTaskDescriptorReturnType<typeof d>>();
     }
+  });
+
+  test('imported helpers', () => {
+
+    // expect<
+    //     EncapsulatedTaskDescriptorReturnType<typeof d>
+    //   >().toEqualTypeOf<void>(); helper
+
+    // FunctionBasedHelperInstance<EncapsulatedTaskDescriptorReturnType<typeof d>>().toEqualTypeOf<void>(); helper
+
+    // export type FunctionBasedHelper<S> = abstract new () => FunctionBasedHelperInstance<S>;
+
+
+    // exp
+    // {
+    //   let d = { foo: 'foo', *perform() {} };
+    //   expect<
+    //     EncapsulatedTaskDescriptorReturnType<typeof d>
+    //   >().toEqualTypeOf<void>();
+    // }
+
+    // {
+    //   let d = {
+    //     foo: 'foo',
+    //     *perform() {
+    //       return 'foo';
+    //     },
+    //   };
+    //   expect<
+    //     EncapsulatedTaskDescriptorReturnType<typeof d>
+    //   >().toEqualTypeOf<string>();
+    // }
+
+    // {
+    //   let d = { perform() {} };
+    //   // @ts-expect-error
+    //   expect<EncapsulatedTaskDescriptorReturnType<typeof d>>();
+    // }
   });
 
   test('EncapsulatedTaskState', () => {
