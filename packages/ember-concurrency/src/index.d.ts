@@ -398,7 +398,6 @@ interface _AbstractTaskProperty<T extends Task<any, any[]>> {
    * });
    * ```
    *
-   * [See the Writing Tasks Docs for more info](/docs/writing-tasks)
    */
   on(...eventNames: string[]): this;
 

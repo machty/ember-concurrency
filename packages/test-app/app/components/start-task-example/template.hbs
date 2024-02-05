@@ -13,7 +13,10 @@
   </button>
 
   <label>
-    <input type="checkbox" {{on "change" (perform this.myTask value="target.checked")}}>
+    <input
+      type="checkbox"
+      {{on "change" (perform this.myTask value="target.checked")}}
+    />
     4. Checkbox
   </label>
   {{! END-SNIPPET }}
