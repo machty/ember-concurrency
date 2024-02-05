@@ -1,5 +1,6 @@
 import Component from '@ember/component';
 import { addListener, removeListener } from '@ember/object/events';
+import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET task-lifecycle-events
@@ -30,7 +31,7 @@ function loopingAjaxTask(id) {
 export default class TaskLifecycleEventsExample extends Component {
   tagName = '';
 
-  logs = [];
+  @tracked logs = [];
 
   constructor() {
     super(...arguments);
@@ -91,9 +92,7 @@ export default class TaskLifecycleEventsExample extends Component {
   @task({ on: 'init' }) task7 = loopingAjaxTask(7);
 
   log(color, message) {
-    let logs = this.logs;
-    logs.push({ color, message });
-    this.set('logs', logs.slice(-7));
+    this.logs = [...this.logs, { color, message }].slice(-7);
   }
 }
 // END-SNIPPET

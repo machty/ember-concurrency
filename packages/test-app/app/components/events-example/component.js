@@ -25,8 +25,6 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
     }
   });
 
-  jQueryEvent = null;
-
   jQueryEventLoop = task(async () => {
     let $body = $('body');
     while (true) {
@@ -34,8 +32,6 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
       this.jQueryEvent = event;
     }
   });
-
-  emberEvent = null;
 
   emberEventedLoop = task(async () => {
     while (true) {

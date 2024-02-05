@@ -1,16 +1,17 @@
 import Component from '@ember/component';
+import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
 
 export default class TaskFunctionSyntaxComponent3 extends Component {
   tagName = '';
-  status = null;
+  @tracked status = null;
 
   // BEGIN-SNIPPET task-function-syntax-3
   myTask = task(async () => {
-    this.set('status', `Thinking...`);
+    this.status = `Thinking...`;
     let promise = timeout(1000).then(() => 123);
     let resolvedValue = await promise;
-    this.set('status', `The value is ${resolvedValue}`);
+    this.status = `The value is ${resolvedValue}`;
   });
   // END-SNIPPET
 }

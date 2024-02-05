@@ -1,17 +1,18 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 import { forever, task } from 'ember-concurrency';
 
 export default class HelpersTestController extends Controller {
-  maybeNullTask = null;
-  status = null;
+  @tracked maybeNullTask = null;
+  @tracked status = null;
 
   myTask = task(async (...args) => {
     try {
-      this.set('status', args.join('-'));
+      this.status = args.join('-');
       await forever;
     } finally {
-      this.set('status', 'canceled');
+      this.status = 'canceled';
     }
   });
 
@@ -27,11 +28,11 @@ export default class HelpersTestController extends Controller {
   });
 
   someTask = task(async () => {
-    this.set('status', 'someTask');
+    this.status = 'someTask';
   });
 
   @action
   setupTask() {
-    this.set('maybeNullTask', this.someTask);
+    this.maybeNullTask = this.someTask;
   }
 }
