@@ -4,7 +4,7 @@ import { taskHelperClosure } from '../-private/helpers';
 
 const CANCEL_REASON = "the 'cancel-all' template helper was invoked";
 
-export function cancelHelper(args) {
+export function cancelHelper(args: any) {
   let cancelable = args[0];
   if (!cancelable || typeof cancelable.cancelAll !== 'function') {
     assert(
