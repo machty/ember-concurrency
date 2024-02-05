@@ -1,5 +1,6 @@
 import Component from '@ember/component';
 import { addListener, removeListener } from '@ember/object/events';
+import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET task-lifecycle-events
