@@ -1,5 +1,6 @@
 import Component from '@ember/component';
 import { enqueueTask, task, timeout } from 'ember-concurrency';
+import { tracked } from '@glimmer/tracking';
 
 // BEGIN-SNIPPET ajax-throttling
 function loopingAjaxTask(id, color) {
@@ -15,7 +16,7 @@ function loopingAjaxTask(id, color) {
 
 export default class AjaxThrottlingExampleComponent extends Component {
   tagName = '';
-  logs = [];
+  @tracked logs = [];
 
   ajaxTask = enqueueTask({ maxConcurrency: 3 }, async () => {
     // simulate slow AJAX
@@ -33,9 +34,7 @@ export default class AjaxThrottlingExampleComponent extends Component {
   @task({ on: 'init' }) task7 = loopingAjaxTask(7, '#DAA520');
 
   log(color, message) {
-    let logs = this.logs;
-    logs.push({ color, message });
-    this.set('logs', logs.slice(-7));
+    this.logs = [...this.logs, { color, message }].slice(-7);
   }
 }
 // END-SNIPPET

@@ -1,4 +1,5 @@
 import Component from '@ember/component';
+import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
 
 // from http://stackoverflow.com/a/3943985/914123
@@ -18,7 +19,7 @@ function scramble(word) {
 export default class ScrambledTextComponent extends Component {
   tagName = '';
   text = null;
-  scrambledText = null;
+  @tracked scrambledText = null;
 
   // BEGIN-SNIPPET scrambled-text
   startScrambling = task({ on: 'init' }, async () => {
@@ -26,11 +27,11 @@ export default class ScrambledTextComponent extends Component {
     while (true) {
       let pauseTime = 140;
       while (pauseTime > 5) {
-        this.set('scrambledText', scramble(text));
+        this.scrambledText = scramble(text);
         await timeout(pauseTime);
         pauseTime = pauseTime * 0.95;
       }
-      this.set('scrambledText', text);
+      this.scrambledText = text;
       await timeout(1500);
     }
   });
