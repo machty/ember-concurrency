@@ -14,7 +14,7 @@ export default {
   plugins: [
     // These are the modules that users should be able to import from your
     // addon. Anything not listed here may get optimized away.
-    addon.publicEntrypoints(['index.js', '**/*.js']),
+    addon.publicEntrypoints(["index.js", "**/*.js"]),
 
     // These are the modules that should get reexported into the traditional
     // "app" tree. Things in here should also be in publicEntrypoints above, but
@@ -33,8 +33,8 @@ export default {
     // By default, this will load the actual babel config from the file
     // babel.config.json.
     babel({
-      extensions: ['.js', '.gjs', '.ts', '.gts'],
-      babelHelpers: 'bundled',
+      extensions: [".js", ".gjs", ".ts", ".gts"],
+      babelHelpers: "bundled",
     }),
 
     // Ensure that standalone .hbs files are properly integrated as Javascript.
