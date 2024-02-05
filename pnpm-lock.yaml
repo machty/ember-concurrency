@@ -45,9 +45,9 @@ importers:
       '@babel/plugin-proposal-decorators':
         specifier: ^7.23.9
         version: 7.23.9(@babel/core@7.23.9)
-      '@babel/preset-typescript':
-        specifier: 7.22.15
-        version: 7.22.15(@babel/core@7.23.9)
+      '@babel/plugin-transform-typescript':
+        specifier: ^7.23.6
+        version: 7.23.6(@babel/core@7.23.9)
       '@embroider/addon-dev':
         specifier: ^4.2.0
         version: 4.2.0(@glint/template@1.3.0)(rollup@4.9.6)
@@ -728,16 +728,6 @@ packages:
     dependencies:
       '@babel/core': 7.23.9
       '@babel/helper-plugin-utils': 7.22.5
-
-  /@babel/plugin-syntax-jsx@7.23.3(@babel/core@7.23.9):
-    resolution: {integrity: sha512-EB2MELswq55OHUoRZLGg/zC7QWUKfNLpE57m/S2yr1uEneIgsTgrSzXP3NXEsMkVn76OlaVVnzN+ugObuYGwhg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.22.5
-    dev: true
 
   /@babel/plugin-syntax-logical-assignment-operators@7.10.4(@babel/core@7.23.9):
     resolution: {integrity: sha512-d8waShlpFDinQ5MtvGU9xDAOzKH47+FFoney2baFIoMr952hKOLp1HR7VszoZvOsV/4+RRszNY7D17ba0te0ig==}
@@ -1462,20 +1452,6 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       '@babel/types': 7.23.9
       esutils: 2.0.3
-
-  /@babel/preset-typescript@7.22.15(@babel/core@7.23.9):
-    resolution: {integrity: sha512-HblhNmh6yM+cU4VwbBRpxFhxsTdfS1zsvH9W+gEjD0ARV9+8B4sNfpI6GuhePti84nuvhiwKS539jKPFHskA9A==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.22.5
-      '@babel/helper-validator-option': 7.23.5
-      '@babel/plugin-syntax-jsx': 7.23.3(@babel/core@7.23.9)
-      '@babel/plugin-transform-modules-commonjs': 7.23.3(@babel/core@7.23.9)
-      '@babel/plugin-transform-typescript': 7.23.6(@babel/core@7.23.9)
-    dev: true
 
   /@babel/regjsgen@0.8.0:
     resolution: {integrity: sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==}

@@ -1,4 +1,5 @@
 import babel from "@rollup/plugin-babel";
+import copy from "rollup-plugin-copy";
 import { Addon } from "@embroider/addon-dev/rollup";
 
 const addon = new Addon({
@@ -14,7 +15,7 @@ export default {
   plugins: [
     // These are the modules that users should be able to import from your
     // addon. Anything not listed here may get optimized away.
-    addon.publicEntrypoints(["index.js", "**/*.js"]),
+    addon.publicEntrypoints(["**/*.js", "index.js", "template-registry.js"]),
 
     // These are the modules that should get reexported into the traditional
     // "app" tree. Things in here should also be in publicEntrypoints above, but
@@ -46,5 +47,13 @@ export default {
 
     // Remove leftover build artifacts when starting a new build.
     addon.clean(),
+
+    // Copy Readme and License into published package
+    copy({
+      targets: [
+        { src: "../README.md", dest: "." },
+        { src: "../LICENSE.md", dest: "." },
+      ],
+    }),
   ],
 };

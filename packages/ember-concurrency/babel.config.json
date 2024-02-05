@@ -3,8 +3,8 @@
 // It exists only to provide development niceties for you, like automatic
 // template colocation.
 {
-  "presets": [["@babel/preset-typescript"]],
   "plugins": [
+    ["@babel/plugin-transform-typescript", { "allExtensions": true, "onlyRemoveTypeImports": true, "allowDeclareFields": true }],
     "@embroider/addon-dev/template-colocation-plugin",
     [
       "babel-plugin-ember-template-compilation",
