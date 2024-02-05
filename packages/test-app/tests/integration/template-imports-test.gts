@@ -16,8 +16,14 @@ module('Integration | template imports / SFC test', function (hooks) {
   test('it works', async function (assert) {
     await render(<template><BasicTemplateImports /></template>);
 
-    await click('button');
+    assert.dom().containsText('idle');
 
-    assert.dom().hasText('Click Me');
+    await click('button#perform');
+    assert.dom().containsText('running');
+
+    await click('button#cancel-all');
+
+    assert.dom().containsText('idle');
+    assert.dom().containsText('foo');
   });
 });
