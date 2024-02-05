@@ -6,6 +6,7 @@ export const TABLE_OF_CONTENTS = [
   { route: 'docs.introduction', title: 'Home' },
   { route: 'docs.installation', title: 'Installation' },
   { route: 'docs.v4-upgrade', title: 'Upgrading to V4' },
+  { route: 'docs.older-versions', title: 'Older Version Docs' },
 
   { section: 'Introduction' },
   { route: 'docs.tutorial.index', title: 'Writing Code Without Tasks' },
