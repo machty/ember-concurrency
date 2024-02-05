@@ -47,7 +47,7 @@ module('Unit: task error handling', function () {
         assert.strictEqual(
           e.message,
           'This error should be caught',
-          'The thrown error was caught'
+          'The thrown error was caught',
         );
       });
     });

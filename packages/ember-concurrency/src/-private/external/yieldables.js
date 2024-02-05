@@ -38,7 +38,7 @@ class YieldableState {
     taskInstance.proceed.call(
       taskInstance,
       this._resumeIndex,
-      YIELDABLE_CANCEL
+      YIELDABLE_CANCEL,
     );
   }
 
@@ -57,7 +57,7 @@ class YieldableState {
       taskInstance,
       this._resumeIndex,
       YIELDABLE_CONTINUE,
-      value
+      value,
     );
   }
 
@@ -76,7 +76,7 @@ class YieldableState {
       taskInstance,
       this._resumeIndex,
       YIELDABLE_RETURN,
-      value
+      value,
     );
   }
 
@@ -94,7 +94,7 @@ class YieldableState {
       taskInstance,
       this._resumeIndex,
       YIELDABLE_THROW,
-      error
+      error,
     );
   }
 }

@@ -17,16 +17,17 @@ module('Integration | helpers | perform', function (hooks) {
         errorGeneratingTask: task(function* () {
           throw new Error('You should not see me!');
         }),
-      })
+      }),
     );
 
     this.owner.register(
       'template:components/test-swallow-error',
-      hbs`
-      <button type="button" {{on 'click' (swallow-error (perform this.errorGeneratingTask))}}>
-        I create an error!
-      </button>
-    `
+      hbs`<button
+  type='button'
+  {{on 'click' (swallow-error (perform this.errorGeneratingTask))}}
+>
+  I create an error!
+</button>`,
     );
 
     await render(hbs`<TestSwallowError />`);
@@ -45,16 +46,17 @@ module('Integration | helpers | perform', function (hooks) {
         errorGeneratingTask: task(function* () {
           throw new Error('You should not see me!');
         }),
-      })
+      }),
     );
 
     this.owner.register(
       'template:components/test-swallow-error',
-      hbs`
-      <button type="button" {{on 'click' (perform this.errorGeneratingTask onError=null)}}>
-        I create an error!
-      </button>
-    `
+      hbs`<button
+  type='button'
+  {{on 'click' (perform this.errorGeneratingTask onError=null)}}
+>
+  I create an error!
+</button>`,
     );
 
     await render(hbs`<TestSwallowError />`);
@@ -78,16 +80,17 @@ module('Integration | helpers | perform', function (hooks) {
         errorReport(e) {
           error = e;
         },
-      })
+      }),
     );
 
     this.owner.register(
       'template:components/test-swallow-error',
-      hbs`
-      <button type="button" {{on 'click' (perform this.errorGeneratingTask onError=this.errorReport)}}>
-        I create an error!
-      </button>
-    `
+      hbs`<button
+  type='button'
+  {{on 'click' (perform this.errorGeneratingTask onError=this.errorReport)}}
+>
+  I create an error!
+</button>`,
     );
 
     await render(hbs`<TestSwallowError />`);

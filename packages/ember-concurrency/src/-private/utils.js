@@ -65,6 +65,6 @@ export function timeout(ms) {
 export function deprecatePrivateModule(moduleName) {
   // eslint-disable-next-line no-console
   console.warn(
-    `an Ember addon is importing a private ember-concurrency module '${moduleName}' that has moved`
+    `an Ember addon is importing a private ember-concurrency module '${moduleName}' that has moved`,
   );
 }

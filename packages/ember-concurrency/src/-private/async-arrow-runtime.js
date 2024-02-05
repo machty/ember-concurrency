@@ -19,7 +19,7 @@ export function buildTask(contextFn, options, taskName, bufferPolicyName) {
   const taskFactory = new TaskFactory(
     taskName || '<unknown>',
     result.generator,
-    optionsWithBufferPolicy
+    optionsWithBufferPolicy,
   );
   return taskFactory.createTask(result.context);
 }

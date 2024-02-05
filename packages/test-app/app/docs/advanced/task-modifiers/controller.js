@@ -28,7 +28,7 @@ export default class TaskModifiersController extends Controller {
     } else {
       return performance.getEntriesByName(
         'ember-concurrency.doWork.runtime',
-        'measure'
+        'measure',
       );
     }
   }

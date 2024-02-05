@@ -28,7 +28,7 @@ export default class CodeTemplateToggleComponent extends Component {
     this.set('resizeObserver', resizeObserver);
 
     const sectionToggles = element.querySelectorAll(
-      '.code-template-toggle-section'
+      '.code-template-toggle-section',
     );
 
     sectionToggles.forEach((sectionToggle) => {

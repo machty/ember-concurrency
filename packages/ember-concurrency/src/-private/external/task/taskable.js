@@ -36,7 +36,7 @@ export class Taskable {
 
     let cancelRequest = new CancelRequest(
       cancelRequestKind || CANCEL_KIND_EXPLICIT,
-      reason
+      reason,
     );
     return this.scheduler.cancelAll(this.guid, cancelRequest).then(() => {
       if (resetState) {

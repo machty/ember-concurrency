@@ -9,7 +9,9 @@ export default class Tutorial2 extends TutorialComponent {
 
   @action
   async findStores() {
-    if (this.isFindingStores) { return; } // ++
+    if (this.isFindingStores) {
+      return;
+    } // ++
 
     let geolocation = this.geolocation;
     let store = this.store;

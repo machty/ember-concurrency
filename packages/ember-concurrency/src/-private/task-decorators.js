@@ -123,7 +123,7 @@ export const enqueueTask = createTaskDecorator(
   {
     enqueue: true,
   },
-  EmberTaskFactory
+  EmberTaskFactory,
 );
 
 /**
@@ -159,7 +159,7 @@ export const keepLatestTask = createTaskDecorator(
   {
     keepLatest: true,
   },
-  EmberTaskFactory
+  EmberTaskFactory,
 );
 
 /**
@@ -195,7 +195,7 @@ export const restartableTask = createTaskDecorator(
   {
     restartable: true,
   },
-  EmberTaskFactory
+  EmberTaskFactory,
 );
 
 /**
@@ -246,7 +246,7 @@ export const dropTaskGroup = createTaskGroupDecorator(
   {
     drop: true,
   },
-  EmberTaskFactory
+  EmberTaskFactory,
 );
 
 /**
@@ -264,7 +264,7 @@ export const enqueueTaskGroup = createTaskGroupDecorator(
   {
     enqueue: true,
   },
-  EmberTaskFactory
+  EmberTaskFactory,
 );
 
 /**
@@ -280,7 +280,7 @@ export const enqueueTaskGroup = createTaskGroupDecorator(
  */
 export const keepLatestTaskGroup = createTaskGroupDecorator(
   { keepLatest: true },
-  EmberTaskFactory
+  EmberTaskFactory,
 );
 
 /**
@@ -296,5 +296,5 @@ export const keepLatestTaskGroup = createTaskGroupDecorator(
  */
 export const restartableTaskGroup = createTaskGroupDecorator(
   { restartable: true },
-  EmberTaskFactory
+  EmberTaskFactory,
 );

@@ -11,7 +11,7 @@ function maybeReportError(onError) {
     } else {
       assert(
         `The onError argument passed to the \`perform\` helper should be a function or null; you passed ${onError}`,
-        false
+        false,
       );
     }
   };

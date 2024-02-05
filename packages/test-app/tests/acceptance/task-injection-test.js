@@ -14,7 +14,7 @@ module('Acceptance | injections on encapsulated tests', function (hooks) {
     assert.dom(`[data-test-selector="perform-task-result"]`).hasText('123-246');
 
     await click(
-      `[data-test-selector="perform-task-w-injection-button-part-2"]`
+      `[data-test-selector="perform-task-w-injection-button-part-2"]`,
     );
     assert.dom(`[data-test-selector="perform-task-result"]`).hasText('123-456');
   });

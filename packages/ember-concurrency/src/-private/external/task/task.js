@@ -72,7 +72,7 @@ export class Task extends Taskable {
     let taskInstance = this._taskInstanceFactory(
       fullArgs,
       performType,
-      linkedObject
+      linkedObject,
     );
 
     if (performType === PERFORM_TYPE_LINKED) {

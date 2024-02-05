@@ -16,7 +16,7 @@ module('Unit | lastValue', function () {
     assert.strictEqual(
       instance.value,
       undefined,
-      'it returns nothing if the task has not been performed'
+      'it returns nothing if the task has not been performed',
     );
 
     await instance.task.perform();
@@ -24,7 +24,7 @@ module('Unit | lastValue', function () {
     assert.strictEqual(
       instance.value,
       'foo',
-      'returning the last successful value'
+      'returning the last successful value',
     );
   });
 
@@ -42,7 +42,7 @@ module('Unit | lastValue', function () {
     assert.strictEqual(
       instance.value,
       'default value',
-      'it returns the default value if the task has not been performed'
+      'it returns the default value if the task has not been performed',
     );
 
     await instance.task.perform();
@@ -50,7 +50,7 @@ module('Unit | lastValue', function () {
     assert.strictEqual(
       instance.value,
       'foo',
-      'returning the last successful value'
+      'returning the last successful value',
     );
   });
 });

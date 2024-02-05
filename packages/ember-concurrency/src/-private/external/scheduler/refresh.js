@@ -102,7 +102,7 @@ class Refresh {
         numQueued: state.numQueued,
         numPerformedInc: state.numPerformedInc,
       },
-      state.attrs
+      state.attrs,
     );
 
     taskable.onState(props, taskable);

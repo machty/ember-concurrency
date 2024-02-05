@@ -6,6 +6,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
+    requireConfigFile: false,
     ecmaFeatures: {
       legacyDecorators: true,
     },
@@ -14,7 +15,11 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:ember/recommended',
-    'plugin:prettier/recommended',
+
+    // This invokes "eslint-config-prettier" to disable ESLint rules that conflict with Prettier.
+    // Not to be confused with "eslint-plugin-prettier" which runs Prettier as an ESLint rule
+    // (which we no longer use)
+    'prettier',
   ],
   env: {
     browser: true,

@@ -5,7 +5,7 @@ function taskFromPropertyDescriptor(
   key,
   descriptor,
   params = [],
-  factoryClass = TaskFactory
+  factoryClass = TaskFactory,
 ) {
   let { initializer, get, value } = descriptor;
   let taskFn;
@@ -44,7 +44,7 @@ function taskGroupPropertyDescriptor(
   key,
   _descriptor,
   params = [],
-  factoryClass = TaskFactory
+  factoryClass = TaskFactory,
 ) {
   let taskGroups = new WeakMap();
   let options = params[0] || {};
@@ -101,19 +101,19 @@ function createDecorator(fn, baseOptions = {}, factoryClass = TaskFactory) {
 
 export function createTaskDecorator(
   baseOptions = {},
-  factoryClass = TaskFactory
+  factoryClass = TaskFactory,
 ) {
   return createDecorator(taskFromPropertyDescriptor, baseOptions, factoryClass);
 }
 
 export function createTaskGroupDecorator(
   baseOptions = {},
-  factoryClass = TaskFactory
+  factoryClass = TaskFactory,
 ) {
   return createDecorator(
     taskGroupPropertyDescriptor,
     baseOptions,
-    factoryClass
+    factoryClass,
   );
 }
 
@@ -137,5 +137,5 @@ export const lastValue = decoratorWithParams(
         return undefined;
       },
     };
-  }
+  },
 );

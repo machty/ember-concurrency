@@ -9,7 +9,7 @@ export function taskHelperClosure(helperName, taskMethod, _args, hash) {
     if (!task || typeof task[taskMethod] !== 'function') {
       assert(
         `The first argument passed to the \`${helperName}\` helper should be a Task object (without quotes); you passed ${task}`,
-        false
+        false,
       );
       return;
     }

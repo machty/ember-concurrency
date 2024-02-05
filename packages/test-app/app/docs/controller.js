@@ -57,7 +57,7 @@ export const FLATTENED_TABLE_OF_CONTENTS = TABLE_OF_CONTENTS.reduce(
 
     return flattened;
   },
-  []
+  [],
 );
 
 export default class DocsController extends Controller {
