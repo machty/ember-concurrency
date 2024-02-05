@@ -18,6 +18,9 @@ jobs:
       - name: Build docs assets
         run: pnpm --filter test-app docs:buildall
 
+      - name: debug api
+        run: find ./packages/test-app/dist
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
