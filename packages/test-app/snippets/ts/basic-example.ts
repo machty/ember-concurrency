@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import { task, timeout } from 'ember-concurrency';
+import { task, timeout } from '../../../ember-concurrency/declarations';
 
 export default class extends Component {
   myTask = task(async (ms: number) => {

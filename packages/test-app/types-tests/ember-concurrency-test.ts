@@ -319,41 +319,11 @@ module('unit tests', () => {
   });
 
   test('imported helpers', () => {
+    // @ts-expect-error
+    perform([]);
 
-    // expect<
-    //     EncapsulatedTaskDescriptorReturnType<typeof d>
-    //   >().toEqualTypeOf<void>(); helper
-
-    // FunctionBasedHelperInstance<EncapsulatedTaskDescriptorReturnType<typeof d>>().toEqualTypeOf<void>(); helper
-
-    // export type FunctionBasedHelper<S> = abstract new () => FunctionBasedHelperInstance<S>;
-
-
-    // exp
-    // {
-    //   let d = { foo: 'foo', *perform() {} };
-    //   expect<
-    //     EncapsulatedTaskDescriptorReturnType<typeof d>
-    //   >().toEqualTypeOf<void>();
-    // }
-
-    // {
-    //   let d = {
-    //     foo: 'foo',
-    //     *perform() {
-    //       return 'foo';
-    //     },
-    //   };
-    //   expect<
-    //     EncapsulatedTaskDescriptorReturnType<typeof d>
-    //   >().toEqualTypeOf<string>();
-    // }
-
-    // {
-    //   let d = { perform() {} };
-    //   // @ts-expect-error
-    //   expect<EncapsulatedTaskDescriptorReturnType<typeof d>>();
-    // }
+    // let a = {} as Task<any, any[]>;
+    // perform([a], {});
   });
 
   test('EncapsulatedTaskState', () => {

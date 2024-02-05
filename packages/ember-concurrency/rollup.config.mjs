@@ -29,7 +29,7 @@ export default {
 
     // Is this right? This is the only way I could find to simply copy over the .d.ts files
     // and maintain directory structure without transpiling anything.
-    // addon.keepAssets(["**/*.d.ts"]),
+    addon.keepAssets(["**/*.d.ts"]),
 
     // This babel config should *not* apply presets or compile away ES modules.
     // It exists only to provide development niceties for you, like automatic

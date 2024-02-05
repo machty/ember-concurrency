@@ -1,5 +1,3 @@
-export * from './manual-types';
-
 import { timeout, EmberYieldable as Yieldable } from './-private/utils';
 import { TaskProperty, TaskGroupProperty } from './-private/task-properties';
 import { task, taskGroup } from './-private/task-public-api';

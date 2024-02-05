@@ -1,7 +1,7 @@
 import { helper } from '@ember/component/helper';
 import { assert } from '@ember/debug';
 import { taskHelperClosure } from '../-private/helpers';
-import type { Task } from '../manual-types';
+import type { Task } from '..';
 
 function maybeReportError(onError: (error: unknown) => void | null | undefined) {
   return function (e: unknown) {

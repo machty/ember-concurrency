@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
-import { task, timeout } from 'ember-concurrency';
-import type { Task } from 'ember-concurrency';
+import { task, timeout } from '../../../ember-concurrency/declarations';
+import type { Task } from '../../../ember-concurrency/declarations';
 
 // Define a Type task that takes a single number argument and returns a string
 type MyTaskType = Task<string, [number]>;
