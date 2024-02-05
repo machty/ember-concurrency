@@ -1,20 +1,21 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
 
 export default class FooController extends Controller {
-  isShowingButton = false;
+  @tracked isShowingButton = false;
 
   showButtonSoon = task(async () => {
-    this.set('isShowingButton', false);
+    this.isShowingButton = false;
     await timeout(200);
-    this.set('isShowingButton', true);
+    this.isShowingButton = true;
   });
 
   value = 0;
 
   @action
   setValue() {
-    this.set('value', 123);
+    this.value = 123;
   }
 }
