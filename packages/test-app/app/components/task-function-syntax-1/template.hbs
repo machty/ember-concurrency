@@ -1,4 +1,4 @@
 <p>
-  <button {{on "click" (perform this.waitAFewSeconds)}} type="button">Perform Task</button>
+  <button {{on "click" this.waitAFewSeconds.perform}} type="button">Perform Task</button>
   {{this.status}}
 </p>

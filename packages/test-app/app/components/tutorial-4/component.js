@@ -1,11 +1,12 @@
+import { tracked } from '@glimmer/tracking';
 import TutorialComponent from '../shared-tutorial/component';
 
 // BEGIN-SNIPPET better-syntax-5
 import { action } from '@ember/object';
 
 export default class Tutorial4 extends TutorialComponent {
-  result = null;
-  isFindingStores = false;
+  @tracked result = null;
+  @tracked isFindingStores = false;
 
   @action
   async findStores() {
@@ -16,7 +17,7 @@ export default class Tutorial4 extends TutorialComponent {
     let geolocation = this.geolocation;
     let store = this.store;
 
-    this.set('isFindingStores', true);
+    this.isFindingStores = true;
 
     try {
       // ++
@@ -27,12 +28,12 @@ export default class Tutorial4 extends TutorialComponent {
         return;
       }
 
-      this.set('result', result);
+      this.result = result;
     } finally {
       // ++
       if (!this.isDestroyed) {
         // ++
-        this.set('isFindingStores', false); // ++
+        this.isFindingStores = false; // ++
       } // ++
     } // ++
   }

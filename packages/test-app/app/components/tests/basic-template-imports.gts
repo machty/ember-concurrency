@@ -37,7 +37,7 @@ export default class BasicTemplateImports extends GlimmerComponent<Signature> {
         <button
           type='button'
           id='perform-curried'
-          {{on 'click' (perform curriedTask)}}
+          {{on 'click' curriedTask.perform}}
         >
           Perform Curried Value Task
         </button>
@@ -47,7 +47,7 @@ export default class BasicTemplateImports extends GlimmerComponent<Signature> {
       <button
         type='button'
         id='perform-promise'
-        {{on 'click' (perform this.promiseTask)}}
+        {{on 'click' this.promiseTask.perform}}
       >
         Perform Promise Task
       </button>

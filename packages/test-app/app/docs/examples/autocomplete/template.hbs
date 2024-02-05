@@ -1,26 +1,31 @@
 <h3>Debounced Type-Ahead Search</h3>
 
 <p>
-  This advanced example combines multiple ember-concurrency concepts
-  to build a basic type-ahead search field with the following features:
+  This advanced example combines multiple ember-concurrency concepts to build a
+  basic type-ahead search field with the following features:
 </p>
 
 <ul>
   <li>
     Debouncing: the browser won't make network requests until the user has
     stopped typing for more than 250ms. This is accomplished by combining the
-    <code><LinkTo @route="docs.task-concurrency">restartable</LinkTo></code> task modifier
-    with a <code>yield timeout(250)</code> at the beginning of the task.
+    <code><LinkTo @route="docs.task-concurrency">restartable</LinkTo></code>
+    task modifier with a
+    <code>yield timeout(250)</code>
+    at the beginning of the task.
   </li>
   <li>
-    Fetch cancelation: if the user starts typing while a prior fetch request
-    is underway, that fetch request will be canceled to save network resources
-    (this is accomplished via the <LinkTo @route="docs.error-vs-cancelation">try / finally cancelation pattern</LinkTo>).
+    Fetch cancelation: if the user starts typing while a prior fetch request is
+    underway, that fetch request will be canceled to save network resources
+    (this is accomplished via the
+    <LinkTo @route="docs.error-vs-cancelation">try / finally cancelation pattern</LinkTo>).
   </li>
   <li>
-    Use <LinkTo @route="docs.derived-state">Derived State</LinkTo> to display
-    both a loading spinner and the final search results without using
-    a single <code>.set()</code>.
+    Use
+    <LinkTo @route="docs.derived-state">Derived State</LinkTo>
+    to display both a loading spinner and the final search results without using
+    a single
+    <code>.set()</code>.
   </li>
 </ul>
 
@@ -35,8 +40,11 @@
   <label>
     Search GitHub...
 
-    <input type="text" {{on "input" (perform this.searchRepo value="target.value")}}
-           placeholder="e.g. machty/ember-concurrency">
+    <input
+      type="text"
+      {{on "input" this.searchRepo.perform}}
+      placeholder="e.g. machty/ember-concurrency"
+    />
   </label>
 
   {{#if this.searchRepo.isRunning}}
@@ -50,7 +58,6 @@
   </ul>
   {{! END-SNIPPET }}
 </p>
-
 
 <h5>JavaScript</h5>
 

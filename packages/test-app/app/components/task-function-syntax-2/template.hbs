@@ -1,4 +1,5 @@
 <p>
-  <button {{on "click" (perform this.pickRandomNumbers)}} type="button">Pick Random Number</button>
+  <button {{on "click" this.pickRandomNumbers.perform}} type="button">Pick
+    Random Number</button>
   {{this.status}}
 </p>

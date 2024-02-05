@@ -12,7 +12,6 @@ Router.map(function () {
     this.route('v4-upgrade');
     this.route('older-versions');
     this.route('installation');
-    this.route('writing-tasks');
 
     this.route('tutorial', function () {
       this.route('discussion');

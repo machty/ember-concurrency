@@ -230,8 +230,6 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    * });
    * ```
    *
-   * [See the Writing Tasks Docs for more info](/docs/writing-tasks)
-   *
    * @method on
    * @memberof TaskProperty
    * @param {String} eventNames*

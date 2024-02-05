@@ -6,18 +6,21 @@ import {
   waitForEvent,
   waitForProperty,
 } from 'ember-concurrency';
+import { tracked } from '@glimmer/tracking';
 
 // Pretending to be jQuery for a very narrow snippet
 const $ = (selector) => document.querySelector(selector);
 
 export default class EventsExampleComponent extends Component.extend(Evented) {
   // BEGIN-SNIPPET waitForEvent
-  domEvent = null;
+  @tracked domEvent = null;
+  @tracked jQueryEvent = null;
+  @tracked emberEvent = null;
 
   domEventLoop = task(async () => {
     while (true) {
       let event = await waitForEvent(document.body, 'click');
-      this.set('domEvent', event);
+      this.domEvent = event;
       this.trigger('fooEvent', { v: Math.random() });
     }
   });
@@ -28,7 +31,7 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
     let $body = $('body');
     while (true) {
       let event = await waitForEvent($body, 'click');
-      this.set('jQueryEvent', event);
+      this.jQueryEvent = event;
     }
   });
 
@@ -37,7 +40,7 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
   emberEventedLoop = task(async () => {
     while (true) {
       let event = await waitForEvent(this, 'fooEvent');
-      this.set('emberEvent', event);
+      this.emberEvent = event;
     }
   });
 
@@ -68,8 +71,8 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
 
   // BEGIN-SNIPPET waitForProperty
   startAll = task(async () => {
-    this.set('bazValue', 1);
-    this.set('state', 'Start.');
+    this.bazValue = 1;
+    this.state = 'Start.';
     this.foo.perform();
     this.bar.perform();
     this.baz.perform();
@@ -81,18 +84,19 @@ export default class EventsExampleComponent extends Component.extend(Evented) {
 
   bar = task(async () => {
     await waitForProperty(this, 'foo.isIdle');
-    this.set('state', `${this.state} Foo is idle.`);
+    this.state = `${this.state} Foo is idle.`;
     await timeout(500);
-    this.set('bazValue', 42);
-    this.set('state', `${this.state} Bar.`);
+    this.bazValue = 42;
+    this.state = `${this.state} Bar.`;
   });
 
-  bazValue = 1;
+  @tracked bazValue = 1;
+  @tracked state = '';
 
   baz = task(async () => {
     let val = await waitForProperty(this, 'bazValue', (v) => v % 2 === 0);
     await timeout(500);
-    this.set('state', `${this.state} Baz got even value ${val}.`);
+    this.state = `${this.state} Baz got even value ${val}.`;
   });
   // END-SNIPPET
 }

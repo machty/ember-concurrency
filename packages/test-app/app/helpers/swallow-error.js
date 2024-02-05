@@ -10,7 +10,7 @@ import { helper } from '@ember/component/helper';
  * want the error to bubble up to the application itself, as we're already handling the error case.
  *
  *   ```hbs
- *   <button {{on 'click' (swallow-error (perform this.someTaskThatMightThrow))}}>
+ *   <button {{on 'click' (swallow-error this.someTaskThatMightThrow.perform)}}>
  *     Click Me
  *   </button>
  *   ```
