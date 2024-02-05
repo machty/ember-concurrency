@@ -1,7 +1,7 @@
 <div class="tutorial-example">
 
   {{! BEGIN-SNIPPET better-syntax-9 }}
-  <button {{on "click" (perform this.findStores)}} type="button">
+  <button {{on "click" this.findStores.perform}} type="button">
     Find Nearby Stores
     {{#if this.findStores.isRunning}}
       <LoadingSpinner />
@@ -12,7 +12,8 @@
     {{#each this.result.stores as |s|}}
       <li>
         <strong>{{s.name}}</strong>:
-        {{s.distance}} miles away
+        {{s.distance}}
+        miles away
       </li>
     {{/each}}
   {{/if}}

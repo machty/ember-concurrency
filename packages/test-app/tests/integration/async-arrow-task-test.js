@@ -88,7 +88,7 @@ module('Integration | async-arrow-task', function (hooks) {
   <button
     id='start'
     type='button'
-    {{on 'click' (perform this.myTask 'Done!')}}
+    {{on 'click' (fn this.myTask.perform 'Done!')}}
   >Start!</button>
 {{else if this.isRunning}}
   Running!

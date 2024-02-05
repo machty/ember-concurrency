@@ -14,9 +14,9 @@
   ability to specify new modifiers as prototype extensions on `TaskProperty`.
   Unfortunately, `TaskProperty` is inherently tied to Ember internals and is not
   used when using decorators, and using prototype extensions does not make clear
-  what modifiers exist, so the `getModifier`, `hasModifier`, and `registerModifier`
-  APIs were introduced to provide a way to manage modifiers and make them
-  discoverable.
+  what modifiers exist, so the `getModifier`, `hasModifier`, and
+  `registerModifier` APIs were introduced to provide a way to manage modifiers
+  and make them discoverable.
 </p>
 
 <h3>Defining a custom task modifier</h3>
@@ -34,7 +34,7 @@
 </p>
 
 {{! BEGIN-SNIPPET task-modifier-benchmark-on-task }}
-<button {{on "click" (perform this.doWork)}} type="button">
+<button {{on "click" this.doWork.perform}} type="button">
   Benchmark task
 </button>
 
@@ -44,7 +44,9 @@
 
 <ol>
   {{#each this.perfEntries as |entry|}}
-    <li>Start time: {{entry.startTime}}ms after page-load; duration = {{entry.duration}}ms</li>
+    <li>Start time:
+      {{entry.startTime}}ms after page-load; duration =
+      {{entry.duration}}ms</li>
   {{/each}}
 </ol>
 {{! END-SNIPPET }}
@@ -56,6 +58,11 @@
 
 <p>
   The behavior and implementation of task modifier APIs are defined further in
-  the <a href="https://github.com/machty/ember-concurrency/blob/master/rfcs/0002-yieldables.md">Task Modifiers RFC</a>.
-  Additionally, the API for <code>TaskFactory</code> is documented <a href="/api/TaskFactory.html">here</a>.
+  the
+  <a
+    href="https://github.com/machty/ember-concurrency/blob/master/rfcs/0002-yieldables.md"
+  >Task Modifiers RFC</a>. Additionally, the API for
+  <code>TaskFactory</code>
+  is documented
+  <a href="/api/TaskFactory.html">here</a>.
 </p>

@@ -6,12 +6,13 @@
 
 <ul>
   <li>
-    Tricky time-based operations like acceleration are simplified
-    by the sequential style of task functions
+    Tricky time-based operations like acceleration are simplified by the
+    sequential style of task functions
   </li>
   <li>
-    You can use <code>(perform taskName)</code> in place of anywhere you
-    might want to use a classic Ember action.
+    You can use
+    <code>taskName.perform</code>
+    in place of anywhere you might want to use a classic Ember action.
   </li>
 </ul>
 
@@ -23,11 +24,17 @@
 
 {{! BEGIN-SNIPPET press-and-hold-buttons }}
 <p>
-  <PressAndHoldButton @press={{perform this.incrementBy -1}} @release={{cancel-all this.incrementBy}}>
+  <PressAndHoldButton
+    @press={{perform this.incrementBy -1}}
+    @release={{cancel-all this.incrementBy}}
+  >
     --Decrease
   </PressAndHoldButton>
 
-  <PressAndHoldButton @press={{perform this.incrementBy 1}} @release={{cancel-all this.incrementBy}}>
+  <PressAndHoldButton
+    @press={{perform this.incrementBy 1}}
+    @release={{cancel-all this.incrementBy}}
+  >
     Increase++
   </PressAndHoldButton>
 </p>

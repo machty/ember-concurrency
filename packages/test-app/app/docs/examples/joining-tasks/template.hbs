@@ -1,45 +1,66 @@
 <h3>Awaiting Multiple Child Tasks (or, cancelable Promise.all, Promise.race)</h3>
 
 <p>
-  <strong>ember-concurrency</strong> provides Task-aware variants of
-  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">Promise.all</a> and
-  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race">Promise.race</a>,
-  which can be used in cases where a parent task wants to wait
-  for multiple child tasks to run to completion (or throw an error)
-  before continuing onward. The <strong>ember-concurrency</strong>
-  variants both have the added benefit that if the parent task is canceled (or restarts),
-  all of the child tasks will be automatically canceled. Similarly,
-  in the case of <strong>all()</strong>,
-  if any of the child tasks throws an error, all other child tasks
-  are immediately canceled.
+  <strong>ember-concurrency</strong>
+  provides Task-aware variants of
+  <a
+    href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all"
+  >Promise.all</a>
+  and
+  <a
+    href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race"
+  >Promise.race</a>, which can be used in cases where a parent task wants to
+  wait for multiple child tasks to run to completion (or throw an error) before
+  continuing onward. The
+  <strong>ember-concurrency</strong>
+  variants both have the added benefit that if the parent task is canceled (or
+  restarts), all of the child tasks will be automatically canceled. Similarly,
+  in the case of
+  <strong>all()</strong>, if any of the child tasks throws an error, all other
+  child tasks are immediately canceled.
 </p>
 
 <h3>Live Example</h3>
 
 <p>
   The example below can be started (or restarted) using either
-  <code>all()</code> to wait for all child tasks to run to completion,
-  or <code>race()</code> to wait for the first. Note that how, in both cases,
-  <code>maxConcurrency: 3</code> ensures that only 3 progress tasks
-  run at a time, but if you restart the task while it's running, it immediately
-  starts 3 tasks after canceling the previous ones.
+  <code>all()</code>
+  to wait for all child tasks to run to completion, or
+  <code>race()</code>
+  to wait for the first. Note that how, in both cases,
+  <code>maxConcurrency: 3</code>
+  ensures that only 3 progress tasks run at a time, but if you restart the task
+  while it's running, it immediately starts 3 tasks after canceling the previous
+  ones.
 </p>
 
 <h5>Status: {{this.status}}</h5>
 
 {{! BEGIN-SNIPPET joining-tasks-template }}
 <p>
-  <button {{on "click" (perform this.parent "all")}} type="button">all()</button>
-  <button {{on "click" (perform this.parent "race")}} type="button">race()</button>
+  <button
+    {{on "click" (fn this.parent.perform "all")}}
+    type="button"
+  >all()</button>
+  <button
+    {{on "click" (fn this.parent.perform "race")}}
+    type="button"
+  >race()</button>
 </p>
 {{! END-SNIPPET }}
 
 {{#each this.childTasks as |ti|}}
   <div class="progress-outer">
-    <div class="progress-inner" style={{progress-style ti.percent ti.id this.colors}} {{! template-lint-disable no-inline-styles }}>
-      Progress: {{ti.percent}}%
+    <div
+      class="progress-inner"
+      style={{progress-style ti.percent ti.id this.colors}}
+      {{! template-lint-disable no-inline-styles }}
+    >
+      Progress:
+      {{ti.percent}}%
       {{#if ti.value}}
-        Word: {{ti.value}}
+        Word:
+        {{ti.value}}
       {{/if}}
     </div>
   </div>
