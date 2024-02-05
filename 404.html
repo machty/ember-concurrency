@@ -1,27 +1,31 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>ember-concurrency</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     
-<meta name="test-app/config/environment" content="%7B%22modulePrefix%22%3A%22test-app%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22history%22%2C%22EmberENV%22%3A%7B%22EXTEND_PROTOTYPES%22%3Afalse%2C%22FEATURES%22%3A%7B%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22test-app%22%2C%22version%22%3A%220.0.0%2Bc6f92d17%22%7D%2C%22emberConcurrencyVersion%22%3A%224.0.0-beta.1%22%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%7D" />
+<meta name="test-app/config/environment" content="%7B%22modulePrefix%22%3A%22test-app%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22history%22%2C%22EmberENV%22%3A%7B%22EXTEND_PROTOTYPES%22%3Afalse%2C%22FEATURES%22%3A%7B%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22name%22%3A%22test-app%22%2C%22version%22%3A%220.0.0%2Bad031817%22%7D%2C%22emberConcurrencyVersion%22%3A%224.0.0-beta.1%22%2C%22fastboot%22%3A%7B%22hostWhitelist%22%3A%5B%7B%7D%2C%22ember-concurrency.com%22%5D%7D%7D" />
 <!-- EMBER_CLI_FASTBOOT_TITLE --><!-- EMBER_CLI_FASTBOOT_HEAD -->
 
-    <link integrity="" rel="stylesheet" href="/assets/vendor-10d8eaf9101947f2130df71856c61a0b.css">
-    <link integrity="" rel="stylesheet" href="/assets/test-app-76a6a77059a24a3f590c4ba242acb117.css">
-    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+    <link integrity="" rel="stylesheet" href="/assets/vendor-10d8eaf9101947f2130df71856c61a0b.css" />
+    <link integrity="" rel="stylesheet" href="/assets/test-app-0fb4f0511a8574d83c92a722b1036d1f.css" />
+    <link
+      href="//fonts.googleapis.com/css?family=Raleway:400,300,600"
+      rel="stylesheet"
+      type="text/css"
+    />
 
     
   </head>
   <body>
     <!-- EMBER_CLI_FASTBOOT_BODY -->
 
-    <script src="/assets/vendor-e824e0a516010dc69860cf86abc8b330.js" integrity="sha256-Zh+EHsIL6yQwWlKlaOWp99s+RhzsoWgEoUcPNtuYpA4= sha512-1V3hqRGqEyBIeta3EKwCD3XIJdSzSWhuyb+EN2jxQkRpOSentXSrDXiEONCDx/j970jBMh90RONtuhzLjlw7pw==" ></script>
-<script src="/assets/chunk.524.7f03c56a4e3983e1f4bd.js" integrity="sha256-LANIxqvR/qN1+sTGzRmjkoBC+KkRBzO6MbosfuhPwVY= sha512-Yqa3nUBZG8KVBKZcB+YawjBiRJSG6QCIW7epeE5MiEBUjqvjWDuR8xRKqsleASu5d4h57iJ7tVpPf3/7sTYlfw==" ></script>
-    <script src="/assets/test-app-0f4983c41f3f009dab4f9f51d73e49de.js" integrity="sha256-r2tmNnwYLkj3PHiq2LzEIF70w3wdT1oIjzChV6OZTx4= sha512-BU5ZHrrsBvj1jNiMHAiV0uXPINXxn/+TU+mRFrsM4TKCod6UmsDywp2DFqCLPmiF3vAEyKlQFqeosPkSBGRxWA==" ></script>
+    <script src="/assets/vendor-a286e50c47086fec960a3485ecc3f30e.js" integrity="sha256-1Lvu7dt4ZaibQVHopZ3IqfvMu9pK1zBY+XDLpjqBAIM= sha512-1vIyDfc5pmiggR9Mv9wDrleuf3U2K5/oH/LdWI/NWH1Bdwu6VZsyJlS27M6isPI/tkumkNQiF2tnYe22cNAKmw==" ></script>
+<script src="/assets/chunk.524.bdce3f4377c0fe5403e7.js" integrity="sha256-98gvTwhU6pTN4SJzu27Pqk3fX4TcDVhw0jxV8+dInHE= sha512-713FSuLhwc49H3kAX4gf5kLrAMI3wMz+M3GXIPUTf8ys7oa9oAfRjnBs6TvH3gDkYmoqitpkb/k3ZKvF7jwNLA==" ></script>
+    <script src="/assets/test-app-f23710a5e6d8592ba4267d7aab2718e6.js" integrity="sha256-FYnWYFsPoQVfHHUPvMsF052LFquHMiOoOAC0/avM40M= sha512-IgmYXgB6b8APRV1btncg5BoT43HL2O3JbMFJEr0wZFPCfQmWeFYMebpTtd0qCwPpfy8uNiN0EHg1b1tr8Tggmg==" ></script>
 
     
   </body>
