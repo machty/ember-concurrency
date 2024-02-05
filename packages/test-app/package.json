@@ -24,7 +24,7 @@
     "test": "concurrently \"npm:lint\" \"npm:test:*\" --names \"lint,test:\"",
     "test:ember": "ember test",
     "test:ember-try": "ember try:one",
-    "docs:buildall": "pnpm docs:buildapp && pnpm docs:buildapi",
+    "docs:buildall": "pnpm docs:buildapi && pnpm docs:buildapp",
     "docs:buildapp": "pnpm build",
     "docs:buildapi": "node_modules/.bin/jsdoc -c .jsdoc --verbose"
   },

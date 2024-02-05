@@ -16,10 +16,7 @@ jobs:
           pnpm-args: --frozen-lockfile
 
       - name: Build docs assets
-        run: pnpm --filter test-app docs:buildall
-
-      - name: debug api
-        run: find ./packages/test-app/dist
+        run: pnpm --filter test-app docs:buildall && find ./packages/test-app/dist
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
