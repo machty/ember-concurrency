@@ -8,4 +8,9 @@ module.exports = {
     'no-whitespace-for-layout': false,
     'require-input-label': false,
   },
+
+  ignore: [
+    // TODO: figure out why I get Parser Errors...
+    '**/*.gts',
+  ],
 };

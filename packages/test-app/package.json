@@ -73,7 +73,7 @@
     "ember-source": "~4.11.0",
     "ember-source-channel-url": "^3.0.0",
     "ember-template-imports": "^3.4.2",
-    "ember-template-lint": "^5.8.0",
+    "ember-template-lint": "^5.13.0",
     "ember-template-lint-plugin-prettier": "^5.0.0",
     "ember-try": "^3.0.0",
     "eslint": "^7.32.0",
