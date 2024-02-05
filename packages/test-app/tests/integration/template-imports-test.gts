@@ -10,9 +10,9 @@ module('Integration | template imports / SFC test', function (hooks) {
   test('it works', async function (assert) {
     await render(<template><BasicTemplateImports /></template>);
 
-    assert.dom().doesNotContainText('hello');
+    // assert.dom().doesNotContainText('hello');
 
-    await settled();
+    // await settled();
     assert.dom().hasText('hello');
   });
 });

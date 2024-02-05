@@ -17,6 +17,10 @@ module.exports = function (defaults) {
       components: ['javascript', 'typescript', 'bash', 'markup'],
     },
 
+    'ember-cli-babel': {
+      enableTypeScriptTransform: true,
+    },
+
     emberCliFontAwesome: {
       useScss: true,
     },
