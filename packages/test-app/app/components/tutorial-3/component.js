@@ -1,11 +1,12 @@
+import { tracked } from '@glimmer/tracking';
 import TutorialComponent from '../shared-tutorial/component';
 
 // BEGIN-SNIPPET better-syntax-4
 import { action } from '@ember/object';
 
 export default class Tutorial3 extends TutorialComponent {
-  result = null;
-  isFindingStores = false;
+  @tracked result = null;
+  @tracked isFindingStores = false;
 
   @action
   async findStores() {
@@ -16,7 +17,7 @@ export default class Tutorial3 extends TutorialComponent {
     let geolocation = this.geolocation;
     let store = this.store;
 
-    this.set('isFindingStores', true);
+    this.isFindingStores = true;
 
     let coords = await geolocation.getCoords();
     let result = await store.getNearbyStores(coords);
@@ -25,8 +26,8 @@ export default class Tutorial3 extends TutorialComponent {
       return;
     } // ++
 
-    this.set('result', result);
-    this.set('isFindingStores', false);
+    this.result = result;
+    this.isFindingStores = false;
   }
 }
 // END-SNIPPET
