@@ -34,8 +34,7 @@
   {{! BEGIN-SNIPPET ask-button }}
   <button
     class={{if this.askQuestion.isIdle "button-primary"}}
-    {{on "click" (fn this.askQuestion)}}
-    .perform
+    {{on "click" this.askQuestion.perform}}
     type="button"
   >
     {{#if this.askQuestion.isIdle}}

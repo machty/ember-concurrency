@@ -26,5 +26,7 @@
 
 snippets
 
+public/api
+
 # Templates are covered by ember template lint's embedded prettier
 *.hbs

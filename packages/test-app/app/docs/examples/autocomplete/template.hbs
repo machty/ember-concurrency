@@ -42,7 +42,7 @@
 
     <input
       type="text"
-      {{on "input" (fn this.searchRepo.perform value="target.value")}}
+      {{on "input" this.searchRepo.perform}}
       placeholder="e.g. machty/ember-concurrency"
     />
   </label>
