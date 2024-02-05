@@ -20,7 +20,7 @@ module('Unit: task instance', function (hooks) {
           assert.deepEqual(
             this,
             context,
-            "generator functions' `this` is the context passed in"
+            "generator functions' `this` is the context passed in",
           );
           assert.deepEqual(args, [1, 2, 3]);
         },
@@ -154,12 +154,12 @@ module('Unit: task instance', function (hooks) {
         assert.strictEqual(
           e.name,
           'TaskCancelation',
-          'promise rejection is a cancelation'
+          'promise rejection is a cancelation',
         );
         if (message) {
           assert.strictEqual(e.message, message);
         }
-      }
+      },
     );
   }
 
@@ -247,7 +247,7 @@ module('Unit: task instance', function (hooks) {
     expectCancelation(
       assert,
       taskInstance,
-      "TaskInstance '<unknown>' was canceled because .cancel() was explicitly called. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
+      "TaskInstance '<unknown>' was canceled because .cancel() was explicitly called. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help",
     );
 
     run(() => {
@@ -685,9 +685,9 @@ module('Unit: task instance', function (hooks) {
       (e) => {
         assert.ok(
           didCancel(e),
-          'canceling a task instance right before it returns is still considered a cancelation'
+          'canceling a task instance right before it returns is still considered a cancelation',
         );
-      }
+      },
     );
 
     run(null, defer.resolve);

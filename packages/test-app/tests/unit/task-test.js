@@ -143,7 +143,7 @@ module('Unit: task', function (hooks) {
     assert.deepEqual(instances.mapBy('isCanceled'), [true, true, true]);
     assert.strictEqual(
       instances[0].cancelReason,
-      "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
+      "TaskInstance 'doStuff' was canceled because .cancelAll() was explicitly called on the Task. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help",
     );
   });
 
@@ -190,7 +190,7 @@ module('Unit: task', function (hooks) {
 
     assert.notOk(
       taskObj.lastSuccessful,
-      'expected there to be no last successful value'
+      'expected there to be no last successful value',
     );
   });
 
@@ -213,7 +213,7 @@ module('Unit: task', function (hooks) {
     assert.deepEqual(instances.mapBy('isCanceled'), [true, true, false]);
     assert.strictEqual(
       instances[0].cancelReason,
-      "TaskInstance 'doStuff' was canceled because it belongs to a 'restartable' Task that was .perform()ed again. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
+      "TaskInstance 'doStuff' was canceled because it belongs to a 'restartable' Task that was .perform()ed again. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help",
     );
   });
 
@@ -522,7 +522,7 @@ module('Unit: task', function (hooks) {
       } catch (e) {
         assert.strictEqual(
           e.message,
-          'You can only call .linked() from within a task.'
+          'You can only call .linked() from within a task.',
         );
       }
     });

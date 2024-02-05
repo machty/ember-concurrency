@@ -18,7 +18,7 @@ function benchmarkModifier(taskFactory, option) {
         yield* taskDefinition(...args);
         window.performance.measure(
           `${namespace}.success`,
-          `${namespace}.start`
+          `${namespace}.start`,
         );
       } catch (e) {
         window.performance.measure(`${namespace}.error`, `${namespace}.start`);
@@ -26,7 +26,7 @@ function benchmarkModifier(taskFactory, option) {
       } finally {
         window.performance.measure(
           `${namespace}.runtime`,
-          `${namespace}.start`
+          `${namespace}.start`,
         );
       }
     };

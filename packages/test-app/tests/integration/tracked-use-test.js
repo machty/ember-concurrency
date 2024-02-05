@@ -16,7 +16,9 @@ module('Integration | tracked use', function (hooks) {
     this.owner.register(
       'component:e-c-test',
       class ECTest extends Component {
-        layout = hbs`<div>{{#if this.exampleTask.isRunning}}running{{else}}{{this.value}}{{/if}}</div>`;
+        layout = hbs`<div>{{#if
+    this.exampleTask.isRunning
+  }}running{{else}}{{this.value}}{{/if}}</div>`;
 
         constructor() {
           super(...arguments);
@@ -35,7 +37,7 @@ module('Integration | tracked use', function (hooks) {
           yield timeout(1000);
           return 'done';
         }
-      }
+      },
     );
 
     render(hbs`<ECTest />`);
@@ -58,7 +60,9 @@ module('Integration | tracked use', function (hooks) {
     this.owner.register(
       'component:e-c-test',
       class ECTest extends Component {
-        layout = hbs`<div>{{#if this.exampleGroup.isRunning}}running{{else}}{{this.value}}{{/if}}</div>`;
+        layout = hbs`<div>{{#if
+    this.exampleGroup.isRunning
+  }}running{{else}}{{this.value}}{{/if}}</div>`;
 
         constructor() {
           super(...arguments);
@@ -80,7 +84,7 @@ module('Integration | tracked use', function (hooks) {
           yield timeout(1000);
           return 'done';
         }
-      }
+      },
     );
 
     render(hbs`<ECTest />`);

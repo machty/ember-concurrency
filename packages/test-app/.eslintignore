@@ -24,6 +24,8 @@
 /package-lock.json.ember-try
 /yarn.lock.ember-try
 
+public/api
+
 snippets
 
 app

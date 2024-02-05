@@ -61,7 +61,6 @@ a {
   line-height: 40px;
 }
 
-
 .btn-cancel {
   color: red;
   font-size: 20px;
@@ -92,22 +91,25 @@ a {
   color: red;
 }
 
-button, .button {
+button,
+.button {
   -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none;   /* Chrome/Safari/Opera */
-  -khtml-user-select: none;    /* Konqueror */
-  -moz-user-select: none;      /* Firefox */
-  -ms-user-select: none;       /* IE/Edge */
-  user-select: none;           /* non-prefixed version, currently
+  -webkit-user-select: none; /* Chrome/Safari/Opera */
+  -khtml-user-select: none; /* Konqueror */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  user-select: none; /* non-prefixed version, currently
                                   not supported by any browser */
 }
 
-th, td {
+th,
+td {
   min-width: 60px;
 }
 
 .completion-state-table {
-  th, td {
+  th,
+  td {
     width: 33%;
   }
   tbody tr {
@@ -126,16 +128,16 @@ th, td {
 
   &.completion-success {
     &:hover {
-      background-color: #1BBD92;
+      background-color: #1bbd92;
     }
-    background-color: #1BBD92;
+    background-color: #1bbd92;
   }
 
   &.completion-error {
     &:hover {
-      background-color: #F33F3F;
+      background-color: #f33f3f;
     }
-    background-color: #F33F3F;
+    background-color: #f33f3f;
   }
 }
 
@@ -204,7 +206,7 @@ th, td {
 .code-snippet {
   border: none;
   margin: 0;
-  padding: 0 .5rem;
+  padding: 0 0.5rem;
 }
 
 .code-template-toggle {

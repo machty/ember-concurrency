@@ -40,7 +40,7 @@ const GenericEventedMixin = {
     const eventHandlers = this._handlers[eventName];
     if (eventHandlers) {
       this._handlers[eventName] = eventHandlers.filter(
-        (handler) => handler !== fn
+        (handler) => handler !== fn,
       );
     }
   },
@@ -102,7 +102,7 @@ module(
             assert.strictEqual(
               error.toString(),
               "Error: You attempted to schedule an action in a queue (non-existing-queue) that doesn't exist",
-              'it correctly bubbles error up'
+              'it correctly bubbles error up',
             );
             taskErrored = true;
           }
@@ -413,7 +413,7 @@ module(
       run(() =>
         waitForEvent(obj, 'foo').then((v) => {
           ev = v;
-        })
+        }),
       );
       assert.strictEqual(ev, null);
       run(obj, 'trigger', 'foo', 123);
@@ -423,7 +423,7 @@ module(
       run(() =>
         race([waitForEvent(obj, 'foo'), waitForEvent(obj, 'bar')]).then((v) => {
           ev = v;
-        })
+        }),
       );
       assert.strictEqual(ev, null);
       run(obj, 'trigger', 'bar', 456);
@@ -466,5 +466,5 @@ module(
 
       assert.deepEqual(values, [1, 2, 3, 'val=3']);
     });
-  }
+  },
 );

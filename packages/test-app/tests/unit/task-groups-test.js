@@ -9,22 +9,22 @@ module('Unit: task groups', function () {
     assert.strictEqual(
       task.isRunning,
       isRunning,
-      `${task.name} is ${isRunning ? '' : 'not'} running ${suffix}`
+      `${task.name} is ${isRunning ? '' : 'not'} running ${suffix}`,
     );
     assert.strictEqual(
       task.isQueued,
       isQueued,
-      `${task.name} is ${isQueued ? '' : 'not'} queued ${suffix}`
+      `${task.name} is ${isQueued ? '' : 'not'} queued ${suffix}`,
     );
     assert.strictEqual(
       task.isIdle,
       isIdle,
-      `${task.name} is ${isIdle ? '' : 'not'} idle ${suffix}`
+      `${task.name} is ${isIdle ? '' : 'not'} idle ${suffix}`,
     );
     assert.strictEqual(
       task.state,
       isRunning ? 'running' : 'idle',
-      `${task.name} state is '${isRunning ? 'running' : 'idle'}' ${suffix}`
+      `${task.name} state is '${isRunning ? 'running' : 'idle'}' ${suffix}`,
     );
   }
 

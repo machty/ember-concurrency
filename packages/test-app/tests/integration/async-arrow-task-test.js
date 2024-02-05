@@ -84,18 +84,20 @@ module('Integration | async-arrow-task', function (hooks) {
   hooks.beforeEach(function () {
     this.owner.register(
       'template:components/test-async-arrow-task',
-      hbs`
-      {{#if this.isWaiting}}
-        <button id="start" type="button" {{on "click" (perform this.myTask "Done!")}}>Start!</button>
-      {{else if this.isRunning}}
-        Running!
-        {{else}}
-        Finished!
-        <span id="state">{{this.myTask.state}}</span>
-        <span id="value">{{this.value}}</span>
-        <span id="resolved">{{this.resolved}}</span>
-      {{/if}}
-    `
+      hbs`{{#if this.isWaiting}}
+  <button
+    id='start'
+    type='button'
+    {{on 'click' (perform this.myTask 'Done!')}}
+  >Start!</button>
+{{else if this.isRunning}}
+  Running!
+{{else}}
+  Finished!
+  <span id='state'>{{this.myTask.state}}</span>
+  <span id='value'>{{this.value}}</span>
+  <span id='resolved'>{{this.resolved}}</span>
+{{/if}}`,
     );
   });
 
@@ -116,7 +118,7 @@ module('Integration | async-arrow-task', function (hooks) {
           assert.strictEqual(this.myTask.name, 'myTask');
           return arg;
         });
-      }
+      },
     );
 
     await startTest(assert);
@@ -139,7 +141,7 @@ module('Integration | async-arrow-task', function (hooks) {
           assert.strictEqual(this.myTask.name, 'myTask');
           return arg;
         });
-      }
+      },
     );
 
     await startTest(assert);
@@ -174,10 +176,10 @@ module('Integration | async-arrow-task', function (hooks) {
           modifier1(
             modifier2(async (arg) => {
               return arg;
-            })
-          )
+            }),
+          ),
         );
-      }
+      },
     );
 
     await render(hbs`<TestAsyncArrowTask />`);
@@ -200,9 +202,9 @@ module('Integration | async-arrow-task', function (hooks) {
             set(this, 'resolved', await promise);
             assert.strictEqual(this.myTask.name, 'myTask');
             return arg;
-          })
+          }),
         );
-      }
+      },
     );
 
     await render(hbs`<TestAsyncArrowTask />`);
@@ -242,7 +244,7 @@ module('Integration | async-arrow-task', function (hooks) {
         myTask = task(this, async (arg) => {
           return this.et.perform(arg);
         });
-      }
+      },
     );
 
     await startTest(assert);
@@ -275,7 +277,7 @@ module('Integration | async-arrow-task', function (hooks) {
         myTask = task(this, async (arg) => {
           return this.et.perform(arg);
         });
-      }
+      },
     );
 
     await startTest(assert);
@@ -294,9 +296,9 @@ module('Integration | async-arrow-task', function (hooks) {
         // eslint-disable-next-line qunit/no-conditional-assertions
         assert.ok(
           msg.includes(
-            "the async arrow task function you've provided is not being properly compiled by Babel"
+            "the async arrow task function you've provided is not being properly compiled by Babel",
           ),
-          'expected assertion message'
+          'expected assertion message',
         );
         assertionDidFire = true;
       }

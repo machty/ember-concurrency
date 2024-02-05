@@ -9,14 +9,14 @@ import sinon from 'sinon';
 function assertEventFired(assert, event, stub, ...args) {
   assert.ok(
     stub.calledOnceWith(...args),
-    `expected '${event}' event callback to have been called`
+    `expected '${event}' event callback to have been called`,
   );
 }
 
 function assertEventNotFired(assert, event, stub) {
   assert.notOk(
     stub.called,
-    `expected '${event}' event callback not to have been called`
+    `expected '${event}' event callback not to have been called`,
   );
 }
 
@@ -143,7 +143,7 @@ module('Unit: task events', function () {
       'canceled',
       canceledStub,
       taskInstance,
-      "TaskInstance 'doThings' was canceled because I just felt like it. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help"
+      "TaskInstance 'doThings' was canceled because I just felt like it. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help",
     );
     assertEventNotFired(assert, 'errored', erroredStub);
     assertEventNotFired(assert, 'succeeded', succeededStub);

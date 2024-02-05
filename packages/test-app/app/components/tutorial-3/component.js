@@ -9,7 +9,9 @@ export default class Tutorial3 extends TutorialComponent {
 
   @action
   async findStores() {
-    if (this.isFindingStores) { return; }
+    if (this.isFindingStores) {
+      return;
+    }
 
     let geolocation = this.geolocation;
     let store = this.store;
@@ -19,7 +21,9 @@ export default class Tutorial3 extends TutorialComponent {
     let coords = await geolocation.getCoords();
     let result = await store.getNearbyStores(coords);
 
-    if (this.isDestroyed) { return; } // ++
+    if (this.isDestroyed) {
+      return;
+    } // ++
 
     this.set('result', result);
     this.set('isFindingStores', false);

@@ -19,7 +19,7 @@ module('Integration | Helper | task action', function (hooks) {
           assert.deepEqual(args, [1, 2, 3, 4, 5, 6]);
           return 999;
         }),
-      })
+      }),
     );
 
     this.owner.register(
@@ -30,15 +30,18 @@ module('Integration | Helper | task action', function (hooks) {
             assert.strictEqual(v, 999);
           });
         },
-      })
+      }),
     );
 
     this.owner.register(
       'template:components/my-component',
-      hbs`<InnerComponent @id="my-component" @curriedTask={{task (task this.myTask 1 2) 3}} />`
+      hbs`<InnerComponent
+  @id='my-component'
+  @curriedTask={{task (task this.myTask 1 2) 3}}
+/>`,
     );
 
-    await render(hbs`<MyComponent/>`);
+    await render(hbs`<MyComponent />`);
 
     await click('#my-component');
   });

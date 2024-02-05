@@ -33,7 +33,7 @@ export default class DerivedStateController extends Controller {
   @computed(
     'commonTaskProperties',
     'lessCommonTaskProperties',
-    'showLessCommon'
+    'showLessCommon',
   )
   get taskProperties() {
     return [

@@ -226,7 +226,7 @@ module('Unit: task states', function (hooks) {
     assert.deepEqual(
       myTask.lastSuccessful,
       taskInstance1,
-      'still is taskInstance1 because taskInstance2 failed'
+      'still is taskInstance1 because taskInstance2 failed',
     );
     await asyncError();
   });
@@ -323,7 +323,7 @@ module('Unit: task states', function (hooks) {
     assert.strictEqual(
       myTask.lastCanceled,
       taskInstance1,
-      'still taskInstance1'
+      'still taskInstance1',
     );
     await asyncError();
   });
@@ -378,7 +378,7 @@ module('Unit: task states', function (hooks) {
     assert.strictEqual(
       obj.myTask.lastRunning,
       taskInstance1,
-      'lastRunning is taskInstance1 when its the only running'
+      'lastRunning is taskInstance1 when its the only running',
     );
 
     const defer2 = RSVP.defer();
@@ -389,7 +389,7 @@ module('Unit: task states', function (hooks) {
     assert.strictEqual(
       obj.myTask.lastRunning,
       taskInstance2,
-      'lastRunning is taskInstance2 when its the latest running'
+      'lastRunning is taskInstance2 when its the latest running',
     );
 
     run(defer2, 'resolve');
@@ -399,24 +399,24 @@ module('Unit: task states', function (hooks) {
     assert.strictEqual(
       obj.myTask.lastRunning,
       taskInstance1,
-      'lastRunning is taskInstance1 when taskInstance2 has stopped'
+      'lastRunning is taskInstance1 when taskInstance2 has stopped',
     );
 
     run(defer1, 'reject', 'big wrench');
 
     assert.false(
       obj.myTask.isRunning,
-      'isRunning is false when tasks finished running'
+      'isRunning is false when tasks finished running',
     );
     assert.strictEqual(
       obj.myTask.numRunning,
       0,
-      'numRunning is 0 when tasks finished running'
+      'numRunning is 0 when tasks finished running',
     );
     assert.strictEqual(
       obj.myTask.lastRunning,
       null,
-      'lastRunning is null when tasks finished running'
+      'lastRunning is null when tasks finished running',
     );
     await asyncError();
   });

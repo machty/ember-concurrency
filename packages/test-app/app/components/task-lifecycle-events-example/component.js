@@ -60,7 +60,7 @@ export default class TaskLifecycleEventsExample extends Component {
         throw new Error('Unexpected matrix glitch');
       }
       return {};
-    }
+    },
   );
 
   ajaxTaskStarted(taskInstance) {
@@ -77,7 +77,7 @@ export default class TaskLifecycleEventsExample extends Component {
     const [id] = taskInstance.args;
     this.log(
       COLORS[id],
-      `Task ${id}: AJAX failed because of '${error.message}'`
+      `Task ${id}: AJAX failed because of '${error.message}'`,
     );
   }
 

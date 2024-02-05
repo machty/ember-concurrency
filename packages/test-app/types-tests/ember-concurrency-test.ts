@@ -66,19 +66,19 @@ type LegacyAsyncTaskFunction<T, Args extends any[]> = (
 ) => Promise<T>;
 
 type LegacyAsyncTaskFunctionArgs<
-  T extends LegacyAsyncTaskFunction<any, any[]>
+  T extends LegacyAsyncTaskFunction<any, any[]>,
 > = T extends (...args: infer A) => Promise<any> ? A : [];
 
 type LegacyAsyncTaskFunctionReturnType<
-  T extends LegacyAsyncTaskFunction<any, any[]>
+  T extends LegacyAsyncTaskFunction<any, any[]>,
 > = T extends (...args: any[]) => Promise<infer R> ? R : unknown;
 
 type LegacyTaskForAsyncTaskFunction<
-  T extends LegacyAsyncTaskFunction<any, any[]>
+  T extends LegacyAsyncTaskFunction<any, any[]>,
 > = Task<LegacyAsyncTaskFunctionReturnType<T>, LegacyAsyncTaskFunctionArgs<T>>;
 
 type TaskInstanceForAsyncTaskFunction<
-  T extends LegacyAsyncTaskFunction<any, any[]>
+  T extends LegacyAsyncTaskFunction<any, any[]>,
 > = TaskInstance<LegacyAsyncTaskFunctionReturnType<T>>;
 
 type AsyncTaskFunction = LegacyAsyncTaskFunction<any, any[]>;
@@ -705,12 +705,12 @@ module('unit tests', () => {
     expect(t.then).toBeCallableWith(() => {});
     expect(t.then).toBeCallableWith(
       () => {},
-      () => {}
+      () => {},
     );
     expect(t.then).toBeCallableWith((v) => expect(v).toBeString());
     expect(t.then).toBeCallableWith(
       (v) => expect(v).toBeString(),
-      (e) => expect(e).toBeAny()
+      (e) => expect(e).toBeAny(),
     );
 
     {
@@ -725,7 +725,7 @@ module('unit tests', () => {
       () => {},
       () => {},
       // @ts-expect-error
-      () => {}
+      () => {},
     );
 
     expect(t.catch).toBeCallableWith();
@@ -743,7 +743,7 @@ module('unit tests', () => {
     t.catch(
       () => {},
       // @ts-expect-error
-      () => {}
+      () => {},
     );
 
     expect(t.finally).toBeCallableWith();
@@ -887,7 +887,7 @@ module('unit tests', () => {
       tp,
 
       foo(
-        this: EmberObject & { tp: TaskProperty<string, [boolean, number?]> }
+        this: EmberObject & { tp: TaskProperty<string, [boolean, number?]> },
       ) {
         let t = this.get('tp');
         expect(t).toMatchTypeOf<Task<string, [boolean, number?]>>();
@@ -912,7 +912,7 @@ module('unit tests', () => {
       },
 
       bar(
-        this: EmberObject & { tp: TaskProperty<string, [boolean, number?]> }
+        this: EmberObject & { tp: TaskProperty<string, [boolean, number?]> },
       ) {
         let t = get(this, 'tp');
         expect(t).toMatchTypeOf<Task<string, [boolean, number?]>>();
@@ -969,7 +969,7 @@ module('unit tests', () => {
         O.create() as EmberObject & {
           tp: TaskProperty<string, [boolean, number?]>;
         },
-        'tp'
+        'tp',
       );
 
       expect(t).toMatchTypeOf<Task<string, [boolean, number?]>>();
@@ -1109,7 +1109,7 @@ module('unit tests', () => {
       [
         OnStateCallback<
           EncapsulatedTask<string, [boolean, number?], { foo: string }>
-        > | null
+        > | null,
       ]
     >();
     expect(tp.onState).returns.toEqualTypeOf(tp);
@@ -1130,7 +1130,7 @@ module('unit tests', () => {
             [boolean, number?],
             { foo: string }
           >;
-        }
+        },
       ) {
         let t = this.get('tp');
         expect(t).toMatchTypeOf<
@@ -1167,7 +1167,7 @@ module('unit tests', () => {
             [boolean, number?],
             { foo: string }
           >;
-        }
+        },
       ) {
         let t = get(this, 'tp');
         expect(t).toMatchTypeOf<
@@ -1244,7 +1244,7 @@ module('unit tests', () => {
             { foo: string }
           >;
         },
-        'tp'
+        'tp',
       );
 
       expect(t).toMatchTypeOf<
@@ -1382,7 +1382,7 @@ module('unit tests', () => {
     {
       let tg = get(
         O.create() as EmberObject & { tgp: TaskGroupProperty<string> },
-        'tgp'
+        'tgp',
       );
 
       expect(tg).toMatchTypeOf<TaskGroup<string>>();
@@ -2300,7 +2300,7 @@ module('unit tests', () => {
     }>();
 
     expect(
-      hashSettled({ value, task, thenable, promise })
+      hashSettled({ value, task, thenable, promise }),
     ).resolves.toEqualTypeOf<{
       value: S<string>;
       task: S<boolean>;
@@ -2367,7 +2367,7 @@ module('unit tests', () => {
     expect(race([promise])).toEqualTypeOf(Promise.race([promise]));
 
     expect(race([value, task, thenable, promise])).toEqualTypeOf(
-      Promise.race([value, task, thenable, promise])
+      Promise.race([value, task, thenable, promise]),
     );
 
     {
@@ -2648,12 +2648,12 @@ module('unit tests', () => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           addEventListener(
             event: string,
-            callback: (...args: any[]) => void
+            callback: (...args: any[]) => void,
           ): void;
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           removeEventListener(
             event: string,
-            callback: (...args: any[]) => void
+            callback: (...args: any[]) => void,
           ): void;
         };
 
@@ -2662,24 +2662,24 @@ module('unit tests', () => {
         on(event: string, callback: Function): void {},
         off(event: string, callback: Function): void {},
       },
-      'foo'
+      'foo',
     );
     expect(waitForEvent).toBeCallableWith(
       {
         one(event: string, callback: Function): void {},
       },
-      'foo'
+      'foo',
     );
     expect(waitForEvent).toBeCallableWith(
       EmberObject.extend(Evented).create() as EmberObject & Evented,
-      'foo'
+      'foo',
     );
     expect(waitForEvent).toBeCallableWith(
       {
         addEventListener(event: string, callback: Function): void {},
         removeEventListener(event: string, callback: Function): void {},
       },
-      'foo'
+      'foo',
     );
     expect(waitForEvent).toBeCallableWith(document.body, 'click');
     expect(waitForEvent).parameters.toEqualTypeOf<[Evented, string]>();
@@ -2811,7 +2811,7 @@ module('unit tests', () => {
     let singleArgModifier = function (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       factory: TaskFactory<any, any[]>,
-      modifierArgument: boolean
+      modifierArgument: boolean,
     ) {
       factory.setTaskDefinition(taskDef);
       factory.setTaskDefinition(encapDef);
@@ -2819,7 +2819,7 @@ module('unit tests', () => {
     let arrayArgModifier = function (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       factory: TaskFactory<any, any[]>,
-      arrayArg: string[]
+      arrayArg: string[],
     ) {
       factory.setTaskDefinition(taskDef);
       factory.setTaskDefinition(encapDef);
@@ -2867,7 +2867,7 @@ module('integration tests', () => {
       async performMyTask(
         this: EmberObject & {
           myTask: TaskProperty<string, [boolean, number?]>;
-        }
+        },
       ) {
         let myTask = this.get('myTask');
 
@@ -2941,7 +2941,7 @@ module('integration tests', () => {
             [boolean, number?],
             EncapsulatedTaskState<{ foo: string }>
           >;
-        }
+        },
       ) {
         let myTask = this.get('myTask');
 
@@ -3062,7 +3062,7 @@ module('integration tests', () => {
           expect(safeResponse).toEqualTypeOf<Response>();
 
           return 'wow';
-        }
+        },
       );
 
       async performMyTask() {
@@ -3170,7 +3170,7 @@ module('integration tests', () => {
           expect(safeResponse).toEqualTypeOf<Response>();
 
           return 'wow';
-        }
+        },
       );
 
       async performMyTask() {
@@ -3232,7 +3232,7 @@ module('integration tests', () => {
           expect(safeResponse).toEqualTypeOf<Response>();
 
           return 'wow';
-        }
+        },
       );
 
       async performMyTask() {
@@ -3343,7 +3343,7 @@ module('integration tests', () => {
           expect(safeResponse).toEqualTypeOf<Response>();
 
           return 'wow';
-        }
+        },
       );
 
       async performMyTask() {

@@ -62,6 +62,7 @@ Task Modifiers.
 - [getModifier](global.html#getModifier)
 - [hasModifier](global.html#hasModifier)
 - [registerModifier](global.html#registerModifier)
+
 ## Task/cancelation-aware variants of Promise helpers
 
 These helpers are just like their Promise/RSVP equivalents, but with

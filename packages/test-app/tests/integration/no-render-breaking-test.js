@@ -14,7 +14,7 @@ module('Integration | no render breaking', function (hooks) {
     this.owner.register(
       'component:e-c-test',
       Component.extend({
-        layout: hbs`<input>`,
+        layout: hbs`<input />`,
 
         focusIn() {
           this.exampleTask.perform();
@@ -23,12 +23,10 @@ module('Integration | no render breaking', function (hooks) {
         exampleTask: task(function* () {
           yield timeout(100);
         }),
-      })
+      }),
     );
 
-    await render(hbs`
-        <ECTest {{autofocus}} />
-      `);
+    await render(hbs`<ECTest {{autofocus}} />`);
     assert.ok(true, 'Renders');
   });
 
@@ -52,7 +50,7 @@ module('Integration | no render breaking', function (hooks) {
         exampleTask: task(function* () {
           yield timeout(100);
         }).restartable(),
-      })
+      }),
     );
 
     await render(hbs`<ECTest />`);

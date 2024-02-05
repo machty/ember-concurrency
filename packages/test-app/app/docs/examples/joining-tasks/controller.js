@@ -36,7 +36,7 @@ export default class JoiningTasksController extends Controller {
         yield timeout(Math.random() * 100 + 100);
         let newPercent = Math.min(
           100,
-          Math.floor(this.percent + Math.random() * 20)
+          Math.floor(this.percent + Math.random() * 20),
         );
         this.set('percent', newPercent);
       }

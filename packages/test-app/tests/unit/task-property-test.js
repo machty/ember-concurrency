@@ -29,7 +29,7 @@ module('Unit: task property', function () {
       doStuff: taskCounterWrapper(
         task(function* () {
           yield forever;
-        })
+        }),
       ),
     });
 

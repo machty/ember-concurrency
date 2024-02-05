@@ -5,21 +5,21 @@ export default class SharedTasksController extends Controller {
   restartableTask3 = task(
     this,
     { maxConcurrency: 3, restartable: true },
-    async (t) => this.sharedTask.perform(t)
+    async (t) => this.sharedTask.perform(t),
   );
 
   enqueuedTask3 = task({ maxConcurrency: 3, enqueue: true }, async (t) =>
-    this.sharedTask.perform(t)
+    this.sharedTask.perform(t),
   );
 
   droppingTask3 = task({ maxConcurrency: 3, drop: true }, async (t) =>
-    this.sharedTask.perform(t)
+    this.sharedTask.perform(t),
   );
 
   keepLatestTask3 = task(
     this,
     { maxConcurrency: 3, keepLatest: true },
-    async (t) => this.sharedTask.perform(t)
+    async (t) => this.sharedTask.perform(t),
   );
 
   sharedTask = task(async (tracker) => {
