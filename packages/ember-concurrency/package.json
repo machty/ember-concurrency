@@ -58,6 +58,7 @@
   "files": [
     "addon-main.cjs",
     "dist",
+    "declarations",
     "async-arrow-task-transform.js"
   ],
   "exports": {
