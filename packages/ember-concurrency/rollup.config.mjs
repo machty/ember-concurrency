@@ -27,10 +27,6 @@ export default {
     // package names.
     addon.dependencies(),
 
-    // Is this right? This is the only way I could find to simply copy over the .d.ts files
-    // and maintain directory structure without transpiling anything.
-    addon.keepAssets(["**/*.d.ts"]),
-
     // This babel config should *not* apply presets or compile away ES modules.
     // It exists only to provide development niceties for you, like automatic
     // template colocation.
@@ -51,8 +47,8 @@ export default {
     // Copy Readme and License into published package
     copy({
       targets: [
-        { src: "../README.md", dest: "." },
-        { src: "../LICENSE.md", dest: "." },
+        { src: "../../README.md", dest: "." },
+        { src: "../../LICENSE.md", dest: "." },
       ],
     }),
   ],

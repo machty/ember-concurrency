@@ -10,6 +10,7 @@ import {
   taskGroup as taskGroupDecorator,
 } from './task-decorators';
 import { assert } from '@ember/debug';
+import { TaskGroup } from './task-group';
 
 /**
  * TODO: update docs to reflect both old and new ES6 styles

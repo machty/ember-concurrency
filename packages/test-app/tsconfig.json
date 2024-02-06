@@ -13,5 +13,6 @@
       "test-app/*": ["app/*"],
       "*": ["types/*"]
     }
-  }
+  },
+  "exclude": ["snippets"]
 }
