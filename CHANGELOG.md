@@ -1,11 +1,12 @@
 # Changelog
 
-### 4.0.0 (unreleased)
+### 4.0.0
   - Ember Concurrency is now a V2 Embroider Addon (#551)
     - BREAKING CHANGE: you must now register the Babel transform used by Ember Concurrency within consuming apps and addons
       - See upgrade docs: https://ember-concurrency.com/docs/v4-upgrade
   - The guides have been updated to reflect modern/best practices:
     - Instead of using the `(perform)` helper, it is now recommended that the bound `.perform()` method on each Task be directly invoked in the template, e.g. `{{on "click" this.myTask.perform}}`, or, when arguments are present, `{{on "click" (fn this.myTask.perform 123 'foo')}}`
+  - Glint template registry has been provided for EC's 3 helpers.
 
 ### 3.1.1
   - Add ember 5 as peerDependencies (#542)
