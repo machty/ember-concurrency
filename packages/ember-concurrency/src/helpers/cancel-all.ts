@@ -1,10 +1,13 @@
 import { helper } from '@ember/component/helper';
 import { assert } from '@ember/debug';
 import { taskHelperClosure } from '../-private/helpers';
+import type { Task } from '../index';
 
 const CANCEL_REASON = "the 'cancel-all' template helper was invoked";
 
-export function cancelHelper(args) {
+type CancelAllParams = [task: Task<any, any[]>];
+
+export function cancelHelper(args: CancelAllParams) {
   let cancelable = args[0];
   if (!cancelable || typeof cancelable.cancelAll !== 'function') {
     assert(

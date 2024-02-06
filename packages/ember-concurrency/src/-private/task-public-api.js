@@ -11,6 +11,8 @@ import {
 } from './task-decorators';
 import { assert } from '@ember/debug';
 
+/** @typedef {import('./task-group').TaskGroup} TaskGroup */
+
 /**
  * TODO: update docs to reflect both old and new ES6 styles
  *

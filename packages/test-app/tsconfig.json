@@ -11,8 +11,8 @@
     "paths": {
       "test-app/tests/*": ["tests/*"],
       "test-app/*": ["app/*"],
-      "*": ["types/*"],
-      "ember-concurrency": ["../ember-concurrency/src/index.d.ts"]
+      "*": ["types/*"]
     }
-  }
+  },
+  "exclude": ["snippets"]
 }

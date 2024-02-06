@@ -3,7 +3,9 @@
   "version": "4.0.0-beta.1",
   "description": "Improved concurrency/async primitives for Ember.js",
   "scripts": {
-    "build": "rollup --config",
+    "build": "concurrently 'npm:build:*'",
+    "build:js": "rollup --config",
+    "build:types": "glint --declaration && cp src/index.d.ts declarations/index.d.ts",
     "lint": "concurrently 'npm:lint:*(!fix)' --names 'lint:'",
     "lint:fix": "concurrently 'npm:lint:*:fix' --names 'fix:'",
     "lint:hbs": "ember-template-lint .",
@@ -12,7 +14,10 @@
     "lint:eslint:fix": "eslint . --fix",
     "lint:prettier": "prettier . --cache --check",
     "lint:prettier:fix": "prettier . --write",
-    "start": "rollup --config --watch",
+    "lint:types": "glint",
+    "start": "concurrently 'npm:start:*'",
+    "start:js": "rollup --config --watch --no-watch.clearScreen",
+    "start:types": "glint --declaration --watch",
     "test": "echo 'Addon does not have tests, run tests in test-app'",
     "prepare": "pnpm build"
   },
@@ -24,11 +29,15 @@
   "engines": {
     "node": "16.* || >= 18"
   },
-  "types": "./addon/index.d.ts",
   "devDependencies": {
     "@babel/core": "^7.23.9",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-decorators": "^7.23.9",
+    "@babel/plugin-transform-typescript": "^7.23.6",
+    "@glint/core": "^1.3.0",
+    "@glint/environment-ember-loose": "^1.3.0",
+    "@glint/environment-ember-template-imports": "^1.3.0",
+    "@glint/template": "^1.3.0",
     "@embroider/addon-dev": "^4.2.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@tsconfig/ember": "^3.0.3",
@@ -43,6 +52,7 @@
     "eslint-plugin-qunit": "^7.3.4",
     "prettier": "^3.1.0",
     "rollup": "^4.9.6",
+    "rollup-plugin-copy": "^3.5.0",
     "typescript": "^5.3.3"
   },
   "files": [
@@ -51,10 +61,23 @@
     "async-arrow-task-transform.js"
   ],
   "exports": {
-    ".": "./dist/index.js",
-    "./*": "./dist/*",
+    ".": {
+      "types": "./declarations/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
+    },
     "./addon-main.js": "./addon-main.cjs",
     "./async-arrow-task-transform": "./async-arrow-task-transform.js"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "declarations/*"
+      ]
+    }
   },
   "keywords": [
     "ember-addon",

@@ -55,7 +55,13 @@ import {
   enqueueTask,
   keepLatestTask,
 } from 'ember-concurrency';
+
+import perform from 'ember-concurrency/helpers/perform';
+import curryTask from 'ember-concurrency/helpers/task';
+import cancelAll from 'ember-concurrency/helpers/cancel-all';
+
 import { expectTypeOf as expect } from 'expect-type';
+import { FunctionBasedHelperInstance, helper } from '@ember/component/helper';
 
 declare type TestCallback = () => void | Promise<void>;
 declare function module(description: string, callback: TestCallback): void;
@@ -310,6 +316,14 @@ module('unit tests', () => {
       // @ts-expect-error
       expect<EncapsulatedTaskDescriptorReturnType<typeof d>>();
     }
+  });
+
+  test('imported helpers', () => {
+    // @ts-expect-error
+    perform([]);
+
+    // let a = {} as Task<any, any[]>;
+    // perform([a], {});
   });
 
   test('EncapsulatedTaskState', () => {
