@@ -1,9 +1,3 @@
-/**
- * NOTE: this is the declaration file that originally came from ember-concurrency-ts.
- * This file clobbers / is-copied-over the `index.d.ts` that TS generates from
- * src/index.js.
- */
-
 export type TaskGenerator<T> = Generator<any, T, any>;
 
 export type TaskFunction<T, Args extends any[]> = (

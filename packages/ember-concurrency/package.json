@@ -5,7 +5,7 @@
   "scripts": {
     "build": "concurrently 'npm:build:*'",
     "build:js": "rollup --config",
-    "build:types": "glint --declaration && cp src/index.d.ts declarations/index.d.ts",
+    "build:types": "glint --declaration",
     "lint": "concurrently 'npm:lint:*(!fix)' --names 'lint:'",
     "lint:fix": "concurrently 'npm:lint:*:fix' --names 'fix:'",
     "lint:hbs": "ember-template-lint .",
