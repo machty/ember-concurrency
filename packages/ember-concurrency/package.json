@@ -69,9 +69,9 @@
       "types": "./declarations/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./*": {
-      "types": "./declarations/*.d.ts",
-      "default": "./dist/*.js"
+    "./helpers/*": {
+      "types": "./declarations/helpers/*.d.ts",
+      "default": "./dist/helpers/*.js"
     },
     "./addon-main.js": "./addon-main.cjs",
     "./async-arrow-task-transform": "./async-arrow-task-transform.js"
