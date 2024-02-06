@@ -22,7 +22,7 @@ export const TABLE_OF_CONTENTS = [
   { route: 'docs.derived-state', title: 'Derived State' },
   { route: 'docs.events', title: 'Awaiting Events / Conditions' },
   { route: 'docs.testing-debugging', title: 'Testing & Debugging' },
-  { route: 'docs.typescript', title: 'TypeScript' },
+  { route: 'docs.typescript', title: 'TypeScript / Glint' },
   { route: 'docs.faq', title: 'FAQ & Fact Sheet' },
 
   { section: 'Advanced' },

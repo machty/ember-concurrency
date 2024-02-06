@@ -1,0 +1,33 @@
+import GlimmerComponent from "@glimmer/component";
+import { task } from "ember-concurrency";
+import perform from "ember-concurrency/helpers/perform";
+import { on } from "@ember/modifier";
+import { fn } from "@ember/helper";
+
+export default class Demo extends GlimmerComponent {
+  taskNoArgs = task(async () => {
+    console.log("Look ma, no args!");
+  });
+
+  taskWithArgs = task(async (value: string) => {
+    console.log(value);
+  });
+
+  <template>
+    <button type="button" {{on "click" this.taskNoArgs.perform}}>
+      Task with no Params (.perform method) (RECOMMENDED)
+    </button>
+
+    <button type="button" {{on "click" (perform this.taskNoArgs)}}>
+      Task with no Params (with classic perform helper)
+    </button>
+
+    <button type="button" {{on "click" (fn this.taskNoArgs.perform '123')}}>
+      Task with Params (currying with fn helper) (RECOMMENDED)
+    </button>
+
+    <button type="button" {{on "click" (perform this.taskWithArgs '123')}}>
+      Task with Params (currying with classic perform helper)
+    </button>
+  </template>
+}
