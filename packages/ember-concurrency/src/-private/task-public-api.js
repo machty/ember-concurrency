@@ -11,7 +11,8 @@ import {
 } from './task-decorators';
 import { assert } from '@ember/debug';
 
-/** @typedef {import('./task-group').TaskGroup} TaskGroup */
+// eslint-disable-next-line no-unused-vars
+import { TaskGroup } from './task-group';
 
 /**
  * TODO: update docs to reflect both old and new ES6 styles
