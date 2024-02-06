@@ -65,13 +65,9 @@
       "types": "./declarations/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./helpers/*": {
-      "types": "./declarations/helpers/*.d.ts",
-      "default": "./dist/helpers/*.js"
-    },
-    "./async-arrow-runtime": {
-      "types": "./declarations/async-arrow-runtime.d.ts",
-      "default": "./dist/async-arrow-runtime.js"
+    "./*": {
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
     },
     "./addon-main.js": "./addon-main.cjs",
     "./async-arrow-task-transform": "./async-arrow-task-transform.js"
