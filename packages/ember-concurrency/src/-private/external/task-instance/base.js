@@ -13,13 +13,13 @@ export class BaseTaskInstance {
     this.hasEnabledEvents = hasEnabledEvents;
   }
 
-  setState(_props) {}
+  setState() {}
   onStarted() {}
   onSuccess() {}
-  onError(_error) {}
-  onCancel(_cancelReason) {}
-  formatCancelReason(_reason) {}
-  selfCancelLoopWarning(_parent) {}
+  onError() {}
+  onCancel() {}
+  formatCancelReason() {}
+  selfCancelLoopWarning() {}
 
   onFinalize(callback) {
     this.executor.onFinalize(callback);
