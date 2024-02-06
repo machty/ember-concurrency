@@ -13,7 +13,7 @@
 <p>
   Ember Concurrency provides a template registry for using the
   <code>perform</code>,
-  <code>cancel-all</code>. and
+  <code>cancel-all</code>, and
   <code>task</code>
   helpers within handlebars templates in Glint "loose mode". See the example
   below for how to include Ember Concurrency's template registry in your Glint
@@ -26,20 +26,28 @@
 
 <p>
   Here is an example of a modern .gts file in "strict mode" which imports the
-  classic <code>perform</code> helper from Ember Concurrency.
+  classic
+  <code>perform</code>
+  helper from Ember Concurrency.
 </p>
 
 <p>
-  Note: while you can import and use the <code>perform</code> helper, it is
-  actually recommended to use the <code>.perform()</code> method on each task,
-  which is internally bound to the task (similar to methods decorated with
-  <code>@action</code>). One of the benefits of using the <code>.perform()</code>
-  method is that it can be used with modern idiomatic patterns like using
-  the <code>fn</code> helper to curry additional args when performing the task.
+  Note: while you can import and use the
+  <code>perform</code>
+  helper, it is actually recommended to use the
+  <code>.perform()</code>
+  method on each task, which is internally bound to the task (similar to methods
+  decorated with
+  <code>@action</code>). One of the benefits of using the
+  <code>.perform()</code>
+  method is that it can be used with modern idiomatic patterns like using the
+  <code>fn</code>
+  helper to curry additional args when performing the task.
 </p>
 
 <p>
-  <em>Pardon the lack of syntax! PR's welcome to improve our syntax highlighting!</em>
+  <em>Pardon the lack of syntax! PR's welcome to improve our syntax
+    highlighting!</em>
 </p>
 
 <CodeSnippet @name="ts/template-import-example.txt" />
