@@ -29,6 +29,8 @@ For more information on using ember-cli, visit [https://cli.emberjs.com/release/
 ### Releasing new versions / publishing to NPM
 
 ```
+cd packages/ember-concurrency
+pnpm build
 npx release-it
 ```
 
