@@ -188,7 +188,7 @@ function convertFunctionExpressionIntoGenerator(
         state._buildTaskImport = addNamed(
           state.root,
           'buildTask',
-          'ember-concurrency/-private/async-arrow-runtime',
+          'ember-concurrency/async-arrow-runtime',
         );
       }
 
