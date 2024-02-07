@@ -14,6 +14,39 @@ found [here](http://ember-concurrency.com).
 
     ember install ember-concurrency
 
+### Configure Babel Transform
+
+Ember Concurrency requires the use of a Babel Transform to convert tasks in the "async-arrow" notation (e.g. `fooTask = task(async () => { /*...*/ }`) into generator functions. Since Ember Concurrency 4.0.0+ is an Embroider V2 Addon, this Babel transform needs to be configured on the consuming application or addon.
+
+```js
+// in app ember-cli-build.js
+
+const app = new EmberApp(defaults, {
+  // ...
+  babel: {
+    plugins: [
+      // ... any other plugins
+      require.resolve("ember-concurrency/async-arrow-task-transform"),
+
+      // NOTE: put any code coverage plugins last, after the transform.
+    ],
+  }
+});
+
+// in V1 addon index.js
+
+// ...
+options: {
+  babel: {
+    plugins: [
+      require.resolve('ember-concurrency/async-arrow-task-transform'),
+    ],
+  },
+},
+```
+
+See the [test application](https://github.com/machty/ember-concurrency/blob/master/packages/test-app/ember-cli-build.js) for an example.
+
 ## Documentation
 
 The [ember-concurrency documentation site](http://ember-concurrency.com) is an ember-cli app
