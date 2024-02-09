@@ -3,9 +3,7 @@
   "version": "4.0.0",
   "description": "Improved concurrency/async primitives for Ember.js",
   "scripts": {
-    "build": "concurrently 'npm:build:*'",
-    "build:js": "rollup --config",
-    "build:types": "glint --declaration && cp src/index.d.ts declarations/index.d.ts",
+    "build": "rollup --config",
     "lint": "concurrently 'npm:lint:*(!fix)' --names 'lint:'",
     "lint:fix": "concurrently 'npm:lint:*:fix' --names 'fix:'",
     "lint:hbs": "ember-template-lint .",
@@ -15,19 +13,27 @@
     "lint:prettier": "prettier . --cache --check",
     "lint:prettier:fix": "prettier . --write",
     "lint:types": "glint",
-    "start": "concurrently 'npm:start:*'",
-    "start:js": "rollup --config --watch --no-watch.clearScreen",
-    "start:types": "glint --declaration --watch",
+    "start": "rollup --config --watch --no-watch.clearScreen",
     "test": "echo 'Addon does not have tests, run tests in test-app'",
     "prepare": "pnpm build"
+  },
+  "pnpm": {
+    "overrides": {
+      "@babel/plugin-transform-typescript": "^7.23.6"
+    }
+  },
+  "dependencies": {
+    "@babel/helper-plugin-utils": "^7.12.13",
+    "@babel/types": "^7.12.13",
+    "decorator-transforms": "^1.0.1",
+    "@embroider/addon-shim": "^1.8.7",
+    "execa": "^8.0.1",
+    "fix-bad-declaration-output": "^1.0.2"
   },
   "peerDependencies": {
     "ember-source": "^3.28.0 || ^4.0.0 || >=5.0.0",
     "@glimmer/tracking": "^1.1.2",
     "@glint/template": ">= 1.0.0"
-  },
-  "engines": {
-    "node": "16.* || >= 18"
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",
@@ -54,6 +60,9 @@
     "rollup": "^4.9.6",
     "rollup-plugin-copy": "^3.5.0",
     "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": "16.* || >= 18"
   },
   "files": [
     "addon-main.cjs",
@@ -94,12 +103,6 @@
   "directories": {
     "doc": "doc",
     "test": "tests"
-  },
-  "dependencies": {
-    "@babel/helper-plugin-utils": "^7.12.13",
-    "@babel/types": "^7.12.13",
-    "decorator-transforms": "^1.0.1",
-    "@embroider/addon-shim": "^1.8.7"
   },
   "ember": {
     "version": 2,
