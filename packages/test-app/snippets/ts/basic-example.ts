@@ -1,4 +1,4 @@
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { task, timeout } from 'ember-concurrency';
 
 export default class extends Component {
