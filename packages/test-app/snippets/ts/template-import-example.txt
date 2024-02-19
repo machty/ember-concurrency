@@ -1,10 +1,10 @@
-import GlimmerComponent from "@glimmer/component";
+import Component from "@glimmer/component";
 import { task } from "ember-concurrency";
 import perform from "ember-concurrency/helpers/perform";
 import { on } from "@ember/modifier";
 import { fn } from "@ember/helper";
 
-export default class Demo extends GlimmerComponent {
+export default class Demo extends Component {
   taskNoArgs = task(async () => {
     console.log("Look ma, no args!");
   });
