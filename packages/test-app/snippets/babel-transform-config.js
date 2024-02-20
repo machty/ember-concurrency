@@ -22,3 +22,12 @@ options: {
     ],
   },
 },
+
+// in engine index.js
+
+// ...
+babel: {
+  plugins: [
+    require.resolve('ember-concurrency/async-arrow-task-transform'),
+  ],
+}, 
