@@ -26,6 +26,11 @@
     "@glimmer/tracking": "^1.1.2",
     "@glint/template": ">= 1.0.0"
   },
+  "peerDependenciesMeta": {
+    "@glint/template": {
+      "optional": true
+    }
+  },
   "engines": {
     "node": "16.* || >= 18"
   },
