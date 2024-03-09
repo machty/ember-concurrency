@@ -1,5 +1,9 @@
 # Changelog
 
+### 4.0.1
+
+- Update assert in task-public-api.js to include note about required Babel transform for arrow functions (#569)
+
 ### 4.0.0
   - Ember Concurrency is now a V2 Embroider Addon (#551)
     - BREAKING CHANGE: you must now register the Babel transform used by Ember Concurrency within consuming apps and addons
