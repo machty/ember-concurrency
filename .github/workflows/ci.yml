@@ -18,7 +18,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: wyvox/action@v1
+    - uses: wyvox/action@v1.1.5
       with:
         pnpm-args: --frozen-lockfile
 
@@ -36,7 +36,7 @@ jobs:
         browser: [chrome, firefox]
 
     steps:
-    - uses: wyvox/action@v1
+    - uses: wyvox/action@v1.1.5
       with:
         pnpm-args: --frozen-lockfile
 
@@ -54,7 +54,7 @@ jobs:
         browser: [chrome, firefox]
 
     steps:
-    - uses: wyvox/action@v1
+    - uses: wyvox/action@v1.1.5
       with:
         pnpm-args: --frozen-lockfile
 
@@ -90,7 +90,7 @@ jobs:
             allow-failure: true
 
     steps:
-    - uses: wyvox/action@v1
+    - uses: wyvox/action@v1.1.5
       with:
         pnpm-args: --frozen-lockfile
 
