@@ -1,5 +1,9 @@
 # Changelog
 
+### 4.0.2
+
+- Make glint template an optional peer dependency (#572)
+
 ### 4.0.1
 
 - Update assert in task-public-api.js to include note about required Babel transform for arrow functions (#569)
