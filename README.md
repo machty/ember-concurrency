@@ -49,7 +49,7 @@ options: {
   "plugins": [
     [
       // ... any other plugins
-    "../../node_modules/ember-concurrency/async-arrow-task-transform"
+    "ember-concurrency/async-arrow-task-transform"
   ]
 }
 ```
