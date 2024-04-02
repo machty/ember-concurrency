@@ -23,6 +23,16 @@ options: {
   },
 },
 
+// in V2 addon babel.config.json
+
+{
+  "plugins": [
+    [
+      // ... any other plugins
+    "../../node_modules/ember-concurrency/async-arrow-task-transform"
+  ]
+}
+
 // in engine index.js
 
 // ...
