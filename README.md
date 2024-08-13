@@ -43,6 +43,15 @@ options: {
     ],
   },
 },
+
+// in V2 addon babel.config.json
+{
+  "plugins": [
+    [
+      // ... any other plugins
+    "ember-concurrency/async-arrow-task-transform"
+  ]
+}
 ```
 
 See the [test application](https://github.com/machty/ember-concurrency/blob/master/packages/test-app/ember-cli-build.js) for an example.
