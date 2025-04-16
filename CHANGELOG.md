@@ -1,5 +1,9 @@
 # Changelog
 
+### 4.0.3
+
+- Fix missing @babel/helper-module-imports dependency (#578)
+
 ### 4.0.2
 
 - Make glint template an optional peer dependency (#572)
