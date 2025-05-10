@@ -1,6 +1,6 @@
 # Changelog
 
-### 4.0.3
+### 4.0.4
 
 - dropped `ember-source` and `@glimmer/tracking` from peerDependencies (#586)
 
