@@ -2,6 +2,10 @@
 
 ### 4.0.3
 
+- dropped `ember-source` and `@glimmer/tracking` from peerDependencies (#586)
+
+### 4.0.3
+
 - Fix missing @babel/helper-module-imports dependency (#578)
 
 ### 4.0.2
