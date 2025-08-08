@@ -236,6 +236,8 @@ export interface EncapsulatedTask<
  *   @task({ group: 'chores' }) changeDiapers = taskFn;
  * }
  * ```
+ *
+ * @deprecated Task Groups are deprecated and will be removed in ember-concurrency 5.0.0. There is no direct replacement for Task Groups and some refactoring may be necessary.
  */
 export interface TaskGroup<T> extends TaskState<TaskInstance<T>> {
   /**
@@ -1535,6 +1537,7 @@ export function waitForEvent(
  *   when the task should continue executing, or
  *   a non-Function value that the watched property
  *   needs to equal before the task will continue running.
+ * @deprecated Use a polling alternative instead.
  */
 export function waitForProperty<O extends object, K extends keyof O>(
   object: O,
