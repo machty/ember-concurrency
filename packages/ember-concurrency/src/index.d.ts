@@ -384,18 +384,18 @@ interface _AbstractTaskProperty<T extends Task<any, any[]>> {
    * when the host object is initialized.
    *
    * ```js
-   * export default Component.extend({
-   *   pollForUpdates: task(function * () {
+   * export default class MyComponent extends Component {
+   *   pollForUpdates = task(async () => {
    *     // ... this runs when the Component is first created
    *     // because we specified .on('init')
-   *   }).on('init'),
+   *   }).on('init');
    *
-   *   handleFoo: task(function * (a, b, c) {
+   *   handleFoo = task(async (a, b, c) => {
    *     // this gets performed automatically if the 'foo'
    *     // event fires on this Component,
    *     // e.g., if someone called component.trigger('foo')
-   *   }).on('foo'),
-   * });
+   *   }).on('foo');
+   * }
    * ```
    *
    */
@@ -465,9 +465,9 @@ interface _AbstractTaskProperty<T extends Task<any, any[]>> {
    * to 3.
    *
    * ```js
-   * doSomeAjax: task(function * (url) {
+   * doSomeAjax = task(async (url) => {
    *   return fetch(url);
-   * }).maxConcurrency(3),
+   * }).maxConcurrency(3);
    *
    * elsewhere() {
    *   this.get('doSomeAjax').perform("http://www.example.com/json");
@@ -616,15 +616,15 @@ export interface TaskGroupProperty<T> extends TaskGroup<T> {
    * using tasks in this group) to 3.
    *
    * ```js
-   * ajax: taskGroup().maxConcurrency(3),
+   * ajax = taskGroup().maxConcurrency(3);
    *
-   * doSomeAjax: task(function * (url) {
+   * doSomeAjax = task(async (url) => {
    *   return Ember.$.getJSON(url).promise();
-   * }).group('ajax'),
+   * }).group('ajax');
    *
-   * doSomeAjax: task(function * (url) {
+   * doSomeOtherAjax = task(async (url) => {
    *   return Ember.$.getJSON(url).promise();
-   * }).group('ajax'),
+   * }).group('ajax');
    *
    * elsewhere() {
    *   this.get('doSomeAjax').perform("http://www.example.com/json");
@@ -850,20 +850,19 @@ export function task(target: Object, propertyKey: string): void;
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
- * is driven by a generator function. Tasks are automatically canceled
+ * is driven by an async function. Tasks are automatically canceled
  * when the object they live on is destroyed (e.g. a Component
  * is unrendered).
  *
  * To define a task, use the `task(...)` function, and pass in
- * a generator function, which will be invoked when the task
- * is performed. The reason generator functions are used is
- * that they (like the proposed ES7 async-await syntax) can
+ * an async arrow function, which will be invoked when the task
+ * is performed. Async functions with the await keyword can
  * be used to elegantly express asynchronous, cancelable
  * operations.
  *
  * You can also define an
  * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
- * by passing in an object that defined a `perform` generator
+ * by passing in an object that defined a `perform` async
  * method.
  *
  * The following Component defines a task called `myTask` that,
@@ -871,14 +870,16 @@ export function task(target: Object, propertyKey: string): void;
  * prints a final message to the console, and then completes.
  *
  * ```js
+ * import Component from '@glimmer/component';
  * import { task, timeout } from 'ember-concurrency';
- * export default Component.extend({
- *   myTask: task(function * () {
+ *
+ * export default class MyComponent extends Component {
+ *   myTask = task(async () => {
  *     console.log("Pausing for a second...");
- *     yield timeout(1000);
+ *     await timeout(1000);
  *     console.log("Done!");
- *   })
- * });
+ *   });
+ * }
  * ```
  *
  * ```hbs
@@ -890,7 +891,7 @@ export function task(target: Object, propertyKey: string): void;
  * but much of a power of tasks lies in proper usage of Task Modifiers
  * that you can apply to a task.
  *
- * @param taskFn A generator function backing the task or an encapsulated task descriptor object with a `perform` generator method.
+ * @param taskFn An async function backing the task or an encapsulated task descriptor object with a `perform` async method.
  */
 export function task<T extends TaskFunction<any, any[]>>(
   taskFn: T,
@@ -1442,13 +1443,15 @@ export function rawTimeout(ms: number): Yieldable<void>;
  * Use `waitForQueue` to pause the task until a certain run loop queue is reached.
  *
  * ```js
+ * import Component from '@glimmer/component';
  * import { task, waitForQueue } from 'ember-concurrency';
- * export default Component.extend({
- *   myTask: task(function * () {
- *     yield waitForQueue('afterRender');
+ *
+ * export default class MyComponent extends Component {
+ *   myTask = task(async () => {
+ *     await waitForQueue('afterRender');
  *     console.log("now we're in the afterRender queue");
- *   })
- * });
+ *   });
+ * }
  * ```
  *
  * @param queueName The name of the Ember run loop queue.
@@ -1461,19 +1464,21 @@ export function waitForQueue(queueName: string): Yieldable<void>;
  * where the object supports `.on()` `.one()` and `.off()`).
  *
  * ```js
+ * import Component from '@glimmer/component';
  * import { task, waitForEvent } from 'ember-concurrency';
- * export default Component.extend({
- *   myTask: task(function * () {
+ *
+ * export default class MyComponent extends Component {
+ *   myTask = task(async () => {
  *     console.log("Please click anywhere..");
- *     let clickEvent = yield waitForEvent($('body'), 'click');
+ *     let clickEvent = await waitForEvent($('body'), 'click');
  *     console.log("Got event", clickEvent);
  *
- *     let emberEvent = yield waitForEvent(this, 'foo');
+ *     let emberEvent = await waitForEvent(this, 'foo');
  *     console.log("Got foo event", emberEvent);
  *
  *     // somewhere else: component.trigger('foo', { value: 123 });
- *   })
- * });
+ *   });
+ * }
  * ```
  *
  * @param object The Ember Object, jQuery element, or other object with .on() and .off() APIs
@@ -1500,17 +1505,20 @@ export function waitForEvent(
  * value becomes the value that you passed in.
  *
  * ```js
+ * import Component from '@glimmer/component';
+ * import { tracked } from '@glimmer/tracking';
  * import { task, waitForProperty } from 'ember-concurrency';
- * export default Component.extend({
- *   foo: 0,
  *
- *   myTask: task(function * () {
+ * export default class MyComponent extends Component {
+ *   @tracked foo = 0;
+ *
+ *   myTask = task(async () => {
  *     console.log("Waiting for `foo` to become 5");
  *
- *     yield waitForProperty(this, 'foo', v => v === 5);
- *     // alternatively: yield waitForProperty(this, 'foo', 5);
+ *     await waitForProperty(this, 'foo', v => v === 5);
+ *     // alternatively: await waitForProperty(this, 'foo', 5);
  *
- *     // somewhere else: this.set('foo', 5)
+ *     // somewhere else: this.foo = 5;
  *
  *     console.log("`foo` is 5!");
  *
