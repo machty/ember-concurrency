@@ -1,6 +1,16 @@
 # Changelog
 
+### 4.0.6
+
+More V5 deprecations (#592):
+
+- rm reference to `Ember._setComputedDecorator`
+- deprecate any form of the `task()` constructor other than `task([{}], async () => {})`
+  - The only allowable use is the one with async arrow fn that gets transpiled by our babel codemod.
+
 ### 4.0.5
+
+Begin adding V5 deprecations (#591):
 
 - Deprecated:
   - Decorator APIs
