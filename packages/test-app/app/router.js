@@ -19,7 +19,6 @@ Router.map(function () {
     });
 
     this.route('task-function-syntax');
-    this.route('task-decorators');
     this.route('task-concurrency');
     this.route('task-concurrency-advanced');
 
