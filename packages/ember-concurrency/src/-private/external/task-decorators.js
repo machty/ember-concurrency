@@ -13,7 +13,7 @@ function taskFromPropertyDescriptor(
   let taskFn;
 
   deprecate(
-    'Using @task decorator (or any of its variants) is deprecated and will be removed in ember-concurrency 5.0.0. Please use modern `taskName = task(async () => {})` syntax instead',
+    'Using @task decorator (or any of its variants) is deprecated. Please use modern `taskName = task(async () => {})` syntax instead',
     false,
     {
       id: 'ember-concurrency.deprecate-decorator-task',
@@ -136,7 +136,7 @@ export const lastValue = decoratorWithParams(
     delete descriptor.initializer;
 
     deprecate(
-      '@lastValue is deprecated is deprecated along with all ember-concurrency decorators and will be removed in ember-concurrency 5.0.0. Please use a getter that references taskName.lastSuccessful.value instead.',
+      '@lastValue is deprecated is deprecated along with all ember-concurrency decorators. Please use a getter that references taskName.lastSuccessful.value instead.',
       false,
       {
         id: 'ember-concurrency.deprecate-decorator-last-value',

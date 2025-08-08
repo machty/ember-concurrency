@@ -74,10 +74,13 @@ class WaitForPropertyYieldable extends EmberYieldable {
     this.key = key;
 
     deprecate(
-      'waitForProperty is deprecated due to its use of observers and will be removed in ember-concurrency 5.0.0. Consider using a polling approach instead.',
+      'waitForProperty is deprecated due to its use of observers. Consider using a polling approach instead.',
       false,
       {
         id: 'ember-concurrency.deprecate-wait-for-property',
+        for: 'ember-concurrency',
+        since: '4.0.5',
+        until: '5.0.0',
       },
     );
 
