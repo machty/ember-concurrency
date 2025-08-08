@@ -1,4 +1,4 @@
-import { assert } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import {
   task as taskDecorator,
   taskGroup as taskGroupDecorator,
@@ -15,8 +15,6 @@ import {
 import { TaskGroup } from './task-group';
 
 /**
- * TODO: update docs to reflect both old and new ES6 styles
- *
  * A Task is a cancelable, restartable, asynchronous operation that
  * is driven by an async function. Tasks are automatically canceled
  * when the object they live on is destroyed (e.g. a Component
@@ -93,6 +91,17 @@ function buildClassicTaskProperty(taskFn) {
     taskProperty[taskFactorySymbol].setTaskDefinition(taskProperty.taskFn);
     return taskProperty[taskFactorySymbol].createTask(this);
   });
+
+  deprecate(
+    "Using task() in any form other than `taskName = task(async () => {})` is deprecated. Please use the modern syntax instead (and consider using one of ember-concurrency's codemods).",
+    false,
+    {
+      id: 'ember-concurrency.deprecate-classic-task-api',
+      for: 'ember-concurrency',
+      since: '4.0.5',
+      until: '5.0.0',
+    },
+  );
 
   taskProperty.taskFn = taskFn;
 
