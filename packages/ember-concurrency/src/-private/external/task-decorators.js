@@ -1,5 +1,7 @@
 import { TaskFactory } from './task-factory';
 
+import { deprecate } from '@ember/debug';
+
 function taskFromPropertyDescriptor(
   target,
   key,
@@ -9,6 +11,17 @@ function taskFromPropertyDescriptor(
 ) {
   let { initializer, get, value } = descriptor;
   let taskFn;
+
+  deprecate(
+    'Using @task decorator (or any of its variants) is deprecated and will be removed in ember-concurrency 5.0.0. Please use modern `taskName = task(async () => {})` syntax instead',
+    false,
+    {
+      id: 'ember-concurrency.deprecate-decorator-task',
+      for: 'ember-concurrency',
+      since: '4.0.5',
+      until: '5.0.0',
+    },
+  );
 
   if (initializer) {
     taskFn = initializer.call(undefined);
@@ -121,6 +134,17 @@ export const lastValue = decoratorWithParams(
   (_target, _key, descriptor, [taskName] = []) => {
     const { initializer } = descriptor;
     delete descriptor.initializer;
+
+    deprecate(
+      '@lastValue is deprecated is deprecated along with all ember-concurrency decorators and will be removed in ember-concurrency 5.0.0. Please use a getter that references taskName.lastSuccessful.value instead.',
+      false,
+      {
+        id: 'ember-concurrency.deprecate-decorator-last-value',
+        for: 'ember-concurrency',
+        since: '4.0.5',
+        until: '5.0.0',
+      },
+    );
 
     return {
       get() {

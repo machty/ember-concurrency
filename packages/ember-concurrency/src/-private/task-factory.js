@@ -1,4 +1,4 @@
-import { assert } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import { get } from '@ember/object';
 import { addListener } from '@ember/object/events';
 import { addObserver } from '@ember/object/observers';
@@ -93,6 +93,19 @@ export class TaskFactory extends BaseTaskFactory {
       `A task definition is not expected for a task group.`,
       !this.taskDefinition,
     );
+
+
+  deprecate(
+    'Task Groups are deprecated and will be removed in ember-concurrency 5.0.0. There is no direct replacement for Task Groups and some refactoring may be necessary.',
+    false,
+    {
+      id: 'ember-concurrency.deprecate-task-group',
+      for: 'ember-concurrency',
+      since: '4.0.5',
+      until: '5.0.0',
+    },
+  );
+
     let options = this.getTaskOptions(context);
 
     return new TaskGroup(options);
