@@ -151,15 +151,20 @@ export class TaskInstance extends BaseTaskInstance {
    * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
    *
    * ```js
-   * export default Component.extend({
-   *   doSomething: task(function * () {
-   *     // ... does something
-   *   }),
+   * import Component from '@glimmer/component';
+   * import { task } from 'ember-concurrency';
+   * import { on } from '@ember/object/evented';
    *
-   *   onDoSomethingStarted: on('doSomething:started', function (taskInstance) {
+   * export default class MyComponent extends Component {
+   *   doSomething = task(async () => {
+   *     // ... does something
+   *   });
+   *
+   *   @on('doSomething:started')
+   *   onDoSomethingStarted(taskInstance) {
    *     // ...
-   *   })
-   * });
+   *   }
+   * }
    * ```
    *
    * @event TaskInstance#TASK_NAME:started
@@ -172,15 +177,20 @@ export class TaskInstance extends BaseTaskInstance {
    * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
    *
    * ```js
-   * export default Component.extend({
-   *   doSomething: task(function * () {
-   *     // ... does something
-   *   }),
+   * import Component from '@glimmer/component';
+   * import { task } from 'ember-concurrency';
+   * import { on } from '@ember/object/evented';
    *
-   *   onDoSomethingSucceeded: on('doSomething:succeeded', function (taskInstance) {
+   * export default class MyComponent extends Component {
+   *   doSomething = task(async () => {
+   *     // ... does something
+   *   });
+   *
+   *   @on('doSomething:succeeded')
+   *   onDoSomethingSucceeded(taskInstance) {
    *     // ...
-   *   })
-   * });
+   *   }
+   * }
    * ```
    *
    * @event TaskInstance#TASK_NAME:succeeded
@@ -194,15 +204,20 @@ export class TaskInstance extends BaseTaskInstance {
    * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
    *
    * ```js
-   * export default Component.extend({
-   *   doSomething: task(function * () {
-   *     // ... does something
-   *   }),
+   * import Component from '@glimmer/component';
+   * import { task } from 'ember-concurrency';
+   * import { on } from '@ember/object/evented';
    *
-   *   onDoSomethingErrored: on('doSomething:errored', function (taskInstance, error) {
+   * export default class MyComponent extends Component {
+   *   doSomething = task(async () => {
+   *     // ... does something
+   *   });
+   *
+   *   @on('doSomething:errored')
+   *   onDoSomethingErrored(taskInstance, error) {
    *     // ...
-   *   })
-   * });
+   *   }
+   * }
    * ```
    *
    * @event TaskInstance#TASK_NAME:errored
@@ -216,15 +231,20 @@ export class TaskInstance extends BaseTaskInstance {
    * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
    *
    * ```js
-   * export default Component.extend({
-   *   doSomething: task(function * () {
-   *     // ... does something
-   *   }),
+   * import Component from '@glimmer/component';
+   * import { task } from 'ember-concurrency';
+   * import { on } from '@ember/object/evented';
    *
-   *   onDoSomethingCanceled: on('doSomething:canceled', function (taskInstance, cancelationReason) {
+   * export default class MyComponent extends Component {
+   *   doSomething = task(async () => {
+   *     // ... does something
+   *   });
+   *
+   *   @on('doSomething:canceled')
+   *   onDoSomethingCanceled(taskInstance, cancelationReason) {
    *     // ...
-   *   })
-   * });
+   *   }
+   * }
    * ```
    *
    * @event TaskInstance#TASK_NAME:canceled

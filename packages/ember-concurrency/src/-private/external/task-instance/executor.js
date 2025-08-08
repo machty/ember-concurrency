@@ -1,27 +1,27 @@
 import { GeneratorState } from '../generator-state';
-import { INITIAL_STATE } from './initial-state';
 import {
-  yieldableSymbol,
-  YIELDABLE_CONTINUE,
-  YIELDABLE_THROW,
-  YIELDABLE_RETURN,
-  YIELDABLE_CANCEL,
   cancelableSymbol,
+  YIELDABLE_CANCEL,
+  YIELDABLE_CONTINUE,
+  YIELDABLE_RETURN,
+  YIELDABLE_THROW,
+  yieldableSymbol,
 } from '../yieldables';
+import { INITIAL_STATE } from './initial-state';
 
 import {
-  COMPLETION_SUCCESS,
-  COMPLETION_ERROR,
-  COMPLETION_CANCEL,
-} from './completion-states';
-import {
-  CancelRequest,
-  CANCEL_KIND_YIELDABLE_CANCEL,
   CANCEL_KIND_LIFESPAN_END,
   CANCEL_KIND_PARENT_CANCEL,
+  CANCEL_KIND_YIELDABLE_CANCEL,
+  CancelRequest,
   didCancel,
   TASK_CANCELATION_NAME,
 } from './cancelation';
+import {
+  COMPLETION_CANCEL,
+  COMPLETION_ERROR,
+  COMPLETION_SUCCESS,
+} from './completion-states';
 
 export const PERFORM_TYPE_DEFAULT = 'PERFORM_TYPE_DEFAULT';
 export const PERFORM_TYPE_UNLINKED = 'PERFORM_TYPE_UNLINKED';
@@ -448,9 +448,9 @@ export class TaskInstanceExecutor {
    * Given the following case:
    *
    * ```js
-   * parentTask: task(function * () {
-   *   yield otherTask.perform();
-   * })
+   * parentTask = task(async () => {
+   *   await otherTask.perform();
+   * });
    * ```
    *
    * Then the `parent` param is the task instance that is executing, `this`

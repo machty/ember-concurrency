@@ -2,8 +2,8 @@ import Ember from 'ember';
 
 import { computed } from '@ember/object';
 
-import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
 import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
+import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
 import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy';
 import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy';
 
@@ -86,13 +86,13 @@ export const propertyModifiers = {
    * to 3.
    *
    * ```js
-   * doSomeAjax: task(function * (url) {
+   * doSomeAjax = task(async (url) => {
    *   return fetch(url);
-   * }).maxConcurrency(3),
+   * }).maxConcurrency(3);
    *
    * elsewhere() {
    *   this.doSomeAjax.perform("http://www.example.com/json");
-   * },
+   * }
    * ```
    *
    * @method maxConcurrency
@@ -126,16 +126,20 @@ export const propertyModifiers = {
    * changes.
    *
    * ```js
+   * import Component from '@glimmer/component';
+   * import { task } from 'ember-concurrency';
+   * import { on } from '@ember/object/evented';
    *
-   * export default Component.extend({
-   *   uploadTask: task(function* (file) {
+   * export default class MyComponent extends Component {
+   *   uploadTask = task(async (file) => {
    *     // ... file upload stuff
-   *   }).evented(),
+   *   }).evented();
    *
-   *   uploadedStarted: on('uploadTask:started', function(taskInstance) {
+   *   @on('uploadTask:started')
+   *   uploadedStarted(taskInstance) {
    *     this.analytics.track("User Photo: upload started");
-   *   }),
-   * });
+   *   }
+   * }
    * ```
    *
    * @method evented
@@ -216,18 +220,21 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
    * when the host object is initialized.
    *
    * ```js
-   * export default Component.extend({
-   *   pollForUpdates: task(function * () {
+   * import Component from '@glimmer/component';
+   * import { task } from 'ember-concurrency';
+   *
+   * export default class MyComponent extends Component {
+   *   pollForUpdates = task(async () => {
    *     // ... this runs when the Component is first created
    *     // because we specified .on('init')
-   *   }).on('init'),
+   *   }).on('init');
    *
-   *   handleFoo: task(function * (a, b, c) {
+   *   handleFoo = task(async (a, b, c) => {
    *     // this gets performed automatically if the 'foo'
    *     // event fires on this Component,
    *     // e.g., if someone called component.trigger('foo')
-   *   }).on('foo'),
-   * });
+   *   }).on('foo');
+   * }
    * ```
    *
    * @method on
