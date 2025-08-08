@@ -280,7 +280,7 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
   },
 });
 
-const setDecorator = Ember._setClassicDecorator || Ember._setComputedDecorator;
+const setDecorator = Ember._setClassicDecorator;
 export function taskComputed(fn) {
   let cp = function (proto, key) {
     if (cp.setup !== undefined) {
