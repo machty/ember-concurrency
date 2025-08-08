@@ -160,23 +160,23 @@ s.push((0,n.get)(e,i.value))}return a[t](...o,...s)}(0,r.assert)(`The first argu
 s.d(t,{w:()=>k})
 var n=s(58),r=s(886)
 const i=require("@ember/object/events")
-var a=s(810),o=s(760),c=s(214),u=s(52),l=s(540),h=s(536),d=s(708)
-class p extends d.c{scheduleRefresh(){(0,o.once)(this,this.refresh)}}var f=s(632)
+var a=s(810),o=s(760),c=s(214),u=s(632),l=s(708)
+class h extends l.c{scheduleRefresh(){(0,o.once)(this,this.refresh)}}var d=s(52),p=s(536),f=s(540)
 let m=0
 function b(e,t,s,n,r,i){if(s&&s.length>0)for(let a=0;a<s.length;++a){let o=s[a],c="__ember_concurrency_handler_"+m++
 t[c]=g(n,r,i),e(t,o,null,c)}}function g(e,t,s){return function(){let n=(0,r.get)(this,e)
 s?(0,o.scheduleOnce)("actions",n,t,...arguments):n[t].apply(n,arguments)}}const y=e=>Array.isArray(e)?e:[e];(0,c.Mr)("cancelOn",((e,t)=>e.addCancelEvents(...y(t)))),(0,c.Mr)("observes",((e,t)=>e.addObserverKeys(...y(t)))),(0,c.Mr)("on",((e,t)=>e.addPerformEvents(...y(t))))
 class k extends c.wF{constructor(...e){var t,s,n,r
-super(...e),t=this,s="env",n=f.I,(s="symbol"==typeof(r=function(e,t){if("object"!=typeof e||!e)return e
+super(...e),t=this,s="env",n=u.I,(s="symbol"==typeof(r=function(e,t){if("object"!=typeof e||!e)return e
 var s=e[Symbol.toPrimitive]
 if(void 0!==s){var n=s.call(e,"string")
 if("object"!=typeof n)return n
 throw new TypeError("@@toPrimitive must return a primitive value.")}return String(e)}(s))?r:String(r))in t?Object.defineProperty(t,s,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[s]=n}createTask(e){(0,n.assert)("Cannot create task if a task definition is not provided as generator function or encapsulated task.",this.taskDefinition)
 let t=this.getTaskOptions(e)
-return"object"==typeof this.taskDefinition?new u.C(Object.assign({taskObj:this.taskDefinition},t)):new u._(Object.assign({generatorFactory:t=>this.taskDefinition.apply(e,t)},t))}createTaskGroup(e){(0,n.assert)("A task definition is not expected for a task group.",!this.taskDefinition)
+return"object"==typeof this.taskDefinition?new d.C(Object.assign({taskObj:this.taskDefinition},t)):new d._(Object.assign({generatorFactory:t=>this.taskDefinition.apply(e,t)},t))}createTaskGroup(e){(0,n.assert)("A task definition is not expected for a task group.",!this.taskDefinition),(0,n.deprecate)("Task Groups are deprecated. There is no direct replacement for Task Groups and some refactoring may be necessary.",!1,{id:"ember-concurrency.deprecate-task-group",for:"ember-concurrency",since:"4.0.5",until:"5.0.0"})
 let t=this.getTaskOptions(e)
-return new h.C(t)}addCancelEvents(...e){return this._cancelEventNames=this._cancelEventNames||[],this._cancelEventNames.push(...e),this}addObserverKeys(...e){return this._observes=this._observes||[],this._observes.push(...e),this}addPerformEvents(...e){return this._eventNames=this._eventNames||[],this._eventNames.push(...e),this}getModifier(e){let t=super.getModifier(e)
-return t||"function"!=typeof l.CY.prototype[e]||(t=l.CY.prototype[e].bind(this)),(0,n.assert)(`Task option '${e}' is not recognized as a supported option.`,t),t}getScheduler(e,t){return new p(e,t)}_setupEmberKVO(e){b(i.addListener,e,this._eventNames,this.name,"perform",!1),b(i.addListener,e,this._cancelEventNames,this.name,"cancelAll",!1),b(a.addObserver,e,this._observes,this.name,"perform",!0)}get taskFn(){return this.taskDefinition}set taskFn(e){this.setTaskDefinition(e)}}},536:(e,t,s)=>{"use strict"
+return new p.C(t)}addCancelEvents(...e){return this._cancelEventNames=this._cancelEventNames||[],this._cancelEventNames.push(...e),this}addObserverKeys(...e){return this._observes=this._observes||[],this._observes.push(...e),this}addPerformEvents(...e){return this._eventNames=this._eventNames||[],this._eventNames.push(...e),this}getModifier(e){let t=super.getModifier(e)
+return t||"function"!=typeof f.CY.prototype[e]||(t=f.CY.prototype[e].bind(this)),(0,n.assert)(`Task option '${e}' is not recognized as a supported option.`,t),t}getScheduler(e,t){return new h(e,t)}_setupEmberKVO(e){b(i.addListener,e,this._eventNames,this.name,"perform",!1),b(i.addListener,e,this._cancelEventNames,this.name,"cancelAll",!1),b(a.addObserver,e,this._observes,this.name,"perform",!0)}get taskFn(){return this.taskDefinition}set taskFn(e){this.setTaskDefinition(e)}}},536:(e,t,s)=>{"use strict"
 s.d(t,{C:()=>a})
 var n=s(408),r=s(983),i=s(180)
 class a extends n.C{}i.L&&Object.defineProperties(a.prototype,i.L),Object.assign(a.prototype,r.e)},280:(e,t,s)=>{"use strict"
@@ -238,24 +238,23 @@ return t&&"function"==typeof t.cancelAll||(0,r.assert)(`The first argument passe
 s.r(t),s.d(t,{default:()=>c,performHelper:()=>o})
 var n=s(746),r=s(58),i=s(504)
 function a(e){return function(t){"function"==typeof e?e(t):null===e||(0,r.assert)(`The onError argument passed to the \`perform\` helper should be a function or null; you passed ${e}`,!1)}}function o(e,t){let s=(0,i.e)("perform","perform",e,t)
-return t&&void 0!==t.onError?function(...e){try{return s(...e).catch(a(t.onError))}catch{a(t.onError)}}:s}var c=(0,n.helper)(o)},272:(e,t,s)=>{"use strict"
+return t&&void 0!==t.onError?function(...e){try{return s(...e).catch(a(t.onError))}catch{a(t.onError)}}:s}var c=(0,n.helper)(o)},888:(e,t,s)=>{"use strict"
 s.r(t),s.d(t,{default:()=>n})
 var n=(0,s(746).helper)((function(e){let[t,...s]=e
 return t._curry(...s)}))},856:(e,t,s)=>{"use strict"
-s.r(t),s.d(t,{Task:()=>se._,TaskGroup:()=>R.C,TaskGroupProperty:()=>u.cv,TaskInstance:()=>q.q,TaskProperty:()=>u.CY,Yieldable:()=>a,all:()=>z,allSettled:()=>Y,animationFrame:()=>i.qg,didCancel:()=>te.G0,dropTask:()=>_,dropTaskGroup:()=>T,enqueueTask:()=>S,enqueueTaskGroup:()=>O,forever:()=>i.Ut,getModifier:()=>h.W9,hasModifier:()=>h.Au,hash:()=>G,hashSettled:()=>Q,keepLatestTask:()=>E,keepLatestTaskGroup:()=>j,lastValue:()=>v,race:()=>L,rawTimeout:()=>i.Kw,registerModifier:()=>h.Mr,restartableTask:()=>x,restartableTaskGroup:()=>P,task:()=>I,taskGroup:()=>F,timeout:()=>c,waitForEvent:()=>X,waitForProperty:()=>ee,waitForQueue:()=>J})
+s.r(t),s.d(t,{Task:()=>se._,TaskGroup:()=>R.C,TaskGroupProperty:()=>u.cv,TaskInstance:()=>q.q,TaskProperty:()=>u.CY,Yieldable:()=>a,all:()=>z,allSettled:()=>Y,animationFrame:()=>i.qg,didCancel:()=>te.G0,dropTask:()=>_,dropTaskGroup:()=>T,enqueueTask:()=>S,enqueueTaskGroup:()=>O,forever:()=>i.Ut,getModifier:()=>h.W9,hasModifier:()=>h.Au,hash:()=>G,hashSettled:()=>N,keepLatestTask:()=>E,keepLatestTaskGroup:()=>j,lastValue:()=>v,race:()=>L,rawTimeout:()=>i.Kw,registerModifier:()=>h.Mr,restartableTask:()=>x,restartableTaskGroup:()=>P,task:()=>I,taskGroup:()=>F,timeout:()=>c,waitForEvent:()=>X,waitForProperty:()=>ee,waitForQueue:()=>J})
 var n=s(760),r=s(632),i=s(512)
 class a extends i.UZ{_deferable(){return r.I.defer()}}class o extends a{constructor(e){super(),this.ms=e}onYield(e){let t=(0,n.later)((()=>e.next()),this.ms)
 return()=>(0,n.cancel)(t)}}function c(e){return new o(e)}var u=s(540),l=s(58),h=s(214)
-function d(e,t,s,n=[],r=h.wF){let i,{initializer:a,get:o,value:c}=s
-a?i=a.call(void 0):o?i=o.call(void 0):c&&(i=c),i.displayName=`${t} (task)`
-let u=new WeakMap,l=new r(t,i,n[0]||{})
-return l._setupEmberKVO(e),{get(){let e=u.get(this)
-return e||(e=l.createTask(this),u.set(this,e)),e}}}function p(e,t,s,n=[],r=h.wF){let i=new WeakMap,a=new r(t,null,n[0]||{})
+function d(e,t,s,n=[],r=h.wF){let i,{initializer:a,get:o,value:c}=s;(0,l.deprecate)("Using @task decorator (or any of its variants) is deprecated. Please use modern `taskName = task(async () => {})` syntax instead",!1,{id:"ember-concurrency.deprecate-decorator-task",for:"ember-concurrency",since:"4.0.5",until:"5.0.0"}),a?i=a.call(void 0):o?i=o.call(void 0):c&&(i=c),i.displayName=`${t} (task)`
+let u=new WeakMap,d=new r(t,i,n[0]||{})
+return d._setupEmberKVO(e),{get(){let e=u.get(this)
+return e||(e=d.createTask(this),u.set(this,e)),e}}}function p(e,t,s,n=[],r=h.wF){let i=new WeakMap,a=new r(t,null,n[0]||{})
 return{get(){let e=i.get(this)
 return e||(e=a.createTaskGroup(this),i.set(this,e)),e}}}function f(e){return function(...t){return function(e){let[t,s,n]=e
 return 3===e.length&&"object"==typeof t&&null!==t&&"string"==typeof s&&("object"==typeof n&&null!==n&&"enumerable"in n&&"configurable"in n||void 0===n)}(t)?e(...t):(...s)=>e(...s,t)}}function m(e,t={},s=h.wF){return f(((n,r,i,[a]=[])=>{let o=Object.assign({},{...t,...a})
 return e(n,r,i,[o],s)}))}function b(e={},t=h.wF){return m(d,e,t)}function g(e={},t=h.wF){return m(p,e,t)}const y=f(((e,t,s,[n]=[])=>{const{initializer:r}=s
-return delete s.initializer,{get(){let e=this[n].lastSuccessful
+return delete s.initializer,(0,l.deprecate)("@lastValue is deprecated is deprecated along with all ember-concurrency decorators. Please use a getter that references taskName.lastSuccessful.value instead.",!1,{id:"ember-concurrency.deprecate-decorator-last-value",for:"ember-concurrency",since:"4.0.5",until:"5.0.0"}),{get(){let e=this[n].lastSuccessful
 return e?e.value:r?r.call(this):void 0}}}))
 var k=s(976)
 const v=y,w=b({},k.w),_=b({drop:!0},k.w),S=b({enqueue:!0},k.w),E=b({keepLatest:!0},k.w),x=b({restartable:!0},k.w),C=g({},k.w),T=g({drop:!0},k.w),O=g({enqueue:!0},k.w),j=g({keepLatest:!0},k.w),P=g({restartable:!0},k.w)
@@ -265,8 +264,8 @@ return(0,l.assert)('It appears you\'re attempting to use the new task(async () =
 return t.taskFn=e,t[u.o7]=new k.w,Object.setPrototypeOf(t,u.CY.prototype),t}(e)}function F(e,t,s){if(M(e)||t&&s)return C(...arguments)
 {let e=(0,u.C_)((function(t){return e[u.o7].setName(t),e[u.o7].createTaskGroup(this)}))
 return e[u.o7]=new k.w,Object.setPrototypeOf(e,u.cv.prototype),e}}function M(e){return!(!e||"function"==typeof e||"object"==typeof e&&"perform"in e&&"function"==typeof e.perform||Object.getPrototypeOf(e)!==Object.prototype)}var q=s(280),D=s(914),A=s.n(D)
-const z=B(A().Promise,"all",N),Y=B(A(),"allSettled",N),L=B(D.Promise,"race",N),G=B(A(),"hash",$),Q=B(A(),"hashSettled",$)
-function N(e){return e}function $(e){return Object.keys(e).map((t=>e[t]))}function W(e){if(e)if(e instanceof q.q)e.executor.asyncErrorsHandled=!0
+const z=B(A().Promise,"all",Q),Y=B(A(),"allSettled",Q),L=B(D.Promise,"race",Q),G=B(A(),"hash",$),N=B(A(),"hashSettled",$)
+function Q(e){return e}function $(e){return Object.keys(e).map((t=>e[t]))}function W(e){if(e)if(e instanceof q.q)e.executor.asyncErrorsHandled=!0
 else if(e instanceof i.UZ)return e._toPromise()
 return e}function B(e,t,s){return function(n){let r=function(e,t){if(Array.isArray(e))return e.map(t)
 if("object"==typeof e&&null!==e){let s={}
@@ -274,12 +273,12 @@ return Object.keys(e).forEach((n=>{s[n]=t(e[n])})),s}return e}(n,W),a=s(r);(0,l.
 let o=A().defer()
 e[t](r).then(o.resolve,o.reject)
 let c=!1,u=()=>{c||(c=!0,a.forEach((e=>{e&&(e instanceof q.q?e.cancel():"function"==typeof e[i.k7]&&e[i.k7]())})))},h=o.promise.finally(u)
-return h[i.k7]=u,h}}var K=s(886),U=s(810)
+return h[i.k7]=u,h}}var U=s(886),K=s(810)
 class V extends a{constructor(e){super(),this.queueName=e}onYield(e){let t
 try{t=(0,n.schedule)(this.queueName,(()=>e.next()))}catch(t){e.throw(t)}return()=>(0,n.cancel)(t)}}class Z extends a{constructor(e,t){super(),this.object=e,this.eventName=t,this.usesDOMEvents=!1}on(e){"function"==typeof this.object.addEventListener?(this.usesDOMEvents=!0,this.object.addEventListener(this.eventName,e)):this.object.on(this.eventName,e)}off(e){this.usesDOMEvents?this.object.removeEventListener(this.eventName,e):this.object.off(this.eventName,e)}onYield(e){let t=null,s=()=>{t&&this.off(t),t=null}
-return t=t=>{s(),e.next(t)},this.on(t),s}}class H extends a{constructor(e,t,s=Boolean){super(),this.object=e,this.key=t,this.predicateCallback="function"==typeof s?s:e=>e===s}onYield(e){let t=!1,s=()=>{let t=(0,K.get)(this.object,this.key)
+return t=t=>{s(),e.next(t)},this.on(t),s}}class H extends a{constructor(e,t,s=Boolean){super(),this.object=e,this.key=t,(0,l.deprecate)("waitForProperty is deprecated due to its use of observers. Consider using a polling approach instead.",!1,{id:"ember-concurrency.deprecate-wait-for-property",for:"ember-concurrency",since:"4.0.5",until:"5.0.0"}),this.predicateCallback="function"==typeof s?s:e=>e===s}onYield(e){let t=!1,s=()=>{let t=(0,U.get)(this.object,this.key)
 if(this.predicateCallback(t))return e.next(t),!0}
-return s()||((0,U.addObserver)(this.object,this.key,null,s),t=!0),()=>{t&&s&&(0,U.removeObserver)(this.object,this.key,null,s)}}}function J(e){return new V(e)}function X(e,t){var s
+return s()||((0,K.addObserver)(this.object,this.key,null,s),t=!0),()=>{t&&s&&(0,K.removeObserver)(this.object,this.key,null,s)}}}function J(e){return new V(e)}function X(e,t){var s
 return(0,l.assert)(`${e} must include Ember.Evented (or support \`.on()\` and \`.off()\`) or DOM EventTarget (or support \`addEventListener\` and  \`removeEventListener\`) to be able to use \`waitForEvent\``,(s=e)&&("function"==typeof s.one&&"function"==typeof s.off||"function"==typeof s.on&&"function"==typeof s.off||"function"==typeof s.addEventListener&&"function"==typeof s.removeEventListener)),new Z(e,t)}function ee(e,t,s){return new H(e,t,s)}var te=s(848),se=s(52)},424:e=>{"use strict"
 e.exports=require("@ember/application")},746:e=>{"use strict"
 e.exports=require("@ember/component/helper")},58:e=>{"use strict"
@@ -289,8 +288,8 @@ e.exports=require("@ember/object")},810:e=>{"use strict"
 e.exports=require("@ember/object/observers")},760:e=>{"use strict"
 e.exports=require("@ember/runloop")},412:e=>{"use strict"
 e.exports=require("ember")},914:e=>{"use strict"
-e.exports=require("rsvp")},888:(e,t,s)=>{e.exports=function(){var e=_eai_d,t=_eai_r
-function n(e){return e&&e.__esModule?e:Object.assign({default:e},e)}window.emberAutoImportDynamic=function(e){return 1===arguments.length?t("_eai_dyn_"+e):t("_eai_dynt_"+e)(Array.prototype.slice.call(arguments,1))},window.emberAutoImportSync=function(e){return t("_eai_sync_"+e)(Array.prototype.slice.call(arguments,1))},e("ember-concurrency",["ember","@ember/object","@ember/application","@ember/destroyable","@ember/runloop","rsvp","@ember/debug","@ember/object/observers"],(function(){return n(s(856))})),e("ember-concurrency/async-arrow-runtime",["@ember/debug","@ember/object","@ember/object/observers","@ember/runloop","@ember/application","@ember/destroyable","ember","rsvp"],(function(){return n(s(252))})),e("ember-concurrency/helpers/cancel-all",["@ember/component/helper","@ember/debug","@ember/object"],(function(){return n(s(84))})),e("ember-concurrency/helpers/perform",["@ember/component/helper","@ember/debug","@ember/object"],(function(){return n(s(572))})),e("ember-concurrency/helpers/task",["@ember/component/helper"],(function(){return n(s(272))})),e("ember-modifier",["@ember/application","@ember/destroyable"],(function(){return n(s(476))})),e("prismjs-glimmer",[],(function(){return n(s(296))}))}()},928:function(e,t){window._eai_r=require,window._eai_d=define},296:(e,t,s)=>{"use strict"
+e.exports=require("rsvp")},912:(e,t,s)=>{e.exports=function(){var e=_eai_d,t=_eai_r
+function n(e){return e&&e.__esModule?e:Object.assign({default:e},e)}window.emberAutoImportDynamic=function(e){return 1===arguments.length?t("_eai_dyn_"+e):t("_eai_dynt_"+e)(Array.prototype.slice.call(arguments,1))},window.emberAutoImportSync=function(e){return t("_eai_sync_"+e)(Array.prototype.slice.call(arguments,1))},e("ember-concurrency",["ember","@ember/object","@ember/application","@ember/destroyable","@ember/runloop","rsvp","@ember/debug","@ember/object/observers"],(function(){return n(s(856))})),e("ember-concurrency/async-arrow-runtime",["@ember/debug","@ember/object","@ember/object/observers","@ember/runloop","ember","rsvp","@ember/application","@ember/destroyable"],(function(){return n(s(252))})),e("ember-concurrency/helpers/cancel-all",["@ember/component/helper","@ember/debug","@ember/object"],(function(){return n(s(84))})),e("ember-concurrency/helpers/perform",["@ember/component/helper","@ember/debug","@ember/object"],(function(){return n(s(572))})),e("ember-concurrency/helpers/task",["@ember/component/helper"],(function(){return n(s(888))})),e("ember-modifier",["@ember/application","@ember/destroyable"],(function(){return n(s(476))})),e("prismjs-glimmer",[],(function(){return n(s(296))}))}()},240:function(e,t){window._eai_r=require,window._eai_d=define},296:(e,t,s)=>{"use strict"
 s.r(t),s.d(t,{setup:()=>u})
 var n=Object.defineProperty,r=Object.prototype.hasOwnProperty,i=Object.getOwnPropertySymbols,a=Object.prototype.propertyIsEnumerable,o=(e,t,s)=>t in e?n(e,t,{enumerable:!0,configurable:!0,writable:!0,value:s}):e[t]=s,c=(e,t)=>{for(var s in t||(t={}))r.call(t,s)&&o(e,s,t[s])
 if(i)for(var s of i(t))a.call(t,s)&&o(e,s,t[s])
@@ -304,6 +303,6 @@ function s(n){var r=t[n]
 if(void 0!==r)return r.exports
 var i=t[n]={exports:{}}
 return e[n].call(i.exports,i,i.exports,s),i.exports}s.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e
-return s.d(t,{a:t}),t},s.d=(e,t)=>{for(var n in t)s.o(t,n)&&!s.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},s.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),s.r=e=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},s(928)
-var n=s(888)
+return s.d(t,{a:t}),t},s.d=(e,t)=>{for(var n in t)s.o(t,n)&&!s.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},s.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),s.r=e=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},s(240)
+var n=s(912)
 __ember_auto_import__=n})()
