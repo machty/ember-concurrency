@@ -1,5 +1,15 @@
 # Changelog
 
+### 4.0.5
+
+- Deprecated:
+  - Decorator APIs
+    - Decorators don't play well with TS - use modern `taskName = task(async () => {})` syntax instead
+  - waitForProperty
+    - Relies on legacy observers.
+  - Task Groups
+    - Awkward to continue to support, overloaded as a concept in general
+
 ### 4.0.4
 
 - dropped `ember-source` and `@glimmer/tracking` from peerDependencies (#586)

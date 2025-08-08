@@ -1,18 +1,18 @@
-import { assert } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import { get } from '@ember/object';
 import { addListener } from '@ember/object/events';
 import { addObserver } from '@ember/object/observers';
 import { scheduleOnce } from '@ember/runloop';
 import {
-  registerModifier,
   TaskFactory as BaseTaskFactory,
+  registerModifier,
 } from './external/task-factory';
 
-import { Task, EncapsulatedTask } from './task';
-import { TaskProperty } from './task-properties';
-import { TaskGroup } from './task-group';
-import EmberScheduler from './scheduler/ember-scheduler';
 import { EMBER_ENVIRONMENT } from './ember-environment';
+import EmberScheduler from './scheduler/ember-scheduler';
+import { EncapsulatedTask, Task } from './task';
+import { TaskGroup } from './task-group';
+import { TaskProperty } from './task-properties';
 
 let handlerCounter = 0;
 
@@ -93,6 +93,18 @@ export class TaskFactory extends BaseTaskFactory {
       `A task definition is not expected for a task group.`,
       !this.taskDefinition,
     );
+
+    deprecate(
+      'Task Groups are deprecated. There is no direct replacement for Task Groups and some refactoring may be necessary.',
+      false,
+      {
+        id: 'ember-concurrency.deprecate-task-group',
+        for: 'ember-concurrency',
+        since: '4.0.5',
+        until: '5.0.0',
+      },
+    );
+
     let options = this.getTaskOptions(context);
 
     return new TaskGroup(options);

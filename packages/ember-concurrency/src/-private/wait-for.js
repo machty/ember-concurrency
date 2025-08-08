@@ -1,7 +1,7 @@
-import { assert } from '@ember/debug';
-import { schedule, cancel } from '@ember/runloop';
+import { assert, deprecate } from '@ember/debug';
 import { get } from '@ember/object';
 import { addObserver, removeObserver } from '@ember/object/observers';
+import { cancel, schedule } from '@ember/runloop';
 import { EmberYieldable, isEventedObject } from './utils';
 
 class WaitForQueueYieldable extends EmberYieldable {
@@ -72,6 +72,17 @@ class WaitForPropertyYieldable extends EmberYieldable {
     super();
     this.object = object;
     this.key = key;
+
+    deprecate(
+      'waitForProperty is deprecated due to its use of observers. Consider using a polling approach instead.',
+      false,
+      {
+        id: 'ember-concurrency.deprecate-wait-for-property',
+        for: 'ember-concurrency',
+        since: '4.0.5',
+        until: '5.0.0',
+      },
+    );
 
     if (typeof predicateCallback === 'function') {
       this.predicateCallback = predicateCallback;
