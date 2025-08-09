@@ -1,7 +1,3 @@
-import { timeout, EmberYieldable as Yieldable } from './-private/utils';
-import { TaskProperty, TaskGroupProperty } from './-private/task-properties';
-import { task, taskGroup } from './-private/task-public-api';
-import { TaskInstance } from './-private/task-instance';
 import {
   all,
   allSettled,
@@ -10,10 +6,10 @@ import {
   race,
 } from './-private/cancelable-promise-helpers';
 import {
-  waitForQueue,
-  waitForEvent,
-  waitForProperty,
-} from './-private/wait-for';
+  getModifier,
+  hasModifier,
+  registerModifier,
+} from './-private/external/task-factory';
 import { didCancel } from './-private/external/task-instance/cancelation';
 import {
   animationFrame,
@@ -21,56 +17,36 @@ import {
   rawTimeout,
 } from './-private/external/yieldables';
 import { Task } from './-private/task';
-import { TaskGroup } from './-private/task-group';
+import { TaskInstance } from './-private/task-instance';
+import { TaskProperty } from './-private/task-properties';
+import { task } from './-private/task-public-api';
+import { timeout, EmberYieldable as Yieldable } from './-private/utils';
 import {
-  dropTask,
-  dropTaskGroup,
-  enqueueTask,
-  enqueueTaskGroup,
-  lastValue,
-  keepLatestTask,
-  keepLatestTaskGroup,
-  restartableTask,
-  restartableTaskGroup,
-} from './-private/task-decorators';
-import {
-  registerModifier,
-  getModifier,
-  hasModifier,
-} from './-private/external/task-factory';
+  waitForEvent,
+  waitForProperty,
+  waitForQueue,
+} from './-private/wait-for';
 
 export {
   all,
   allSettled,
   animationFrame,
   didCancel,
-  dropTask,
-  dropTaskGroup,
-  enqueueTask,
-  enqueueTaskGroup,
   forever,
   getModifier,
   hash,
   hashSettled,
   hasModifier,
-  keepLatestTask,
-  keepLatestTaskGroup,
-  lastValue,
   race,
   rawTimeout,
   registerModifier,
-  restartableTask,
-  restartableTaskGroup,
   task,
-  taskGroup,
+  Task,
+  TaskInstance,
+  TaskProperty,
   timeout,
-  waitForQueue,
   waitForEvent,
   waitForProperty,
-  Task,
-  TaskProperty,
-  TaskInstance,
-  TaskGroup,
-  TaskGroupProperty,
+  waitForQueue,
   Yieldable,
 };

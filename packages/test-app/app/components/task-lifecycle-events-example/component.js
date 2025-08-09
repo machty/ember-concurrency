@@ -1,5 +1,6 @@
-import Component from '@ember/component';
+import { registerDestructor } from '@ember/destroyable';
 import { addListener, removeListener } from '@ember/object/events';
+import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
 
@@ -15,19 +16,6 @@ const COLORS = [
   '#DAA520',
 ];
 
-function loopingAjaxTask(id) {
-  return function* () {
-    while (true) {
-      try {
-        yield this.ajaxTask.perform(id);
-      } catch (e) {
-        // Ignoring AJAX failures because we're being naughty.
-      }
-      yield timeout(2000);
-    }
-  };
-}
-
 export default class TaskLifecycleEventsExample extends Component {
   tagName = '';
 
@@ -39,14 +27,21 @@ export default class TaskLifecycleEventsExample extends Component {
     addListener(this, 'ajaxTask:started', this, this.ajaxTaskStarted);
     addListener(this, 'ajaxTask:succeeded', this, this.ajaxTaskSucceeded);
     addListener(this, 'ajaxTask:errored', this, this.ajaxTaskErrored);
-  }
 
-  willDestroy() {
-    super.willDestroy(...arguments);
+    registerDestructor(this, () => {
+      removeListener(this, 'ajaxTask:started', this, this.ajaxTaskStarted);
+      removeListener(this, 'ajaxTask:succeeded', this, this.ajaxTaskSucceeded);
+      removeListener(this, 'ajaxTask:errored', this, this.ajaxTaskErrored);
+    });
 
-    removeListener(this, 'ajaxTask:started', this, this.ajaxTaskStarted);
-    removeListener(this, 'ajaxTask:succeeded', this, this.ajaxTaskSucceeded);
-    removeListener(this, 'ajaxTask:errored', this, this.ajaxTaskErrored);
+    this.loopingAjaxTask.perform(0);
+    this.loopingAjaxTask.perform(1);
+    this.loopingAjaxTask.perform(2);
+    this.loopingAjaxTask.perform(3);
+    this.loopingAjaxTask.perform(4);
+    this.loopingAjaxTask.perform(5);
+    this.loopingAjaxTask.perform(6);
+    this.loopingAjaxTask.perform(7);
   }
 
   ajaxTask = task(
@@ -63,6 +58,17 @@ export default class TaskLifecycleEventsExample extends Component {
       return {};
     },
   );
+
+  loopingAjaxTask = task(async (id) => {
+    while (true) {
+      try {
+        await this.ajaxTask.perform(id);
+      } catch (e) {
+        // Ignoring AJAX failures because we're being naughty.
+      }
+      await timeout(2000);
+    }
+  });
 
   ajaxTaskStarted(taskInstance) {
     const [id] = taskInstance.args;
@@ -81,15 +87,6 @@ export default class TaskLifecycleEventsExample extends Component {
       `Task ${id}: AJAX failed because of '${error.message}'`,
     );
   }
-
-  @task({ on: 'init' }) task0 = loopingAjaxTask(0);
-  @task({ on: 'init' }) task1 = loopingAjaxTask(1);
-  @task({ on: 'init' }) task2 = loopingAjaxTask(2);
-  @task({ on: 'init' }) task3 = loopingAjaxTask(3);
-  @task({ on: 'init' }) task4 = loopingAjaxTask(4);
-  @task({ on: 'init' }) task5 = loopingAjaxTask(5);
-  @task({ on: 'init' }) task6 = loopingAjaxTask(6);
-  @task({ on: 'init' }) task7 = loopingAjaxTask(7);
 
   log(color, message) {
     this.logs = [...this.logs, { color, message }].slice(-7);

@@ -13,11 +13,11 @@ module('Integration | helpers | perform', function (hooks) {
 
     this.owner.register(
       'component:test-swallow-error',
-      Component.extend({
-        errorGeneratingTask: task(function* () {
+      class extends Component {
+        errorGeneratingTask = task(async () => {
           throw new Error('You should not see me!');
-        }),
-      }),
+        });
+      },
     );
 
     this.owner.register(
@@ -42,11 +42,11 @@ module('Integration | helpers | perform', function (hooks) {
 
     this.owner.register(
       'component:test-swallow-error',
-      Component.extend({
-        errorGeneratingTask: task(function* () {
+      class extends Component {
+        errorGeneratingTask = task(async () => {
           throw new Error('You should not see me!');
-        }),
-      }),
+        })
+      },
     );
 
     this.owner.register(
@@ -73,14 +73,14 @@ module('Integration | helpers | perform', function (hooks) {
 
     this.owner.register(
       'component:test-swallow-error',
-      Component.extend({
-        errorGeneratingTask: task(function* () {
+      class extends Component {
+        errorGeneratingTask = task(async () => {
           throw new Error('You should not see me!');
-        }),
+        })
         errorReport(e) {
           error = e;
-        },
-      }),
+        }
+      },
     );
 
     this.owner.register(

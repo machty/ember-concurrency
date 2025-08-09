@@ -11,8 +11,6 @@ import {
 import { EMBER_ENVIRONMENT } from './ember-environment';
 import EmberScheduler from './scheduler/ember-scheduler';
 import { EncapsulatedTask, Task } from './task';
-import { TaskGroup } from './task-group';
-import { TaskProperty } from './task-properties';
 
 let handlerCounter = 0;
 
@@ -88,28 +86,6 @@ export class TaskFactory extends BaseTaskFactory {
     }
   }
 
-  createTaskGroup(context) {
-    assert(
-      `A task definition is not expected for a task group.`,
-      !this.taskDefinition,
-    );
-
-    deprecate(
-      'Task Groups are deprecated. There is no direct replacement for Task Groups and some refactoring may be necessary.',
-      false,
-      {
-        id: 'ember-concurrency.deprecate-task-group',
-        for: 'ember-concurrency',
-        since: '4.0.5',
-        until: '5.0.0',
-      },
-    );
-
-    let options = this.getTaskOptions(context);
-
-    return new TaskGroup(options);
-  }
-
   addCancelEvents(...cancelEventNames) {
     this._cancelEventNames = this._cancelEventNames || [];
     this._cancelEventNames.push(...cancelEventNames);
@@ -130,11 +106,6 @@ export class TaskFactory extends BaseTaskFactory {
 
   getModifier(name) {
     let modifier = super.getModifier(name);
-    if (!modifier && typeof TaskProperty.prototype[name] === 'function') {
-      // Shim for compatibility with user-defined TaskProperty prototype
-      // extensions. To be removed when replaced with proper public API.
-      modifier = TaskProperty.prototype[name].bind(this);
-    }
 
     assert(
       `Task option '${name}' is not recognized as a supported option.`,
@@ -177,8 +148,8 @@ export class TaskFactory extends BaseTaskFactory {
     );
   }
 
-  // Provided for compatibility with ember-concurrency TaskProperty extension
-  // methods
+  // Provided for compatibility with the now-removed ember-concurrency TaskProperty extension
+  // methods. TODO: delete this?
   get taskFn() {
     return this.taskDefinition;
   }

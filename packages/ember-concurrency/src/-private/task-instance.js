@@ -10,7 +10,7 @@ import { TRACKED_INITIAL_INSTANCE_STATE } from './tracked-state';
   via {@linkcode TaskInstance#cancel} or {@linkcode Task#cancelAll},
   or automatically due to the host object being destroyed, or
   because concurrency policy enforced by a
-  {@linkcode TaskProperty Task Modifier} canceled the task instance.
+  {@linkcode Task Modifier} canceled the task instance.
 
   <style>
     .ignore-this--this-is-here-to-hide-constructor,
@@ -111,8 +111,7 @@ export class TaskInstance extends BaseTaskInstance {
    * - `"running"`: task instance is currently running (returns true even if
    *     is paused on a yielded promise)
    * - `"waiting"`: task instance hasn't begun running yet (usually
-   *     because the task is using the {@linkcode TaskProperty#enqueue enqueue}
-   *     task modifier)
+   *     because the task is using the enqueue task modifier)
    *
    * The animated timeline examples on the [Task Concurrency](/docs/task-concurrency)
    * docs page make use of this property.
@@ -127,7 +126,7 @@ export class TaskInstance extends BaseTaskInstance {
    * True if the TaskInstance was canceled before it could
    * ever start running. For example, calling
    * {@linkcode Task#perform .perform()} twice on a
-   * task with the {@linkcode TaskProperty#drop drop} modifier applied
+   * task with the drop modifier applied
    * will result in the second task instance being dropped.
    *
    * @name isDropped

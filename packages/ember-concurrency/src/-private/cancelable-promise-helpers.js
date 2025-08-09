@@ -14,8 +14,6 @@ import { cancelableSymbol, Yieldable } from './external/yieldables';
  * - if any of the {@linkcode TaskInstance}s (or regular promises) passed in reject (or
  *   are canceled), all of the other unfinished `TaskInstance`s will
  *   be automatically canceled.
- *
- * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
 export const all = taskAwareVariantOf(RSVP.Promise, 'all', identity);
 
@@ -40,8 +38,6 @@ export const allSettled = taskAwareVariantOf(RSVP, 'allSettled', identity);
  *   {@linkcode TaskInstance}s passed in to `race` will be canceled
  * - once any of the tasks/promises passed in complete (either success, failure,
  *   or cancelation), any of the {@linkcode TaskInstance}s passed in will be canceled
- *
- * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
 export const race = taskAwareVariantOf(Promise, 'race', identity);
 

@@ -43,10 +43,6 @@ export const TABLE_OF_CONTENTS = [
   },
   { route: 'docs.examples.ajax-throttling', title: 'AJAX Throttling' },
   { route: 'docs.examples.route-tasks', title: 'Route Tasks' },
-  {
-    route: 'docs.examples.joining-tasks',
-    title: 'Awaiting Multiple Child Tasks',
-  },
 ];
 
 export const FLATTENED_TABLE_OF_CONTENTS = TABLE_OF_CONTENTS.reduce(

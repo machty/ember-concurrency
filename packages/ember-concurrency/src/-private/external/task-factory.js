@@ -1,12 +1,11 @@
-import Scheduler from './scheduler/scheduler';
-import UnboundedSchedulerPolicy from './scheduler/policies/unbounded-policy';
-import EnqueueSchedulerPolicy from './scheduler/policies/enqueued-policy';
+import { DEFAULT_ENVIRONMENT } from './environment';
 import DropSchedulerPolicy from './scheduler/policies/drop-policy';
+import EnqueueSchedulerPolicy from './scheduler/policies/enqueued-policy';
 import KeepLatestSchedulerPolicy from './scheduler/policies/keep-latest-policy';
 import RestartableSchedulerPolicy from './scheduler/policies/restartable-policy';
+import UnboundedSchedulerPolicy from './scheduler/policies/unbounded-policy';
+import Scheduler from './scheduler/scheduler';
 import { Task } from './task/task';
-import { TaskGroup } from './task/task-group';
-import { DEFAULT_ENVIRONMENT } from './environment';
 
 function assertModifiersNotMixedWithGroup(obj) {
   if (obj._hasSetConcurrencyConstraint && obj._taskGroupPath) {
@@ -137,19 +136,6 @@ export class TaskFactory {
   }
 
   /**
-   * Returns a new TaskGroup bound to the given context
-   *
-   * @protected
-   * @param {*} context
-   * @returns {Task}
-   */
-  createTaskGroup(context) {
-    let options = this.getTaskOptions(context);
-
-    return new TaskGroup(options);
-  }
-
-  /**
    * Returns a modifier callback with the given name bound to this TaskFactory,
    * if registered.
    *
@@ -186,7 +172,7 @@ export class TaskFactory {
   }
 
   /**
-   * Returns the options to pass to a Task or TaskGroup constructor
+   * Returns the options to pass to a Task constructor
    *
    * @protected
    * @param {*} context
@@ -196,24 +182,11 @@ export class TaskFactory {
     let group, scheduler;
     let onStateCallback = this._onStateCallback;
 
-    if (this._taskGroupPath) {
-      group = context[this._taskGroupPath];
-      if (!(group instanceof TaskGroup)) {
-        throw new Error(
-          `Expected group '${this._taskGroupPath}' to be defined but was not found.`,
-        );
-      }
-
-      scheduler = group.scheduler;
-    } else {
-      let schedulerPolicy = new this._schedulerPolicyClass(
-        this._maxConcurrency,
-      );
-      scheduler = this.getScheduler(
-        schedulerPolicy,
-        onStateCallback && typeof onStateCallback === 'function',
-      );
-    }
+    let schedulerPolicy = new this._schedulerPolicyClass(this._maxConcurrency);
+    scheduler = this.getScheduler(
+      schedulerPolicy,
+      onStateCallback && typeof onStateCallback === 'function',
+    );
 
     return {
       context,

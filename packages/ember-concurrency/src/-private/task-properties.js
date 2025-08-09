@@ -181,21 +181,6 @@ export const propertyModifiers = {
   },
 };
 
-/**
-  A {@link TaskProperty} is the Computed Property-like object returned
-  from the {@linkcode task} function. You can call Task Modifier methods
-  on this object to configure the behavior of the {@link Task}.
-
-  See [Managing Task Concurrency](/docs/task-concurrency) for an
-  overview of all the different task modifiers you can use and how
-  they impact automatic cancelation / enqueueing of task instances.
-
-  {@link TaskProperty} is only used for supporting "classic" Ember objects.
-  When using Native JavaScript or TypeScript classes, you will use [task decorators](/docs/task-decorators)
-  on methods instead.
-
-  @class TaskProperty
-*/
 export class TaskProperty {}
 export class TaskGroupProperty {}
 

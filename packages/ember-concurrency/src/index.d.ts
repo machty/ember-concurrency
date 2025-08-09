@@ -219,44 +219,6 @@ export interface EncapsulatedTask<
 > extends AbstractTask<Args, EncapsulatedTaskInstance<T, State>> {}
 
 /**
- * "Task Groups" provide a means for applying
- * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
- * as part of a group task, modifiers like `drop` or `restartable`
- * will no longer affect the individual `Task`. Instead those
- * modifiers can be applied to the entire group.
- *
- * ```js
- * import { task, taskGroup } from 'ember-concurrency';
- *
- * export default class MyController extends Controller {
- *   @taskGroup({ drop: true }) chores;
- *
- *   @task({ group: 'chores' }) mowLawn = taskFn;
- *   @task({ group: 'chores' }) doDishes = taskFn;
- *   @task({ group: 'chores' }) changeDiapers = taskFn;
- * }
- * ```
- *
- * @deprecated Task Groups are deprecated and will be removed in ember-concurrency 5.0.0. There is no direct replacement for Task Groups and some refactoring may be necessary.
- */
-export interface TaskGroup<T> extends TaskState<TaskInstance<T>> {
-  /**
-   * Cancels all running or queued `TaskInstance`s for this task group.
-   * If you're trying to cancel a specific TaskInstance (rather
-   * than all of the instances running under this task group) call
-   * `.cancel()` on the specific TaskInstance.
-   *
-   * @param options.reason A descriptive reason the task group was
-   *   cancelled. Defaults to `".cancelAll() was explicitly called
-   *   on the Task"`.
-   * @param options.resetState If true, will clear the task group state
-   *   (`last*` and `performCount` properties will be set to initial
-   *   values). Defaults to false.
-   */
-  cancelAll(options?: { reason?: string; resetState?: boolean }): Promise<void>;
-}
-
-/**
  * A `TaskInstance` represent a single execution of a
  * {@linkcode Task}. Every call to {@linkcode Task#perform} returns
  * a `TaskInstance`.
@@ -496,15 +458,15 @@ interface _AbstractTaskProperty<T extends Task<any, any[]>> {
    *
    * ```js
    *
-   * export default Component.extend({
-   *   uploadTask: task(function* (file) {
+   * export default class MyComponent extends Component {
+   *   uploadTask = task(async (file) => {
    *     // ... file upload stuff
    *   }).evented(),
    *
    *   uploadedStarted: on('uploadTask:started', function(taskInstance) {
    *     this.analytics.track("User Photo: upload started");
    *   }),
-   * });
+   * }
    * ```
    */
   evented(): this;
@@ -550,96 +512,6 @@ export interface EncapsulatedTaskProperty<
   // eslint-disable-next-line @typescript-eslint/ban-types
   State extends object,
 > extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>> {}
-
-export interface TaskGroupProperty<T> extends TaskGroup<T> {
-  /**
-   * Configures the task group to cancel old currently task
-   * instances to make room for a new one to perform. Sets
-   * default maxConcurrency to 1.
-   *
-   * [See the Live Example](/docs/examples/route-tasks/1)
-   *
-   * @method restartable
-   * @memberof TaskGroupProperty
-   * @instance
-   */
-  restartable(): this;
-
-  /**
-   * Configures the task group to run task instances
-   * one-at-a-time in the order they were `.perform()`ed.
-   * Sets default maxConcurrency to 1.
-   *
-   * @method enqueue
-   * @memberof TaskGroupProperty
-   * @instance
-   */
-  enqueue(): this;
-
-  /**
-   * Configures the task group to immediately cancel (i.e.
-   * drop) any task instances performed when the task group
-   * is already running at maxConcurrency. Sets default
-   * maxConcurrency to 1.
-   *
-   * @method drop
-   * @memberof TaskGroupProperty
-   * @instance
-   */
-  drop(): this;
-
-  /**
-   * Configures the task group to drop all but the most
-   * recently performed {@linkcode TaskInstance }.
-   *
-   * @method keepLatest
-   * @memberof TaskGroupProperty
-   * @instance
-   */
-  keepLatest(): this;
-
-  /**
-   * Sets the maximum number of task instances that are
-   * allowed to run in this task group at the same time.
-   * By default, with no task modifiers applied, this number
-   * is Infinity (there is no limit to the number of tasks
-   * that can run at the same time).
-   * {@linkcode TaskGroupProperty#restartable .restartable},
-   * {@linkcode TaskGroupProperty#enqueue .enqueue}, and
-   * {@linkcode TaskGroupProperty#drop .drop} set the
-   * default maxConcurrency to 1, but you can override this
-   * value to set the maximum number of concurrently running
-   * tasks to a number greater than 1.
-   *
-   * [See the AJAX Throttling example](/docs/examples/ajax-throttling)
-   *
-   * The example below uses a task group with `maxConcurrency(3)`
-   * to limit the number of concurrent AJAX requests (for anyone
-   * using tasks in this group) to 3.
-   *
-   * ```js
-   * ajax = taskGroup().maxConcurrency(3);
-   *
-   * doSomeAjax = task(async (url) => {
-   *   return Ember.$.getJSON(url).promise();
-   * }).group('ajax');
-   *
-   * doSomeOtherAjax = task(async (url) => {
-   *   return Ember.$.getJSON(url).promise();
-   * }).group('ajax');
-   *
-   * elsewhere() {
-   *   this.get('doSomeAjax').perform("http://www.example.com/json");
-   * },
-   * ```
-   *
-   * @method maxConcurrency
-   * @memberof TaskGroupProperty
-   * @param {Number} n The maximum number of concurrently running tasks
-   * @instance
-   */
-  maxConcurrency(n: number): this;
-}
 
 export type TaskCancelation = Error & { name: 'TaskCancelation' };
 
@@ -705,7 +577,7 @@ export interface YieldableState {
   cancel(): void;
 
   /**
-   * Cause the TaskInstance to return from its yield with an optional value,
+   * Cause the TaskInstance to return from its yield/await with an optional value,
    * and continue executing.
    * @method next
    * @param value
@@ -728,7 +600,7 @@ export interface YieldableState {
 
 export abstract class Yieldable<T> implements PromiseLike<T> {
   /**
-   * Defines what happens when the task encounters `yield myYieldable` and returns
+   * Defines what happens when the task encounters `await myYieldable` and returns
    * a disposer function that handles any cleanup.
    *
    * The state parameter is provided by the runtime, and provides operations for
@@ -795,7 +667,6 @@ type OptionTypeFor<T, F> = F extends (...args: infer Args) => T
   : never;
 
 type TaskOptions = OptionsFor<TaskProperty<unknown, unknown[]>>;
-type TaskGroupOptions = OptionsFor<TaskGroupProperty<unknown>>;
 
 type MethodOrPropertyDecoratorWithParams<Params extends unknown[]> =
   MethodDecorator &
@@ -818,21 +689,18 @@ type MethodOrPropertyDecoratorWithParams<Params extends unknown[]> =
  * but much of a power of tasks lies in proper usage of Task Modifiers
  * that you can apply to a task.
  *
- * You can also define an
- * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
- * by decorating an object that defines a `perform` generator
- * method.
- *
  * ```js
  * import Component from '@glimmer/component';
  * import { task } from 'ember-concurrency';
  *
  * class MyComponent extends Component {
- *   @task
- *   *plainTask() {}
+ *   plainTask = task(async () => {
+ *     // ...
+ *   });
  *
- *   @task({ maxConcurrency: 5, keepLatest: true, cancelOn: 'click' })
- *   *taskWithModifiers() {}
+ *   taskWithModifiers = task({ maxConcurrency: 5, keepLatest: true, cancelOn: 'click' }, async () => {
+ *     // ...
+ *   });
  * }
  * ```
  *
@@ -861,11 +729,6 @@ export function task(target: Object, propertyKey: string): void;
  * is performed. Async functions with the await keyword can
  * be used to elegantly express asynchronous, cancelable
  * operations.
- *
- * You can also define an
- * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
- * by passing in an object that defined a `perform` async
- * method.
  *
  * The following Component defines a task called `myTask` that,
  * when performed, prints a message to the console, sleeps for 1 second,
@@ -946,21 +809,18 @@ export type AsyncTaskFunction<T, Args extends any[]> = (
  * Optionally takes a hash of options that will be applied as modifiers to the
  * task. For instance `maxConcurrency`, `on`, or `group`.
  *
- * You can also define an
- * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
- * by decorating an object that defines a `perform` generator
- * method.
- *
  * ```js
  * import Component from '@ember/component';
  * import { task, dropTask } from 'ember-concurrency';
  *
  * class MyComponent extends Component {
- *   @task
- *   *plainTask() {}
+ *   plainTask = task(async () => {
+ *     // ...
+ *   });
  *
- *   @dropTask({ cancelOn: 'click' })
- *   *myDropTask() {}
+ *   myDropTask = task({ cancelOn: 'click' }, async () => {
+ *     // ...
+ *   });
  * }
  * ```
  *
@@ -988,276 +848,6 @@ export function dropTask<
 >(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
 
 /**
- * Turns the decorated generator function into a task and applies the
- * `enqueue` modifier.
- *
- * Optionally takes a hash of options that will be applied as modifiers to the
- * task. For instance `maxConcurrency`, `on`, or `group`.
- *
- * You can also define an
- * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
- * by decorating an object that defines a `perform` generator
- * method.
- *
- * ```js
- * import Component from '@ember/component';
- * import { task, enqueueTask } from 'ember-concurrency';
- *
- * class MyComponent extends Component {
- *   @task
- *   *plainTask() {}
- *
- *   @enqueueTask({ cancelOn: 'click' })
- *   *myEnqueueTask() {}
- * }
- * ```
- *
- * @function
- * @param {object?} [options={}]
- * @return {Task}
- */
-export function enqueueTask<T extends TaskOptions>(
-  baseOptions?: T,
-): MethodOrPropertyDecoratorWithParams<[T]>;
-export function enqueueTask<T>(
-  target: Object,
-  propertyKey: string,
-  descriptor: TypedPropertyDescriptor<T>,
-): TypedPropertyDescriptor<T>;
-export function enqueueTask(target: Object, propertyKey: string): void;
-export function enqueueTask<
-  HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-
-export function enqueueTask<
-  HostObject,
-  O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-
-/**
- * Turns the decorated generator function into a task and applies the
- * `keepLatest` modifier.
- *
- * Optionally takes a hash of options that will be applied as modifiers to the
- * task. For instance `maxConcurrency`, `on`, or `group`.
- *
- * You can also define an
- * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
- * by decorating an object that defines a `perform` generator
- * method.
- *
- * ```js
- * import Component from '@ember/component';
- * import { task, keepLatestTask } from 'ember-concurrency';
- *
- * class MyComponent extends Component {
- *   @task
- *   *plainTask() {}
- *
- *   @keepLatestTask({ cancelOn: 'click' })
- *   *myKeepLatestTask() {}
- * }
- * ```
- *
- * @function
- * @param {object?} [options={}]
- * @return {Task}
- */
-export function keepLatestTask<T extends TaskOptions>(
-  baseOptions?: T,
-): MethodOrPropertyDecoratorWithParams<[T]>;
-export function keepLatestTask<T>(
-  target: Object,
-  propertyKey: string,
-  descriptor: TypedPropertyDescriptor<T>,
-): TypedPropertyDescriptor<T>;
-export function keepLatestTask(target: Object, propertyKey: string): void;
-export function keepLatestTask<
-  HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-
-export function keepLatestTask<
-  HostObject,
-  O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-
-/**
- * Turns the decorated generator function into a task and applies the
- * `restartable` modifier.
- *
- * Optionally takes a hash of options that will be applied as modifiers to the
- * task. For instance `maxConcurrency`, `on`, or `group`.
- *
- * You can also define an
- * <a href="/docs/advanced/encapsulated-task">Encapsulated Task</a>
- * by decorating an object that defines a `perform` generator
- * method.
- *
- * ```js
- * import Component from '@ember/component';
- * import { task, restartableTask } from 'ember-concurrency';
- *
- * class MyComponent extends Component {
- *   @task
- *   *plainTask() {}
- *
- *   @restartableTask({ cancelOn: 'click' })
- *   *myRestartableTask() {}
- * }
- * ```
- *
- * @function
- * @param {object?} [options={}]
- * @return {Task}
- */
-export function restartableTask<T extends TaskOptions>(
-  baseOptions?: T,
-): MethodOrPropertyDecoratorWithParams<[T]>;
-export function restartableTask<T>(
-  target: Object,
-  propertyKey: string,
-  descriptor: TypedPropertyDescriptor<T>,
-): TypedPropertyDescriptor<T>;
-export function restartableTask(target: Object, propertyKey: string): void;
-export function restartableTask<
-  HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-
-export function restartableTask<
-  HostObject,
-  O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-
-/**
- * "Task Groups" provide a means for applying
- * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
- * as part of a group task, modifiers like `drop` or `restartable`
- * will no longer affect the individual `Task`. Instead those
- * modifiers can be applied to the entire group.
- *
- * Turns the decorated property into a task group.
- *
- * Optionally takes a hash of options that will be applied as modifiers to the
- * task group. For instance `maxConcurrency` or `keepLatest`.
- *
- * ```js
- * import Component from '@glimmer/component';
- * import { task, taskGroup } from 'ember-concurrency';
- *
- * class MyComponent extends Component {
- *   @taskGroup({ maxConcurrency: 5 }) chores;
- *
- *   @task({ group: 'chores' })
- *   *mowLawn() {}
- *
- *   @task({ group: 'chores' })
- *   *doDishes() {}
- * }
- * ```
- *
- * @function
- * @param {object?} [options={}]
- * @return {TaskGroup}
- */
-export function taskGroup<T extends TaskGroupOptions>(
-  baseOptions: T,
-): PropertyDecorator;
-export function taskGroup(target: Object, propertyKey: string): void;
-
-/**
- * "Task Groups" provide a means for applying
- * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
- * as part of a group task, modifiers like `drop` or `restartable`
- * will no longer affect the individual `Task`. Instead those
- * modifiers can be applied to the entire group.
- *
- * ```js
- * import { task, taskGroup } from 'ember-concurrency';
- *
- * export default Controller.extend({
- *   chores: taskGroup().drop(),
- *
- *   mowLawn:       task(taskFn).group('chores'),
- *   doDishes:      task(taskFn).group('chores'),
- *   changeDiapers: task(taskFn).group('chores')
- * });
- * ```
- *
- * @returns {TaskGroupProperty}
- */
-export function taskGroup<T>(): TaskGroupProperty<T>;
-
-/**
- * Turns the decorated property into a task group and applies the
- * `drop` modifier.
- *
- * Optionally takes a hash of further options that will be applied as modifiers
- * to the task group.
- *
- * @function
- * @param {object?} [options={}]
- * @return {TaskGroup}
- */
-export function dropTaskGroup<T extends TaskGroupOptions>(
-  baseOptions: T,
-): PropertyDecorator;
-export function dropTaskGroup(target: Object, propertyKey: string): void;
-
-/**
- * Turns the decorated property into a task group and applies the
- * `enqueue` modifier.
- *
- * Optionally takes a hash of further options that will be applied as modifiers
- * to the task group.
- *
- * @function
- * @param {object?} [options={}]
- * @return {TaskGroup}
- */
-export function enqueueTaskGroup<T extends TaskGroupOptions>(
-  baseOptions: T,
-): PropertyDecorator;
-export function enqueueTaskGroup(target: Object, propertyKey: string): void;
-
-/**
- * Turns the decorated property into a task group and applies the
- * `keepLatest` modifier.
- *
- * Optionally takes a hash of further options that will be applied as modifiers
- * to the task group.
- *
- * @function
- * @param {object?} [options={}]
- * @return {TaskGroup}
- */
-export function keepLatestTaskGroup<T extends TaskGroupOptions>(
-  baseOptions: T,
-): PropertyDecorator;
-export function keepLatestGroup(target: Object, propertyKey: string): void;
-
-/**
- * Turns the decorated property into a task group and applies the
- * `restartable` modifier.
- *
- * Optionally takes a hash of further options that will be applied as modifiers
- * to the task group.
- *
- * @function
- * @param {object?} [options={}]
- * @return {TaskGroup}
- */
-export function restartableTaskGroup<T extends TaskGroupOptions>(
-  baseOptions: T,
-): PropertyDecorator;
-export function restartableTaskGroup(target: Object, propertyKey: string): void;
-
-/**
  * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
  * The normal version of a `Promise.all` just returns a regular, uncancelable
  * Promise. The `ember-concurrency` variant of `all()` has the following
@@ -1268,8 +858,6 @@ export function restartableTaskGroup(target: Object, propertyKey: string): void;
  * - if any of the {@linkcode TaskInstance}s (or regular promises) passed in reject (or
  *   are canceled), all of the other unfinished `TaskInstance`s will
  *   be automatically canceled.
- *
- * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
 export function all<T extends readonly unknown[] | readonly [unknown]>(
   values: T,
@@ -1299,10 +887,10 @@ export function allSettled<T>(values: Iterable<T>): Promise<Array<Settled<T>>>;
  *
  * ```js
  * export default class MyComponent extends Component {
- *   @task *myTask() {
+ *   myTask = task(async () => {
  *     let lastNow = performance.now();
  *     while (true) {
- *       yield animationFrame();
+ *       await animationFrame();
  *
  *       let now = performance.now();
  *       let dt = now - lastNow;
@@ -1310,7 +898,7 @@ export function allSettled<T>(values: Iterable<T>): Promise<Array<Settled<T>>>;
  *
  *       console.log(dt);
  *     }
- *   }
+ *   });
  * }
  * ```
  */
@@ -1380,8 +968,6 @@ export function hashSettled<T>(
  *   {@linkcode TaskInstance}s passed in to `race` will be canceled
  * - once any of the tasks/promises passed in complete (either success, failure,
  *   or cancelation), any of the {@linkcode TaskInstance}s passed in will be canceled
- *
- * [Check out the "Awaiting Multiple Child Tasks example"](/docs/examples/joining-tasks)
  */
 export function race<T>(values: readonly T[]): Promise<Resolved<T>>;
 export function race<T>(values: Iterable<T>): Promise<Resolved<T>>;
@@ -1400,12 +986,12 @@ export function race<T>(values: Iterable<T>): Promise<Resolved<T>>;
  *
  * ```js
  * export default class MyComponent extends Component {
- *   @task *myTask() {
+ *   myTask = task(async () => {
  *     while (true) {
  *       console.log("Hello!");
- *       yield timeout(1000);
+ *       await timeout(1000);
  *     }
- *   }
+ *   });
  * }
  * ```
  *
@@ -1427,12 +1013,12 @@ export function timeout(ms: number): Yieldable<void>;
  *
  * ```js
  * export default class MyComponent extends Component {
- *   @task *myTask() {
+ *   myTask = task(async () => {
  *     while (true) {
  *       console.log("Hello!");
- *       yield rawTimeout(1000);
+ *       await rawTimeout(1000);
  *     }
- *   }
+ *   });
  * }
  * ```
  *
@@ -1525,7 +1111,7 @@ export function waitForEvent(
  *     console.log("`foo` is 5!");
  *
  *     // wait for another task to be idle before running:
- *     yield waitForProperty(this, 'otherTask.isIdle');
+ *     await waitForProperty(this, 'otherTask.isIdle');
  *     console.log("otherTask is idle!");
  *   })
  * });
@@ -1580,38 +1166,11 @@ export function waitForProperty<O extends object, K extends keyof O>(
  * export default class MyComponent extends Component {
  *   @service myService;
  *
- *   @task *myTask() {
- *     yield this.myService.doSomethingThatCausesATransition();
- *     yield forever;
- *   }
+ *   myTask = task(async () => {
+ *     await this.myService.doSomethingThatCausesATransition();
+ *     await forever;
+ *   });
  * }
  * ```
  */
 export function forever(): Yieldable<never>;
-
-/**
- * This decorator allows you to alias a property to the result of a task.
- * You can also provide a default value to use before the task has completed.
- *
- * ```js
- * import Component from '@glimmer/component';
- * import { task, lastValue } from 'ember-concurrency';
- *
- * export default class ExampleComponent extends Component {
- *   @task
- *   someTask = function*() {
- *     // ...
- *   };
- *
- *   @lastValue('someTask')
- *   someTaskValue;
- *
- *   @lastValue('someTask')
- *   someTaskValueWithDefault = 'A default value';
- * }
- * ```
- *
- * @function
- * @param {string} taskName the name of the task to read a value from
- */
-export function lastValue(taskName: string): PropertyDecorator;

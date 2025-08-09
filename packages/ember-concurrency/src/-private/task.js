@@ -214,6 +214,7 @@ export class Task extends BaseTask {
 
   _taskInstanceFactory(args, performType, linkedObject) {
     let options = this._taskInstanceOptions(args, performType, linkedObject);
+    options.task = this;
     let taskInstance = new TaskInstance(options);
     return taskInstance;
   }

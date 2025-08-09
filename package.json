@@ -7,14 +7,16 @@
     "lint": "pnpm run --filter '*' lint",
     "lint:fix": "pnpm run --filter '*' lint:fix",
     "test": "pnpm --filter test-app run test",
-    "test:ember": "pnpm --filter test-app run test:ember"
+    "test:ember": "pnpm --filter test-app run test:ember",
+    "rm-node-modules": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
+    "reset": "git clean -Xfd; git clean -fd; pnpm i && pnpm build > /dev/null 2>&1; pnpm i -f; pnpm sync"
   },
   "devDependencies": {
     "concurrently": "^8.0.0"
   },
   "volta": {
-    "node": "16.19.0",
-    "pnpm": "8.15.1"
+    "node": "20.11.1",
+    "pnpm": "10.10.0"
   },
   "version": "4.0.0-beta.2"
 }

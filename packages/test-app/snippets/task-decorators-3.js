@@ -1,4 +1,0 @@
-@task({ on: 'didInsertElement' })
-*doStuff() {
-  // ...
-}

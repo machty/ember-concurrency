@@ -1,6 +1,6 @@
   pollForChanges = task(async () => {
     while(true) {
-      yield pollServerForChanges();
-      yield timeout(5000);
+      await pollServerForChanges();
+      await timeout(5000);
     }
   })
