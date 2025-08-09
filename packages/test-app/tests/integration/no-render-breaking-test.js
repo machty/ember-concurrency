@@ -14,7 +14,7 @@ module('Integration | no render breaking', function (hooks) {
     this.owner.register(
       'component:e-c-test',
       class extends Component {
-        layout = hbs`<input />`,
+        layout = hbs`<input />`
 
         focusIn() {
           this.exampleTask.perform();

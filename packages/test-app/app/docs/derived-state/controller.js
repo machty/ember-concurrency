@@ -1,5 +1,6 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 import { task } from 'ember-concurrency';
 
 let i = 0;
@@ -10,10 +11,10 @@ export default class DerivedStateController extends Controller {
     i++;
 
     await timeout(1000);
-  
+
     let words = [randomWord(), randomWord(), randomWord()];
     let wordsString = `${i}: ${words}`;
-  
+
     if (shouldError) {
       throw new Error(wordsString);
     } else {
@@ -21,11 +22,11 @@ export default class DerivedStateController extends Controller {
     }
   });
 
-  doStuffDrop = task({drop:true }, async () => {
+  doStuffDrop = task({ drop: true }, async () => {
     await this.doStuff.perform();
   });
 
-  doStuffEnqueued = task({enqueue:true }, async () => {
+  doStuffEnqueued = task({ enqueue: true }, async () => {
     await this.doStuff.perform();
   });
 
