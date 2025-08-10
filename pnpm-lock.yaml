@@ -201,9 +201,6 @@ importers:
       ember-cli-terser:
         specifier: ^4.0.2
         version: 4.0.2
-      ember-code-snippet:
-        specifier: ^3.0.0
-        version: 3.0.0
       ember-concurrency:
         specifier: workspace:*
         version: link:../ember-concurrency
@@ -2224,9 +2221,6 @@ packages:
   broccoli-filter@1.3.0:
     resolution: {integrity: sha512-VXJXw7eBfG82CFxaBDjYmyN7V72D4In2zwLVQJd/h3mBfF3CMdRTsv2L20lmRTtCv1sAHcB+LgMso90e/KYiLw==}
 
-  broccoli-flatiron@0.1.3:
-    resolution: {integrity: sha512-dD/4ck+LKOLTBzFlxP2zX7fhWt1TFMVR/88b9/wd8LkAHUyAzWs1vBah94ObSvajYGZ7ic+XvMXw+OhmvdlYoQ==}
-
   broccoli-funnel-reducer@1.0.0:
     resolution: {integrity: sha512-SaOCEdh+wnt2jFUV2Qb32m7LXyElvFwW3NKNaEJyi5PGQNwxfqpkc0KI6AbQANKgdj/40U2UC0WuGThFwuEUaA==}
 
@@ -3146,10 +3140,6 @@ packages:
   ember-cli-get-component-path-option@1.0.0:
     resolution: {integrity: sha512-k47TDwcJ2zPideBCZE8sCiShSxQSpebY2BHcX2DdipMmBox5gsfyVrbKJWIHeSTTKyEUgmBIvQkqTOozEziCZA==}
 
-  ember-cli-htmlbars@3.1.0:
-    resolution: {integrity: sha512-cgvRJM73IT0aePUG7oQ/afB7vSRBV3N0wu9BrWhHX2zkR7A7cUBI7KC9VPk6tbctCXoM7BRGsCC4aIjF7yrfXA==}
-    engines: {node: 6.* || 8.* || >= 10.*}
-
   ember-cli-htmlbars@5.7.2:
     resolution: {integrity: sha512-Uj6R+3TtBV5RZoJY14oZn/sNPnc+UgmC8nb5rI4P3fR/gYoyTFIZSXiIM7zl++IpMoIrocxOrgt+mhonKphgGg==}
     engines: {node: 10.* || >= 12.*}
@@ -3236,10 +3226,6 @@ packages:
     resolution: {integrity: sha512-X0Ep67O/r2nCViILV8wEvI0xiRlLRS8GgeDklQ3SvDXQp2d3xbI8ARW76pcb1du39HPgIi0G6F/OpJ1uOr4ZQQ==}
     engines: {node: '>= 14'}
     hasBin: true
-
-  ember-code-snippet@3.0.0:
-    resolution: {integrity: sha512-pvIpGPLma7m6WQ5+uOjwkzozIzRAqlUSQk9TMCrQQ/AeEGWtqTJvZyAtH9LoarPtudHtWCZkUqJXIqKsjIqAbw==}
-    engines: {node: 8.* || >= 10.*}
 
   ember-compatibility-helpers@1.2.7:
     resolution: {integrity: sha512-BtkjulweiXo9c3yVWrtexw2dTmBrvavD/xixNC6TKOBdrixUwU+6nuOO9dufDWsMxoid7MvtmDpzc9+mE8PdaA==}
@@ -3426,9 +3412,6 @@ packages:
   es-to-primitive@1.3.0:
     resolution: {integrity: sha512-w+5mJ3GuFL+NjVtJlvydShqE1eN3h3PbI7/5LAsYJP/2qtuMXjfL2LpHSRqo4b4eSF5K/DH1JXKUAHSB2UW50g==}
     engines: {node: '>= 0.4'}
-
-  es6-promise@1.0.0:
-    resolution: {integrity: sha512-8/2Juj7DeNMwxkbcruBmErKcgPSTPgaGIB08nQvlBzaqliW1vMliNOaBQaMzzQAxX9k0vGy+8wwWlgiLuKqZIw==}
 
   escalade@3.2.0:
     resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
@@ -6191,10 +6174,6 @@ packages:
   strip-ansi@6.0.1:
     resolution: {integrity: sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==}
     engines: {node: '>=8'}
-
-  strip-bom@3.0.0:
-    resolution: {integrity: sha512-vavAMRXOgBVNF6nyEEmL3DBK19iRpDcoIwW+swQ+CbGiu7lju6t+JklA1MHweoWtadgt4ISVUsXLyDq34ddcwA==}
-    engines: {node: '>=4'}
 
   strip-bom@4.0.0:
     resolution: {integrity: sha512-3xurFv5tEgii33Zi8Jtp55wEIILR9eh34FAW00PZf+JnSsTmV/ioewSgQl97JHvgjoRGwPShsWm+IdrxB35d0w==}
@@ -9323,11 +9302,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  broccoli-flatiron@0.1.3:
-    dependencies:
-      broccoli-plugin: 1.3.1
-      mkdirp: 0.5.6
-
   broccoli-funnel-reducer@1.0.0: {}
 
   broccoli-funnel@1.2.0:
@@ -10444,15 +10418,6 @@ snapshots:
 
   ember-cli-get-component-path-option@1.0.0: {}
 
-  ember-cli-htmlbars@3.1.0:
-    dependencies:
-      broccoli-persistent-filter: 2.3.1
-      hash-for-dep: 1.5.1
-      json-stable-stringify: 1.3.0
-      strip-bom: 3.0.0
-    transitivePeerDependencies:
-      - supports-color
-
   ember-cli-htmlbars@5.7.2:
     dependencies:
       '@ember/edition-utils': 1.2.0
@@ -10796,18 +10761,6 @@ snapshots:
       - velocityjs
       - walrus
       - whiskers
-
-  ember-code-snippet@3.0.0:
-    dependencies:
-      broccoli-flatiron: 0.1.3
-      broccoli-merge-trees: 1.2.4
-      broccoli-plugin: 1.3.1
-      ember-cli-babel: 7.26.11
-      ember-cli-htmlbars: 3.1.0
-      es6-promise: 1.0.0
-      glob: 7.2.3
-    transitivePeerDependencies:
-      - supports-color
 
   ember-compatibility-helpers@1.2.7(@babel/core@7.28.0):
     dependencies:
@@ -11222,8 +11175,6 @@ snapshots:
       is-callable: 1.2.7
       is-date-object: 1.1.0
       is-symbol: 1.1.1
-
-  es6-promise@1.0.0: {}
 
   escalade@3.2.0: {}
 
@@ -14477,8 +14428,6 @@ snapshots:
   strip-ansi@6.0.1:
     dependencies:
       ansi-regex: 5.0.1
-
-  strip-bom@3.0.0: {}
 
   strip-bom@4.0.0: {}
 
