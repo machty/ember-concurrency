@@ -1,6 +1,6 @@
 import Controller from '@ember/controller';
+import { service } from '@ember/service';
 import config from '../config/environment';
-import { inject as service } from '@ember/service';
 
 const versionRegExp = /\d+[.]\d+[.]\d+(?:-(?:alpha|beta|rc)\.\d+)?/;
 const { emberConcurrencyVersion } = config;

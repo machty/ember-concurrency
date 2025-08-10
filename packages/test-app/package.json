@@ -70,7 +70,7 @@
     "ember-qunit": "^6.2.0",
     "ember-resolver": "^11.0.0",
     "ember-sinon-qunit": "^7.4.0",
-    "ember-source": "~4.11.0",
+    "ember-source": "~6.4.0",
     "ember-source-channel-url": "^3.0.0",
     "ember-template-imports": "^3.4.2",
     "ember-template-lint": "^5.13.0",

@@ -1,6 +1,6 @@
 import Controller from '@ember/controller';
 import { computed } from '@ember/object';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 
 export const TABLE_OF_CONTENTS = [
   { route: 'docs.introduction', title: 'Home' },
