@@ -17,6 +17,7 @@ function pickFrom(list, index) {
 class Tracker {
   @tracked hasStarted = false;
   @tracked startTime: number;
+  @tracked endTime: number | null = null;
   @tracked taskInstance: any;
 
   constructor(
@@ -30,15 +31,26 @@ class Tracker {
     this.taskInstance = taskInstance;
   }
 
-  get endTime() {
-    return this.comp.timeElapsed;
+  get endTimeOrNow() {
+    return this.endTime || this.comp.timeElapsed;
   }
+
   get isCanceled() {
     return this.taskInstance.isCanceled;
   }
+
   get state() {
     return capitalize(this.taskInstance.state);
   }
+
+  start = () => {
+    this.hasStarted = true;
+    this.startTime = this.comp.timeElapsed || 1;
+  };
+
+  end = () => {
+    this.endTime = this.comp.timeElapsed;
+  };
 }
 
 interface ConcurrencyGraphSignature {
@@ -105,7 +117,7 @@ export default class ConcurrencyGraphComponent extends Component<ConcurrencyGrap
 
     let task = this.args.task;
     let taskInstance = task.perform(tracker);
-    tracker.set('taskInstance', taskInstance);
+    tracker.taskInstance = taskInstance;
 
     this.trackers = [...this.trackers, tracker];
     this.ticker.perform();
@@ -136,7 +148,9 @@ export default class ConcurrencyGraphComponent extends Component<ConcurrencyGrap
                   y={{pickFrom this.labelHeights tracker.id}}
                   height='20px'
                   width='{{scale
-                    (width tracker.startTime tracker.endTime this.upperLimit)
+                    (width
+                      tracker.startTime tracker.endTimeOrNow this.upperLimit
+                    )
                     this.lowerLimit
                     this.upperLimit
                   }}%'
