@@ -1,0 +1,241 @@
+import Evented from '@ember/object/evented';
+import Component from '@glimmer/component';
+import {
+  task,
+  timeout,
+  waitForEvent,
+  waitForProperty,
+} from 'ember-concurrency';
+import { tracked } from '@glimmer/tracking';
+import { on } from '@ember/modifier';
+import { if } from '@ember/helper';
+
+import CodeSnippet from './code-snippet';
+
+// Pretending to be jQuery for a very narrow snippet
+const $ = (selector: string) => document.querySelector(selector);
+
+interface EventsExampleSignature {
+  Args: {};
+}
+
+export default class EventsExampleComponent extends Component<EventsExampleSignature>.extend(Evented) {
+  // BEGIN-SNIPPET waitForEvent
+  @tracked domEvent: Event | null = null;
+  @tracked jQueryEvent: Event | null = null;
+  @tracked emberEvent: any = null;
+
+  domEventLoop = task(async () => {
+    while (true) {
+      let event = await waitForEvent(document.body, 'click');
+      this.domEvent = event;
+      this.trigger('fooEvent', { v: Math.random() });
+    }
+  });
+
+  jQueryEventLoop = task(async () => {
+    let $body = $('body');
+    while (true) {
+      let event = await waitForEvent($body!, 'click');
+      this.jQueryEvent = event;
+    }
+  });
+
+  emberEventedLoop = task(async () => {
+    while (true) {
+      let event = await waitForEvent(this, 'fooEvent');
+      this.emberEvent = event;
+    }
+  });
+
+  constructor(owner: unknown, args: EventsExampleSignature['Args']) {
+    super(owner, args);
+    
+    // Use a micro-task to ensure DOM is ready
+    Promise.resolve().then(() => {
+      this.domEventLoop.perform();
+      this.jQueryEventLoop.perform();
+      this.emberEventedLoop.perform();
+      this.waiterLoop.perform();
+    });
+  }
+
+  // END-SNIPPET
+
+  // BEGIN-SNIPPET waitForEvent-derived-state
+  waiterLoop = task(async () => {
+    while (true) {
+      await this.waiter.perform();
+      await timeout(1500);
+    }
+  });
+
+  waiter = task(async () => {
+    let event = await waitForEvent(document.body, 'click');
+    return event;
+  });
+
+  // END-SNIPPET
+
+  // BEGIN-SNIPPET waitForProperty
+  startAll = task(async () => {
+    this.bazValue = 1;
+    this.state = 'Start.';
+    this.foo.perform();
+    this.bar.perform();
+    this.baz.perform();
+  });
+
+  foo = task(async () => {
+    await timeout(500);
+  });
+
+  bar = task(async () => {
+    await waitForProperty(this, 'foo.isIdle');
+    this.state = `${this.state} Foo is idle.`;
+    await timeout(500);
+    this.bazValue = 42;
+    this.state = `${this.state} Bar.`;
+  });
+
+  @tracked bazValue = 1;
+  @tracked state = '';
+
+  baz = task(async () => {
+    let val = await waitForProperty(this, 'bazValue', (v: number) => v % 2 === 0);
+    await timeout(500);
+    this.state = `${this.state} Baz got even value ${val}.`;
+  });
+  // END-SNIPPET
+
+  <template>
+    <h2>Awaiting Events / Conditions</h2>
+
+    <p>
+      In addition to pausing the execution of a task until a yielded promise
+      resolves, it's also possible to pause the execution of a task until
+      some other event or condition occurs by using the following helpers:
+    </p>
+
+    <ul>
+      <li>
+        <a href="/api/global.html#waitForEvent">waitForEvent</a>
+        Pause the task until an Ember/DOM/jQuery event fires.
+      </li>
+      <li>
+        <a href="/api/global.html#waitForProperty">waitForProperty</a>
+        Pause the task until a property on an Ember object becomes
+        some expected value.
+      </li>
+      <li>
+        <a href="/api/global.html#waitForQueue">waitForQueue</a>
+        Pause the task and resume execution within a specific
+        Ember Run Loop queue.
+      </li>
+    </ul>
+
+    <p>
+      The patterns described below can be seen as alternatives to using observers
+      and other patterns that are often prone to abuse; proper use of observers or
+      Ember.Evented hooks often requires conditionals and defensive programming to
+      ensure that the app is in some expected state before running the logic in that
+      hook, which is the kind of error-prone busywork that ember-concurrency
+      intends to prevent.
+    </p>
+
+    <p>
+      By expressing event-driven code within tasks using the patterns below, you are
+      already heavily constraining the conditions in which that event or observer can fire,
+      which means you don't have to write nearly as much guard/cleanup logic to ensure that
+      an event doesn't fire at an unexpected time/state.
+    </p>
+
+    <h3>Waiting for Ember & DOM / jQuery Events</h3>
+
+    <p>
+      You can use <code><a href="/api/global.html#waitForEvent">waitForEvent(object, eventName)</a></code> to pause your task until
+      an Ember.Evented or DOM / jQuery Event fires.
+      <code>object</code> must include Ember.Evented (or support <code>.one()</code>
+      and <code>.off()</code>) or be a valid DOM EventTarget (or support
+      <code>.addEventListener()</code> and <code>.removeEventListener()</code>).
+    </p>
+
+    <p>
+      This is useful for when you want to dynamically wait for an event to fire
+      within a task, but you don't want to have to set up a Promise that
+      resolves when the event fires.
+    </p>
+
+    <h3>Example</h3>
+
+    <p>
+      Try clicking around the page; <code>waitForEvent</code> will install
+      handlers and wait for the specified Ember, DOM or jQuery event to fire;
+      the value returned from <code>await</code> is the event that was fired.
+    </p>
+
+    {{!BEGIN-SNIPPET waitForEvent}}
+    <h4>
+      domEvent: (x={{this.domEvent.offsetX}}, y={{this.domEvent.offsetX}})
+    </h4>
+
+    <h4>
+      jqueryEvent: (x={{this.jQueryEvent.offsetX}}, y={{this.jQueryEvent.offsetX}})
+    </h4>
+
+    <h4>
+      emberEvent: (v={{this.emberEvent.v}})
+    </h4>
+    {{!END-SNIPPET}}
+
+    <CodeSnippet @name="waitForEvent.js" />
+    <CodeSnippet @name="waitForEvent.hbs" />
+
+    <h3>Example with Derived State</h3>
+
+    <p>
+      Sometimes, it's desirable to know whether a certain part of a task
+      is executing, rather than the whole task. For instance, in the example
+      below, the <code>waiterLoop</code> task has an infinite loop, so
+      <code>waiterLoop.isRunning</code> will always be true. If you want
+      to know whether a specific part of that loop is running, then you
+      can just extract some of that logic into another task and check
+      if that subtask's <code>isRunning</code> property in the template.
+    </p>
+
+    {{!BEGIN-SNIPPET waitForEvent-derived-state}}
+    <h4>
+      {{#if this.waiter.isRunning}}
+        Please click somewhere...
+      {{else}}
+        Thanks!
+      {{/if}}
+    </h4>
+    {{!END-SNIPPET}}
+
+    <CodeSnippet @name="waitForEvent-derived-state.js" />
+    <CodeSnippet @name="waitForEvent-derived-state.hbs" />
+
+    <h3>Waiting for a condition / property</h3>
+
+    <p>
+      You can use <code><a href="/api/global.html#waitForProperty">waitForProperty(object, property, callbackOrValue)</a></code>
+      to pause your task until a property on an Ember Object becomes a certain value.
+      This can be used in a variety of use cases, including coordination execution
+      between concurrent tasks.
+    </p>
+
+    {{!BEGIN-SNIPPET waitForProperty}}
+    <button {{on "click" this.startAll.perform}} type="button">
+      Start
+    </button>
+
+    <h5>
+      State: {{this.state}}
+    </h5>
+    {{!END-SNIPPET}}
+
+    <CodeSnippet @name="waitForProperty.js" />
+    <CodeSnippet @name="waitForProperty.hbs" />
+  </template>
+}
