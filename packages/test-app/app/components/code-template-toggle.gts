@@ -1,15 +1,15 @@
-import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
+import { on } from '@ember/modifier';
 import { action } from '@ember/object';
 import { guidFor } from '@ember/object/internals';
-import { on } from '@ember/modifier';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 
 import CodeSnippet from './code-snippet';
 
 interface CodeTemplateToggleSignature {
   Args: {
-    templateSnippet: string;
-    codeSnippet: string;
+    codeSnippet1: string;
+    codeSnippet2: string;
   };
 }
 
@@ -24,7 +24,7 @@ export default class CodeTemplateToggleComponent extends Component<CodeTemplateT
 
   constructor(owner: unknown, args: CodeTemplateToggleSignature['Args']) {
     super(owner, args);
-    
+
     // Use a micro-task to ensure DOM is ready
     Promise.resolve().then(() => {
       const element = document.getElementById(this.id);
@@ -75,14 +75,20 @@ export default class CodeTemplateToggleComponent extends Component<CodeTemplateT
 
   <template>
     <div id={{this.id}}>
-      <div class="code-template-toggle">
-        <div class="code-template-toggle-section {{if this.showCode "hidden"}}">
-          <CodeSnippet @name={{@templateSnippet}} />
+      <div class='code-template-toggle'>
+        <div class='code-template-toggle-section {{if this.showCode "hidden"}}'>
+          <CodeSnippet @name={{@codeSnippet2}} />
         </div>
-        <div class="code-template-toggle-section {{if this.showCode "" "hidden"}}">
-          <CodeSnippet @name={{@codeSnippet}} />
+        <div
+          class='code-template-toggle-section {{if this.showCode "" "hidden"}}'
+        >
+          <CodeSnippet @name={{@codeSnippet1}} />
         </div>
-        <span role="button" class="button code-template-toggle-button" {{on "click" this.toggle}}>
+        <span
+          role='button'
+          class='button code-template-toggle-button'
+          {{on 'click' this.toggle}}
+        >
           {{this.toggleDescription}}
         </span>
       </div>
