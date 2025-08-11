@@ -8,11 +8,7 @@ import LoadingSpinner from './loading-spinner';
 
 // BEGIN-SNIPPET better-syntax-8
 
-interface Tutorial7Signature {
-  Args: {};
-}
-
-export default class Tutorial7 extends Component<Tutorial7Signature> {
+export default class Tutorial7 extends Component {
   @tracked result = null;
 
   geolocation = new Geolocation();
@@ -29,7 +25,6 @@ export default class Tutorial7 extends Component<Tutorial7Signature> {
 
   <template>
     <div class="tutorial-example">
-      {{! BEGIN-SNIPPET better-syntax-8 }}
       <button {{on "click" this.findStores.perform}} type="button">
         Find Nearby Stores
         {{#if this.findStores.isRunning}}
@@ -47,7 +42,6 @@ export default class Tutorial7 extends Component<Tutorial7Signature> {
           </li>
         {{/each}}
       {{/if}}
-      {{! END-SNIPPET }}
 
       <span class="tutorial-example-label">Example</span>
     </div>

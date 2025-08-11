@@ -8,11 +8,7 @@ import LoadingSpinner from './loading-spinner';
 
 // BEGIN-SNIPPET better-syntax-4
 
-interface Tutorial3Signature {
-  Args: {};
-}
-
-export default class Tutorial3 extends Component<Tutorial3Signature> {
+export default class Tutorial3 extends Component {
   @tracked result = null;
   @tracked isFindingStores = false;
 
@@ -43,7 +39,6 @@ export default class Tutorial3 extends Component<Tutorial3Signature> {
 
   <template>
     <div class="tutorial-example">
-      {{! BEGIN-SNIPPET better-syntax-4 }}
       <button {{on "click" this.findStores}} type="button">
         Find Nearby Stores
         {{#if this.isFindingStores}}
@@ -59,7 +54,6 @@ export default class Tutorial3 extends Component<Tutorial3Signature> {
           </li>
         {{/each}}
       {{/if}}
-      {{! END-SNIPPET }}
 
       <span class="tutorial-example-label">Example</span>
     </div>

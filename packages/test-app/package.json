@@ -60,7 +60,7 @@
     "ember-cli-inject-live-reload": "^2.1.0",
     "ember-cli-sass": "^10.0.1",
     "ember-cli-sri": "^2.1.1",
-    "ember-code-snippet": "^3.0.0",
+    "ember-code-snippet": "ef4/ember-code-snippet",
     "ember-cli-terser": "^4.0.2",
     "ember-concurrency": "workspace:*",
     "ember-fetch": "^8.1.2",

@@ -1,18 +1,14 @@
+import { on } from '@ember/modifier';
+import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { action } from '@ember/object';
-import { on } from '@ember/modifier';
-import { Store, Geolocation } from './shared-tutorial';
+import { Geolocation, Store } from './shared-tutorial';
 
 import LoadingSpinner from './loading-spinner';
 
 // BEGIN-SNIPPET better-syntax-2
 
-interface Tutorial1Signature {
-  Args: {};
-}
-
-export default class Tutorial1 extends Component<Tutorial1Signature> {
+export default class Tutorial1 extends Component {
   @tracked result = null;
   @tracked isFindingStores = false; // ++
 
@@ -34,9 +30,8 @@ export default class Tutorial1 extends Component<Tutorial1Signature> {
   }
 
   <template>
-    <div class="tutorial-example">
-      {{! BEGIN-SNIPPET better-syntax-2 }}
-      <button {{on "click" this.findStores}} type="button">
+    <div class='tutorial-example'>
+      <button {{on 'click' this.findStores}} type='button'>
         Find Nearby Stores
         {{#if this.isFindingStores}}
           {{! ++ }}
@@ -48,13 +43,13 @@ export default class Tutorial1 extends Component<Tutorial1Signature> {
         {{#each this.result.stores as |s|}}
           <li>
             <strong>{{s.name}}</strong>:
-            {{s.distance}} miles away
+            {{s.distance}}
+            miles away
           </li>
         {{/each}}
       {{/if}}
-      {{! END-SNIPPET }}
 
-      <span class="tutorial-example-label">Example</span>
+      <span class='tutorial-example-label'>Example</span>
     </div>
   </template>
 }

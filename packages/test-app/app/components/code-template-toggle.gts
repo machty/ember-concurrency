@@ -13,10 +13,9 @@ interface CodeTemplateToggleSignature {
   };
 }
 
-export default class CodeTemplateToggleComponent extends Component<CodeTemplateToggleSignature> {
+export default class CodeTemplateToggle extends Component<CodeTemplateToggleSignature> {
   id = guidFor(this);
-  toggleDescription = 'Toggle JS / Template';
-  @tracked showCode = true;
+  @tracked showCodeSnippet1 = true;
   _toggleTimer = null;
 
   maxHeight = 0;
@@ -57,7 +56,7 @@ export default class CodeTemplateToggleComponent extends Component<CodeTemplateT
 
   @action
   toggle() {
-    this.showCode = !this.showCode;
+    this.showCodeSnippet1 = !this.showCodeSnippet1;
   }
 
   _createResizeObserver(onMaxHeightChange: (maxHeight: number) => void) {
@@ -76,21 +75,29 @@ export default class CodeTemplateToggleComponent extends Component<CodeTemplateT
   <template>
     <div id={{this.id}}>
       <div class='code-template-toggle'>
-        <div class='code-template-toggle-section {{if this.showCode "hidden"}}'>
-          <CodeSnippet @name={{@codeSnippet2}} />
-        </div>
         <div
-          class='code-template-toggle-section {{if this.showCode "" "hidden"}}'
+          class='code-template-toggle-section
+            {{if this.showCodeSnippet1 "" "hidden"}}'
         >
           <CodeSnippet @name={{@codeSnippet1}} />
         </div>
-        <span
-          role='button'
-          class='button code-template-toggle-button'
-          {{on 'click' this.toggle}}
-        >
-          {{this.toggleDescription}}
-        </span>
+
+        {{#if @codeSnippet2}}
+          <div
+            class='code-template-toggle-section
+              {{if this.showCodeSnippet1 "hidden"}}'
+          >
+            <CodeSnippet @name={{@codeSnippet2}} />
+          </div>
+
+          <span
+            role='button'
+            class='button code-template-toggle-button'
+            {{on 'click' this.toggle}}
+          >
+            Diff
+          </span>
+        {{/if}}
       </div>
     </div>
   </template>

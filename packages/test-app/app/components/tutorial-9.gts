@@ -1,18 +1,14 @@
+import { on } from '@ember/modifier';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { on } from '@ember/modifier';
 import { task } from 'ember-concurrency';
-import { Store, Geolocation } from './shared-tutorial';
+import { Geolocation, Store } from './shared-tutorial';
 
 import LoadingSpinner from './loading-spinner';
 
 // BEGIN-SNIPPET better-syntax-10
 
-interface Tutorial9Signature {
-  Args: {};
-}
-
-export default class Tutorial9 extends Component<Tutorial9Signature> {
+export default class Tutorial9 extends Component {
   @tracked result = null;
 
   geolocation = new Geolocation();
@@ -28,9 +24,8 @@ export default class Tutorial9 extends Component<Tutorial9Signature> {
   });
 
   <template>
-    <div class="tutorial-example">
-      {{! BEGIN-SNIPPET better-syntax-10 }}
-      <button {{on "click" this.findStores.perform}} type="button">
+    <div class='tutorial-example'>
+      <button {{on 'click' this.findStores.perform}} type='button'>
         Find Nearby Stores
         {{#if this.findStores.isRunning}}
           <LoadingSpinner />
@@ -46,9 +41,8 @@ export default class Tutorial9 extends Component<Tutorial9Signature> {
           </li>
         {{/each}}
       {{/if}}
-      {{! END-SNIPPET }}
 
-      <span class="tutorial-example-label">Example</span>
+      <span class='tutorial-example-label'>Example</span>
     </div>
   </template>
 }

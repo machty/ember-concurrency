@@ -14,7 +14,6 @@ interface PressAndHoldButtonSignature {
 // BEGIN-SNIPPET increment-button
 export default class PressAndHoldButtonComponent extends Component<PressAndHoldButtonSignature> {
   <template>
-    {{! BEGIN-SNIPPET increment-button }}
     <button
       {{! template-lint-disable no-pointer-down-event-binding }}
       {{on 'touchstart' @press}}
@@ -26,7 +25,6 @@ export default class PressAndHoldButtonComponent extends Component<PressAndHoldB
     >
       {{yield}}
     </button>
-    {{! END-SNIPPET }}
   </template>
 }
 // END-SNIPPET

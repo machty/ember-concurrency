@@ -6,11 +6,7 @@ import { Store, Geolocation } from './shared-tutorial';
 
 // BEGIN-SNIPPET better-syntax-7
 
-interface Tutorial6Signature {
-  Args: {};
-}
-
-export default class Tutorial6 extends Component<Tutorial6Signature> {
+export default class Tutorial6 extends Component {
   @tracked result = null;
 
   geolocation = new Geolocation();
@@ -29,7 +25,6 @@ export default class Tutorial6 extends Component<Tutorial6Signature> {
     <div class="tutorial-example">
       {{! template-lint-disable block-indentation }}
 
-      {{! BEGIN-SNIPPET better-syntax-7 }}
       <button {{on "click" this.findStores.perform}} type="button">
         {{! ++ }}
         Find Nearby Stores
@@ -44,7 +39,6 @@ export default class Tutorial6 extends Component<Tutorial6Signature> {
           </li>
         {{/each}}
       {{/if}}
-      {{! END-SNIPPET }}
 
       <span class="tutorial-example-label">Example</span>
     </div>

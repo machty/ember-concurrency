@@ -10,7 +10,7 @@ type Signature = {
   };
 };
 
-export default class CodeTemplateToggleComponent extends Component<Signature> {
+export default class CodeSnippet extends Component<Signature> {
   @cached
   get snippet() {
     return getCodeSnippet(this.args.name);
