@@ -2,7 +2,6 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import { on } from '@ember/modifier';
-import { if } from '@ember/helper';
 import { Store, Geolocation } from './shared-tutorial';
 
 import LoadingSpinner from './loading-spinner';

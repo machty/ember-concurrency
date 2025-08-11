@@ -8,7 +8,6 @@ import {
 } from 'ember-concurrency';
 import { tracked } from '@glimmer/tracking';
 import { on } from '@ember/modifier';
-import { if } from '@ember/helper';
 
 import CodeSnippet from './code-snippet';
 

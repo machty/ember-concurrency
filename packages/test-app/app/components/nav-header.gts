@@ -1,5 +1,4 @@
 import Component from '@glimmer/component';
-import { if } from '@ember/helper';
 import { LinkTo } from '@ember/routing';
 
 interface NavHeaderSignature {

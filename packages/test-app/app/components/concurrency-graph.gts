@@ -1,32 +1,45 @@
-import { oneWay } from '@ember/object/computed';
 import { A } from '@ember/array';
-import Component from '@glimmer/component';
-import { capitalize } from '@ember/string';
-import EmberObject, { action, computed } from '@ember/object';
-import { animationFrame, task } from 'ember-concurrency';
-import { tracked } from '@glimmer/tracking';
 import { on } from '@ember/modifier';
-import { if } from '@ember/helper';
-import { each } from '@ember/helper';
-import pickFrom from '../helpers/pickFrom';
+import { action } from '@ember/object';
+import { capitalize } from '@ember/string';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { animationFrame, task } from 'ember-concurrency';
 import scale from '../helpers/scale';
 import subtract from '../helpers/subtract';
-import width from '../helpers/width';
 import sum from '../helpers/sum';
+import width from '../helpers/width';
 
-let Tracker = EmberObject.extend({
-  id: null,
-  performTime: null,
-  startTime: null,
-  endTime: oneWay('comp.timeElapsed'),
-  comp: null,
-  taskInstance: null,
-  isCanceled: oneWay('taskInstance.isCanceled'),
-  state: computed('taskInstance.state', function () {
+function pickFrom(list, index) {
+  return list[index % list.length];
+}
+
+class Tracker {
+  @tracked hasStarted = false;
+  @tracked startTime: number;
+  @tracked taskInstance: any;
+
+  constructor(
+    public id: number,
+    public performTime: number,
+    startTime: number,
+    public comp: ConcurrencyGraphComponent,
+    taskInstance: any,
+  ) {
+    this.startTime = startTime;
+    this.taskInstance = taskInstance;
+  }
+
+  get endTime() {
+    return this.comp.timeElapsed;
+  }
+  get isCanceled() {
+    return this.taskInstance.isCanceled;
+  }
+  get state() {
     return capitalize(this.taskInstance.state);
-  }),
-  hasStarted: false,
-});
+  }
+}
 
 interface ConcurrencyGraphSignature {
   Args: {
@@ -35,7 +48,7 @@ interface ConcurrencyGraphSignature {
 }
 
 export default class ConcurrencyGraphComponent extends Component<ConcurrencyGraphSignature> {
-  @tracked trackers = A();
+  @tracked trackers: Tracker[] = [];
   @tracked timeElapsed = 0;
   startTime: number | null = null;
   nextId = 0;
@@ -48,17 +61,15 @@ export default class ConcurrencyGraphComponent extends Component<ConcurrencyGrap
     this.restart();
   }
 
-  @computed('trackers.[]')
   get lowerLimit() {
     let trackers = this.trackers;
     if (!trackers) {
       return 0;
     }
-    let v = Math.min(...trackers.mapBy('performTime'));
+    let v = Math.min(...trackers.map((tracker) => tracker.performTime));
     return v;
   }
 
-  @computed('timeElapsed')
   get upperLimit() {
     let timeElapsed = this.timeElapsed;
     return Math.max(10000, timeElapsed);
@@ -84,61 +95,88 @@ export default class ConcurrencyGraphComponent extends Component<ConcurrencyGrap
   @action
   startTask() {
     this.startTime = this.startTime || +new Date();
-    let tracker = Tracker.create({
-      id: this.nextId++,
-      performTime: this.timeElapsed,
-      comp: this,
-      start: () => {
-        tracker.set('hasStarted', true);
-        tracker.set('startTime', this.timeElapsed || 1);
-      },
-      end: () => {
-        tracker.set('endTime', this.timeElapsed);
-      },
-    });
+    let tracker = new Tracker(
+      this.nextId++,
+      this.timeElapsed,
+      this.startTime,
+      this,
+      null,
+    );
 
     let task = this.args.task;
     let taskInstance = task.perform(tracker);
     tracker.set('taskInstance', taskInstance);
 
-    this.trackers.pushObject(tracker);
+    this.trackers = [...this.trackers, tracker];
     this.ticker.perform();
   }
 
   <template>
     <div>
-      <button type="button" {{on "click" this.startTask}}>task.perform()</button>
-      <button type="button" {{on "click" this.restart}}>Clear Timeline</button>
+      <button
+        type='button'
+        {{on 'click' this.startTask}}
+      >task.perform()</button>
+      <button type='button' {{on 'click' this.restart}}>Clear Timeline</button>
       {{#if @task.isRunning}}
-        <button type="button" {{on "click" @task.cancelAll}}>Cancel All</button>
+        <button type='button' {{on 'click' @task.cancelAll}}>Cancel All</button>
       {{/if}}
 
-      <svg class="concurrency-graph">
+      <svg class='concurrency-graph'>
         {{#each this.trackers as |tracker|}}
-          <g class="concurrency-graph-tracker">
+          <g class='concurrency-graph-tracker'>
             {{#let (pickFrom this.colors tracker.id) as |color|}}
               {{#if tracker.hasStarted}}
-                <rect x="{{scale (subtract tracker.startTime this.lowerLimit) this.lowerLimit this.upperLimit}}%"
-                      y={{pickFrom this.labelHeights tracker.id}}
-                      height="20px"
-                      width="{{scale (width tracker.startTime tracker.endTime this.upperLimit) this.lowerLimit this.upperLimit}}%"
-                      stroke="black"
-                      fill={{color}}
-                      fill-opacity="0.3" />
+                <rect
+                  x='{{scale
+                    (subtract tracker.startTime this.lowerLimit)
+                    this.lowerLimit
+                    this.upperLimit
+                  }}%'
+                  y={{pickFrom this.labelHeights tracker.id}}
+                  height='20px'
+                  width='{{scale
+                    (width tracker.startTime tracker.endTime this.upperLimit)
+                    this.lowerLimit
+                    this.upperLimit
+                  }}%'
+                  stroke='black'
+                  fill={{color}}
+                  fill-opacity='0.3'
+                />
               {{/if}}
 
-              {{#let (scale (subtract tracker.performTime this.lowerLimit) this.lowerLimit this.upperLimit) as |x|}}
-                <text x="{{sum 0.5 x}}%"
-                      y={{sum 15 (pickFrom this.labelHeights tracker.id)}}
-                      font-family="Raleway"
-                      fill={{color}}
-                      font-size="14"
-                      text-decoration={{if tracker.isCanceled "line-through" "none"}}
-                      font-style={{if tracker.startTime "normal" "italic"}} >
+              {{#let
+                (scale
+                  (subtract tracker.performTime this.lowerLimit)
+                  this.lowerLimit
+                  this.upperLimit
+                )
+                as |x|
+              }}
+                <text
+                  x='{{sum 0.5 x}}%'
+                  y={{sum 15 (pickFrom this.labelHeights tracker.id)}}
+                  font-family='Raleway'
+                  fill={{color}}
+                  font-size='14'
+                  text-decoration={{if
+                    tracker.isCanceled
+                    'line-through'
+                    'none'
+                  }}
+                  font-style={{if tracker.startTime 'normal' 'italic'}}
+                >
                   {{tracker.state}}
                 </text>
                 {{#let (pickFrom this.labelHeights tracker.id) as |y|}}
-                  <line x1="{{x}}%" y1={{y}} x2="{{x}}%" y2={{sum 20 y}} stroke={{color}} />
+                  <line
+                    x1='{{x}}%'
+                    y1={{y}}
+                    x2='{{x}}%'
+                    y2={{sum 20 y}}
+                    stroke={{color}}
+                  />
                 {{/let}}
               {{/let}}
             {{/let}}
@@ -146,7 +184,7 @@ export default class ConcurrencyGraphComponent extends Component<ConcurrencyGrap
         {{/each}}
 
         {{#let (scale this.timeElapsed this.lowerLimit this.upperLimit) as |x|}}
-          <line x1="{{x}}%" y1="0" x2="{{x}}%" y2="100" stroke="black" />
+          <line x1='{{x}}%' y1='0' x2='{{x}}%' y2='100' stroke='black' />
         {{/let}}
       </svg>
     </div>
