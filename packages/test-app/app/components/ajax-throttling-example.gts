@@ -8,15 +8,11 @@ export function color(color) {
 }
 
 // BEGIN-SNIPPET ajax-throttling
-interface AjaxThrottlingExampleSignature {
-  Args: {};
-}
-
-export default class AjaxThrottlingExampleComponent extends Component<AjaxThrottlingExampleSignature> {
+export default class AjaxThrottlingExample extends Component {
   @tracked logs: Array<{ color: string; message: string }> = [];
 
-  constructor(owner: unknown, args: AjaxThrottlingExampleSignature['Args']) {
-    super(owner, args);
+  constructor(...args: ConstructorParameters<typeof Component>) {
+    super(...args);
     this.loopingAjaxTask.perform('#0000FF');
     this.loopingAjaxTask.perform('#8A2BE2');
     this.loopingAjaxTask.perform('#A52A2A');
