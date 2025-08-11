@@ -1,9 +1,9 @@
 import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { enqueueTask, task, timeout } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 
-export function color(color) {
+export function color(color: string) {
   return htmlSafe(`color: ${color};`);
 }
 
@@ -13,17 +13,21 @@ export default class AjaxThrottlingExample extends Component {
 
   constructor(...args: ConstructorParameters<typeof Component>) {
     super(...args);
-    this.loopingAjaxTask.perform('#0000FF');
-    this.loopingAjaxTask.perform('#8A2BE2');
-    this.loopingAjaxTask.perform('#A52A2A');
-    this.loopingAjaxTask.perform('#DC143C');
-    this.loopingAjaxTask.perform('#20B2AA');
-    this.loopingAjaxTask.perform('#FF1493');
-    this.loopingAjaxTask.perform('#228B22');
-    this.loopingAjaxTask.perform('#DAA520');
+
+    // Kick off tasks on a timeout to avoid race conditions
+    setTimeout(() => {
+      this.loopingAjaxTask.perform('#0000FF');
+      this.loopingAjaxTask.perform('#8A2BE2');
+      this.loopingAjaxTask.perform('#A52A2A');
+      this.loopingAjaxTask.perform('#DC143C');
+      this.loopingAjaxTask.perform('#20B2AA');
+      this.loopingAjaxTask.perform('#FF1493');
+      this.loopingAjaxTask.perform('#228B22');
+      this.loopingAjaxTask.perform('#DAA520');
+    }, 1);
   }
 
-  enqueuedAjaxTask = enqueueTask({ maxConcurrency: 3 }, async () => {
+  enqueuedAjaxTask = task({ enqueue: true, maxConcurrency: 3 }, async () => {
     // simulate slow AJAX
     await timeout(2000 + 2000 * Math.random());
     return {};
