@@ -7,7 +7,8 @@ import type Geolocation from '../services/geolocation';
 import type Store from '../services/store';
 import type { FindStoresResult } from '../services/store';
 
-import LoadingSpinner from './loading-spinner.gts';
+// @ts-expect-error - TS requires the extension to be provided by not ember-cli?
+import LoadingSpinner from './loading-spinner';
 
 // BEGIN-SNIPPET better-syntax-10
 export default class Tutorial9 extends Component {
