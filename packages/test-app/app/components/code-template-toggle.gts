@@ -1,10 +1,11 @@
+import { registerDestructor } from '@ember/destroyable';
 import { on } from '@ember/modifier';
 import { action } from '@ember/object';
 import { guidFor } from '@ember/object/internals';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-
 import CodeSnippet from './code-snippet';
+import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 
 interface CodeTemplateToggleSignature {
   Args: {
@@ -21,32 +22,25 @@ export default class CodeTemplateToggle extends Component<CodeTemplateToggleSign
   maxHeight = 0;
   resizeObserver: ResizeObserver | null = null;
 
-  constructor(owner: unknown, args: CodeTemplateToggleSignature['Args']) {
-    super(owner, args);
-
-    // Use a micro-task to ensure DOM is ready
-    Promise.resolve().then(() => {
-      const element = document.getElementById(this.id);
-      if (!element) {
-        return;
+  @action
+  setupResizeObserver(element: HTMLDivElement) {
+    const resizeObserver = this._createResizeObserver((maxHeight) => {
+      const toggle = element.querySelector('.code-template-toggle');
+      if (toggle) {
+        (toggle as HTMLElement).style.height = `${maxHeight}px`;
       }
-
-      const resizeObserver = this._createResizeObserver((maxHeight) => {
-        const toggle = element.querySelector('.code-template-toggle');
-        if (toggle) {
-          (toggle as HTMLElement).style.height = `${maxHeight}px`;
-        }
-      });
-      this.resizeObserver = resizeObserver;
-
-      const sectionToggles = element.querySelectorAll(
-        '.code-template-toggle-section',
-      );
-
-      sectionToggles.forEach((sectionToggle) => {
-        resizeObserver.observe(sectionToggle);
-      });
     });
+    this.resizeObserver = resizeObserver;
+
+    const sectionToggles = element.querySelectorAll(
+      '.code-template-toggle-section',
+    );
+
+    sectionToggles.forEach((sectionToggle) => {
+      resizeObserver.observe(sectionToggle);
+    });
+
+    registerDestructor;
   }
 
   willDestroy() {
@@ -73,7 +67,7 @@ export default class CodeTemplateToggle extends Component<CodeTemplateToggleSign
   }
 
   <template>
-    <div id={{this.id}}>
+    <div id={{this.id}} {{didInsert this.setupResizeObserver}}>
       <div class='code-template-toggle'>
         <div
           class='code-template-toggle-section
