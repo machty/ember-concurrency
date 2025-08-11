@@ -22,12 +22,23 @@ const SUFFIXES = [
   ' Donuts',
 ];
 
+export type FindStoresResult = {
+  stores: StoreData[];
+};
+
+export type StoreData = {
+  lat: number;
+  long: number;
+  name: string;
+  distance: string;
+};
+
 function randomFrom(array: string[]) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
 class Store {
-  async getNearbyStores() {
+  async getNearbyStores(_coords: any): Promise<FindStoresResult> {
     let num = 3; //Math.floor(Math.random() * 2) + 5;
     let stores = [];
     for (let i = 0; i < num; ++i) {

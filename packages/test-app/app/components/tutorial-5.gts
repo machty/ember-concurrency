@@ -2,13 +2,12 @@ import { on } from '@ember/modifier';
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { Geolocation, Store } from './shared-tutorial';
-
-import LoadingSpinner from './loading-spinner';
+import LoadingSpinner from './loading-spinner.gts';
+import { type FindStoresResult, Geolocation, Store } from './shared-tutorial';
 
 // BEGIN-SNIPPET better-syntax-6
-export default class Tutorial5 extends Component<Tutorial5Signature> {
-  @tracked result = null;
+export default class Tutorial5 extends Component {
+  @tracked result: FindStoresResult | null = null;
   @tracked isFindingStores = false;
 
   geolocation = new Geolocation();

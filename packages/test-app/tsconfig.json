@@ -12,7 +12,8 @@
       "test-app/tests/*": ["tests/*"],
       "test-app/*": ["app/*"],
       "*": ["types/*"]
-    }
+    },
+    "experimentalDecorators": true
   },
   "exclude": ["snippets"]
 }
