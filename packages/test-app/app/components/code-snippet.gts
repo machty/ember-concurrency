@@ -21,6 +21,10 @@ export default class CodeSnippet extends Component<Signature> {
       return 'markup';
     }
 
+    if (this.snippet.language === 'gts') {
+      return 'typescript';
+    }
+
     return this.snippet.language;
   }
 
