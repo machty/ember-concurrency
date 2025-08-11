@@ -29,7 +29,7 @@ export default class MyButtonComponent extends Component<MyButtonSignature> {
   }
 
   <template>
-    <button {{on 'click' this.onClick}} type='button'>
+    <button {{on 'click' this.onClick}} type='button' ...attributes>
       {{yield}}
     </button>
   </template>
