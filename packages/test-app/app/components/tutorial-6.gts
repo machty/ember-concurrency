@@ -1,16 +1,18 @@
+import { on } from '@ember/modifier';
+import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { on } from '@ember/modifier';
 import { task } from 'ember-concurrency';
-import { Store, Geolocation } from './shared-tutorial';
+import type Geolocation from '../services/geolocation';
+import type Store from '../services/store';
+import type { FindStoresResult } from '../services/store';
 
 // BEGIN-SNIPPET better-syntax-7
-
 export default class Tutorial6 extends Component {
-  @tracked result = null;
+  @service declare geolocation: Geolocation;
+  @service declare store: Store;
 
-  geolocation = new Geolocation();
-  store = new Store();
+  @tracked result: FindStoresResult | null = null;
 
   findStores = task(async () => {
     let geolocation = this.geolocation;
@@ -22,10 +24,10 @@ export default class Tutorial6 extends Component {
   });
 
   <template>
-    <div class="tutorial-example">
+    <div class='tutorial-example'>
       {{! template-lint-disable block-indentation }}
 
-      <button {{on "click" this.findStores.perform}} type="button">
+      <button {{on 'click' this.findStores.perform}} type='button'>
         {{! ++ }}
         Find Nearby Stores
       </button>
@@ -40,7 +42,7 @@ export default class Tutorial6 extends Component {
         {{/each}}
       {{/if}}
 
-      <span class="tutorial-example-label">Example</span>
+      <span class='tutorial-example-label'>Example</span>
     </div>
   </template>
 }

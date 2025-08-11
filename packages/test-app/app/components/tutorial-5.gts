@@ -1,17 +1,20 @@
 import { on } from '@ember/modifier';
 import { action } from '@ember/object';
+import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
+import type Geolocation from '../services/geolocation';
+import type Store from '../services/store';
 import LoadingSpinner from './loading-spinner.gts';
-import { type FindStoresResult, Geolocation, Store } from './shared-tutorial';
+import type { FindStoresResult } from './shared-tutorial';
 
 // BEGIN-SNIPPET better-syntax-6
 export default class Tutorial5 extends Component {
+  @service declare geolocation: Geolocation;
+  @service declare store: Store;
+
   @tracked result: FindStoresResult | null = null;
   @tracked isFindingStores = false;
-
-  geolocation = new Geolocation();
-  store = new Store();
 
   @action
   async findStores() {

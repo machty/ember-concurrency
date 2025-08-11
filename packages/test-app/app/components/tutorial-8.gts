@@ -1,18 +1,20 @@
 import { on } from '@ember/modifier';
+import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { task } from 'ember-concurrency';
-import { Geolocation, Store } from './shared-tutorial';
+import type Geolocation from '../services/geolocation';
+import type Store from '../services/store';
+import type { FindStoresResult } from '../services/store';
 
-import LoadingSpinner from './loading-spinner';
+import LoadingSpinner from './loading-spinner.gts';
 
 // BEGIN-SNIPPET better-syntax-9
-
 export default class Tutorial8 extends Component {
-  @tracked result = null;
+  @service declare geolocation: Geolocation;
+  @service declare store: Store;
 
-  geolocation = new Geolocation();
-  store = new Store();
+  @tracked result: FindStoresResult | null = null;
 
   findStores = task({ drop: true }, async () => {
     // ++

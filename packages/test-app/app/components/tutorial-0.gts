@@ -1,16 +1,20 @@
 import { on } from '@ember/modifier';
 import { action } from '@ember/object';
+import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { Geolocation, Store } from './shared-tutorial';
+import type Geolocation from '../services/geolocation';
+import {
+  type FindStoresResult,
+  type default as Store,
+} from '../services/store';
 
 // BEGIN-SNIPPET better-syntax-1
-
 export default class Tutorial0 extends Component {
-  @tracked result = null;
+  @tracked result: FindStoresResult | null = null;
 
-  geolocation = new Geolocation();
-  store = new Store();
+  @service declare geolocation: Geolocation;
+  @service declare store: Store;
 
   @action
   async findStores() {

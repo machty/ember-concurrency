@@ -1,19 +1,21 @@
 import { on } from '@ember/modifier';
 import { action } from '@ember/object';
+import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { Geolocation, Store } from './shared-tutorial';
+import type Geolocation from '../services/geolocation';
+import type Store from '../services/store';
+import type { FindStoresResult } from '../services/store';
 
-import LoadingSpinner from './loading-spinner';
+import LoadingSpinner from './loading-spinner.gts';
 
 // BEGIN-SNIPPET better-syntax-2
-
 export default class Tutorial1 extends Component {
-  @tracked result = null;
-  @tracked isFindingStores = false; // ++
+  @service declare geolocation: Geolocation;
+  @service declare store: Store;
 
-  geolocation = new Geolocation();
-  store = new Store();
+  @tracked result: FindStoresResult | null = null;
+  @tracked isFindingStores = false; // ++
 
   @action
   async findStores() {

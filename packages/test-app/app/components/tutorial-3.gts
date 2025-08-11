@@ -1,19 +1,21 @@
+import { on } from '@ember/modifier';
+import { action } from '@ember/object';
+import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { action } from '@ember/object';
-import { on } from '@ember/modifier';
-import { Store, Geolocation } from './shared-tutorial';
+import type Geolocation from '../services/geolocation';
+import type Store from '../services/store';
+import type { FindStoresResult } from '../services/store';
 
-import LoadingSpinner from './loading-spinner';
+import LoadingSpinner from './loading-spinner.gts';
 
 // BEGIN-SNIPPET better-syntax-4
-
 export default class Tutorial3 extends Component {
-  @tracked result = null;
-  @tracked isFindingStores = false;
+  @service declare geolocation: Geolocation;
+  @service declare store: Store;
 
-  geolocation = new Geolocation();
-  store = new Store();
+  @tracked result: FindStoresResult | null = null;
+  @tracked isFindingStores = false;
 
   @action
   async findStores() {
@@ -38,8 +40,8 @@ export default class Tutorial3 extends Component {
   }
 
   <template>
-    <div class="tutorial-example">
-      <button {{on "click" this.findStores}} type="button">
+    <div class='tutorial-example'>
+      <button {{on 'click' this.findStores}} type='button'>
         Find Nearby Stores
         {{#if this.isFindingStores}}
           <LoadingSpinner />
@@ -50,12 +52,13 @@ export default class Tutorial3 extends Component {
         {{#each this.result.stores as |s|}}
           <li>
             <strong>{{s.name}}</strong>:
-            {{s.distance}} miles away
+            {{s.distance}}
+            miles away
           </li>
         {{/each}}
       {{/if}}
 
-      <span class="tutorial-example-label">Example</span>
+      <span class='tutorial-example-label'>Example</span>
     </div>
   </template>
 }

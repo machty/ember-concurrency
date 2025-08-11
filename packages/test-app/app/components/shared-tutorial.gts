@@ -1,74 +1,13 @@
 import { A } from '@ember/array';
 import { action } from '@ember/object';
+import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { timeout } from 'ember-concurrency';
+import type GeolocationService from '../services/geolocation';
+import type StoreService from '../services/store';
 
-const PREFIXES = [
-  'Tomster',
-  'Glimmer',
-  'Transclusion',
-  'Zoey',
-  'Flux',
-  'Reducer',
-];
-
-const SUFFIXES = [
-  'Mart',
-  ' Central',
-  's ᴙ Us',
-  'beds n stuff',
-  'potle',
-  ' Donuts',
-];
-
-export type FindStoresResult = {
-  stores: StoreData[];
-};
-
-export type StoreData = {
-  lat: number;
-  long: number;
-  name: string;
-  distance: string;
-};
-
-function randomFrom(array: string[]) {
-  return array[Math.floor(Math.random() * array.length)];
-}
-
-class Store {
-  async getNearbyStores(_coords: any): Promise<FindStoresResult> {
-    let num = 3; //Math.floor(Math.random() * 2) + 5;
-    let stores = [];
-    for (let i = 0; i < num; ++i) {
-      let name = randomFrom(PREFIXES) + randomFrom(SUFFIXES);
-      stores.push({
-        lat: Math.random() * 60,
-        long: Math.random() * 60,
-        name,
-        distance: Math.random().toFixed(2),
-      });
-    }
-
-    await timeout(800);
-    return { stores };
-  }
-}
-
-class Geolocation {
-  async getCoords() {
-    await timeout(800);
-
-    return {
-      lat: Math.random() * 60,
-      long: Math.random() * 60,
-    };
-  }
-}
-
-// Export the shared services and utility classes for use by tutorial components
-export { Geolocation, Store };
+// Re-export types for use by tutorial components
+export type { FindStoresResult, StoreData } from '../services/store';
 
 interface SharedTutorialSignature {
   Args: {};
@@ -78,15 +17,15 @@ interface SharedTutorialSignature {
 }
 
 export default class SharedTutorialComponent extends Component<SharedTutorialSignature> {
+  @service declare geolocation: GeolocationService;
+  @service declare store: StoreService;
+
   logs = A();
   formData = {
     user: 'machty',
     amount: '9.99',
   };
   @tracked showTemplate = false;
-
-  geolocation = new Geolocation();
-  store = new Store();
 
   @action
   toggleTemplate() {
