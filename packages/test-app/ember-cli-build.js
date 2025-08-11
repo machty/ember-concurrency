@@ -10,8 +10,8 @@ module.exports = function (defaults) {
       enabled: false,
     },
 
-    // snippetPaths: ['snippets'],
-    // snippetSearchPaths: ['app'],
+    snippetPaths: ['snippets'],
+    snippetSearchPaths: ['app'],
 
     'ember-prism': {
       components: ['javascript', 'typescript', 'bash', 'markup'],

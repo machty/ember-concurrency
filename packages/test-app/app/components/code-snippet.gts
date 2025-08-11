@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-// import { getCodeSnippet } from 'ember-code-snippet';
+import { getCodeSnippet } from 'ember-code-snippet';
 import { cached } from '@glimmer/tracking';
 
 import CodeBlock from 'ember-prism/components/code-block';
@@ -13,11 +13,7 @@ type Signature = {
 export default class CodeTemplateToggleComponent extends Component<Signature> {
   @cached
   get snippet() {
-    // return getCodeSnippet(this.args.name);
-    return {
-      language: 'javascript',
-      source: 'console.log("Hello, world!");',
-    };
+    return getCodeSnippet(this.args.name);
   }
 
   get language() {
