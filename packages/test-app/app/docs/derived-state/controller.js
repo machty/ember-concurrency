@@ -42,7 +42,7 @@ export default class DerivedStateController extends Controller {
     this.showLessCommon = event.target.checked;
   }
 
-  tasks = ['doStuff', 'doStuffDrop', 'doStuffEnqueue', 'doStuffRestartable'];
+  tasks = ['doStuff', 'doStuffDrop', 'doStuffEnqueued', 'doStuffRestartable'];
 
   get taskProperties() {
     return [
