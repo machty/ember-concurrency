@@ -1,6 +1,11 @@
+import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { enqueueTask, task, timeout } from 'ember-concurrency';
+
+export function color(color) {
+  return htmlSafe(`color: ${color};`);
+}
 
 // BEGIN-SNIPPET ajax-throttling
 interface AjaxThrottlingExampleSignature {

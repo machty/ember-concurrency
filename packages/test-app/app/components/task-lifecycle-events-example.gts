@@ -1,8 +1,13 @@
 import { registerDestructor } from '@ember/destroyable';
 import { addListener, removeListener } from '@ember/object/events';
+import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
+
+export function color(color) {
+  return htmlSafe(`color: ${color};`);
+}
 
 // BEGIN-SNIPPET task-lifecycle-events
 const COLORS = [
