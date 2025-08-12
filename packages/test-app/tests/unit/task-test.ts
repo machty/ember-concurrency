@@ -13,7 +13,6 @@ module('Unit: task', function (hooks) {
   hooks.afterEach(function () {
     console.log = originalLog;
     console.warn = originalWarn;
-    // (Ember.ENV as any).DEBUG_TASKS = false;
   });
 
   test('task.cancelAll cancels all running task instances', async function (assert) {
@@ -209,35 +208,34 @@ module('Unit: task', function (hooks) {
   });
 
   // TODO: figure out how to reinstate. In the meantime people can use `{ debug: true }` on tasks of interest.
+  test.skip('Ember.ENV.DEBUG_TASKS=true enables basic debugging', function (assert) {
+    assert.expect(1);
 
-  // test('Ember.ENV.DEBUG_TASKS=true enables basic debugging', function (assert) {
-  //   assert.expect(1);
+    // (Ember.ENV as any).DEBUG_TASKS = true;
 
-  //   (Ember.ENV as any).DEBUG_TASKS = true;
+    let logs: any[] = [];
+    console.log = (...args: any[]) => {
+      logs.push(args);
+    };
 
-  //   let logs: any[] = [];
-  //   console.log = (...args: any[]) => {
-  //     logs.push(args);
-  //   };
+    class TestObj {
+      a = task(async () => {
+        await defer().promise;
+      });
+    }
 
-  //   class TestObj {
-  //     a = task(async () => {
-  //       await defer().promise;
-  //     });
-  //   }
+    run(() => {
+      let obj = new TestObj();
+      (obj as any).a.perform();
+      destroy(obj);
+    });
 
-  //   run(() => {
-  //     let obj = new TestObj();
-  //     (obj as any).a.perform();
-  //     destroy(obj);
-  //   });
-
-  //   assert.deepEqual(logs, [
-  //     [
-  //       "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help",
-  //     ],
-  //   ]);
-  // });
+    assert.deepEqual(logs, [
+      [
+        "TaskInstance 'a' was canceled because the object it lives on was destroyed or unrendered. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help",
+      ],
+    ]);
+  });
 
   test('.unlinked().perform() detaches a child task from its parent to avoid parent->child cancelation', function (assert) {
     assert.expect(4);
