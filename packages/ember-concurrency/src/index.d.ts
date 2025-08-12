@@ -294,49 +294,6 @@ interface OnStateCallback<T> {
 // `interface MyThing<T> extends T {}` is not allowed
 interface _AbstractTaskProperty<T extends Task<any, any[]>> {
   /**
-   * Calling `task(...).on(eventName)` configures the task to be
-   * automatically performed when the specified events fire. In
-   * this way, it behaves like
-   * [Ember.on](http://emberjs.com/api/classes/Ember.html#method_on).
-   *
-   * You can use `task(...).on('init')` to perform the task
-   * when the host object is initialized.
-   *
-   * ```js
-   * export default class MyComponent extends Component {
-   *   pollForUpdates = task(async () => {
-   *     // ... this runs when the Component is first created
-   *     // because we specified .on('init')
-   *   }).on('init');
-   *
-   *   handleFoo = task(async (a, b, c) => {
-   *     // this gets performed automatically if the 'foo'
-   *     // event fires on this Component,
-   *     // e.g., if someone called component.trigger('foo')
-   *   }).on('foo');
-   * }
-   * ```
-   *
-   */
-  on(...eventNames: string[]): this;
-
-  /**
-   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
-   * but instead will cause the task to be canceled if any of the
-   * specified events fire on the parent object.
-   *
-   * [See the Live Example](/docs/examples/route-tasks/1)
-   */
-  cancelOn(...eventNames: string[]): this;
-
-  /**
-   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
-   * but instead will cause the task to be performed if any of the
-   * specified properties on the parent object change.
-   */
-  observes(...keys: string[]): this;
-
-  /**
    * Configures the task to cancel old currently task instances
    * to make room for a new one to perform. Sets default
    * maxConcurrency to 1.

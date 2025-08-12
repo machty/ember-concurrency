@@ -23,7 +23,7 @@ class Refresh {
       return this.setTaskInstanceExecutionState(taskInstance, reducer.step());
     });
 
-    this.stateTracker.computeFinalStates((state) => this.applyState(state));
+    this.stateTracker.forEachState((state) => this.applyState(state));
     this.startingInstances.forEach((taskInstance) => taskInstance.start());
 
     return finalTaskInstances;

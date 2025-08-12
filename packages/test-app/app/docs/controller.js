@@ -20,7 +20,6 @@ export const TABLE_OF_CONTENTS = [
   { route: 'docs.error-vs-cancelation', title: 'Handling Errors' },
   { route: 'docs.child-tasks', title: 'Child Tasks' },
   { route: 'docs.derived-state', title: 'Derived State' },
-  { route: 'docs.events', title: 'Awaiting Events / Conditions' },
   { route: 'docs.testing-debugging', title: 'Testing & Debugging' },
   { route: 'docs.typescript', title: 'TypeScript / Glint' },
   { route: 'docs.faq', title: 'FAQ & Fact Sheet' },

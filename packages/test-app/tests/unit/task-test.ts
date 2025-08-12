@@ -2,7 +2,6 @@
 import { A } from '@ember/array';
 import { destroy } from '@ember/destroyable';
 import { later, run } from '@ember/runloop';
-import { settled } from '@ember/test-helpers';
 import Ember from 'ember';
 import { forever, task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
@@ -306,112 +305,6 @@ module('Unit: task', function (hooks) {
     run(() => {
       new TestObj();
     });
-  });
-
-  test('.observes re-performs the task every time the observed property changes in a coalesced manner', async function (assert) {
-    assert.expect(2);
-
-    let values: any[] = [];
-
-    class TestObj {
-      foo = 0;
-
-      observingTask = task(async () => {
-        values.push(this.foo);
-      }).observes('foo');
-    }
-
-    let obj = new TestObj();
-    await settled();
-
-    (obj as any).foo = 1;
-    (obj as any).foo = 2;
-    (obj as any).foo = 3;
-    await settled();
-
-    assert.deepEqual(values, [3]);
-    values = [];
-
-    (obj as any).foo = 4;
-    (obj as any).foo = 5;
-    (obj as any).foo = 6;
-    await settled();
-
-    assert.deepEqual(values, [6]);
-  });
-
-  test('.observes coalesces even with multiple properties', async function (assert) {
-    assert.expect(2);
-
-    let values: any[] = [];
-
-    class TestObj {
-      foo = 0;
-      bar = 0;
-
-      observingTask = task(async () => {
-        values.push(this.foo);
-        values.push(this.bar);
-      }).observes('foo', 'bar');
-    }
-
-    let obj = new TestObj();
-
-    (obj as any).foo = 1;
-    (obj as any).foo = 2;
-    (obj as any).bar = 1;
-    (obj as any).bar = 2;
-    await settled();
-
-    assert.deepEqual(values, [2, 2]);
-    values = [];
-
-    (obj as any).foo = 3;
-    (obj as any).foo = 4;
-    (obj as any).bar = 3;
-    (obj as any).bar = 4;
-    await settled();
-
-    assert.deepEqual(values, [4, 4]);
-  });
-
-  test(".observes has the same lazy/live semantics as normal Ember.observer(...).on('init')", async function (assert) {
-    assert.expect(2);
-
-    let values: any[] = [];
-
-    class TestObj {
-      foo = 0;
-
-      get bar() {
-        return this.foo;
-      }
-
-      observingTask = task(async () => {
-        values.push((this as any).bar);
-      })
-        .observes('bar')
-        .on('init');
-
-      constructor() {
-        (this as any).observingTask.perform();
-      }
-    }
-
-    let obj = new TestObj();
-
-    (obj as any).foo = 1;
-    (obj as any).foo = 2;
-    await settled();
-
-    assert.deepEqual(values, [0, 2]);
-    values = [];
-
-    (obj as any).foo = 3;
-    (obj as any).foo = 4;
-    await settled();
-
-    assert.deepEqual(values, [4]);
   });
 
   test('performing a task on a destroyed object returns an immediately-canceled taskInstance', function (assert) {
