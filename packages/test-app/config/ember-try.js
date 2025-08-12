@@ -72,7 +72,7 @@ module.exports = async function () {
       },
       {
         name: 'tsc',
-        command: 'tsc',
+        command: 'pnpm tsc',
       },
       embroiderSafe(),
       embroiderOptimized(),
