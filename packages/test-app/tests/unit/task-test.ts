@@ -94,9 +94,9 @@ module('Unit: task', function (hooks) {
     assert.expect(2);
 
     class TestObj {
-      doStuff = task(async () => {
+      doStuff = task({ restartable: true }, async () => {
         await timeout(1);
-      }).restartable();
+      });
     }
 
     let instances: any;
@@ -215,7 +215,7 @@ module('Unit: task', function (hooks) {
     assert.ok(true);
   });
 
-  test('.debug() enables basic debugging', function (assert) {
+  test('debug:true enables basic debugging', function (assert) {
     assert.expect(1);
 
     let logs: any[] = [];
@@ -224,9 +224,9 @@ module('Unit: task', function (hooks) {
     };
 
     class TestObj {
-      a = task(async () => {
+      a = task({ debug: true }, async () => {
         await defer().promise;
-      }).debug();
+      });
     }
 
     run(() => {

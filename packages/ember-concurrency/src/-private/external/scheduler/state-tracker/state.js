@@ -15,6 +15,7 @@ class RefreshState {
   }
 
   onCompletion(taskInstance) {
+    debugger;
     let state = taskInstance.completionState;
     this.attrs.lastRunning = null;
     this.attrs.lastComplete = taskInstance;

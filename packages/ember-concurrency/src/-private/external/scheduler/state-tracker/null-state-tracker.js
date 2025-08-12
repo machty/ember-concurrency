@@ -6,6 +6,8 @@ class NullStateTracker {
   stateFor() {
     return NULL_STATE;
   }
+
+  computeFinalStates() {}
 }
 
 export default NullStateTracker;

@@ -37,7 +37,7 @@ module('Unit: task states', function (hooks) {
     assert.expect(8);
 
     class TestObj {
-      myTask = task(async (input: any) => {
+      myTask = task({ restartable: true }, async (input: any) => {
         if (!input || input === '') {
           return input;
         }
@@ -45,7 +45,7 @@ module('Unit: task states', function (hooks) {
         await timeout(250);
 
         return 'bam';
-      }).restartable();
+      });
     }
 
     let obj = new TestObj();
@@ -152,9 +152,9 @@ module('Unit: task states', function (hooks) {
     assert.expect(3);
 
     class TestObj {
-      myTask = task(async () => {
+      myTask = task({ drop: true }, async () => {
         await forever;
-      }).drop();
+      });
     }
 
     let myTask: any, taskInstance1: any;
@@ -175,10 +175,10 @@ module('Unit: task states', function (hooks) {
     let defer: any, taskInstance0: any, taskInstance1: any;
 
     class TestObj {
-      myTask = task(async () => {
+      myTask = task({ enqueue: true }, async () => {
         defer = RSVP.defer();
         await defer.promise;
-      }).enqueue();
+      });
     }
 
     let obj: TestObj, myTask: any;
@@ -203,10 +203,10 @@ module('Unit: task states', function (hooks) {
     let defer: any, taskInstance0: any, taskInstance1: any;
 
     class TestObj {
-      myTask = task(async () => {
+      myTask = task({ enqueue: true }, async () => {
         defer = RSVP.defer();
         return await defer.promise;
-      }).enqueue();
+      });
     }
 
     let obj: TestObj, myTask: any;
@@ -239,10 +239,10 @@ module('Unit: task states', function (hooks) {
     let defer: any, taskInstance0: any, taskInstance1: any, taskInstance2: any;
 
     class TestObj {
-      myTask = task(async () => {
+      myTask = task({ enqueue: true }, async () => {
         defer = RSVP.defer();
         return await defer.promise;
-      }).enqueue();
+      });
     }
 
     let obj: TestObj, myTask: any;
@@ -271,10 +271,10 @@ module('Unit: task states', function (hooks) {
     let defer: any, taskInstance1: any, taskInstance2: any;
 
     class TestObj {
-      myTask = task(async () => {
+      myTask = task({ enqueue: true }, async () => {
         defer = RSVP.defer();
         return await defer.promise;
-      }).enqueue();
+      });
     }
 
     let obj: TestObj, myTask: any;
@@ -303,10 +303,10 @@ module('Unit: task states', function (hooks) {
     let defer: any, taskInstance1: any;
 
     class TestObj {
-      myTask = task(async () => {
+      myTask = task({ enqueue: true }, async () => {
         defer = RSVP.defer();
         return await defer.promise;
-      }).enqueue();
+      });
     }
 
     let obj: TestObj, myTask: any;
@@ -339,10 +339,10 @@ module('Unit: task states', function (hooks) {
     let defer: any, taskInstance1: any, taskInstance2: any;
 
     class TestObj {
-      myTask = task(async () => {
+      myTask = task({ enqueue: true }, async () => {
         defer = RSVP.defer();
         return await defer.promise;
-      }).enqueue();
+      });
     }
 
     let obj: TestObj, myTask: any;

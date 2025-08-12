@@ -26,7 +26,6 @@ export const TABLE_OF_CONTENTS = [
 
   { section: 'Advanced' },
   { route: 'docs.task-concurrency-advanced', title: 'Using maxConcurrency' },
-  { route: 'docs.advanced.lifecycle-events', title: 'Lifecycle Events' },
   { route: 'docs.advanced.task-modifiers', title: 'Task Modifiers' },
   {
     route: 'docs.advanced.yieldables',

@@ -7,9 +7,8 @@ import { module, test } from 'qunit';
 
 import { modifier } from 'ember-modifier';
 
-const autofocusModifier = modifier(function autofocus(element) {
-  const childElement = element.querySelector('input')!;
-  childElement.focus();
+const autofocusModifier = modifier(function autofocus(element: HTMLInputElement) {
+  element.focus();
 });
 
 module('Integration | no render breaking', function (hooks) {

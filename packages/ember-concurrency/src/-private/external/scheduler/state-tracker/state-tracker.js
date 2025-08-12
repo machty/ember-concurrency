@@ -21,6 +21,10 @@ class StateTracker {
     return taskState;
   }
 
+  computeFinalStates(callback) {
+    this.forEachState((state) => callback(state));
+  }
+
   forEachState(callback) {
     this.states.forEach((state) => callback(state));
   }

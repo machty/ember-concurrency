@@ -33,7 +33,6 @@ Router.map(function () {
     this.route('faq');
 
     this.route('advanced', function () {
-      this.route('lifecycle-events');
       this.route('task-modifiers');
       this.route('yieldables');
     });
