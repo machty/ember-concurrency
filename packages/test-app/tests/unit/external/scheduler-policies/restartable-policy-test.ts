@@ -1,39 +1,39 @@
+import RestartablePolicy from 'ember-concurrency/-private/external/scheduler/policies/restartable-policy';
 import { module, test } from 'qunit';
-import DropPolicy from 'ember-concurrency/-private/external/scheduler/policies/drop-policy';
 import { typesFor } from './helpers';
 
-module('Unit: Drop policy', function () {
+module('Unit: Restartable policy', function () {
   test('maxConcurrency 1 cancels the earliest running instance', function (assert) {
-    let policy = new DropPolicy(1);
+    let policy = new RestartablePolicy(1);
     assert.deepEqual(typesFor(policy, 0, 1), ['STARTED']);
-    assert.deepEqual(typesFor(policy, 1, 1), ['STARTED', 'CANCELLED']);
+    assert.deepEqual(typesFor(policy, 1, 1), ['CANCELLED', 'STARTED']);
     assert.deepEqual(typesFor(policy, 1, 2), [
+      'CANCELLED',
+      'CANCELLED',
       'STARTED',
-      'CANCELLED',
-      'CANCELLED',
     ]);
     assert.deepEqual(typesFor(policy, 1, 3), [
+      'CANCELLED',
+      'CANCELLED',
+      'CANCELLED',
       'STARTED',
-      'CANCELLED',
-      'CANCELLED',
-      'CANCELLED',
     ]);
   });
 
   test('maxConcurrency 2 keeps the first two running', function (assert) {
-    let policy = new DropPolicy(2);
+    let policy = new RestartablePolicy(2);
     assert.deepEqual(typesFor(policy, 0, 1), ['STARTED']);
     assert.deepEqual(typesFor(policy, 1, 1), ['STARTED', 'STARTED']);
     assert.deepEqual(typesFor(policy, 1, 2), [
-      'STARTED',
-      'STARTED',
       'CANCELLED',
+      'STARTED',
+      'STARTED',
     ]);
     assert.deepEqual(typesFor(policy, 1, 3), [
-      'STARTED',
-      'STARTED',
       'CANCELLED',
       'CANCELLED',
+      'STARTED',
+      'STARTED',
     ]);
   });
 });

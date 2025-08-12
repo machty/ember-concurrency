@@ -1,5 +1,5 @@
-import { module, test } from 'qunit';
 import EnqueuedPolicy from 'ember-concurrency/-private/external/scheduler/policies/enqueued-policy';
+import { module, test } from 'qunit';
 import { typesFor } from './helpers';
 
 module('Unit: Enqueued policy', function () {

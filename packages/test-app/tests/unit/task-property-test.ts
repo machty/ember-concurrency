@@ -1,14 +1,13 @@
 import { setOwner } from '@ember/application';
-import EmberObject from '@ember/object';
 import { settled } from '@ember/test-helpers';
-import { forever, task, TaskProperty } from 'ember-concurrency';
+import { forever, task } from 'ember-concurrency';
 import { module, test } from 'qunit';
 
 let taskRunCounter = 0;
-function taskCounterWrapper(taskProperty) {
+function taskCounterWrapper(taskProperty: any): any {
   let originalTaskFn = taskProperty.taskFn;
 
-  taskProperty.taskFn = function* (...args) {
+  taskProperty.taskFn = function* (...args: any[]) {
     taskRunCounter += 1;
     try {
       return yield* originalTaskFn.apply(this, args);
@@ -25,19 +24,19 @@ module('Unit: task property', function () {
   test('`TaskProperty`s can be extended with custom functionality / decoration', async function (assert) {
     assert.expect(4);
 
-    let Obj = EmberObject.extend({
-      doStuff: taskCounterWrapper(
-        task(function* () {
-          yield forever;
+    class TestObj {
+      doStuff = taskCounterWrapper(
+        task(async () => {
+          await forever;
         }),
-      ),
-    });
+      );
+    }
 
-    let obj;
+    let obj: TestObj;
 
     assert.strictEqual(taskRunCounter, 0);
 
-    obj = Obj.create();
+    obj = new TestObj();
     obj.doStuff.perform();
     assert.strictEqual(taskRunCounter, 1);
 
@@ -54,7 +53,7 @@ module('Unit: task property', function () {
     assert.expect(4);
 
     try {
-      TaskProperty.prototype.countable = function () {
+      (TaskProperty.prototype as any).countable = function () {
         return taskCounterWrapper(this);
       };
 
@@ -67,21 +66,21 @@ module('Unit: task property', function () {
       assert.strictEqual(taskRunCounter, 0);
 
       let obj = new TestSubject();
-      setOwner(obj, this.owner);
+      setOwner(obj, (this as any).owner);
 
-      obj.doStuff.perform();
+      (obj as any).doStuff.perform();
       assert.strictEqual(taskRunCounter, 1);
 
-      obj.doStuff.perform();
+      (obj as any).doStuff.perform();
       assert.strictEqual(taskRunCounter, 2);
 
-      obj.doStuff.cancelAll();
+      (obj as any).doStuff.cancelAll();
 
       await settled();
 
       assert.strictEqual(taskRunCounter, 0);
     } finally {
-      delete TaskProperty.prototype.countable;
+      delete (TaskProperty.prototype as any).countable;
     }
   });
 });

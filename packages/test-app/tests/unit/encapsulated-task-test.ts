@@ -1,30 +1,31 @@
-import { run } from '@ember/runloop';
-import RSVP from 'rsvp';
-import EmberObject, { computed } from '@ember/object';
+import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
+import { run } from '@ember/runloop';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
+import RSVP from 'rsvp';
 
 module('Unit: EncapsulatedTask', function () {
   test('encapsulated tasks can be specified via a pojos with perform methods', function (assert) {
     assert.expect(2);
 
-    let defer;
-    let Obj = EmberObject.extend({
-      myTask: task({
-        *perform(...args) {
+    let defer: any;
+
+    class TestObj {
+      myTask = task({
+        async *perform(...args: any[]) {
           assert.deepEqual(args, [1, 2, 3]);
           defer = RSVP.defer();
-          yield defer.promise;
+          await defer.promise;
           return 123;
         },
-      }),
-    });
+      });
+    }
 
-    let obj;
+    let obj: TestObj;
     run(() => {
-      obj = Obj.create();
-      obj.myTask.perform(1, 2, 3).then((v) => {
+      obj = new TestObj();
+      obj.myTask.perform(1, 2, 3).then((v: any) => {
         assert.strictEqual(v, 123);
       });
     });
@@ -34,47 +35,49 @@ module('Unit: EncapsulatedTask', function () {
   test('encapsulated tasks can have their state accessed', async function (assert) {
     assert.expect(2);
 
-    let defer;
-    let Obj = EmberObject.extend({
-      myTask: task({
+    let defer: any;
+
+    class TestObj {
+      myTask = task({
         someProp: false,
 
-        *perform() {
+        async *perform() {
           defer = RSVP.defer();
-          yield defer.promise;
-          this.set('someProp', true);
+          await defer.promise;
+          (this as any).set('someProp', true);
         },
-      }),
-    });
+      });
+    }
 
-    let obj = Obj.create();
+    let obj = new TestObj();
     const taskInstance = obj.myTask.perform(1, 2, 3);
-    assert.false(taskInstance.someProp);
+    assert.false((taskInstance as any).someProp);
 
     defer.resolve();
     await taskInstance;
-    assert.true(taskInstance.someProp);
+    assert.true((taskInstance as any).someProp);
   });
 
   test('encapsulated tasks can access host context', async function (assert) {
     assert.expect(1);
 
-    let defer;
-    let Obj = EmberObject.extend({
-      mySecretValue: 'pickle',
+    let defer: any;
 
-      myTask: task({
+    class TestObj {
+      mySecretValue = 'pickle';
+
+      myTask = task({
         someProp: false,
 
-        *perform() {
+        async *perform() {
           defer = RSVP.defer();
-          yield defer.promise;
-          return this.context.mySecretValue;
+          await defer.promise;
+          return (this as any).context.mySecretValue;
         },
-      }),
-    });
+      });
+    }
 
-    let obj = Obj.create();
+    let obj = new TestObj();
     const taskInstance = obj.myTask.perform();
 
     defer.resolve();
@@ -85,48 +88,49 @@ module('Unit: EncapsulatedTask', function () {
   test('encapsulated tasks can access task instance context', async function (assert) {
     assert.expect(2);
 
-    let defer;
-    let Obj = EmberObject.extend({
-      myTask: task({
+    let defer: any;
+
+    class TestObj {
+      myTask = task({
         amIRunning: reads('isRunning'),
 
-        *perform() {
+        async *perform() {
           defer = RSVP.defer();
-          yield defer.promise;
+          await defer.promise;
           return 'blah';
         },
-      }),
-    });
+      });
+    }
 
-    let obj = Obj.create();
+    let obj = new TestObj();
     const taskInstance = obj.myTask.perform();
-    assert.true(taskInstance.amIRunning);
+    assert.true((taskInstance as any).amIRunning);
 
     defer.resolve();
     await taskInstance;
-    assert.false(taskInstance.amIRunning);
+    assert.false((taskInstance as any).amIRunning);
   });
 
   test('encapsulated tasks work with native ES classes and decorators', function (assert) {
     assert.expect(2);
 
-    let defer;
+    let defer: any;
 
     class FakeGlimmerComponent {
       @task myTask = {
-        *perform(...args) {
+        async *perform(...args: any[]) {
           assert.deepEqual(args, [1, 2, 3]);
           defer = RSVP.defer();
-          yield defer.promise;
+          await defer.promise;
           return 123;
         },
       };
     }
 
-    let obj;
+    let obj: FakeGlimmerComponent;
     run(() => {
       obj = new FakeGlimmerComponent();
-      obj.myTask.perform(1, 2, 3).then((v) => {
+      (obj as any).myTask.perform(1, 2, 3).then((v: any) => {
         assert.strictEqual(v, 123);
       });
     });
@@ -136,34 +140,34 @@ module('Unit: EncapsulatedTask', function () {
   test('native ES class encapsulated tasks can modify their state', async function (assert) {
     assert.expect(4);
 
-    let defer;
+    let defer: any;
 
     class FakeComponent {
       @task myTask = {
         someProp: 0,
 
         doubled: computed('someProp', function () {
-          return this.someProp * 2;
+          return (this as any).someProp * 2;
         }),
 
-        *perform() {
+        async *perform() {
           defer = RSVP.defer();
-          let whatProp = this.someProp;
-          yield defer.promise;
+          let whatProp = (this as any).someProp;
+          await defer.promise;
           // eslint-disable-next-line ember/classic-decorator-no-classic-methods
-          this.set('someProp', whatProp + 1);
+          (this as any).set('someProp', whatProp + 1);
         },
       };
     }
 
     let obj = new FakeComponent();
-    const taskInstance = obj.myTask.perform(1, 2, 3);
-    assert.strictEqual(taskInstance.someProp, 0);
-    assert.strictEqual(taskInstance.doubled, 0);
+    const taskInstance = (obj as any).myTask.perform(1, 2, 3);
+    assert.strictEqual((taskInstance as any).someProp, 0);
+    assert.strictEqual((taskInstance as any).doubled, 0);
 
     defer.resolve();
     await taskInstance;
-    assert.strictEqual(taskInstance.someProp, 1);
-    assert.strictEqual(taskInstance.doubled, 2);
+    assert.strictEqual((taskInstance as any).someProp, 1);
+    assert.strictEqual((taskInstance as any).doubled, 2);
   });
 });

@@ -1,50 +1,62 @@
-import Evented from '@ember/object/evented';
-import EmberObject, { computed, set } from '@ember/object';
+import { computed, set } from '@ember/object';
 import { run } from '@ember/runloop';
 import { settled } from '@ember/test-helpers';
-import { module, test } from 'qunit';
 import {
+  race,
   task,
-  waitForQueue,
   waitForEvent,
   waitForProperty,
-  race,
+  waitForQueue,
 } from 'ember-concurrency';
-import { alias } from '@ember/object/computed';
+import { module, test } from 'qunit';
 
-const EventedObject = EmberObject.extend(Evented);
+interface GenericEvented {
+  _handlers: Record<string, Function[]>;
+  has(eventName: string): boolean;
+  trigger(eventName: string, data?: any): void;
+  on(eventName: string, fn: Function): void;
+  off(eventName: string, fn: Function): void;
+}
 
-const GenericEventedMixin = {
-  init() {
-    this._super(...arguments);
-    this._handlers = {};
-  },
+class EventedClass implements GenericEvented {
+  _handlers: Record<string, Function[]> = {};
 
-  has(eventName) {
+  has(eventName: string): boolean {
     return this._handlers[eventName] && this._handlers[eventName].length > 0;
-  },
+  }
 
-  trigger(eventName, data) {
+  trigger(eventName: string, data?: any): void {
     const eventHandlers = this._handlers[eventName];
     if (eventHandlers) {
       eventHandlers.forEach((handler) => handler.call(this, data));
     }
-  },
+  }
 
-  on(eventName, fn) {
+  on(eventName: string, fn: Function): void {
     this._handlers[eventName] = this._handlers[eventName] || [];
     this._handlers[eventName].push(fn);
-  },
+  }
 
-  off(eventName, fn) {
+  off(eventName: string, fn: Function): void {
     const eventHandlers = this._handlers[eventName];
     if (eventHandlers) {
       this._handlers[eventName] = eventHandlers.filter(
         (handler) => handler !== fn,
       );
     }
-  },
-};
+  }
+}
+
+// Create a class that extends both EventedClass and has Ember.Evented interface
+class EmberEventedClass extends EventedClass {
+  // Add Ember.Evented compatibility
+  has(eventName: string): boolean {
+    return (
+      super.has(eventName) ||
+      (this as any)._emberEventListeners?.[eventName]?.length > 0
+    );
+  }
+}
 
 module(
   'Unit: test waitForQueue and waitForEvent and waitForProperty',
@@ -53,15 +65,16 @@ module(
       assert.expect(2);
 
       let taskCompleted = false;
-      const Obj = EmberObject.extend({
-        task: task(function* () {
-          yield waitForQueue('afterRender');
+
+      class TestObj {
+        task = task(async () => {
+          await waitForQueue('afterRender');
           taskCompleted = true;
-        }),
-      });
+        });
+      }
 
       run(() => {
-        let obj = Obj.create();
+        let obj = new TestObj();
         obj.task.perform();
         assert.notOk(taskCompleted, 'Task should not have completed');
       });
@@ -73,15 +86,16 @@ module(
       assert.expect(2);
 
       let taskCompleted = false;
-      const Obj = EmberObject.extend({
-        task: task(function* () {
-          yield waitForQueue('afterRender');
+
+      class TestObj {
+        task = task(async () => {
+          await waitForQueue('afterRender');
           taskCompleted = true;
-        }),
-      });
+        });
+      }
 
       run(() => {
-        let obj = Obj.create();
+        let obj = new TestObj();
         obj.task.perform();
         assert.notOk(taskCompleted, 'Task should not have completed');
         obj.task.cancelAll();
@@ -94,11 +108,12 @@ module(
       assert.expect(2);
 
       let taskErrored = false;
-      const Obj = EmberObject.extend({
-        task: task(function* () {
+
+      class TestObj {
+        task = task(async () => {
           try {
-            yield waitForQueue('non-existing-queue');
-          } catch (error) {
+            await waitForQueue('non-existing-queue');
+          } catch (error: any) {
             assert.strictEqual(
               error.toString(),
               "Error: You attempted to schedule an action in a queue (non-existing-queue) that doesn't exist",
@@ -106,11 +121,11 @@ module(
             );
             taskErrored = true;
           }
-        }),
-      });
+        });
+      }
 
       run(() => {
-        let obj = Obj.create();
+        let obj = new TestObj();
         obj.task.perform();
         assert.notOk(taskErrored, 'Task should have errored');
       });
@@ -119,17 +134,18 @@ module(
     test('waitForEvent works (`Ember.Evented` interface)', function (assert) {
       assert.expect(4);
       let taskCompleted = false;
-      const Obj = EventedObject.extend({
-        task: task(function* () {
-          let value = yield waitForEvent(this, 'foo');
+
+      class TestObj extends EmberEventedClass {
+        task = task(async () => {
+          let value = await waitForEvent(this, 'foo');
           assert.strictEqual(value, 123);
           taskCompleted = true;
-        }),
-      });
+        });
+      }
 
-      let obj;
+      let obj: TestObj;
       run(() => {
-        obj = Obj.create();
+        obj = new TestObj();
         obj.task.perform();
       });
 
@@ -145,16 +161,17 @@ module(
     test('canceling waitForEvent works (`Ember.Evented` interface)', function (assert) {
       assert.expect(4);
       let taskCompleted = false;
-      const Obj = EventedObject.extend({
-        task: task(function* () {
-          yield waitForEvent(this, 'foo');
-          taskCompleted = true;
-        }),
-      });
 
-      let obj;
+      class TestObj extends EmberEventedClass {
+        task = task(async () => {
+          await waitForEvent(this, 'foo');
+          taskCompleted = true;
+        });
+      }
+
+      let obj: TestObj;
       run(() => {
-        obj = Obj.create();
+        obj = new TestObj();
         obj.task.perform();
       });
 
@@ -174,18 +191,18 @@ module(
 
       const element = document.createElement('button');
       let taskCompleted = false;
-      let obj;
+      let obj: TestObj;
 
-      const Obj = EventedObject.extend({
-        task: task(function* () {
-          let { detail } = yield waitForEvent(element, 'foo');
+      class TestObj extends EmberEventedClass {
+        task = task(async () => {
+          let { detail } = await waitForEvent(element, 'foo');
           assert.strictEqual(detail, 123);
           taskCompleted = true;
-        }),
-      });
+        });
+      }
 
       run(() => {
-        obj = Obj.create();
+        obj = new TestObj();
         obj.task.perform();
       });
 
@@ -201,23 +218,23 @@ module(
       assert.expect(3);
 
       const element = document.createElement('button');
-      element.removeEventListener = (...args) => {
+      element.removeEventListener = (...args: any[]) => {
         removeEventListenerCalled = true;
         return HTMLElement.prototype.removeEventListener.apply(element, args);
       };
       let taskCompleted = false;
       let removeEventListenerCalled = false;
-      let obj;
+      let obj: TestObj;
 
-      const Obj = EventedObject.extend({
-        task: task(function* () {
-          yield waitForEvent(element, 'foo');
+      class TestObj extends EmberEventedClass {
+        task = task(async () => {
+          await waitForEvent(element, 'foo');
           taskCompleted = true;
-        }),
-      });
+        });
+      }
 
       run(() => {
-        obj = Obj.create();
+        obj = new TestObj();
         obj.task.perform();
       });
 
@@ -234,19 +251,18 @@ module(
     test('waitForEvent works (generic on/off interface)', function (assert) {
       assert.expect(4);
       let taskCompleted = false;
-      const Obj = EmberObject.extend({
-        ...GenericEventedMixin,
 
-        task: task(function* () {
-          let value = yield waitForEvent(this, 'foo');
+      class TestObj extends EventedClass {
+        task = task(async () => {
+          let value = await waitForEvent(this, 'foo');
           assert.strictEqual(value, 123);
           taskCompleted = true;
-        }),
-      });
+        });
+      }
 
-      let obj;
+      let obj: TestObj;
       run(() => {
-        obj = Obj.create();
+        obj = new TestObj();
         obj.task.perform();
       });
 
@@ -262,19 +278,18 @@ module(
     test('canceling waitForEvent works (generic on/off interface)', function (assert) {
       assert.expect(4);
       let taskCompleted = false;
-      const Obj = EmberObject.extend({
-        ...GenericEventedMixin,
 
-        task: task(function* () {
-          let value = yield waitForEvent(this, 'foo');
+      class TestObj extends EventedClass {
+        task = task(async () => {
+          let value = await waitForEvent(this, 'foo');
           assert.strictEqual(value, 123);
           taskCompleted = true;
-        }),
-      });
+        });
+      }
 
-      let obj;
+      let obj: TestObj;
       run(() => {
-        obj = Obj.create();
+        obj = new TestObj();
         obj.task.perform();
       });
 
@@ -292,30 +307,34 @@ module(
     test('waitForProperty works', async function (assert) {
       assert.expect(1);
 
-      let values = [];
-      const Obj = EmberObject.extend({
-        a: 1,
-        b: alias('a'),
+      let values: any[] = [];
 
-        task: task(function* () {
-          let result = yield waitForProperty(this, 'b', (v) => {
+      class TestObj {
+        a = 1;
+
+        get b() {
+          return this.a;
+        }
+
+        task = task(async () => {
+          let result = await waitForProperty(this, 'b', (v: any) => {
             values.push(v);
             return v == 3 ? 'done' : false;
           });
           values.push(`val=${result}`);
-        }),
-      });
+        });
+      }
 
-      let obj = Obj.create();
+      let obj = new TestObj();
       obj.task.perform();
 
-      obj.set('a', 2);
+      (obj as any).a = 2;
       await settled();
 
-      obj.set('a', 3);
+      (obj as any).a = 3;
       await settled();
 
-      obj.set('a', 4);
+      (obj as any).a = 4;
       await settled();
 
       assert.deepEqual(values, [1, 2, 3, 'val=3']);
@@ -324,16 +343,16 @@ module(
     test('waitForProperty works with immediately truthy predicates', async function (assert) {
       assert.expect(1);
 
-      const Obj = EmberObject.extend({
-        a: 1,
+      class TestObj {
+        a = 1;
 
-        task: task(function* () {
-          yield waitForProperty(this, 'a', (v) => v === 1);
+        task = task(async () => {
+          await waitForProperty(this, 'a', (v: any) => v === 1);
           assert.ok(true);
-        }),
-      });
+        });
+      }
 
-      let obj = Obj.create();
+      let obj = new TestObj();
       obj.task.perform();
 
       await settled();
@@ -342,25 +361,25 @@ module(
     test("waitForProperty's default predicate checks for truthiness", async function (assert) {
       assert.expect(2);
 
-      const Obj = EmberObject.extend({
-        a: 0,
+      class TestObj {
+        a: any = 0;
 
-        task: task(function* () {
-          yield waitForProperty(this, 'a');
-        }),
-      });
+        task = task(async () => {
+          await waitForProperty(this, 'a');
+        });
+      }
 
-      let obj = Obj.create();
+      let obj = new TestObj();
       obj.task.perform();
 
-      obj.set('a', false);
+      obj.a = false;
       await settled();
 
-      obj.set('a', null);
+      obj.a = null;
       await settled();
       assert.ok(obj.task.isRunning);
 
-      obj.set('a', 'hey');
+      obj.a = 'hey';
       await settled();
       assert.notOk(obj.task.isRunning);
     });
@@ -369,38 +388,39 @@ module(
       assert.expect(4);
 
       let state = 'null';
-      const Obj = EmberObject.extend({
-        a: 1,
 
-        task: task(function* () {
+      class TestObj {
+        a: any = 1;
+
+        task = task(async () => {
           state = 'waiting for a===3';
-          yield waitForProperty(this, 'a', 3);
+          await waitForProperty(this, 'a', 3);
           state = 'waiting for a===null';
-          yield waitForProperty(this, 'a', null);
-        }),
-      });
+          await waitForProperty(this, 'a', null);
+        });
+      }
 
-      let obj = Obj.create();
+      let obj = new TestObj();
       obj.task.perform();
 
-      obj.set('a', 1);
+      obj.a = 1;
       await settled();
 
-      obj.set('a', 2);
+      obj.a = 2;
       await settled();
       assert.strictEqual(state, 'waiting for a===3');
 
-      obj.set('a', 3);
+      obj.a = 3;
       await settled();
       assert.strictEqual(state, 'waiting for a===null');
 
-      obj.set('a', 0);
+      obj.a = 0;
       await settled();
-      obj.set('a', false);
+      obj.a = false;
       await settled();
       assert.strictEqual(state, 'waiting for a===null');
 
-      obj.set('a', null);
+      obj.a = null;
       await settled();
       assert.ok(obj.task.isIdle);
     });
@@ -408,10 +428,10 @@ module(
     test('exposes a Promise interface that works with promise helpers', function (assert) {
       assert.expect(4);
 
-      let obj = EventedObject.create();
-      let ev = null;
+      let obj = new EmberEventedClass();
+      let ev: any = null;
       run(() =>
-        waitForEvent(obj, 'foo').then((v) => {
+        waitForEvent(obj, 'foo').then((v: any) => {
           ev = v;
         }),
       );
@@ -421,9 +441,11 @@ module(
 
       ev = null;
       run(() =>
-        race([waitForEvent(obj, 'foo'), waitForEvent(obj, 'bar')]).then((v) => {
-          ev = v;
-        }),
+        race([waitForEvent(obj, 'foo'), waitForEvent(obj, 'bar')]).then(
+          (v: any) => {
+            ev = v;
+          },
+        ),
       );
       assert.strictEqual(ev, null);
       run(obj, 'trigger', 'bar', 456);
@@ -433,18 +455,18 @@ module(
     test('waitForProperty works on an ES class', async function (assert) {
       assert.expect(1);
 
-      let values = [];
-      class Obj {
+      let values: any[] = [];
+
+      class TestObj {
         a = 1;
 
-        // eslint-disable-next-line ember/no-computed-properties-in-native-classes
         @computed('a')
         get b() {
           return this.a;
         }
 
         @task *task() {
-          let result = yield waitForProperty(this, 'b', (v) => {
+          let result = yield waitForProperty(this, 'b', (v: any) => {
             values.push(v);
             return v == 3 ? 'done' : false;
           });
@@ -452,8 +474,8 @@ module(
         }
       }
 
-      let obj = new Obj();
-      obj.task.perform();
+      let obj = new TestObj();
+      (obj as any).task.perform();
 
       set(obj, 'a', 2);
       await settled();

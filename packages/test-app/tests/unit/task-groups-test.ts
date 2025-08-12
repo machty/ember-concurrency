@@ -1,11 +1,17 @@
 import { run } from '@ember/runloop';
-import RSVP from 'rsvp';
-import EmberObject from '@ember/object';
-import { task, taskGroup, forever } from 'ember-concurrency';
+import { forever, task, taskGroup } from 'ember-concurrency';
 import { module, test } from 'qunit';
+import RSVP from 'rsvp';
 
 module('Unit: task groups', function () {
-  function assertStates(assert, task, isRunning, isQueued, isIdle, suffix) {
+  function assertStates(
+    assert: any,
+    task: any,
+    isRunning: boolean,
+    isQueued: boolean,
+    isIdle: boolean,
+    suffix: string,
+  ): void {
     assert.strictEqual(
       task.isRunning,
       isRunning,
@@ -31,24 +37,25 @@ module('Unit: task groups', function () {
   test('task groups allow tasks to share concurrency constraints', function (assert) {
     assert.expect(63);
 
-    let deferA, deferB;
-    let Obj = EmberObject.extend({
-      tg: taskGroup().enqueue(),
+    let deferA: any, deferB: any;
 
-      taskA: task(function* () {
+    class TestObj {
+      tg = taskGroup().enqueue();
+
+      taskA = task(async () => {
         deferA = RSVP.defer();
-        yield deferA.promise;
-      }).group('tg'),
+        await deferA.promise;
+      }).group('tg');
 
-      taskB: task(function* () {
+      taskB = task(async () => {
         deferB = RSVP.defer();
-        yield deferB.promise;
-      }).group('tg'),
-    });
+        await deferB.promise;
+      }).group('tg');
+    }
 
-    let obj, taskA, taskB, suffix, tg;
+    let obj: TestObj, taskA: any, taskB: any, suffix: string, tg: any;
     run(() => {
-      obj = Obj.create();
+      obj = new TestObj();
       tg = obj.tg;
       taskA = obj.taskA;
       taskB = obj.taskB;
@@ -94,32 +101,32 @@ module('Unit: task groups', function () {
   test('task groups enforce that only one member runs at a time', function (assert) {
     assert.expect(1);
 
-    let Obj = EmberObject.extend({
-      tg: taskGroup(),
-      taskA: task(function* () {}).group('tg'),
-    });
+    class TestObj {
+      tg = taskGroup();
+      taskA = task(async () => {}).group('tg');
+    }
 
     run(() => {
-      assert.strictEqual(Obj.create().taskA.group.name, 'tg');
+      assert.strictEqual(new TestObj().taskA.group.name, 'tg');
     });
   });
 
-  function sharedTaskGroupSetup(taskGroupProperty) {
-    let Obj = EmberObject.extend({
-      tg: taskGroupProperty,
+  function sharedTaskGroupSetup(taskGroupProperty: any): [any, any, any] {
+    class TestObj {
+      tg = taskGroupProperty;
 
-      taskA: task(function* () {
-        yield forever;
-      }).group('tg'),
+      taskA = task(async () => {
+        await forever;
+      }).group('tg');
 
-      taskB: task(function* () {
-        yield forever;
-      }).group('tg'),
-    });
+      taskB = task(async () => {
+        await forever;
+      }).group('tg');
+    }
 
-    let taskA, taskB, tg;
+    let taskA: any, taskB: any, tg: any;
     run(() => {
-      let obj = Obj.create();
+      let obj = new TestObj();
       tg = obj.tg;
       taskA = obj.taskA;
       taskB = obj.taskB;
@@ -171,15 +178,15 @@ module('Unit: task groups', function () {
 
     let defer = RSVP.defer();
 
-    let Obj = EmberObject.extend({
-      tg: taskGroup().enqueue(),
+    class TestObj {
+      tg = taskGroup().enqueue();
 
-      myTask: task(function* () {
-        yield defer.promise;
-      }).group('tg'),
-    });
+      myTask = task(async () => {
+        await defer.promise;
+      }).group('tg');
+    }
 
-    let obj = Obj.create();
+    let obj = new TestObj();
     let tg = obj.tg;
     assert.false(tg.isRunning);
     run(() => obj.myTask.perform());
@@ -191,28 +198,29 @@ module('Unit: task groups', function () {
   test("calling cancelAll on a task doesn't cancel other tasks in group", function (assert) {
     assert.expect(6);
 
-    let obj, taskA, taskB, tg;
-    let Obj = EmberObject.extend({
-      tg: taskGroup(),
+    let obj: TestObj, taskA: any, taskB: any, tg: any;
 
-      taskA: task(function* () {
-        yield forever;
-      }).group('tg'),
+    class TestObj {
+      tg = taskGroup();
 
-      taskB: task(function* () {
-        yield forever;
-      }).group('tg'),
-    });
+      taskA = task(async () => {
+        await forever;
+      }).group('tg');
+
+      taskB = task(async () => {
+        await forever;
+      }).group('tg');
+    }
 
     run(() => {
-      obj = Obj.create();
+      obj = new TestObj();
       tg = obj.tg;
       taskA = obj.taskA;
       taskA.perform();
       taskB = obj.taskB;
     });
 
-    function assertRunning() {
+    function assertRunning(): void {
       assert.true(tg.isRunning);
       assert.true(taskA.isRunning);
       assert.false(taskB.isRunning);
@@ -228,9 +236,10 @@ module('Unit: task groups', function () {
   test('ES class syntax with decorators works with task groups', function (assert) {
     assert.expect(12);
 
-    let deferA, deferB;
+    let deferA: any, deferB: any;
+
     class FakeGlimmerComponent {
-      @taskGroup({ enqueue: true }) tg;
+      @taskGroup({ enqueue: true }) tg: any;
 
       @task({ group: 'tg' }) *taskA() {
         deferA = RSVP.defer();
@@ -243,7 +252,11 @@ module('Unit: task groups', function () {
       }
     }
 
-    let obj, taskA, taskB, suffix, tg;
+    let obj: FakeGlimmerComponent,
+      taskA: any,
+      taskB: any,
+      suffix: string,
+      tg: any;
 
     run(() => {
       obj = new FakeGlimmerComponent();

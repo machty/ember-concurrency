@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
-import { defer } from 'rsvp';
+import { destroy } from '@ember/destroyable';
 import { run } from '@ember/runloop';
-import EmberObject from '@ember/object';
 import Ember from 'ember';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
-import { destroy } from '@ember/destroyable';
+import { defer } from 'rsvp';
 
 const originalWarn = console.warn;
 
@@ -18,32 +17,34 @@ module('Unit: self-cancel loops', function (hooks) {
   test("a warning is logged when a non-link-specified cross object parent->child cancelation occurs due to parent object's destruction", function (assert) {
     assert.expect(2);
 
-    let warnings = [];
-    console.warn = (...args) => {
+    let warnings: any[] = [];
+    console.warn = (...args: any[]) => {
       warnings.push(args);
     };
 
-    let Obj = EmberObject.extend({
-      a: task(function* () {
-        yield this.child.b.perform();
-      }),
+    class TestObj {
+      child: TestObj | null = null;
 
-      b: task(function* () {
-        yield defer().promise;
-      }),
+      a = task(async () => {
+        await this.child!.b.perform();
+      });
 
-      c: task(function* () {
-        yield this.child.b.linked().perform();
-      }),
+      b = task(async () => {
+        await defer().promise;
+      });
 
-      child: null,
-    });
+      c = task(async () => {
+        await this.child!.b.linked().perform();
+      });
+    }
 
-    let child, canceledParent, destroyedParent;
+    let child: TestObj, canceledParent: TestObj, destroyedParent: TestObj;
     run(() => {
-      child = Obj.create();
-      canceledParent = Obj.create({ child });
-      destroyedParent = Obj.create({ child });
+      child = new TestObj();
+      canceledParent = new TestObj();
+      canceledParent.child = child;
+      destroyedParent = new TestObj();
+      destroyedParent.child = child;
       canceledParent.a.perform();
       destroyedParent.a.perform();
     });
@@ -61,8 +62,9 @@ module('Unit: self-cancel loops', function (hooks) {
     warnings.length = 0;
 
     run(() => {
-      child = Obj.create();
-      destroyedParent = Obj.create({ child });
+      child = new TestObj();
+      destroyedParent = new TestObj();
+      destroyedParent.child = child;
       destroyedParent.c.perform();
     });
 

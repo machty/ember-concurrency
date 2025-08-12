@@ -1,5 +1,5 @@
-import { module, test } from 'qunit';
 import UnboundedPolicy from 'ember-concurrency/-private/external/scheduler/policies/unbounded-policy';
+import { module, test } from 'qunit';
 import { typesFor } from './helpers';
 
 module('Unit: Unbounded policy', function () {

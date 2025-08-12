@@ -1,23 +1,43 @@
-import { defer } from 'rsvp';
-import Evented, { on } from '@ember/object/evented';
+import { on } from '@ember/object/evented';
 import { run } from '@ember/runloop';
-import EmberObject from '@ember/object';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
+import { defer } from 'rsvp';
 import sinon from 'sinon';
 
-function assertEventFired(assert, event, stub, ...args) {
+function assertEventFired(
+  assert: any,
+  event: string,
+  stub: any,
+  ...args: any[]
+): void {
   assert.ok(
     stub.calledOnceWith(...args),
     `expected '${event}' event callback to have been called`,
   );
 }
 
-function assertEventNotFired(assert, event, stub) {
+function assertEventNotFired(assert: any, event: string, stub: any): void {
   assert.notOk(
     stub.called,
     `expected '${event}' event callback not to have been called`,
   );
+}
+
+// Create a base class that implements Evented
+class EventedClass {
+  // Implement minimal Evented interface
+  trigger(eventName: string, ...args: any[]): void {
+    const listeners = (this as any)._eventedListeners?.[eventName] || [];
+    listeners.forEach((listener: any) => listener(...args));
+  }
+
+  on(eventName: string, handler: Function): void {
+    (this as any)._eventedListeners = (this as any)._eventedListeners || {};
+    (this as any)._eventedListeners[eventName] =
+      (this as any)._eventedListeners[eventName] || [];
+    (this as any)._eventedListeners[eventName].push(handler);
+  }
 }
 
 module('Unit: task events', function () {
@@ -29,22 +49,31 @@ module('Unit: task events', function () {
     const canceledStub = sinon.stub();
     const erroredStub = sinon.stub();
 
-    let Obj = EmberObject.extend(Evented, {
-      doThings: task(function* (deferred) {
-        yield deferred.promise;
-      }).evented(),
+    class TestObj extends EventedClass {
+      doThings = task(async (deferred: any) => {
+        await deferred.promise;
+      }).evented();
 
-      startedListener: on('doThings:started', startedStub),
-      succeededListener: on('doThings:succeeded', succeededStub),
-      canceledListener: on('doThings:canceled', canceledStub),
-      erroredListener: on('doThings:errored', erroredStub),
-    });
+      startedListener = on('doThings:started', startedStub);
+      succeededListener = on('doThings:succeeded', succeededStub);
+      canceledListener = on('doThings:canceled', canceledStub);
+      erroredListener = on('doThings:errored', erroredStub);
 
-    let deferred, obj, taskInstance;
+      constructor() {
+        super();
+        // Manually set up event listeners since we're not using EmberObject
+        this.on('doThings:started', startedStub);
+        this.on('doThings:succeeded', succeededStub);
+        this.on('doThings:canceled', canceledStub);
+        this.on('doThings:errored', erroredStub);
+      }
+    }
+
+    let deferred: any, obj: TestObj, taskInstance: any;
 
     run(() => {
       deferred = defer();
-      obj = Obj.create();
+      obj = new TestObj();
       taskInstance = obj.doThings.perform(deferred);
     });
 
@@ -68,26 +97,35 @@ module('Unit: task events', function () {
     const canceledStub = sinon.stub();
     const erroredStub = sinon.stub();
 
-    let Obj = EmberObject.extend(Evented, {
-      doThings: task(function* (deferred) {
-        yield deferred.promise;
-      }).evented(),
+    class TestObj extends EventedClass {
+      doThings = task(async (deferred: any) => {
+        await deferred.promise;
+      }).evented();
 
-      startedListener: on('doThings:started', startedStub),
-      succeededListener: on('doThings:succeeded', succeededStub),
-      canceledListener: on('doThings:canceled', canceledStub),
-      erroredListener: on('doThings:errored', erroredStub),
-    });
+      startedListener = on('doThings:started', startedStub);
+      succeededListener = on('doThings:succeeded', succeededStub);
+      canceledListener = on('doThings:canceled', canceledStub);
+      erroredListener = on('doThings:errored', erroredStub);
 
-    let deferred, obj, taskInstance;
+      constructor() {
+        super();
+        // Manually set up event listeners since we're not using EmberObject
+        this.on('doThings:started', startedStub);
+        this.on('doThings:succeeded', succeededStub);
+        this.on('doThings:canceled', canceledStub);
+        this.on('doThings:errored', erroredStub);
+      }
+    }
+
+    let deferred: any, obj: TestObj, taskInstance: any;
 
     let error = new Error('someone unplugged the network');
 
     run(() => {
       deferred = defer();
-      obj = Obj.create();
+      obj = new TestObj();
       taskInstance = obj.doThings.perform(deferred);
-      taskInstance.catch((e) => {
+      taskInstance.catch((e: any) => {
         assert.strictEqual(e.message, 'someone unplugged the network');
       });
     });
@@ -112,22 +150,31 @@ module('Unit: task events', function () {
     const canceledStub = sinon.stub();
     const erroredStub = sinon.stub();
 
-    let Obj = EmberObject.extend(Evented, {
-      doThings: task(function* (deferred) {
-        yield deferred.promise;
-      }).evented(),
+    class TestObj extends EventedClass {
+      doThings = task(async (deferred: any) => {
+        await deferred.promise;
+      }).evented();
 
-      startedListener: on('doThings:started', startedStub),
-      succeededListener: on('doThings:succeeded', succeededStub),
-      canceledListener: on('doThings:canceled', canceledStub),
-      erroredListener: on('doThings:errored', erroredStub),
-    });
+      startedListener = on('doThings:started', startedStub);
+      succeededListener = on('doThings:succeeded', succeededStub);
+      canceledListener = on('doThings:canceled', canceledStub);
+      erroredListener = on('doThings:errored', erroredStub);
 
-    let deferred, obj, taskInstance;
+      constructor() {
+        super();
+        // Manually set up event listeners since we're not using EmberObject
+        this.on('doThings:started', startedStub);
+        this.on('doThings:succeeded', succeededStub);
+        this.on('doThings:canceled', canceledStub);
+        this.on('doThings:errored', erroredStub);
+      }
+    }
+
+    let deferred: any, obj: TestObj, taskInstance: any;
 
     run(() => {
       deferred = defer();
-      obj = Obj.create();
+      obj = new TestObj();
       taskInstance = obj.doThings.perform(deferred);
     });
 

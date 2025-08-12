@@ -1,8 +1,8 @@
-import RSVP from 'rsvp';
 import { run } from '@ember/runloop';
-import EmberObject from '@ember/object';
-import { task, rawTimeout, timeout, forever } from 'ember-concurrency';
+import { forever, rawTimeout, task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
+import RSVP from 'rsvp';
+
 import { makeAsyncError } from '../helpers/helpers';
 
 module('Unit: task states', function (hooks) {
@@ -11,13 +11,13 @@ module('Unit: task states', function (hooks) {
   test('state basic', function (assert) {
     assert.expect(11);
 
-    let Obj = EmberObject.extend({
-      myTask: task(function* () {}),
-    });
+    class TestObj {
+      myTask = task(async () => {});
+    }
 
-    let obj;
+    let obj: TestObj;
     run(() => {
-      obj = Obj.create();
+      obj = new TestObj();
       assert.true(obj.myTask.isIdle);
       assert.false(obj.myTask.isRunning);
       assert.strictEqual(obj.myTask.state, 'idle');
@@ -36,19 +36,19 @@ module('Unit: task states', function (hooks) {
   test('state resets properly on early return', async function (assert) {
     assert.expect(8);
 
-    let Obj = EmberObject.extend({
-      myTask: task(function* (input) {
+    class TestObj {
+      myTask = task(async (input: any) => {
         if (!input || input === '') {
           return input;
         }
 
-        yield timeout(250);
+        await timeout(250);
 
         return 'bam';
-      }).restartable(),
-    });
+      }).restartable();
+    }
 
-    let obj = Obj.create();
+    let obj = new TestObj();
     assert.true(obj.myTask.isIdle);
     assert.false(obj.myTask.isRunning);
     assert.strictEqual(obj.myTask.state, 'idle');
@@ -71,15 +71,15 @@ module('Unit: task states', function (hooks) {
   test('state when task is blocked on a yield', function (assert) {
     assert.expect(15);
 
-    let Obj = EmberObject.extend({
-      myTask: task(function* () {
-        yield forever;
-      }),
-    });
+    class TestObj {
+      myTask = task(async () => {
+        await forever;
+      });
+    }
 
-    let obj, t;
+    let obj: TestObj, t: any;
     run(() => {
-      obj = Obj.create();
+      obj = new TestObj();
       t = obj.myTask;
     });
 
@@ -114,12 +114,12 @@ module('Unit: task states', function (hooks) {
   test('.lastPerformed is set when task.perform is called', function (assert) {
     assert.expect(3);
 
-    let Obj = EmberObject.extend({
-      myTask: task(function* () {}),
-    });
+    class TestObj {
+      myTask = task(async () => {});
+    }
 
     run(() => {
-      let obj = Obj.create();
+      let obj = new TestObj();
       let myTask = obj.myTask;
       assert.strictEqual(myTask.lastPerformed, null);
       let taskInstance0 = myTask.perform();
@@ -132,12 +132,12 @@ module('Unit: task states', function (hooks) {
   test('.performCount exposes the number of times a task has been performed', function (assert) {
     assert.expect(3);
 
-    let Obj = EmberObject.extend({
-      doStuff: task(function* () {}),
-    });
+    class TestObj {
+      doStuff = task(async () => {});
+    }
 
     run(() => {
-      let obj = Obj.create();
+      let obj = new TestObj();
       let doStuff = obj.doStuff;
       assert.strictEqual(doStuff.performCount, 0);
       doStuff.perform();
@@ -151,15 +151,15 @@ module('Unit: task states', function (hooks) {
   test('a dropped .lastPerformed shows up as canceled', function (assert) {
     assert.expect(3);
 
-    let Obj = EmberObject.extend({
-      myTask: task(function* () {
-        yield forever;
-      }).drop(),
-    });
+    class TestObj {
+      myTask = task(async () => {
+        await forever;
+      }).drop();
+    }
 
-    let myTask, taskInstance1;
+    let myTask: any, taskInstance1: any;
     run(() => {
-      let obj = Obj.create();
+      let obj = new TestObj();
       myTask = obj.myTask;
       myTask.perform();
       taskInstance1 = myTask.perform();
@@ -172,17 +172,18 @@ module('Unit: task states', function (hooks) {
   test('.last is set when a task starts', function (assert) {
     assert.expect(4);
 
-    let defer, taskInstance0, taskInstance1;
-    let Obj = EmberObject.extend({
-      myTask: task(function* () {
-        defer = RSVP.defer();
-        yield defer.promise;
-      }).enqueue(),
-    });
+    let defer: any, taskInstance0: any, taskInstance1: any;
 
-    let obj, myTask;
+    class TestObj {
+      myTask = task(async () => {
+        defer = RSVP.defer();
+        await defer.promise;
+      }).enqueue();
+    }
+
+    let obj: TestObj, myTask: any;
     run(() => {
-      obj = Obj.create();
+      obj = new TestObj();
       myTask = obj.myTask;
       assert.strictEqual(myTask.last, null);
       taskInstance0 = myTask.perform();
@@ -199,17 +200,18 @@ module('Unit: task states', function (hooks) {
   test('.lastSuccessful is set when a task instance returns a value', async function (assert) {
     assert.expect(5);
 
-    let defer, taskInstance0, taskInstance1;
-    let Obj = EmberObject.extend({
-      myTask: task(function* () {
-        defer = RSVP.defer();
-        return yield defer.promise;
-      }).enqueue(),
-    });
+    let defer: any, taskInstance0: any, taskInstance1: any;
 
-    let obj, myTask;
+    class TestObj {
+      myTask = task(async () => {
+        defer = RSVP.defer();
+        return await defer.promise;
+      }).enqueue();
+    }
+
+    let obj: TestObj, myTask: any;
     run(() => {
-      obj = Obj.create();
+      obj = new TestObj();
       myTask = obj.myTask;
       assert.strictEqual(myTask.lastSuccessful, null);
       taskInstance0 = myTask.perform();
@@ -234,17 +236,18 @@ module('Unit: task states', function (hooks) {
   test('.lastComplete is set when a task instance returns/cancels/errors', async function (assert) {
     assert.expect(5);
 
-    let defer, taskInstance0, taskInstance1, taskInstance2;
-    let Obj = EmberObject.extend({
-      myTask: task(function* () {
-        defer = RSVP.defer();
-        return yield defer.promise;
-      }).enqueue(),
-    });
+    let defer: any, taskInstance0: any, taskInstance1: any, taskInstance2: any;
 
-    let obj, myTask;
+    class TestObj {
+      myTask = task(async () => {
+        defer = RSVP.defer();
+        return await defer.promise;
+      }).enqueue();
+    }
+
+    let obj: TestObj, myTask: any;
     run(() => {
-      obj = Obj.create();
+      obj = new TestObj();
       myTask = obj.myTask;
       assert.strictEqual(myTask.lastComplete, null);
       taskInstance0 = myTask.perform();
@@ -265,17 +268,18 @@ module('Unit: task states', function (hooks) {
   test('.lastErrored is set when a task instance errors (but not cancels)', async function (assert) {
     assert.expect(5);
 
-    let defer, taskInstance1, taskInstance2;
-    let Obj = EmberObject.extend({
-      myTask: task(function* () {
-        defer = RSVP.defer();
-        return yield defer.promise;
-      }).enqueue(),
-    });
+    let defer: any, taskInstance1: any, taskInstance2: any;
 
-    let obj, myTask;
+    class TestObj {
+      myTask = task(async () => {
+        defer = RSVP.defer();
+        return await defer.promise;
+      }).enqueue();
+    }
+
+    let obj: TestObj, myTask: any;
     run(() => {
-      obj = Obj.create();
+      obj = new TestObj();
       myTask = obj.myTask;
       assert.strictEqual(myTask.lastErrored, null);
       myTask.perform();
@@ -296,17 +300,18 @@ module('Unit: task states', function (hooks) {
   test('.lastCanceled is set when a task instance cancels (but not errors)', async function (assert) {
     assert.expect(5);
 
-    let defer, taskInstance1;
-    let Obj = EmberObject.extend({
-      myTask: task(function* () {
-        defer = RSVP.defer();
-        return yield defer.promise;
-      }).enqueue(),
-    });
+    let defer: any, taskInstance1: any;
 
-    let obj, myTask;
+    class TestObj {
+      myTask = task(async () => {
+        defer = RSVP.defer();
+        return await defer.promise;
+      }).enqueue();
+    }
+
+    let obj: TestObj, myTask: any;
     run(() => {
-      obj = Obj.create();
+      obj = new TestObj();
       myTask = obj.myTask;
       assert.strictEqual(myTask.lastCanceled, null);
       myTask.perform();
@@ -331,17 +336,18 @@ module('Unit: task states', function (hooks) {
   test('.lastIncomplete is set when a task instance errors or cancels', async function (assert) {
     assert.expect(5);
 
-    let defer, taskInstance1, taskInstance2;
-    let Obj = EmberObject.extend({
-      myTask: task(function* () {
-        defer = RSVP.defer();
-        return yield defer.promise;
-      }).enqueue(),
-    });
+    let defer: any, taskInstance1: any, taskInstance2: any;
 
-    let obj, myTask;
+    class TestObj {
+      myTask = task(async () => {
+        defer = RSVP.defer();
+        return await defer.promise;
+      }).enqueue();
+    }
+
+    let obj: TestObj, myTask: any;
     run(() => {
-      obj = Obj.create();
+      obj = new TestObj();
       myTask = obj.myTask;
       assert.strictEqual(myTask.lastIncomplete, null);
       myTask.perform();
@@ -362,13 +368,13 @@ module('Unit: task states', function (hooks) {
   test('.lastRunning resets one-by-one as tasks are completed, successfully or not', async function (assert) {
     assert.expect(12);
 
-    let Obj = EmberObject.extend({
-      myTask: task(function* (defer) {
-        return yield defer.promise;
-      }),
-    });
+    class TestObj {
+      myTask = task(async (defer: any) => {
+        return await defer.promise;
+      });
+    }
 
-    const obj = Obj.create();
+    const obj = new TestObj();
 
     const defer1 = RSVP.defer();
     const taskInstance1 = obj.myTask.perform(defer1);

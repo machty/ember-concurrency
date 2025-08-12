@@ -1,5 +1,5 @@
-import { module, test } from 'qunit';
 import KeepLatestPolicy from 'ember-concurrency/-private/external/scheduler/policies/keep-latest-policy';
+import { module, test } from 'qunit';
 import { typesFor } from './helpers';
 
 module('Unit: KeepLatest policy', function () {
