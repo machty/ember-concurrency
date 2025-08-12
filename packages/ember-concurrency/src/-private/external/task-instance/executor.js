@@ -52,7 +52,6 @@ export class TaskInstanceExecutor {
     }
     this.setState({ hasStarted: true });
     this.proceedSync(YIELDABLE_CONTINUE, undefined);
-    this.taskInstance.onStarted();
   }
 
   cancel(cancelRequest) {
@@ -409,21 +408,6 @@ export class TaskInstanceExecutor {
     state.isFinished = true;
     this.setState(state);
     this.runFinalizeCallbacks();
-    this.dispatchFinalizeEvents(state.completionState);
-  }
-
-  dispatchFinalizeEvents(completionState) {
-    switch (completionState) {
-      case COMPLETION_SUCCESS:
-        this.taskInstance.onSuccess();
-        break;
-      case COMPLETION_ERROR:
-        this.taskInstance.onError(this.state.error);
-        break;
-      case COMPLETION_CANCEL:
-        this.taskInstance.onCancel(this.state.cancelReason);
-        break;
-    }
   }
 
   invokeYieldable(yieldedValue) {

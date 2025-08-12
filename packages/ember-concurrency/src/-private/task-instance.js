@@ -49,22 +49,6 @@ export class TaskInstance extends BaseTaskInstance {
     }
   }
 
-  onStarted() {
-    this.triggerEvent('started', this);
-  }
-
-  onSuccess() {
-    this.triggerEvent('succeeded', this);
-  }
-
-  onError(error) {
-    this.triggerEvent('errored', this, error);
-  }
-
-  onCancel(cancelReason) {
-    this.triggerEvent('canceled', this, cancelReason);
-  }
-
   formatCancelReason(reason) {
     return `TaskInstance '${this.getName()}' was canceled because ${reason}. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help`;
   }
@@ -142,113 +126,6 @@ export class TaskInstance extends BaseTaskInstance {
    * @memberof TaskInstance
    * @instance
    * @readOnly
-   */
-
-  /**
-   * Event emitted when a new {@linkcode TaskInstance} starts executing.
-   *
-   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
-   *
-   * ```js
-   * import Component from '@glimmer/component';
-   * import { task } from 'ember-concurrency';
-   * import { on } from '@ember/object/evented';
-   *
-   * export default class MyComponent extends Component {
-   *   doSomething = task(async () => {
-   *     // ... does something
-   *   });
-   *
-   *   @on('doSomething:started')
-   *   onDoSomethingStarted(taskInstance) {
-   *     // ...
-   *   }
-   * }
-   * ```
-   *
-   * @event TaskInstance#TASK_NAME:started
-   * @param {TaskInstance} taskInstance - Task instance that was started
-   */
-
-  /**
-   * Event emitted when a {@linkcode TaskInstance} succeeds.
-   *
-   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
-   *
-   * ```js
-   * import Component from '@glimmer/component';
-   * import { task } from 'ember-concurrency';
-   * import { on } from '@ember/object/evented';
-   *
-   * export default class MyComponent extends Component {
-   *   doSomething = task(async () => {
-   *     // ... does something
-   *   });
-   *
-   *   @on('doSomething:succeeded')
-   *   onDoSomethingSucceeded(taskInstance) {
-   *     // ...
-   *   }
-   * }
-   * ```
-   *
-   * @event TaskInstance#TASK_NAME:succeeded
-   * @param {TaskInstance} taskInstance - Task instance that was succeeded
-   */
-
-  /**
-   * Event emitted when a {@linkcode TaskInstance} throws an an error that is
-   * not handled within the task itself.
-   *
-   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
-   *
-   * ```js
-   * import Component from '@glimmer/component';
-   * import { task } from 'ember-concurrency';
-   * import { on } from '@ember/object/evented';
-   *
-   * export default class MyComponent extends Component {
-   *   doSomething = task(async () => {
-   *     // ... does something
-   *   });
-   *
-   *   @on('doSomething:errored')
-   *   onDoSomethingErrored(taskInstance, error) {
-   *     // ...
-   *   }
-   * }
-   * ```
-   *
-   * @event TaskInstance#TASK_NAME:errored
-   * @param {TaskInstance} taskInstance - Task instance that was started
-   * @param {Error} error - Error that was thrown by the task instance
-   */
-
-  /**
-   * Event emitted when a {@linkcode TaskInstance} is canceled.
-   *
-   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
-   *
-   * ```js
-   * import Component from '@glimmer/component';
-   * import { task } from 'ember-concurrency';
-   * import { on } from '@ember/object/evented';
-   *
-   * export default class MyComponent extends Component {
-   *   doSomething = task(async () => {
-   *     // ... does something
-   *   });
-   *
-   *   @on('doSomething:canceled')
-   *   onDoSomethingCanceled(taskInstance, cancelationReason) {
-   *     // ...
-   *   }
-   * }
-   * ```
-   *
-   * @event TaskInstance#TASK_NAME:canceled
-   * @param {TaskInstance} taskInstance - Task instance that was started
-   * @param {string} cancelationReason - Cancelation reason that was was provided to {@linkcode TaskInstance#cancel}
    */
 
   /**
