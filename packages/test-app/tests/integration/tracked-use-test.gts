@@ -13,7 +13,7 @@ module('Integration | tracked use', function (hooks) {
     const done = assert.async();
 
     class ECTest extends Component {
-      constructor(owner: unknown, args: any) {
+      constructor(owner: any, args: any) {
         super(owner, args);
         this.exampleTask.perform();
       }

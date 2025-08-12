@@ -4,9 +4,14 @@ import { module, test } from 'qunit';
 
 interface GenericEvented {
   _handlers: Record<string, Function[]>;
-  has(eventName: string): boolean;
+
+  // eslint-disable-next-line no-unused-vars
+  has(_eventName: string): boolean;
+  // eslint-disable-next-line no-unused-vars
   trigger(eventName: string, data?: any): void;
+  // eslint-disable-next-line no-unused-vars
   on(eventName: string, fn: Function): void;
+  // eslint-disable-next-line no-unused-vars
   off(eventName: string, fn: Function): void;
 }
 
