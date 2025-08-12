@@ -72,7 +72,7 @@ module.exports = async function () {
       },
       {
         name: 'tsc',
-        command: 'pnpm tsc',
+        command: 'pnpm tsc types-tests/*.ts',
       },
       embroiderSafe(),
       embroiderOptimized(),
