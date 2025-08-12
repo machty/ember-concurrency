@@ -7,7 +7,5 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "files": [
-    "./types-tests/ember-concurrency-test.ts"
-  ]
+  "files": ["./types-tests/ember-concurrency-test.ts"]
 }
