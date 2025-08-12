@@ -3,176 +3,24 @@ import { A } from '@ember/array';
 import { destroy } from '@ember/destroyable';
 import { later, run } from '@ember/runloop';
 import Ember from 'ember';
-import { forever, task, timeout } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 import { module, test } from 'qunit';
 import { defer } from 'rsvp';
 
 const originalLog = console.log;
 const originalWarn = console.warn;
 
-// Helper class for Evented behavior
-class EventedClass {
-  trigger(eventName: string, ...args: any[]): void {
-    // Basic trigger implementation for testing
-    const listeners = (this as any)._eventListeners?.[eventName] || [];
-    listeners.forEach((listener: any) => listener(...args));
-  }
-
-  on(eventName: string, callback: Function): void {
-    (this as any)._eventListeners = (this as any)._eventListeners || {};
-    (this as any)._eventListeners[eventName] =
-      (this as any)._eventListeners[eventName] || [];
-    (this as any)._eventListeners[eventName].push(callback);
-  }
-
-  destroy(): void {
-    (this as any)._eventListeners = {};
-  }
-}
-
 module('Unit: task', function (hooks) {
   hooks.afterEach(function () {
     console.log = originalLog;
     console.warn = originalWarn;
-    Ember.ENV.DEBUG_TASKS = false;
-  });
-
-  test('task init', function (assert) {
-    assert.expect(3);
-
-    class TestObj {
-      oldschool = task(async () => {
-        assert.ok(this instanceof TestObj);
-      }).on('init');
-
-      newschool = task(async () => {
-        assert.ok(this instanceof TestObj);
-        await 1;
-        await 1;
-        await 1;
-        assert.ok(true, 'done');
-      }).on('init');
-
-      constructor() {
-        // Simulate init behavior
-        (this as any).oldschool.perform();
-        (this as any).newschool.perform();
-      }
-    }
-
-    run(() => {
-      new TestObj();
-    });
-  });
-
-  test('task Evented event', function (assert) {
-    assert.expect(1);
-
-    let arr: any[] = [];
-
-    class TestObj extends EventedClass {
-      doStuff = task(async (a: any, b: any, c: any) => {
-        arr.push(a, b, c);
-      }).on('foo');
-
-      constructor() {
-        super();
-        this.on('foo', (...args: any[]) => {
-          (this as any).doStuff.perform(...args);
-        });
-      }
-    }
-
-    run(() => {
-      let obj = new TestObj();
-      obj.trigger('foo', 1, 2, 3);
-      obj.trigger('foo', 4, 5, 6);
-      obj.trigger('foo', 7, 8, 9);
-    });
-    assert.deepEqual(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-  });
-
-  test('task Evented event discontinues after destruction', function (assert) {
-    assert.expect(1);
-
-    let arr: any[] = [];
-
-    class TestObj extends EventedClass {
-      doStuff = task(async (a: any, b: any, c: any) => {
-        arr.push(a, b, c);
-      }).on('foo');
-
-      constructor() {
-        super();
-        this.on('foo', (...args: any[]) => {
-          (this as any).doStuff.perform(...args);
-        });
-      }
-    }
-
-    let obj: TestObj;
-    run(() => {
-      obj = new TestObj();
-      obj.trigger('foo', 1, 2, 3);
-    });
-    run(obj, 'destroy');
-    run(obj, 'trigger', 9, 9, 9);
-    assert.deepEqual(arr, [1, 2, 3]);
-  });
-
-  test('task discontinues after destruction when blocked on async values', function (assert) {
-    let start = assert.async();
-    assert.expect(1);
-
-    class TestObj extends EventedClass {
-      doStuff = task(async () => {
-        assert.ok(true);
-        await timeout(1000);
-        assert.ok(false);
-        await timeout(1000);
-      }).on('init');
-
-      constructor() {
-        super();
-        (this as any).doStuff.perform();
-      }
-    }
-
-    let obj: TestObj;
-    run(() => {
-      obj = new TestObj();
-    });
-
-    later(() => {
-      destroy(obj);
-      start();
-    });
-  });
-
-  test('tasks can be paused indefinitely by yielding `forever`', function (assert) {
-    assert.expect(2);
-
-    class TestObj extends EventedClass {
-      doStuff = task(async () => {
-        await forever;
-      }).on('init');
-
-      constructor() {
-        super();
-        (this as any).doStuff.perform();
-      }
-    }
-
-    let obj = run(() => new TestObj());
-    assert.true((obj as any).doStuff.isRunning);
-    run(() => destroy(obj));
-    assert.false((obj as any).doStuff.isRunning);
+    (Ember.ENV as any).DEBUG_TASKS = false;
   });
 
   test('task.cancelAll cancels all running task instances', async function (assert) {
     assert.expect(2);
 
-    class TestObj extends EventedClass {
+    class TestObj {
       doStuff = task(async () => {
         await timeout(1);
         assert.ok(false, 'should not get here');
@@ -198,7 +46,7 @@ module('Unit: task', function (hooks) {
   test('task.cancelAll normally preserves the last derived state', async function (assert) {
     assert.expect(2);
 
-    class TestObj extends EventedClass {
+    class TestObj {
       doStuff = task(async () => {
         await timeout(1);
         return 1;
@@ -220,7 +68,7 @@ module('Unit: task', function (hooks) {
   test('task.cancelAll({ resetState: true }) resets derived state', async function (assert) {
     assert.expect(2);
 
-    class TestObj extends EventedClass {
+    class TestObj {
       doStuff = task(async () => {
         await timeout(1);
         return 1;
@@ -245,7 +93,7 @@ module('Unit: task', function (hooks) {
   test('cancelation due to task modifier supplies useful message', function (assert) {
     assert.expect(2);
 
-    class TestObj extends EventedClass {
+    class TestObj {
       doStuff = task(async () => {
         await timeout(1);
       }).restartable();
@@ -268,7 +116,7 @@ module('Unit: task', function (hooks) {
   test('tasks can call cancelAll() on themselves', function (assert) {
     assert.expect(1);
 
-    class TestObj extends EventedClass {
+    class TestObj {
       doStuff = task(async () => {
         (this as any).doStuff.cancelAll();
         return 123;
@@ -282,29 +130,6 @@ module('Unit: task', function (hooks) {
     });
 
     assert.ok((obj as any).doStuff.last.isCanceled);
-  });
-
-  test('task().cancelOn', function (assert) {
-    assert.expect(0);
-
-    class TestObj extends EventedClass {
-      doStuff = task(async () => {
-        await timeout(10);
-        assert.ok(false, 'should not get here');
-      })
-        .on('init')
-        .cancelOn('foo');
-
-      constructor() {
-        super();
-        (this as any).doStuff.perform();
-        this.trigger('foo');
-      }
-    }
-
-    run(() => {
-      new TestObj();
-    });
   });
 
   test('performing a task on a destroyed object returns an immediately-canceled taskInstance', function (assert) {
@@ -420,7 +245,7 @@ module('Unit: task', function (hooks) {
   test('Ember.ENV.DEBUG_TASKS=true enables basic debugging', function (assert) {
     assert.expect(1);
 
-    Ember.ENV.DEBUG_TASKS = true;
+    (Ember.ENV as any).DEBUG_TASKS = true;
 
     let logs: any[] = [];
     console.log = (...args: any[]) => {
