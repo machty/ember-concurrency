@@ -352,7 +352,7 @@ module('Unit: task', function (hooks) {
         return 'yes';
       }
 
-      task = task(async () => {
+      myTask = task(async () => {
         assert.ok(true);
       });
     }
@@ -361,53 +361,31 @@ module('Unit: task', function (hooks) {
       let obj = new TestObj();
       if (obj.es5getterSyntaxSupported === 'yes') {
         assert.expect(1);
-        (obj as any).task.perform();
+        (obj as any).myTask.perform();
       } else {
         assert.expect(0);
       }
     });
   });
 
-  test('ES classes: syntax with decorators works', function (assert) {
-    assert.expect(2);
-
-    const done = assert.async(2);
-
-    class FakeGlimmerComponent {
-      @task *task() {
-        assert.true(this instanceof FakeGlimmerComponent);
-        yield timeout(1);
-        assert.true(true);
-        done();
-      }
-    }
-
-    run(() => {
-      let obj = new FakeGlimmerComponent();
-      (obj as any).task.perform();
-    });
-
-    later(done, 1);
-  });
-
   test('ES classes: performing a task on a destroyed object returns an immediately-canceled taskInstance', function (assert) {
     assert.expect(2);
 
     class TestObj {
-      @task *task() {
+      myTask = task(async () => {
         throw new Error("shouldn't get here");
-      }
+      });
     }
 
     let obj: TestObj;
     run(() => {
       obj = new TestObj();
       destroy(obj);
-      assert.true((obj as any).task.perform().isDropped);
+      assert.true((obj as any).myTask.perform().isDropped);
     });
 
     run(() => {
-      assert.true((obj as any).task.perform().isDropped);
+      assert.true((obj as any).myTask.perform().isDropped);
     });
   });
 
@@ -416,12 +394,12 @@ module('Unit: task', function (hooks) {
     assert.expect(1);
 
     class TestObj {
-      @task *doStuff() {
+      doStuff = task(async () => {
         assert.ok(true);
-        yield timeout(1000);
+        await timeout(1000);
         assert.ok(false);
-        yield timeout(1000);
-      }
+        await timeout(1000);
+      });
 
       constructor() {
         (this as any).doStuff.perform();
