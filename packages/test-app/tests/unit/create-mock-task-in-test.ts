@@ -1,19 +1,21 @@
-import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
-import { module, test } from 'qunit';
 import { task } from 'ember-concurrency';
+import { module, test } from 'qunit';
 
 module('Unit: test environment', function () {
   test(`mock task can be created in a test`, function (assert) {
     assert.expect(1);
 
     let taskRan = false;
-    let myMock = EmberObject.extend({
-      doAsync: task(function* () {
+
+    class TestObject {
+      doAsync = task(async () => {
         taskRan = true;
-        yield true;
-      }),
-    }).create();
+        await true;
+      });
+    }
+
+    let myMock = new TestObject();
 
     run(() => {
       return myMock.doAsync.perform().then(() => {

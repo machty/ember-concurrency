@@ -53,28 +53,6 @@ module.exports = function (defaults) {
   */
 
   return maybeEmbroider(app, {
-    packageRules: [
-      {
-        package: 'test-app',
-        components: {
-          '{{e-c-test}}': {
-            safeToIgnore: true,
-          },
-          '{{inner-component}}': {
-            safeToIgnore: true,
-          },
-          '{{my-component}}': {
-            safeToIgnore: true,
-          },
-          '{{test-swallow-error}}': {
-            safeToIgnore: true,
-          },
-          '{{test-async-arrow-task}}': {
-            safeToIgnore: true,
-          },
-        },
-      },
-    ],
     skipBabel: [
       {
         package: 'qunit',

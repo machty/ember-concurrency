@@ -1,18 +1,17 @@
+import { lastValue, task } from 'ember-concurrency';
 import { module, test } from 'qunit';
-import EmberObject from '@ember/object';
-import { task, lastValue } from 'ember-concurrency';
 
 module('Unit | lastValue', function () {
   test('without a default value', async function (assert) {
-    class ObjectWithTask extends EmberObject {
-      @task task = function* () {
-        return yield 'foo';
-      };
+    class ObjectWithTask {
+      task = task(async () => {
+        return await 'foo';
+      });
 
-      @lastValue('task') value;
+      @lastValue('task') value: any;
     }
 
-    const instance = ObjectWithTask.create();
+    const instance = new ObjectWithTask();
     assert.strictEqual(
       instance.value,
       undefined,
@@ -29,15 +28,15 @@ module('Unit | lastValue', function () {
   });
 
   test('with a default value', async function (assert) {
-    class ObjectWithTaskDefaultValue extends EmberObject {
-      @task task = function* () {
-        return yield 'foo';
-      };
+    class ObjectWithTaskDefaultValue {
+      task = task(async () => {
+        return await 'foo';
+      });
 
       @lastValue('task') value = 'default value';
     }
 
-    const instance = ObjectWithTaskDefaultValue.create();
+    const instance = new ObjectWithTaskDefaultValue();
 
     assert.strictEqual(
       instance.value,

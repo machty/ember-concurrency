@@ -5,7 +5,6 @@ import { task } from 'ember-concurrency';
 import perform from 'ember-concurrency/helpers/perform';
 import { setupRenderingTest } from 'ember-qunit';
 import { module, test } from 'qunit';
-import swallowError from '../../../app/helpers/swallow-error';
 
 module('Integration | helpers | perform', function (hooks) {
   setupRenderingTest(hooks);
@@ -95,3 +94,21 @@ module('Integration | helpers | perform', function (hooks) {
     assert.ok(error instanceof Error);
   });
 });
+
+function swallowError(fn: any) {
+  return function callAndSwallowError(...args: any[]) {
+    try {
+      const response = fn(...args);
+
+      if (response.catch) {
+        return response.catch(function () {
+          // Swallow async error
+        });
+      }
+
+      return response;
+    } catch (e) {
+      // Swallow synchronous error
+    }
+  };
+}

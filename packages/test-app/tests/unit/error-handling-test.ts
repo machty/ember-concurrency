@@ -1,49 +1,48 @@
 import { run } from '@ember/runloop';
-import { defer } from 'rsvp';
-import EmberObject from '@ember/object';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
+import { defer } from 'rsvp';
 
 module('Unit: task error handling', function () {
   test('explicitly canceling parent task: no errors', function (assert) {
     assert.expect(1);
 
-    let childDefer;
-    let Obj = EmberObject.extend({
-      parent: task(function* () {
-        yield this.child.perform();
-      }),
+    let childDefer: any;
 
-      child: task(function* () {
+    class TestObject {
+      parent = task(async () => {
+        await this.child.perform();
+      });
+
+      child = task(async () => {
         childDefer = defer();
-        yield childDefer.promise;
-      }),
-    });
+        await childDefer.promise;
+      });
+    }
 
-    let obj;
+    let obj = new TestObject();
     run(() => {
-      obj = Obj.create();
       obj.parent.perform();
     });
     assert.ok(childDefer);
     run(() => {
-      obj.parent.cancelAll();
+      (obj.parent as any).cancelAll();
     });
   });
 
   test('synchronous errors can be caught asynchronously', function (assert) {
     assert.expect(1);
 
-    let Obj = EmberObject.extend({
-      throwError: task(function* () {
+    class TestObject {
+      throwError = task(async () => {
         throw new Error('This error should be caught');
-      }),
-    });
+      });
+    }
 
     run(() => {
-      let obj = Obj.create();
+      let obj = new TestObject();
 
-      obj.throwError.perform().catch((e) => {
+      obj.throwError.perform().catch((e: any) => {
         assert.strictEqual(
           e.message,
           'This error should be caught',
@@ -56,21 +55,21 @@ module('Unit: task error handling', function () {
   test('parent task canceled by restartable policy: no errors', function (assert) {
     assert.expect(1);
 
-    let childDefer;
-    let Obj = EmberObject.extend({
-      parent: task(function* () {
-        yield this.child.perform();
-      }).restartable(),
+    let childDefer: any;
 
-      child: task(function* () {
+    class TestObject {
+      parent = task({ restartable: true }, async () => {
+        await this.child.perform();
+      });
+
+      child = task(async () => {
         childDefer = defer();
-        yield childDefer.promise;
-      }),
-    });
+        await childDefer.promise;
+      });
+    }
 
-    let obj;
+    let obj = new TestObject();
     run(() => {
-      obj = Obj.create();
       obj.parent.perform();
     });
     assert.ok(childDefer);
@@ -82,25 +81,25 @@ module('Unit: task error handling', function () {
   test('parent task perform attempt canceled by drop policy: no errors', function (assert) {
     assert.expect(1);
 
-    let childDefer;
-    let Obj = EmberObject.extend({
-      parent: task(function* () {
-        yield this.child.perform();
-      }).drop(),
+    let childDefer: any;
 
-      child: task(function* () {
+    class TestObject {
+      parent = task({ drop: true }, async () => {
+        await this.child.perform();
+      });
+
+      child = task(async () => {
         childDefer = defer();
         try {
-          yield childDefer.promise;
+          await childDefer.promise;
         } catch (e) {
           assert.ok(false);
         }
-      }),
-    });
+      });
+    }
 
-    let obj;
+    let obj = new TestObject();
     run(() => {
-      obj = Obj.create();
       obj.parent.perform(1);
     });
     assert.ok(childDefer);
@@ -110,7 +109,7 @@ module('Unit: task error handling', function () {
     });
 
     run(() => {
-      obj.parent.cancelAll();
+      (obj.parent as any).cancelAll();
     });
   });
 });
