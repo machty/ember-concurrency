@@ -21,18 +21,6 @@ export type TaskForTaskFunction<T extends TaskFunction<any, any[]>> = Task<
 export type TaskInstanceForTaskFunction<T extends TaskFunction<any, any[]>> =
   TaskInstance<TaskFunctionReturnType<T>>;
 
-export interface EncapsulatedTaskDescriptor<T, Args extends any[]> {
-  perform(...args: Args): TaskGenerator<T>;
-}
-
-export type EncapsulatedTaskDescriptorArgs<
-  T extends EncapsulatedTaskDescriptor<any, any[]>,
-> = T extends { perform(...args: infer A): TaskGenerator<any> } ? A : [];
-
-export type EncapsulatedTaskDescriptorReturnType<
-  T extends EncapsulatedTaskDescriptor<any, any[]>,
-> = T extends { perform(...args: any[]): TaskGenerator<infer R> } ? R : unknown;
-
 export type AsyncArrowTaskFunction<HostObject, T, Args extends any[]> = (
   this: HostObject,
   ...args: Args
@@ -60,27 +48,6 @@ export type TaskInstanceForAsyncTaskFunction<
   HostObject,
   T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
 > = TaskInstance<AsyncTaskArrowFunctionReturnType<HostObject, T>>;
-
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type EncapsulatedTaskState<T extends object> = Omit<
-  T,
-  'perform' | keyof TaskInstance<any>
->;
-
-export type TaskForEncapsulatedTaskDescriptor<
-  T extends EncapsulatedTaskDescriptor<any, any[]>,
-> = EncapsulatedTask<
-  EncapsulatedTaskDescriptorReturnType<T>,
-  EncapsulatedTaskDescriptorArgs<T>,
-  EncapsulatedTaskState<T>
->;
-
-export type TaskInstanceForEncapsulatedTaskDescriptor<
-  T extends EncapsulatedTaskDescriptor<any, any[]>,
-> = EncapsulatedTaskInstance<
-  EncapsulatedTaskDescriptorReturnType<T>,
-  EncapsulatedTaskState<T>
->;
 
 interface TaskState<T extends TaskInstance<any>> {
   /**
@@ -210,14 +177,6 @@ interface AbstractTask<Args extends any[], T extends TaskInstance<any>>
 export interface Task<T, Args extends any[]>
   extends AbstractTask<Args, TaskInstance<T>> {}
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface EncapsulatedTask<
-  T,
-  Args extends any[],
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  State extends object,
-> extends AbstractTask<Args, EncapsulatedTaskInstance<T, State>> {}
-
 /**
  * A `TaskInstance` represent a single execution of a
  * {@linkcode Task}. Every call to {@linkcode Task#perform} returns
@@ -326,10 +285,6 @@ export interface TaskInstance<T> extends Promise<T> {
 
   finally(onfinally?: (() => void) | null): Promise<T>;
 }
-
-// eslint-disable-next-line @typescript-eslint/ban-types
-type EncapsulatedTaskInstance<T, State extends object> = TaskInstance<T> &
-  EncapsulatedTaskState<State>;
 
 interface OnStateCallback<T> {
   (state: TaskState<TaskInstance<any>>, taskable: T): void;
@@ -505,19 +460,10 @@ type AbstractTaskProperty<T extends Task<any, any[]>> = T &
 export interface TaskProperty<T, Args extends any[]>
   extends AbstractTaskProperty<Task<T, Args>> {}
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface EncapsulatedTaskProperty<
-  T,
-  Args extends any[],
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  State extends object,
-> extends AbstractTaskProperty<EncapsulatedTask<T, Args, State>> {}
-
 export type TaskCancelation = Error & { name: 'TaskCancelation' };
 
 export type TaskDefinition<T, Args extends any[]> =
   | TaskFunction<T, Args>
-  | EncapsulatedTaskDescriptor<T, Args>;
 
 export interface TaskModifier<T, Args extends any[]> {
   (factory: AbstractTaskFactory<T, Args>, taskModifierOption: any): void;
@@ -756,18 +702,11 @@ export function task(target: Object, propertyKey: string): void;
  * but much of a power of tasks lies in proper usage of Task Modifiers
  * that you can apply to a task.
  *
- * @param taskFn An async function backing the task or an encapsulated task descriptor object with a `perform` async method.
+ * @param taskFn An async function backing the task
  */
 export function task<T extends TaskFunction<any, any[]>>(
   taskFn: T,
 ): TaskProperty<TaskFunctionReturnType<T>, TaskFunctionArgs<T>>;
-export function task<T extends EncapsulatedTaskDescriptor<any, any[]>>(
-  taskFn: T,
-): EncapsulatedTaskProperty<
-  EncapsulatedTaskDescriptorReturnType<T>,
-  EncapsulatedTaskDescriptorArgs<T>,
-  EncapsulatedTaskState<T>
->;
 
 export function task<
   HostObject,

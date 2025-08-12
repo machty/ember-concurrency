@@ -1,4 +1,4 @@
-import { assert, deprecate } from '@ember/debug';
+import { assert } from '@ember/debug';
 import { get } from '@ember/object';
 import { addListener } from '@ember/object/events';
 import { addObserver } from '@ember/object/observers';
@@ -10,7 +10,7 @@ import {
 
 import { EMBER_ENVIRONMENT } from './ember-environment';
 import EmberScheduler from './scheduler/ember-scheduler';
-import { EncapsulatedTask, Task } from './task';
+import { Task } from './task';
 
 let handlerCounter = 0;
 
@@ -63,27 +63,20 @@ export class TaskFactory extends BaseTaskFactory {
 
   createTask(context) {
     assert(
-      `Cannot create task if a task definition is not provided as generator function or encapsulated task.`,
+      `Cannot create task if a task definition is not provided as generator function`,
       this.taskDefinition,
     );
 
     let options = this.getTaskOptions(context);
 
-    if (typeof this.taskDefinition === 'object') {
-      return new EncapsulatedTask(
-        Object.assign({ taskObj: this.taskDefinition }, options),
-      );
-    } else {
-      return new Task(
-        Object.assign(
-          {
-            generatorFactory: (args) =>
-              this.taskDefinition.apply(context, args),
-          },
-          options,
-        ),
-      );
-    }
+    return new Task(
+      Object.assign(
+        {
+          generatorFactory: (args) => this.taskDefinition.apply(context, args),
+        },
+        options,
+      ),
+    );
   }
 
   addCancelEvents(...cancelEventNames) {
