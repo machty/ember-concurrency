@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { destroy } from '@ember/destroyable';
 import { run } from '@ember/runloop';
-import Ember from 'ember';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
 import { defer } from 'rsvp';
@@ -11,7 +10,6 @@ const originalWarn = console.warn;
 module('Unit: self-cancel loops', function (hooks) {
   hooks.afterEach(function () {
     console.warn = originalWarn;
-    Ember.ENV.DEBUG_TASKS = false;
   });
 
   test("a warning is logged when a non-link-specified cross object parent->child cancelation occurs due to parent object's destruction", function (assert) {

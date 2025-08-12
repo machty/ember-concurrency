@@ -1,8 +1,8 @@
-import Ember from 'ember';
 import { defer } from 'rsvp';
 import { Environment } from './external/environment';
 import { assert } from '@ember/debug';
 import { join, next, schedule } from '@ember/runloop';
+import { getOnerror } from '@ember/-internals/error-handling';
 
 export class EmberEnvironment extends Environment {
   assert(...args) {
@@ -15,8 +15,9 @@ export class EmberEnvironment extends Environment {
 
   reportUncaughtRejection(error) {
     next(null, function () {
-      if (Ember.onerror) {
-        Ember.onerror(error);
+      const onError = getOnerror();
+      if (onError) {
+        onError(error);
       } else {
         throw error;
       }
@@ -28,7 +29,9 @@ export class EmberEnvironment extends Environment {
   }
 
   globalDebuggingEnabled() {
-    return Ember.ENV.DEBUG_TASKS;
+    // TODO figure out how to reinstate. In the meantime people can use `{ debug: true }` on tasks of interest.
+    // return Ember.ENV.DEBUG_TASKS;
+    return false;
   }
 }
 

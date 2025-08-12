@@ -1,7 +1,3 @@
-import Ember from 'ember';
-
-import { computed } from '@ember/object';
-
 import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
 import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
 import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy';
@@ -177,17 +173,3 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
   },
 });
 
-const setDecorator = Ember._setClassicDecorator;
-export function taskComputed(fn) {
-  let cp = function (proto, key) {
-    if (cp.setup !== undefined) {
-      cp.setup(proto, key);
-    }
-
-    return computed(fn)(...arguments);
-  };
-
-  setDecorator(cp);
-
-  return cp;
-}

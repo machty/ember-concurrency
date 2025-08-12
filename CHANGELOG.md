@@ -12,6 +12,8 @@
       - e.g. `task(function * () {})` not supported
     - Removed all decorator-based APIs, e.g. `@task * foo() { ... }`
     - Removed encapsulated tasks
+    - Removed Ember.ENV.DEBUG_TASKS
+      - This may be reinstated by some other means if there is interest. In the meantime you can continue to use `{debug:true}` for debugging logging on specific tasks of interest
 
 ### 4.0.6
 
