@@ -172,4 +172,3 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
     this[taskFactorySymbol].setName(key);
   },
 });
-
