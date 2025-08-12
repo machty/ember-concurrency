@@ -78,5 +78,5 @@ See the [Contributing](CONTRIBUTING.md) guide for details.
 [npm-badge-link]: http://badge.fury.io/js/ember-concurrency
 [ember-observer-badge]: http://emberobserver.com/badges/ember-concurrency.svg
 [ember-observer-url]: http://emberobserver.com/addons/ember-concurrency
-[ember-version]: https://img.shields.io/badge/Ember-3.8+-brightgreen.svg
+[ember-version]: https://img.shields.io/badge/Ember-4.0+-brightgreen.svg
 [twiddle-starter]: https://ember-twiddle.com/b2b0c016f4df24261381487b60c707f3?numColumns=2&openFiles=templates.application.hbs%2Ctemplates.application.hbs
