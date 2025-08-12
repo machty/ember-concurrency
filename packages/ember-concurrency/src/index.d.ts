@@ -409,8 +409,7 @@ export interface TaskProperty<T, Args extends any[]>
 
 export type TaskCancelation = Error & { name: 'TaskCancelation' };
 
-export type TaskDefinition<T, Args extends any[]> =
-  | TaskFunction<T, Args>
+export type TaskDefinition<T, Args extends any[]> = TaskFunction<T, Args>;
 
 export interface TaskModifier<T, Args extends any[]> {
   (factory: AbstractTaskFactory<T, Args>, taskModifierOption: any): void;

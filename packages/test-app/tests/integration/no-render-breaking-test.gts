@@ -7,7 +7,9 @@ import { module, test } from 'qunit';
 
 import { modifier } from 'ember-modifier';
 
-const autofocusModifier = modifier(function autofocus(element: HTMLInputElement) {
+const autofocusModifier = modifier(function autofocus(
+  element: HTMLInputElement,
+) {
   element.focus();
 });
 
@@ -26,7 +28,9 @@ module('Integration | no render breaking', function (hooks) {
         await timeout(100);
       });
 
-      <template><input {{autofocusModifier}} {{on 'focusin' this.focusIn}} /></template>
+      <template>
+        <input {{autofocusModifier}} {{on 'focusin' this.focusIn}} />
+      </template>
     }
 
     await render(<template><ECTest /></template>);

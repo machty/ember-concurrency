@@ -182,39 +182,6 @@ module('Unit: task', function (hooks) {
     });
   });
 
-  test('call stack stays within reasonable bounds', function (assert) {
-    assert.expect(1);
-
-    class TestObj {
-      a = task(async () => {
-        await (this as any).b.perform();
-
-        // Not sure how to test this in an automated fashion;
-        // when we tweak scheduler logic, we can check that stack
-        // traces are within reasonable bounds by uncommenting
-        // the line below. (I'd use Error.stack but Chrome truncates
-        // the stack to only a few frames).
-        // debugger;
-      });
-
-      b = task(async () => {
-        await (this as any).c.perform();
-      });
-
-      c = task(async () => {
-        await (this as any).d.perform();
-      });
-
-      d = task(async () => {});
-    }
-
-    run(() => {
-      let obj = new TestObj();
-      (obj as any).a.perform();
-    });
-    assert.ok(true);
-  });
-
   test('debug:true enables basic debugging', function (assert) {
     assert.expect(1);
 

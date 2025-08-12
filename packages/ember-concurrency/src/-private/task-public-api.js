@@ -1,5 +1,4 @@
 import { assert } from '@ember/debug';
-import { TaskProperty } from './task-properties';
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that

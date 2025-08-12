@@ -15,7 +15,6 @@ module('Integration | tracked use', function (hooks) {
     class ECTest extends Component {
       constructor(owner: unknown, args: any) {
         super(owner, args);
-        debugger;
         this.exampleTask.perform();
       }
 

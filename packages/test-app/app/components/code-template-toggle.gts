@@ -5,7 +5,7 @@ import { guidFor } from '@ember/object/internals';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import CodeSnippet from './code-snippet';
-import didInsert from "@ember/render-modifiers/modifiers/did-insert";
+import didInsert from '@ember/render-modifiers/modifiers/did-insert';
 
 interface CodeTemplateToggleSignature {
   Args: {
