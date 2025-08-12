@@ -61,12 +61,12 @@ interface TaskState<T extends TaskInstance<any>> {
   readonly isQueued: boolean;
 
   /**
-   * `true` if the task or task group is not in the running or queued state.
+   * `true` if the task is not in the running or queued state.
    */
   readonly isIdle: boolean;
 
   /**
-   * The current state of the task or task group: `"running"`, `"queued"` or `"idle"`.
+   * The current state of the task: `"running"`, `"queued"` or `"idle"`.
    */
   readonly state: 'running' | 'queued' | 'idle';
 
@@ -111,7 +111,7 @@ interface TaskState<T extends TaskInstance<any>> {
   readonly lastIncomplete: T | null;
 
   /**
-   * The number of times this task or task group has been performed.
+   * The number of times this task has been performed.
    */
   readonly performCount: number;
 }
@@ -355,16 +355,6 @@ interface _AbstractTaskProperty<T extends Task<any, any[]>> {
   maxConcurrency(n: number): this;
 
   /**
-   * Adds this task to a TaskGroup so that concurrency constraints
-   * can be shared between multiple tasks.
-   *
-   * [See the Task Group docs for more information](/docs/task-groups)
-   *
-   * @param groupPath A path to the TaskGroup property.
-   */
-  group(groupPath: string): this;
-
-  /**
    * Activates lifecycle events, allowing Evented host objects to react to task state
    * changes.
    *
@@ -433,7 +423,6 @@ interface AbstractTaskFactory<T, Args extends any[]> {
   getOptions(): Record<string, any>;
   setDebug(isDebug: boolean): this;
   setEvented(isEvented: boolean): this;
-  setGroup(groupName: string): this;
   setMaxConcurrency(maxConcurrency: number): this;
   setName(name: string): this;
   setOnState(onStateCallback: OnStateCallback<T> | null): this;

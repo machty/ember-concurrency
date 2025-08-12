@@ -106,22 +106,6 @@ export const propertyModifiers = {
   },
 
   /**
-   * Adds this task to a TaskGroup so that concurrency constraints
-   * can be shared between multiple tasks.
-   *
-   * [See the Task Group docs for more information](/docs/task-groups)
-   *
-   * @method group
-   * @memberof TaskProperty
-   * @param {String} groupPath A path to the TaskGroup property
-   * @instance
-   */
-  group(taskGroupPath) {
-    this[taskFactorySymbol].setGroup(taskGroupPath);
-    return this;
-  },
-
-  /**
    * Activates lifecycle events, allowing Evented host objects to react to task state
    * changes.
    *
@@ -182,9 +166,7 @@ export const propertyModifiers = {
 };
 
 export class TaskProperty {}
-export class TaskGroupProperty {}
 
-Object.assign(TaskGroupProperty.prototype, propertyModifiers);
 Object.assign(TaskProperty.prototype, propertyModifiers, {
   setup(proto, key) {
     if (this.callSuperSetup) {

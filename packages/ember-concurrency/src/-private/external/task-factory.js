@@ -7,18 +7,10 @@ import UnboundedSchedulerPolicy from './scheduler/policies/unbounded-policy';
 import Scheduler from './scheduler/scheduler';
 import { Task } from './task/task';
 
-function assertModifiersNotMixedWithGroup(obj) {
-  if (obj._hasSetConcurrencyConstraint && obj._taskGroupPath) {
-    throw new Error(
-      `Cannot use both 'group' and other concurrency-constraining task modifiers (e.g. 'drop', 'enqueue', 'restartable')`,
-    );
-  }
-}
-
 function assertUnsetBufferPolicy(obj) {
   if (obj._hasSetBufferPolicy) {
     throw new Error(
-      `Cannot set multiple buffer policies on a task or task group. ${obj._schedulerPolicyClass} has already been set for task or task group '${obj.name}'`,
+      `Cannot set multiple buffer policies on a task. ${obj._schedulerPolicyClass} has already been set for task '${obj.name}'`,
     );
   }
 }
@@ -30,7 +22,6 @@ const MODIFIER_REGISTRY = {
   debug: (factory, value) => value && factory.setDebug(value),
   drop: (factory, value) =>
     value && factory.setBufferPolicy(DropSchedulerPolicy),
-  group: (factory, groupName) => factory.setGroup(groupName),
   keepLatest: (factory, value) =>
     value && factory.setBufferPolicy(KeepLatestSchedulerPolicy),
   maxConcurrency: (factory, maxConcurrency) =>
@@ -85,7 +76,7 @@ export function hasModifier(name) {
 }
 
 /**
- * Factory used for instantiating Tasks and Task Groups. Mostly for internal
+ * Factory used for instantiating Tasks. Mostly for internal
  * use, but some public APIs exposed via the Task Modifier APIs.
  *
  * <style>
@@ -106,7 +97,6 @@ export class TaskFactory {
   _maxConcurrency = null;
   _onStateCallback = (state, taskable) => taskable.setState(state);
   _schedulerPolicyClass = UnboundedSchedulerPolicy;
-  _taskGroupPath = null;
 
   constructor(name = '<unknown>', taskDefinition = null, options = {}) {
     this.name = name;
@@ -215,7 +205,6 @@ export class TaskFactory {
     this._hasSetBufferPolicy = true;
     this._hasSetConcurrencyConstraint = true;
     this._schedulerPolicyClass = policy;
-    assertModifiersNotMixedWithGroup(this);
 
     return this;
   }
@@ -251,17 +240,6 @@ export class TaskFactory {
   setMaxConcurrency(maxConcurrency) {
     this._hasSetConcurrencyConstraint = true;
     this._maxConcurrency = maxConcurrency;
-    return this;
-  }
-
-  /**
-   * Assigns Task created from this factory to the specified group name
-   *
-   * @param {string} group
-   * @returns {TaskFactory}
-   */
-  setGroup(group) {
-    this._taskGroupPath = group;
     return this;
   }
 

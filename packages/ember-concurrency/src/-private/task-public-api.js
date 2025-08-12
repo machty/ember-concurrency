@@ -42,61 +42,18 @@ import { TaskProperty } from './task-properties';
  * @param {function} taskFunction the async function backing the task.
  * @returns {TaskProperty}
  */
-export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
+export function task() {
   assert(
     `It appears you're attempting to use the new task(async () => { ... }) syntax, but the async arrow task function you've provided is not being properly compiled by Babel.\n\nPossible causes / remedies:\n\n1. You must pass the async function expression directly to the task() function (it is not currently supported to pass in a variable containing the async arrow fn, or any other kind of indirection)\n2. The new task syntax is only supported by native classes. Ensure that this is one.\n3. If this code is in an addon, please ensure the addon specifies ember-concurrency "2.3.0" or higher in "dependencies" (not "devDependencies")\n4. Ensure that there is only one version of ember-concurrency v2.3.0+ being used in your project (including nested dependencies) and consider using npm/yarn/pnpm resolutions to enforce a single version is used\n5. Ensure that you have registered the Babel transform that Ember Concurrency uses to transform tasks in the "async-arrow" notation, see https://ember-concurrency.com/docs/v4-upgrade`,
     !isUntranspiledAsyncFn(arguments[arguments.length - 1]),
   );
 
-  if (
-    isDecoratorOptions(taskFnOrProtoOrDecoratorOptions) ||
-    (key && descriptor)
-  ) {
-    assert(
-      `Using @task decorator (or any of its variants) is no longer supported since ember-concurrency v5. Please use modern \`taskName = task(async () => {})\` syntax instead`,
-      false,
-    );
-  } else {
-    assert(
-      `Using task(...) in any form other than task(async () => {}) is no longer supported since ember-concurrency v5. Please use the modern syntax instead (and consider using one of ember-concurrency's codemods).`,
-      false,
-    );
-  }
+  assert(
+    `Using task(...) in any form other than \`task(async () => {})\` is no longer supported since ember-concurrency v5. Please use the modern syntax instead (and consider using one of ember-concurrency's codemods).`,
+    false,
+  );
 }
 
 function isUntranspiledAsyncFn(obj) {
   return obj && obj.constructor && obj.constructor.name === 'AsyncFunction';
-}
-
-export function taskGroup(possibleDecoratorOptions, key, descriptor) {
-  if (isDecoratorOptions(possibleDecoratorOptions) || (key && descriptor)) {
-    assert(
-      `Using @taskGroup decorator (or any of its variants) is no longer supported since ember-concurrency v5. Please use modern \`taskGroupName = taskGroup(async () => {})\` syntax instead`,
-      false,
-    );
-  } else {
-    assert(
-      `Using taskGroup(...) in any form other than taskGroup(async () => {}) is no longer supported since ember-concurrency v5. Please use the modern syntax instead (and consider using one of ember-concurrency's codemods).`,
-      false,
-    );
-  }
-}
-
-function isDecoratorOptions(possibleOptions) {
-  if (!possibleOptions) {
-    return false;
-  }
-  if (typeof possibleOptions === 'function') {
-    return false;
-  }
-
-  if (
-    typeof possibleOptions === 'object' &&
-    'perform' in possibleOptions &&
-    typeof possibleOptions.perform === 'function'
-  ) {
-    return false;
-  }
-
-  return Object.getPrototypeOf(possibleOptions) === Object.prototype;
 }

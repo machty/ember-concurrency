@@ -2003,7 +2003,6 @@ module('integration tests', () => {
         async (immediately: boolean, ms: number | undefined = 500) => {
           // expect(this).toEqualTypeOf<MyComponent>();
           expect(this.foo).not.toBeAny();
-          expect(this.foo).toEqualTypeOf<TaskGroup<never>>();
 
           if (!immediately) {
             await timeout(ms);
@@ -2122,13 +2121,9 @@ module('integration tests', () => {
 
   test('async arrow dropTask and other alternative task fns', () => {
     class MyComponent extends GlimmerComponent {
-      @taskGroup
-      foo!: TaskGroup<never>;
-
       normalTask = task(async (immediately: boolean, ms = 500) => {
         // expect(this).toEqualTypeOf<MyComponent>();
         expect(this.foo).not.toBeAny();
-        expect(this.foo).toEqualTypeOf<TaskGroup<never>>();
 
         if (!immediately) {
           await timeout(ms);
@@ -2176,7 +2171,6 @@ module('integration tests', () => {
         async (immediately: boolean, ms: number | undefined = 500) => {
           // expect(this).toEqualTypeOf<MyComponent>();
           expect(this.foo).not.toBeAny();
-          expect(this.foo).toEqualTypeOf<TaskGroup<never>>();
 
           if (!immediately) {
             await timeout(ms);

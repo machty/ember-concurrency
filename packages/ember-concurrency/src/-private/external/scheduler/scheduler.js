@@ -11,7 +11,7 @@ import NullStateTracker from './state-tracker/null-state-tracker';
 // for later execution, or be immediately cancelled. As TaskInstances start
 // and run to completion, the Scheduler's `refresh()` method is called to
 // give it an opportunity to start (or cancel) previously enqueued task instances,
-// as well as update the derived state on Tasks and TaskGroups.
+// as well as update the derived state on Tasks.
 
 // Every Task has its own Scheduler instance, unless it is part of a group,
 // in which case all the Tasks in a group share a single Scheduler.
