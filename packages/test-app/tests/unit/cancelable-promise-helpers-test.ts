@@ -80,7 +80,7 @@ module('Unit: cancelable promises test helpers', function (hooks) {
       obj.parent.perform();
     });
 
-    let childTask = obj.child;
+    let childTask = obj!.child;
     assert.strictEqual(childTask.numRunning, 3);
     run(() => defers.shift()!.reject({ wat: 'lol' }));
     assert.strictEqual(childTask.numRunning, 0);
