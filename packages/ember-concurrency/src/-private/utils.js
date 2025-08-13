@@ -46,12 +46,12 @@ class TimeoutYieldable extends EmberYieldable {
  *
  * ```js
  * export default class MyComponent extends Component {
- *   &#64;task *myTask() {
+ *   myTask = task(async () => {
  *     while (true) {
  *       console.log("Hello!");
- *       yield timeout(1000);
+ *       await timeout(1000);
  *     }
- *   }
+ *   });
  * }
  * ```
  *

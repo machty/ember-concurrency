@@ -122,10 +122,10 @@ class WaitForPropertyYieldable extends EmberYieldable {
  * ```js
  * import { task, waitForQueue } from 'ember-concurrency';
  * export default class MyComponent extends Component {
- *   &#64;task *myTask() {
- *     yield waitForQueue('afterRender');
+ *   myTask = task(async () => {
+ *     await waitForQueue('afterRender');
  *     console.log("now we're in the afterRender queue");
- *   }
+ *   });
  * }
  * ```
  *
@@ -143,16 +143,16 @@ export function waitForQueue(queueName) {
  * ```js
  * import { task, waitForEvent } from 'ember-concurrency';
  * export default class MyComponent extends Component {
- *   &#64;task *myTask() {
+ *   myTask = task(async () => {
  *     console.log("Please click anywhere..");
- *     let clickEvent = yield waitForEvent($('body'), 'click');
+ *     let clickEvent = await waitForEvent($('body'), 'click');
  *     console.log("Got event", clickEvent);
  *
- *     let emberEvent = yield waitForEvent(this, 'foo');
+ *     let emberEvent = await waitForEvent(this, 'foo');
  *     console.log("Got foo event", emberEvent);
  *
  *     // somewhere else: component.trigger('foo', { value: 123 });
- *   }
+ *   });
  * }
  * ```
  *
@@ -187,23 +187,24 @@ export function waitForEvent(object, eventName) {
  * export default class MyComponent extends Component {
  *   &#64;tracked foo = 0;
  *
- *   &#64;task *myTask() {
+ *   myTask = task(async () => {
  *     console.log("Waiting for `foo` to become 5");
  *
- *     yield waitForProperty(this, 'foo', v => v === 5);
- *     // alternatively: yield waitForProperty(this, 'foo', 5);
+ *     await waitForProperty(this, 'foo', v => v === 5);
+ *     // alternatively: await waitForProperty(this, 'foo', 5);
  *
  *     // somewhere else: this.foo = 5;
  *
  *     console.log("`foo` is 5!");
  *
  *     // wait for another task to be idle before running:
- *     yield waitForProperty(this, 'otherTask.isIdle');
+ *     await waitForProperty(this, 'otherTask.isIdle');
  *     console.log("otherTask is idle!");
- *   }
+ *   });
  * }
  * ```
  *
+ * @deprecated Deprecated due to use of classic observers. Consider using a polling approach instead.
  * @param {object} object an object (most likely an Ember Object)
  * @param {string} key the property name that is observed for changes
  * @param {function} callbackOrValue a Function that should return a truthy value

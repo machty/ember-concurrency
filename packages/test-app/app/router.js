@@ -33,8 +33,6 @@ Router.map(function () {
     this.route('faq');
 
     this.route('advanced', function () {
-      this.route('encapsulated-task');
-      this.route('lifecycle-events');
       this.route('task-modifiers');
       this.route('yieldables');
     });
@@ -48,18 +46,10 @@ Router.map(function () {
       this.route('route-tasks', function () {
         this.route('detail', { path: ':id' });
       });
-      this.route('joining-tasks');
     });
     this.route('task-cancelation-help');
     this.route('404', { path: '*path' });
   });
   this.route('helpers-test');
   this.route('deprecation-test');
-  this.route('testing-ergo', function () {
-    this.route('foo');
-    this.route('foo-settimeout');
-    this.route('slow');
-    this.route('timer-loop');
-  });
-  this.route('task-injection-test');
 });

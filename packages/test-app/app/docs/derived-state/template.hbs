@@ -141,7 +141,11 @@
 
 <p>
   <label>
-    <Input @type="checkbox" @checked={{this.showLessCommon}} />
+    <input
+      type="checkbox"
+      checked={{this.showLessCommon}}
+      {{on "change" this.setShowLessCommon}}
+    />
     Show less common properties
   </label>
 </p>

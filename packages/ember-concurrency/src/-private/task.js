@@ -1,12 +1,9 @@
-import { setOwner, getOwner } from '@ember/application';
-import EmberObject, { get, set } from '@ember/object';
 import { isDestroying, registerDestructor } from '@ember/destroyable';
+import { CANCEL_KIND_LIFESPAN_END } from './external/task-instance/cancelation';
 import { Task as BaseTask } from './external/task/task';
 import { TaskInstance } from './task-instance';
-import { TaskInstanceExecutor } from './external/task-instance/executor';
 import { TASKABLE_MIXIN } from './taskable-mixin';
 import { TRACKED_INITIAL_TASK_STATE } from './tracked-state';
-import { CANCEL_KIND_LIFESPAN_END } from './external/task-instance/cancelation';
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -214,6 +211,7 @@ export class Task extends BaseTask {
 
   _taskInstanceFactory(args, performType, linkedObject) {
     let options = this._taskInstanceOptions(args, performType, linkedObject);
+    options.task = this;
     let taskInstance = new TaskInstance(options);
     return taskInstance;
   }
@@ -238,122 +236,3 @@ if (TRACKED_INITIAL_TASK_STATE) {
 }
 
 Object.assign(Task.prototype, TASKABLE_MIXIN);
-
-const currentTaskInstanceSymbol = '__ec__encap_current_ti';
-export class EncapsulatedTask extends Task {
-  constructor(options) {
-    super(options);
-    this.taskObj = options.taskObj;
-    this._encapsulatedTaskStates = new WeakMap();
-    this._encapsulatedTaskInstanceProxies = new WeakMap();
-  }
-
-  _getEncapsulatedTaskClass() {
-    let encapsulatedTaskImplClass = this._encapsulatedTaskImplClass;
-
-    if (!encapsulatedTaskImplClass) {
-      // eslint-disable-next-line ember/no-classic-classes
-      encapsulatedTaskImplClass = EmberObject.extend(this.taskObj, {
-        unknownProperty(key) {
-          let currentInstance = this[currentTaskInstanceSymbol];
-          return currentInstance ? currentInstance[key] : undefined;
-        },
-      });
-    }
-
-    return encapsulatedTaskImplClass;
-  }
-
-  _taskInstanceFactory(args, performType) {
-    let owner = getOwner(this.context);
-    let taskInstanceProxy;
-    let encapsulatedTaskImpl = this._getEncapsulatedTaskClass().create({
-      context: this.context,
-    });
-    setOwner(encapsulatedTaskImpl, owner);
-
-    let generatorFactory = () =>
-      encapsulatedTaskImpl.perform.apply(taskInstanceProxy, args);
-    let taskInstance = new TaskInstance({
-      task: this,
-      args,
-      executor: new TaskInstanceExecutor({
-        generatorFactory,
-        env: this.env,
-        debug: this.debug,
-      }),
-      performType,
-      hasEnabledEvents: this.hasEnabledEvents,
-    });
-    encapsulatedTaskImpl[currentTaskInstanceSymbol] = taskInstance;
-
-    this._encapsulatedTaskStates.set(taskInstance, encapsulatedTaskImpl);
-
-    taskInstanceProxy = this._wrappedEncapsulatedTaskInstance(taskInstance);
-
-    return taskInstanceProxy;
-  }
-
-  _wrappedEncapsulatedTaskInstance(taskInstance) {
-    if (!taskInstance) {
-      return null;
-    }
-
-    let _encapsulatedTaskInstanceProxies =
-      this._encapsulatedTaskInstanceProxies;
-    let proxy = _encapsulatedTaskInstanceProxies.get(taskInstance);
-
-    if (!proxy) {
-      let encapsulatedTaskImpl = this._encapsulatedTaskStates.get(taskInstance);
-
-      proxy = new Proxy(taskInstance, {
-        get(obj, prop) {
-          return prop in obj
-            ? obj[prop]
-            : get(encapsulatedTaskImpl, prop.toString());
-        },
-        set(obj, prop, value) {
-          if (prop in obj) {
-            obj[prop] = value;
-          } else {
-            set(encapsulatedTaskImpl, prop.toString(), value);
-          }
-          return true;
-        },
-        has(obj, prop) {
-          return prop in obj || prop in encapsulatedTaskImpl;
-        },
-        ownKeys(obj) {
-          return Reflect.ownKeys(obj).concat(
-            Reflect.ownKeys(encapsulatedTaskImpl),
-          );
-        },
-        defineProperty(obj, prop, descriptor) {
-          // Ember < 3.16 uses a WeakMap for value storage, keyed to the proxy.
-          // We need to ensure that when we use setProperties to update it, and
-          // it creates Meta, that it uses the proxy to key, otherwise we'll
-          // have two different values stores in Meta, one which won't render.
-          let proxy = _encapsulatedTaskInstanceProxies.get(taskInstance);
-          if (proxy) {
-            if (descriptor.get) {
-              descriptor.get = descriptor.get.bind(proxy);
-            } else if (proxy && descriptor.set) {
-              descriptor.set = descriptor.set.bind(proxy);
-            }
-          }
-
-          return Reflect.defineProperty(encapsulatedTaskImpl, prop, descriptor);
-        },
-        getOwnPropertyDescriptor(obj, prop) {
-          return prop in obj
-            ? Reflect.getOwnPropertyDescriptor(obj, prop)
-            : Reflect.getOwnPropertyDescriptor(encapsulatedTaskImpl, prop);
-        },
-      });
-
-      _encapsulatedTaskInstanceProxies.set(taskInstance, proxy);
-    }
-
-    return proxy;
-  }
-}

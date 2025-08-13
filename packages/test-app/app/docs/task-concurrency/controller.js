@@ -8,7 +8,7 @@ export default class SharedTasksController extends Controller {
     this.sharedTask.perform(t),
   );
 
-  enqueuedTask = task({ enqueue: true }, async (t) =>
+  enqueueTask = task({ enqueue: true }, async (t) =>
     this.sharedTask.perform(t),
   );
 
@@ -33,7 +33,7 @@ export default class SharedTasksController extends Controller {
 // BEGIN-SNIPPET shared-tasks
   defaultTask = task(async (t) => { ... });
   restartableTask = task({ restartable: true }, async (t) => { ... }
-  enqueuedTask = task({ enqueue: true }, async (t) => { ... }
+  enqueueTask = task({ enqueue: true }, async (t) => { ... }
   droppingTask = task({ drop: true }, async (t) => { ... }
   keepLatestTask = task({ keepLatest: true }, async (t) => { ... }
 // END-SNIPPET

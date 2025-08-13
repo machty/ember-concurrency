@@ -1,7 +1,3 @@
-import Ember from 'ember';
-
-import { computed } from '@ember/object';
-
 import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
 import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
 import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy';
@@ -106,22 +102,6 @@ export const propertyModifiers = {
   },
 
   /**
-   * Adds this task to a TaskGroup so that concurrency constraints
-   * can be shared between multiple tasks.
-   *
-   * [See the Task Group docs for more information](/docs/task-groups)
-   *
-   * @method group
-   * @memberof TaskProperty
-   * @param {String} groupPath A path to the TaskGroup property
-   * @instance
-   */
-  group(taskGroupPath) {
-    this[taskFactorySymbol].setGroup(taskGroupPath);
-    return this;
-  },
-
-  /**
    * Activates lifecycle events, allowing Evented host objects to react to task state
    * changes.
    *
@@ -181,25 +161,8 @@ export const propertyModifiers = {
   },
 };
 
-/**
-  A {@link TaskProperty} is the Computed Property-like object returned
-  from the {@linkcode task} function. You can call Task Modifier methods
-  on this object to configure the behavior of the {@link Task}.
-
-  See [Managing Task Concurrency](/docs/task-concurrency) for an
-  overview of all the different task modifiers you can use and how
-  they impact automatic cancelation / enqueueing of task instances.
-
-  {@link TaskProperty} is only used for supporting "classic" Ember objects.
-  When using Native JavaScript or TypeScript classes, you will use [task decorators](/docs/task-decorators)
-  on methods instead.
-
-  @class TaskProperty
-*/
 export class TaskProperty {}
-export class TaskGroupProperty {}
 
-Object.assign(TaskGroupProperty.prototype, propertyModifiers);
 Object.assign(TaskProperty.prototype, propertyModifiers, {
   setup(proto, key) {
     if (this.callSuperSetup) {
@@ -207,90 +170,5 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
     }
 
     this[taskFactorySymbol].setName(key);
-    this[taskFactorySymbol]._setupEmberKVO(proto);
-  },
-
-  /**
-   * Calling `task(...).on(eventName)` configures the task to be
-   * automatically performed when the specified events fire. In
-   * this way, it behaves like
-   * [Ember.on](http://emberjs.com/api/classes/Ember.html#method_on).
-   *
-   * You can use `task(...).on('init')` to perform the task
-   * when the host object is initialized.
-   *
-   * ```js
-   * import Component from '@glimmer/component';
-   * import { task } from 'ember-concurrency';
-   *
-   * export default class MyComponent extends Component {
-   *   pollForUpdates = task(async () => {
-   *     // ... this runs when the Component is first created
-   *     // because we specified .on('init')
-   *   }).on('init');
-   *
-   *   handleFoo = task(async (a, b, c) => {
-   *     // this gets performed automatically if the 'foo'
-   *     // event fires on this Component,
-   *     // e.g., if someone called component.trigger('foo')
-   *   }).on('foo');
-   * }
-   * ```
-   *
-   * @method on
-   * @memberof TaskProperty
-   * @param {String} eventNames*
-   * @instance
-   */
-  on() {
-    this[taskFactorySymbol].addPerformEvents(...arguments);
-    return this;
-  },
-
-  /**
-   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
-   * but instead will cause the task to be canceled if any of the
-   * specified events fire on the parent object.
-   *
-   * [See the Live Example](/docs/examples/route-tasks/1)
-   *
-   * @method cancelOn
-   * @memberof TaskProperty
-   * @param {String} eventNames*
-   * @instance
-   */
-  cancelOn() {
-    this[taskFactorySymbol].addCancelEvents(...arguments);
-    return this;
-  },
-
-  /**
-   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
-   * but instead will cause the task to be performed if any of the
-   * specified properties on the parent object change.
-   *
-   * @method observes
-   * @memberof TaskProperty
-   * @param {String} keys*
-   * @instance
-   */
-  observes() {
-    this[taskFactorySymbol].addObserverKeys(...arguments);
-    return this;
   },
 });
-
-const setDecorator = Ember._setClassicDecorator;
-export function taskComputed(fn) {
-  let cp = function (proto, key) {
-    if (cp.setup !== undefined) {
-      cp.setup(proto, key);
-    }
-
-    return computed(fn)(...arguments);
-  };
-
-  setDecorator(cp);
-
-  return cp;
-}

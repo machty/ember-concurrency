@@ -1,11 +1,11 @@
-import { Taskable } from './taskable';
 import {
+  getRunningInstance,
   PERFORM_TYPE_DEFAULT,
   PERFORM_TYPE_LINKED,
   PERFORM_TYPE_UNLINKED,
-  getRunningInstance,
   TaskInstanceExecutor,
 } from '../task-instance/executor';
+import { Taskable } from './taskable';
 
 class TaskLinkProxy {
   constructor(task, performType, linkedObject) {
@@ -92,7 +92,6 @@ export class Task extends Taskable {
   _taskInstanceOptions(args, performType, _linkedObject) {
     let generatorFactory = () => this.generatorFactory(args);
     let taskInstanceOptions = {
-      task: this,
       args,
       executor: new TaskInstanceExecutor({
         generatorFactory,

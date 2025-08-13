@@ -52,7 +52,6 @@ export class TaskInstanceExecutor {
     }
     this.setState({ hasStarted: true });
     this.proceedSync(YIELDABLE_CONTINUE, undefined);
-    this.taskInstance.onStarted();
   }
 
   cancel(cancelRequest) {
@@ -125,7 +124,7 @@ export class TaskInstanceExecutor {
    *
    * - call `.next(value)` on it, which is used to pass in a resolved
    *   value (the fulfilled value of a promise), e.g. if a task generator fn
-   *   does `yield Promise.resolve(5)`, then we take that promise yielded
+   *   does `await Promise.resolve(5)`, then we take that promise yielded
    *   by the generator, detect that it's a promise, resolve it, and then
    *   pass its fulfilled value `5` back into the generator function so
    *   that it can continue executing.
@@ -409,21 +408,6 @@ export class TaskInstanceExecutor {
     state.isFinished = true;
     this.setState(state);
     this.runFinalizeCallbacks();
-    this.dispatchFinalizeEvents(state.completionState);
-  }
-
-  dispatchFinalizeEvents(completionState) {
-    switch (completionState) {
-      case COMPLETION_SUCCESS:
-        this.taskInstance.onSuccess();
-        break;
-      case COMPLETION_ERROR:
-        this.taskInstance.onError(this.state.error);
-        break;
-      case COMPLETION_CANCEL:
-        this.taskInstance.onCancel(this.state.cancelReason);
-        break;
-    }
   }
 
   invokeYieldable(yieldedValue) {

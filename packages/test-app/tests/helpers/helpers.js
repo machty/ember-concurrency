@@ -1,6 +1,6 @@
-import Ember from 'ember';
+import { setOnerror } from '@ember/-internals/error-handling';
 
 export function makeAsyncError(hooks) {
-  hooks.afterEach(() => (Ember.onerror = null));
-  return () => new window.Promise((r) => (Ember.onerror = r));
+  hooks.afterEach(() => setOnerror(null));
+  return () => new window.Promise((r) => setOnerror(r));
 }

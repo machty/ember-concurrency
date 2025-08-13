@@ -10,7 +10,7 @@ type Signature = {
   };
 };
 
-export default class CodeTemplateToggleComponent extends Component<Signature> {
+export default class CodeSnippet extends Component<Signature> {
   @cached
   get snippet() {
     return getCodeSnippet(this.args.name);
@@ -19,6 +19,10 @@ export default class CodeTemplateToggleComponent extends Component<Signature> {
   get language() {
     if (this.snippet.language === 'handlebars') {
       return 'markup';
+    }
+
+    if (this.snippet.language === 'gts') {
+      return 'typescript';
     }
 
     return this.snippet.language;

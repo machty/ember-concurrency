@@ -1,40 +1,49 @@
-import { action, computed } from '@ember/object';
 import Controller from '@ember/controller';
-import { task, timeout } from 'ember-concurrency';
-import { randomWord } from 'test-app/utils';
+import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import { task } from 'ember-concurrency';
 
 let i = 0;
-function* sharedFn(shouldError) {
-  i++;
-
-  yield timeout(1000);
-
-  let words = [randomWord(), randomWord(), randomWord()];
-  let wordsString = `${i}: ${words}`;
-
-  if (shouldError) {
-    throw new Error(wordsString);
-  } else {
-    return wordsString;
-  }
-}
 
 // BEGIN-SNIPPET completion-state-controller
 export default class DerivedStateController extends Controller {
-  @task doStuff = sharedFn;
-  @task({ drop: true }) doStuffDrop = sharedFn;
-  @task({ enqueue: true }) doStuffEnqueue = sharedFn;
-  @task({ restartable: true }) doStuffRestartable = sharedFn;
+  doStuff = task(async () => {
+    i++;
 
+    await timeout(1000);
+
+    let words = [randomWord(), randomWord(), randomWord()];
+    let wordsString = `${i}: ${words}`;
+
+    if (shouldError) {
+      throw new Error(wordsString);
+    } else {
+      return wordsString;
+    }
+  });
+
+  doStuffDrop = task({ drop: true }, async () => {
+    await this.doStuff.perform();
+  });
+
+  doStuffEnqueued = task({ enqueue: true }, async () => {
+    await this.doStuff.perform();
+  });
+
+  doStuffRestartable = task({ restartable: true }, async () => {
+    await this.doStuff.perform();
+  });
+
+  @tracked
   showLessCommon = false;
 
-  tasks = ['doStuff', 'doStuffDrop', 'doStuffEnqueue', 'doStuffRestartable'];
+  @action
+  setShowLessCommon(event) {
+    this.showLessCommon = event.target.checked;
+  }
 
-  @computed(
-    'commonTaskProperties',
-    'lessCommonTaskProperties',
-    'showLessCommon',
-  )
+  tasks = ['doStuff', 'doStuffDrop', 'doStuffEnqueued', 'doStuffRestartable'];
+
   get taskProperties() {
     return [
       ...this.commonTaskProperties,

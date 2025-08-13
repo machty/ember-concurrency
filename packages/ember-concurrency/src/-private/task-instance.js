@@ -10,7 +10,7 @@ import { TRACKED_INITIAL_INSTANCE_STATE } from './tracked-state';
   via {@linkcode TaskInstance#cancel} or {@linkcode Task#cancelAll},
   or automatically due to the host object being destroyed, or
   because concurrency policy enforced by a
-  {@linkcode TaskProperty Task Modifier} canceled the task instance.
+  {@linkcode Task Modifier} canceled the task instance.
 
   <style>
     .ignore-this--this-is-here-to-hide-constructor,
@@ -47,22 +47,6 @@ export class TaskInstance extends BaseTaskInstance {
     } else {
       return 'waiting';
     }
-  }
-
-  onStarted() {
-    this.triggerEvent('started', this);
-  }
-
-  onSuccess() {
-    this.triggerEvent('succeeded', this);
-  }
-
-  onError(error) {
-    this.triggerEvent('errored', this, error);
-  }
-
-  onCancel(cancelReason) {
-    this.triggerEvent('canceled', this, cancelReason);
   }
 
   formatCancelReason(reason) {
@@ -111,8 +95,7 @@ export class TaskInstance extends BaseTaskInstance {
    * - `"running"`: task instance is currently running (returns true even if
    *     is paused on a yielded promise)
    * - `"waiting"`: task instance hasn't begun running yet (usually
-   *     because the task is using the {@linkcode TaskProperty#enqueue enqueue}
-   *     task modifier)
+   *     because the task is using the enqueue task modifier)
    *
    * The animated timeline examples on the [Task Concurrency](/docs/task-concurrency)
    * docs page make use of this property.
@@ -127,7 +110,7 @@ export class TaskInstance extends BaseTaskInstance {
    * True if the TaskInstance was canceled before it could
    * ever start running. For example, calling
    * {@linkcode Task#perform .perform()} twice on a
-   * task with the {@linkcode TaskProperty#drop drop} modifier applied
+   * task with the drop modifier applied
    * will result in the second task instance being dropped.
    *
    * @name isDropped
@@ -143,113 +126,6 @@ export class TaskInstance extends BaseTaskInstance {
    * @memberof TaskInstance
    * @instance
    * @readOnly
-   */
-
-  /**
-   * Event emitted when a new {@linkcode TaskInstance} starts executing.
-   *
-   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
-   *
-   * ```js
-   * import Component from '@glimmer/component';
-   * import { task } from 'ember-concurrency';
-   * import { on } from '@ember/object/evented';
-   *
-   * export default class MyComponent extends Component {
-   *   doSomething = task(async () => {
-   *     // ... does something
-   *   });
-   *
-   *   @on('doSomething:started')
-   *   onDoSomethingStarted(taskInstance) {
-   *     // ...
-   *   }
-   * }
-   * ```
-   *
-   * @event TaskInstance#TASK_NAME:started
-   * @param {TaskInstance} taskInstance - Task instance that was started
-   */
-
-  /**
-   * Event emitted when a {@linkcode TaskInstance} succeeds.
-   *
-   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
-   *
-   * ```js
-   * import Component from '@glimmer/component';
-   * import { task } from 'ember-concurrency';
-   * import { on } from '@ember/object/evented';
-   *
-   * export default class MyComponent extends Component {
-   *   doSomething = task(async () => {
-   *     // ... does something
-   *   });
-   *
-   *   @on('doSomething:succeeded')
-   *   onDoSomethingSucceeded(taskInstance) {
-   *     // ...
-   *   }
-   * }
-   * ```
-   *
-   * @event TaskInstance#TASK_NAME:succeeded
-   * @param {TaskInstance} taskInstance - Task instance that was succeeded
-   */
-
-  /**
-   * Event emitted when a {@linkcode TaskInstance} throws an an error that is
-   * not handled within the task itself.
-   *
-   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
-   *
-   * ```js
-   * import Component from '@glimmer/component';
-   * import { task } from 'ember-concurrency';
-   * import { on } from '@ember/object/evented';
-   *
-   * export default class MyComponent extends Component {
-   *   doSomething = task(async () => {
-   *     // ... does something
-   *   });
-   *
-   *   @on('doSomething:errored')
-   *   onDoSomethingErrored(taskInstance, error) {
-   *     // ...
-   *   }
-   * }
-   * ```
-   *
-   * @event TaskInstance#TASK_NAME:errored
-   * @param {TaskInstance} taskInstance - Task instance that was started
-   * @param {Error} error - Error that was thrown by the task instance
-   */
-
-  /**
-   * Event emitted when a {@linkcode TaskInstance} is canceled.
-   *
-   * `on` from `@ember/object/evented` may be used to create a binding on the host object to the event.
-   *
-   * ```js
-   * import Component from '@glimmer/component';
-   * import { task } from 'ember-concurrency';
-   * import { on } from '@ember/object/evented';
-   *
-   * export default class MyComponent extends Component {
-   *   doSomething = task(async () => {
-   *     // ... does something
-   *   });
-   *
-   *   @on('doSomething:canceled')
-   *   onDoSomethingCanceled(taskInstance, cancelationReason) {
-   *     // ...
-   *   }
-   * }
-   * ```
-   *
-   * @event TaskInstance#TASK_NAME:canceled
-   * @param {TaskInstance} taskInstance - Task instance that was started
-   * @param {string} cancelationReason - Cancelation reason that was was provided to {@linkcode TaskInstance#cancel}
    */
 
   /**

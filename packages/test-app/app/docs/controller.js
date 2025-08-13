@@ -1,6 +1,6 @@
 import Controller from '@ember/controller';
 import { computed } from '@ember/object';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 
 export const TABLE_OF_CONTENTS = [
   { route: 'docs.introduction', title: 'Home' },
@@ -20,14 +20,12 @@ export const TABLE_OF_CONTENTS = [
   { route: 'docs.error-vs-cancelation', title: 'Handling Errors' },
   { route: 'docs.child-tasks', title: 'Child Tasks' },
   { route: 'docs.derived-state', title: 'Derived State' },
-  { route: 'docs.events', title: 'Awaiting Events / Conditions' },
   { route: 'docs.testing-debugging', title: 'Testing & Debugging' },
   { route: 'docs.typescript', title: 'TypeScript / Glint' },
   { route: 'docs.faq', title: 'FAQ & Fact Sheet' },
 
   { section: 'Advanced' },
   { route: 'docs.task-concurrency-advanced', title: 'Using maxConcurrency' },
-  { route: 'docs.advanced.lifecycle-events', title: 'Lifecycle Events' },
   { route: 'docs.advanced.task-modifiers', title: 'Task Modifiers' },
   {
     route: 'docs.advanced.yieldables',
@@ -43,10 +41,6 @@ export const TABLE_OF_CONTENTS = [
   },
   { route: 'docs.examples.ajax-throttling', title: 'AJAX Throttling' },
   { route: 'docs.examples.route-tasks', title: 'Route Tasks' },
-  {
-    route: 'docs.examples.joining-tasks',
-    title: 'Awaiting Multiple Child Tasks',
-  },
 ];
 
 export const FLATTENED_TABLE_OF_CONTENTS = TABLE_OF_CONTENTS.reduce(

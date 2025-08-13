@@ -1,5 +1,20 @@
 # Changelog
 
+### 5.0.0.alpha
+
+- Breaking Changes
+  - Removed a number of features that were overloaded, dependent on Ember Object, TypeScript-unfriendly, and/or otherwise likely to cause problems with future/Polaris Ember
+  - Some of these features were already explicitly or soft-deprecated (removed from docs or otherwise discouraged)
+  - Removed features include:
+    - Removed lifecycle events, e.g. firing `taskName:started`, `taskName:errored`
+    - Removed Task Groups
+    - Removed support for any Task construction other than via async arrow fn
+      - e.g. `task(function * () {})` not supported
+    - Removed all decorator-based APIs, e.g. `@task * foo() { ... }`
+    - Removed encapsulated tasks
+    - Removed Ember.ENV.DEBUG_TASKS
+      - This may be reinstated by some other means if there is interest. In the meantime you can continue to use `{debug:true}` for debugging logging on specific tasks of interest
+
 ### 4.0.6
 
 More V5 deprecations (#592):

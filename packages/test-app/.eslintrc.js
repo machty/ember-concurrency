@@ -2,7 +2,7 @@
 
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
@@ -29,6 +29,7 @@ module.exports = {
     'ember/no-classic-components': 0,
     'ember/no-classic-classes': 0,
     'ember/no-computed-properties-in-native-classes': 0,
+    'ember/no-empty-glimmer-component-classes': 0,
   },
   overrides: [
     // node files

@@ -43,7 +43,7 @@ class YieldableState {
   }
 
   /**
-   * Cause the TaskInstance to return from its yield with an optional value,
+   * Cause the TaskInstance to return from its awaited with an optional value,
    * and continue executing.
    * @method next
    * @memberof YieldableState
@@ -123,14 +123,14 @@ class YieldableState {
  * const idleCallback = () => new IdleCallbackYieldable();
  *
  * class MyComponent extends Component {
- *   &#64;task *backgroundTask() {
+ *   backgroundTask = task(async () => {
  *     while (1) {
- *       yield idleCallback();
+ *       await idleCallback();
  *
  *       const data = this.complicatedNumberCrunching();
- *       yield this.sendData(data);
+ *       await this.sendData(data);
  *     }
- *   }
+ *   });
  * }
  * ```
  *
@@ -153,7 +153,7 @@ export class Yieldable {
   }
 
   /**
-   * Defines what happens when the task encounters `yield myYieldable` and returns
+   * Defines what happens when the task encounters `await myYieldable` and returns
    * a disposer function that handles any cleanup.
    *
    * The state parameter is provided by the runtime, and provides operations for
@@ -276,10 +276,10 @@ class RawTimeoutYieldable extends Yieldable {
  *
  * ```js
  * export default class MyComponent extends Component {
- *   &#64;task *myTask() {
+ *   myTask = task(async () => {
  *     let lastNow = performance.now();
  *     while (true) {
- *       yield animationFrame();
+ *       await animationFrame();
  *
  *       let now = performance.now();
  *       let dt = now - lastNow;
@@ -287,7 +287,7 @@ class RawTimeoutYieldable extends Yieldable {
  *
  *       console.log(dt);
  *     }
- *   }
+ *   });
  * }
  * ```
  */
@@ -318,10 +318,10 @@ export function animationFrame() {
  * import { task, forever } from 'ember-concurrency';
  * export default class MyComponent extends Component {
  *   &#64;service myService;
- *   &#64;task *myTask() {
- *     yield this.myService.doSomethingThatCausesATransition();
- *     yield forever;
- *   }
+ *   myTask = task(async () => {
+ *     await this.myService.doSomethingThatCausesATransition();
+ *     await forever;
+ *   });
  * }
  * ```
  */
@@ -341,12 +341,12 @@ export const forever = new ForeverYieldable();
  *
  * ```js
  * export default class MyComponent extends Component {
- *   &#64;task *myTask() {
+ *   myTask = task(async () => {
  *     while (true) {
  *       console.log("Hello!");
- *       yield rawTimeout(1000);
+ *       await rawTimeout(1000);
  *     }
- *   }
+ *   });
  * }
  * ```
  *

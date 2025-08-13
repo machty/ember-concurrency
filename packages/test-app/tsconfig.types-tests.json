@@ -1,0 +1,11 @@
+{
+  // This separate tsconfig exists because a recent refactor of our
+  // tests from .js to .ts produced a lot of type errors I'm not yet
+  // ready to solve; this lets us focus only getting
+  // the types-tests passing again.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "files": ["./types-tests/ember-concurrency-test.ts"]
+}

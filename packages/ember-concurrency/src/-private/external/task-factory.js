@@ -1,25 +1,16 @@
-import Scheduler from './scheduler/scheduler';
-import UnboundedSchedulerPolicy from './scheduler/policies/unbounded-policy';
-import EnqueueSchedulerPolicy from './scheduler/policies/enqueued-policy';
+import { DEFAULT_ENVIRONMENT } from './environment';
 import DropSchedulerPolicy from './scheduler/policies/drop-policy';
+import EnqueueSchedulerPolicy from './scheduler/policies/enqueued-policy';
 import KeepLatestSchedulerPolicy from './scheduler/policies/keep-latest-policy';
 import RestartableSchedulerPolicy from './scheduler/policies/restartable-policy';
+import UnboundedSchedulerPolicy from './scheduler/policies/unbounded-policy';
+import Scheduler from './scheduler/scheduler';
 import { Task } from './task/task';
-import { TaskGroup } from './task/task-group';
-import { DEFAULT_ENVIRONMENT } from './environment';
-
-function assertModifiersNotMixedWithGroup(obj) {
-  if (obj._hasSetConcurrencyConstraint && obj._taskGroupPath) {
-    throw new Error(
-      `Cannot use both 'group' and other concurrency-constraining task modifiers (e.g. 'drop', 'enqueue', 'restartable')`,
-    );
-  }
-}
 
 function assertUnsetBufferPolicy(obj) {
   if (obj._hasSetBufferPolicy) {
     throw new Error(
-      `Cannot set multiple buffer policies on a task or task group. ${obj._schedulerPolicyClass} has already been set for task or task group '${obj.name}'`,
+      `Cannot set multiple buffer policies on a task. ${obj._schedulerPolicyClass} has already been set for task '${obj.name}'`,
     );
   }
 }
@@ -31,7 +22,6 @@ const MODIFIER_REGISTRY = {
   debug: (factory, value) => value && factory.setDebug(value),
   drop: (factory, value) =>
     value && factory.setBufferPolicy(DropSchedulerPolicy),
-  group: (factory, groupName) => factory.setGroup(groupName),
   keepLatest: (factory, value) =>
     value && factory.setBufferPolicy(KeepLatestSchedulerPolicy),
   maxConcurrency: (factory, maxConcurrency) =>
@@ -86,7 +76,7 @@ export function hasModifier(name) {
 }
 
 /**
- * Factory used for instantiating Tasks and Task Groups. Mostly for internal
+ * Factory used for instantiating Tasks. Mostly for internal
  * use, but some public APIs exposed via the Task Modifier APIs.
  *
  * <style>
@@ -107,7 +97,6 @@ export class TaskFactory {
   _maxConcurrency = null;
   _onStateCallback = (state, taskable) => taskable.setState(state);
   _schedulerPolicyClass = UnboundedSchedulerPolicy;
-  _taskGroupPath = null;
 
   constructor(name = '<unknown>', taskDefinition = null, options = {}) {
     this.name = name;
@@ -134,19 +123,6 @@ export class TaskFactory {
         options,
       ),
     );
-  }
-
-  /**
-   * Returns a new TaskGroup bound to the given context
-   *
-   * @protected
-   * @param {*} context
-   * @returns {Task}
-   */
-  createTaskGroup(context) {
-    let options = this.getTaskOptions(context);
-
-    return new TaskGroup(options);
   }
 
   /**
@@ -186,7 +162,7 @@ export class TaskFactory {
   }
 
   /**
-   * Returns the options to pass to a Task or TaskGroup constructor
+   * Returns the options to pass to a Task constructor
    *
    * @protected
    * @param {*} context
@@ -196,24 +172,11 @@ export class TaskFactory {
     let group, scheduler;
     let onStateCallback = this._onStateCallback;
 
-    if (this._taskGroupPath) {
-      group = context[this._taskGroupPath];
-      if (!(group instanceof TaskGroup)) {
-        throw new Error(
-          `Expected group '${this._taskGroupPath}' to be defined but was not found.`,
-        );
-      }
-
-      scheduler = group.scheduler;
-    } else {
-      let schedulerPolicy = new this._schedulerPolicyClass(
-        this._maxConcurrency,
-      );
-      scheduler = this.getScheduler(
-        schedulerPolicy,
-        onStateCallback && typeof onStateCallback === 'function',
-      );
-    }
+    let schedulerPolicy = new this._schedulerPolicyClass(this._maxConcurrency);
+    scheduler = this.getScheduler(
+      schedulerPolicy,
+      onStateCallback && typeof onStateCallback === 'function',
+    );
 
     return {
       context,
@@ -242,7 +205,6 @@ export class TaskFactory {
     this._hasSetBufferPolicy = true;
     this._hasSetConcurrencyConstraint = true;
     this._schedulerPolicyClass = policy;
-    assertModifiersNotMixedWithGroup(this);
 
     return this;
   }
@@ -278,17 +240,6 @@ export class TaskFactory {
   setMaxConcurrency(maxConcurrency) {
     this._hasSetConcurrencyConstraint = true;
     this._maxConcurrency = maxConcurrency;
-    return this;
-  }
-
-  /**
-   * Assigns Task created from this factory to the specified group name
-   *
-   * @param {string} group
-   * @returns {TaskFactory}
-   */
-  setGroup(group) {
-    this._taskGroupPath = group;
     return this;
   }
 

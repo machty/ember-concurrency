@@ -7,7 +7,6 @@ import {
 class RefreshState {
   constructor(taskable, tag) {
     this.taskable = taskable;
-    this.group = taskable.group;
     this.numRunning = 0;
     this.numQueued = 0;
     this.numPerformedInc = 0;
@@ -47,14 +46,6 @@ class RefreshState {
 
   onQueued() {
     this.numQueued += 1;
-  }
-
-  recurseTaskGroups(callback) {
-    let group = this.group;
-    while (group) {
-      callback(group);
-      group = group.group;
-    }
   }
 
   applyStateFrom(other) {

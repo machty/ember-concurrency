@@ -1,6 +1,6 @@
 {
   "name": "ember-concurrency",
-  "version": "4.0.6",
+  "version": "5.0.0-alpha.1",
   "description": "Improved concurrency/async primitives for Ember.js",
   "scripts": {
     "build": "concurrently 'npm:build:*'",
@@ -30,7 +30,7 @@
     }
   },
   "engines": {
-    "node": "16.* || >= 18"
+    "node": "22.14.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",
@@ -43,13 +43,13 @@
     "@glint/template": "^1.3.0",
     "@embroider/addon-dev": "^4.2.0",
     "@rollup/plugin-babel": "^6.0.4",
-    "@tsconfig/ember": "^3.0.3",
+    "@ember/library-tsconfig": "^1.1.3",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
     "babel-eslint": "^10.1.0",
     "ember-template-lint": "^5.13.0",
     "eslint": "^7.32.0",
-    "ember-source": "~4.11.0",
+    "ember-source": "~6.4.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-ember": "^11.12.0",
     "eslint-plugin-n": "^15.6.1",
@@ -57,7 +57,7 @@
     "prettier": "^3.1.0",
     "rollup": "^4.9.6",
     "rollup-plugin-copy": "^3.5.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.9.2"
   },
   "files": [
     "addon-main.cjs",
@@ -125,7 +125,6 @@
     }
   },
   "volta": {
-    "node": "16.19.0",
-    "pnpm": "7.33.6"
+    "extends": "../../package.json"
   }
 }
