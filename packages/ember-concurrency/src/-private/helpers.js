@@ -1,4 +1,5 @@
 import { assert } from '@ember/debug';
+import { getValueFromStringPath } from './utils';
 
 export function taskHelperClosure(helperName, taskMethod, _args, hash) {
   let task = _args[0];
@@ -15,7 +16,7 @@ export function taskHelperClosure(helperName, taskMethod, _args, hash) {
 
     if (hash && hash.value) {
       let event = innerArgs.pop();
-      innerArgs.push(event[hash.value]);
+      innerArgs.push(getValueFromStringPath(event, hash.value));
     }
 
     return task[taskMethod](...outerArgs, ...innerArgs);

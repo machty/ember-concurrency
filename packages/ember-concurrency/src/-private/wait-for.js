@@ -1,7 +1,11 @@
 import { assert, deprecate } from '@ember/debug';
 import { addObserver, removeObserver } from '@ember/object/observers';
 import { cancel, schedule } from '@ember/runloop';
-import { EmberYieldable, isEventedObject } from './utils';
+import {
+  EmberYieldable,
+  getValueFromStringPath,
+  isEventedObject,
+} from './utils';
 
 class WaitForQueueYieldable extends EmberYieldable {
   constructor(queueName) {
@@ -93,7 +97,7 @@ class WaitForPropertyYieldable extends EmberYieldable {
   onYield(state) {
     let observerBound = false;
     let observerFn = () => {
-      let value = this.object[this.key];
+      let value = getValueFromStringPath(this.object, this.key);
       let predicateValue = this.predicateCallback(value);
       if (predicateValue) {
         state.next(value);
