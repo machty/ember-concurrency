@@ -1,5 +1,4 @@
 import Controller from '@ember/controller';
-import { computed } from '@ember/object';
 
 // BEGIN-SNIPPET task-modifier-benchmark-on-task
 import { task, timeout } from 'ember-concurrency';
@@ -21,7 +20,6 @@ export default class TaskModifiersController extends Controller {
     await timeout(20000 * Math.random());
   });
 
-  @computed('doWork.isRunning')
   get perfEntries() {
     if (this.doWork.isRunning) {
       return [];

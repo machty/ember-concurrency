@@ -1,4 +1,4 @@
-import { later, cancel } from '@ember/runloop';
+import { cancel, later } from '@ember/runloop';
 import { EMBER_ENVIRONMENT } from './ember-environment';
 import { Yieldable } from './external/yieldables';
 
@@ -67,4 +67,9 @@ export function deprecatePrivateModule(moduleName) {
   console.warn(
     `an Ember addon is importing a private ember-concurrency module '${moduleName}' that has moved`,
   );
+}
+
+// This does what Ember.get used to do.
+export function getValueFromStringPath(obj, path) {
+  return path.split('.').reduce((acc, part) => acc[part], obj);
 }

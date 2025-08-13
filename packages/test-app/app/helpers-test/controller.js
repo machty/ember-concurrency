@@ -19,7 +19,7 @@ export default class HelpersTestController extends Controller {
   valueTask = task(async (value) => {
     let expected = 'Set value option';
     if (value !== expected) {
-      throw new Error(`value !== ${expected}`);
+      throw new Error(`value !== ${expected}. value is ${value}`);
     }
   });
 

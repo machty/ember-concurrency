@@ -18,7 +18,6 @@ import {
 } from './-private/external/yieldables';
 import { Task } from './-private/task';
 import { TaskInstance } from './-private/task-instance';
-import { TaskProperty } from './-private/task-properties';
 import { task } from './-private/task-public-api';
 import { timeout, EmberYieldable as Yieldable } from './-private/utils';
 import {
@@ -43,7 +42,6 @@ export {
   task,
   Task,
   TaskInstance,
-  TaskProperty,
   timeout,
   waitForEvent,
   waitForProperty,

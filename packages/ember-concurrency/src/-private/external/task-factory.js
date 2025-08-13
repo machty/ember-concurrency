@@ -18,7 +18,6 @@ function assertUnsetBufferPolicy(obj) {
 const MODIFIER_REGISTRY = {
   enqueue: (factory, value) =>
     value && factory.setBufferPolicy(EnqueueSchedulerPolicy),
-  evented: (factory, value) => value && factory.setEvented(value),
   debug: (factory, value) => value && factory.setDebug(value),
   drop: (factory, value) =>
     value && factory.setBufferPolicy(DropSchedulerPolicy),
