@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>JSDoc: Source: task.js</title>
 
-    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js" integrity="sha256-OdwnjpJmUf0qo35PEn08X3HnqEK8iVOqYj/GspMf5PA= sha512-JcSVG6KneerYlyLyiu7r3UYKrvYPOY8iNu7eOpwbCCSCdvXuStbMzc4MB+v21gQ7Y+82m2MyFg6ggylf9rLHXg==" > </script>
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js" integrity="sha256-iJ62JokFFH0hn3DfxUBSbuYjCfEU60uGpGI2G+sMATk= sha512-U96YfHWvwHOKaSJXqlNmcNL/j/ow3+EQp0Dferou+n15tEZ5TjS1WPbiu1yE10+HrlKwNYvr3JtPn9mpnUVUYg==" > </script>
     <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js" integrity="sha256-W/8u/xdnRt8pUf2OdHRfPyaq6lGTxTZQZsKHgKD/y4I= sha512-OsUG3GgeyMYQWj48BRAEUKSbafPqxNMaG6fkAKuvqQ9bIza9JNaxDiQ+H7ObiSv8eJvEaUHTnHJA6FLxpV0HZQ==" > </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -26,15 +26,12 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { setOwner, getOwner } from '@ember/application';
-import EmberObject, { get, set } from '@ember/object';
-import { isDestroying, registerDestructor } from '@ember/destroyable';
+            <pre class="prettyprint source linenums"><code>import { isDestroying, registerDestructor } from '@ember/destroyable';
+import { CANCEL_KIND_LIFESPAN_END } from './external/task-instance/cancelation';
 import { Task as BaseTask } from './external/task/task';
 import { TaskInstance } from './task-instance';
-import { TaskInstanceExecutor } from './external/task-instance/executor';
 import { TASKABLE_MIXIN } from './taskable-mixin';
 import { TRACKED_INITIAL_TASK_STATE } from './tracked-state';
-import { CANCEL_KIND_LIFESPAN_END } from './external/task-instance/cancelation';
 
 /**
   The `Task` object lives on a host Ember object (e.g.
@@ -242,6 +239,7 @@ export class Task extends BaseTask {
 
   _taskInstanceFactory(args, performType, linkedObject) {
     let options = this._taskInstanceOptions(args, performType, linkedObject);
+    options.task = this;
     let taskInstance = new TaskInstance(options);
     return taskInstance;
   }
@@ -266,125 +264,6 @@ if (TRACKED_INITIAL_TASK_STATE) {
 }
 
 Object.assign(Task.prototype, TASKABLE_MIXIN);
-
-const currentTaskInstanceSymbol = '__ec__encap_current_ti';
-export class EncapsulatedTask extends Task {
-  constructor(options) {
-    super(options);
-    this.taskObj = options.taskObj;
-    this._encapsulatedTaskStates = new WeakMap();
-    this._encapsulatedTaskInstanceProxies = new WeakMap();
-  }
-
-  _getEncapsulatedTaskClass() {
-    let encapsulatedTaskImplClass = this._encapsulatedTaskImplClass;
-
-    if (!encapsulatedTaskImplClass) {
-      // eslint-disable-next-line ember/no-classic-classes
-      encapsulatedTaskImplClass = EmberObject.extend(this.taskObj, {
-        unknownProperty(key) {
-          let currentInstance = this[currentTaskInstanceSymbol];
-          return currentInstance ? currentInstance[key] : undefined;
-        },
-      });
-    }
-
-    return encapsulatedTaskImplClass;
-  }
-
-  _taskInstanceFactory(args, performType) {
-    let owner = getOwner(this.context);
-    let taskInstanceProxy;
-    let encapsulatedTaskImpl = this._getEncapsulatedTaskClass().create({
-      context: this.context,
-    });
-    setOwner(encapsulatedTaskImpl, owner);
-
-    let generatorFactory = () =>
-      encapsulatedTaskImpl.perform.apply(taskInstanceProxy, args);
-    let taskInstance = new TaskInstance({
-      task: this,
-      args,
-      executor: new TaskInstanceExecutor({
-        generatorFactory,
-        env: this.env,
-        debug: this.debug,
-      }),
-      performType,
-      hasEnabledEvents: this.hasEnabledEvents,
-    });
-    encapsulatedTaskImpl[currentTaskInstanceSymbol] = taskInstance;
-
-    this._encapsulatedTaskStates.set(taskInstance, encapsulatedTaskImpl);
-
-    taskInstanceProxy = this._wrappedEncapsulatedTaskInstance(taskInstance);
-
-    return taskInstanceProxy;
-  }
-
-  _wrappedEncapsulatedTaskInstance(taskInstance) {
-    if (!taskInstance) {
-      return null;
-    }
-
-    let _encapsulatedTaskInstanceProxies =
-      this._encapsulatedTaskInstanceProxies;
-    let proxy = _encapsulatedTaskInstanceProxies.get(taskInstance);
-
-    if (!proxy) {
-      let encapsulatedTaskImpl = this._encapsulatedTaskStates.get(taskInstance);
-
-      proxy = new Proxy(taskInstance, {
-        get(obj, prop) {
-          return prop in obj
-            ? obj[prop]
-            : get(encapsulatedTaskImpl, prop.toString());
-        },
-        set(obj, prop, value) {
-          if (prop in obj) {
-            obj[prop] = value;
-          } else {
-            set(encapsulatedTaskImpl, prop.toString(), value);
-          }
-          return true;
-        },
-        has(obj, prop) {
-          return prop in obj || prop in encapsulatedTaskImpl;
-        },
-        ownKeys(obj) {
-          return Reflect.ownKeys(obj).concat(
-            Reflect.ownKeys(encapsulatedTaskImpl),
-          );
-        },
-        defineProperty(obj, prop, descriptor) {
-          // Ember &lt; 3.16 uses a WeakMap for value storage, keyed to the proxy.
-          // We need to ensure that when we use setProperties to update it, and
-          // it creates Meta, that it uses the proxy to key, otherwise we'll
-          // have two different values stores in Meta, one which won't render.
-          let proxy = _encapsulatedTaskInstanceProxies.get(taskInstance);
-          if (proxy) {
-            if (descriptor.get) {
-              descriptor.get = descriptor.get.bind(proxy);
-            } else if (proxy &amp;&amp; descriptor.set) {
-              descriptor.set = descriptor.set.bind(proxy);
-            }
-          }
-
-          return Reflect.defineProperty(encapsulatedTaskImpl, prop, descriptor);
-        },
-        getOwnPropertyDescriptor(obj, prop) {
-          return prop in obj
-            ? Reflect.getOwnPropertyDescriptor(obj, prop)
-            : Reflect.getOwnPropertyDescriptor(encapsulatedTaskImpl, prop);
-        },
-      });
-
-      _encapsulatedTaskInstanceProxies.set(taskInstance, proxy);
-    }
-
-    return proxy;
-  }
-}
 </code></pre>
         </article>
     </section>
@@ -395,13 +274,13 @@ export class EncapsulatedTask extends Task {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Aug 08 2025 17:49:50 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Aug 13 2025 00:38:14 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

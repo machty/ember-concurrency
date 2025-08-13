@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>JSDoc: Source: task-public-api.js</title>
 
-    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js" integrity="sha256-OdwnjpJmUf0qo35PEn08X3HnqEK8iVOqYj/GspMf5PA= sha512-JcSVG6KneerYlyLyiu7r3UYKrvYPOY8iNu7eOpwbCCSCdvXuStbMzc4MB+v21gQ7Y+82m2MyFg6ggylf9rLHXg==" > </script>
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js" integrity="sha256-iJ62JokFFH0hn3DfxUBSbuYjCfEU60uGpGI2G+sMATk= sha512-U96YfHWvwHOKaSJXqlNmcNL/j/ow3+EQp0Dferou+n15tEZ5TjS1WPbiu1yE10+HrlKwNYvr3JtPn9mpnUVUYg==" > </script>
     <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js" integrity="sha256-W/8u/xdnRt8pUf2OdHRfPyaq6lGTxTZQZsKHgKD/y4I= sha512-OsUG3GgeyMYQWj48BRAEUKSbafPqxNMaG6fkAKuvqQ9bIza9JNaxDiQ+H7ObiSv8eJvEaUHTnHJA6FLxpV0HZQ==" > </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -26,21 +26,7 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { assert, deprecate } from '@ember/debug';
-import {
-  task as taskDecorator,
-  taskGroup as taskGroupDecorator,
-} from './task-decorators';
-import { TaskFactory } from './task-factory';
-import {
-  TaskGroupProperty,
-  TaskProperty,
-  taskComputed,
-  taskFactorySymbol,
-} from './task-properties';
-
-// eslint-disable-next-line no-unused-vars
-import { TaskGroup } from './task-group';
+            <pre class="prettyprint source linenums"><code>import { assert } from '@ember/debug';
 
 /**
  * A Task is a cancelable, restartable, asynchronous operation that
@@ -53,11 +39,6 @@ import { TaskGroup } from './task-group';
  * is performed. Async functions with the await keyword can
  * be used to elegantly express asynchronous, cancelable
  * operations.
- *
- * You can also define an
- * &lt;a href="/docs/advanced/encapsulated-task">Encapsulated Task&lt;/a>
- * by passing in an object that defined a `perform` async
- * function property.
  *
  * The following Component defines a task called `myTask` that,
  * when performed, prints a message to the console, sleeps for 1 second,
@@ -88,113 +69,20 @@ import { TaskGroup } from './task-group';
  * @param {function} taskFunction the async function backing the task.
  * @returns {TaskProperty}
  */
-export function task(taskFnOrProtoOrDecoratorOptions, key, descriptor) {
+export function task() {
   assert(
     `It appears you're attempting to use the new task(async () => { ... }) syntax, but the async arrow task function you've provided is not being properly compiled by Babel.\n\nPossible causes / remedies:\n\n1. You must pass the async function expression directly to the task() function (it is not currently supported to pass in a variable containing the async arrow fn, or any other kind of indirection)\n2. The new task syntax is only supported by native classes. Ensure that this is one.\n3. If this code is in an addon, please ensure the addon specifies ember-concurrency "2.3.0" or higher in "dependencies" (not "devDependencies")\n4. Ensure that there is only one version of ember-concurrency v2.3.0+ being used in your project (including nested dependencies) and consider using npm/yarn/pnpm resolutions to enforce a single version is used\n5. Ensure that you have registered the Babel transform that Ember Concurrency uses to transform tasks in the "async-arrow" notation, see https://ember-concurrency.com/docs/v4-upgrade`,
     !isUntranspiledAsyncFn(arguments[arguments.length - 1]),
   );
 
-  if (
-    isDecoratorOptions(taskFnOrProtoOrDecoratorOptions) ||
-    (key &amp;&amp; descriptor)
-  ) {
-    return taskDecorator(...arguments);
-  } else {
-    return buildClassicTaskProperty(taskFnOrProtoOrDecoratorOptions);
-  }
+  assert(
+    `Using task(...) in any form other than \`task(async () => {})\` is no longer supported since ember-concurrency v5. Please use the modern syntax instead (and consider using one of ember-concurrency's codemods).`,
+    false,
+  );
 }
 
 function isUntranspiledAsyncFn(obj) {
   return obj &amp;&amp; obj.constructor &amp;&amp; obj.constructor.name === 'AsyncFunction';
-}
-
-/**
- * Build and return a "classic" TaskProperty, which is essentially a subclass of a Computed Property
- * descriptor that can be used to define Tasks on classic Ember.Objects.
- *
- * @private
- */
-function buildClassicTaskProperty(taskFn) {
-  const taskProperty = taskComputed(function () {
-    taskProperty[taskFactorySymbol].setTaskDefinition(taskProperty.taskFn);
-    return taskProperty[taskFactorySymbol].createTask(this);
-  });
-
-  deprecate(
-    "Using task() in any form other than `taskName = task(async () => {})` is deprecated. Please use the modern syntax instead (and consider using one of ember-concurrency's codemods).",
-    false,
-    {
-      id: 'ember-concurrency.deprecate-classic-task-api',
-      for: 'ember-concurrency',
-      since: '4.0.5',
-      until: '5.0.0',
-    },
-  );
-
-  taskProperty.taskFn = taskFn;
-
-  taskProperty[taskFactorySymbol] = new TaskFactory();
-
-  Object.setPrototypeOf(taskProperty, TaskProperty.prototype);
-
-  return taskProperty;
-}
-
-/**
- * "Task Groups" provide a means for applying
- * task modifiers to groups of tasks. Once a {@linkcode Task} is declared
- * as part of a group task, modifiers like `drop` or `restartable`
- * will no longer affect the individual `Task`. Instead those
- * modifiers can be applied to the entire group.
- *
- * ```js
- * import { task, taskGroup } from 'ember-concurrency';
- *
- * export default class MyController extends Controller {
- *   &amp;#64;taskGroup({ drop: true }) chores;
- *
- *   &amp;#64;task({ group: 'chores' }) mowLawn = taskFn;
- *   &amp;#64;task({ group: 'chores' }) doDishes = taskFn;
- *   &amp;#64;task({ group: 'chores' }) changeDiapers = taskFn;
- * }
- * ```
- *
- * @returns {TaskGroup}
- */
-export function taskGroup(possibleDecoratorOptions, key, descriptor) {
-  if (isDecoratorOptions(possibleDecoratorOptions) || (key &amp;&amp; descriptor)) {
-    return taskGroupDecorator(...arguments);
-  } else {
-    let tp = taskComputed(function (key) {
-      tp[taskFactorySymbol].setName(key);
-      return tp[taskFactorySymbol].createTaskGroup(this);
-    });
-
-    tp[taskFactorySymbol] = new TaskFactory();
-
-    Object.setPrototypeOf(tp, TaskGroupProperty.prototype);
-
-    return tp;
-  }
-}
-
-function isDecoratorOptions(possibleOptions) {
-  if (!possibleOptions) {
-    return false;
-  }
-  if (typeof possibleOptions === 'function') {
-    return false;
-  }
-
-  if (
-    typeof possibleOptions === 'object' &amp;&amp;
-    'perform' in possibleOptions &amp;&amp;
-    typeof possibleOptions.perform === 'function'
-  ) {
-    return false;
-  }
-
-  return Object.getPrototypeOf(possibleOptions) === Object.prototype;
 }
 </code></pre>
         </article>
@@ -206,13 +94,13 @@ function isDecoratorOptions(possibleOptions) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Aug 08 2025 17:49:50 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Aug 13 2025 00:38:14 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

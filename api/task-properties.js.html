@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>JSDoc: Source: task-properties.js</title>
 
-    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js" integrity="sha256-OdwnjpJmUf0qo35PEn08X3HnqEK8iVOqYj/GspMf5PA= sha512-JcSVG6KneerYlyLyiu7r3UYKrvYPOY8iNu7eOpwbCCSCdvXuStbMzc4MB+v21gQ7Y+82m2MyFg6ggylf9rLHXg==" > </script>
+    <script src="scripts/prettify/prettify-709bfcc456c694bfe8ee86d184a1c360.js" integrity="sha256-iJ62JokFFH0hn3DfxUBSbuYjCfEU60uGpGI2G+sMATk= sha512-U96YfHWvwHOKaSJXqlNmcNL/j/ow3+EQp0Dferou+n15tEZ5TjS1WPbiu1yE10+HrlKwNYvr3JtPn9mpnUVUYg==" > </script>
     <script src="scripts/prettify/lang-css-914365fa44cd3c094afc7c0de229e29e.js" integrity="sha256-W/8u/xdnRt8pUf2OdHRfPyaq6lGTxTZQZsKHgKD/y4I= sha512-OsUG3GgeyMYQWj48BRAEUKSbafPqxNMaG6fkAKuvqQ9bIza9JNaxDiQ+H7ObiSv8eJvEaUHTnHJA6FLxpV0HZQ==" > </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -26,11 +26,7 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import Ember from 'ember';
-
-import { computed } from '@ember/object';
-
-import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
+            <pre class="prettyprint source linenums"><code>import DropSchedulerPolicy from './external/scheduler/policies/drop-policy';
 import EnqueueSchedulerPolicy from './external/scheduler/policies/enqueued-policy';
 import KeepLatestSchedulerPolicy from './external/scheduler/policies/keep-latest-policy';
 import RestartableSchedulerPolicy from './external/scheduler/policies/restartable-policy';
@@ -134,22 +130,6 @@ export const propertyModifiers = {
   },
 
   /**
-   * Adds this task to a TaskGroup so that concurrency constraints
-   * can be shared between multiple tasks.
-   *
-   * [See the Task Group docs for more information](/docs/task-groups)
-   *
-   * @method group
-   * @memberof TaskProperty
-   * @param {String} groupPath A path to the TaskGroup property
-   * @instance
-   */
-  group(taskGroupPath) {
-    this[taskFactorySymbol].setGroup(taskGroupPath);
-    return this;
-  },
-
-  /**
    * Activates lifecycle events, allowing Evented host objects to react to task state
    * changes.
    *
@@ -209,25 +189,8 @@ export const propertyModifiers = {
   },
 };
 
-/**
-  A {@link TaskProperty} is the Computed Property-like object returned
-  from the {@linkcode task} function. You can call Task Modifier methods
-  on this object to configure the behavior of the {@link Task}.
-
-  See [Managing Task Concurrency](/docs/task-concurrency) for an
-  overview of all the different task modifiers you can use and how
-  they impact automatic cancelation / enqueueing of task instances.
-
-  {@link TaskProperty} is only used for supporting "classic" Ember objects.
-  When using Native JavaScript or TypeScript classes, you will use [task decorators](/docs/task-decorators)
-  on methods instead.
-
-  @class TaskProperty
-*/
 export class TaskProperty {}
-export class TaskGroupProperty {}
 
-Object.assign(TaskGroupProperty.prototype, propertyModifiers);
 Object.assign(TaskProperty.prototype, propertyModifiers, {
   setup(proto, key) {
     if (this.callSuperSetup) {
@@ -235,93 +198,8 @@ Object.assign(TaskProperty.prototype, propertyModifiers, {
     }
 
     this[taskFactorySymbol].setName(key);
-    this[taskFactorySymbol]._setupEmberKVO(proto);
-  },
-
-  /**
-   * Calling `task(...).on(eventName)` configures the task to be
-   * automatically performed when the specified events fire. In
-   * this way, it behaves like
-   * [Ember.on](http://emberjs.com/api/classes/Ember.html#method_on).
-   *
-   * You can use `task(...).on('init')` to perform the task
-   * when the host object is initialized.
-   *
-   * ```js
-   * import Component from '@glimmer/component';
-   * import { task } from 'ember-concurrency';
-   *
-   * export default class MyComponent extends Component {
-   *   pollForUpdates = task(async () => {
-   *     // ... this runs when the Component is first created
-   *     // because we specified .on('init')
-   *   }).on('init');
-   *
-   *   handleFoo = task(async (a, b, c) => {
-   *     // this gets performed automatically if the 'foo'
-   *     // event fires on this Component,
-   *     // e.g., if someone called component.trigger('foo')
-   *   }).on('foo');
-   * }
-   * ```
-   *
-   * @method on
-   * @memberof TaskProperty
-   * @param {String} eventNames*
-   * @instance
-   */
-  on() {
-    this[taskFactorySymbol].addPerformEvents(...arguments);
-    return this;
-  },
-
-  /**
-   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
-   * but instead will cause the task to be canceled if any of the
-   * specified events fire on the parent object.
-   *
-   * [See the Live Example](/docs/examples/route-tasks/1)
-   *
-   * @method cancelOn
-   * @memberof TaskProperty
-   * @param {String} eventNames*
-   * @instance
-   */
-  cancelOn() {
-    this[taskFactorySymbol].addCancelEvents(...arguments);
-    return this;
-  },
-
-  /**
-   * This behaves like the {@linkcode TaskProperty#on task(...).on() modifier},
-   * but instead will cause the task to be performed if any of the
-   * specified properties on the parent object change.
-   *
-   * @method observes
-   * @memberof TaskProperty
-   * @param {String} keys*
-   * @instance
-   */
-  observes() {
-    this[taskFactorySymbol].addObserverKeys(...arguments);
-    return this;
   },
 });
-
-const setDecorator = Ember._setClassicDecorator;
-export function taskComputed(fn) {
-  let cp = function (proto, key) {
-    if (cp.setup !== undefined) {
-      cp.setup(proto, key);
-    }
-
-    return computed(fn)(...arguments);
-  };
-
-  setDecorator(cp);
-
-  return cp;
-}
 </code></pre>
         </article>
     </section>
@@ -332,13 +210,13 @@ export function taskComputed(fn) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskGroup.html">TaskGroup</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="TaskProperty.html">TaskProperty</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#dropTask">dropTask</a></li><li><a href="global.html#dropTaskGroup">dropTaskGroup</a></li><li><a href="global.html#enqueueTask">enqueueTask</a></li><li><a href="global.html#enqueueTaskGroup">enqueueTaskGroup</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#keepLatestTask">keepLatestTask</a></li><li><a href="global.html#keepLatestTaskGroup">keepLatestTaskGroup</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#restartableTask">restartableTask</a></li><li><a href="global.html#restartableTaskGroup">restartableTaskGroup</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#taskGroup">taskGroup</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li><li><a href="TaskFactory.html">TaskFactory</a></li><li><a href="TaskInstance.html">TaskInstance</a></li><li><a href="Yieldable.html">Yieldable</a></li><li><a href="YieldableState.html">YieldableState</a></li></ul><h3>Global</h3><ul><li><a href="global.html#all">all</a></li><li><a href="global.html#allSettled">allSettled</a></li><li><a href="global.html#animationFrame">animationFrame</a></li><li><a href="global.html#didCancel">didCancel</a></li><li><a href="global.html#forever">forever</a></li><li><a href="global.html#getModifier">getModifier</a></li><li><a href="global.html#hasModifier">hasModifier</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#hashSettled">hashSettled</a></li><li><a href="global.html#race">race</a></li><li><a href="global.html#rawTimeout">rawTimeout</a></li><li><a href="global.html#registerModifier">registerModifier</a></li><li><a href="global.html#task">task</a></li><li><a href="global.html#timeout">timeout</a></li><li><a href="global.html#waitForEvent">waitForEvent</a></li><li><a href="global.html#waitForProperty">waitForProperty</a></li><li><a href="global.html#waitForQueue">waitForQueue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Aug 08 2025 17:49:50 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Aug 13 2025 00:38:14 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
