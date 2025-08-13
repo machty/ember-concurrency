@@ -1,5 +1,9 @@
 # Changelog
 
+### 5.1.0
+
+- The EC Babel async arrow function transformer now prunes imports that become unused after applying the transform so that Rollup doesn't complain about unused imports. (#595)
+
 ### 5.0.1
 
 - Reverted required Node.js version requirements
