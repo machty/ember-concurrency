@@ -1,6 +1,11 @@
 # Changelog
 
-### 5.0.0.alpha
+### 5.0.1
+
+- Reverted required Node.js version requirements
+- Removed internal references to `ember/object` `get()` and `computed`
+
+### 5.0.0
 
 - Breaking Changes
   - Removed a number of features that were overloaded, dependent on Ember Object, TypeScript-unfriendly, and/or otherwise likely to cause problems with future/Polaris Ember
