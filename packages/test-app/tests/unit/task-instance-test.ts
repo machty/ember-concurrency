@@ -338,7 +338,7 @@ module('Unit: task instance', function (hooks) {
     assert.ok(taskInstance.isFinished);
   });
 
-  test('unhandled yielded rejections are asyncly reported to Ember.onerror', async function (assert) {
+  test('unhandled yielded rejections are asyncly reported to getOnerror (formerly Ember.onerror)', async function (assert) {
     assert.expect(1);
     run(() => {
       wrap(function* () {

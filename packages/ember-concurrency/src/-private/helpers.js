@@ -1,4 +1,3 @@
-import { get } from '@ember/object';
 import { assert } from '@ember/debug';
 
 export function taskHelperClosure(helperName, taskMethod, _args, hash) {
@@ -16,7 +15,7 @@ export function taskHelperClosure(helperName, taskMethod, _args, hash) {
 
     if (hash && hash.value) {
       let event = innerArgs.pop();
-      innerArgs.push(get(event, hash.value));
+      innerArgs.push(event[hash.value]);
     }
 
     return task[taskMethod](...outerArgs, ...innerArgs);
