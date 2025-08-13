@@ -148,6 +148,12 @@ function convertFunctionExpressionIntoGenerator(
       // CallExpression path
       const taskPath = (rootModifierPath || taskFnPath).parentPath;
 
+      // Track the factory function name so we can remove its import later
+      if (!state._usedTaskFactories) {
+        state._usedTaskFactories = new Set();
+      }
+      state._usedTaskFactories.add(factoryFunctionName);
+
       // Transform the async arrow task function into a generator function
       // (we'll do the actual transformation of `await`s into `yield`s below)
       let asyncArrowFnBody = taskFnPath.node.body;
@@ -278,6 +284,52 @@ function extractTaskNameFromClassProperty(taskPath) {
   return null;
 }
 
+/**
+ * Clean up unused task factory function imports from ember-concurrency.
+ * This handles both complete import removal and partial import removal.
+ *
+ * @param {babel.NodePath} programPath - The program root path
+ * @param {Set<string>} usedTaskFactories - Set of task factory names that were transformed
+ */
+function cleanupUnusedTaskFactoryImports(programPath, usedTaskFactories) {
+  if (!usedTaskFactories || usedTaskFactories.size === 0) {
+    return;
+  }
+
+  programPath.traverse({
+    ImportDeclaration(path) {
+      const importSource = path.node.source.value;
+      if (importSource !== 'ember-concurrency') {
+        return;
+      }
+
+      const specifiers = path.node.specifiers;
+      const remainingSpecifiers = [];
+
+      for (const specifier of specifiers) {
+        if (
+          specifier.type === 'ImportSpecifier' &&
+          usedTaskFactories.has(specifier.imported.name)
+        ) {
+          // This is a task factory function that was transformed, so remove it
+          continue;
+        } else {
+          // Keep this import specifier
+          remainingSpecifiers.push(specifier);
+        }
+      }
+
+      if (remainingSpecifiers.length === 0) {
+        // Remove the entire import declaration if no specifiers remain
+        path.remove();
+      } else if (remainingSpecifiers.length < specifiers.length) {
+        // Update the import declaration with remaining specifiers
+        path.node.specifiers = remainingSpecifiers;
+      }
+    },
+  });
+}
+
 module.exports = declare((api) => {
   api.assertVersion(7);
 
@@ -291,27 +343,23 @@ module.exports = declare((api) => {
     // the latter, it's more likely that other Babel plugins would be have transformed these
     // AST nodes in a way that would break out transforms.
     visitor: {
-      Program(path, state) {
-        // Stash the program root on state so that it's easier to dynamically inject `import` later on
-        state.root = path;
+      Program: {
+        enter(path, state) {
+          // Stash the program root on state so that it's easier to dynamically inject `import` later on
+          state.root = path;
+        },
+        exit(path, state) {
+          // Clean up unused task factory imports after all transformations are complete
+          cleanupUnusedTaskFactoryImports(path, state._usedTaskFactories);
+        },
+      },
 
-        path.traverse(
-          {
-            ClassDeclaration(path, innerState) {
-              path.traverse(
-                TransformAsyncMethodsIntoGeneratorMethods,
-                innerState,
-              );
-            },
-            ClassExpression(path, innerState) {
-              path.traverse(
-                TransformAsyncMethodsIntoGeneratorMethods,
-                innerState,
-              );
-            },
-          },
-          state,
-        );
+      ClassDeclaration(path, state) {
+        path.traverse(TransformAsyncMethodsIntoGeneratorMethods, state);
+      },
+
+      ClassExpression(path, state) {
+        path.traverse(TransformAsyncMethodsIntoGeneratorMethods, state);
       },
     },
   };
