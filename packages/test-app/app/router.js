@@ -10,7 +10,6 @@ Router.map(function () {
   this.route('docs', function () {
     this.route('introduction');
     this.route('v4-upgrade');
-    this.route('older-versions');
     this.route('installation');
 
     this.route('tutorial', function () {
