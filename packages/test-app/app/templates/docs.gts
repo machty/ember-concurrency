@@ -1,6 +1,9 @@
-import Controller from '@ember/controller';
 import { computed } from '@ember/object';
+import { LinkTo } from '@ember/routing';
 import { service } from '@ember/service';
+import Component from '@glimmer/component';
+import GithubEdit from '../components/github-edit';
+import NavHeader from '../components/nav-header';
 
 export const TABLE_OF_CONTENTS = [
   { route: 'docs.introduction', title: 'Home' },
@@ -54,8 +57,8 @@ export const FLATTENED_TABLE_OF_CONTENTS = TABLE_OF_CONTENTS.reduce(
   [],
 );
 
-export default class DocsController extends Controller {
-  @service router;
+export default class DocsRouteComponent extends Component {
+  @service declare router: any;
 
   tableOfContents = TABLE_OF_CONTENTS;
 
@@ -107,4 +110,57 @@ export default class DocsController extends Controller {
       }
     }
   }
+
+  <template>
+    <div class='container'>
+      <div class='docs row'>
+        <div class='three columns'>
+          <div class='side-menu'>
+            {{#each this.tableOfContents as |entry|}}
+              {{#if entry.section}}
+                <div class='toc-section-title'>
+                  {{entry.section}}
+                </div>
+              {{else}}
+                <div class='toc-entry'>
+                  {{#if entry.route}}
+                    <LinkTo @route={{entry.route}}>{{entry.title}}</LinkTo>
+                  {{else}}
+                    {{entry.title}}
+                  {{/if}}
+                </div>
+
+                {{#if entry.children}}
+                  {{#each entry.children as |child|}}
+                    <div class='toc-entry toc-subentry'>
+                      <LinkTo @route={{child.route}}>{{child.title}}</LinkTo>
+                    </div>
+                  {{/each}}
+                {{/if}}
+              {{/if}}
+            {{/each}}
+          </div>
+        </div>
+        <div class='nine columns'>
+          <NavHeader
+            @nextTopic={{this.nextTopic}}
+            @prevTopic={{this.prevTopic}}
+          />
+          <GithubEdit />
+
+          {{outlet}}
+
+          <br />
+          <br />
+          <br />
+          <br />
+
+          <NavHeader
+            @nextTopic={{this.nextTopic}}
+            @prevTopic={{this.prevTopic}}
+          />
+        </div>
+      </div>
+    </div>
+  </template>
 }

@@ -10,7 +10,7 @@ import didInsert from '@ember/render-modifiers/modifiers/did-insert';
 interface CodeTemplateToggleSignature {
   Args: {
     codeSnippet1: string;
-    codeSnippet2: string;
+    codeSnippet2?: string;
   };
 }
 

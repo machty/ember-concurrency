@@ -1,0 +1,142 @@
+import { on } from '@ember/modifier';
+import { action } from '@ember/object';
+import { LinkTo } from '@ember/routing';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { forever, task } from 'ember-concurrency';
+import CodeSnippet from '../../components/code-snippet';
+
+export default class CancelationRouteComponent extends Component {
+  @tracked count = 0;
+  @tracked mostRecent = null;
+
+  // BEGIN-SNIPPET cancelation
+  myTask = task(async () => {
+    try {
+      this.count += 1;
+      await forever;
+    } finally {
+      // finally blocks always get called,
+      // even when the task is being canceled
+      this.count -= 1;
+    }
+  });
+
+  @action
+  performTask() {
+    let task = this.myTask;
+    let taskInstance = task.perform();
+    this.mostRecent = taskInstance;
+  }
+
+  @action
+  cancelAll() {
+    this.myTask.cancelAll();
+  }
+
+  @action
+  cancelMostRecent() {
+    this.mostRecent.cancel();
+  }
+  // END-SNIPPET
+
+  <template>
+    <h3>Cancellation</h3>
+
+    <p>
+      <strong>ember-concurrency</strong>
+      tasks can be canceled either
+      <em>explicitly</em>
+      (by calling one of the cancel methods on a task or task instance) or
+      <em>implicitly</em>
+      (based on how the task is configured, or because the task's host object
+      was destroyed).
+    </p>
+
+    <h4>How ember-concurrency cancels task functions</h4>
+
+    <p>
+      You may be aware that async functions in JavaScript are not cancellable,
+      i.e. if you call an async function, you can't externally cause that async
+      function to stop running (unless you're making explicit use of cancel
+      tokens or some other mechanism).
+    </p>
+
+    <p>
+      ember-concurrency's
+      <code>task()</code>
+      API is built around async arrow functions, so you might be wondering, how
+      does e-c get around this limitation? The answer is that behind the scenes,
+      ember-concurrency uses a Babel transform to convert your async arrow
+      function into a
+      <a
+        href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*'
+      >Generator Function</a>, which are able to be cancelled. (Please see the
+      <LinkTo @route='docs.installation'>Installation Docs</LinkTo>
+      on how to install this transform.)
+    </p>
+
+    <h4>Implicit Cancelation via Task Modifiers</h4>
+
+    <p>
+      Generally speaking, it is
+      <em>much</em>
+      better to configure your tasks properly (via
+      <LinkTo @route='docs.task-concurrency'>Task Modifiers</LinkTo>) such that
+      they'll be implicitly/automatically canceled at the right time, but there
+      are still some cases where explicit cancelation is the only option.
+    </p>
+
+    <h4>Explicit Cancelation</h4>
+
+    <p>
+      There are two ways to explicitly cancel a task:
+    </p>
+
+    <ol>
+      <li>
+        Call
+        <code>task.cancelAll()</code>
+        on the Task object &mdash; this will cancel all running or enqueued Task
+        Instances for that task.
+      </li>
+      <li>
+        Call
+        <code>taskInstance.cancel()</code>
+        on a Task Instance (the object returned from a prior call to
+        <code>task.perform()</code>)
+      </li>
+    </ol>
+
+    <h4>Example</h4>
+
+    {{! BEGIN-SNIPPET cancelation-template }}
+    <h5>Running tasks: {{this.count}}</h5>
+
+    <button type='button' {{on 'click' this.performTask}}>Perform Task</button>
+    {{#if this.count}}
+      <button type='button' {{on 'click' this.cancelAll}}>Cancel All</button>
+    {{/if}}
+    {{#if this.mostRecent.isRunning}}
+      <button type='button' {{on 'click' this.cancelMostRecent}}>Cancel Most
+        Recent</button>
+    {{/if}}
+    {{! END-SNIPPET }}
+
+    {{! template-lint-disable no-unbalanced-curlies }}
+    <p>
+      <em>
+        Tip: You can also use the
+        <code>.numRunning</code>
+        property to get the current number of running task instances for a given
+        task, e.g.
+        <code>\{{myTask.numRunning}}</code>:
+        {{this.myTask.numRunning}}
+      </em>
+    </p>
+    {{! template-lint-enable no-unbalanced-curlies }}
+
+    <CodeSnippet @name='cancelation-template.gts' />
+    <CodeSnippet @name='cancelation.gts' />
+  </template>
+}
