@@ -1,0 +1,143 @@
+import { fn } from '@ember/helper';
+import { on } from '@ember/modifier';
+import { LinkTo } from '@ember/routing';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { restartableTask, timeout } from 'ember-concurrency';
+import RouteTemplate from 'ember-route-template';
+import CodeSnippet from '../../components/code-snippet';
+
+class ErrorVsCancelationRouteComponent extends Component {
+  @tracked numCompletions = 0;
+  @tracked numErrors = 0;
+  @tracked numFinallys = 0;
+
+  // BEGIN-SNIPPET error-vs-cancelation
+  myTask = restartableTask(async (doError) => {
+    try {
+      await timeout(1000);
+      if (doError) {
+        throw new Error('Boom');
+      }
+    } catch (e) {
+      this.numErrors++;
+    } finally {
+      this.numFinallys++;
+    }
+    this.numCompletions++;
+  });
+  // END-SNIPPET
+
+  <template>
+    <h3>Errors vs Cancelation</h3>
+
+    <p>
+      When you
+      <code>await</code>
+      a promise or async function call, your task function will pause execution
+      until one of three things happens:
+    </p>
+
+    <ol>
+      <li>The promise fulfills/async function returns, and your task will
+        continue executing from that point.</li>
+      <li>The promise rejects/async function throws, and your task will
+        automatically throw an error from that point.</li>
+      <li>Something causes the task to be canceled, which has the behavior
+        described below.</li>
+    </ol>
+
+    <p>
+      The
+      <LinkTo @route='docs.task-function-syntax'>Task Function Syntax docs</LinkTo>
+      demonstrates how you can use standard JavaScript
+      <code>try/catch</code>
+      blocks to catch exceptions thrown when you await a rejecting promise, but
+      what about cancelation? Are cancelations considered exceptions/errors, or
+      something else?
+    </p>
+
+    <p>
+      In ember-concurrency, cancelation is considered a third kind of
+      "completion" (the other two being a successful return from a function, and
+      throwing an exception from a function). Specifically, this means that if a
+      task is canceled while it is paused on a yield, the task will essentially
+      return from that point, it will skip any
+      <code>catch(e) {}</code>
+      blocks it is in, but it
+      <em>will</em>
+      execute any
+      <code>finally {}</code>
+      blocks. The benefit of this behavior is that:
+    </p>
+
+    <ol>
+      <li><code>finally</code>
+        blocks will always run and can be used for cleanup logic *</li>
+      <li>
+        You don't have to distinguish between cancelation and thrown exceptions
+        in your
+        <code>catch</code>
+        blocks (which you'd annoyingly have to do if cancelation were considered
+        just another type of error).
+      </li>
+    </ol>
+
+    <p>
+      <em>
+        * While
+        <code>finally</code>
+        blocks are nice for cleanup logic, make sure you're leveraging the power
+        of
+        <LinkTo @route='docs.task-concurrency'>Task Modifiers</LinkTo>
+        and
+        <code>.isRunning / .isIdle</code>
+        task properties as much as possible so that you're not manually
+        re-implementing a lot of the implicit state that ember-concurrency
+        provides you for free, e.g. you should avoid manually toggling the
+        visibility of a loading spinner within a task if you could accomplish
+        the same thing using the
+        <code>.isRunning</code>
+        property on a task.
+      </em>
+    </p>
+
+    <h4>Example</h4>
+
+    <p>
+      Both of the buttons below will (re)start
+      <code>myTask</code>
+      when clicked. If you click the buttons quickly, it will cause the
+      currently running task to cancel from the
+      <code>await</code>
+      where it is paused. Notice how cancelations don't increment the
+      <code>numErrors</code>
+      property because cancelations skip the
+      <code>catch</code>
+      block.
+    </p>
+
+    {{! BEGIN-SNIPPET error-vs-cancelation-template }}
+    <button {{on 'click' (fn this.myTask.perform false)}} type='button'>
+      Run to Completion
+    </button>
+
+    <button {{on 'click' (fn this.myTask.perform true)}} type='button'>
+      Throw an Error
+    </button>
+
+    <ul>
+      <li>Task State: {{this.myTask.state}}</li>
+      <li>Completions: {{this.numCompletions}}</li>
+      <li>Errors: {{this.numErrors}}</li>
+      <li>Finally block runs: {{this.numFinallys}}</li>
+    </ul>
+
+    {{! END-SNIPPET }}
+
+    <CodeSnippet @name='error-vs-cancelation-template.gts' />
+    <CodeSnippet @name='error-vs-cancelation.gts' />
+  </template>
+}
+
+export default RouteTemplate(ErrorVsCancelationRouteComponent);

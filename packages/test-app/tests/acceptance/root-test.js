@@ -2,7 +2,7 @@ import { module, test, skip } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 import { visit } from '@ember/test-helpers';
 import { run, _cancelTimers } from '@ember/runloop';
-import { FLATTENED_TABLE_OF_CONTENTS } from 'test-app/docs/controller';
+import { FLATTENED_TABLE_OF_CONTENTS } from 'test-app/templates/docs';
 
 const cancelTimers = _cancelTimers || run.cancelTimers;
 

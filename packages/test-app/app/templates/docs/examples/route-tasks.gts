@@ -1,0 +1,77 @@
+import { LinkTo } from '@ember/routing';
+import RouteTemplate from 'ember-route-template';
+import CodeSnippet from '../../../components/code-snippet';
+
+const ids = [1, 2, 3, 4, 10, 50, 200];
+
+export default RouteTemplate(
+  <template>
+    <h3>Tasks on Ember.Route (and other long-lived objects)</h3>
+
+    <p>
+      <strong>ember-concurrency</strong>
+      tasks are scoped to the lifetime of the object they live on, so if that
+      object is destroyed, all of the tasks attached to it are canceled. This is
+      very convenient when writing tasks on object with finite lifetimes, like
+      Components, but certain Ember objects, like Routes (and Controllers), are
+      never actually destroyed. Even if you can't rely on object destruction to
+      cancel a task,
+      <strong>ember-concurrency</strong>
+      makes it easy to run tasks between lifecycle events other than
+      <code>init</code>
+      and
+      <code>destroy</code>.
+    </p>
+
+    <h3>Live Example</h3>
+
+    <p>
+      Try clicking the links below. As the URL changes, you should see
+      notifications about the server polling status changing. If you leave this
+      route (by going to another page on this site), you'll see that the polling
+      task is being properly canceled.
+    </p>
+
+    <ul>
+      {{#each ids as |id|}}
+        <li>
+          <LinkTo @route='docs.examples.route-tasks.detail' @model={{id}}>
+            Thing
+            {{id}}
+          </LinkTo>
+        </li>
+      {{/each}}
+    </ul>
+
+    <ul>
+      <li>
+        <code>setupController</code>
+        kicks off the task with the current model id
+      </li>
+      <li>
+        The
+        <code>pollServerForChanges</code>
+        task polls the server in a loop, and uses the
+        <code>finally</code>
+        block to notify when it is being canceled.
+      </li>
+      <li>
+        We use
+        <code>restartable</code>
+        to ensure that only one instance of the task is running at a time, hence
+        any time
+        <code>setupController</code>
+        performs the task, any prior instances are canceled.
+      </li>
+      <li>
+        We use
+        <code>cancelAll</code>
+        in the route's
+        <code>resetController</code>
+        hook to make sure the task cancels when the user leaves the route.
+      </li>
+    </ul>
+
+    <CodeSnippet @name='detail-route.ts' />
+  </template>,
+);

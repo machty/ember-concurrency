@@ -1,0 +1,191 @@
+import { LinkTo } from '@ember/routing';
+import RouteTemplate from 'ember-route-template';
+import CodeSnippet from '../../components/code-snippet';
+
+export default RouteTemplate(
+  <template>
+    <h3>Testing</h3>
+
+    <p>
+      Ember doesn't yet have strong conventions for testing long-term timers and
+      polling loops, and since many of the use cases that ember-concurrency
+      addresses involves heavy use of
+      <code>timeout()</code>, and often times within a (possibly infinite) loop,
+      it can be difficult to figure out how to test code that makes heavy use of
+      such things within ember-concurrency tasks.
+    </p>
+
+    <p>
+      <em>
+        NOTE: this is an area of active development within the Ember community,
+        particularly amongst ember-concurrency users; in due time we will
+        probably have more official API (possibly in the form of another addon)
+        to help make testing time more manageable, but in the meantime, this
+        page documents some common approaches to testing time with present-day
+        tooling.
+      </em>
+    </p>
+
+    <h4>The Problem</h4>
+
+    <p>
+      Consider the following (common) pattern for polling a server for changes:
+    </p>
+
+    <CodeSnippet @name='poll-loop.js' />
+
+    <p>
+      The above example uses ember-concurrency tasks; to demonstrate that these
+      issues aren't limited to ember-concurrency tasks, here is how the same
+      logic might be written without ember-concurrency:
+    </p>
+
+    <CodeSnippet @name='poll-loop-classic.js' />
+
+    <p>
+      Both of these cases involve a "poll loop": on every iteration, do
+      something asynchronous, then pause for some period of time, then repeat.
+    </p>
+
+    <p>
+      If, within an acceptance test, you
+      <code>visit()</code>ed the page that causes this loop to start, your
+      acceptance test case would "hang" and eventually fail with a QUnit test
+      timeout. The reason this happens is that the Ember testing tools are aware
+      of all timers created via
+      <code>Ember.run.later</code>
+      (and ember-concurrency's
+      <code>timeout()</code>
+      helper internally uses
+      <code>Ember.run.later</code>), and will wait for all timers to "settle"
+      before allowing the test to proceed. But if you have a timer within a
+      loop, the timers will never settle, and hence your test will hang.
+    </p>
+
+    <p>
+      The solution, one way or another, is to "break" the timer loop when in a
+      testing environment. Here are all the ways to do that, each with their own
+      problems / tradeoffs:
+    </p>
+
+    <h5>Insert <code>Ember.testing</code> checks in your code</h5>
+
+    <CodeSnippet @name='poll-loop-break-1.js' />
+
+    <p>
+      This is sufficient when it's satisfactory to just test a single iteration
+      of a loop, but a) it won't test that the task continues to loop, and b)
+      it's unfortunate to have to riddle your actual code with testing logic.
+    </p>
+
+    <h5>Use <code>Ember.run.cancelTimers</code> in your test case</h5>
+
+    <p>
+      This is the approach used by the ember-concurrency
+      <a
+        href='https://github.com/machty/ember-concurrency/blob/72f70b6c327f5242ca623d61ea0595b5f9093896/tests/helpers/start-app.js#L17-L19'
+      >documentation site tests</a>; since any of the pages on this docs site
+      might demonstrate a live ember-concurrency task with a timer loop, all of
+      the acceptance tests automatically cancel all outstanding timers after
+      500ms to effectively stop all tasks wherever they're paused.
+    </p>
+
+    <h4>No loops, but long timers</h4>
+
+    <p>
+      If you're testing code that just uses long timers, but not necessarily
+      loops, you might still run into the problem of test cases that take too
+      long to complete, or might hit the QUnit timeout. A common solution to
+      this problem is to use much smaller millisecond timer values in a testing
+      environment. You can either do this by checking
+      <code>Ember.testing</code>
+      wherever you set a timer, or, more elegantly, you can define common timer
+      values in a config file, import the timer values wherever you need to set
+      a timer, and in test environments, the config file specifies much smaller
+      values so that the timers elapse more quickly.
+    </p>
+
+    <h4>The Future</h4>
+
+    <p>
+      The above solutions leave much to be desired. Hopefully a definitive
+      solution that produces clear, deterministic, consistent results will
+      emerge from the community. There are some
+      <a
+        href='https://gist.github.com/machty/574457b1f2d993cc5959a1d6d6c74e5b'
+      >ideas</a>
+      floating around, and if you're interested in contributing to the
+      discussion please join the
+      <code>#e-concurrency</code>
+      channel on the
+      <a href='https://discord.gg/zT3asNS'>Ember Community Discord server</a>.
+    </p>
+
+    <p>
+      Also, if you're finding success with a testing approach that wasn't
+      mentioned here, please open a GitHub issue with your ideas or open a Pull
+      Request to add additional docs to
+      <a
+        href='https://github.com/machty/ember-concurrency/blob/master/packages/test-app/app/docs/testing-debugging/template.hbs'
+      >this page</a>.
+    </p>
+
+    <h3>Debugging</h3>
+
+    <h4>Unexpected Cancelation</h4>
+
+    <p>
+      Sometimes it's not obvious why a Task was canceled; in these cases you can
+      use the
+      <code>debug</code>
+      Task Modifier on a specific task e.g.
+      <code>@task({ debug: true }) *nameOfTask { /* ... */ }</code>, which will
+      provide some logging about the task's lifecycle, e.g.
+      <code>TaskInstance 'nameOfTask' was canceled because the object it lives
+        on was destroyed or unrendered
+      </code>.
+    </p>
+
+    {{! <p>
+      To enable lifecycle logging on ALL ember-concurrency tasks, you can enable the <code>DEBUG_TASKS</code>
+      flag on <code>EmberENV</code> in your project's <code>config/environment.js</code> file.
+    </p> }}
+
+    <h4>Strange errors when using as documented</h4>
+
+    <p>
+      Check the
+      <LinkTo @route='docs.installation'>requirements</LinkTo>
+      to see what you need to install.
+    </p>
+
+    <p>
+      If you are sure that you fulfilled the requirements correctly, but are
+      still experiencing weird errors, install
+      <a
+        href='https://github.com/salsify/ember-cli-dependency-lint'
+        rel='noreferrer noopener'
+      ><code>ember-cli-dependency-lint</code></a>
+      to ensure that you are not accidentally including outdated versions of
+      <code>ember-concurrency</code>
+      as a transitive dependency. You may need to file an issue with the
+      relevant dependency to update their ember-concurrency dependency range.
+      Alternatively, you might resort to using something like Yarn resolutions
+      to enforce your application's version of ember-concurrency, but this
+      depends on how its being used by the dependency.
+    </p>
+
+    <p>
+      If it's still not working after that, please reach out on the
+      <code>#e-concurrency</code>
+      channel on the
+      <a href='https://discord.gg/zT3asNS' rel='noreferrer noopener'>Ember
+        Community Discord server</a>
+      or file a
+      <a
+        href='https://github.com/machty/ember-concurrency/issues/new'
+        rel='noreferrer noopener'
+      >new issue</a>.
+    </p>
+  </template>,
+);

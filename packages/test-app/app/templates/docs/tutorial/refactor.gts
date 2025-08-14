@@ -1,0 +1,165 @@
+import { LinkTo } from '@ember/routing';
+import RouteTemplate from 'ember-route-template';
+import CodeTemplateToggle from '../../../components/code-template-toggle';
+import Tutorial0 from '../../../components/tutorial-0';
+import Tutorial6 from '../../../components/tutorial-6';
+import Tutorial7 from '../../../components/tutorial-7';
+import Tutorial8 from '../../../components/tutorial-8';
+
+export default RouteTemplate(
+  <template>
+    <h3>Refactoring With Tasks</h3>
+
+    <p>
+      Now we're going to build the same functionality using ember-concurrency
+      tasks, starting with the same bare minimum implementation as before, and
+      making incremental improvements.
+    </p>
+
+    <p>
+      For reference, here is the bare minimum implementation that we started
+      with before (which only uses core Ember APIs):
+    </p>
+
+    <CodeTemplateToggle @codeSnippet1='better-syntax-1.gts' />
+    <Tutorial0 />
+
+    <h4>Version 1: Bare Minimum Implementation (with Tasks)</h4>
+
+    <p>
+      Now let's build the same thing with ember-concurrency tasks:
+    </p>
+
+    <CodeTemplateToggle @codeSnippet1='better-syntax-7.gts' />
+    <Tutorial6 />
+
+    <p>
+      Let's take a moment to point out everything that has changed:
+    </p>
+
+    <p>
+      First, instead of using a
+      <code>findStores</code>
+      <em>action</em>, we define a
+      <code>findStores</code>
+      <em>task</em>. This involves calling the
+      <code>task()</code>
+      builder function with
+      <code>this</code>
+      and modifying our async function to use the async arrow function syntax.
+    </p>
+
+    {{! template-lint-disable no-unbalanced-curlies }}
+    <p>
+      Second, in the template, instead of using
+      <code>\{{on "click" this.findStores}}</code>, we use
+      <code>\{{on "click" this.findStores.perform}}</code>.
+    </p>
+    {{! template-lint-enable no-unbalanced-curlies }}
+
+    <p>Let's press onward with the refactor:</p>
+
+    <h5>Version 2: Add a Loading Spinner (with Tasks)</h5>
+
+    <p>
+      Rather than defining a separate boolean flag and manually tracking the
+      state of the task, we can use the
+      <code>isRunning</code>
+      property exposed by the task to drive our loading spinner, which means we
+      only need to make a change to the template code; the JavaScript can stay
+      the same:
+    </p>
+
+    <CodeTemplateToggle @codeSnippet1='better-syntax-8.gts' />
+    <Tutorial7 />
+
+    <h4>Version 3: Preventing Concurrency (with Tasks)</h4>
+
+    <p>
+      So far so good, but we still haven't addressed the issue that clicking the
+      button multiple times causes weird behavior due to multiple fetch
+      operations running at the same time.
+    </p>
+
+    <p>
+      Rather than putting an
+      <code>if</code>
+      guard at the start of the task, the ember-concurrency way to prevent
+      concurrency is to apply a
+      <LinkTo @route='docs.task-concurrency'>Task Modifier</LinkTo>
+      to the task. The one we want to use is the
+      <code>drop</code>
+      modifier, which prevents concurrency by "dropping" any attempt to perform
+      the task while it is already running.
+    </p>
+
+    <CodeTemplateToggle @codeSnippet1='better-syntax-9.gts' />
+    <Tutorial8 />
+
+    <p>
+      Now when you button mash "Find Nearby Stores", you no longer get the weird
+      behavior due to concurrent fetches.
+    </p>
+
+    <h4>Version 4: Handling "set on destroyed object" errors (with Tasks)</h4>
+
+    <p>
+      What about those pesky
+      <code>"set on destroyed object"</code>
+      errors?
+    </p>
+
+    <p>
+      Good news! Our code is already safe because ember-concurrency
+      automatically cancels tasks when their host object (e.g. a Component) is
+      destroyed. In our example, if the
+      <code>findStores</code>
+      task is paused at the unresolved
+      <code>getNearbyStores</code>
+      <code>await</code>
+      call right when the user navigates away, the component will be destroyed
+      and the
+      <code>findStores</code>
+      task will stop right where it is and will never hit the line of code with
+      <code>this.result = result</code>, thus avoiding the
+      <code>"set on destroyed object"</code>
+      error.
+    </p>
+
+    <h4>Version 5: Handle Promise Rejection/Async Exceptions (with Tasks)</h4>
+
+    <p>
+      Will a promise rejection/async exception put our task into an
+      unrecoverable state?
+    </p>
+
+    <p>
+      It turns out that, again, we don't need to change any code; if either
+      <code>getCoords</code>
+      or
+      <code>getNearbyStores</code>
+      throw an exception, the
+      <code>findStores</code>
+      task would stop execution where the error occurred, bubble the exception
+      to the console (so that error reporters can catch it), but from there on
+      the task can be immediately performed / retried again. So, we don't need
+      to change any code.
+    </p>
+
+    <h3>Final Diff</h3>
+
+    <CodeTemplateToggle
+      @codeSnippet1='better-syntax-10.gts'
+      @codeSnippet2='better-syntax-6.gts'
+    />
+
+    <br />
+    <h3>Conclusion</h3>
+
+    <p>
+      This was a very successful refactor. We were able to remove a lot of ugly
+      boilerplate and defensive programming code, and what we're left with is
+      very clean, concise, and safe.
+    </p>
+  </template>,
+);
