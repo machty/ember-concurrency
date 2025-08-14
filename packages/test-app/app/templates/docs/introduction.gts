@@ -1,0 +1,74 @@
+import { LinkTo } from '@ember/routing';
+import RouteTemplate from 'ember-route-template';
+
+export default RouteTemplate(
+  <template>
+    <p style='font-size: 20px;' {{! template-lint-disable no-inline-styles }}>
+      <strong>ember-concurrency</strong>
+      is an Ember Addon that makes it easy to write concise, robust, and
+      beautiful asynchronous code.
+    </p>
+
+    <p>
+      It provides you with a powerful
+      <strong>Task</strong>
+      primitive, which offers the following benefits:
+    </p>
+
+    <ul>
+      <li>
+        Tasks, unlike Promises, support cancelation.
+      </li>
+      <li>
+        Tasks expose their underlying state (whether they're running or idle)
+        which makes it trivial to build loading indicators without having to
+        manually track / mutate state yourself.
+      </li>
+      <li>
+        <LinkTo @route='docs.task-concurrency'>Task Modifiers</LinkTo>
+        make it trivial to prevent two executions of the same task from running
+        at the same time, e.g. you can prevent double form submissions using the
+        <code>drop</code>
+        modifier, or you can configure a task to be
+        <code>restartable</code>
+        so that it starts over when you click a "Restart" button. Implementing
+        this logic without tasks requires a lot of boilerplate code and
+        defensive programming.
+      </li>
+      <li>
+        Tasks that live on Components are automatically canceled when that
+        Component is unrendered; no more
+        <code>if(this.isDestroyed)</code>
+        checks to prevent timers or ajax responses causing
+        <code>"set on destroyed object"</code>
+        errors.
+      </li>
+    </ul>
+
+    <h3>Additional Learning Resources</h3>
+
+    <p>
+      In addition to the comprehensive documentation on this site, you might
+      find the following links useful for learning about ember-concurrency.
+    </p>
+
+    <ul>
+      <li>
+        <a href='https://www.youtube.com/watch?v=VEzVDOmY-dc'>
+          EmberConf presentation on ember-concurrency
+        </a>
+      </li>
+      <li>
+        <a href='https://embermap.com/topics/ember-concurrency'>
+          EmberMap's paid course on ember-concurrency
+        </a>
+      </li>
+      <li>
+        <a href='https://www.youtube.com/watch?v=5znpEiwHpL4'>
+          YouTube: Building a Drum Machine with Ember Octane and Ember
+          Concurrency
+        </a>
+      </li>
+    </ul>
+  </template>,
+);
