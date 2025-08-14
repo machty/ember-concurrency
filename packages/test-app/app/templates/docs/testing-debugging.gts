@@ -1,6 +1,6 @@
 import { LinkTo } from '@ember/routing';
 import RouteTemplate from 'ember-route-template';
-import CodeSnippet from '../../../components/code-snippet';
+import CodeSnippet from '../../components/code-snippet';
 
 export default RouteTemplate(
   <template>
