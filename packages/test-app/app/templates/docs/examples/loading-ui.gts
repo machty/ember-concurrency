@@ -3,10 +3,11 @@ import { LinkTo } from '@ember/routing';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
+import RouteTemplate from 'ember-route-template';
 import CodeSnippet from '../../../components/code-snippet';
 import LoadingSpinner from '../../../components/loading-spinner';
 
-export default class LoadingUIRouteComponent extends Component {
+class LoadingUIRouteComponent extends Component {
   @tracked result = null;
 
   // BEGIN-SNIPPET loading-ui-ask-question-task
@@ -70,3 +71,5 @@ export default class LoadingUIRouteComponent extends Component {
     <CodeSnippet @name='ask-button.gts' />
   </template>
 }
+
+export default RouteTemplate(LoadingUIRouteComponent);

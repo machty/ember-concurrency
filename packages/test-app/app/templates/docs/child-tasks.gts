@@ -2,9 +2,10 @@ import { on } from '@ember/modifier';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { restartableTask, task, timeout } from 'ember-concurrency';
+import RouteTemplate from 'ember-route-template';
 import CodeSnippet from '../../components/code-snippet';
 
-export default class ChildTasksRouteComponent extends Component {
+class ChildTasksRouteComponent extends Component {
   @tracked status = 'Waiting to start';
 
   // BEGIN-SNIPPET child-tasks
@@ -68,3 +69,5 @@ export default class ChildTasksRouteComponent extends Component {
     <CodeSnippet @name='child-tasks-template.gts' />
   </template>
 }
+
+export default RouteTemplate(ChildTasksRouteComponent);

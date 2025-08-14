@@ -1,12 +1,13 @@
+import { fn } from '@ember/helper';
+import { on } from '@ember/modifier';
+import { LinkTo } from '@ember/routing';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { restartableTask, timeout } from 'ember-concurrency';
-import { LinkTo } from '@ember/routing';
-import { fn } from '@ember/helper';
-import { on } from '@ember/modifier';
+import RouteTemplate from 'ember-route-template';
 import CodeSnippet from '../../components/code-snippet';
 
-export default class ErrorVsCancelationRouteComponent extends Component {
+class ErrorVsCancelationRouteComponent extends Component {
   @tracked numCompletions = 0;
   @tracked numErrors = 0;
   @tracked numFinallys = 0;
@@ -41,7 +42,7 @@ export default class ErrorVsCancelationRouteComponent extends Component {
       <li>The promise fulfills/async function returns, and your task will
         continue executing from that point.</li>
       <li>The promise rejects/async function throws, and your task will
-        automatically `throw` an error from that point.</li>
+        automatically throw an error from that point.</li>
       <li>Something causes the task to be canceled, which has the behavior
         described below.</li>
     </ol>
@@ -138,3 +139,5 @@ export default class ErrorVsCancelationRouteComponent extends Component {
     <CodeSnippet @name='error-vs-cancelation.gts' />
   </template>
 }
+
+export default RouteTemplate(ErrorVsCancelationRouteComponent);

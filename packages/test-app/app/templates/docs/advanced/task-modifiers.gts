@@ -1,6 +1,7 @@
 import { on } from '@ember/modifier';
 import Component from '@glimmer/component';
 import { task, timeout } from 'ember-concurrency';
+import RouteTemplate from 'ember-route-template';
 import CodeSnippet from '../../../components/code-snippet';
 
 // registerModifer is called in the module defining the modifier,
@@ -15,20 +16,20 @@ let performance =
     ? window.performance
     : { getEntriesByName() {} };
 
-export default class TaskModifiersRouteComponent extends Component {
+class TaskModifiersRouteComponent extends Component {
   // BEGIN-SNIPPET task-modifier-benchmark-on-task
   doWork = task({ drop: true, benchmark: true }, async () => {
     await timeout(20000 * Math.random());
   });
 
-  get perfEntries() {
+  get perfEntries(): PerformanceEntry[] {
     if (this.doWork.isRunning) {
       return [];
     } else {
       return performance.getEntriesByName(
         'ember-concurrency.doWork.runtime',
         'measure',
-      );
+      ) as PerformanceEntry[];
     }
   }
   // END-SNIPPET
@@ -44,15 +45,25 @@ export default class TaskModifiersRouteComponent extends Component {
     </p>
 
     <p>
-      Task modifiers have been a concept built-in to `ember-concurrency` since
-      the beginning. However, until `0.7.19` they were only specifyable within
-      `ember-concurrency` internals, and not extendable by users. `0.7.19` added
-      the ability to specify new modifiers as prototype extensions on
-      `TaskProperty`. Unfortunately, `TaskProperty` is inherently tied to Ember
-      internals and is not used when using decorators, and using prototype
-      extensions does not make clear what modifiers exist, so the `getModifier`,
-      `hasModifier`, and `registerModifier` APIs were introduced to provide a
-      way to manage modifiers and make them discoverable.
+      Task modifiers have been a concept built-in to
+      <code>ember-concurrency</code>
+      since the beginning. However, until
+      <code>0.7.19</code>
+      they were only specifyable within
+      <code>ember-concurrency</code>
+      internals, and not extendable by users.
+      <code>0.7.19</code>
+      added the ability to specify new modifiers as prototype extensions on
+      <code>TaskProperty</code>. Unfortunately,
+      <code>TaskProperty</code>
+      is inherently tied to Ember internals and is not used when using
+      decorators, and using prototype extensions does not make clear what
+      modifiers exist, so the
+      <code>getModifier</code>,
+      <code>hasModifier</code>, and
+      <code>registerModifier</code>
+      APIs were introduced to provide a way to manage modifiers and make them
+      discoverable.
     </p>
 
     <h3>Defining a custom task modifier</h3>
@@ -90,3 +101,5 @@ export default class TaskModifiersRouteComponent extends Component {
     <CodeSnippet @name='task-modifier-benchmark-on-task.gts' />
   </template>
 }
+
+export default RouteTemplate(TaskModifiersRouteComponent);

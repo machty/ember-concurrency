@@ -1,9 +1,9 @@
-import { computed } from '@ember/object';
 import { LinkTo } from '@ember/routing';
 import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import GithubEdit from '../components/github-edit';
 import NavHeader from '../components/nav-header';
+import RouteTemplate from 'ember-route-template';
 
 export const TABLE_OF_CONTENTS = [
   { route: 'docs.introduction', title: 'Home' },
@@ -57,7 +57,7 @@ export const FLATTENED_TABLE_OF_CONTENTS = TABLE_OF_CONTENTS.reduce(
   [],
 );
 
-export default class DocsRouteComponent extends Component {
+class DocsRouteComponent extends Component {
   @service declare router: any;
 
   tableOfContents = TABLE_OF_CONTENTS;
@@ -161,3 +161,5 @@ export default class DocsRouteComponent extends Component {
     </div>
   </template>
 }
+
+export default RouteTemplate(DocsRouteComponent);

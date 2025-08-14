@@ -3,10 +3,11 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
 import cancelAll from 'ember-concurrency/helpers/cancel-all';
+import RouteTemplate from 'ember-route-template';
 import CodeSnippet from '../../../components/code-snippet';
 import PressAndHoldButton from '../../../components/press-and-hold-button';
 
-export default class IncrementButtonsRouteComponent extends Component {
+class IncrementButtonsRouteComponent extends Component {
   @tracked count = 0;
 
   // BEGIN-SNIPPET increment-button-task
@@ -72,3 +73,5 @@ export default class IncrementButtonsRouteComponent extends Component {
     <CodeSnippet @name='press-and-hold-buttons.gts' />
   </template>
 }
+
+export default RouteTemplate(IncrementButtonsRouteComponent);

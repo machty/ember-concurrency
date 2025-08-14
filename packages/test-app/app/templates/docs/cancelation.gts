@@ -4,9 +4,10 @@ import { LinkTo } from '@ember/routing';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { forever, task } from 'ember-concurrency';
+import RouteTemplate from 'ember-route-template';
 import CodeSnippet from '../../components/code-snippet';
 
-export default class CancelationRouteComponent extends Component {
+class CancelationRouteComponent extends Component {
   @tracked count = 0;
   @tracked mostRecent = null;
 
@@ -140,3 +141,5 @@ export default class CancelationRouteComponent extends Component {
     <CodeSnippet @name='cancelation.gts' />
   </template>
 }
+
+export default RouteTemplate(CancelationRouteComponent);

@@ -1,10 +1,11 @@
 import { LinkTo } from '@ember/routing';
 import Component from '@glimmer/component';
 import { task, timeout } from 'ember-concurrency';
+import RouteTemplate from 'ember-route-template';
 import CodeSnippet from '../../components/code-snippet';
 import ConcurrencyGraph from '../../components/concurrency-graph';
 
-export default class TaskConcurrencyRouteComponent extends Component {
+class TaskConcurrencyRouteComponent extends Component {
   defaultTask = task(async (t) => this.sharedTask.perform(t));
 
   restartableTask = task({ restartable: true }, async (t) =>
@@ -150,6 +151,8 @@ export default class TaskConcurrencyRouteComponent extends Component {
     <ConcurrencyGraph @task={{this.keepLatestTask}} />
   </template>
 }
+
+export default RouteTemplate(TaskConcurrencyRouteComponent);
 
 /*
 // BEGIN-SNIPPET shared-tasks

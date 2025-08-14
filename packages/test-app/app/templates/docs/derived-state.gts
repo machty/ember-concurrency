@@ -5,11 +5,12 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { task, timeout } from 'ember-concurrency';
 import cancelAll from 'ember-concurrency/helpers/cancel-all';
+import RouteTemplate from 'ember-route-template';
 import { randomWord } from '../../utils';
 
 let i = 0;
 
-export default class DerivedStateRouteComponent extends Component {
+class DerivedStateRouteComponent extends Component {
   doStuff = task(async (shouldError) => {
     i++;
 
@@ -317,3 +318,5 @@ export default class DerivedStateRouteComponent extends Component {
     {{/each}}
   </template>
 }
+
+export default RouteTemplate(DerivedStateRouteComponent);

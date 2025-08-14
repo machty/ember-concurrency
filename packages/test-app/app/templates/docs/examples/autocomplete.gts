@@ -3,12 +3,13 @@ import { LinkTo } from '@ember/routing';
 import { isBlank } from '@ember/utils';
 import Component from '@glimmer/component';
 import { task, timeout } from 'ember-concurrency';
+import RouteTemplate from 'ember-route-template';
 import CodeSnippet from '../../../components/code-snippet';
 import LoadingSpinner from '../../../components/loading-spinner';
 
 const DEBOUNCE_MS = 250;
 
-export default class AutocompleteRouteComponent extends Component {
+class AutocompleteRouteComponent extends Component {
   // BEGIN-SNIPPET debounced-search-with-cancelation
   searchRepo = task({ restartable: true }, async (event) => {
     const term = event.target.value;
@@ -127,3 +128,5 @@ export default class AutocompleteRouteComponent extends Component {
     <CodeSnippet @name='debounced-search-with-cancelation-template.gts' />
   </template>
 }
+
+export default RouteTemplate(AutocompleteRouteComponent);

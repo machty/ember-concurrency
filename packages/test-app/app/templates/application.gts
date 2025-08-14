@@ -1,11 +1,11 @@
 import { service } from '@ember/service';
 import Component from '@glimmer/component';
-import config from '../config/environment';
-
+import RouteTemplate from 'ember-route-template';
+import config from 'test-app/config/environment';
 const versionRegExp = /\d+[.]\d+[.]\d+(?:-(?:alpha|beta|rc)\.\d+)?/;
 const { emberConcurrencyVersion } = config;
 
-export default class ApplicationRouteComponent extends Component {
+class ApplicationRouteComponent extends Component {
   @service declare notifications: any;
 
   addonVersion = emberConcurrencyVersion.match(versionRegExp)[0];
@@ -54,3 +54,5 @@ export default class ApplicationRouteComponent extends Component {
     </div>
   </template>
 }
+
+export default RouteTemplate(ApplicationRouteComponent);

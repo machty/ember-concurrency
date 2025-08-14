@@ -5,9 +5,10 @@ import { tracked } from '@glimmer/tracking';
 import { forever, task } from 'ember-concurrency';
 import cancelAll from 'ember-concurrency/helpers/cancel-all';
 import perform from 'ember-concurrency/helpers/perform';
+import RouteTemplate from 'ember-route-template';
 import MyButton from '../components/my-button';
 
-export default class HelpersTestRouteComponent extends Component {
+class HelpersTestRouteComponent extends Component {
   @tracked maybeNullTask = null;
   @tracked status = null;
 
@@ -71,3 +72,5 @@ export default class HelpersTestRouteComponent extends Component {
     >Set value option</button>
   </template>
 }
+
+export default RouteTemplate(HelpersTestRouteComponent);
