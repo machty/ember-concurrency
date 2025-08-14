@@ -9,7 +9,7 @@ import LoadingSpinner from '../../../components/loading-spinner';
 export default class LoadingUIRouteComponent extends Component {
   @tracked result = null;
 
-  // BEGIN-SNIPPET loading-ui-controller
+  // BEGIN-SNIPPET loading-ui-ask-question-task
   askQuestion = task({ drop: true }, async () => {
     await timeout(1000);
     this.result = Math.random();
@@ -65,7 +65,7 @@ export default class LoadingUIRouteComponent extends Component {
       {{! END-SNIPPET }}
     </p>
 
-    <CodeSnippet @name='loading-ui-controller.gts' />
+    <CodeSnippet @name='loading-ui-ask-question-task.gts' />
 
     <CodeSnippet @name='ask-button.gts' />
   </template>
