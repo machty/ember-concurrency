@@ -2,6 +2,8 @@ import { LinkTo } from '@ember/routing';
 import RouteTemplate from 'ember-route-template';
 import CodeSnippet from '../../../components/code-snippet';
 
+const ids = [1, 2, 3, 4, 10, 50, 200];
+
 export default RouteTemplate(
   <template>
     <h3>Tasks on Ember.Route (and other long-lived objects)</h3>
@@ -31,7 +33,7 @@ export default RouteTemplate(
     </p>
 
     <ul>
-      {{#each @controller.ids as |id|}}
+      {{#each ids as |id|}}
         <li>
           <LinkTo @route='docs.examples.route-tasks.detail' @model={{id}}>
             Thing
