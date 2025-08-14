@@ -2,7 +2,9 @@ import { on } from '@ember/modifier';
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { cancelAll, forever, perform, task } from 'ember-concurrency';
+import { forever, task } from 'ember-concurrency';
+import cancelAll from 'ember-concurrency/helpers/cancel-all';
+import perform from 'ember-concurrency/helpers/perform';
 import MyButton from '../components/my-button';
 
 export default class HelpersTestRouteComponent extends Component {

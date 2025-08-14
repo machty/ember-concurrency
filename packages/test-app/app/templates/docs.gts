@@ -62,7 +62,6 @@ export default class DocsRouteComponent extends Component {
 
   tableOfContents = TABLE_OF_CONTENTS;
 
-  @computed('router.currentRouteName')
   get currentIndex() {
     let contents = FLATTENED_TABLE_OF_CONTENTS,
       current = this.router.currentRouteName,
@@ -86,12 +85,10 @@ export default class DocsRouteComponent extends Component {
     return bestMatch;
   }
 
-  @computed('currentIndex', 'flatContents')
   get nextTopic() {
     return this.findNext(+1);
   }
 
-  @computed('currentIndex', 'flatContents')
   get prevTopic() {
     return this.findNext(-1);
   }

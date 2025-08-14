@@ -1,12 +1,13 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 import { task, timeout } from 'ember-concurrency';
+import type NotificationsService from '../../../../services/notifications';
 
 // BEGIN-SNIPPET detail-route
 export default class RouteTasksDetailRoute extends Route {
-  @service notifications;
+  @service declare notifications: NotificationsService;
 
-  setupController(controller, model) {
+  setupController(controller: any, model: any) {
     super.setupController(...arguments);
 
     this.pollServerForChanges.perform(model.id);
@@ -17,7 +18,7 @@ export default class RouteTasksDetailRoute extends Route {
     this.pollServerForChanges.cancelAll();
   }
 
-  pollServerForChanges = task({ restartable: true }, async (id) => {
+  pollServerForChanges = task({ restartable: true }, async (id: string) => {
     let notifications = this.notifications;
     await timeout(500);
     try {

@@ -72,6 +72,6 @@ export default RouteTemplate(
       </li>
     </ul>
 
-    <CodeSnippet @name='detail-route.js' />
+    <CodeSnippet @name='detail-route.ts' />
   </template>,
 );
