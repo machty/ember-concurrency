@@ -1,6 +1,6 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
-import { restartableTask, timeout } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 
 // BEGIN-SNIPPET detail-route
 export default class RouteTasksDetailRoute extends Route {
@@ -17,7 +17,7 @@ export default class RouteTasksDetailRoute extends Route {
     this.pollServerForChanges.cancelAll();
   }
 
-  pollServerForChanges = restartableTask(async (id) => {
+  pollServerForChanges = task({ restartable: true }, async (id) => {
     let notifications = this.notifications;
     await timeout(500);
     try {

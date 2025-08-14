@@ -2,8 +2,8 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { restartableTask, timeout } from 'ember-concurrency';
 import { LinkTo } from '@ember/routing';
-import { fn } from "@ember/helper";
-import { on } from "@ember/modifier";
+import { fn } from '@ember/helper';
+import { on } from '@ember/modifier';
 import CodeSnippet from '../../components/code-snippet';
 
 export default class ErrorVsCancelationRouteComponent extends Component {
