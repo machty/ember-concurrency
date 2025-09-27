@@ -30,7 +30,7 @@ import { assert } from '@ember/debug';
  * ```
  *
  * ```hbs
- * <button {{action myTask.perform}}>Perform Task</button>
+ * <button {{on "click" myTask.perform}}>Perform Task</button>
  * ```
  *
  * By default, tasks have no concurrency constraints
