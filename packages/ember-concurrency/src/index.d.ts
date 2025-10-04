@@ -612,58 +612,6 @@ export type AsyncTaskFunction<T, Args extends any[]> = (
 ) => Promise<T>;
 
 /**
- * Creates a task with the `drop` modifier applied.
- */
-export function dropTask<
-  HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-export function dropTask<
-  HostObject,
-  O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-
-/**
- * Creates a task with the `enqueue` modifier applied.
- */
-export function enqueueTask<
-  HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-export function enqueueTask<
-  HostObject,
-  O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-
-/**
- * Creates a task with the `keepLatest` modifier applied.
- */
-export function keepLatestTask<
-  HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-export function keepLatestTask<
-  HostObject,
-  O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-
-/**
- * Creates a task with the `restartable` modifier applied.
- */
-export function restartableTask<
-  HostObject,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-export function restartableTask<
-  HostObject,
-  O extends TaskOptions,
-  T extends AsyncArrowTaskFunction<HostObject, any, any[]>,
->(baseOptions: O, asyncArrowTaskFn: T): TaskForAsyncTaskFunction<HostObject, T>;
-
-/**
  * A cancelation-aware variant of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
  * The normal version of a `Promise.all` just returns a regular, uncancelable
  * Promise. The `ember-concurrency` variant of `all()` has the following
