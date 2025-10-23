@@ -12,11 +12,12 @@ module('Integration | classic', function (hooks) {
     assert.expect(2);
     const done = assert.async();
 
-    const ECTest = Component.extend({
+    // eslint-disable-next-line ember/require-tagless-components
+    class ECTest extends Component.extend({
       example: task(async () => {
         await timeout(1000);
         return 'done';
-      })
+      }),
     }) {
       <template>
         <div>
