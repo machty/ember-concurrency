@@ -77,6 +77,7 @@ jobs:
         - ember-5.0
         - ember-lts-6.4
         - ember-release
+        - ember-release-with-coverage
         - ember-default
         - tsc
         - embroider-safe
