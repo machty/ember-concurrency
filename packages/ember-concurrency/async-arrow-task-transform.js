@@ -347,19 +347,30 @@ module.exports = declare((api) => {
         enter(path, state) {
           // Stash the program root on state so that it's easier to dynamically inject `import` later on
           state.root = path;
+
+          path.traverse(
+            {
+              ClassDeclaration(path, innerState) {
+                path.traverse(
+                  TransformAsyncMethodsIntoGeneratorMethods,
+                  innerState,
+                );
+              },
+
+              ClassExpression(path, innerState) {
+                path.traverse(
+                  TransformAsyncMethodsIntoGeneratorMethods,
+                  innerState,
+                );
+              },
+            },
+            state,
+          );
         },
         exit(path, state) {
           // Clean up unused task factory imports after all transformations are complete
           cleanupUnusedTaskFactoryImports(path, state._usedTaskFactories);
         },
-      },
-
-      ClassDeclaration(path, state) {
-        path.traverse(TransformAsyncMethodsIntoGeneratorMethods, state);
-      },
-
-      ClassExpression(path, state) {
-        path.traverse(TransformAsyncMethodsIntoGeneratorMethods, state);
       },
     },
   };
