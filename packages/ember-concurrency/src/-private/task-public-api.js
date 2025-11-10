@@ -54,5 +54,20 @@ export function task() {
 }
 
 function isUntranspiledAsyncFn(obj) {
-  return obj && obj.constructor && obj.constructor.name === 'AsyncFunction';
+  if (obj && obj.constructor && obj.constructor.name === 'AsyncFunction'){
+    return true;
+  }
+
+  // Handle code-instrumented async functions (e.g. by babel-plugin-istanbul)
+  // These are often wrapped and lose their constructor name, but still contain async code
+  try {
+    const src = obj.toString();
+    if (src.startsWith('async') || src.includes('__cov_')) {
+      return true;
+    }
+  } catch {
+    // Ignore toString failures
+  }
+
+  return false;
 }
