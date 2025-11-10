@@ -50,6 +50,17 @@ module.exports = async function () {
         },
       },
       {
+        name: 'ember-release-with-coverage',
+        env: {
+          COVERAGE: true,
+        },
+        npm: {
+          devDependencies: {
+            'ember-source': await getChannelURL('release'),
+          },
+        },
+      },
+      {
         name: 'ember-beta',
         npm: {
           devDependencies: {
