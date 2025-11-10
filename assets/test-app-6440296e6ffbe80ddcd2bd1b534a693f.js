@@ -477,4 +477,4 @@ if(e!==t)throw new Error(`value !== ${t}. value is ${e}`)}}),null,"valueTask",nu
 e.default=(0,c.default)(k)}),define("test-app/utils",["exports"],function(e){Object.defineProperty(e,"__esModule",{value:!0}),e.randomWord=function(){return t[Math.floor(Math.random()*t.length)]}
 const t=["ember","tomster","swag","yolo","turbo","ajax"]}),define("test-app/config/environment",[],function(){if("undefined"!=typeof FastBoot)return FastBoot.config("test-app")
 try{var e="test-app/config/environment",t=document.querySelector('meta[name="'+e+'"]').getAttribute("content"),n={default:JSON.parse(decodeURIComponent(t))}
-return Object.defineProperty(n,"__esModule",{value:!0}),n}catch(r){throw new Error('Could not read config from meta tag with name "'+e+'".')}}),"undefined"==typeof FastBoot&&(runningTests||require("test-app/app").default.create({name:"test-app",version:"0.0.0+84c46446"}))
+return Object.defineProperty(n,"__esModule",{value:!0}),n}catch(r){throw new Error('Could not read config from meta tag with name "'+e+'".')}}),"undefined"==typeof FastBoot&&(runningTests||require("test-app/app").default.create({name:"test-app",version:"0.0.0+3b9fadf6"}))
