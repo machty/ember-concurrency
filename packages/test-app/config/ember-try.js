@@ -75,8 +75,24 @@ module.exports = async function () {
         name: 'tsc',
         command: 'pnpm tsc --project tsconfig.types-tests.json',
       },
-      embroiderSafe(),
-      embroiderOptimized(),
+      embroiderSafe({
+        npm: {
+          devDependencies: {
+            '@embroider/core': '^3.5.7',
+            '@embroider/compat': '^3.8.5',
+            '@embroider/webpack': '^4.1.1',
+          },
+        },
+      }),
+      embroiderOptimized({
+        npm: {
+          devDependencies: {
+            '@embroider/core': '^3.5.7',
+            '@embroider/compat': '^3.8.5',
+            '@embroider/webpack': '^4.1.1',
+          },
+        },
+      }),
     ],
   };
 };
