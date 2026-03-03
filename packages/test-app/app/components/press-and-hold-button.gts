@@ -19,6 +19,7 @@ export default class PressAndHoldButtonComponent extends Component<PressAndHoldB
       {{on 'pointerdown' @press}}
       {{on 'pointerup' @release}}
       {{on 'pointercancel' @release}}
+      {{on 'pointerleave' @release}}
       type='button'
     >
       {{yield}}
