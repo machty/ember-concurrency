@@ -16,11 +16,10 @@ export default class PressAndHoldButtonComponent extends Component<PressAndHoldB
   <template>
     <button
       {{! template-lint-disable no-pointer-down-event-binding }}
-      {{on 'touchstart' @press}}
-      {{on 'mousedown' @press}}
-      {{on 'touchend' @release}}
-      {{on 'mouseleave' @release}}
-      {{on 'mouseup' @release}}
+      {{on 'pointerdown' @press}}
+      {{on 'pointerup' @release}}
+      {{on 'pointercancel' @release}}
+      {{on 'pointerleave' @release}}
       type='button'
     >
       {{yield}}
