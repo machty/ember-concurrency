@@ -331,7 +331,7 @@ function cleanupUnusedTaskFactoryImports(programPath, usedTaskFactories) {
 }
 
 module.exports = declare((api) => {
-  api.assertVersion(7);
+  api.assertVersion('^7.0.0-0 || ^8.0.0');
 
   return {
     name: 'transform-ember-concurrency-async-function-tasks',
