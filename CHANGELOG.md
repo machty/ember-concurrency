@@ -1,5 +1,9 @@
 # Changelog
 
+### 5.2.1
+
+- Allow the async arrow task transform to run under Babel 8 (#613)
+
 ### 5.2.0
 
 - Fix compatibility with ember-cli-code-coverage (#604)
