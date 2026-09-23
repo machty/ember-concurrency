@@ -119,7 +119,7 @@ interface AbstractTask<Args extends any[], T extends TaskInstance<any>>
    *
    * @param args Arguments to pass to the task function.
    */
-  perform(...args: Args): T;
+  perform: (...args: Args) => T;
 
   /**
    * Flags the task as linked to the parent task's lifetime. Must be called
