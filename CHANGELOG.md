@@ -1,5 +1,9 @@
 # Changelog
 
+### 5.3.0
+
+- Type Task.perform as a property (#615)
+
 ### 5.2.1
 
 - Allow the async arrow task transform to run under Babel 8 (#613)
