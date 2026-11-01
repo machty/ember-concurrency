@@ -943,7 +943,7 @@ export function waitForEvent(
  *   when the task should continue executing, or
  *   a non-Function value that the watched property
  *   needs to equal before the task will continue running.
- * @deprecated Use a polling alternative instead.
+ * @deprecated See the migration guide: https://github.com/machty/ember-concurrency/blob/master/WAIT-FOR-PROPERTY-MIGRATION.md
  */
 export function waitForProperty<O extends object, K extends keyof O>(
   object: O,

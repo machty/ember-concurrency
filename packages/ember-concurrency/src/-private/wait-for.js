@@ -77,13 +77,14 @@ class WaitForPropertyYieldable extends EmberYieldable {
     this.key = key;
 
     deprecate(
-      'waitForProperty is deprecated due to its use of observers. Consider using a polling approach instead.',
+      'waitForProperty is deprecated because it uses observers. Most uses can wait for what changes the property instead.',
       false,
       {
         id: 'ember-concurrency.deprecate-wait-for-property',
         for: 'ember-concurrency',
         since: '4.0.5',
-        until: '5.0.0',
+        until: '6.0.0',
+        url: 'https://github.com/machty/ember-concurrency/blob/master/WAIT-FOR-PROPERTY-MIGRATION.md',
       },
     );
 
@@ -207,7 +208,7 @@ export function waitForEvent(object, eventName) {
  * }
  * ```
  *
- * @deprecated Deprecated due to use of classic observers. Consider using a polling approach instead.
+ * @deprecated Deprecated due to use of classic observers. See the migration guide: https://github.com/machty/ember-concurrency/blob/master/WAIT-FOR-PROPERTY-MIGRATION.md
  * @param {object} object an object (most likely an Ember Object)
  * @param {string} key the property name that is observed for changes
  * @param {function} callbackOrValue a Function that should return a truthy value
