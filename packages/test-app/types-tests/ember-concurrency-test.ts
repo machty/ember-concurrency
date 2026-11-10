@@ -17,18 +17,14 @@ import {
   allSettled,
   animationFrame,
   didCancel,
-  dropTask,
-  enqueueTask,
   forever,
   getModifier,
   hasModifier,
   hash,
   hashSettled,
-  keepLatestTask,
   race,
   rawTimeout,
   registerModifier,
-  restartableTask,
   task,
   timeout,
   waitForEvent,
@@ -1608,7 +1604,8 @@ module('integration tests', () => {
   test('classic ember', () => {
     ClassicComponent.extend({
       // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-      myTask: restartableTask(
+      myTask: task(
+        { restartable: true },
         async (immediately: boolean, ms: number = 500) => {
           if (!immediately) {
             await timeout(ms);
@@ -1939,14 +1936,6 @@ module('integration tests', () => {
         return 'wow';
       });
 
-      restartable = restartableTask(async () => {});
-      restartable2 = restartableTask({ maxConcurrency: 2 }, async () => {});
-      enqueue = enqueueTask(async () => {});
-      enqueue2 = enqueueTask({ maxConcurrency: 2 }, async () => {});
-      drop = dropTask(async () => {});
-      drop2 = dropTask({ maxConcurrency: 2 }, async () => {});
-      keepLatest = keepLatestTask(async () => {});
-      keepLatest2 = keepLatestTask({ maxConcurrency: 2 }, async () => {});
       debug = task({ debug: true }, async () => {});
       onState = task({ onState: () => {} }, async () => {});
       onStateNull = task({ onState: null }, async () => {});
