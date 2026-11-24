@@ -1,5 +1,4 @@
 /* eslint-env node */
-const { declare } = require('@babel/helper-plugin-utils');
 const {
   yieldExpression,
   functionExpression,
@@ -330,7 +329,7 @@ function cleanupUnusedTaskFactoryImports(programPath, usedTaskFactories) {
   });
 }
 
-module.exports = declare((api) => {
+module.exports = function asyncArrowTaskTransform(api) {
   api.assertVersion('^7.0.0 || ^8.0.0');
 
   return {
@@ -374,4 +373,4 @@ module.exports = declare((api) => {
       },
     },
   };
-});
+};
