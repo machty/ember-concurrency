@@ -34,7 +34,7 @@
     "@ember/optional-features": "^2.0.0",
     "@ember/render-modifiers": "^3.0.0",
     "@ember/string": "^3.1.1",
-    "@ember/test-helpers": "^5.4.3",
+    "@ember/test-helpers": "^5.8.0",
     "@embroider/test-setup": "^2.1.1",
     "@glimmer/component": "^2.0.0",
     "@glimmer/tracking": "^1.1.2",
